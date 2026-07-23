@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import {
   startSpeculos,
   specs,

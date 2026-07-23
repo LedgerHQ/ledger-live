@@ -1,0 +1,15 @@
+{
+  "name": "@shared/live-env",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": []
+    },
+    "coverage": {
+      "dependsOn": ["build"]
+    },
+    "typecheck": {
+      "dependsOn": ["build"]
+    }
+  }
+}

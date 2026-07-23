@@ -7,7 +7,7 @@ import { CLI } from "tests/utils/cliUtils";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { expectPulledDataToMatchAccountChanges } from "tests/utils/ledgerSyncPulledDataUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/live-env";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.LS;

@@ -47,7 +47,7 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
 import { useTheme } from "styled-components/native";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";

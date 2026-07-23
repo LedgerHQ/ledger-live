@@ -3,7 +3,7 @@ import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/featu
 import { withCopyStoreHydration } from "@devtools/protocols/copyStore";
 import { sleepingListener } from "./sleepingListener";
 import { cryptoAssetsApi, calApiExtra } from "@domain/api-currency-token";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 const rootReducer = combineReducers({
   featureFlags: featureFlagsReducer,

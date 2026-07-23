@@ -3,7 +3,7 @@ import { FlatList } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTokensData } from "@features/platform-currencies";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";

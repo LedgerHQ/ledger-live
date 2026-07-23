@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useCurrencyById } from "@features/platform-currencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import { useRoute } from "@react-navigation/native";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";

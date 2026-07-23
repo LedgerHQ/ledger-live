@@ -27,7 +27,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { broadcastLogger } from "~/datadog";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";

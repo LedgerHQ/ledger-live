@@ -1,6 +1,6 @@
 import os from "os";
 import semverSatisfies from "semver/functions/satisfies";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
 

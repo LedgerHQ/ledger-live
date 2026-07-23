@@ -7,7 +7,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";

@@ -1,5 +1,5 @@
 import { close as closeBridge, findFreePort, init as initBridge } from "../bridge/server";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";

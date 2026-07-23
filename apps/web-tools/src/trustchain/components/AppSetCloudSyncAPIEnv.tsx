@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { setEnv, getEnvDefault } from "@ledgerhq/live-env";
+import { setEnv, getEnvDefault } from "@shared/live-env";
 import { TextInput } from "@ledgerhq/lumen-ui-react";
 import { Actionable } from "./Actionable";
 import { ApiUrlPresets } from "./ApiUrlPresets";

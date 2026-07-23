@@ -6,7 +6,7 @@ import { Store } from "redux";
 import VaultTransport from "@ledgerhq/hw-transport-vault";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { setEnvOnAllThreads } from "./../helpers/env";

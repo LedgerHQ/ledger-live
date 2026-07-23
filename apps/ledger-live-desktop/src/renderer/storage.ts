@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { ipcRenderer } from "electron";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";

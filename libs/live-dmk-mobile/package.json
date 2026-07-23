@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",
+    "@shared/live-env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-env";
+import useEnv from "@features/platform-env";
+import { setEnv } from "@shared/live-env";
 import Track from "~/renderer/analytics/Track";
 import Input from "~/renderer/components/Input";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";

@@ -3,7 +3,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, type UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/sdk";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/walletsync/root";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import {
   DeviceManagementKitTransportSpeculos,
   SpeculosHttpTransportOpts,

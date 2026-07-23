@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ipcRenderer } from "electron";
 import { useSelector, useStore } from "LLD/hooks/redux";
-import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { EnvName, getEnv } from "@shared/live-env";
 import {
   FEATURE_FLAGS_DEFAULTS,
   type Feature,

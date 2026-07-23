@@ -6,7 +6,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
 import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/store";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { urls } from "~/config/urls";
 import { setDataModal } from "~/renderer/actions/modals";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";

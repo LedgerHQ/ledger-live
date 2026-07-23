@@ -6,7 +6,7 @@ import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/type
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import {
   isAvailableOnBuy,
@@ -163,15 +163,11 @@ export function useActionBarViewModel({
     ledgerCurrency?.id ?? distributionItem?.currency.id ?? rampActiveLedgerIds[0];
   const rampNavigationCurrencyIds =
     rampActiveLedgerIds.length > 1 ? rampActiveLedgerIds : undefined;
-  const sendCurrencyIds = useMemo(
-    () =>
-      ledgerIds && ledgerIds.length > 0
-        ? ledgerIds
-        : trackingCurrencyId
-          ? [trackingCurrencyId]
-          : undefined,
-    [ledgerIds, trackingCurrencyId],
-  );
+  const sendCurrencyIds = useMemo(() => {
+    if (ledgerIds && ledgerIds.length > 0) return ledgerIds;
+    if (trackingCurrencyId) return [trackingCurrencyId];
+    return undefined;
+  }, [ledgerIds, trackingCurrencyId]);
 
   const onBuy = useCallback(() => {
     track("button_clicked", {

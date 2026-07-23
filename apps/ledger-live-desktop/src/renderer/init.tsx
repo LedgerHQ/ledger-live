@@ -1,7 +1,7 @@
+import { getEnv } from "@shared/live-env";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";

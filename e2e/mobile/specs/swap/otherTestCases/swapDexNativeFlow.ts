@@ -2,7 +2,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";

@@ -2,7 +2,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { allure } from "jest-allure2-reporter/api";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
 import { log } from "detox";

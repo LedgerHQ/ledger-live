@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@shared/live-env";
 import SettingsRow from "~/components/SettingsRow";
 import Track from "~/analytics/Track";
 import { reboot } from "~/actions/appstate";

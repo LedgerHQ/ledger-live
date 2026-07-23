@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import { privacyPolicy, termsOfUse } from "@ledgerhq/live-common/exchange/providers/swap";

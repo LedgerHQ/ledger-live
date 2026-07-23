@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import { v4 as uuid } from "uuid";
 import { Actionable } from "./Actionable";

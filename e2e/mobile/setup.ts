@@ -1,8 +1,8 @@
+import { getEnv, setEnv } from "@shared/live-env";
 import { device, log } from "detox";
 import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge } from "./bridge/server";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setAllureDescription } from "./helpers/allure/allure-helper";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");

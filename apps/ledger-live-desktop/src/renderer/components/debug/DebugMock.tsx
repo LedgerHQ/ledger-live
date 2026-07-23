@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 
 import React, { useCallback, useState } from "react";
-import { getEnv, getAllEnvs } from "@ledgerhq/live-env";
+import { getEnv, getAllEnvs } from "@shared/live-env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
 import { deserializeError } from "@ledgerhq/errors";

@@ -1,3 +1,4 @@
+import "@shared/live-env";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { TextDecoder, TextEncoder } from "util";

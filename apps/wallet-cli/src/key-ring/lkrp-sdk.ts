@@ -1,6 +1,6 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { LKRP_APPLICATION_ID } from "./constants";
 
 export function createLkrpSdk(memberName = "wallet-cli") {

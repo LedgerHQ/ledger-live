@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { ApplicationOptions } from "page";
 

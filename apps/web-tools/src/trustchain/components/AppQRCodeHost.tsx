@@ -5,7 +5,7 @@ import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protoco
 import { RenderActionable } from "./Actionable";
 import QRCode from "./QRCode";
 import { useTrustchainSDK } from "../context";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 
 export function AppQRCodeHost({
   trustchain,

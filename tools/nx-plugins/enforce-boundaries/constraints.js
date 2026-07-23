@@ -40,4 +40,9 @@ const DEP_CONSTRAINTS = [
   },
 ];
 
-module.exports = { DEP_CONSTRAINTS };
+/** Per-package exceptions: { sourceRoot, targetRoot, allowedImport }. Remove when @ledgerhq/live-env moves to ts-libs. */
+const BOUNDARY_EXCEPTIONS = [
+  { sourceRoot: "shared/live-env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+];
+
+module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS };

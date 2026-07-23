@@ -1,5 +1,5 @@
 import { renderHook, act, withFlagOverrides } from "@tests/test-renderer";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { track } from "~/analytics";

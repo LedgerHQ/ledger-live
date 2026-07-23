@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import test from "../../fixtures/common";
 import { Layout } from "../../component/layout.component";
 

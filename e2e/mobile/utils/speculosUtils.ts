@@ -6,7 +6,7 @@ import {
   takeScreenshot,
   setExchangeDependencies,
 } from "@ledgerhq/live-e2e-shared/speculos";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/live-env";
 import { device, log } from "detox";
 import {
   waitForSpeculosReady,

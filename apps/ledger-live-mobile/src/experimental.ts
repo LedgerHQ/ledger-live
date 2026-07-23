@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import storage from "LLM/storage";
-import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
-import type { EnvName } from "@ledgerhq/live-env";
+import { setEnvUnsafe, isEnvDefault, changes, type EnvName } from "@shared/live-env";
 
 import type { FeatureId } from "@shared/feature-flags";
 
@@ -139,7 +137,7 @@ export const getStorageEnv = async () => {
   }
 };
 
-export const setStorageEnvs = async (key: EnvName, val: string) => {
+export const setStorageEnvs = async (key: string, val: unknown) => {
   try {
     const envs = await getStorageEnv();
     envs[key] = val;
@@ -149,7 +147,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
   }
 };
 
-export const isReadOnly = (key: EnvName) => Object.keys(Config).includes(key);
+export const isReadOnly = (key: string) => Object.keys(Config).includes(key);
 
 export const enabledExperimentalFeatures = (): string[] =>
   [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));
@@ -165,7 +163,7 @@ export const enabledExperimentalFeatures = (): string[] =>
     setEnvUnsafe(k as EnvName, Config[k]);
   }
 
-  const saveEnvs = async (name: EnvName, value: string) => {
+  const saveEnvs = async (name: string, value: unknown) => {
     if (
       [...experimentalFeatures, ...developerFeatures].find(f => f.name === name) &&
       !isReadOnly(name)
@@ -174,7 +172,12 @@ export const enabledExperimentalFeatures = (): string[] =>
     }
   };
 
-  changes.pipe(concatMap(({ name, value }) => saveEnvs(name, value))).subscribe();
+  let saveQueue = Promise.resolve();
+  changes.subscribe(({ name, value }) => {
+    saveQueue = saveQueue
+      .then(() => saveEnvs(name, value))
+      .catch(err => logger.critical(err as Error));
+  });
 })();
 
 export function useExperimental(): boolean {

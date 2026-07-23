@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";

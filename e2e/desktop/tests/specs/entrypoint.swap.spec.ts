@@ -12,7 +12,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";

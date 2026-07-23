@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/live-env";
 import { runCliGetAddress } from "@ledgerhq/live-e2e-shared/runCli";
 import {
   startSpeculos,

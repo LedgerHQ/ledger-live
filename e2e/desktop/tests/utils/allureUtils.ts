@@ -2,7 +2,7 @@ import { ElectronApplication, Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import { readFile } from "fs";
 import { takeScreenshot, drainSpeculosScreenshots } from "@ledgerhq/live-e2e-shared/speculos";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/live-env";
 import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";

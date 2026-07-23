@@ -52,7 +52,7 @@ import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/
 import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recoverState";
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import StyleProvider from "~/StyleProvider";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@shared/live-env";
 import { setTestProviderInfo } from "@ledgerhq/live-common/exchange/providers/index";
 import Input from "~/renderer/components/Input";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";

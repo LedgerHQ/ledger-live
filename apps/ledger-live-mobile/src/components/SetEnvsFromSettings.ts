@@ -1,4 +1,4 @@
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { setEnvUnsafe } from "@shared/live-env";
 import { useEffect } from "react";
 import { useSelector } from "~/context/hooks";
 import {

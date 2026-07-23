@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import "@shared/live-env";
 import "./embed-usb-native";
 import { resolve } from "node:path";
 import { createCLI } from "@bunli/core";

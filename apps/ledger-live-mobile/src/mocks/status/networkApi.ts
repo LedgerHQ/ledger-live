@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import type {
   ServiceStatusApi,
   ServiceStatusSummary,

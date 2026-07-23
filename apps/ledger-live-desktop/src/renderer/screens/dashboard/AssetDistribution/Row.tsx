@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/live-env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled, { css } from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";

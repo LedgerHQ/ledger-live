@@ -1,5 +1,5 @@
 import React from "react";
-import { isEnvDefault, changes, EnvName } from "@ledgerhq/live-env";
+import { isEnvDefault, changes, EnvName } from "@shared/live-env";
 import { Trans } from "react-i18next";
 import { setEnvOnAllThreads } from "./../helpers/env";
 export type FeatureCommon = {
@@ -112,8 +112,8 @@ export const getLocalStorageEnvs = (): {
 };
 export const enabledExperimentalFeatures = (): string[] =>
   experimentalFeatures.map(e => e.name).filter(k => !isEnvDefault(k));
-export const isReadOnlyEnv = (key: EnvName) => key in process.env;
-export const setLocalStorageEnv = (key: EnvName, val: string) => {
+export const isReadOnlyEnv = (key: string) => key in process.env;
+export const setLocalStorageEnv = (key: string, val: unknown) => {
   const envs = getLocalStorageEnvs();
   envs[key] = val;
   window.localStorage.setItem(lsKey, JSON.stringify(envs));
