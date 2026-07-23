@@ -20,6 +20,7 @@ const createMockClient = (): Client =>
 
 const mockClient = createMockClient();
 const mockTestnetClient = createMockClient();
+const mockLocalClient = createMockClient();
 
 jest.mock("@hashgraph/sdk", () => {
   return {
@@ -27,6 +28,7 @@ jest.mock("@hashgraph/sdk", () => {
     Client: {
       forMainnetAsync: jest.fn(() => Promise.resolve(mockClient)),
       forTestnetAsync: jest.fn(() => Promise.resolve(mockTestnetClient)),
+      forNetwork: jest.fn(() => mockLocalClient),
     },
   };
 });
@@ -126,6 +128,102 @@ describe("rpcClient", () => {
       expect(defaultRetryClient).toBe(defaultSdkClient);
       expect(mockClient.setMaxAttempts).toHaveBeenCalledWith(0);
       expect(defaultSdkClient.setMaxAttempts).not.toHaveBeenCalled();
+    });
+
+    it("uses Client.forNetwork when consensusNodes is present in config", async () => {
+      const localConfig = {
+        ...mockConfig,
+        consensusNodes: { "127.0.0.1:35211": "0.0.3" },
+      };
+
+      const client = await rpcClient.getInstance(localConfig);
+
+      expect(Client.forNetwork).toHaveBeenCalledWith(
+        { "127.0.0.1:35211": "0.0.3" },
+        { scheduleNetworkUpdate: false },
+      );
+      expect(Client.forMainnetAsync).not.toHaveBeenCalled();
+      expect(Client.forTestnetAsync).not.toHaveBeenCalled();
+      expect(client).toBe(mockLocalClient);
+    });
+
+    it("does not call Client.forNetwork when consensusNodes is absent", async () => {
+      await rpcClient.getInstance(mockConfig);
+
+      expect(Client.forNetwork).not.toHaveBeenCalled();
+      expect(Client.forMainnetAsync).toHaveBeenCalledTimes(1);
+    });
+
+    it("caches distinct clients for two different consensusNodes maps on the same networkType", async () => {
+      const otherLocalClient = createMockClient();
+      jest
+        .mocked(Client.forNetwork)
+        .mockReturnValueOnce(mockLocalClient)
+        .mockReturnValueOnce(otherLocalClient);
+
+      const configA = { ...mockConfig, consensusNodes: { "127.0.0.1:35211": "0.0.3" } };
+      const configB = { ...mockConfig, consensusNodes: { "127.0.0.1:9999": "0.0.3" } };
+
+      const clientA = await rpcClient.getInstance(configA);
+      const clientB = await rpcClient.getInstance(configB);
+      const clientA2 = await rpcClient.getInstance(configA);
+
+      expect(Client.forNetwork).toHaveBeenCalledTimes(2);
+      expect(clientA).toBe(mockLocalClient);
+      expect(clientB).toBe(otherLocalClient);
+      expect(clientA2).toBe(clientA);
+    });
+
+    it("composes consensusNodes with sdkClientOptions in the cache key (does not drop sdkClientOptions)", async () => {
+      const withOptionsA = {
+        ...mockConfig,
+        consensusNodes: { "127.0.0.1:35211": "0.0.3" },
+        sdkClientOptions: { maxAttempts: 0 },
+      };
+      const withOptionsB = {
+        ...mockConfig,
+        consensusNodes: { "127.0.0.1:35211": "0.0.3" },
+        sdkClientOptions: { maxAttempts: 5 },
+      };
+
+      const otherLocalClient = createMockClient();
+      jest
+        .mocked(Client.forNetwork)
+        .mockReturnValueOnce(mockLocalClient)
+        .mockReturnValueOnce(otherLocalClient);
+
+      const clientA = await rpcClient.getInstance(withOptionsA);
+      const clientB = await rpcClient.getInstance(withOptionsB);
+
+      expect(Client.forNetwork).toHaveBeenCalledTimes(2);
+      expect(clientA).not.toBe(clientB);
+      expect(mockLocalClient.setMaxAttempts).toHaveBeenCalledWith(0);
+      expect(otherLocalClient.setMaxAttempts).toHaveBeenCalledWith(5);
+    });
+
+    it("caches distinct clients for the same consensusNodes map on different networkTypes", async () => {
+      const otherLocalClient = createMockClient();
+      jest
+        .mocked(Client.forNetwork)
+        .mockReturnValueOnce(mockLocalClient)
+        .mockReturnValueOnce(otherLocalClient);
+
+      const configMainnet = {
+        ...mockConfig,
+        networkType: "mainnet" as const,
+        consensusNodes: { "127.0.0.1:35211": "0.0.3" },
+      };
+      const configTestnet = {
+        ...mockConfig,
+        networkType: "testnet" as const,
+        consensusNodes: { "127.0.0.1:35211": "0.0.3" },
+      };
+
+      const clientA = await rpcClient.getInstance(configMainnet);
+      const clientB = await rpcClient.getInstance(configTestnet);
+
+      expect(Client.forNetwork).toHaveBeenCalledTimes(2);
+      expect(clientA).not.toBe(clientB);
     });
   });
 

@@ -16,11 +16,17 @@ async function broadcastTransaction({
 const _hederaClients: Map<string, Promise<Client>> = new Map();
 
 function getClientCacheKey(config: HederaCoinConfig): string {
-  if (config.sdkClientOptions) {
-    return `${config.networkType}:${JSON.stringify(config.sdkClientOptions)}`;
+  const parts: string[] = [config.networkType];
+
+  if (config.consensusNodes) {
+    parts.push(JSON.stringify(config.consensusNodes));
   }
 
-  return config.networkType;
+  if (config.sdkClientOptions) {
+    parts.push(JSON.stringify(config.sdkClientOptions));
+  }
+
+  return parts.join(":");
 }
 
 function applySdkClientOptions(client: Client, config: HederaCoinConfig): void {
@@ -39,8 +45,13 @@ function applySdkClientOptions(client: Client, config: HederaCoinConfig): void {
 }
 
 async function createClient(config: HederaCoinConfig): Promise<Client> {
-  const client =
-    config.networkType === "mainnet"
+  const client = config.consensusNodes
+    ? // A custom consensusNodes override points the SDK at a local/emulated
+      // network (e.g. Solo) on non-default ports. Disable the periodic
+      // address-book refresh so it cannot overwrite that topology with the
+      // canonical mainnet/testnet ports.
+      Client.forNetwork(config.consensusNodes, { scheduleNetworkUpdate: false })
+    : config.networkType === "mainnet"
       ? await Client.forMainnetAsync()
       : await Client.forTestnetAsync();
 

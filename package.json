@@ -138,6 +138,7 @@
     "coin:tester:multiversx": "pnpm --filter coin-tester-multiversx",
     "coin:tester:tron": "pnpm --filter coin-tester-tron",
     "coin:tester:xrp": "pnpm --filter coin-tester-xrp",
+    "coin:tester:hedera": "pnpm --filter coin-tester-hedera",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
@@ -313,6 +314,11 @@
       "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
     },
     "packageExtensions": {
+      "@hiero-ledger/solo": {
+        "dependencies": {
+          "reflect-metadata": "^0.2.2"
+        }
+      },
       "detox-allure2-adapter": {
         "dependencies": {
           "tslib": "*"

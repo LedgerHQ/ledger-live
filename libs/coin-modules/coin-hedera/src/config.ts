@@ -4,12 +4,14 @@ import buildCoinConfig, {
 } from "@ledgerhq/coin-module-framework/config";
 
 export interface HederaConfig {
-  /**
-   * When true, the transaction valid-start time is sourced from the latest
-   * network block instead of the local machine clock.
-   */
+  /** When true, valid-start time comes from the latest network block instead of the local clock. */
   useNetworkTimestamp: boolean;
   networkType: "mainnet" | "testnet";
+  /**
+   * Overrides the consensus gRPC topology (`Client.forNetwork` shape: `"host:port" → "0.0.x"`),
+   * e.g. to point at a local Solo deploy. `networkType` still governs mirror node behavior.
+   */
+  consensusNodes?: Record<string, string>;
   sdkClientOptions?: {
     maxAttempts?: number;
     requestTimeout?: number;
