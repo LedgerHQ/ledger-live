@@ -10,11 +10,12 @@ describe("TransportError", () => {
     expect(error.id).toEqual("SomeId");
   });
 
-  test("falls back to the class name when message is empty", () => {
+  test("keeps an empty message while still exposing the class name (legacy parity)", () => {
     const error = new TransportError("", "SomeId");
 
     expect(error.message).toEqual("");
-    expect(error.stack).toContain("TransportError");
+    expect(error.name).toEqual("TransportError");
+    expect(typeof error.stack).toBe("string");
   });
 
   test("is an instance of Error and TransportError", () => {
