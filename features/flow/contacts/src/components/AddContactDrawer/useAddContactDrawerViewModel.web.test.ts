@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { contact } from "@domain/entity-contact";
+import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import type { ContactCreationPort } from "../../add/model/ports";
 import { useAddContactDrawerViewModel } from "./useAddContactDrawerViewModel";
 
@@ -22,6 +22,15 @@ describe("useAddContactDrawerViewModel", () => {
 
     act(() => {
       result.current.onOpen();
+      result.current.onDraftNameChange("Ada1");
+    });
+
+    expect(result.current).toMatchObject({
+      invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
+      isConfirmEnabled: false,
+    });
+
+    act(() => {
       result.current.onDraftNameChange("Ada");
     });
 
@@ -35,6 +44,7 @@ describe("useAddContactDrawerViewModel", () => {
       isOpen: false,
       draftName: "",
       isConfirmEnabled: false,
+      invalidNameError: null,
     });
   });
 

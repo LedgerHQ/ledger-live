@@ -9,7 +9,8 @@ export function useAddContactDrawerViewModel({
 }: UseAddContactDrawerViewModelOptions): AddContactDrawerViewModel {
   const [isOpen, setIsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { draftName, isSaveEnabled, save, setDraftName } = useAddContactViewModel(contactCreation);
+  const { draftName, invalidNameError, isSaveEnabled, save, setDraftName } =
+    useAddContactViewModel(contactCreation);
   const onOpen = useCallback(() => setIsOpen(true), []);
   const onClose = useCallback(() => {
     setIsOpen(false);
@@ -42,6 +43,7 @@ export function useAddContactDrawerViewModel({
     isConfirmEnabled: isSaveEnabled && !isSaving,
     isSaving,
     draftName,
+    invalidNameError,
     onOpen,
     onClose,
     onDraftNameChange,

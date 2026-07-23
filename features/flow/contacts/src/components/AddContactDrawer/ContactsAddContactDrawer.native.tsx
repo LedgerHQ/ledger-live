@@ -6,9 +6,8 @@ import {
   Box,
   Button,
   Text,
-  TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
-import { CONTACT_NAME_MAX_LENGTH } from "../../add/model/constants";
+import { ContactNameInput } from "./ContactNameInput";
 import type { ContactsAddContactDrawerProps } from "./types";
 
 export function ContactsAddContactDrawer({
@@ -16,12 +15,15 @@ export function ContactsAddContactDrawer({
   isConfirmEnabled,
   isSaving,
   draftName,
+  invalidNameError,
   bottomInset = 0,
   keyboardInset = 0,
   labels,
   onDraftNameChange,
   onConfirm,
 }: ContactsAddContactDrawerProps): React.JSX.Element {
+  const nameValidationError =
+    invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 + keyboardInset }}>
       {isOpen ? (
@@ -31,14 +33,11 @@ export function ContactsAddContactDrawer({
             <Text typography="heading3SemiBold" lx={{ color: "base" }}>
               {labels.title}
             </Text>
-            <TextInput
-              testID="contacts-add-contact-name-input"
-              autoFocus
-              placeholder={labels.namePlaceholder}
+            <ContactNameInput
               value={draftName}
+              placeholder={labels.namePlaceholder}
+              errorMessage={nameValidationError}
               onChangeText={onDraftNameChange}
-              maxLength={CONTACT_NAME_MAX_LENGTH}
-              maxCount={CONTACT_NAME_MAX_LENGTH}
             />
             <Banner appearance="info" description={labels.namingDisclaimer} />
           </Box>

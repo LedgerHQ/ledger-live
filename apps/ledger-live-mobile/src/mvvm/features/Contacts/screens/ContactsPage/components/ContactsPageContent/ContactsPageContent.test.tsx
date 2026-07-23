@@ -55,11 +55,15 @@ function createViewModel({
       isConfirmEnabled: false,
       isSaving: false,
       draftName: "",
+      invalidNameError: null,
       labels: {
         title: "Add contact",
         namePlaceholder: "Contact name",
         namingDisclaimer: "Use a nickname.",
         confirmName: "Confirm name",
+        nameValidationErrors: {
+          InvalidContactNameError: "Special characters are not allowed.",
+        },
       },
       onOpen: jest.fn(),
       onClose: jest.fn(),
