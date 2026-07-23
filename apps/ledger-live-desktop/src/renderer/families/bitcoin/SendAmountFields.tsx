@@ -39,9 +39,10 @@ const Fields: Props = ({
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const hideAdvancedFees = account.currency.id === "zcash" && shieldedEnabled;
-  const [isAdvanceMode, setAdvanceMode] = useState(
-    !hideAdvancedFees && (!transaction.feesStrategy || transaction.feesStrategy === "custom"),
+  const [advanceModeSelected, setAdvanceMode] = useState(
+    !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
+  const isAdvanceMode = !hideAdvancedFees && advanceModeSelected;
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);

@@ -315,6 +315,14 @@ export type LLDCoinFamily<
   createSendSteps?: (disableBacks?: string[]) => Step<string, SendStepProps>[];
 
   /**
+   * Allow a family to override the Send modal title (e.g. Zcash
+   * transparent/shielded transfer types). Called during render and may invoke
+   * React hooks. The family owns its own gating (feature flags, currency
+   * checks) and should return null/undefined to fall back to the default title.
+   */
+  useSendModalTitle?: (_: { account: A; transaction: T | undefined | null }) => string | null;
+
+  /**
    * Allow to override the "Recipient" step in the Send modal.
    */
   SendStepRecipient?: React.ComponentType<SendStepProps>;
