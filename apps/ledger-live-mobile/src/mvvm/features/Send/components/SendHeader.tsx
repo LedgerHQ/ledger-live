@@ -110,6 +110,7 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}
+              autoFocus
             />
           ) : (
             <>
