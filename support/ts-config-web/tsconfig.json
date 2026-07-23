@@ -1,0 +1,10 @@
+{
+  "extends": "@support/ts-config-base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "moduleSuffixes": [".web", ""]
+  },
+  "include": ["${configDir}/src/**/*"],
+  "exclude": ["node_modules"]
+}
