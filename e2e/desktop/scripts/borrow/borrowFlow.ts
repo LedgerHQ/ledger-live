@@ -59,7 +59,7 @@ function resolveAccount(name: string): { path: string; specKey: string } {
   }
   return {
     path: account.accountPath,
-    specKey: account.currency.speculosApp.name.replace(/ /g, "_"),
+    specKey: account.currency.speculosApp.name.replaceAll(" ", "_"),
   };
 }
 

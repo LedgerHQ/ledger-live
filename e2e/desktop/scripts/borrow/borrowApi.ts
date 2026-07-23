@@ -75,7 +75,7 @@ export async function postAction(body: ActionRequest): Promise<PartnerActionResp
   if (!Array.isArray(steps) || steps.length === 0) {
     throw new Error(`Partner returned no steps[] (actionId ${actionId})`);
   }
-  return { actionId, steps: steps.map(normalizeStep) };
+  return { actionId, steps: steps.map((step, i) => normalizeStep(step, i)) };
 }
 
 /** Best-effort notify; the state we act on is the on-chain confirmation, not this. */

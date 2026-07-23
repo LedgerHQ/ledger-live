@@ -37,7 +37,7 @@
     "axios": "catalog:",
     "bignumber.js": "9.1.2",
     "dotenv": "^16.4.7",
-    "ethers": "6.15.0",
+    "ethers": "catalog:",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"

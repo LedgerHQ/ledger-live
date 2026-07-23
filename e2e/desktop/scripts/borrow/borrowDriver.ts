@@ -1,9 +1,8 @@
 import { DEFAULT_RPC_URL, runBorrow, type BorrowFlowOptions, type Flow } from "./borrowFlow";
 
 const FLOWS: Flow[] = ["open", "close", "repay", "withdraw"];
-function isFlow(v: string | undefined): v is Flow {
-  return FLOWS.some(f => f === v);
-}
+const FLOW_SET = new Set<string>(FLOWS);
+const isFlow = (v: string | undefined): v is Flow => v !== undefined && FLOW_SET.has(v);
 
 function parseArgs(argv: string[]): BorrowFlowOptions {
   const flow = argv[0];

@@ -11,6 +11,8 @@ import {
 import { buildTags } from "tests/utils/tagsUtils";
 import { resetLoanState } from "tests/utils/borrowSetup";
 
+test.describe.configure({ mode: "serial" });
+
 const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const LOAN_AMOUNT = "1";
@@ -76,6 +78,11 @@ test.describe("Borrow open loan", () => {
       ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
       ...FF_BORROW_DESKTOP,
     },
+  });
+
+  test.beforeAll(async () => {
+    test.setTimeout(600_000);
+    await resetLoanState();
   });
 
   test.afterAll(async () => {

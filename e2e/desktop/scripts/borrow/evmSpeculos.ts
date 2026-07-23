@@ -163,7 +163,7 @@ export class EvmSpeculosExecutor {
     tx.signature = Signature.from({
       r: prefix0x(sig.r),
       s: prefix0x(sig.s),
-      v: typeof sig.v === "number" ? sig.v : parseInt(sig.v, 16),
+      v: typeof sig.v === "number" ? sig.v : Number.parseInt(sig.v, 16),
     });
     const signedHex = tx.serialized;
 

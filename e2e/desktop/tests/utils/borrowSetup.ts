@@ -27,7 +27,7 @@ const resolveRpc = (rpcUrl?: string): string =>
  */
 export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<void> {
   if (!broadcastEnabled()) {
-    console.log("[borrowSetup] DISABLE_TRANSACTION_BROADCAST !== 0 — skipping ensureLoanOpen");
+    console.log("[borrowSetup] DISABLE_TRANSACTION_BROADCAST !== '0' — skipping ensureLoanOpen");
     return;
   }
   await openBorrowPosition({
@@ -46,7 +46,7 @@ export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<
  */
 export async function resetLoanState(options: BorrowSetupOptions = {}): Promise<void> {
   if (!broadcastEnabled()) {
-    console.log("[borrowSetup] DISABLE_TRANSACTION_BROADCAST !== 0 — skipping resetLoanState");
+    console.log("[borrowSetup] DISABLE_TRANSACTION_BROADCAST !== '0' — skipping resetLoanState");
     return;
   }
   await closeBorrowPosition({
