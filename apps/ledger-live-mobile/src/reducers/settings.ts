@@ -73,6 +73,7 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
@@ -174,6 +175,7 @@ export const INITIAL_STATE: SettingsState = {
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
+  hasDismissedContactsFeatureIntroduction: false,
   productTourCompleted: false,
   hasSeenQ2WalletV4Tour: false,
   doNotAskAgainSkipMemo: false,
@@ -672,6 +674,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state, action) => ({
+    ...state,
+    hasDismissedContactsFeatureIntroduction: (
+      action as Action<SettingsSetHasDismissedContactsFeatureIntroductionPayload>
+    ).payload,
+  }),
+
   [SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO]: (state, action) => ({
     ...state,
     doNotAskAgainSkipMemo: (action as Action<SettingsSetDoNotAskAgainSkipMemoPayload>).payload,
@@ -961,6 +970,9 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+
+export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
+  state.settings.hasDismissedContactsFeatureIntroduction;
 
 export const doNotAskAgainSkipMemoSelector = (state: State) => state.settings.doNotAskAgainSkipMemo;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
