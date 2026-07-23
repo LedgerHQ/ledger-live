@@ -5,41 +5,23 @@ import {
   hidePostOnboardingWalletEntryPoint,
   postOnboardingSetFinished,
 } from "@ledgerhq/live-common/postOnboarding/actions";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { type StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
-import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
   closeFinishPostOnboarding,
   selectIsFinishPostOnboardingOpen,
 } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/finishOnboardingDialog";
-import { resolveFinishPostOnboardingStartAction, type FinishPostOnboardingListItem } from "./utils";
-import { usePostOnboardingFinishProgress } from "./usePostOnboardingFinishProgress";
+import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
+import type { FinishOnboardingStep } from "LLD/features/FinishOnboarding/hooks/types";
 
-/**
- * {@link FinishPostOnboardingListItem} with a concrete `startAction` for
- * `PostOnboardingAction` (hub actions may omit it; the view model resolves it in one place).
- */
-export type FinishOnboardingDialogAction = Omit<FinishPostOnboardingListItem, "startAction"> & {
-  readonly startAction: (args: StartActionArgs) => void;
-};
+export type FinishOnboardingDialogAction = FinishOnboardingStep;
 
 export interface FinishOnboardingDialogViewProps {
-  /** True when every listed post-onboarding action (excl. device row) is completed. */
-  readonly allActionsCompleted: boolean;
-  /**
-   * Rows from {@link usePostOnboardingFinishProgress} with `startAction` resolved for the dialog
-   * (see {@link resolveFinishPostOnboardingStartAction} in `./utils`).
-   */
-  readonly actions: FinishOnboardingDialogAction[];
-  /** From the hook: hub completed count in `actionList` + 1 (implicit device row, always first). */
-  readonly completedActionsAmount: number;
-  /** From the hook: `actionList`.length + 1 (same implicit device step in the stepper). */
-  readonly totalActionsAmount: number;
+  readonly allStepsCompleted: boolean;
+  readonly steps: FinishOnboardingDialogAction[];
+  readonly completedStepsAmount: number;
+  readonly totalStepsAmount: number;
   readonly deviceModelId: DeviceModelId | null;
   readonly isOpen: boolean;
   readonly onClose: () => void;
@@ -57,30 +39,27 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
   const dispatch = useDispatch();
   const isDialogOpen = useSelector(selectIsFinishPostOnboardingOpen);
 
-  const { actionsState, deviceModelId } = usePostOnboardingHubState();
-  const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
-  const accounts = useSelector(accountsSelector);
-  const productTourCompleted = useSelector(productTourCompletedSelector);
-
   const {
-    allActionsCompleted,
-    completedActionsAmount,
-    actionList,
-    totalActionsAmount,
-    completionById,
-  } = usePostOnboardingFinishProgress(actionsState);
+    steps,
+    deviceModelId,
+    allStepsCompleted,
+    completedStepsAmount,
+    totalStepsAmount,
+    postOnboardingInProgress,
+  } = useFinishOnboardingState();
 
-  const hasActions = actionList.length > 0;
   useEffect(() => {
-    if (!allActionsCompleted || !hasActions) return;
+    if (!postOnboardingInProgress || !allStepsCompleted) return;
     track("Post-onboarding widget completed", {
       deviceModelId,
       flow: "post-onboarding",
     });
-    dispatch(closeFinishPostOnboarding());
+    if (isDialogOpen) {
+      dispatch(closeFinishPostOnboarding());
+    }
     dispatch(hidePostOnboardingWalletEntryPoint());
     dispatch(postOnboardingSetFinished());
-  }, [allActionsCompleted, hasActions, deviceModelId, dispatch]);
+  }, [allStepsCompleted, deviceModelId, dispatch, isDialogOpen, postOnboardingInProgress]);
 
   useEffect(() => {
     if (isDialogOpen) {
@@ -109,44 +88,27 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
 
   return useMemo(
     () => ({
-      allActionsCompleted,
-      actions: actionList.map(
-        (item): FinishOnboardingDialogAction => ({
-          ...item,
-          completed:
-            item.completed ||
-            !!completionById[item.id] ||
-            !!item.getIsAlreadyCompletedByState?.({
-              isLedgerSyncActive,
-              accounts,
-              productTourCompleted,
-            }),
-          startAction: resolveFinishPostOnboardingStartAction(item),
-        }),
-      ),
-      completedActionsAmount,
+      allStepsCompleted,
+      steps,
+      completedStepsAmount,
       deviceModelId,
       isOpen: isDialogOpen,
       onClose,
       onGotIt,
       onGotItLabel: t("postOnboarding.dialog.primaryLabel"),
       title: t("postOnboarding.dialog.title"),
-      totalActionsAmount,
+      totalStepsAmount,
     }),
     [
-      accounts,
-      allActionsCompleted,
-      completedActionsAmount,
+      allStepsCompleted,
+      completedStepsAmount,
       deviceModelId,
-      actionList,
       isDialogOpen,
       onClose,
       onGotIt,
+      steps,
       t,
-      isLedgerSyncActive,
-      productTourCompleted,
-      totalActionsAmount,
-      completionById,
+      totalStepsAmount,
     ],
   );
 }
