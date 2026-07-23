@@ -54,6 +54,10 @@ export function buildLargeScreenUpsellContent({
     variant === "opted_in"
       ? "largeScreenUpsellModal.optedIn.subtitle"
       : "largeScreenUpsellModal.optedOut.subtitle";
+  const ctaKey =
+    variant === "opted_in"
+      ? "largeScreenUpsellModal.optedIn.cta"
+      : "largeScreenUpsellModal.optedOut.cta";
 
   return {
     id,
@@ -61,7 +65,7 @@ export function buildLargeScreenUpsellContent({
     ...heroImageUrls,
     title: t(titleKey, { discount: discountPercentage }),
     subtitle: t(subtitleKey, { discount: discountPercentage }),
-    primaryButtonLabel: t("largeScreenUpsellModal.cta"),
+    primaryButtonLabel: t(ctaKey),
     primaryButtonLink,
     secondaryButtonLabel: "",
     secondaryButtonLink: "",

@@ -1,8 +1,12 @@
 import { buildLargeScreenUpsellContent } from "../upsellContent";
 
 const t = (key: string, options?: Record<string, unknown>) => {
-  if (key === "largeScreenUpsellModal.cta") {
+  if (key === "largeScreenUpsellModal.optedIn.cta") {
     return "Explore touchscreen signers";
+  }
+
+  if (key === "largeScreenUpsellModal.optedOut.cta") {
+    return "Learn more";
   }
 
   if (key === "largeScreenUpsellModal.optedIn.title") {
@@ -14,11 +18,11 @@ const t = (key: string, options?: Record<string, unknown>) => {
   }
 
   if (key === "largeScreenUpsellModal.optedOut.title") {
-    return "Spot scams. See every detail";
+    return "Spot scams before signing";
   }
 
   if (key === "largeScreenUpsellModal.optedOut.subtitle") {
-    return "Review each transaction detail with confidence.";
+    return "Learn more about advanced security features that enable real-time threat detection.";
   }
 
   return key;
@@ -55,8 +59,11 @@ describe("buildLargeScreenUpsellContent", () => {
       t,
     });
 
-    expect(content.title).toBe("Spot scams. See every detail");
-    expect(content.subtitle).toBe("Review each transaction detail with confidence.");
+    expect(content.title).toBe("Spot scams before signing");
+    expect(content.subtitle).toBe(
+      "Learn more about advanced security features that enable real-time threat detection.",
+    );
+    expect(content.primaryButtonLabel).toBe("Learn more");
     expect(content.primaryButtonLink).toContain("support.ledger.com/limits");
     expect(content.imageUrlLight).toContain("large_screen_upsell_light");
     expect(content.imageUrlDark).toContain("large_screen_upsell_dark");
