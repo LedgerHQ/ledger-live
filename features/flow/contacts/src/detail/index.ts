@@ -1,0 +1,1 @@
+export { useEmptyContactDetail } from "./useEmptyContactDetail";
