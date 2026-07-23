@@ -1,11 +1,9 @@
 /**
- * Decides which platform runs a broadcast-gated swap flow on a given run.
+ * Decide whether this platform should run a broadcast-gated swap flow.
  *
- * On the Monday broadcast nightly iOS and Android drive the SAME on-chain account (same Speculos
- * seed → same address), so running the same broadcast flow on both at once races on the shared
- * allowance/nonce. We avoid it without serializing or locking: each
- * flow runs on exactly ONE platform per run, and the assignment rotates so both platforms still
- * cover both flows over successive runs.
+ * On broadcast nightlies iOS+Android share the same on-chain account, so running both can race on
+ * allowance/nonce. We pin each flow to one platform per run and rotate assignments.
+ * See: https://ledgerhq.atlassian.net/browse/QAA-1411
  */
 
 const PLATFORM_SLOTS = ["ios", "android"] as const;
