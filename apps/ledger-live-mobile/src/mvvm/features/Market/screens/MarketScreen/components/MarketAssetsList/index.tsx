@@ -17,6 +17,10 @@ import { useMarketAssetsList } from "./useMarketAssetsList";
 
 const HORIZONTAL_PADDING = 16;
 
+const listStyle = {
+  flex: 1,
+};
+
 type Props = Readonly<{
   assets: MarketAssetDisplayData[];
   loading: boolean;
@@ -54,9 +58,11 @@ export function MarketAssetsList({
     sections,
     contentMinHeight,
     footerMinHeight,
+    emptyFooterHeight,
     handleScrollEnd,
     handleListLayout,
     handleHeaderLayout,
+    handleCategorySwitcherLayout,
     keyExtractor,
   } = useMarketAssetsList({ assets, selectedCategory, showSubheader });
 
@@ -70,6 +76,26 @@ export function MarketAssetsList({
     [assets.length, contentMinHeight, bottom],
   );
 
+  const emptyFooterStyle = useMemo(() => {
+    const minHeightStyle = { minHeight: footerMinHeight };
+    const shouldCenterEmptyState =
+      assets.length === 0 &&
+      !loading &&
+      !error &&
+      (emptyState !== undefined || !showSubheader) &&
+      emptyFooterHeight > 0;
+
+    return shouldCenterEmptyState ? { height: emptyFooterHeight } : minHeightStyle;
+  }, [
+    assets.length,
+    emptyFooterHeight,
+    emptyState,
+    error,
+    footerMinHeight,
+    loading,
+    showSubheader,
+  ]);
+
   const renderRow = useCallback(
     ({ item }: SectionListRenderItemInfo<MarketAssetDisplayData>) => (
       <AssetListItem variant="market" market={item} onPress={onAssetPress} lx={rowStyle} />
@@ -79,7 +105,11 @@ export function MarketAssetsList({
 
   const renderCategorySwitcher = useCallback(
     () => (
-      <Box lx={stickyCategorySwitcherStyle}>
+      <Box
+        testID={MARKET_SCREEN_TEST_IDS.assetsCategorySwitcherContainer}
+        lx={stickyCategorySwitcherStyle}
+        onLayout={handleCategorySwitcherLayout}
+      >
         <MarketCategorySwitcher
           selectedCategory={selectedCategory}
           tabs={categoryTabs}
@@ -87,7 +117,7 @@ export function MarketAssetsList({
         />
       </Box>
     ),
-    [selectedCategory, categoryTabs, onSelectCategory],
+    [selectedCategory, categoryTabs, onSelectCategory, handleCategorySwitcherLayout],
   );
 
   const footerSpinner = fetchingNextPage ? (
@@ -101,7 +131,7 @@ export function MarketAssetsList({
 
   const listFooter =
     assets.length === 0 ? (
-      <Box style={{ minHeight: footerMinHeight }}>
+      <Box style={emptyFooterStyle}>
         <MarketAssetsEmptyState
           loading={loading}
           error={error}
@@ -118,6 +148,7 @@ export function MarketAssetsList({
       <SectionList
         ref={listRef}
         testID={MARKET_SCREEN_TEST_IDS.list}
+        style={listStyle}
         sections={sections}
         onScrollEndDrag={handleScrollEnd}
         onMomentumScrollEnd={handleScrollEnd}
