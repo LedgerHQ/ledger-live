@@ -1,6 +1,6 @@
 import React from "react";
 import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../../utils/trackDeviceIntent";
 import type { BaseInitializerStateProps } from "../../types";
 import { WrongDeviceForAccountView } from "./WrongDeviceForAccountView";
@@ -10,24 +10,17 @@ type WrongDeviceForAccountProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: BlockingStateType.WrongDeviceForAccount }>
 >;
 
-export function WrongDeviceForAccount({
-  device,
-  sourceFlow,
-  onCancel,
-}: WrongDeviceForAccountProps) {
+export function WrongDeviceForAccount({ device, onCancel }: WrongDeviceForAccountProps) {
   const viewModel = useWrongDeviceForAccountViewModel({
     device,
-    sourceFlow,
     onCancel,
   });
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_CONNECT_APP.WrongDeviceForAccount}
-        sourceFlow={sourceFlow}
         modelId={device.modelId}
         refreshSource
-        deviceUxV2
       />
       <WrongDeviceForAccountView {...viewModel} />
     </>

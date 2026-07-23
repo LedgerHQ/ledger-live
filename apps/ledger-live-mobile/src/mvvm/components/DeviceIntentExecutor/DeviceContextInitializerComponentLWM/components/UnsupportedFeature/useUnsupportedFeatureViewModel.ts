@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type Params = Readonly<{
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 }>;
 
-export function useUnsupportedFeatureViewModel({ device, sourceFlow }: Params) {
+export function useUnsupportedFeatureViewModel({ device }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openSupport } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -18,9 +18,10 @@ export function useUnsupportedFeatureViewModel({ device, sourceFlow }: Params) {
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.ContactLedgerSupport,
+      extraProperties: analyticsProperties,
     });
     openSupport();
-  }, [openSupport, sourceFlow, modelId]);
+  }, [analyticsProperties, openSupport, sourceFlow, modelId]);
 
   return {
     onContactSupport,

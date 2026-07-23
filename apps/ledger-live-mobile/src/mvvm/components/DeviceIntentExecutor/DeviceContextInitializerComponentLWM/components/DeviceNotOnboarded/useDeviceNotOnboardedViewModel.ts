@@ -1,15 +1,15 @@
 import { useCallback } from "react";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type Params = Readonly<{
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 }>;
 
-export function useDeviceNotOnboardedViewModel({ device, sourceFlow }: Params) {
+export function useDeviceNotOnboardedViewModel({ device }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openOnboarding } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -18,9 +18,10 @@ export function useDeviceNotOnboardedViewModel({ device, sourceFlow }: Params) {
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.SetUpDevice,
+      extraProperties: analyticsProperties,
     });
     openOnboarding();
-  }, [openOnboarding, sourceFlow, modelId]);
+  }, [analyticsProperties, openOnboarding, sourceFlow, modelId]);
 
   return {
     productName: device.productName,

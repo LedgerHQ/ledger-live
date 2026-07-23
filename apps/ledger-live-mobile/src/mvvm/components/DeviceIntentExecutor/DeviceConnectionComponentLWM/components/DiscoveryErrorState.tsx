@@ -8,10 +8,10 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { InfoState } from "LLM/components/InfoState";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
 import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useSourceFlow } from "../../utils/SourceFlowContext";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_DEVICE_BUTTON,
   getTrackingSubError,
@@ -57,7 +57,7 @@ export function DiscoveryErrorState({
   platform,
 }: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const trackingTransport = getTrackingTransport(state.error.transportId);
 
   React.useEffect(() => {
@@ -66,13 +66,11 @@ export function DiscoveryErrorState({
   }, [state.error]);
 
   const trackingScreen = (
-    <TrackScreen
+    <TrackDIEScreen
       category={PAGE_CONNECT_DEVICE.DiscoveryError}
-      sourceFlow={sourceFlow}
       {...(trackingTransport ? { transport: trackingTransport } : {})}
       subError={getTrackingSubError(state.error.type)}
       refreshSource
-      deviceUxV2
     />
   );
 
@@ -85,6 +83,7 @@ export function DiscoveryErrorState({
         trackConnectDeviceButtonClicked({
           sourceFlow,
           button: trackButtonName,
+          extraProperties: analyticsProperties,
         });
         state.retry?.();
       },
@@ -99,6 +98,7 @@ export function DiscoveryErrorState({
         trackConnectDeviceButtonClicked({
           sourceFlow,
           button: CONNECT_DEVICE_BUTTON.ContinueWithUsb,
+          extraProperties: analyticsProperties,
         });
         state.ignore();
       },
