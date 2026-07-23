@@ -29,12 +29,13 @@ class BitcoinLikeWallet {
   constructor() {}
 
   getExplorer(currency: WalletBtcCurrency) {
-    if (!this.explorers[currency.id]) {
-      this.explorers[currency.id] = new BitcoinLikeExplorer({
+    const explorerURI = blockchainBaseURL(currency);
+    if (!this.explorers[explorerURI]) {
+      this.explorers[explorerURI] = new BitcoinLikeExplorer({
         cryptoCurrency: currency,
       });
     }
-    return this.explorers[currency.id];
+    return this.explorers[explorerURI];
   }
 
   async generateAccount(
@@ -53,7 +54,7 @@ class BitcoinLikeWallet {
     const explorerURI = blockchainBaseURL(cryptoCurrency);
     this.explorers[explorerURI] = this.getExplorer(cryptoCurrency);
     const crypto = cryptoFactory(params.currency);
-    const storageId = params.xpub + cryptoCurrency.id;
+    const storageId = params.xpub + cryptoCurrency.id + cryptoCurrency.explorerEndpoint;
     if (!this.storages[storageId]) {
       this.storages[storageId] = new BitcoinLikeStorage();
     }
