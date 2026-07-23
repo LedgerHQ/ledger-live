@@ -1,5 +1,3 @@
-import { DeviceSocketFail } from "@ledgerhq/errors";
-
 /**
  * Detects whether an error from the HSM socket indicates a counterfeit device.
  * When the HSM genuine check identifies a counterfeit device, it sends an error
@@ -8,6 +6,6 @@ import { DeviceSocketFail } from "@ledgerhq/errors";
  * the explicit "not genuine" warning UI instead of the generic error screen.
  */
 export const isCounterfeitError = (error: unknown): boolean =>
-  error instanceof DeviceSocketFail &&
-  typeof (error as Error).message === "string" &&
-  /counterfeit/i.test((error as Error).message);
+  (error as { name?: string })?.name === "DeviceSocketFail" &&
+  typeof (error as { message?: string }).message === "string" &&
+  /counterfeit/i.test((error as { message: string }).message);

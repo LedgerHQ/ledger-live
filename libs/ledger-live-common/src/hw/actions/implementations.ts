@@ -59,13 +59,11 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   config?: PollingImplementationConfig;
   // retryableWithDelayDisconnectedErrors has default value of [DisconnectedDevice, DisconnectedDeviceDuringOperation]
   // used to filter which error(s) retry polling after a delay, reconnectWaitTime
-  retryableWithDelayDisconnectedErrors?: ReadonlyArray<ErrorConstructor>;
+  retryableWithDelayDisconnectedErrors?: ReadonlyArray<new (message?: string) => Error>;
 };
 
-const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<ErrorConstructor> = [
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-];
+const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<new (message?: string) => Error> =
+  [DisconnectedDevice, DisconnectedDeviceDuringOperation];
 
 export const defaultImplementationConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
