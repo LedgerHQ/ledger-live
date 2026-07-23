@@ -22,10 +22,11 @@ The canonical rules live in [Git conventions](docs/contributing/git-conventions.
 ## Updating your branch with develop
 
 **Always prefer rebasing** unless your branch contains merge commits from
-sub-features:
+sub-features.
 
-- Small, self-contained branches -> rebase: `git rebase origin/develop`
-- Branches with cross-branch merges -> merge: `git merge origin/develop`
+- Small, self-contained branches -> rebase on `develop`.
+- Branches with cross-branch merges -> merge `develop` into them to stay up to
+  date.
 
 ## The PR Lifecycle
 
