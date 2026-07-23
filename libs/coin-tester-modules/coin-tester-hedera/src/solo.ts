@@ -1,7 +1,4 @@
 import { execFile } from "child_process";
-import { readFile } from "fs/promises";
-import { homedir } from "os";
-import { join } from "path";
 import { promisify } from "util";
 import chalk from "chalk";
 
@@ -11,19 +8,21 @@ const EXEC_OPTS = { env: process.env, maxBuffer: 1024 * 1024 * 64 } as const;
 
 const SOLO_BIN = "solo"; // resolved from the package's own node_modules/.bin via pnpm
 
-/** Solo's genesis operator; its key is what the tester signs and funds accounts with. */
-const GENESIS_OPERATOR_ACCOUNT_ID = "0.0.2";
-
 /**
- * `solo one-shot single deploy` hard-codes both the deployment name and the namespace to
- * "one-shot", and writes account material to `<SOLO_HOME>/<deployment>-<namespace>/accounts.json`.
+ * Memoised deployment. The suite's `beforeAll` pays the 7–10 minute bring-up; `getGenesisClient()`
+ * reaches `deploySolo()` too and must get it for free. The *promise* is stored rather than the
+ * resolved value so two concurrent callers cannot start two deploys.
+ *
+ * A failed bring-up is cached on purpose: a kube/Solo failure is an environment fault, so every
+ * caller should fail on it immediately rather than each spending ~10 min on a retry that will fail
+ * the same way and exhaust the per-test budget.
  */
-const accountsJsonPath = () =>
-  join(process.env.SOLO_HOME ?? join(homedir(), ".solo"), "one-shot-one-shot", "accounts.json");
+let deployment: Promise<void> | undefined;
 
-type SoloAccounts = {
-  systemAccounts?: { accountId: string; privateKey: string }[];
-};
+export function deploySolo(): Promise<void> {
+  deployment ??= runDeploy();
+  return deployment;
+}
 
 /**
  * Deploys a single-node Hiero Solo cluster: consensus node, mirror node
@@ -33,58 +32,24 @@ type SoloAccounts = {
  * RAM / 6 CPU — see README "Running locally" for host prerequisites this
  * script does not install.
  */
-export async function deploySolo(): Promise<{ genesisOperatorKey: string }> {
+async function runDeploy(): Promise<void> {
   console.log("Deploying Hiero Solo (one-shot, single node)…");
 
   // A previous run that was killed hard (or crashed before teardown) leaves its tunnels behind;
   // clean up before deploying so we never bind against — or worse, talk to — a stale one.
   await killPortForwards();
 
-  const { stdout } = await execFileAsync(
+  await execFileAsync(
     SOLO_BIN,
     ["one-shot", "single", "deploy", "--quiet-mode", "--minimal-setup"],
     EXEC_OPTS,
   );
 
-  const genesisOperatorKey =
-    (await readGenesisOperatorKeyFromState()) ?? parseGenesisOperatorKey(stdout);
-
   console.log(chalk.bgBlueBright(" -  SOLO READY ✅  - "));
-  return { genesisOperatorKey };
-}
-
-/**
- * Preferred source: the state file Solo rewrites on every deploy. Structured, so it can't be
- * confused by neighbouring keys on the same log line the way stdout scraping can.
- */
-async function readGenesisOperatorKeyFromState(): Promise<string | undefined> {
-  try {
-    const parsed = JSON.parse(await readFile(accountsJsonPath(), "utf8")) as SoloAccounts;
-    return parsed.systemAccounts?.find(a => a.accountId === GENESIS_OPERATOR_ACCOUNT_ID)
-      ?.privateKey;
-  } catch {
-    // Missing or unreadable state file — fall back to scraping the deploy output.
-    return undefined;
-  }
-}
-
-function parseGenesisOperatorKey(deployOutput: string): string {
-  // The line looks like: "Operator Account ID: 0.0.2, Public Key: <88 hex>, Private Key: <96 hex>".
-  // Public Key and Private Key are both in the 64-96 hex-char range, and Public Key comes first on
-  // the line — anchor on the "Private Key:" label itself, not just "0.0.2", or a non-greedy match
-  // grabs the Public Key instead (44 bytes, too short).
-  const match = deployOutput.match(/0\.0\.2[^\n]*?Private Key:\s*([0-9a-fA-F]{64,96})/);
-  if (!match) {
-    throw new Error(
-      `solo.ts: could not find the ${GENESIS_OPERATOR_ACCOUNT_ID} genesis operator private key in ` +
-        `${accountsJsonPath()} nor in the \`solo one-shot single deploy\` output. ` +
-        "Solo's state layout or CLI output may have changed — inspect both and update solo.ts.",
-    );
-  }
-  return match[1];
 }
 
 export async function teardownSolo(): Promise<void> {
+  deployment = undefined;
   console.log("Tearing down Hiero Solo…");
   try {
     await execFileAsync(SOLO_BIN, ["one-shot", "single", "destroy", "--quiet-mode"], EXEC_OPTS);

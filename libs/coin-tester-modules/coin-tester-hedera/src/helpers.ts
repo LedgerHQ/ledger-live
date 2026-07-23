@@ -10,9 +10,25 @@ import type {
   HederaAccount,
   HederaSigner,
 } from "@ledgerhq/coin-hedera/types";
+import type { ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
-import { FAKE_HGRAPH_URL, LOCAL_CONSENSUS_NODES, LOCAL_MIRROR_NODE_URL } from "./fixtures";
+import {
+  FAKE_HGRAPH_URL,
+  HEDERA,
+  LOCAL_CONSENSUS_NODES,
+  LOCAL_MIRROR_NODE_URL,
+  installCryptoAssetsStore,
+} from "./fixtures";
+import { buildHederaSigner } from "./signer";
+import { createFundedAccount } from "./genesis";
+import { initMswHandlers } from "./indexer";
+
+/** Every scenario account starts funded with this many HBAR from the genesis operator. */
+const INITIAL_BALANCE_HBAR = 100;
+
+export type HederaScenarioTransaction = ScenarioTransaction<Transaction, HederaAccount>;
 
 registerCoinModules(coinModuleLoaders);
 
@@ -42,4 +58,35 @@ export async function getBridges(signer: HederaSigner): Promise<{
   const getAddress = hederaResolver(signerContext);
 
   return { currencyBridge, accountBridge, getAddress };
+}
+
+/**
+ * Shared scenario preamble: installs the crypto-assets store (unskippable — `tokens` is required,
+ * so a scenario can never forget it and silently inherit whatever the previous scenario left
+ * installed), builds a fresh signer and bridges, derives the account-under-test's address, starts
+ * the MSW handlers, and funds the account from the genesis operator.
+ */
+export async function setupHederaScenario(tokens: TokenCurrency[]): Promise<{
+  currencyBridge: CurrencyBridge;
+  accountBridge: AccountBridge<Transaction, HederaAccount, TransactionStatus>;
+  publicKey: string;
+  accountId: string;
+  close: () => void;
+}> {
+  installCryptoAssetsStore(tokens);
+
+  const signer = buildHederaSigner();
+  const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
+
+  const { publicKey } = await getAddress("", {
+    path: "44/3030",
+    currency: HEDERA,
+    derivationMode: "hederaBip44",
+  });
+
+  const close = initMswHandlers();
+
+  const accountId = await createFundedAccount(publicKey, INITIAL_BALANCE_HBAR);
+
+  return { currencyBridge, accountBridge, publicKey, accountId, close };
 }

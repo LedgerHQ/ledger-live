@@ -1,4 +1,4 @@
-import { PublicKey } from "@hashgraph/sdk";
+import { PrivateKey, PublicKey } from "@hashgraph/sdk";
 import { buildHederaSigner } from "./signer";
 
 describe("buildHederaSigner", () => {
@@ -29,5 +29,15 @@ describe("buildHederaSigner", () => {
     const verified = PublicKey.fromString(publicKeyHex).verify(bodyBytes, signature);
 
     expect(verified).toBe(true);
+  });
+});
+
+describe("buildHederaSigner key isolation", () => {
+  it("uses an explicitly supplied key, so fixtures can co-sign for the same account", async () => {
+    const key = PrivateKey.generateED25519();
+
+    const publicKey = await buildHederaSigner(key).getPublicKey("44/3030");
+
+    expect(publicKey).toBe(key.publicKey.toStringRaw());
   });
 });

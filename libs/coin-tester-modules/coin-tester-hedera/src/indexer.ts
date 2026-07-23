@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { FAKE_HGRAPH_URL } from "./fixtures";
+import { FAKE_HGRAPH_URL, HBAR_USD_RATE, HEDERA } from "./fixtures";
 
 const observer = { callCount: 0, queries: [] as string[] };
 
@@ -44,7 +44,13 @@ export function initMswHandlers(): () => void {
     http.get("https://global.api.prd.ledger.com/cal/*", () => HttpResponse.json([])),
     http.get("https://nft.api.live.ledger.com/*", () => HttpResponse.json([])),
     http.get("https://earn.api.live.ledger.com/*", () => HttpResponse.json([])),
-    http.get("https://countervalues.live.ledger.com/*", () => HttpResponse.json([])),
+    // Must be a real number, not []: getCurrencyToUSDRate swallows failures and returns null
+    // (coin-hedera network/utils.ts:218-220), which sends estimateFees down the DEFAULT_TINYBAR_FEE
+    // fallback and makes HTS association fail the HEDERA_TOKEN_ASSOCIATION_MIN_USD check.
+    // The key is inferCurrencyAPIID(currency) === currency.id (live-countervalues helpers.ts:17).
+    http.get("https://countervalues.live.ledger.com/v3/spot/simple", () =>
+      HttpResponse.json({ [HEDERA.id]: HBAR_USD_RATE }),
+    ),
   );
 
   server.listen({

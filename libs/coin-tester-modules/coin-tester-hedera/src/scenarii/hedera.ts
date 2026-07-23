@@ -1,56 +1,19 @@
-import {
-  AccountCreateTransaction,
-  Client,
-  Hbar,
-  PrivateKey,
-  PublicKey,
-  TransactionId,
-} from "@hashgraph/sdk";
-import type { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import type { Transaction } from "@ledgerhq/coin-hedera/types";
-import type { HederaAccount } from "@ledgerhq/coin-hedera/types";
+import type { Scenario } from "@ledgerhq/coin-tester/main";
+import type { Transaction, HederaAccount } from "@ledgerhq/coin-hedera/types";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
-import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import BigNumber from "bignumber.js";
-import {
-  HEDERA,
-  LOCAL_CONSENSUS_NODES,
-  LOCAL_MIRROR_NODE_URL,
-  RECIPIENT,
-  makeHederaAccount,
-} from "../fixtures";
-import { buildHederaSigner } from "../signer";
-import { getBridges } from "../helpers";
-import { deploySolo, teardownSolo } from "../solo";
-import { getHgraphObserver, initMswHandlers } from "../indexer";
+import { RECIPIENT, makeHederaAccount } from "../fixtures";
+import { type HederaScenarioTransaction, setupHederaScenario } from "../helpers";
+import { getHgraphObserver } from "../indexer";
 
 const ONE_HBAR_IN_TINYBAR = 100_000_000;
-const INITIAL_BALANCE_HBAR = 100;
-
-// Mirror node indexes accounts asynchronously; evm_address can be unset right after the
-// receipt returns, and coin-hedera's getAccountShape throws hard on that with no retry.
-async function waitForMirrorNodeEvmAddress(accountId: string): Promise<void> {
-  const deadline = Date.now() + 30_000;
-  while (Date.now() < deadline) {
-    const res = await fetch(`${LOCAL_MIRROR_NODE_URL}/api/v1/accounts/${accountId}`).catch(
-      () => undefined,
-    );
-    if (res?.ok) {
-      const body = (await res.json()) as { evm_address?: string | null };
-      if (body.evm_address) return;
-    }
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
-  throw new Error(
-    `hedera scenario setup: mirror node never populated evm_address for ${accountId} within 30s`,
-  );
-}
-
-type HederaScenarioTransaction = ScenarioTransaction<Transaction, HederaAccount>;
 
 let closeMswHandlers: (() => void) | undefined;
 
 function makeTransactions(): HederaScenarioTransaction[] {
+  // Note for send max: getTransactionStatus checks `balance < totalSpent`, and totalSpent works out
+  // to exactly `(balance − fee) + fee === balance`. It passes on equality with zero margin — any
+  // rounding that pushes totalSpent up becomes a NotEnoughBalance the runner will not retry.
   const sendOneHbar: HederaScenarioTransaction = {
     name: "Send 1 HBAR to an existing recipient",
     family: "hedera",
@@ -70,64 +33,50 @@ function makeTransactions(): HederaScenarioTransaction[] {
     },
   };
 
-  return [sendOneHbar];
+  const sendMaxHbar: HederaScenarioTransaction = {
+    name: "Send max HBAR (drains the account)",
+    family: "hedera",
+    mode: HEDERA_TRANSACTION_MODES.Send,
+    useAllAmount: true,
+    recipient: RECIPIENT,
+    expect: (previous, current) => {
+      expect(current.operations.length).toBeGreaterThan(previous.operations.length);
+      const [latest] = current.operations;
+      expect(latest.type).toBe("OUT");
+      expect(latest.recipients).toContain(RECIPIENT);
+      // `value` is fee-inclusive, as sendOneHbar already relies on.
+      expect(current.balance).toStrictEqual(previous.balance.minus(latest.value));
+      // Send max leaves behind the fee *estimate* minus the fee actually charged — not zero.
+      // estimateMaxSpendable subtracts an estimate; Solo charges the real schedule. The bound is
+      // the fee the mirror node reports (charged_tx_fee, listOperations.v2.ts:41), never the
+      // stubbed USD rate: that keeps the assertion independent of the mock while still catching
+      // both an ignored useAllAmount (residue ≈ the whole balance) and a wildly-off estimate.
+      expect(current.balance.toNumber()).toBeLessThanOrEqual(
+        latest.fee.multipliedBy(10).toNumber(),
+      );
+      // A mirror-node balance is never negative, so isGreaterThanOrEqualTo(0) can't fail — it was
+      // vacuous. What actually catches an ignored `useAllAmount` (which would leave most of the
+      // balance behind) is the residual being a tiny fraction of what was there before the send.
+      expect(current.balance.toNumber()).toBeLessThan(previous.balance.toNumber() * 0.01);
+    },
+  };
+
+  return [sendOneHbar, sendMaxHbar];
 }
 
 export const scenarioHedera: Scenario<Transaction, HederaAccount> = {
-  name: "Ledger Live Hedera — send 1 HBAR",
+  name: "Ledger Live Hedera — native HBAR sends",
 
   setup: async () => {
-    setCryptoAssetsStore({
-      findTokenById: async () => undefined,
-      findTokenByAddressInCurrency: async () => undefined,
-      getTokensSyncHash: async () => "",
-    });
-
-    const { genesisOperatorKey } = await deploySolo();
-
-    const signer = buildHederaSigner();
-    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
-
-    const { publicKey } = await getAddress("", {
-      path: "44/3030",
-      currency: HEDERA,
-      derivationMode: "hederaBip44",
-    });
-
-    closeMswHandlers = initMswHandlers();
-
-    // scheduleNetworkUpdate:false — Solo exposes consensus on a custom port
-    // (35211); the SDK's periodic address-book refresh would otherwise replace
-    // the topology with default ports (50211/50212). There is no address book
-    // to fetch on a one-shot local node anyway.
-    const genesisClient = Client.forNetwork(LOCAL_CONSENSUS_NODES, {
-      scheduleNetworkUpdate: false,
-    });
-    genesisClient.setOperator("0.0.2", PrivateKey.fromStringED25519(genesisOperatorKey));
-
-    const receipt = await new AccountCreateTransaction()
-      .setKeyWithoutAlias(PublicKey.fromString(publicKey))
-      .setInitialBalance(new Hbar(INITIAL_BALANCE_HBAR))
-      .setTransactionId(TransactionId.generate("0.0.2"))
-      .execute(genesisClient)
-      .then(response => response.getReceipt(genesisClient));
-
-    const accountId = receipt.accountId?.toString();
-    if (!accountId) {
-      throw new Error("hedera scenario setup: AccountCreateTransaction receipt has no accountId");
-    }
-
-    genesisClient.close();
-
-    await waitForMirrorNodeEvmAddress(accountId);
-
-    const account = makeHederaAccount(accountId, publicKey);
+    const { currencyBridge, accountBridge, publicKey, accountId, close } =
+      await setupHederaScenario([]);
+    closeMswHandlers = close;
 
     return {
       currencyBridge,
       accountBridge,
-      account,
-      // Absorbs the mirror node's lag behind consensus.
+      account: makeHederaAccount(accountId, publicKey),
+      // Absorbs the mirror node's lag behind consensus — for `expect` only, nothing earlier.
       retryInterval: 2000,
       retryLimit: 20,
     };
@@ -142,8 +91,8 @@ export const scenarioHedera: Scenario<Transaction, HederaAccount> = {
     );
   },
 
-  teardown: async () => {
+  // Cluster teardown lives in scenarii.test.ts's afterAll — no scenario may tear it down.
+  teardown: () => {
     closeMswHandlers?.();
-    await teardownSolo();
   },
 };

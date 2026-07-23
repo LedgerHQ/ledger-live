@@ -1,16 +1,24 @@
 # @ledgerhq/coin-tester-hedera
 
-End-to-end coin-tester scenario for the **legacy** `@ledgerhq/coin-hedera` bridge: sync → craft →
+End-to-end coin-tester scenarios for the **legacy** `@ledgerhq/coin-hedera` bridge: sync → craft →
 status → sign → broadcast → re-sync → assert, against a real local Hedera network, signing with a
 pure-software Ed25519 key (no Speculos, no device).
 
 ## Scope
 
-In scope: a single scenario sending 1 HBAR from a funded account to an existing account, asserting
-the sender balance dropped by `value + fee` and an `OUT` operation appeared.
+Three scenarios, each on its own account funded from the genesis operator (`0.0.2`), all sharing a
+single Solo deployment:
 
-Out of scope (deferred): HTS/ERC20 transfers, token association, staking, memo edge cases; CI
-wiring; making `coin-hedera`'s hgraph dependency optional.
+1. **Native HBAR sends** — send 1 HBAR to an existing recipient; send max (drains the account).
+2. **HTS association and transfer** — associate a locally minted fungible token through the bridge,
+   then send part of the balance to a separate, pre-associated fixture account.
+3. **Delegate and undelegate** — stake to Solo's consensus node, then unstake.
+
+All three sign with a pure-software Ed25519 key (no Speculos, no device) and follow the same loop:
+sync → craft → status → sign → broadcast → re-sync → assert.
+
+Out of scope (deferred): ERC20 transfers, `ClaimRewards`, memo edge cases, CI wiring, and making
+`coin-hedera`'s hgraph dependency optional.
 
 ## Running locally
 
@@ -25,6 +33,9 @@ pnpm coin:tester:hedera start
 Cold start is ~7–10 minutes; the suite's `jest.setTimeout` is raised to 20 minutes to absorb it.
 `teardown` runs unconditionally after every run (deploy + destroy every time — no persistence, by
 design, to match every other coin-tester package in this workspace).
+
+The cluster is brought up once in the suite's `beforeAll` and torn down in its `afterAll`. No
+scenario may tear it down — doing so would leave the remaining scenarios talking to a deleted pod.
 
 ## Solo's undeclared `reflect-metadata` dependency
 
@@ -87,10 +98,12 @@ deferred change — see the PR description for scope.
 
 ## Unit tests for the harness itself
 
-Unlike every sibling coin-tester, this package ships two unit tests for its own harness:
-`signer.test.ts` and `indexer.test.ts`. They exist because the SDK's public-key encoding and the
-hgraph `invariant` are both silent-failure modes that would otherwise only surface deep inside a
-10-minute scenario run. `pnpm start`'s `src/*.test.ts` glob picks them up alongside the scenario.
+Unlike every sibling coin-tester, this package ships unit tests for its own harness:
+`signer.test.ts`, `indexer.test.ts` and `solo.test.ts`. The first two exist because the SDK's
+public-key encoding and the hgraph `invariant` are both silent-failure modes that would otherwise
+only surface deep inside a 10-minute scenario run. `solo.test.ts` guards `deploySolo()`'s
+memoisation, whose regression costs about 20 extra minutes per run instead of failing loudly.
+`pnpm start`'s `src/*.test.ts` glob picks them up alongside the scenario.
 
 ## CI gap
 
