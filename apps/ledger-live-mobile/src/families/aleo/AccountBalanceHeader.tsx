@@ -99,7 +99,7 @@ export default function AccountBalanceHeader({
       ? aleoAccount.transparentBalance !== undefined
       : Boolean(aleoAccount.aleoResources);
 
-  if (!hasBalances || aleoAccount.balance.lte(0)) return null;
+  if (!hasBalances) return null;
 
   return <AleoBalanceSummary account={aleoAccount} mainAccount={mainAccount} />;
 }

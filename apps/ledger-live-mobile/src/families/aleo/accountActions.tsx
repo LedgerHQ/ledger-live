@@ -1,11 +1,11 @@
-import React from "react";
-import { Trans } from "~/context/Locale";
+import { i18n } from "~/context/Locale";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent } from "~/components/FabActions";
+import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 
 const getMainActions = ({
   account,
@@ -16,13 +16,17 @@ const getMainActions = ({
 }): ActionButtonEvent[] => [
   {
     id: "public_to_private",
-    label: <Trans i18nKey="aleo.accountActions.publicToPrivate" />,
+    label: i18n.t("aleo.accountActions.publicToPrivate"),
     Icon: IconsLegacy.TransferMedium,
     event: "button_clicked",
     eventProperties: {
       button: "public_to_private",
       currency: "ALEO",
       page: "Account Page",
+    },
+    disabled: !account.balance.gt(0),
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
     },
     navigationParams: [
       NavigatorName.SendFunds,
@@ -61,10 +65,14 @@ const getAdditionalAssetActions = ({
 }): ActionButtonEvent[] => [
   {
     id: "self_transfer",
-    label: <Trans i18nKey="aleo.accountActions.publicToPrivate" />,
+    label: i18n.t("aleo.accountActions.publicToPrivate"),
     Icon: IconsLegacy.TransferMedium,
     event: "button_clicked",
     eventProperties: { button: "self_transfer", currency: currency?.ticker },
+    ...(defaultAccount && { disabled: !defaultAccount.balance.gt(0) }),
+    modalOnDisabledClick: {
+      component: ZeroBalanceDisabledModalContent,
+    },
     navigationParams: [
       NavigatorName.SendFunds,
       defaultAccount
