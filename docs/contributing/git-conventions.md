@@ -94,7 +94,7 @@ Rules:
 - Never mix refactor, fix and feature work in a single commit.
 - Do not use `--no-verify` when committing or pushing. Fix hook failures; if a hook is broken, surface it.
 
-Use `pnpm commit` to create a valid commit message, using tab-completion for type and scope.
+Use `pnpm commit` to create a valid commit message, using tab-completion for type.
 
 Use `pnpm commitlint --from <target-branch>` to check every commit on the branch.
 
