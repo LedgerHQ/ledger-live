@@ -316,7 +316,8 @@
     "packageExtensions": {
       "@hiero-ledger/solo": {
         "dependencies": {
-          "reflect-metadata": "^0.2.2"
+          "reflect-metadata": "^0.2.2",
+          "protobufjs": "^8.0.1"
         }
       },
       "detox-allure2-adapter": {

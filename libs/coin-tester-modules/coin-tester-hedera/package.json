@@ -74,7 +74,7 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@hiero-ledger/solo": "0.68.0",
+    "@hiero-ledger/solo": "0.83.0",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -1,4 +1,7 @@
 import { execFile } from "child_process";
+import { rm } from "fs/promises";
+import { homedir } from "os";
+import { join } from "path";
 import { promisify } from "util";
 import chalk from "chalk";
 
@@ -19,6 +22,13 @@ const SOLO_BIN = "solo"; // resolved from the package's own node_modules/.bin vi
  */
 let deployment: Promise<void> | undefined;
 
+/**
+ * `solo one-shot single deploy` hard-codes both the deployment name and the namespace to
+ * "one-shot", and writes account material to `<SOLO_HOME>/<deployment>-<namespace>/accounts.json`.
+ */
+const oneShotOutputDir = () =>
+  join(process.env.SOLO_HOME ?? join(homedir(), ".solo"), "one-shot-one-shot");
+
 export function deploySolo(): Promise<void> {
   deployment ??= runDeploy();
   return deployment;
@@ -26,8 +36,8 @@ export function deploySolo(): Promise<void> {
 
 /**
  * Deploys a single-node Hiero Solo cluster: consensus node, mirror node
- * (REST/gRPC/Web3/Importer/RestJava/Pinger), JSON-RPC relay and explorer all
- * run as pods inside one kind-managed Docker container. Requires a
+ * (REST/gRPC/Web3/Importer/RestJava/Pinger) and its Postgres/Redis/MinIO backing
+ * services run as pods inside one kind-managed Docker container. Requires a
  * Kubernetes >= v1.32.2 capable host (kind + kubectl + helm) with >= 12 GB
  * RAM / 6 CPU — see README "Running locally" for host prerequisites this
  * script does not install.
@@ -39,6 +49,31 @@ async function runDeploy(): Promise<void> {
   // clean up before deploying so we never bind against — or worse, talk to — a stale one.
   await killPortForwards();
 
+  // Since Solo 0.82 (still true in 0.83), `deploy` refuses to auto-clean pre-existing one-shot
+  // state while `--quiet-mode` is set: it throws `ConfirmationRequiredSoloError` for an interactive
+  // confirmation it cannot show, and tells you to run `destroy` explicitly instead. (Verified in
+  // 0.83's `default-one-shot-deploy-orchestrator.js`: the auto-clean phase is gated on
+  // `quiet !== true`.) "Pre-existing state" includes a leftover accounts.json in
+  // `<SOLO_HOME>/one-shot-one-shot/`, which every previous run writes — so without this, the
+  // second deploy on a machine always fails. `destroy` removes that directory, so this is the
+  // supported way to start from a clean slate.
+  await destroyQuietly();
+
+  // …except `destroy` skips its own "Remove output directory" step whenever Solo's local config
+  // lists no deployment ("No deployments found in local config"), which is exactly the state a
+  // hard-killed or foreign run leaves behind. The stale accounts.json then keeps tripping the
+  // deploy guard forever. The directory is per-deployment scratch state Solo rewrites on every
+  // deploy, so removing it ourselves is safe and breaks the deadlock.
+  await rm(oneShotOutputDir(), { recursive: true, force: true });
+
+  // `--minimal-setup` is a no-op through Solo 0.83, kept only because it states the intent and
+  // should start working again upstream. `minimalSetup` is read in exactly two places — the skip
+  // conditions of the explorer and relay phases, both spelled `!deployExplorer && !minimalSetup`
+  // — and since `deployExplorer`/`deployRelay` default to true, that expression is false either
+  // way. The obvious fix, `--deploy-explorer=false --deploy-relay=false`, is rejected by this
+  // command path: "Unknown arguments: deploy-explorer, deployExplorer, deploy-relay, deployRelay".
+  // So the JSON-RPC relay (~170 MB) and the explorer ride along unused; the tester only ever talks
+  // to the consensus node (35211) and the mirror node REST API (38081).
   await execFileAsync(
     SOLO_BIN,
     ["one-shot", "single", "deploy", "--quiet-mode", "--minimal-setup"],
@@ -51,14 +86,21 @@ async function runDeploy(): Promise<void> {
 export async function teardownSolo(): Promise<void> {
   deployment = undefined;
   console.log("Tearing down Hiero Solo…");
+  await destroyQuietly();
+  await killPortForwards();
+}
+
+/**
+ * `solo one-shot single destroy`, best-effort: it must never throw, neither when tearing down
+ * (that would mask the real test outcome — matches the yaci.ts/flextesa.ts convention in sibling
+ * testers) nor when clearing the slate before a deploy (nothing to destroy is the healthy case).
+ */
+async function destroyQuietly(): Promise<void> {
   try {
     await execFileAsync(SOLO_BIN, ["one-shot", "single", "destroy", "--quiet-mode"], EXEC_OPTS);
   } catch (err) {
-    // Best-effort: teardown must never throw and mask the real test outcome
-    // (matches the yaci.ts/flextesa.ts convention in sibling testers).
-    console.error("solo.ts: teardown failed (ignored):", err);
+    console.error("solo.ts: `one-shot single destroy` failed (ignored):", err);
   }
-  await killPortForwards();
 }
 
 /**

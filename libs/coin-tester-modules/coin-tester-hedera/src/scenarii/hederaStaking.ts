@@ -39,10 +39,11 @@ function makeTransactions(): HederaScenarioTransaction[] {
       expect(latest.type).toBe("UNDELEGATE");
       // `null`, not a delegation object with nodeId === -1. getStakes.ts:22-27 documents -1 as the
       // mirror node's "no longer delegated" marker, and synchronisation.ts:108-115 would map that
-      // number onto a delegation object — but Solo 0.68.0 does not send it. Probed against a live
-      // cluster: the account reads back as staked (nodeId 0) for ~3 s after the transaction;
-      // `staked_node_id` goes non-numeric from ~3 s onward — 242 samples over 4.3 min. So this is
-      // the settled state, not mirror-node lag. This assertion is only non-vacuous because
+      // number onto a delegation object — but Solo's mirror node does not send it (measured on
+      // 0.68.0, still holds on 0.83: this assertion passes on the current pin). Probed against a
+      // live 0.68.0 cluster: the account reads back as staked (nodeId 0) for ~3 s after the
+      // transaction; `staked_node_id` goes non-numeric from ~3 s onward — 242 samples over 4.3 min.
+      // So this is the settled state, not mirror-node lag. This assertion is only non-vacuous because
       // `delegate` runs immediately before it in this same scenario: against a fresh, never-staked
       // account, `toBeNull()` would pass trivially, and an undelegate that silently did nothing
       // would still fail here by leaving nodeId === 0.

@@ -25,7 +25,8 @@ export const GENESIS_ACCOUNT_ID = "0.0.2";
 
 /**
  * Canonical genesis operator key of a local Hedera network — a public constant, not a secret.
- * Solo 0.68.0 writes exactly this value to `~/.solo/<deployment>/accounts.json`.
+ * Solo writes exactly this value to `~/.solo/<deployment>/accounts.json` (unchanged across the
+ * versions we've run, 0.68 → 0.83).
  */
 export const GENESIS_OPERATOR_KEY =
   "302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137";

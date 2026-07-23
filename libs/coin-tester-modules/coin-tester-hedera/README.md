@@ -22,9 +22,12 @@ Out of scope (deferred): ERC20 transfers, `ClaimRewards`, memo edge cases, CI wi
 
 ## Running locally
 
-Requires a Kubernetes >= v1.32.2 capable host (kind + kubectl + helm), 12 GB RAM / 6 CPU — Hiero
-Solo (`@hiero-ledger/solo`) deploys a single-node cluster running the consensus node, mirror node,
-JSON-RPC relay and explorer all as pods inside one container.
+Requires a Kubernetes >= v1.32.2 capable host (kind + kubectl + helm). Hiero Solo
+(`@hiero-ledger/solo`) deploys a single-node cluster running the consensus node, mirror node,
+JSON-RPC relay and explorer all as pods inside one container. Under Solo 0.83's small-memory profile
+a full run peaks around ~4 GB RAM (measured on the local suite: kind container ~3.8 GiB RSS,
+consensus-node Java heap capped at 256M, kube-apiserver at 300Mi); budget ~6 GB free for headroom.
+The small-memory profile is on by default and passing `--values-file` would disable it, so don't.
 
 ```bash
 pnpm coin:tester:hedera start
