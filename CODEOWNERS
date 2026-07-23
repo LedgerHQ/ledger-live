@@ -1,3 +1,5 @@
+# AGENTS: Do NOT infer ownership from this file. Use the /codeownership skill instead, as it provides accurate ownership resolution and avoids mistakes caused by misreading CODEOWNERS patterns.
+# HUMANS: The file below documents code ownership for GitHub's native review-assignment feature.
 # How does it work? => https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 # This is a comment.
 # Each line is a file pattern followed by one or more owners.
