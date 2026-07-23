@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Header from "./Header";
@@ -12,7 +11,7 @@ import Row from "./Row";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 type Props = {
   accounts: AccountLike[];
 };
@@ -24,9 +23,9 @@ export default function AccountDistribution({ accounts }: Props) {
   const accountDistribution = useMemo(
     () =>
       accounts
-        .filter(a => !blacklistedTokenIds.includes(getDomainCurrencyForAccount(a).id))
+        .filter(a => !blacklistedTokenIds.includes(getAccountCurrency(a).id))
         .map(a => {
-          const from = getDomainCurrencyForAccount(a);
+          const from = getAccountCurrency(a);
 
           return {
             account: a,

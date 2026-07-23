@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -32,7 +31,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -82,7 +81,7 @@ const StepSummary = (props: StepProps) => {
   const { estimatedFees, amount, totalSpent, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
 
   const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount) as CryptoOrTokenCurrency;
   const feesUnit = getFeesUnit(feesCurrency);

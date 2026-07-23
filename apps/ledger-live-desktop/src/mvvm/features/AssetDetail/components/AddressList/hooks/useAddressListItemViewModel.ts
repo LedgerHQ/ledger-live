@@ -2,14 +2,13 @@ import { useCallback } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useCounterValueCellViewModel } from "LLD/components/Cells/CounterValueCell/useCounterValueCellViewModel";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export type AddressListItemViewModel = Readonly<{
   displayName: string;
@@ -30,7 +29,7 @@ export function useAddressListItemViewModel(
 ): AddressListItemViewModel {
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const parentAccount =
     account.type === "TokenAccount" ? lookupParentAccount(account.parentId) : undefined;
   const networkCurrency =

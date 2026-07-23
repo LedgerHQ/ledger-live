@@ -1,6 +1,5 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Text from "~/renderer/components/Text";
@@ -13,7 +12,7 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;
@@ -54,7 +53,7 @@ const Header = ({
   account: AccountLike;
   parentAccount: Account | undefined | null;
 }) => {
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
   const name = useAccountName(account);
   let title;

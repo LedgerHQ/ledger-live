@@ -1,9 +1,4 @@
-import {
-  canReceive,
-  canSend,
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { canReceive, canSend, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
@@ -51,7 +46,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -142,7 +137,7 @@ const ActionItem = ({
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const navigate = useNavigate();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const onWalletConnectLiveApp = useCallback(() => {
@@ -218,7 +213,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
 
   const { isCurrencyAvailable } = useRampCatalog();
 

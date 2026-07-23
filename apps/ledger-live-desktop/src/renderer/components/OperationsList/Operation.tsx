@@ -5,7 +5,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -20,7 +20,7 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
 import { useAccountName } from "~/renderer/reducers/wallet";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -70,7 +70,7 @@ function OperationComponent({
   };
 
   const isOptimistic = operation.blockHeight === null;
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const cryptoCurrency =
     currency.type === "CryptoCurrency"
       ? currency

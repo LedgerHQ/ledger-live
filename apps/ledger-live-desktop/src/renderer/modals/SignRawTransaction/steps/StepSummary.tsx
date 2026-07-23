@@ -3,7 +3,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,7 +14,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -43,7 +43,7 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
     return null;
   }
 
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
 
   return (
     <Box flow={4} mx={40}>

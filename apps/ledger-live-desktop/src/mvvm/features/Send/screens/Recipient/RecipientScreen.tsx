@@ -1,4 +1,3 @@
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import React, { useCallback, useMemo, useRef } from "react";
@@ -7,7 +6,7 @@ import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowConte
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../utils/tracking";
 import { RecipientAddressModal } from "./components/RecipientAddressModal";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export function RecipientScreen() {
   const { state, uiConfig } = useSendFlowData();
@@ -19,7 +18,7 @@ export function RecipientScreen() {
 
   const currency: CryptoCurrency | TokenCurrency | null = useMemo(() => {
     if (state.account.currency) return state.account.currency as CryptoCurrency | TokenCurrency;
-    return account ? getDomainCurrencyForAccount(account) : null;
+    return account ? getAccountCurrency(account) : null;
   }, [state.account.currency, account]);
 
   const trackingProperties = useMemo(

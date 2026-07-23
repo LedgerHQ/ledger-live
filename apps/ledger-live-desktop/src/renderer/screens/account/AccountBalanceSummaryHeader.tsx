@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { AccountLike, BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -11,7 +10,7 @@ import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import Swap from "~/renderer/icons/Swap";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   isAvailable: boolean;
@@ -33,7 +32,7 @@ export default function AccountBalanceSummaryHeader({
   countervalueFirst,
   setCountervalueFirst,
 }: Props) {
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
   const cvUnit = counterValue.units[0];
   const data = [

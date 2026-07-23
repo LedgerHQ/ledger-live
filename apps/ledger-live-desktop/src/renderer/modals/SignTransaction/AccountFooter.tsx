@@ -2,12 +2,7 @@
 
 import React from "react";
 import { Trans } from "react-i18next";
-import {
-  getAccountCurrency,
-  getFeesCurrency,
-  getFeesUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
@@ -17,7 +12,7 @@ import Label from "~/renderer/components/Label";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useLLDCoinFamily } from "~/renderer/families";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -26,7 +21,7 @@ type Props = {
 };
 
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);

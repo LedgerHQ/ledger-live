@@ -1,5 +1,4 @@
 /* eslint-disable consistent-return */
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
@@ -36,7 +35,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { Divider } from "@ledgerhq/react-ui/index";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 function getURLFeesInfo({
   op,
@@ -128,7 +127,7 @@ const OperationDetailsExtra = ({
   account,
 }: OperationDetailsExtraProps<CosmosAccount, CosmosOperation>) => {
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;

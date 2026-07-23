@@ -10,7 +10,6 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { formatCurrencyUnit } from "@ledgerhq/live-currency-format";
-import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import {
   formatAmountForInput,
   formatFiatForInput,
@@ -20,7 +19,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
 
 type UseAmountInputParams = Readonly<{
@@ -41,7 +40,7 @@ export function useAmountInput({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
 
-  const accountCurrency = useMemo(() => getDomainCurrencyForAccount(account), [account]);
+  const accountCurrency = useMemo(() => getAccountCurrency(account), [account]);
   const accountUnit = useMaybeAccountUnit(account) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
 

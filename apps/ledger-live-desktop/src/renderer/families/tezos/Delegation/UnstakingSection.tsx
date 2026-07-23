@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
-import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import {
   getAddressExplorer,
   getDefaultExplorerView,
@@ -24,7 +24,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import BakerImage from "../BakerImage";
 import SectionHeaderColumns from "./SectionHeaderColumns";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const UNSTAKE_DELAY_MS = 4 * 24 * 60 * 60 * 1000;
 
@@ -101,7 +101,7 @@ type RowProps = {
 
 const UnstakingRow = ({ position, account }: RowProps) => {
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const baker = useBaker(position.delegate ?? "");
   const isFinalizable = isFinalizablePosition(position.uid);
 

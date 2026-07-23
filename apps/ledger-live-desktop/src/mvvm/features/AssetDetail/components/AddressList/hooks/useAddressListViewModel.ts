@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -19,7 +18,7 @@ import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/consta
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export function useAddressListViewModel(distributionItem: DistributionItem) {
@@ -98,9 +97,7 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     track("button_clicked", {
       button: "Account",
       currency: distributionItem.currency.id,
-      chain: mainAccount
-        ? getDomainCurrencyForAccount(mainAccount).id
-        : getDomainCurrencyForAccount(account).id,
+      chain: mainAccount ? getAccountCurrency(mainAccount).id : getAccountCurrency(account).id,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     if (account.type === "TokenAccount" && !parentAccount) {

@@ -1,4 +1,3 @@
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/families/algorand/types";
 import { BigNumber } from "bignumber.js";
@@ -28,7 +27,7 @@ import {
   OperationDetailsExtraProps,
 } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const CellIcon = styled(Box)<{ index: number }>`
   flex: 1 0 50%;
@@ -60,7 +59,7 @@ const OperationDetailsExtra = ({
   operation,
 }: OperationDetailsExtraProps<AlgorandAccount, AlgorandOperation>) => {
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const { rewards, memo, assetId } = operation.extra;
   return (
     <>

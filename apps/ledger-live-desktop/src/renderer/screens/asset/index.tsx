@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { Navigate, useParams } from "react-router";
 import { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
@@ -20,7 +19,7 @@ import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 export default function AssetPage() {
   const { "*": assetId } = useParams<{ "*": string }>();
   const { t } = useTranslation();
@@ -31,7 +30,7 @@ export default function AssetPage() {
   const allAccounts = useSelector(accountsSelector);
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
-  }).filter(a => getDomainCurrencyForAccount(a).id === assetId);
+  }).filter(a => getAccountCurrency(a).id === assetId);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
@@ -41,7 +40,7 @@ export default function AssetPage() {
   if (!accounts.length || !unit) return <Navigate to="/" replace />;
   const parentAccount =
     accounts[0].type !== "Account" ? lookupParentAccount(accounts[0].parentId) : null;
-  const currency = getDomainCurrencyForAccount(accounts[0]);
+  const currency = getAccountCurrency(accounts[0]);
 
   const color = getCurrencyColor(currency, paperColor);
   return (

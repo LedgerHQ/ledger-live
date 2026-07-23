@@ -2,11 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import type BigNumber from "bignumber.js";
-import {
-  getMainAccount,
-  getAccountCurrency,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
@@ -22,7 +18,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   delegation: Delegation;
@@ -81,7 +77,7 @@ const CTA = styled.div`
 `;
 const Row = ({ account, parentAccount, delegation, stakingEnabled, delegatedAmount }: Props) => {
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const diffInDays = useMemo(() => {

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import styled, { useTheme } from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
@@ -26,7 +26,7 @@ import StopCircle from "~/renderer/icons/StopCircle";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BakerImage from "../BakerImage";
 import SectionHeaderColumns from "./SectionHeaderColumns";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const HeaderWrapper = styled(BaseHeaderWrapper)`
   > * {
@@ -101,7 +101,7 @@ const StakingSection = ({ account, info }: Props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const { stakedBalance, delegateAddress } = info;
   const baker = useBaker(delegateAddress ?? "");
 

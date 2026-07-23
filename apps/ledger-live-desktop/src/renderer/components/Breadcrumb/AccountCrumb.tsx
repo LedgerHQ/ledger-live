@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import Box from "~/renderer/components/Box";
 import { useNavigate, useParams } from "react-router";
-import {
-  listSubAccounts,
-  getAccountCurrency,
-  findSubAccountById,
-} from "@ledgerhq/live-common/account/index";
+import { listSubAccounts, findSubAccountById } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -29,7 +25,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type ItemShape = {
   key: string;
@@ -83,9 +79,9 @@ const AccountCrumb = () => {
   const currency = useMemo(
     () =>
       tokenAccount
-        ? getDomainCurrencyForAccount(tokenAccount)
+        ? getAccountCurrency(tokenAccount)
         : account
-          ? getDomainCurrencyForAccount(account)
+          ? getAccountCurrency(account)
           : null,
     [tokenAccount, account],
   );
@@ -99,7 +95,7 @@ const AccountCrumb = () => {
 
   const renderItem = useCallback(
     ({ item, isActive }: { item: ItemShape; isActive: boolean }) => {
-      const currency = getDomainCurrencyForAccount(item.account);
+      const currency = getAccountCurrency(item.account);
       const name = accountNameWithDefaultSelector(walletState, item.account);
       return (
         <Item key={item.key} isActive={isActive}>
@@ -237,10 +233,7 @@ const AccountCrumb = () => {
                 <Box flex={1} shrink horizontal>
                   <TextLink shrink>
                     {account && (
-                      <CryptoCurrencyIcon
-                        size={20}
-                        currency={getDomainCurrencyForAccount(account)}
-                      />
+                      <CryptoCurrencyIcon size={20} currency={getAccountCurrency(account)} />
                     )}
                     <Button
                       onClick={() => {

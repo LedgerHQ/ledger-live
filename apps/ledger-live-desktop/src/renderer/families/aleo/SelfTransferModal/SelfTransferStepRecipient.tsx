@@ -1,5 +1,5 @@
 import React from "react";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -12,7 +12,7 @@ import BalanceSelector from "../shared/BalanceSelector";
 import { applyAleoBalanceSourceChange, getAleoCurrencyConfig } from "../shared/utils";
 import { Trans } from "react-i18next";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export const SelfTransferStepRecipient = ({
   t,
@@ -35,7 +35,7 @@ export const SelfTransferStepRecipient = ({
 
   // show only Aleo accounts
   const accountFilter = (acc: AccountLike) => {
-    return getDomainCurrencyForAccount(acc).id === mainAccount.currency.id;
+    return getAccountCurrency(acc).id === mainAccount.currency.id;
   };
 
   return (

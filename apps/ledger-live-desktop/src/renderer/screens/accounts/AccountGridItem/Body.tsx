@@ -2,14 +2,13 @@ import React from "react";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
 import { PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -22,7 +21,7 @@ function Body({ account, range }: Props) {
     range,
   });
   const bgColor = useTheme().colors.background.card;
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const color = useCurrencyColor(currency, bgColor);
   return (
     <Box flow={4}>

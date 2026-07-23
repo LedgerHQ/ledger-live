@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTokensData } from "@features/platform-currencies";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,7 +17,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { StepProps } from "../Body";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
@@ -42,7 +42,7 @@ const TokenParentSelection = ({
   mainAccount: Account;
 }) => {
   const filterAccountSelect = useCallback(
-    (a: AccountLike) => getDomainCurrencyForAccount(a).id === mainAccount.currency.id,
+    (a: AccountLike) => getAccountCurrency(a).id === mainAccount.currency.id,
     [mainAccount],
   );
   return (

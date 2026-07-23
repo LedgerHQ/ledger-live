@@ -3,12 +3,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getFeesCurrency,
-  getFeesUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -29,7 +24,7 @@ import { useLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -75,7 +70,7 @@ const StepSummary = (props: StepProps) => {
   const { estimatedFees, amount, totalSpent, errors, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount) as CryptoOrTokenCurrency;
   const feesUnit = getFeesUnit(feesCurrency);
 

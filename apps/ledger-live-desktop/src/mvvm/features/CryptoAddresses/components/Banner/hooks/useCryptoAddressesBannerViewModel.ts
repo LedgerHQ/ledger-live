@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
@@ -13,7 +12,7 @@ import { track } from "~/renderer/analytics/segment";
 import { useNavigate } from "react-router";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const CRYPTO_ADDRESSES_BANNER_SOURCE = "portfolio_crypto_addresses_banner";
 
@@ -42,7 +41,7 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
   const firstThreeCurrencies = [
     ...new Map(
       accounts.map(a => {
-        const currency = getDomainCurrencyForAccount(a);
+        const currency = getAccountCurrency(a);
         return [currency.id, currency] as const;
       }),
     ).values(),

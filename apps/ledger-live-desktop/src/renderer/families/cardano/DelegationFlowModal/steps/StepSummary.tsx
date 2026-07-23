@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -14,7 +13,7 @@ import BigNumber from "bignumber.js";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -32,7 +31,7 @@ function StepSummary(props: StepProps) {
 
   const { estimatedFees, warnings } = status;
   const { feeTooHigh } = warnings;
-  const feesCurrency = getDomainCurrencyForAccount(account);
+  const feesCurrency = getAccountCurrency(account);
   const showDeposit = !account.cardanoResources?.delegation?.status;
   const stakeKeyDeposit = transaction.protocolParams.stakeKeyDeposit;
   return (

@@ -1,7 +1,6 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
@@ -11,7 +10,7 @@ import Star from "~/renderer/components/Stars/Star";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TableRow } from "./TableContainer";
 import { useAccountUnit } from "../hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -43,7 +42,7 @@ function TokenRow(props: Props) {
   const { account, parentAccount, onClick, range, nested, disableRounding } = props;
   const onClickRow = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const Row = nested ? NestedRow : TableRow;
   return (

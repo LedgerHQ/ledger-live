@@ -1,9 +1,4 @@
-import {
-  getAccountCurrency,
-  getFeesCurrency,
-  getFeesUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React from "react";
@@ -16,7 +11,7 @@ import Label from "~/renderer/components/Label";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -25,7 +20,7 @@ type Props = {
 };
 
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);

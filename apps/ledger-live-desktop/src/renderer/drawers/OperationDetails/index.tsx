@@ -1,6 +1,5 @@
 import {
   findSubAccountById,
-  getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -79,7 +78,7 @@ import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateForm
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const mapStateToProps = (
   state: State,
@@ -153,8 +152,8 @@ const OperationD = (props: Props) => {
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const name = useAccountName(mainAccount);
-  const currency = getDomainCurrencyForAccount(account);
-  const mainCurrency = getDomainCurrencyForAccount(mainAccount);
+  const currency = getAccountCurrency(account);
+  const mainCurrency = getAccountCurrency(mainAccount);
 
   const unit = useAccountUnit(account);
   const cryptoCurrency = mainAccount.currency;
@@ -664,7 +663,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName = getDomainCurrencyForAccount(opAccount).name;
+              const subAccountName = getAccountCurrency(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent

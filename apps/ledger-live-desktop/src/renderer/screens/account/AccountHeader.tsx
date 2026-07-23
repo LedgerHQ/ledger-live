@@ -16,11 +16,7 @@ import {
   getDefaultExplorerView,
   getAccountContractExplorer,
 } from "@ledgerhq/live-common/explorers";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ExternalLink from "~/renderer/icons/ExternalLink";
@@ -34,7 +30,7 @@ import IconCheck from "~/renderer/icons/Check";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { useAccountName } from "~/renderer/reducers/wallet";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type BaseComponentProps = BaseProps & { ff?: string };
 
@@ -171,7 +167,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   const [name, setName] = useState(storeAccountName);
   const [editingName, setEditingName] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const currency = getDomainCurrencyForAccount(account);
+  const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const getContract = () =>

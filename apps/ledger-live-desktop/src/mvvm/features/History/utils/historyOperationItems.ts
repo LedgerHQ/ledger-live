@@ -4,11 +4,7 @@ import type { Currency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  flattenAccounts,
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSmallValueOperation } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
 import {
   getOperationAmountNumber,
@@ -20,7 +16,7 @@ import { currencySettingsDefaults, type CurrencySettings } from "~/renderer/redu
 import { getOperationCounterpartyAddress } from "./getOperationCounterpartyAddress";
 import type { OperationTableItem } from "../types";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type AccountInfo = { account: AccountLike; parentAccount?: Account };
 type FilterFn = (operation: Operation, account: AccountLike) => boolean;
@@ -113,7 +109,7 @@ function toTableItem(
     type: operation.type,
     address: getOperationCounterpartyAddress(operation),
     amount: getOperationAmountNumber(operation),
-    currency: getDomainCurrencyForAccount(account),
+    currency: getAccountCurrency(account),
     isPending,
     isUnread: isOperationUnread(operation.date, lastSeenTs),
   };

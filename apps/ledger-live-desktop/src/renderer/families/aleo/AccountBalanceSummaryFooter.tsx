@@ -16,10 +16,10 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayAndHourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
-import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
+import { getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 import { getAleoCurrencyConfig, formatAleoBalances } from "./shared/utils";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -148,7 +148,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
 
   const mainAccount =
     account.type === "TokenAccount" ? getParentAccount(account, allAccounts) : account;
-  const config = getAleoCurrencyConfig(getDomainCurrencyForAccount(account));
+  const config = getAleoCurrencyConfig(getAccountCurrency(account));
   const formatConfig: formatCurrencyUnitOptions = {
     alwaysShowSign: false,
     showCode: true,

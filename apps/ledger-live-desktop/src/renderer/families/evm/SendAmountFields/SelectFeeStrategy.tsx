@@ -5,7 +5,6 @@ import {
   GasOptions,
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
@@ -21,7 +20,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import { getAccountCurrency } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
@@ -100,7 +99,7 @@ const SelectFeeStrategy = ({
 }: Props) => {
   const accountUnit = useAccountUnit(account);
   const bridge = useAccountBridge(account);
-  const feesCurrency = getDomainCurrencyForAccount(account);
+  const feesCurrency = getAccountCurrency(account);
   const { errors } = status;
   const { gasPrice: messageGas } = errors;
 
