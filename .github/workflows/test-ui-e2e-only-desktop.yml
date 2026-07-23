@@ -364,14 +364,6 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-      - name: (TEMP repro LIVE-32988) Pin Cardano app to v8.0.6 for e2e
-        shell: bash
-        run: |
-          DIR="$GITHUB_WORKSPACE/e2e/desktop/tests/artifacts/appVersion"
-          mkdir -p "$DIR"
-          printf '%s' '[{"versionDisplayName":"Cardano ADA","version":"8.0.6"}]' > "$DIR/nano-app-catalog.json"
-          echo "Pinned Cardano catalog (skips live provider fetch):"; cat "$DIR/nano-app-catalog.json"
-
       - name: Run Playwright E2E tests
         id: run-playwright
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop

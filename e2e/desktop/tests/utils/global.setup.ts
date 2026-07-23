@@ -30,6 +30,20 @@ export default async function globalSetup(_config: FullConfig) {
 
   await createNanoAppJsonFile(NANO_APP_CATALOG_PATH);
 
+  // TEMP repro (LIVE-32988): force Cardano app to v8.0.6 so develop's v8 hw-app
+  // binding talks to a v8 device app. Provider-1 catalog still serves 7.3.0 for
+  // this firmware; coin-apps has app_8.0.6.elf for nanos+/1.6.1.
+  {
+    const catalogPath = path.resolve(process.cwd(), NANO_APP_CATALOG_PATH);
+    const catalog: Array<{ versionDisplayName: string; version: string }> = JSON.parse(
+      await fs.readFile(catalogPath, "utf8"),
+    );
+    for (const entry of catalog) {
+      if (entry.versionDisplayName === "Cardano ADA") entry.version = "8.0.6";
+    }
+    await fs.writeFile(catalogPath, JSON.stringify(catalog, null, 2));
+  }
+
   const dir = path.dirname(environmentFilePath);
 
   mkdirSync(dir, { recursive: true });
