@@ -4,17 +4,16 @@ import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { asDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account } from "@ledgerhq/types-live";
 import { Button, Spinner, TextInput } from "@ledgerhq/lumen-ui-react";
-import { setEnv, getEnv, getEnvDefault } from "@ledgerhq/live-env";
+import { setEnvUnsafe, getEnv, getEnvDefault } from "@ledgerhq/live-env";
 import type { EnvName } from "@ledgerhq/live-env";
 import { ToolPage } from "../components/ToolPage";
 import { syncAccount } from "../logic/syncAccount";
 
 // Coin endpoint env vars that can be switched between PRD (ledger.com) and STG (ledger-test.com).
-// Note: Cosmos-family chains (cosmos, osmosis, axelar, coreum, dydx, injective, …) use
-// live-config with hardcoded LCD URLs — they are NOT covered by this switcher.
+// Note: Some chains use hardcoded URLs outside live-env (Cosmos-family via live-config,
+// Polkadot asset hub/westend in config.ts…) — they are NOT covered by this switcher.
 const COIN_ENDPOINT_VARS = [
   "EXPLORER",
-  "LEDGER_REST_API_BASE",
   "API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT",
   "API_CELO_INDEXER",
   "API_CELO_NODE",
@@ -48,16 +47,17 @@ const COIN_ENDPOINT_VARS = [
 
 type CoinEnv = "prd" | "stg";
 
-// setEnv typed narrowly: all entries in COIN_ENDPOINT_VARS are string-valued env vars,
-// so the string→string transform is safe. The cast is necessary because TypeScript cannot
-// distribute EnvValue<K> over a union K when iterating.
 function setCoinEnvVar(name: (typeof COIN_ENDPOINT_VARS)[number], value: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setEnv(name, value as any);
+  setEnvUnsafe(name, value);
 }
 
 function detectCoinEnv(): CoinEnv {
-  return (getEnv("EXPLORER") as string).includes("ledger-test.com") ? "stg" : "prd";
+  try {
+    const { hostname } = new URL(getEnv("EXPLORER") as string);
+    return hostname === "ledger-test.com" || hostname.endsWith(".ledger-test.com") ? "stg" : "prd";
+  } catch {
+    return "prd";
+  }
 }
 
 function SyncEnvSwitcher({ onEnvChange }: { onEnvChange: () => void }) {
@@ -65,7 +65,7 @@ function SyncEnvSwitcher({ onEnvChange }: { onEnvChange: () => void }) {
 
   const applyPrd = useCallback(() => {
     for (const name of COIN_ENDPOINT_VARS) {
-      setCoinEnvVar(name, getEnvDefault(name) as string);
+      setCoinEnvVar(name, String(getEnvDefault(name)));
     }
     setCoinEnv("prd");
     onEnvChange();
@@ -73,10 +73,7 @@ function SyncEnvSwitcher({ onEnvChange }: { onEnvChange: () => void }) {
 
   const applyStg = useCallback(() => {
     for (const name of COIN_ENDPOINT_VARS) {
-      setCoinEnvVar(
-        name,
-        (getEnvDefault(name) as string).replace(/ledger\.com/g, "ledger-test.com"),
-      );
+      setCoinEnvVar(name, String(getEnvDefault(name)).replace(/ledger\.com/g, "ledger-test.com"));
     }
     setCoinEnv("stg");
     onEnvChange();
@@ -103,7 +100,8 @@ function SyncEnvSwitcher({ onEnvChange }: { onEnvChange: () => void }) {
       </Button>
       {coinEnv === "stg" && (
         <span className="body-3 text-warning">
-          ⚠ Cosmos-family chains (cosmos, osmosis, axelar…) use hardcoded URLs — not switched.
+          ⚠ Some chains use hardcoded URLs outside live-env (Cosmos-family, Polkadot asset
+          hub/westend…) — not switched.
         </span>
       )}
     </div>
@@ -145,7 +143,7 @@ function App() {
           if (!cancelled) setAccount(acc);
         },
         err => {
-          if (!cancelled) setAccountError(err);
+          if (!cancelled) setAccountError(err instanceof Error ? err.message : String(err));
         },
       );
     } catch (e) {
