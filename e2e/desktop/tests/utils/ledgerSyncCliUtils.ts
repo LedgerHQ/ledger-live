@@ -3,7 +3,7 @@ import { activateLedgerSync } from "@ledgerhq/live-e2e-shared/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { expect, Page, Response } from "@playwright/test";
 import { Application } from "tests/page";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;

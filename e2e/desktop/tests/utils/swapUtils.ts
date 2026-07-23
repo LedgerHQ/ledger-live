@@ -14,7 +14,7 @@ import {
   revokeTokenCommand,
   getTokenAllowanceCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
 import { launchSpeculos, cleanSpeculos } from "./speculosUtils";

@@ -6,7 +6,7 @@ import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSe
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapDadaMarketToDisplayData } from "LLM/features/GlobalSearch/utils/mapDadaMarketToDisplayData";

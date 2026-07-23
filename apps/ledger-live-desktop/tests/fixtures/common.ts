@@ -1,3 +1,4 @@
+import "@shared/env";
 import { test as base, Page, ElectronApplication } from "@playwright/test";
 import fsPromises from "fs/promises";
 import merge from "lodash/merge";

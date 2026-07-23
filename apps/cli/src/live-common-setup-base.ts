@@ -1,4 +1,4 @@
-import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
+import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { listen } from "@ledgerhq/logs";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";

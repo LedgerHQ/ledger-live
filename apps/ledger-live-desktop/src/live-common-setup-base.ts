@@ -1,5 +1,5 @@
 import os from "os";
-import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";

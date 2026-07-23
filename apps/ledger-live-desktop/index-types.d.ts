@@ -37,7 +37,7 @@ type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
 type FeatureId = import("@shared/feature-flags").FeatureId;
 type Feature = import("@shared/feature-flags").Feature;
-type EnvName = import("@ledgerhq/live-env").EnvName;
+type EnvName = import("@shared/env").EnvName;
 
 interface RawEvents {
   [key: string]: unknown;

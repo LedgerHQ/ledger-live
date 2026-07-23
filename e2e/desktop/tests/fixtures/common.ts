@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";

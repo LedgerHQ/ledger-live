@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useCurrencyById } from "@features/platform-currencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { CompositeNavigationProp } from "@react-navigation/native";

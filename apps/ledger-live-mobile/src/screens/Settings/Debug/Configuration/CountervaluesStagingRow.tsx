@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import SettingsRow from "~/components/SettingsRow";
 import Switch from "~/components/Switch";
 

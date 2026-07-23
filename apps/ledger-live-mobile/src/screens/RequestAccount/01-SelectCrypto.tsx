@@ -12,7 +12,7 @@ import LText from "~/components/LText";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import VersionNumber from "react-native-version-number";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import { Flex, InfiniteLoader, SearchInput } from "@ledgerhq/native-ui";

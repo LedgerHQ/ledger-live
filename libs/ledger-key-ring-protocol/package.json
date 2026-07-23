@@ -74,6 +74,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip39": "^3.0.4",

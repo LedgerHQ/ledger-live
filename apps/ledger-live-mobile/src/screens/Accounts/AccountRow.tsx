@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";

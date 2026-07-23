@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
 import CryptoCurrencyIconWithCount from "~/renderer/components/CryptoCurrencyIconWithCount";

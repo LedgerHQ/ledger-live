@@ -26,7 +26,7 @@ import Info from "~/icons/Info";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({

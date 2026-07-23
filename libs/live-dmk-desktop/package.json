@@ -42,6 +42,7 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

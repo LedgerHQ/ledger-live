@@ -12,7 +12,7 @@ import {
 import { configureStore } from "@reduxjs/toolkit";
 import { calApiExtra, cryptoAssetsApi } from "@domain/api-currency-token";
 import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const NON_SPECULOS_DEVICE_ERROR =

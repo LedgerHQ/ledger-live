@@ -218,6 +218,9 @@
     "./shared/feature-flags": {
       "entry": ["src/index.ts"]
     },
+    "./shared/live-env": {
+      "entry": ["src/index.ts"]
+    },
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
@@ -228,6 +231,9 @@
       "entry": ["src/index.ts", "src/index.native.ts", "src/jest.native.ts"]
     },
     "./features/flow/fear-and-greed": {
+      "entry": ["src/index.ts"]
+    },
+    "./features/platform/env": {
       "entry": ["src/index.ts"]
     },
     "./features/platform/feature-flags": {
