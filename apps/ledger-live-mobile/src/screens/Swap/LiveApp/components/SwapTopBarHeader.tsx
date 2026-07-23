@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, type IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import {
   TOP_BAR_CONTENT_HEIGHT,
