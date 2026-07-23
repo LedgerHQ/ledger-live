@@ -142,8 +142,10 @@ jobs:
           git tag live-mobile@${{ steps.mobile-version.outputs.version }}
 
       - name: push changes
+        env:
+          TARGET_REF: ${{ inputs.ref }}
         run: |
-          git push origin ${{ inputs.ref }} --tags
+          git push origin "$TARGET_REF" --tags
 
       - name: create desktop github release
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}

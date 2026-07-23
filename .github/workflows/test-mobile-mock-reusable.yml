@@ -129,9 +129,11 @@ jobs:
 
       - name: Determine cache keys
         id: cache-keys
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           PREFIX=""
-          if [ "${{ github.ref_name }}" = "develop" ]; then
+          if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
