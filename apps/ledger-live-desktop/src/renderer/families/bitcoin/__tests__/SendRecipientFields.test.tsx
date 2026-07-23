@@ -3,7 +3,16 @@ import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapter
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import SendRecipientFields from "../SendRecipientFields";
+
+// The bridge's updateTransaction merges the patch onto the transaction.
+// Mocking it also avoids the Suspense boundary that useAccountBridge (React `use`) requires.
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({
+    updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
+  }),
+}));
 
 const baseAccount = createFixtureAccount();
 
@@ -23,12 +32,15 @@ const renderComponent = (
   account: ReturnType<typeof createFixtureAccount>,
   sender?: "public" | "private",
   flagEnabled = true,
+  transactionOverrides: Record<string, unknown> = {},
 ) =>
   render(
     <SendRecipientFields.component
       account={account as never}
       parentAccount={null}
-      transaction={{ sender } as never}
+      transaction={{ sender, ...transactionOverrides } as never}
+      status={{ errors: {}, warnings: {} } as never}
+      onChange={jest.fn()}
     />,
     { initialState: withFlagOverrides({ zcashShielded: { enabled: flagEnabled } }) },
   );
@@ -83,5 +95,33 @@ describe("SendRecipientFields — Zcash sync state banner integration", () => {
   it("zcashShielded flag off → no banner for Zcash account", () => {
     renderComponent(buildZcashAccount({ syncState: "stopped" }), "private", false);
     expect(screen.queryByTestId("zcash-sync-banner-stopped")).not.toBeInTheDocument();
+  });
+});
+
+describe("SendRecipientFields — Zcash memo field", () => {
+  it("Zcash + shielded recipient → memo field visible", () => {
+    renderComponent(buildZcashAccount({ syncState: "complete" }), "private", true, {
+      recipientType: "private",
+    });
+    expect(screen.getByTestId("memo-tag-input")).toBeInTheDocument();
+  });
+
+  it("Zcash + public (transparent) recipient → no memo field", () => {
+    renderComponent(buildZcashAccount({ syncState: "complete" }), "public", true, {
+      recipientType: "public",
+    });
+    expect(screen.queryByTestId("memo-tag-input")).not.toBeInTheDocument();
+  });
+
+  it("Zcash + shielded recipient but flag off → no memo field", () => {
+    renderComponent(buildZcashAccount({ syncState: "complete" }), "private", false, {
+      recipientType: "private",
+    });
+    expect(screen.queryByTestId("memo-tag-input")).not.toBeInTheDocument();
+  });
+
+  it("Bitcoin account → no memo field (regression guard)", () => {
+    renderComponent(buildBitcoinAccount(), "private", true, { recipientType: "private" });
+    expect(screen.queryByTestId("memo-tag-input")).not.toBeInTheDocument();
   });
 });
