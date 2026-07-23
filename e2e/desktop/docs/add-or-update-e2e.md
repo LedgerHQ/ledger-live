@@ -211,4 +211,5 @@ test.use({
   );
   ```
 
-- **Always declare `lwdWallet40` flags explicitly in `test.use({ featureFlags })`** — never rely on the `E2E_DESKTOP_FEATURE_FLAGS` environment variable to gate which UI elements you assert. CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). Tests that pass locally but exercise different elements than CI do not provide confidence. Use `FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT` (not `FF_LWD_WALLET_40_Q2`) to also suppress the analytics consent dialog that appears under Q2 flags.
+- Be aware that there may be environment variables to gate which UI elements you can assert on. For example, CI may set `wallet40-q2` (enabling `earnUpselling: true` → `crowd-favourites`), while a local run without the variable defaults to Q1 (`earnUpselling: false` → different UI). So tests may pass locally but exercise different elements than CI. '
+- As such, you may need to declare flags explicitly in `test.use({ featureFlags })` if your UI varies based on specific feature flag parameters or configurations.
