@@ -168,9 +168,7 @@ test.describe("Reset app", () => {
       await app.settings.resetApp();
       await app.settingsModal.checkResetModal();
       await app.settingsModal.clickOnConfirmButton();
-      await app.onboarding.clickGetStartedButton();
-      const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
-      await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
+      await app.settingsModal.expectAppJsonRegenerated(userdataFile, appJsonBefore);
     },
   );
 });
