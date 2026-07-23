@@ -38,7 +38,6 @@
   `@ledgerhq/live-common/e2e/*` into a new dedicated, private package `@ledgerhq/live-e2e-shared`
   (located under `e2e/`, alongside the Desktop and Mobile E2E suites). This keeps test-only code
   out of `live-common`, which is in maintenance mode.
-
   - `@ledgerhq/live-common`: removed the internal `./e2e` export.
   - `@shared/feature-flags`: now exports `getAllFeatureFlags` (previously in the live-common e2e
     module), so production debug tooling no longer depends on test code.
@@ -64,7 +63,6 @@
   `@ledgerhq/live-common/e2e/*` into a new dedicated, private package `@ledgerhq/live-e2e-shared`
   (located under `e2e/`, alongside the Desktop and Mobile E2E suites). This keeps test-only code
   out of `live-common`, which is in maintenance mode.
-
   - `@ledgerhq/live-common`: removed the internal `./e2e` export.
   - `@shared/feature-flags`: now exports `getAllFeatureFlags` (previously in the live-common e2e
     module), so production debug tooling no longer depends on test code.
