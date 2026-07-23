@@ -1,12 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getAccountCurrency, getMainAccount } from "../../../account";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
+import type { Currency } from "@domain/entity-currency";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { useAccountBridge } from "../../../bridge/useAccountBridge";
@@ -70,7 +67,7 @@ export function useNetworkFeesCore({
     [account, parentAccount],
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
-  const domainAccountCurrency = accountCurrency as CryptoOrTokenCurrency;
+  const domainAccountCurrency = accountCurrency;
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const presetEstimation = useMemo(

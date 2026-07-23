@@ -17,7 +17,6 @@ import invariant from "invariant";
 import { Observable } from "rxjs";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
@@ -242,7 +241,7 @@ const completeExchange = (
 
         //-- CHECK_PAYOUT_ADDRESS
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          await getCurrencyExchangeConfig(payoutCurrency as CryptoOrTokenCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";
@@ -285,7 +284,7 @@ const completeExchange = (
         }
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
-          await getCurrencyExchangeConfig(refundCurrency as CryptoOrTokenCurrency);
+          await getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
 
         try {

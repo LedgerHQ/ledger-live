@@ -3,10 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getAccountCurrency, getMainAccount } from "../../../../account";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type {
   CustomFeeInputValueTransform,
@@ -145,10 +142,7 @@ export function useCustomFeesViewModelCore({
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
-  const accountCurrency = useMemo(
-    () => getAccountCurrency(mainAccount) as CryptoOrTokenCurrency,
-    [mainAccount],
-  );
+  const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const fiatUnit = counterValueCurrency.units[0];
 
   const customFeeConfig = useMemo(() => sendFeatures.getCustomFeeConfig(currency), [currency]);

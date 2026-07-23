@@ -14,7 +14,6 @@ import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
 import { getCurrencyExchangeConfig } from "../..";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { convertToAppExchangePartnerKey, getProviderConfig } from "../../providers";
 
 import type {
@@ -136,7 +135,7 @@ const completeExchange = (
         }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          await getCurrencyExchangeConfig(payoutCurrency as CryptoOrTokenCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           o.next({

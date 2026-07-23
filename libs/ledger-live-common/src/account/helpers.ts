@@ -1,7 +1,9 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getAccountCurrency as getAccountCurrency__ } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 export { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
 
@@ -11,7 +13,6 @@ export {
   findTokenAccountByCurrency,
   flattenAccounts,
   getMainAccount,
-  getAccountCurrency,
   getAccountSpendableBalance,
   getFeesCurrency,
   getFeesUnit,
@@ -22,6 +23,12 @@ export {
   listSubAccounts,
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
+
+// Account boundary: framework returns unbranded types; single `as` narrows to domain.
+// Remove when Account adopts domain currency types (LIVE-34762).
+export const getAccountCurrency = getAccountCurrency__ as (
+  account?: AccountLike,
+) => CryptoCurrency | TokenCurrency;
 
 /**
  * Load blacklisted tokens and organize them into sections by parent currency
