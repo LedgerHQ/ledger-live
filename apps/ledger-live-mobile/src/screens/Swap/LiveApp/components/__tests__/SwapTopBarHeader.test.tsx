@@ -9,6 +9,23 @@ jest.mock("../useSwapTopBarHeaderViewModel", () => ({
 
 const mockedUseSwapTopBarHeaderViewModel = jest.mocked(useSwapTopBarHeaderViewModel);
 
+const baseViewModel: ReturnType<typeof useSwapTopBarHeaderViewModel> = {
+  onMyLedgerPress: jest.fn(),
+  onMyWalletPress: jest.fn(),
+  shouldDisplayMyWallet: false,
+  hasUnreadNotifications: false,
+  onSwapHistoryPress: jest.fn(),
+  hasAccounts: false,
+  isSyncError: false,
+  isSyncPending: false,
+  listOfErrorAccountNames: "",
+  syncAccessibilityLabel: "Synchronize",
+  isSyncDrawerOpen: false,
+  openSyncDrawer: jest.fn(),
+  closeSyncDrawer: jest.fn(),
+  onTryRefresh: jest.fn(),
+};
+
 describe("SwapTopBarHeader", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -19,8 +36,8 @@ describe("SwapTopBarHeader", () => {
     const onSwapHistoryPress = jest.fn();
 
     mockedUseSwapTopBarHeaderViewModel.mockReturnValue({
+      ...baseViewModel,
       onMyLedgerPress,
-      onMyWalletPress: jest.fn(),
       shouldDisplayMyWallet: false,
       hasUnreadNotifications: false,
       onSwapHistoryPress,
@@ -40,7 +57,7 @@ describe("SwapTopBarHeader", () => {
     const onSwapHistoryPress = jest.fn();
 
     mockedUseSwapTopBarHeaderViewModel.mockReturnValue({
-      onMyLedgerPress: jest.fn(),
+      ...baseViewModel,
       onMyWalletPress,
       shouldDisplayMyWallet: true,
       hasUnreadNotifications: false,
@@ -60,11 +77,9 @@ describe("SwapTopBarHeader", () => {
 
   it("should not show My Wallet when the feature flag is off", () => {
     mockedUseSwapTopBarHeaderViewModel.mockReturnValue({
-      onMyLedgerPress: jest.fn(),
-      onMyWalletPress: jest.fn(),
+      ...baseViewModel,
       shouldDisplayMyWallet: false,
       hasUnreadNotifications: true,
-      onSwapHistoryPress: jest.fn(),
     });
 
     const { queryByTestId } = render(<SwapTopBarHeader />);
@@ -77,7 +92,7 @@ describe("SwapTopBarHeader", () => {
     const onSwapHistoryPress = jest.fn();
 
     mockedUseSwapTopBarHeaderViewModel.mockReturnValue({
-      onMyLedgerPress: jest.fn(),
+      ...baseViewModel,
       onMyWalletPress,
       shouldDisplayMyWallet: true,
       hasUnreadNotifications: true,
