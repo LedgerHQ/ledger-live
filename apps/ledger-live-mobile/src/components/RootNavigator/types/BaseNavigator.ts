@@ -192,6 +192,7 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     transaction?: Transaction;
     justScanned?: boolean;
+    onScanned?: (address: string) => void;
   };
   [ScreenName.BleDevicePairingFlow]: undefined;
   [ScreenName.AnalyticsAllocation]: undefined;
