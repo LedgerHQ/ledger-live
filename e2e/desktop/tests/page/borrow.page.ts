@@ -1,5 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
+import { BORROW_TEST_IDS } from "tests/utils/borrowTestIds";
 import { WebViewAppPage } from "./webViewApp.page";
 
 export class BorrowPage extends WebViewAppPage {
@@ -10,23 +11,27 @@ export class BorrowPage extends WebViewAppPage {
   private readonly simulateLoanRoutePattern = /\/loan\/simulate-loan/;
   private readonly loanExecutionRoutePattern = /\/loan\/loan-execution/;
 
-  // --- Copy / labels (role+name until borrow-live-app exposes data-testids) ---
-  private readonly introModalTitle = "Introducing Crypto Loan";
-  private readonly simulateMyLoanLabel = "Simulate my loan";
-  private readonly enterLoanAmountLabel = "Enter loan amount";
-  private readonly continueLabel = "Continue";
-  private readonly giveApprovalLabel = "Give approval";
-  private readonly authorizeDepositingLabel = "Authorize depositing";
-  private readonly authorizeBorrowingLabel = "Authorize borrowing";
-  private readonly accessApprovedSummary = "Step 1: Access approved";
-  private readonly depositStepDoneSummary = "Step 2: Authorize depositing collateral";
-  private readonly borrowStepDoneSummary = "Loan received successfully";
-  private readonly loanCompletionPattern = /Congrats! Your (USDC|USDT) loan is on the way\./;
-  private readonly viewMyLoanLabel = "View my loan";
-  private readonly getNewLoanLabel = "Get a new loan";
-  private readonly yourLoansTitle = "Your loans";
-  private readonly executionErrorTitle = "Something went wrong";
-  private readonly onChainFailedMessage = "The transaction failed on-chain";
+  // --- Borrow webview test ids (mirror borrow-live-app BORROW_TEST_IDS) ---
+  private readonly introModalId = BORROW_TEST_IDS.introModal;
+  private readonly introModalTitleId = BORROW_TEST_IDS.introModalTitle;
+  private readonly simulateMyLoanButtonId = BORROW_TEST_IDS.simulateMyLoanButton;
+  private readonly simulateLoanScreenId = BORROW_TEST_IDS.simulateLoanScreen;
+  private readonly loanAmountInputId = BORROW_TEST_IDS.loanAmountInput;
+  private readonly simulateContinueButtonId = BORROW_TEST_IDS.simulateContinueButton;
+  private readonly getNewLoanButtonId = BORROW_TEST_IDS.getNewLoanButton;
+  private readonly loanExecutionScreenId = BORROW_TEST_IDS.loanExecutionScreen;
+  private readonly giveApprovalButtonId = BORROW_TEST_IDS.giveApprovalButton;
+  private readonly authorizeDepositingButtonId = BORROW_TEST_IDS.authorizeDepositingButton;
+  private readonly authorizeBorrowingButtonId = BORROW_TEST_IDS.authorizeBorrowingButton;
+  private readonly step1AccessApprovedId = BORROW_TEST_IDS.step1AccessApproved;
+  private readonly step2DepositDoneId = BORROW_TEST_IDS.step2DepositDone;
+  private readonly executionErrorId = BORROW_TEST_IDS.executionError;
+  private readonly onChainFailedMessageId = BORROW_TEST_IDS.onChainFailedMessage;
+  private readonly loanCompletionCardId = BORROW_TEST_IDS.loanCompletionCard;
+  private readonly viewMyLoanButtonId = BORROW_TEST_IDS.viewMyLoanButton;
+  private readonly yourLoansTitleId = BORROW_TEST_IDS.yourLoansTitle;
+
+  private readonly hostContinueLabel = "Continue";
   private readonly hostSignModalTextPattern = /Approve token|Sign transaction/i;
   private readonly mainnetFundingHint =
     "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
@@ -47,52 +52,52 @@ export class BorrowPage extends WebViewAppPage {
     has: this.page.getByText(this.hostSignModalTextPattern),
   });
   private readonly hostSignModalContinueBtn = this.hostSignModal.getByRole("button", {
-    name: this.continueLabel,
+    name: this.hostContinueLabel,
   });
 
   // --- Borrow webview locators (scoped to the live-app window) ---
   private introModal(webview: Page) {
-    return webview.getByRole("dialog").filter({
-      has: webview.getByRole("heading", { name: this.introModalTitle }),
-    });
+    return webview.getByTestId(this.introModalId);
   }
 
-  private introModalHeading(webview: Page) {
-    return this.introModal(webview).getByRole("heading", { name: this.introModalTitle });
+  private introModalTitle(webview: Page) {
+    return webview.getByTestId(this.introModalTitleId);
   }
 
   private simulateMyLoanBtn(webview: Page) {
-    return this.introModal(webview).getByRole("button", { name: this.simulateMyLoanLabel });
+    return webview.getByTestId(this.simulateMyLoanButtonId);
   }
 
-  private enterLoanAmountHeading(webview: Page) {
-    return webview.getByText(this.enterLoanAmountLabel, { exact: true });
+  private simulateLoanScreen(webview: Page) {
+    return webview.getByTestId(this.simulateLoanScreenId);
   }
 
   private loanAmountInput(webview: Page) {
-    return this.enterLoanAmountHeading(webview)
-      .locator("..")
-      .getByRole("textbox", { disabled: false });
+    return webview.getByTestId(this.loanAmountInputId);
   }
 
-  private continueBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.continueLabel });
+  private simulateContinueBtn(webview: Page) {
+    return webview.getByTestId(this.simulateContinueButtonId);
   }
 
   private getNewLoanBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.getNewLoanLabel });
+    return webview.getByTestId(this.getNewLoanButtonId);
+  }
+
+  private loanExecutionScreen(webview: Page) {
+    return webview.getByTestId(this.loanExecutionScreenId);
   }
 
   private giveApprovalBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.giveApprovalLabel });
+    return webview.getByTestId(this.giveApprovalButtonId);
   }
 
   private authorizeDepositingBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.authorizeDepositingLabel });
+    return webview.getByTestId(this.authorizeDepositingButtonId);
   }
 
   private authorizeBorrowingBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.authorizeBorrowingLabel });
+    return webview.getByTestId(this.authorizeBorrowingButtonId);
   }
 
   private executionFlowEntryBtn(webview: Page) {
@@ -101,28 +106,24 @@ export class BorrowPage extends WebViewAppPage {
 
   private executionError(webview: Page) {
     return webview
-      .getByText(this.executionErrorTitle, { exact: true })
-      .or(webview.getByText(this.onChainFailedMessage));
+      .getByTestId(this.executionErrorId)
+      .or(webview.getByTestId(this.onChainFailedMessageId));
   }
 
-  private executionStepDone(webview: Page, doneSummary: string) {
-    return webview.getByText(doneSummary, { exact: true });
-  }
-
-  private borrowStepDoneText(webview: Page) {
-    return webview.getByText(this.borrowStepDoneSummary, { exact: true });
+  private executionStepDone(webview: Page, doneTestId: string) {
+    return webview.getByTestId(doneTestId);
   }
 
   private loanCompletionCard(webview: Page) {
-    return webview.getByText(this.loanCompletionPattern);
+    return webview.getByTestId(this.loanCompletionCardId);
   }
 
   private viewMyLoanBtn(webview: Page) {
-    return webview.getByRole("button", { name: this.viewMyLoanLabel });
+    return webview.getByTestId(this.viewMyLoanButtonId);
   }
 
   private yourLoansHeading(webview: Page) {
-    return webview.getByText(this.yourLoansTitle, { exact: true });
+    return webview.getByTestId(this.yourLoansTitleId);
   }
 
   private loanSuccessIndicator(webview: Page) {
@@ -133,8 +134,7 @@ export class BorrowPage extends WebViewAppPage {
   }
 
   private borrowStepCompleteIndicator(webview: Page) {
-    return this.borrowStepDoneText(webview)
-      .or(this.loanCompletionCard(webview))
+    return this.loanCompletionCard(webview)
       .or(this.viewMyLoanBtn(webview))
       .or(this.executionError(webview));
   }
@@ -158,6 +158,7 @@ export class BorrowPage extends WebViewAppPage {
 
   private async ensureSimulateLoanScreen(webview: Page) {
     if (this.simulateLoanRoutePattern.test(webview.url())) {
+      await expect(this.simulateLoanScreen(webview)).toBeVisible();
       return;
     }
 
@@ -172,6 +173,7 @@ export class BorrowPage extends WebViewAppPage {
 
     await getNewLoanButton.click();
     await expect(webview).toHaveURL(this.simulateLoanRoutePattern);
+    await expect(this.simulateLoanScreen(webview)).toBeVisible();
   }
 
   @step("Dismiss intro modal if shown and wait for simulate screen")
@@ -181,14 +183,14 @@ export class BorrowPage extends WebViewAppPage {
       await this.clickSimulateMyLoan();
       return;
     }
-    await expect(this.enterLoanAmountHeading(webview)).toBeVisible();
+    await expect(this.loanAmountInput(webview)).toBeVisible();
   }
 
   @step("Verify Introducing Crypto Loan modal is visible")
   async verifyIntroModalVisible() {
     const webview = await this.getWebView();
     await expect(this.introModal(webview)).toBeVisible();
-    await expect(this.introModalHeading(webview)).toBeVisible();
+    await expect(this.introModalTitle(webview)).toBeVisible();
   }
 
   @step("Click Simulate my loan")
@@ -196,8 +198,8 @@ export class BorrowPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const introModal = this.introModal(webview);
     await this.simulateMyLoanBtn(webview).click();
-    await expect(introModal).toBeHidden();
-    await expect(this.enterLoanAmountHeading(webview)).toBeVisible();
+    await expect(introModal).toHaveCount(0);
+    await expect(this.loanAmountInput(webview)).toBeVisible();
   }
 
   @step("Type loan amount")
@@ -212,7 +214,7 @@ export class BorrowPage extends WebViewAppPage {
   @step("Click Continue")
   async clickContinue() {
     const webview = await this.getWebView();
-    const continueButton = this.continueBtn(webview);
+    const continueButton = this.simulateContinueBtn(webview);
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
   }
@@ -221,6 +223,7 @@ export class BorrowPage extends WebViewAppPage {
   async expectExecutionFlowVisible() {
     const webview = await this.getWebView();
     await expect(webview).toHaveURL(this.loanExecutionRoutePattern);
+    await expect(this.loanExecutionScreen(webview)).toBeVisible();
     await expect(this.executionFlowEntryBtn(webview)).toBeVisible();
   }
 
@@ -291,15 +294,15 @@ export class BorrowPage extends WebViewAppPage {
     await expect(this.modalBackdrop).toBeHidden({ timeout: 120_000 });
   }
 
-  private async expectExecutionStepOutcome(webview: Page, doneSummary: string) {
-    const done = this.executionStepDone(webview, doneSummary);
+  private async expectExecutionStepOutcome(webview: Page, doneTestId: string) {
+    const done = this.executionStepDone(webview, doneTestId);
     const error = this.executionError(webview);
 
-    await expect(done.or(error)).toBeVisible({ timeout: this.executionStepTimeoutMs });
+    await expect(done.or(error).first()).toBeVisible({ timeout: this.executionStepTimeoutMs });
 
-    if (await error.isVisible()) {
+    if (await error.first().isVisible()) {
       throw new Error(
-        `Borrow execution step failed in webview (${doneSummary}). ${this.mainnetFundingHint}`,
+        `Borrow execution step failed in webview (${doneTestId}). ${this.mainnetFundingHint}`,
       );
     }
   }
@@ -307,26 +310,25 @@ export class BorrowPage extends WebViewAppPage {
   @step("Wait for Step 1 approval to complete")
   async expectApprovalStepCompleted() {
     const webview = await this.getWebView();
-    await this.expectExecutionStepOutcome(webview, this.accessApprovedSummary);
+    await this.expectExecutionStepOutcome(webview, this.step1AccessApprovedId);
     await expect(this.authorizeDepositingBtn(webview)).toBeEnabled();
   }
 
   @step("Wait for Step 2 deposit to complete")
   async expectDepositStepCompleted() {
     const webview = await this.getWebView();
-    await this.expectExecutionStepOutcome(webview, this.depositStepDoneSummary);
+    await this.expectExecutionStepOutcome(webview, this.step2DepositDoneId);
     await expect(this.authorizeBorrowingBtn(webview)).toBeEnabled();
   }
 
   @step("Wait for Step 3 borrow to complete")
   async expectBorrowStepCompleted() {
     const webview = await this.getWebView();
-    // Success screen can show several indicators at once; .first() avoids Playwright strict mode.
     await expect(this.borrowStepCompleteIndicator(webview).first()).toBeVisible({
       timeout: this.executionStepTimeoutMs,
     });
 
-    if (await this.executionError(webview).isVisible()) {
+    if (await this.executionError(webview).first().isVisible()) {
       throw new Error(`Borrow Step 3 failed in webview. ${this.mainnetFundingHint}`);
     }
   }
