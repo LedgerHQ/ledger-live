@@ -23,14 +23,14 @@ export function runNewSendFlowTest(
 
     it(`Send ${transaction.amount} ${transaction.accountToDebit.currency.ticker} from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
-      await app.send.setRecipientAndContinueNewFlow(
+      await app.newSend.setRecipientAndContinueNewFlow(
         transaction.accountToCredit.address,
         transaction.memoTag,
       );
-      await app.send.setAmountAndReviewNewFlow(transaction.amount);
-      await app.send.waitForSignature();
+      await app.newSend.setAmountAndReviewNewFlow(transaction.amount);
+      await app.newSend.waitForSignature();
       await app.speculos.signSendTransaction(transaction);
-      await app.send.waitForSuccessConfirmation();
+      await app.newSend.waitForSuccessConfirmation();
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipientAddress(transaction.accountToCredit);
