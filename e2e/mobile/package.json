@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-mobile-e2e-tests",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",

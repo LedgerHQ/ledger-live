@@ -111,6 +111,7 @@
     "stop" : "Durdur",
     "updateNow" : "Şimdi güncelle",
     "close" : "Kapat",
+    "ok" : "Tamam",
     "eastern" : "Doğu",
     "western" : "Batı",
     "reverify" : "Tekrar doğrula",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "Kart",
+    "paytab" : "Ödeme yap",
     "menu" : "Menü",
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "Doğrulayıcı Grubu",
           "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
-          "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+          "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
           "totalVotes" : "Toplam Oy",
           "commission" : "Komisyon"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "Çekilebilir bakiye",
       "statusUpdateNotice" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
       "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
-      "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+      "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
       "emptyState" : {
         "description" : "Varlıklarınızla yetki devrederek SOL ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
             "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
             "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise Hüküm ve Koşulları",
             "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "XTZ varlıklarınızı stake edin"
-      }
+      },
+      "pendingUnstakeWarning" : "Doğrulayıcınızı şimdi değiştirebilirsiniz; ancak mevcut doğrulayıcınızdan başlattığınız stake durdurma işlemi yaklaşık 4 gün içinde tamamlanana kadar yeni doğrulayıcıyla stake yapamazsınız."
     },
     "staking" : {
       "header" : "Staking",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "Analitik katılım onayı (QA)",
         "rowDesc" : "Kaydedilen gizlilik onayı sürümünü ve onay tarihini inceleyin; portföy analitiği onay modal'ı için güncel olmayan durumları simüle edin."
       },
+      "devTools" : {
+        "rowTitle" : "DevTools",
+        "rowDesc" : "DevTools konsolunu (özellik bayrakları ve geliştirici araçları paneli) açın."
+      },
       "brazeTools" : {
         "title" : "Braze Araçları",
         "description" : "Yerel braze kartları oluşturun",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "Çekmeceyi Aç",
         "showJson" : "JSON’u göster",
         "hideJson" : "JSON’u gizle"
+      },
+      "contactsDevTool" : {
+        "title" : "Kişiler Dev Tool",
+        "description" : "Masaüstü sürümü için Kişiler (Contacts) özelliğinin kullanıma sunulma ayarlarını değiştirin (lwdContacts feature flag)",
+        "mainFeatureToggle" : "Ana Özelliği Açma/Kapatma",
+        "featureParameters" : "Özellik Parametreleri",
+        "eligibleAddressFamilies" : "Uygun adres formatları",
+        "customFamiliesHint" : "Özel çoklu format testi için virgülle ayrılmış formatlar.",
+        "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
+        "applyFamilies" : "Uygula",
+        "resetOverride" : "Uygulamayı sıfırla"
       },
       "cryptoAssetsList" : {
         "title" : "Kripto Varlık Listesi",
@@ -6690,6 +6708,10 @@
       "title" : "Hesap desteklenmiyor.",
       "description" : "Lütfen tekrar deneyin veya Ledger Destek ile iletişime geçin ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Hesabın yeniden eklenmesi gerekiyor",
+      "description" : "Ledger Wallet bu hesabın açık anahtarına erişemedi. Devam etmek için lütfen hesabı kaldırın ve tekrar ekleyin"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Alıcı hesap, seçili ASA'yı onaylamadı."
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "Stake edilen bakiye yetersiz"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Öncelikle önceki doğrulayıcınız ile stake durdurma işleminin tamamlanması gerekir."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
@@ -8594,6 +8619,17 @@
       "description" : "Ledger Nano S cihazınızdaki sınırlı bellek; en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar."
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın."
+    },
+    "optedOut" : {
+      "title" : "Dolandırıcılık girişimlerini tespit edin. Tüm ayrıntıları görün",
+      "subtitle" : "İşlem detaylarını dokunmatik ekranlı bir imzalayıcıda net bir şekilde inceleyin ve gelişmiş güvenlik kontrolleriyle dolandırıcılıkları tespit edin."
+    },
+    "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Eklemek istediğiniz hesapları seçin",
@@ -9167,7 +9203,8 @@
       "more" : "İşlem geçmişi seçenekleri",
       "hideDustTransactions" : "Toz işlemleri gizle",
       "showDustTransactions" : "Toz işlemleri göster",
-      "dustTransactionsDescription" : "{{threshold}} tutarının altındaki işlemler gizlenecektir."
+      "dustTransactionsDescription" : "{{threshold}} tutarının altındaki işlemler gizlenecektir.",
+      "dustTransactionsDisplayedDescription" : "{{threshold}} tutarının altındaki işlemler görüntülenecektir."
     },
     "exportDialog" : {
       "title" : "İşlem geçmişini dışa aktarın",
@@ -9225,7 +9262,22 @@
       "title" : "My Ledger",
       "description" : "Ledger cihazınızı yönetin"
     },
+    "contacts" : {
+      "title" : "Kişiler",
+      "description" : "Kişilerinizi yönetin"
+    },
     "explore" : "Tüm Ledger cihazlarını keşfedin"
+  },
+  "contacts" : {
+    "title" : "Kişiler",
+    "addContact" : "Kişi ekle",
+    "searchPlaceholder" : "Kişi ara",
+    "me" : {
+      "name" : "Ben",
+      "addressCount_zero" : "0 adres",
+      "addressCount_one" : "{{count}} adres",
+      "addressCount_other" : "{{count}} adres"
+    }
   },
   "assetDetails" : {
     "header" : {

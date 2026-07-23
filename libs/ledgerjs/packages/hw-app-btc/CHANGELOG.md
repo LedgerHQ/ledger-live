@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-btc
 
+## 11.3.0
+
+### Minor Changes
+
+- [#19550](https://github.com/LedgerHQ/ledger-live/pull/19550) [`d7edc6e`](https://github.com/LedgerHQ/ledger-live/commit/d7edc6ee38776dcbc6da341f734b42d78dc05836) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add the NU6.3 Zcash consensus branch id (0x37a5165b, mainnet activation height 3,428,143) to the transparent height→branch-id table, so transactions signed through the legacy (non-DMK) Btc path after NU6.3 activation are accepted by the network. Unknown block heights now default to the NU6.3 branch id.
+
+## 11.3.0-next.0
+
+### Minor Changes
+
+- [#19550](https://github.com/LedgerHQ/ledger-live/pull/19550) [`d7edc6e`](https://github.com/LedgerHQ/ledger-live/commit/d7edc6ee38776dcbc6da341f734b42d78dc05836) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Add the NU6.3 Zcash consensus branch id (0x37a5165b, mainnet activation height 3,428,143) to the transparent height→branch-id table, so transactions signed through the legacy (non-DMK) Btc path after NU6.3 activation are accepted by the network. Unknown block heights now default to the NU6.3 branch id.
+
 ## 11.2.2
 
 ### Patch Changes

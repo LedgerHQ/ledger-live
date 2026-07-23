@@ -28,6 +28,7 @@
     "cryptoAsset" : "Kripto varlık",
     "skip" : "Atla",
     "next" : "İleri",
+    "new" : "Yeni",
     "noCryptoFound" : "Kripto varlık bulunamadı",
     "needHelp" : "Yardıma mı ihtiyacınız var?",
     "edit" : "Düzenle",
@@ -49,6 +50,7 @@
     "transactionDate" : "İşlem tarihi",
     "outdated" : "Eski",
     "satPerByte" : "sat/bayt",
+    "satPerVByte" : "sat/vByte",
     "sompiPerByte" : "sompi/bayt",
     "notAvailable" : "Mevcut değil",
     "import" : "İçe aktar",
@@ -125,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "Lütfen tekrar deneyin",
       "description" : "Hesabın sürümü eski. Senkronizasyon gerekiyor"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Hesabın yeniden eklenmesi gerekiyor",
+      "description" : "Ledger Wallet bu hesabın açık anahtarına erişemedi. Devam etmek için lütfen hesabı kaldırın ve tekrar ekleyin"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Alıcı hesap, seçili ASA'yı onaylamadı."
@@ -478,6 +484,12 @@
     "FeeRequired" : {
       "title" : "Ücretler zorunludur"
     },
+    "FeeTooHigh" : {
+      "title" : "Ağ ücretleri, tutarın % 10'unun üzerindedir"
+    },
+    "FeeTooLow" : {
+      "title" : "Ücret ağ tarafından kabul edilemeyecek kadar düşük. Lütfen artırın"
+    },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Donanım yazılımı veya uygulama güncellemesi gerekiyor",
       "description" : "Tüm uygulamaları kaldırmak için lütfen My Ledger'ı kullanın ve yeniden yüklemeden önce bir donanım yazılımı güncellemesi olup olmadığını kontrol edin."
@@ -528,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "{{currencyName}} tarayıcısından geçersiz yanıt"
+    },
+    "InvalidTransactionError" : {
+      "title" : "Geçersiz işlem",
+      "description" : "İşlem artık blok zinciri durumuyla eşleşmiyor. Lütfen akışı yeniden başlatın."
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Dil yüklemesi cihaz tarafından reddedildi",
@@ -898,20 +914,23 @@
     "TezosNotEnoughStaked" : {
       "title" : "Stake edilen bakiye yetersiz"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Öncelikle önceki doğrulayıcınız ile stake durdurma işleminin tamamlanması gerekir."
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "Legacy adres biçimi artık desteklenmiyor"
     },
+    "RecipientRequired" : {
+      "title" : "Alıcı adresi gerekli"
+    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
     },
     "DustLimit" : {
       "title" : "Miktar, dust sınırının altında"
-    },
-    "StratisDown2021Warning" : {
-      "description" : "Stratis blok zinciri evrimleşti ve artık düzgün çalışmayabilir. Orijinal Stratis blok zinciri desteği 16 Ekim 2021'e kadar sürdürülecektir."
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Tutar {{minAmountFromFormatted}} değerinden fazla olmalıdır"
@@ -1006,6 +1025,9 @@
     },
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
+    },
+    "SolanaStakeAccountAmountTooLow" : {
+      "title" : "Tutar staking için çok düşük. Minimum değer: {{minimumAmount}}"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -1173,6 +1195,9 @@
     "XrpInvalidMemo" : {
       "title" : "Memo formatı yanlış, 4294967296’dan küçük olmalıdır"
     },
+    "XrpDestinationTagRequired" : {
+      "title" : "Bu alıcı için bir hedef etiketi gereklidir"
+    },
     "HederaMemoExceededSizeError" : {
       "title" : "Geçersiz memo boyutu, en fazla 100 karaktere izin verilir"
     },
@@ -1187,6 +1212,9 @@
     },
     "MaxFeeTooLow" : {
       "title" : "Ücret üst limiti, önerilen değerden düşük"
+    },
+    "GasPriceTooLow" : {
+      "title" : "Gas ücreti, ağın belirlediği minimum değerin altında"
     },
     "PriorityFeeHigherThanMaxFee" : {
       "title" : "Öncelik ücreti üst limiti, ücret üst limitinden yüksek olamaz"
@@ -1366,9 +1394,20 @@
       }
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
+      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın."
+    },
+    "optedOut" : {
+      "title" : "Dolandırıcılık girişimlerini tespit edin. Tüm ayrıntıları görün",
+      "subtitle" : "İşlem detaylarını dokunmatik ekranlı bir imzalayıcıda net bir şekilde inceleyin ve gelişmiş güvenlik kontrolleriyle dolandırıcılıkları tespit edin."
+    },
+    "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
+  },
   "earn" : {
     "simulator" : {
-      "title" : "Ödül simülatörü"
+      "title" : "Getiri simülatörü"
     },
     "deposit" : {
       "protocolInfoModal" : {
@@ -1864,12 +1903,6 @@
     "postWelcomeStep" : {
       "title" : "Hadi başlayalım",
       "noLedgerYet" : "Henüz Ledger'ım yok",
-      "noLedgerYetModal" : {
-        "title" : "Milyonlarca kullanıcı. 0 hack'lenme.",
-        "desc" : "Ledger'ın dijital varlıklarınız için sağladığı güvenlikle içiniz rahat olsun.",
-        "buy" : "Ledger satın alın",
-        "explore" : "Bu uygulamayı keşfedin"
-      },
       "setupLedger" : {
         "title" : "Ledger cihazınızı kurun",
         "subtitle" : "Ledger'ınızın yeni mi, yoksa sıfırlanan bir cihaz mı olduğunu seçin."
@@ -1877,18 +1910,6 @@
       "accessWallet" : {
         "title" : "Cüzdanınıza erişin",
         "subtitle" : "Ledger'ınızın halihazırda kurulmuş olup olmadığını seçin."
-      },
-      "buyNano" : {
-        "title" : "Ledger Nano X satın alın",
-        "subtitle" : "Bir Ledger cihazı, varlıklarınızın güvende olduğundan emin olmanızın tek yoludur "
-      },
-      "discoverLedger" : {
-        "title" : "Ledger Wallet'ı keşfedin",
-        "subtitle" : "Uygulamayı inceleyin ve sunduğu avantajları öğrenin "
-      },
-      "desktopSync" : {
-        "title" : "Masaüstü uygulamasıyla senkronize edin",
-        "subtitle" : "Ledger Wallet masaüstü uygulamasındaki varlıklarınızı mobil cihazınızla senkronize edin."
       }
     },
     "welcomeBackStep" : {
@@ -2791,13 +2812,6 @@
         "cta" : "Anladım"
       }
     },
-    "appsStep" : {
-      "title" : "{{productName}} cihazında uygulamalar yükleyin"
-    },
-    "readyStep" : {
-      "title" : "Kurulum sonu",
-      "doneTitle" : "{{productName}} hazır"
-    },
     "completion" : {
       "title" : "Artık kontrol sizde"
     },
@@ -2811,7 +2825,6 @@
     }
   },
   "tabs" : {
-    "portfolio" : "Cüzdan",
     "accounts" : "Hesaplar",
     "transfer" : "Transfer",
     "manager" : "My Ledger",
@@ -2849,10 +2862,7 @@
         "addAccounts" : "Varlık ekle",
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
-      },
-      "title" : "İlk olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
-      "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
-      "addAccount" : "veya bir hesap ekleyin"
+      }
     },
     "noOpState" : {
       "title" : "Henüz işlem yok mu?",
@@ -2866,9 +2876,9 @@
       "description" : "Kaldıraçlı işlem yapın"
     },
     "borrowEntry" : {
-      "title" : "Borçlar",
-      "cardTitle" : "Stabil coin ile borç alın",
-      "cardDescription" : "Likidite elinizin altında",
+      "title" : "Kripto kredileri",
+      "cardTitle" : "Stabil coin kredisi alın",
+      "cardDescription" : "Rekabetçi kurlarla kredi alın",
       "cta" : "Keşfedin"
     },
     "recommended" : {
@@ -2990,6 +3000,8 @@
     "month" : "1A",
     "year" : "1Y",
     "all" : "Tümü",
+    "second_short" : "sn.",
+    "minute_short" : "dk.",
     "since" : {
       "day" : "geçen gün",
       "week" : "geçen hafta",
@@ -3056,7 +3068,14 @@
   "operationsList" : {
     "to" : "Alıcı",
     "from" : "Gönderici",
-    "pending" : "Beklemede"
+    "pending" : "Beklemede",
+    "options" : {
+      "more" : "İşlem geçmişi seçenekleri",
+      "hideDustTransactions" : "Toz işlemleri gizle",
+      "showDustTransactions" : "Toz işlemleri göster",
+      "dustTransactionsHiddenDescription" : "{{threshold}} tutarının altındaki işlemler gizlenecektir.",
+      "dustTransactionsDisplayedDescription" : "{{threshold}} tutarının altındaki işlemler görüntülenecektir."
+    }
   },
   "operationDetails" : {
     "title" : "İşlem bilgileri",
@@ -3129,7 +3148,8 @@
       "targetStakingNodeId" : "Hedef düğüm kimliği",
       "previousStakingNodeId" : "Önceki düğüm kimliği",
       "gasConsumed" : "Harcanan gas",
-      "gasUsed" : "Kullanılan gas"
+      "gasUsed" : "Kullanılan gas",
+      "functionId" : "İşlev Kimliği"
     },
     "multipleAddresses" : "Neden birden fazla adres var?"
   },
@@ -3798,10 +3818,8 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "Bildirimleri aç",
-      "titleVariantB" : "Önemli bilgileri kaçırmayın",
-      "desc" : "Ledger Wallet, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
-      "descVariantB" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. İstediğiniz zaman devre dışı bırakabilirsiniz.",
+      "title" : "Önemli bilgileri kaçırmayın",
+      "desc" : "Yeni token’lar, kazanç fırsatları ve piyasa değişimleri hakkında gerçek zamanlı uyarılar alın. İstediğiniz zaman devre dışı bırakabilirsiniz.",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra",
       "transactionsAlerts" : {
@@ -4196,6 +4214,43 @@
       "history" : {
         "title" : "Takas geçmişi"
       },
+      "modals" : {
+        "transactionStatus" : {
+          "title" : "{{sendTicker}} → {{receiveTicker}} takas edin",
+          "sections" : {
+            "status" : {
+              "heading" : "Durum",
+              "sendPending" : "{{ticker}} gönderiliyor",
+              "sendCompleted" : "{{ticker}} gönderildi",
+              "receivePending" : "{{ticker}} alınıyor",
+              "receiveCompleted" : "{{ticker}} alındı",
+              "estimated" : "(Tahmini)"
+            },
+            "details" : {
+              "networkFees" : "Ağ ücretleri",
+              "receiveAccount" : "Alıcı hesap",
+              "provider" : "Sağlayıcı",
+              "swapId" : "Swap ID'si"
+            }
+          },
+          "statusLabels" : {
+            "pending" : "Devam ediyor",
+            "onhold" : "Durduruldu",
+            "expired" : "Süresi doldu",
+            "finished" : "Tamamlandı",
+            "refunded" : "Para iadesi yapıldı",
+            "cancelled" : "İptal edildi",
+            "unknown" : "Bilinmiyor"
+          },
+          "actions" : {
+            "viewInExplorer" : "Tarayıcıda görüntüle",
+            "copied" : "Kopyalandı"
+          },
+          "accessibility" : {
+            "copySwapId" : "Takas kimliğini kopyala"
+          }
+        }
+      },
       "wrongDevice" : {
         "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
         "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Wallet üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
@@ -4455,6 +4510,7 @@
     "newSendFlow" : {
       "title" : "{{currency}} gönder",
       "available" : "Mevcut: {{amount}}",
+      "to" : "Alıcı:",
       "placeholder" : "Adres ya da ENS adı girin",
       "placeholderNoENS" : "Adresi girin",
       "pasteFromClipboard" : {
@@ -4462,15 +4518,12 @@
         "cta" : "Yapıştır"
       },
       "editRecipientAccessibilityLabel" : "Alıcıyı düzenle",
-      "recent" : "Son kullanılanlar",
-      "recentDetail" : "Son işlem ayrıntıları",
-      "myAccounts" : "Hesaplarım",
-      "account" : "Hesap",
       "sendTo" : "{{address}} adresine gönder",
       "addressMatched" : "Adres eşleşti",
       "addressNotFound" : "Adres bulunamadı",
+      "account" : "Hesap",
       "alreadyUsed" : "Daha önce kullanıldı · {{date}}",
-      "recentSendWillAppear" : "Son gönderme işleminiz burada görüntülenecek",
+      "notInRecentHistory" : "Son işlemler geçmişinizde bulunmuyor",
       "relativeDate" : {
         "justNow" : "Şimdi",
         "minutesAgo_one" : "1 dk. önce",
@@ -4480,12 +4533,13 @@
         "daysAgo_one" : "1 gün önce",
         "daysAgo_other" : "{{count}} gün önce"
       },
-      "remove" : "Kaldır",
-      "enterTag" : "{{tag}} gir",
       "firstInteraction" : {
-        "title" : "Yeni bir adrese gönderiyorsunuz",
-        "description" : "Adresin doğru olduğunu doğrulayın. Emin değilseniz önce küçük bir tutar gönderin."
+        "description" : "Bu adres, son işlemler geçmişinizde bulunmuyor. Emin değilseniz önce küçük bir tutar gönderin.",
+        "learnMore" : "Daha fazla bilgi",
+        "helpTitle" : "Son gönderim işlemleri geçmişi",
+        "helpDescription" : "Son işlemler geçmişiniz, belirli bir adrese gönderim yapıp yapmadığınızı hemen görmenize izin verir. Bu, potansiyel kopyala/yapıştır hatalarını veya hack'leme girişimlerini önleyebilir. Geçmişiniz, Ledger Wallet kullanarak kripto gönderdiğiniz son 12 adresi içerir."
       },
+      "enterTag" : "{{tag}} gir",
       "sanctioned" : {
         "title" : "İşaretlenmiş adres",
         "description" : "Bu adres işaretlenmiş ve Ledger bu adrese gönderim yapamıyor.",
@@ -4537,13 +4591,17 @@
       "transactionSigned" : "İşlem imzalandı",
       "processingTransaction" : "İşleminiz gerçekleştiriliyor",
       "sign" : {
-        "title" : "Ledger {{wording}} üzerinde devam edin",
+        "title" : "{{wording}} üzerinde devam edin",
         "description" : "Güvenli Dokunmatik Ekranınızda gösterilen yönergeleri izleyin.",
         "cancelled" : {
           "title" : "İşlem iptal edildi",
           "description" : "İşlemi reddettiniz. Fonlarınız etkilenmeyecektir.",
           "close" : "Kapat",
           "retry" : "Tekrar deneyin"
+        },
+        "error" : {
+          "retry" : "Tekrar deneyin",
+          "close" : "Kapat"
         }
       },
       "confirmation" : {
@@ -4560,6 +4618,7 @@
         "maxPriorityFee" : "Öncelik Ücreti Üst Limiti ({{unit}})",
         "gasLimit" : "Gas limiti ({{unit}})",
         "feePerByte" : "Ücret tutarı ({{unit}})",
+        "feesAmount" : "Ücret tutarı ({{unit}})",
         "suggested" : "Önerilen",
         "nextBlock" : "Sonraki blok",
         "networkFeesInFiat" : "{{currency}} olarak ağ ücretleri",
@@ -6714,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Özel doğrulayıcı ekle",
-      "sectionLabel" : "Yetki Devri"
+      "sectionLabel" : "Yetki Devri",
+      "pendingUnstakeWarning" : "Doğrulayıcınızı şimdi değiştirebilirsiniz; ancak mevcut doğrulayıcınızdan başlattığınız stake durdurma işlemi yaklaşık 4 gün içinde tamamlanana kadar yeni doğrulayıcıyla stake yapamazsınız."
     },
     "staking" : {
       "sectionLabel" : "Staking",
@@ -8986,8 +9046,7 @@
     "setPreferencesCTA" : "Tercihlerinizi belirleyin",
     "refuseCTA" : "Tümünü reddet",
     "acceptCTA" : "Tümünü kabul et",
-    "privacyPolicy" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
-    "privacyPolicyCTA" : "Gizlilik Politikası",
+    "privacyPolicy" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz. <PrivacyPolicy>Gizlilik Politikası</PrivacyPolicy>",
     "setPreferences" : {
       "title" : "Tercihlerinizi belirleyin",
       "performance" : "Uygulama performansı",
@@ -9404,6 +9463,9 @@
     "fallbackBanner" : {
       "title" : "Takas ve Satın Alma bu varlıkta desteklenmemektedir."
     },
+    "stockDisclaimerBanner" : {
+      "title" : "Temettüler veya hisse bölünmeleri toplam bakiyeye dahil edilmez."
+    },
     "hiddenAssetBanner" : {
       "title" : "Bu varlık, portföyünüzden gizlenmiştir.",
       "showAsset" : "Varlığı göster"
@@ -9430,6 +9492,13 @@
       "openMenuA11yLabel" : "Grafik seçenekleri",
       "hideTransactions" : "Fiyat grafiğinde etkinliği gizle",
       "showTransactions" : "Fiyat grafiğinde etkinliği göster"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "Daha fazla seçenek",
+        "sell" : "Sat",
+        "earn" : "Kazan"
+      }
     }
   },
   "assetSelection" : {
@@ -9781,29 +9850,21 @@
     }
   },
   "concordium" : {
-    "receive" : {
-      "messageIfSkipped" : "Concordium Adresiniz şu an doğrulanamıyor. Adresinizi Concordium tarayıcısına yapıştırarak mutlaka iki kez kontrol edin.",
-      "verifyLink" : "Doğrula"
-    },
     "onboard" : {
       "title" : "Concordium'a Katılım",
       "acknowledge" : {
         "title" : "Bilgilendirme",
         "description" : "Concordium, haricî kimlik doğrulaması gerektirir. Lütfen şu önemli güvenlik uyarılarını okuyun:",
         "list" : {
-          "1" : {
-            "title" : "Adres doğrulaması yok",
-            "description" : "Ledger cihazınız Concordium alıcı adreslerini doğrulayamaz. Fonları almadan önce adresleri manuel olarak doğrulayın."
-          },
-          "2" : {
+          "separateSeed" : {
             "title" : "Concordium ID uygulaması ayrı bir kurtarma ifadesi kullanır",
             "description" : "Concordium uygulamasında YENİ 24 kelime oluşturacaksınız. Ledger kurtarma ifadenizi ASLA kullanmayın."
           },
-          "3" : {
+          "outsideLedgerLive" : {
             "title" : "Ledger Wallet dışına yönlendirileceksiniz",
             "description" : "Kimlik doğrulama, haricî Concordium Wallet uygulamasında gerçekleşir. Concordium’un blok zinciri protokolü bunu gerekli kılar."
           },
-          "4" : {
+          "signingSecure" : {
             "title" : "İşlem imzalama her zaman güvendedir",
             "description" : "Sadece Ledger cihazınız işlemleri imzalayabilir ve hesaplar oluşturabilir."
           }
@@ -9907,7 +9968,8 @@
     "swap" : "Takas et",
     "earn" : "Kazan",
     "yield" : "Getiri",
-    "card" : "Kart"
+    "card" : "Kart",
+    "paytab" : "Ödeme yap"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9954,6 +10016,10 @@
       "backup" : "Yedekle",
       "help" : "Yardım",
       "referral" : "Referans"
+    },
+    "contacts" : {
+      "title" : "Kişiler",
+      "description" : "Kişilerinizi yönetin"
     },
     "backupHub" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -10016,6 +10082,121 @@
       "available" : "Mevcut",
       "unavailable" : "Bağlı değil",
       "menuAccessibilityLabel" : "Cihaz seçenekleri"
+    }
+  },
+  "aleo" : {
+    "addAccount" : {
+      "stepViewKeyWarning" : {
+        "title" : "Aleo gizli bakiyesini belirleyin",
+        "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
+        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "cta" : {
+          "allow" : "İzin ver",
+          "cancel" : "İptal et"
+        }
+      },
+      "stepViewKeyApprove" : {
+        "title" : "Ledger cihazınızda onaylayın",
+        "description" : "Görüntüleme anahtarının paylaşılmasını cihazınızda onaylayın",
+        "cancelAlert" : "Cihazınızdaki hesapların her birini ayrı olarak reddedebilirsiniz. Tümünü iptal etmeniz durumunda portföyünüze artık hiçbir hesap eklenmez.",
+        "cancelAllBtn_one" : "İptal et",
+        "cancelAllBtn_other" : "Tümünü iptal et",
+        "redirecting" : "Yönlendiriliyor..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "Hiçbir {{currency}} hesabı eklenmedi",
+        "description" : "Seçili hesaplardan hiçbiri için görüntüleme anahtarını paylaşmadınız. Görüntüleme anahtarları, Ledger Wallet’taki gizli bakiyenizi görüntülemek için gereklidir."
+      },
+      "stepScanAccounts" : {
+        "cta" : {
+          "shareKey_one" : "Görüntüleme anahtarını paylaşın",
+          "shareKey_other" : "Görüntüleme anahtarlarını paylaşın"
+        }
+      }
+    },
+    "accountActions" : {
+      "publicToPrivate" : "Kendine transfer"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "Bakiye seçin",
+        "convertToPrivate" : "Açık hesaptan transfer",
+        "convertToPublic" : "Gizli hesaptan transfer",
+        "sendPublicly" : "Açık gönder",
+        "sendPrivately" : "Gizli gönder"
+      },
+      "balanceSelector" : {
+        "public" : "Açık",
+        "private" : "Gizli",
+        "lastUpdate" : "Son güncelleme: {{label}}",
+        "recently" : "Yakın zamanda"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Gizli bakiyeniz senkronize ediliyor (%{{percentage}}).",
+        "desc" : "Lütfen bekleyin",
+        "errorTitle" : "Gizli bakiye senkronizasyonu başarısız oldu.",
+        "errorDesc" : "Bir şeyler yanlış gitti, lütfen tekrar deneyin."
+      },
+      "quickAmountSelector" : {
+        "title" : "Hızlı seçim",
+        "strategies" : {
+          "fast" : "Hızlı",
+          "balanced" : "Dengeli",
+          "full" : "Tam"
+        },
+        "recordCount_one" : "{{count}} kayıt",
+        "recordCount_other" : "{{count}} kayıt",
+        "unavailable" : "Mevcut değil",
+        "noValue" : "—",
+        "spendableBalance" : "Maksimum Harcanabilir Bakiye:",
+        "tooltip" : {
+          "desc" : "Gönderici, tutar ve alıcı bilgileri zincir üstünde gizli tutulur. Gönderim başına en fazla {{max}} kayıt."
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir.",
+        "recordsUsed" : "Kullanılan kayıtlar",
+        "signingTime" : "İmzalama zamanı"
+      }
+    },
+    "balancesSection" : "Bakiyeler",
+    "info" : {
+      "transparent" : {
+        "title" : "Şeffaf bakiye",
+        "description" : "Aleo ağında herkese açık olarak görülebilen bakiye. Bu tutar doğrudan gönderilebilir veya alınabilir ve herkes tarafından görülebilir."
+      },
+      "private" : {
+        "title" : "Gizli bakiye",
+        "description" : "Aleo ağındaki korumalı bakiye. Bu bakiyeyi yalnızca siz görebilirsiniz; gizli işlemler için kanıt oluşturulması gerekir."
+      }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "Senkronizasyonu başlat",
+        "stopSync" : "Senkronizasyonu durdur",
+        "syncAgain" : "Tekrar senkronize et",
+        "lastSync" : "Son senkronizasyon: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Açık",
+        "private" : "Gizli"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Provable sponsorluğunda"
+    }
+  },
+  "contacts" : {
+    "title" : "Kişiler",
+    "addContact" : "Kişi ekle",
+    "searchPlaceholder" : "Kişi ara",
+    "me" : {
+      "name" : "Ben",
+      "addressCount_zero" : "0 adres",
+      "addressCount_one" : "{{count}} adres",
+      "addressCount_other" : "{{count}} adres"
     }
   }
 }

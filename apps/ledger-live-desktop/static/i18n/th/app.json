@@ -111,6 +111,7 @@
     "stop" : "หยุด",
     "updateNow" : "อัปเดตตอนนี้",
     "close" : "ปิด",
+    "ok" : "ตกลง",
     "eastern" : "ตะวันออก",
     "western" : "ตะวันตก",
     "reverify" : "ตรวจสอบอีกครั้ง",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "การ์ด",
+    "paytab" : "จ่าย",
     "menu" : "เมนู",
     "stars" : "บัญชีที่ติดดาว",
     "accounts" : "บัญชี",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "กลุ่มผู้ตรวจสอบ",
           "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment",
-          "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+          "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
           "totalVotes" : "จำนวนโหวตทั้งหมด",
           "commission" : "คอมมิชชัน"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "สามารถถอนได้",
       "statusUpdateNotice" : "สถานะของการ Delegate จะได้รับการอัปเดตเมื่อมีการยืนยันธุรกรรม",
       "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment",
-      "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+      "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
       "emptyState" : {
         "description" : "คุณสามารถรับ Reward สำหรับ SOL ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
         "info" : "วิธีใช้งานการ Delegate?",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "ผู้ตรวจสอบ",
-            "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
             "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "ผู้ตรวจสอบ",
-            "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
             "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "ผู้ตรวจสอบ",
-            "ledgerByChorusOneTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Bitwise",
             "ledgerByFigmentTC" : "ข้อกำหนดและเงื่อนไขของ Ledger by Figment"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "สเตค XTZ ของคุณ"
-      }
+      },
+      "pendingUnstakeWarning" : "คุณสามารถเปลี่ยนผู้ตรวจสอบได้ในตอนนี้ แต่คุณจะยังไม่สามารถสเตคกับผู้ตรวจสอบรายใหม่ได้ จนกว่าการยกเลิกการสเตคที่รอนุมัติอยู่จากผู้ตรวจสอบปัจจุบันของคุณจะเสร็จสิ้นในอีกประมาณ 4 วัน"
     },
     "staking" : {
       "header" : "กำลัง Stake",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "ความยินยอมในการเลือกใช้ (QA) สำหรับการวิเคราะห์ข้อมูล",
         "rowDesc" : "ตรวจสอบเวอร์ชันการยินยอมและวันที่ให้ความยินยอม จำลองสถานะที่ล้าสมัยสำหรับหน้าต่างการยินยอมในการวิเคราะห์พอร์ตโฟลิโอ"
       },
+      "devTools" : {
+        "rowTitle" : "เครื่องมือ DevTools",
+        "rowDesc" : "เปิดหน้าต่างเครื่องมือ DevTools (Feature Flags และแผงเมนู DevTools)"
+      },
       "brazeTools" : {
         "title" : "เครื่องมือ Braze",
         "description" : "สร้าง Local Braze Card",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "เปิดแถบเมนูด้านซ้าย",
         "showJson" : "แสดง JSON",
         "hideJson" : "ซ่อน JSON"
+      },
+      "contactsDevTool" : {
+        "title" : "เครื่องมือ Contacts Dev Tool",
+        "description" : "เปิด/ปิดการตั้งค่าการเปิดตัว Contacts สำหรับเดสก์ท็อป (lwdContacts Feature Flag)",
+        "mainFeatureToggle" : "เปิด/ปิดฟีเจอร์หลัก",
+        "featureParameters" : "พารามิเตอร์ของฟีเจอร์",
+        "eligibleAddressFamilies" : "เครือข่ายของที่อยู่คริปโตที่สามารถใช้งานได้",
+        "customFamiliesHint" : "ใส่เครื่องหมายจุลภาค (,) คั่นเพื่อทดสอบที่อยู่คริปโตหลายเครือข่ายแบบกำหนดเอง",
+        "customFamiliesPlaceholder" : "evm, stellar, aptos",
+        "applyFamilies" : "ใช้งาน",
+        "resetOverride" : "รีเซ็ตการเขียนทับ"
       },
       "cryptoAssetsList" : {
         "title" : "รายการสินทรัพย์คริปโต",
@@ -6690,6 +6708,10 @@
       "title" : "ไม่รองรับบัญชี",
       "description" : "โปรดลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "ต้องทำการเพิ่มบัญชีอีกครั้ง",
+      "description" : "แอป Ledger Wallet ไม่สามารถดึงข้อมูล Public Key ของบัญชีนี้ได้ โปรดลบบัญชีแล้วเพิ่มใหม่อีกครั้งเพื่อดำเนินการต่อ"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "บัญชีผู้รับยังไม่ได้เลือกเข้าร่วม ASA ที่เลือก"
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "ยอดที่สเตคไว้ไม่เพียงพอ"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "การยกเลิกการสเตคจากผู้ตรวจสอบก่อนหน้าต้องเสร็จสิ้นก่อน"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
@@ -8594,6 +8619,17 @@
       "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ"
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
+      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%"
+    },
+    "optedOut" : {
+      "title" : "ตรวจจับสแกมได้ทันที ดูได้ทุกรายละเอียด",
+      "subtitle" : "ตรวจสอบได้ชัดเจนบนอุปกรณ์ลงนามหน้าจอสัมผัส และตรวจจับสแกมด้วยการตรวจสอบความปลอดภัยขั้นสูง"
+    },
+    "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
@@ -9167,7 +9203,8 @@
       "more" : "ตัวเลือกประวัติธุรกรรม",
       "hideDustTransactions" : "ซ่อนธุรกรรมที่เป็น Dust",
       "showDustTransactions" : "แสดงธุรกรรมที่เป็น Dust",
-      "dustTransactionsDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} จะถูกซ่อนไว้"
+      "dustTransactionsDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} จะถูกซ่อนไว้",
+      "dustTransactionsDisplayedDescription" : "ธุรกรรมที่มีมูลค่าต่ำกว่า {{threshold}} จะแสดงผล"
     },
     "exportDialog" : {
       "title" : "ส่งออกประวัติธุรกรรม",
@@ -9225,7 +9262,22 @@
       "title" : "Ledger ของฉัน",
       "description" : "จัดการอุปกรณ์ Ledger ของคุณ"
     },
+    "contacts" : {
+      "title" : "รายชื่อ",
+      "description" : "จัดการรายชื่อของคุณ"
+    },
     "explore" : "ดูอุปกรณ์ Ledger ทั้งหมด"
+  },
+  "contacts" : {
+    "title" : "รายชื่อ",
+    "addContact" : "เพิ่มรายชื่อ",
+    "searchPlaceholder" : "ค้นหารายชื่อ",
+    "me" : {
+      "name" : "ที่อยู่ของฉัน",
+      "addressCount_zero" : "0 ที่อยู่คริปโต",
+      "addressCount_one" : "{{count}} ที่อยู่",
+      "addressCount_other" : "{{count}} ที่อยู่"
+    }
   },
   "assetDetails" : {
     "header" : {

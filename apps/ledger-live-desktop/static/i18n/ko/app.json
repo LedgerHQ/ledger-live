@@ -111,6 +111,7 @@
     "stop" : "중지",
     "updateNow" : "지금 업데이트",
     "close" : "닫기",
+    "ok" : "확인",
     "eastern" : "동부",
     "western" : "서부",
     "reverify" : "재확인",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "카드",
+    "paytab" : "결제",
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "검증인 그룹",
           "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
-          "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+          "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
           "totalVotes" : "총 투표수",
           "commission" : "커미션"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "출금 가능",
       "statusUpdateNotice" : "거래 확인 후 위임 상태가 업데이트됩니다.",
       "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
-      "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+      "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
       "emptyState" : {
         "description" : "자산을 위임하여 SOL 보상을 받을 수 있습니다.",
         "info" : "위임은 어떤 원리인가요?",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "XTZ 스테이킹"
-      }
+      },
+      "pendingUnstakeWarning" : "지금 검증인을 변경할 수 있지만, 현재 검증인으로부터 진행 중인 언스테이킹 절차가 완료될 때까지(약 4일 소요) 새로운 검증인에게 스테이킹할 수 없습니다."
     },
     "staking" : {
       "header" : "스테이킹",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "애널리틱스 옵트인 동의(QA)",
         "rowDesc" : "저장된 개인정보 보호정책 동의 버전 및 동의 날짜를 확인합니다. 포트폴리오 애널리틱스 동의 모달의 구버전 상태를 시뮬레이션해 볼 수 있습니다."
       },
+      "devTools" : {
+        "rowTitle" : "개발자 도구",
+        "rowDesc" : "DevTools 셸 열기(기능 플래그 및 개발 도구 패널)"
+      },
       "brazeTools" : {
         "title" : "브레이즈 도구",
         "description" : "로컬 브레이즈 카드 생성",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "Drawer 열기",
         "showJson" : "JSON 표시",
         "hideJson" : "JSON 감추기"
+      },
+      "contactsDevTool" : {
+        "title" : "연락처 개발자 도구",
+        "description" : "데스크탑용 연락처 롤아웃 설정 토글(lwdContacts 기능 플래그)",
+        "mainFeatureToggle" : "메인 기능 토글",
+        "featureParameters" : "기능 파라미터",
+        "eligibleAddressFamilies" : "지원 주소 체계",
+        "customFamiliesHint" : "사용자 지정 다중 패밀리 테스트를 위해 쉼표로 구분된 주소 체계",
+        "customFamiliesPlaceholder" : "evm, stellar, aptos",
+        "applyFamilies" : "적용",
+        "resetOverride" : "오버라이드 리셋"
       },
       "cryptoAssetsList" : {
         "title" : "암호화폐 목록",
@@ -6690,6 +6708,10 @@
       "title" : "지원되지 않는 계정입니다.",
       "description" : "재시도하거나 지원 부서로 문의하세요 ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "계정을 다시 추가해야 합니다",
+      "description" : "Ledger Wallet에서 이 계정의 공개 키(Public key)를 가져올 수 없습니다. 계속하려면 계정을 제거하고 다시 추가하세요"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "선택한 ASA에서 수령인 계정을 선택하지 않았습니다."
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "스테이킹 잔액 부족"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "이전 검증인으로부터 진행 중인 언스테이킹 절차가 먼저 완료되어야 합니다"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
@@ -8594,6 +8619,17 @@
       "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다."
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "더 다양하게, 더 간편하게, {{discount}}% 할인까지",
+      "subtitle" : "더 커진 화면, 더 스마트해진 트랜잭션 검토, 강화된 보안은 물론 {{discount}}% 할인 혜택까지."
+    },
+    "optedOut" : {
+      "title" : "스캠 감지, 모든 정보 확인",
+      "subtitle" : "터치스크린 사이너에서 모든 정보를 꼼꼼히 확인하고, 고급 보안 점검 기능으로 스캠을 식별하세요."
+    },
+    "cta" : "터치스크린 사이너 둘러보기"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "추가하려는 계정을 선택하세요",
@@ -9167,7 +9203,8 @@
       "more" : "거래 내역 설정",
       "hideDustTransactions" : "더스트 트랜잭션 숨기기",
       "showDustTransactions" : "더스트 트랜잭션 표시하기",
-      "dustTransactionsDescription" : "{{threshold}} 미만의 소액 트랜잭션을 숨깁니다."
+      "dustTransactionsDescription" : "{{threshold}} 미만의 소액 트랜잭션을 숨깁니다.",
+      "dustTransactionsDisplayedDescription" : "{{threshold}} 미만의 소액 트랜잭션이 표시됩니다."
     },
     "exportDialog" : {
       "title" : "트랜잭션 내역 내보내기",
@@ -9225,7 +9262,22 @@
       "title" : "내 Ledger",
       "description" : "Ledger 장치를 관리하세요"
     },
+    "contacts" : {
+      "title" : "연락처",
+      "description" : "연락처 관리"
+    },
     "explore" : "모든 Ledger 장치 살펴보기"
+  },
+  "contacts" : {
+    "title" : "연락처",
+    "addContact" : "연락처 추가",
+    "searchPlaceholder" : "연락처 검색",
+    "me" : {
+      "name" : "나",
+      "addressCount_zero" : "주소 0개",
+      "addressCount_one" : "주소 {{count}}개",
+      "addressCount_other" : "주소 {{count}}개"
+    }
   },
   "assetDetails" : {
     "header" : {
