@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.13.0-next.1
+
+### Minor Changes
+
+- [#19956](https://github.com/LedgerHQ/ledger-live/pull/19956) [`3c9a320`](https://github.com/LedgerHQ/ledger-live/commit/3c9a320e5ab6a8483ecf68cd53b31c96798a3a7d) Thanks [@lewisd5](https://github.com/lewisd5)! - Small CI patch
+
 ## 4.13.0-next.0
 
 ### Minor Changes
