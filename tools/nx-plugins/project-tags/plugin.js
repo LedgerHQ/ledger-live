@@ -63,6 +63,10 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:tools");
   }
 
+  if (projectRoot.startsWith("support/")) {
+    tags.add("scope:support");
+  }
+
   if (!(projectRoot === "apps" || projectRoot.startsWith("apps/"))) {
     tags.add("scope:no-apps");
   }

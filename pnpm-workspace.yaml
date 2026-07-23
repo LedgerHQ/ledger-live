@@ -17,6 +17,7 @@ packages:
   - "domain/entity/*"
   - "domain/api/*"
   - "shared/*"
+  - "support/*"
   - "devtools/*"
 
 catalog:

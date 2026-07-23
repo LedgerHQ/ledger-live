@@ -1,0 +1,16 @@
+{
+  "name": "@support/ts-config-web-x-native",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript config preset for packages targeting both web and React Native",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./tsconfig.web.json": "./tsconfig.web.json",
+    "./tsconfig.native.json": "./tsconfig.native.json",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@support/ts-config-base": "workspace:*"
+  }
+}
