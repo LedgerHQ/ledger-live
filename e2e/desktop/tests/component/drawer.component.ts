@@ -21,6 +21,11 @@ export class Drawer extends Component {
     await this.closeButton.click();
   }
 
+  @step("Wait for drawer to be hidden")
+  async waitForDrawerToBeHidden() {
+    await this.content.waitFor({ state: "hidden" });
+  }
+
   public getAccountButton = (accountName: string) =>
     this.page.getByTestId(`account-row-${accountName.toLowerCase()}-0`).first();
 

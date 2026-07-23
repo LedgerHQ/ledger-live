@@ -159,6 +159,7 @@ export default class SwapPage extends CommonPage {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await app.common.closePage();
+    jestExpect(await waitForElementNotVisible(this.swapSuccessTitleId)).toBeTruthy();
   }
 
   @Step("Selected provider: $0")

@@ -246,6 +246,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
             swap.accountToCredit.currency.name,
           );
           await app.swapDrawer.closeDrawer();
+          await app.swapDrawer.waitForDrawerToBeHidden();
           await app.swap.goAndWaitForSwapToBeReady(async () => {});
         }
       },
