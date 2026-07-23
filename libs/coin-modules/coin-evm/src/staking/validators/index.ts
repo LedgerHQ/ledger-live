@@ -136,6 +136,11 @@ export const hasRedelegation = (currencyId: string): boolean =>
 export const hasCompound = (currencyId: string): boolean =>
   typeof STAKING_CONTRACTS[currencyId]?.functions.compoundReward === "string";
 
+export const hasChainRewards = (currencyId: string): boolean => {
+  const config = STAKING_CONTRACTS[currencyId];
+  return typeof config?.functions.claimReward === "string";
+};
+
 const toValidatorBalance = (tokens: string): bigint => {
   try {
     const balance = BigInt(tokens);

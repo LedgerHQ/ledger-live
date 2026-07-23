@@ -7,6 +7,7 @@ import {
   getValidators,
   getValidatorsPage,
   hasDelegationVisibilityDelay,
+  hasChainRewards,
   hasUnbondingPeriod,
   prefetchValidators,
 } from "./validators";
@@ -316,6 +317,18 @@ describe("staking/validators", () => {
           apy: 0,
         },
       ]);
+    });
+  });
+
+  describe("hasChainRewards", () => {
+    it.each([
+      ["sei_evm", true],
+      ["monad", true],
+      ["zero_gravity", false],
+      ["somnia", true],
+      ["unknown_chain", false],
+    ])("%s returns %s", (currencyId, expected) => {
+      expect(hasChainRewards(currencyId)).toEqual(expected);
     });
   });
 });

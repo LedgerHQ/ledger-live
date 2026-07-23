@@ -24,6 +24,7 @@ export {
   hasDelegationVisibilityDelay,
   hasRedelegation,
   hasCompound,
+  hasChainRewards,
   getValidators,
   prefetchValidators,
   isSeiAccountUnassociated,
