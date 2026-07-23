@@ -195,6 +195,38 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
   });
 
+  it("should save a contact from the add-contact CTA", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: withFlagOverrides({
+          lwdContacts: { enabled: true, params: { newBadge: false } },
+        }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+
+    expect(screen.getByTestId("contacts-add-contact-dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
+
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
+
+    await user.click(screen.getByTestId("contacts-add-contact-save"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+      expect(screen.getByText("Ada")).toBeVisible();
+    });
+  });
+
   it("should filter saved contacts when searching", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>

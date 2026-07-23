@@ -34,6 +34,8 @@ describe("useAddContactDrawerViewModel", () => {
       result.current.onDraftNameChange("Ada");
     });
 
+    expect(result.current.avatarInitial).toBe("A");
+
     await act(async () => {
       await result.current.onConfirm();
     });
