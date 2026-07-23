@@ -9,6 +9,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 
 const StepAmount = (props: StepProps) => {
@@ -32,7 +33,9 @@ const StepAmount = (props: StepProps) => {
         action="delegate"
         currency="MultiversX"
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
 
       {account && transaction && mainAccount && (

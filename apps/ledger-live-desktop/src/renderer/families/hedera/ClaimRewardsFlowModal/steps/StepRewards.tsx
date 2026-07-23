@@ -17,6 +17,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { localeSelector } from "~/renderer/reducers/settings";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "../types";
 
 function StepRewards({ account, parentAccount, transaction, status, error }: Readonly<StepProps>) {
@@ -46,7 +47,9 @@ function StepRewards({ account, parentAccount, transaction, status, error }: Rea
 
   return (
     <Box flow={4}>
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error && <ErrorBanner error={error} />}
       {status.warnings.claimRewardsFee && (
         <Alert type="warning">

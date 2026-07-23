@@ -11,6 +11,7 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import Alert from "~/renderer/components/Alert";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 
 const StepAmount = ({
@@ -34,7 +35,9 @@ const StepAmount = ({
         action="delegation"
         currency="sol"
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>

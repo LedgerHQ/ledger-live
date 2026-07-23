@@ -1,4 +1,5 @@
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCallback, useMemo } from "react";
 import { useLocation } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -50,13 +51,14 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const isCurrencySupported =
     currency?.ledgerIds.some(lrId => !deactivatedCurrencyIds.has(lrId)) || false;
-  const { getLedgerCurrency } = useLazyLedgerCurrency(
+  const { getLedgerCurrency: _getLedgerCurrency } = useLazyLedgerCurrency(
     {
       product: "lld",
       version: __APP_VERSION__,
     },
     currency,
   );
+  const getLedgerCurrency = _getLedgerCurrency as () => Promise<CryptoOrTokenCurrency | undefined>;
 
   const onBuy = useCallback(
     async (e: React.SyntheticEvent) => {

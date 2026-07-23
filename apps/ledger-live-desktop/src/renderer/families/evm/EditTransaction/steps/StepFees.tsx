@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { memo } from "react";
@@ -126,7 +127,7 @@ export const StepFeesFooter = ({
   return (
     <>
       {gasPriceError || maxPriorityFeeError || maxFeeError ? (
-        <BuyButton currency={mainAccount.currency} account={mainAccount} />
+        <BuyButton currency={mainAccount.currency as CryptoCurrency} account={mainAccount} />
       ) : null}
       <TransactionErrorBanner
         transactionHasBeenValidated={transactionHasBeenValidated}

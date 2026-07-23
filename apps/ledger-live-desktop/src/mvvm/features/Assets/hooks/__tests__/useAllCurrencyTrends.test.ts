@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AssetTableItem } from "../../types";
 import { useAllCurrencyTrends } from "../useAllCurrencyTrends";
 
@@ -56,6 +57,7 @@ const initialState = {
 function makeAssetItem(overrides: Partial<AssetTableItem>): AssetTableItem {
   return {
     ...BITCOIN_ASSET,
+    currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
     isPlaceholder: false,
     ...overrides,
   };
@@ -80,16 +82,19 @@ describe("useAllCurrencyTrends", () => {
     const items: AssetTableItem[] = [
       {
         ...BITCOIN_ASSET,
+        currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
         accounts: bitcoinAccounts,
         isPlaceholder: false,
       },
       {
         ...ETHEREUM_ASSET,
+        currency: ETHEREUM_ASSET.currency as CryptoOrTokenCurrency,
         accounts: ethereumAccounts,
         isPlaceholder: false,
       },
       {
         ...STABLECOIN_ASSET,
+        currency: STABLECOIN_ASSET.currency as CryptoOrTokenCurrency,
         isPlaceholder: true,
       },
       makeAssetItem({
@@ -141,6 +146,7 @@ describe("useAllCurrencyTrends", () => {
           [
             {
               ...BITCOIN_ASSET,
+              currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
               accounts: [bitcoinAccount],
               isPlaceholder: false,
             },
@@ -169,6 +175,7 @@ describe("useAllCurrencyTrends", () => {
           [
             {
               ...BITCOIN_ASSET,
+              currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
               accounts: bitcoinAccounts,
               isPlaceholder: false,
             },
@@ -225,6 +232,7 @@ describe("useAllCurrencyTrends", () => {
           [
             {
               ...BITCOIN_ASSET,
+              currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
               accounts: [bitcoinAccount],
               isPlaceholder: false,
             },

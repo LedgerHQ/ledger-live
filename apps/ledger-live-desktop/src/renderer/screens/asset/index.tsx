@@ -20,6 +20,7 @@ import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 export default function AssetPage() {
   const { "*": assetId } = useParams<{ "*": string }>();
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ export default function AssetPage() {
   const allAccounts = useSelector(accountsSelector);
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
-  }).filter(a => getAccountCurrency(a).id === assetId);
+  }).filter(a => getDomainCurrencyForAccount(a).id === assetId);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
@@ -40,7 +41,7 @@ export default function AssetPage() {
   if (!accounts.length || !unit) return <Navigate to="/" replace />;
   const parentAccount =
     accounts[0].type !== "Account" ? lookupParentAccount(accounts[0].parentId) : null;
-  const currency = getAccountCurrency(accounts[0]);
+  const currency = getDomainCurrencyForAccount(accounts[0]);
 
   const color = getCurrencyColor(currency, paperColor);
   return (

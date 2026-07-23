@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
@@ -59,7 +60,9 @@ const StepAmount = ({
         action="vote"
         currency="celo"
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>

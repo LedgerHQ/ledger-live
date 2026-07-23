@@ -13,6 +13,7 @@ import { track } from "~/renderer/analytics/segment";
 import { useNavigate } from "react-router";
 import { Wallet } from "@ledgerhq/lumen-ui-react/symbols";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const CRYPTO_ADDRESSES_BANNER_SOURCE = "portfolio_crypto_addresses_banner";
 
@@ -41,7 +42,7 @@ export const useCryptoAddressesBannerViewModel = (): CryptoAddressesBannerViewMo
   const firstThreeCurrencies = [
     ...new Map(
       accounts.map(a => {
-        const currency = getAccountCurrency(a);
+        const currency = getDomainCurrencyForAccount(a);
         return [currency.id, currency] as const;
       }),
     ).values(),

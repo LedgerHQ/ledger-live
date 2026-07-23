@@ -4,6 +4,7 @@ import { format } from "@ledgerhq/live-common/market/utils/currencyFormatter";
 import type { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
@@ -137,7 +138,7 @@ describe("useOptionsMenuViewModel", () => {
         useOptionsMenuViewModel({
           distributionItem: item,
           marketData: usdcMarket,
-          currency: usdcToken,
+          currency: usdcToken as CryptoOrTokenCurrency,
         }),
       { initialState: { settings: { counterValue: "USD" } } },
     );

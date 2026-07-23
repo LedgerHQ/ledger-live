@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAptosValidators } from "@ledgerhq/live-common/families/aptos/react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -30,7 +31,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const renderItem = (validator: AptosValidator) => {
     return (
       <ValidatorRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         key={validator.address}
         validator={validator}
         unit={unit}

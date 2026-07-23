@@ -14,6 +14,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 
 const StepAmount = ({
@@ -40,7 +41,7 @@ const StepAmount = ({
         action="unstake"
         currency="xtz"
       />
-      <CurrencyDownStatusAlert currencies={[account.currency]} />
+      <CurrencyDownStatusAlert currencies={[account.currency as CryptoCurrency]} />
       {error ? <ErrorBanner error={error} /> : null}
       <Alert type="primary">
         <Trans i18nKey="tezos.unstake.flow.steps.amount.unbondingNotice" />

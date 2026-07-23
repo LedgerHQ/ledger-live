@@ -10,6 +10,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { urls } from "~/config/urls";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
 
@@ -28,7 +29,9 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
         action="staking"
         currency="hedera"
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
         <>

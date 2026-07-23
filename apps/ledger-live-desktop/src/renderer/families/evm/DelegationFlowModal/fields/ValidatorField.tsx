@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -67,7 +68,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   const renderItem = (validator: StakingValidatorItem) => (
     <EvmFamilyValidatorRow
       key={validator.validatorAddress}
-      currency={account.currency}
+      currency={account.currency as CryptoCurrency}
       validator={validator}
       unit={unit}
       active={chosenVoteAccAddr === validator.validatorAddress}

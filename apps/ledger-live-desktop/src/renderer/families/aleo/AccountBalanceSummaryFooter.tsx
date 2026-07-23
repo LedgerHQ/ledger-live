@@ -19,6 +19,7 @@ import Spinner from "~/renderer/components/Spinner";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 import { getAleoCurrencyConfig, formatAleoBalances } from "./shared/utils";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -147,7 +148,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
 
   const mainAccount =
     account.type === "TokenAccount" ? getParentAccount(account, allAccounts) : account;
-  const config = getAleoCurrencyConfig(getAccountCurrency(account));
+  const config = getAleoCurrencyConfig(getDomainCurrencyForAccount(account));
   const formatConfig: formatCurrencyUnitOptions = {
     alwaysShowSign: false,
     showCode: true,

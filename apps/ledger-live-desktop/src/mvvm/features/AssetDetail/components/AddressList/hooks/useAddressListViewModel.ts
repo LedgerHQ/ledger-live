@@ -19,6 +19,8 @@ import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/consta
 import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export function useAddressListViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
@@ -83,7 +85,7 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     if (networkLedgerIds.length > 1) {
       openAssetFlow(undefined, networkLedgerIds);
     } else {
-      openAddAccountFlow(distributionItem.currency);
+      openAddAccountFlow(distributionItem.currency as CryptoOrTokenCurrency);
     }
   };
 
@@ -96,7 +98,9 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
     track("button_clicked", {
       button: "Account",
       currency: distributionItem.currency.id,
-      chain: mainAccount ? getAccountCurrency(mainAccount).id : getAccountCurrency(account).id,
+      chain: mainAccount
+        ? getDomainCurrencyForAccount(mainAccount).id
+        : getDomainCurrencyForAccount(account).id,
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     if (account.type === "TokenAccount" && !parentAccount) {

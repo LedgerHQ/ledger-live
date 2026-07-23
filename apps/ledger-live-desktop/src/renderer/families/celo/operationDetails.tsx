@@ -84,7 +84,9 @@ const OperationDetailsExtra = ({
                     <Box>
                       <Text ff="Inter|SemiBold">{validatorGroup.name}</Text>
                     </Box>
-                    <Address onClick={redirectAddress(currency, validatorGroup.address)}>
+                    <Address
+                      onClick={redirectAddress(currency as CryptoCurrency, validatorGroup.address)}
+                    >
                       <SplitAddress value={validatorGroup.address} />
                     </Address>
                   </OpDetailsVoteData>
@@ -133,7 +135,7 @@ const resolveFeeTokenFromAdapter = (
   const tokenAccount = (account.subAccounts ?? []).find(
     sub => sub.type === "TokenAccount" && sub.token.contractAddress.toLowerCase() === contract,
   );
-  return tokenAccount?.type === "TokenAccount" ? tokenAccount.token : undefined;
+  return tokenAccount?.type === "TokenAccount" ? (tokenAccount.token as TokenCurrency) : undefined;
 };
 
 const useFeesCurrency = (

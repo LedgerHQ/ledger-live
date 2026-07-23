@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
@@ -23,6 +24,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 const Row = styled(Box)`
   background: ${p => p.theme.colors.background.card};
   border-radius: 4px;
@@ -175,7 +177,7 @@ const AccountRowItem = (props: Props) => {
     currency = account.currency;
     mainAccount = account;
     tokens = listSubAccounts(account).filter(
-      subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
+      subAccount => !blacklistedTokenIds.includes(getDomainCurrencyForAccount(subAccount).id),
     );
     disabled = !accountMatchesSearch(walletState, search, account);
     isToken = (currency.tokenTypes || []).length > 0;
@@ -232,7 +234,11 @@ const AccountRowItem = (props: Props) => {
               </div>
             </Box>
             <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
-            <Countervalue account={account} currency={currency} range={range} />
+            <Countervalue
+              account={account}
+              currency={currency as CryptoOrTokenCurrency}
+              range={range}
+            />
             <Delta account={account} range={range} />
             <Star accountId={account.id} />
           </RowContent>

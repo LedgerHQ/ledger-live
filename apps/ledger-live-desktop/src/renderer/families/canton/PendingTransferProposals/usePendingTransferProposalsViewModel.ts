@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useFeature } from "@features/platform-feature-flags";
@@ -117,7 +118,7 @@ export function usePendingTransferProposalsViewModel(
           setModal(prev => ({ ...prev, isOpen: false }));
           if (device) {
             handleTopologyChangeError(dispatch, {
-              currency: parentAccount.currency,
+              currency: parentAccount.currency as CryptoCurrency,
               device,
               mainAccount: parentAccount,
               useModularDrawer,

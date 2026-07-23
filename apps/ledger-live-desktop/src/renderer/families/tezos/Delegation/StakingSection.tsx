@@ -26,6 +26,7 @@ import StopCircle from "~/renderer/icons/StopCircle";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BakerImage from "../BakerImage";
 import SectionHeaderColumns from "./SectionHeaderColumns";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const HeaderWrapper = styled(BaseHeaderWrapper)`
   > * {
@@ -100,7 +101,7 @@ const StakingSection = ({ account, info }: Props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const { stakedBalance, delegateAddress } = info;
   const baker = useBaker(delegateAddress ?? "");
 

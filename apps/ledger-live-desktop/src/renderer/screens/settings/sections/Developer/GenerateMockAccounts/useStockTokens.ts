@@ -25,7 +25,7 @@ export function useStockTokens(enabled = true): StockTokensResult {
       const currency = data.cryptoOrTokenCurrencies[ledgerId];
       if (!currency || currency.type !== "TokenCurrency") continue;
       const parentId = currency.parentCurrencyId;
-      groups.set(parentId, [...(groups.get(parentId) ?? []), currency]);
+      groups.set(parentId, [...(groups.get(parentId) ?? []), currency as TokenCurrency]);
     }
 
     return Array.from(groups, ([parentId, tokens]) => ({ parentId, tokens }));

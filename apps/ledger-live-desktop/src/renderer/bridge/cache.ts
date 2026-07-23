@@ -37,11 +37,11 @@ export function getCurrencyCache(currency: CryptoCurrency): unknown {
 }
 export const cache = makeBridgeCacheSystem({
   saveData(c, d) {
-    setCurrencyCache(c, d);
+    setCurrencyCache(c as CryptoCurrency, d);
     return Promise.resolve();
   },
   getData(c) {
-    return Promise.resolve(getCurrencyCache(c));
+    return Promise.resolve(getCurrencyCache(c as CryptoCurrency));
   },
 });
 export const hydrateCurrency = cache.hydrateCurrency;

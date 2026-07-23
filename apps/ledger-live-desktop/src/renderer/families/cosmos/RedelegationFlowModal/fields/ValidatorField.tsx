@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
@@ -45,7 +46,7 @@ export default function ValidatorField({
   const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         key={validator.validatorAddress}
         validator={validator}
         unit={unit}

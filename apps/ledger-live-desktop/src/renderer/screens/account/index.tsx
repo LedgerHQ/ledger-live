@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -121,7 +122,7 @@ const AccountPage = ({
     return <Navigate to={fallbackPath} replace />;
   }
 
-  const color = getCurrencyColor(currency, bgColor);
+  const color = getCurrencyColor(currency as CryptoCurrency, bgColor);
 
   return (
     <Box key={account.id}>
@@ -149,8 +150,8 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
-      <AccountWarningBanner currency={currency} />
-      <AccountWarningCustomBanner currency={currency} />
+      <AccountWarningBanner currency={currency as CryptoCurrency} />
+      <AccountWarningCustomBanner currency={currency as CryptoCurrency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}

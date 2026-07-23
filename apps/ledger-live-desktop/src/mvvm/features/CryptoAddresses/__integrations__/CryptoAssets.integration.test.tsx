@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, within } from "tests/testSetup";
 import { BITCOIN_ASSET } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import type { AssetTableItem } from "LLD/features/Assets/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import CryptoAssets from "../CryptoAssets";
 import useCryptoAssetsViewModel from "../hooks/useCryptoAssetsViewModel";
 import type { CryptoAssetsViewModel } from "../types";
@@ -10,7 +11,11 @@ jest.mock("../hooks/useCryptoAssetsViewModel");
 
 const mockedUseCryptoAssetsViewModel = jest.mocked(useCryptoAssetsViewModel);
 
-const realBitcoinRow: AssetTableItem = { ...BITCOIN_ASSET, isPlaceholder: false };
+const realBitcoinRow: AssetTableItem = {
+  ...BITCOIN_ASSET,
+  currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
+  isPlaceholder: false,
+};
 
 const baseViewModel: CryptoAssetsViewModel = {
   title: "Crypto assets",

@@ -20,6 +20,7 @@ import { currencySettingsDefaults, type CurrencySettings } from "~/renderer/redu
 import { getOperationCounterpartyAddress } from "./getOperationCounterpartyAddress";
 import type { OperationTableItem } from "../types";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type AccountInfo = { account: AccountLike; parentAccount?: Account };
 type FilterFn = (operation: Operation, account: AccountLike) => boolean;
@@ -112,7 +113,7 @@ function toTableItem(
     type: operation.type,
     address: getOperationCounterpartyAddress(operation),
     amount: getOperationAmountNumber(operation),
-    currency: getAccountCurrency(account),
+    currency: getDomainCurrencyForAccount(account),
     isPending,
     isUnread: isOperationUnread(operation.date, lastSeenTs),
   };
@@ -171,7 +172,7 @@ export function buildHistoryOperationItems(
 ): OperationTableItem[] {
   const lastSeenTs = parseLastSeenMs(lastSeenOperationDate);
   const getConfirmationsNb = (mainAccount: Account) =>
-    getConfirmationsNbForCurrency(currenciesSettings, mainAccount.currency);
+    getConfirmationsNbForCurrency(currenciesSettings, mainAccount.currency as CryptoCurrency);
 
   const accountsMap = buildAccountsMap(accounts);
   const items = buildOperationItems(accountsMap, filterOperation, getConfirmationsNb, lastSeenTs);
@@ -229,7 +230,10 @@ export function historyHasUnreadOperations(
   const lastSeenTs = parseLastSeenMs(lastSeenDate);
   const filterOperation = buildHistoryOperationFilter(options);
   const getConfirmationsNb = (mainAccount: Account) =>
-    getConfirmationsNbForCurrency(options.currenciesSettings, mainAccount.currency);
+    getConfirmationsNbForCurrency(
+      options.currenciesSettings,
+      mainAccount.currency as CryptoCurrency,
+    );
   const accountsMap = buildAccountsMap(accounts);
   const items = buildOperationItems(accountsMap, filterOperation, getConfirmationsNb, lastSeenTs);
   return items.some(item => item.isUnread);

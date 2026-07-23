@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import {
   LEDGER_POOL_IDS,
@@ -79,7 +80,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
       <ValidatorRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         key={validatorIdx + validator.poolId}
         pool={validator}
         unit={unit}

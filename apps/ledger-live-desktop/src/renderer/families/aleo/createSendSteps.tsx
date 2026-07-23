@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { StepAmountFooter as DefaultStepAmountFooter } from "~/renderer/modals/Send/steps/StepAmount";
@@ -68,7 +69,9 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
         }
 
         const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : null;
-        const config = mainAccount ? getAleoCurrencyConfig(mainAccount.currency) : undefined;
+        const config = mainAccount
+          ? getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency)
+          : undefined;
         const isManualStrategy = !config || config.recordPickingStrategy === "manual";
         transitionTo(isManualStrategy ? "record-picker" : "recipient");
       },

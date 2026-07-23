@@ -12,6 +12,7 @@ import Row from "./Row";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 type Props = {
   accounts: AccountLike[];
 };
@@ -23,9 +24,9 @@ export default function AccountDistribution({ accounts }: Props) {
   const accountDistribution = useMemo(
     () =>
       accounts
-        .filter(a => !blacklistedTokenIds.includes(getAccountCurrency(a).id))
+        .filter(a => !blacklistedTokenIds.includes(getDomainCurrencyForAccount(a).id))
         .map(a => {
-          const from = getAccountCurrency(a);
+          const from = getDomainCurrencyForAccount(a);
 
           return {
             account: a,

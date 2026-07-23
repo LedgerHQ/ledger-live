@@ -82,7 +82,7 @@ const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFiel
           </Box>
           <Address
             style={{ maxWidth: "95%" }}
-            onClick={redirectAddress(account.currency, voteAddress)}
+            onClick={redirectAddress(account.currency as CryptoCurrency, voteAddress)}
           >
             <Ellipsis>{voteAddress}</Ellipsis>
           </Address>

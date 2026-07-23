@@ -2,6 +2,8 @@ import { addTestnetCurrencies, getTestnetCurrencies } from "../testnetCurrencies
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
   ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
@@ -15,7 +17,7 @@ const mockListSupportedCurrencies = listSupportedCurrencies as jest.MockedFuncti
 describe("testnetCurrencies", () => {
   const mockMainnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: CryptoCurrencyIdSchema.parse("ethereum"),
     name: "Ethereum",
     ticker: "ETH",
     managerAppName: "Ethereum",
@@ -36,7 +38,7 @@ describe("testnetCurrencies", () => {
 
   const mockTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum_sepolia",
+    id: CryptoCurrencyIdSchema.parse("ethereum_sepolia"),
     name: "Ethereum Sepolia",
     managerAppName: "Ethereum",
     coinType: 60,
@@ -58,7 +60,7 @@ describe("testnetCurrencies", () => {
 
   const mockBitcoinTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "bitcoin_testnet",
+    id: CryptoCurrencyIdSchema.parse("bitcoin_testnet"),
     name: "Bitcoin Testnet",
     ticker: "BTC",
     managerAppName: "Bitcoin",
@@ -80,11 +82,11 @@ describe("testnetCurrencies", () => {
 
   const mockToken: CryptoOrTokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usdc",
+    id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
     name: "USD Coin",
     ticker: "USDC",
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
     tokenType: "erc20",
     units: [
       {

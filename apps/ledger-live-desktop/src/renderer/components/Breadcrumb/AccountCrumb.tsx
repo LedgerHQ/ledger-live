@@ -29,6 +29,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type ItemShape = {
   key: string;
@@ -82,9 +83,9 @@ const AccountCrumb = () => {
   const currency = useMemo(
     () =>
       tokenAccount
-        ? getAccountCurrency(tokenAccount)
+        ? getDomainCurrencyForAccount(tokenAccount)
         : account
-          ? getAccountCurrency(account)
+          ? getDomainCurrencyForAccount(account)
           : null,
     [tokenAccount, account],
   );
@@ -98,7 +99,7 @@ const AccountCrumb = () => {
 
   const renderItem = useCallback(
     ({ item, isActive }: { item: ItemShape; isActive: boolean }) => {
-      const currency = getAccountCurrency(item.account);
+      const currency = getDomainCurrencyForAccount(item.account);
       const name = accountNameWithDefaultSelector(walletState, item.account);
       return (
         <Item key={item.key} isActive={isActive}>
@@ -236,7 +237,10 @@ const AccountCrumb = () => {
                 <Box flex={1} shrink horizontal>
                   <TextLink shrink>
                     {account && (
-                      <CryptoCurrencyIcon size={20} currency={getAccountCurrency(account)} />
+                      <CryptoCurrencyIcon
+                        size={20}
+                        currency={getDomainCurrencyForAccount(account)}
+                      />
                     )}
                     <Button
                       onClick={() => {

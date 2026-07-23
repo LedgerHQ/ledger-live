@@ -18,6 +18,7 @@ import ExternalLink from "~/renderer/icons/ExternalLink";
 import { openURL } from "~/renderer/linking";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 const CurNameToken = styled(Text).attrs(() => ({
   ff: "Inter|Bold",
   fontSize: 2,
@@ -65,7 +66,7 @@ const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader(
   account,
   parentAccount,
 }: Props) {
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const getContract = () =>

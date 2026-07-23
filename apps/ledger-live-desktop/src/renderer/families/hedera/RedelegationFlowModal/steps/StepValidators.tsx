@@ -18,6 +18,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import TranslatedError from "~/renderer/components/TranslatedError";
 import ValidatorsSelect from "~/renderer/families/hedera/shared/staking/ValidatorsSelect";
 import AmountField from "../../shared/staking/AmountField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "../types";
 
 function StepValidators({
@@ -56,7 +57,9 @@ function StepValidators({
 
   return (
     <Box flow={4}>
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error && <ErrorBanner error={error} />}
       <Box>
         <Label mb={4}>

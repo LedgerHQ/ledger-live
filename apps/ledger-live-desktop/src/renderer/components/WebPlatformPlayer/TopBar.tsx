@@ -29,6 +29,7 @@ import { Icons } from "@ledgerhq/react-ui/assets/index";
 import Switch from "~/renderer/components/Switch";
 import { MobileView } from "~/renderer/hooks/useMobileView";
 import Input from "~/renderer/components/Input";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -327,7 +328,10 @@ export const TopBar = ({
                 </>
               ) : (
                 <>
-                  <CryptoCurrencyIcon currency={getAccountCurrency(currentAccount)} size={16} />
+                  <CryptoCurrencyIcon
+                    currency={getDomainCurrencyForAccount(currentAccount)}
+                    size={16}
+                  />
                   <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}

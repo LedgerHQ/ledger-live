@@ -4,6 +4,7 @@ import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import { currenciesSelector } from "~/renderer/reducers/accounts";
 import { useSelector } from "LLD/hooks/redux";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 /**
  * Renders the top banner alerts (clear cache, currency down status).
@@ -15,7 +16,10 @@ export const TopBannerAlerts = memo(function TopBannerAlerts() {
   return (
     <TopBannerContainer>
       <ClearCacheBanner />
-      <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
+      <CurrencyDownStatusAlert
+        currencies={currencies as CryptoOrTokenCurrency[]}
+        hideStatusIncidents
+      />
     </TopBannerContainer>
   );
 });

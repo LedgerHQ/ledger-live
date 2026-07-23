@@ -9,6 +9,7 @@ import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
 import { closeAllModal } from "~/renderer/actions/modals";
@@ -34,7 +35,9 @@ const StepAmount = ({
   return (
     <Box flow={4}>
       <TrackPage category="Sign Transaction Flow" name="Step Amount" />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error || warning
         ? !gasPriceError && (
             <Alert

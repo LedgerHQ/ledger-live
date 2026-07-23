@@ -21,6 +21,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import { hourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
@@ -100,8 +101,8 @@ const OperationRow = ({
     toExists,
   } = mappedSwapOperation;
   const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
-  const fromCurrency = getAccountCurrency(fromAccount);
-  const toCurrency = getAccountCurrency(toAccount);
+  const fromCurrency = getDomainCurrencyForAccount(fromAccount);
+  const toCurrency = getDomainCurrencyForAccount(toAccount);
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
   const { t } = useTranslation();
 

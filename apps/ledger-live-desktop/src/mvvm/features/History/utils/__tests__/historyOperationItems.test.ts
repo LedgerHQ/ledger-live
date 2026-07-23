@@ -1,4 +1,5 @@
 import type { Features } from "@shared/feature-flags";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   getAddressPoisoningFamiliesForFilter,
   getConfirmationsNbForCurrency,
@@ -67,13 +68,13 @@ describe("getConfirmationsNbForCurrency", () => {
             unit: bitcoinCurrency.units[0],
           },
         },
-        bitcoinCurrency,
+        bitcoinCurrency as CryptoCurrency,
       ),
     ).toBe(7);
   });
 
   it("falls back to currency defaults when settings are missing", () => {
-    const n = getConfirmationsNbForCurrency({}, bitcoinCurrency);
+    const n = getConfirmationsNbForCurrency({}, bitcoinCurrency as CryptoCurrency);
     expect(typeof n).toBe("number");
     expect(Number.isFinite(n)).toBe(true);
   });

@@ -8,6 +8,8 @@ import {
 } from "@ledgerhq/live-common/families/aleo/constants";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
@@ -44,11 +46,16 @@ describe("getAleoCurrencyConfig", () => {
   it("uses parentCurrency when passed a TokenCurrency", () => {
     mockGetCurrencyConfiguration.mockReturnValue(mockAleoCoinConfig);
 
-    // @ts-expect-error - not all fields are needed for this test
-    const tokenCurrency: TokenCurrency = {
-      type: "TokenCurrency",
-      parentCurrencyId: "aleo",
-    };
+    const tokenCurrency = {
+      type: "TokenCurrency" as const,
+      id: TokenCurrencyIdSchema.parse("aleo/arc22/test"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("aleo"),
+      contractAddress: "token.aleo",
+      tokenType: "arc22",
+      name: "test",
+      ticker: "TST",
+      units: [],
+    } satisfies TokenCurrency;
 
     const result = getAleoCurrencyConfig(tokenCurrency);
 

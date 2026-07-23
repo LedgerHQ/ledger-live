@@ -63,7 +63,7 @@ export const generateRandomAccounts = (count: number): [Account, AccountUserData
     .fill(null)
     .map(() => {
       const currency = getRandomCurrency();
-      return createAccount(currency);
+      return createAccount(currency as CryptoCurrency);
     });
 };
 

@@ -5,7 +5,6 @@ import {
   useSwapTransactionStatusDisplayViewModel,
   type SwapTransactionStatusTransactionExplorerBuilder,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useSelector } from "LLD/hooks/redux";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -32,7 +31,7 @@ export function useSwapTransactionStatusViewModel(params: SwapTransactionStatusP
 export type SwapTransactionStatusViewModel = ReturnType<typeof useSwapTransactionStatusViewModel>;
 
 function useDesktopTransactionExplorerBuilder(
-  currency: CryptoCurrency | undefined,
+  currency: { family?: string } | undefined,
 ): SwapTransactionStatusTransactionExplorerBuilder | undefined {
   return useLLDCoinFamily(currency?.family).getTransactionExplorer;
 }

@@ -31,7 +31,7 @@ export function buildPlaceholderAssetItemsFromAssetsData(
 
     const ticker = assetsData.cryptoAssets[id]?.ticker?.toUpperCase() ?? "";
     const { id: marketId } = assetsData.markets?.[currency.id] ?? {};
-    const item = toPlaceholderItem(currency, marketId ?? id);
+    const item = toPlaceholderItem(currency as CryptoOrTokenCurrency, marketId ?? id);
 
     if (stablecoinTickers.has(ticker)) {
       stablecoins.push(item);

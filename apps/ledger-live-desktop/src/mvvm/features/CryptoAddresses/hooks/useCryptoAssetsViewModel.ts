@@ -27,6 +27,7 @@ import {
   type AssetsPageCategory,
 } from "LLD/features/Assets/constants";
 import type { AssetTableItem } from "LLD/features/Assets/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoAssetsViewModel } from "../types";
 import { track } from "~/renderer/analytics/segment";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
@@ -83,19 +84,31 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
 
   const items = useMemo((): AssetTableItem[] => {
     if (category === ASSETS_PAGE_CATEGORY_STOCKS) {
-      return categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false }));
+      return categorizedAssets.stocks.map(item => ({
+        ...item,
+        isPlaceholder: false,
+        currency: item.currency as CryptoOrTokenCurrency,
+      }));
     }
     if (category === ASSETS_PAGE_CATEGORY_CRYPTOS) {
       if (isEmptyState) {
         return padItems([], resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
       }
-      const real = categorizedAssets.cryptos.map(item => ({ ...item, isPlaceholder: false }));
+      const real = categorizedAssets.cryptos.map(item => ({
+        ...item,
+        isPlaceholder: false,
+        currency: item.currency as CryptoOrTokenCurrency,
+      }));
       return padItems(real, resolvedDefaults.cryptos, EMPTY_STATE_CRYPTOS);
     }
     if (isEmptyState) {
       return padItems([], resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
     }
-    const real = categorizedAssets.stablecoins.map(item => ({ ...item, isPlaceholder: false }));
+    const real = categorizedAssets.stablecoins.map(item => ({
+      ...item,
+      isPlaceholder: false,
+      currency: item.currency as CryptoOrTokenCurrency,
+    }));
     return padItems(real, resolvedDefaults.stablecoins, EMPTY_STATE_STABLECOINS);
   }, [
     category,

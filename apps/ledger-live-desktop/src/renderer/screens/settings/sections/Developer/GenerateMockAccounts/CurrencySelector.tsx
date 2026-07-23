@@ -202,7 +202,7 @@ export default function CurrencySelector({
       >
         <SelectionDisplay
           selectedCount={selectedCount}
-          selectedCurrenciesList={selectedCurrenciesList}
+          selectedCurrenciesList={selectedCurrenciesList as Currency[]}
           placeholder={placeholder}
         />
         <AngleDown size={16} color={isOpen ? "neutral.c100" : "neutral.c70"} />
@@ -232,7 +232,7 @@ export default function CurrencySelector({
             filteredCurrencies.map(currency => (
               <CurrencyItemComponent
                 key={currency.id}
-                currency={currency}
+                currency={currency as Currency}
                 isSelected={selectedCurrencies[currency.id] || false}
                 onToggle={() => handleCurrencyToggle(currency.id)}
               />

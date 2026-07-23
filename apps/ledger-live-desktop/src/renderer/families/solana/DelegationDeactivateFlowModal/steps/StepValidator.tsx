@@ -12,6 +12,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import ValidatorRow from "../../shared/components/ValidatorRow";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
@@ -59,7 +60,7 @@ export default function StepValidator({
       <ValidatorRow
         disableHover
         active
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         validator={validator}
         unit={unit}
       />

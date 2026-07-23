@@ -1,10 +1,12 @@
-import { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
+import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 /** Router state hint so asset detail can resolve ledger id ≠ market id (e.g. xStocks). */
 export type AssetNavigationMarketState = Pick<MarketCurrencyData, "id" | "ledgerIds">;
 
-export type AssetTableItem = CategorizedAssetItem & {
+export type AssetTableItem = Omit<CategorizedAssetItem, "currency"> & {
+  currency: CryptoOrTokenCurrency;
   isPlaceholder: boolean;
   marketPrice?: number;
   marketId?: string;

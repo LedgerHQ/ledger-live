@@ -4,7 +4,12 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { NetworkListItem } from "../NetworkListItem";
 import type { ReactElement, ReactNode } from "react";
 
-type NetworkWithUI = CryptoOrTokenCurrency & {
+export type NetworkWithUI = {
+  type: "CryptoCurrency" | "TokenCurrency";
+  id: string;
+  parentCurrencyId?: string;
+  name: string;
+  ticker: string;
   description?: string;
   rightElement?: ReactNode;
   apy?: ReactElement;
@@ -18,10 +23,11 @@ type NetworkVirtualListProps = {
 export const NetworkVirtualList = ({ networks, onClick }: NetworkVirtualListProps) => {
   const renderNetworkItem = useCallback(
     (network: NetworkWithUI) => {
-      const networkId = network.type === "CryptoCurrency" ? network.id : network.parentCurrencyId;
+      const networkId =
+        network.type === "CryptoCurrency" ? network.id : (network.parentCurrencyId ?? network.id);
       return (
         <NetworkListItem
-          currency={network}
+          currency={network as CryptoOrTokenCurrency}
           description={network.description}
           rightElement={network.rightElement}
           apy={network.apy}

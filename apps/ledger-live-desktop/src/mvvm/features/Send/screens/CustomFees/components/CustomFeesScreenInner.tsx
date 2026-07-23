@@ -9,6 +9,7 @@ import {
 import { useStableGasOptions } from "@ledgerhq/live-common/flows/send/customFees/hooks/useStableGasOptions";
 import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { CustomFeesScreenInnerBase } from "./CustomFeesScreenInnerBase";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type CustomFeesScreenInnerProps = Readonly<{
   account: AccountLike;
@@ -31,7 +32,7 @@ export function CustomFeesScreenInner({
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
-  const currency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
+  const currency = useMemo(() => getDomainCurrencyForAccount(mainAccount), [mainAccount]);
   const stableTransaction = useStableGasOptions(transaction);
 
   useFlowEffects({

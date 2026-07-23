@@ -5,6 +5,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import Text from "~/renderer/components/Text";
 import Input from "~/renderer/components/Input";
 import { generateAccountsForCurrencies, injectMockAccounts, getSupportedCurrencies } from "./utils";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import CurrencySelector from "./CurrencySelector";
 import { Box, Flex } from "@ledgerhq/react-ui/index";
 
@@ -38,7 +39,7 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
     if (window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) {
       try {
         const currencies = getSupportedCurrencies().filter(c => selectedCurrencyIds.includes(c.id));
-        const accounts = generateAccountsForCurrencies(currencies, tokens);
+        const accounts = generateAccountsForCurrencies(currencies as CryptoCurrency[], tokens);
         await injectMockAccounts(accounts, true);
       } catch (error) {
         console.warn("Failed to generate mock accounts:", error);

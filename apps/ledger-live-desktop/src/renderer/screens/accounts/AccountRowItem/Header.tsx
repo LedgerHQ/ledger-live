@@ -9,6 +9,7 @@ import Tooltip from "~/renderer/components/Tooltip";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 type Props = {
   account: AccountLike;
   nested?: boolean;
@@ -21,7 +22,7 @@ const NestedIndicator = styled.div`
 `;
 const Header = ({ account, nested }: Props) => {
   const theme = useTheme();
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const name = useAccountName(account);
   const color = currency.type === "CryptoCurrency" ? currency.color : theme.colors.neutral.c70;
   const title = currency.type === "CryptoCurrency" ? currency.name : "token";

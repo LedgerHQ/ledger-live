@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import {
@@ -67,7 +68,7 @@ export function useModularDialogData() {
 
     return assetsSorted
       .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter(currency => currency !== undefined);
+      .filter(currency => currency !== undefined) as CryptoOrTokenCurrency[];
   }, [assetsSorted, data]);
 
   return {

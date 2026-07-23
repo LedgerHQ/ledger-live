@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   CantonAccount,
@@ -57,7 +58,7 @@ const Root = (props: {
       };
 
       handleTopologyChangeError(dispatch, {
-        currency: account.currency,
+        currency: account.currency as CryptoCurrency,
         device,
         mainAccount,
         useModularDrawer,

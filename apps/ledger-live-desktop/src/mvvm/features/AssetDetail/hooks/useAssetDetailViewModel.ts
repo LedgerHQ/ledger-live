@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   isMarketCurrencyData,
   resolveAssetDetailMarketInfo,
@@ -75,7 +76,8 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
 
   const marketFallback = resolveAssetDetailMarketInfo(marketCurrencyData, marketState);
 
-  const ledgerCurrency = distributionItem?.currency ?? ledgerCurrencyFromDada;
+  const ledgerCurrency = ((distributionItem?.currency as CryptoOrTokenCurrency | undefined) ??
+    ledgerCurrencyFromDada) as CryptoOrTokenCurrency | undefined;
   const ledgerIds = useMemo(() => {
     if (assetMarketLedgerIds?.length) return assetMarketLedgerIds;
     if (marketCurrencyData?.ledgerIds?.length) return marketCurrencyData.ledgerIds;

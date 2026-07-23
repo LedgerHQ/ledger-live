@@ -16,6 +16,7 @@ import { useAccountName } from "~/renderer/reducers/wallet";
 import AngleDown from "~/renderer/icons/AngleDown";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
 import CopyButton from "../Components/CopyButton";
@@ -170,7 +171,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={20} currency={account.currency} />
+              <CryptoCurrencyIcon size={20} currency={account.currency as CryptoCurrency} />
             </div>
             <Text ff="Inter" color="neutral.c100" fontSize={4} style={{ flex: 1 }}>
               {accountName}

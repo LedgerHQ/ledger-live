@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import { getDefaultValidator } from "@ledgerhq/live-common/families/hedera/utils";
@@ -34,7 +35,7 @@ const ValidatorsListField = ({ account, selectedValidatorNodeId, onChangeValidat
   const renderItem = (validator: HederaValidator) => {
     return (
       <ValidatorListItem
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         key={validator.nodeId}
         validator={validator}
         unit={unit}

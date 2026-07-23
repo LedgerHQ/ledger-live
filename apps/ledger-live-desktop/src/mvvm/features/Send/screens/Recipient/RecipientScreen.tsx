@@ -7,6 +7,7 @@ import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowConte
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../utils/tracking";
 import { RecipientAddressModal } from "./components/RecipientAddressModal";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export function RecipientScreen() {
   const { state, uiConfig } = useSendFlowData();
@@ -17,8 +18,8 @@ export function RecipientScreen() {
   const parentAccount = state.account.parentAccount ?? undefined;
 
   const currency: CryptoCurrency | TokenCurrency | null = useMemo(() => {
-    if (state.account.currency) return state.account.currency;
-    return account ? getAccountCurrency(account) : null;
+    if (state.account.currency) return state.account.currency as CryptoCurrency | TokenCurrency;
+    return account ? getDomainCurrencyForAccount(account) : null;
   }, [state.account.currency, account]);
 
   const trackingProperties = useMemo(

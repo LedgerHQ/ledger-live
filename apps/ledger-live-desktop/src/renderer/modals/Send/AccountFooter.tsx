@@ -14,6 +14,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Label from "~/renderer/components/Label";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useLLDCoinFamily } from "~/renderer/families";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -22,7 +24,7 @@ type Props = {
 };
 
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
@@ -65,7 +67,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
               style={{
                 lineHeight: "12px",
               }}
-              currency={feesCurrency}
+              currency={feesCurrency as CryptoOrTokenCurrency}
               value={status.estimatedFees}
               alwaysShowSign={false}
               alwaysShowValue

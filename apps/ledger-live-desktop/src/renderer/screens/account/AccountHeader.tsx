@@ -34,6 +34,7 @@ import IconCheck from "~/renderer/icons/Check";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type BaseComponentProps = BaseProps & { ff?: string };
 
@@ -170,7 +171,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   const [name, setName] = useState(storeAccountName);
   const [editingName, setEditingName] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const getContract = () =>

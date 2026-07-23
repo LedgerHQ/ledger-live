@@ -11,6 +11,7 @@ import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import Swap from "~/renderer/icons/Swap";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   isAvailable: boolean;
@@ -32,7 +33,7 @@ export default function AccountBalanceSummaryHeader({
   countervalueFirst,
   setCountervalueFirst,
 }: Props) {
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const unit = useAccountUnit(account);
   const cvUnit = counterValue.units[0];
   const data = [

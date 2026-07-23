@@ -12,6 +12,7 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
@@ -53,7 +54,7 @@ export const DefaultStepAmount = (props: StepProps) => {
         currencyName={currencyName}
         walletConnectSend={walletConnectProxy}
       />
-      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
       {error ? <ErrorBanner error={error} /> : null}
       <Fragment key={account.id}>
         <SpendableBanner

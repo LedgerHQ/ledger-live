@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -76,7 +77,7 @@ const OperationDetailsExtra = ({
               color="neutral.c70"
               date={operation.date}
               fontSize={3}
-              currency={account.currency}
+              currency={account.currency as CryptoCurrency}
               value={amount}
               subMagnitude={1}
               style={{

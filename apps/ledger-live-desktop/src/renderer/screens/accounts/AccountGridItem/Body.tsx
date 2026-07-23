@@ -9,6 +9,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -21,7 +22,7 @@ function Body({ account, range }: Props) {
     range,
   });
   const bgColor = useTheme().colors.background.card;
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const color = useCurrencyColor(currency, bgColor);
   return (
     <Box flow={4}>

@@ -11,6 +11,7 @@ import { track } from "~/renderer/analytics/segment";
 import { buildAssetsPagePath } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { ASSETS_PAGE_CATEGORY_STOCKS, MAX_STOCKS_TO_DISPLAY } from "LLD/features/Assets/constants";
 import type { AssetSectionData, AssetTableItem } from "LLD/features/Assets/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const TRACKING_SOURCE = "Portfolio";
 
@@ -27,7 +28,12 @@ export function usePortfolioStocksViewModel(): PortfolioStocksViewModelResult {
   const { categorizedAssets, isLoadingStocks, isStocksError } = useCategorizedAssetsFromPortfolio();
 
   const items = useMemo<AssetTableItem[]>(
-    () => categorizedAssets.stocks.map(item => ({ ...item, isPlaceholder: false })),
+    () =>
+      categorizedAssets.stocks.map(item => ({
+        ...item,
+        currency: item.currency as CryptoOrTokenCurrency,
+        isPlaceholder: false,
+      })),
     [categorizedAssets.stocks],
   );
 

@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -99,7 +100,7 @@ const StepVote = ({
         {mappedVotes.map(({ vote, validatorGroup }) => {
           return (
             <ActivateValidatorGroupRow
-              currency={account.currency}
+              currency={account.currency as CryptoCurrency}
               active={transaction.recipient === validatorGroup.address}
               onClick={() => onChange(validatorGroup.address)}
               key={validatorGroup.address}

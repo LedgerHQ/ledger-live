@@ -36,6 +36,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 function getURLFeesInfo({
   op,
@@ -127,7 +128,7 @@ const OperationDetailsExtra = ({
   account,
 }: OperationDetailsExtraProps<CosmosAccount, CosmosOperation>) => {
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;

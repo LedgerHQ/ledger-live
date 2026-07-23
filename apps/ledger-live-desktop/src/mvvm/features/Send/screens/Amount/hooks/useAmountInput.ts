@@ -20,6 +20,8 @@ import {
 } from "@ledgerhq/live-common/flows/send/amount/utils/amountInput";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import { syncAmountInputs } from "@ledgerhq/live-common/flows/send/amount/utils/amountInputSync";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 
 type UseAmountInputParams = Readonly<{
   account: AccountLike;
@@ -39,7 +41,7 @@ export function useAmountInput({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
 
-  const accountCurrency = useMemo(() => getAccountCurrency(account), [account]);
+  const accountCurrency = useMemo(() => getDomainCurrencyForAccount(account), [account]);
   const accountUnit = useMaybeAccountUnit(account) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
 
@@ -92,7 +94,9 @@ export function useAmountInput({
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
-    inputMode === "fiat" ? (counterValueCurrency.symbol ?? fiatUnit.code) : accountUnit.code;
+    inputMode === "fiat"
+      ? ((counterValueCurrency as FiatCurrency).symbol ?? fiatUnit.code)
+      : accountUnit.code;
   const currencyPosition: "left" | "right" = inputMode === "fiat" ? "left" : "right";
 
   const secondaryValue = useMemo(() => {

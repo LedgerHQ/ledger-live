@@ -208,7 +208,7 @@ const StorageBar = ({
                     installing={installQueue.includes(name) || uninstallQueue.includes(name)}
                     color={getAppStorageBarColor({
                       name,
-                      currency,
+                      currency: currency as CryptoCurrency | undefined | null,
                     })}
                     ratio={blocks / distribution.appsSpaceBlocks}
                   >

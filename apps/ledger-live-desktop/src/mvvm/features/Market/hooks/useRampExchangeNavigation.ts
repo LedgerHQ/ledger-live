@@ -2,11 +2,8 @@ import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import {
-  flattenAccounts,
-  getAccountCurrency,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildBuyNavigationState, type BuyNavigationOnRampState } from "../utils/buyNavigation";
@@ -78,7 +75,7 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
           onSuccess: (account, parentAccount) => {
             navigate("/exchange", {
               state: buildRampNavigationState(kind, {
-                ledgerCurrency: getAccountCurrency(account),
+                ledgerCurrency: getDomainCurrencyForAccount(account),
                 account,
                 parentAccount,
                 returnTo: location.pathname,
@@ -127,7 +124,7 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
         onSuccess: (account, parentAccount) => {
           navigate("/exchange", {
             state: buildRampNavigationState(kind, {
-              ledgerCurrency: getAccountCurrency(account),
+              ledgerCurrency: getDomainCurrencyForAccount(account),
               account,
               parentAccount,
               returnTo: location.pathname,

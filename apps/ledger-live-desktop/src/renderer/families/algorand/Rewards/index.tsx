@@ -14,6 +14,7 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { AlgorandFamily } from "../types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type AccountBodyHeader = NonNullable<AlgorandFamily["AccountBodyHeader"]>;
 
@@ -26,7 +27,7 @@ const RewardsSection = ({
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { rewards } = mainAccount.algorandResources || {};
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const unit = useAccountUnit(account);
   const dispatch = useDispatch();
   const onRewardsClick = useCallback(() => {

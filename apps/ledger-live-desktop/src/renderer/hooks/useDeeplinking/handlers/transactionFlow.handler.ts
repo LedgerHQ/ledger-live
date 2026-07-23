@@ -3,6 +3,7 @@ import {
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -118,10 +119,13 @@ async function handleTransactionFlow(
     return;
   }
 
-  const matchingAccounts = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+  const matchingAccounts = getAccountsOrSubAccountsByCurrency(
+    foundCurrency as CryptoOrTokenCurrency,
+    accounts || [],
+  );
 
   if (!matchingAccounts.length) {
-    openAddAccountFlow(foundCurrency, openModalWithAccount);
+    openAddAccountFlow(foundCurrency as CryptoOrTokenCurrency, openModalWithAccount);
     return;
   }
 

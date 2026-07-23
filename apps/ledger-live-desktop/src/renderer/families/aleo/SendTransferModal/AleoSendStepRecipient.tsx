@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -34,13 +35,15 @@ export const AleoSendStepRecipient = ({
 
   const isTokenAccount = account.type === "TokenAccount";
   const mainAccount = getMainAccount(account, parentAccount);
-  const config = getAleoCurrencyConfig(mainAccount.currency);
+  const config = getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency);
 
   return (
     <Box flow={4}>
       <TrackPage category="Aleo Send Flow" name="Step Recipient" currencyName={currencyName} />
       <>
-        {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+        {mainAccount ? (
+          <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+        ) : null}
         {error ? <ErrorBanner error={error} /> : null}
         {status.errors?.sender ? (
           <div data-testid="sender-error-container">

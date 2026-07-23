@@ -22,6 +22,7 @@ import {
   AWAIT_DELEGATION_SYNC_PRIORITY,
   MAX_AWAIT_DELEGATION_POLLS,
 } from "../constants";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 
 const StepAmount = ({
@@ -106,7 +107,7 @@ const StepAmount = ({
         action="stake"
         currency="xtz"
       />
-      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
       {error ? <ErrorBanner error={error} /> : null}
       <Fragment key={account.id}>
         <SpendableBanner

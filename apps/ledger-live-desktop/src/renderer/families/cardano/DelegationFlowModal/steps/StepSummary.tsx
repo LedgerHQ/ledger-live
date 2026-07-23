@@ -14,6 +14,7 @@ import BigNumber from "bignumber.js";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -31,7 +32,7 @@ function StepSummary(props: StepProps) {
 
   const { estimatedFees, warnings } = status;
   const { feeTooHigh } = warnings;
-  const feesCurrency = getAccountCurrency(account);
+  const feesCurrency = getDomainCurrencyForAccount(account);
   const showDeposit = !account.cardanoResources?.delegation?.status;
   const stakeKeyDeposit = transaction.protocolParams.stakeKeyDeposit;
   return (

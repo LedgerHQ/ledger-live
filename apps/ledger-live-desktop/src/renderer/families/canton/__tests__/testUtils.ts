@@ -4,12 +4,13 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {
-    id: "canton_network",
+    id: CryptoCurrencyIdSchema.parse("canton_network"),
     name: "Canton",
     type: "CryptoCurrency",
     family: "canton",

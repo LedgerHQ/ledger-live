@@ -43,7 +43,11 @@ export function useConfirmationViewModel() {
   );
 
   const status = useMemo(
-    () => getConfirmationStatus(state.operation, state.account.currency),
+    () =>
+      getConfirmationStatus(
+        state.operation,
+        state.account.currency as CryptoCurrency | TokenCurrency | null,
+      ),
     [state.operation, state.account.currency],
   );
 

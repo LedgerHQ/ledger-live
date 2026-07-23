@@ -10,7 +10,7 @@ export function getAccountAssetsCurrencies(
   blacklistedTokenIds?: readonly string[],
 ): AccountAssetCurrency[] {
   if (account.type === "TokenAccount") {
-    return [account.token];
+    return [account.token as TokenCurrency];
   }
 
   const allSubs = listSubAccounts(account);
@@ -20,15 +20,15 @@ export function getAccountAssetsCurrencies(
     : allSubs;
 
   if (subs.length === 0) {
-    return [account.currency];
+    return [account.currency as CryptoCurrency];
   }
 
   const currencies: AccountAssetCurrency[] = [];
   if (!account.balance.isZero()) {
-    currencies.push(account.currency);
+    currencies.push(account.currency as CryptoCurrency);
   }
   for (const sub of subs) {
-    currencies.push(sub.token);
+    currencies.push(sub.token as TokenCurrency);
   }
   return currencies;
 }

@@ -86,7 +86,7 @@ class RecipientAddress extends PureComponent<Props, State> {
     Object.assign(rest, {
       fromQRCode: true,
     });
-    this.props.onChange(address, rest);
+    this.props.onChange(address, rest as OnChangeExtra);
     this.setState({
       qrReaderOpened: false,
     });

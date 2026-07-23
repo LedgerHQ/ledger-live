@@ -9,6 +9,7 @@ import { useDistribution } from "~/renderer/actions/general";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const PAGE_SIZE = 6;
 
@@ -30,7 +31,7 @@ export function useAllocationData(): AllocationViewProps {
       distribution.list
         .filter(item => !blacklistedTokenIds.includes(item.currency.id))
         .map(item => ({
-          currency: item.currency,
+          currency: item.currency as CryptoOrTokenCurrency,
           balance: item.amount,
           distribution: Math.floor((item.distribution ?? 0) * 10000) / 100,
         })),

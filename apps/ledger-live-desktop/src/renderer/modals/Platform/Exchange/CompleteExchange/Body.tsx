@@ -159,7 +159,7 @@ const Body = ({
   );
 
   const tokenCurrency: TokenCurrency | undefined =
-    account.type === "TokenAccount" ? account.token : undefined;
+    account.type === "TokenAccount" ? (account.token as TokenCurrency) : undefined;
 
   const sourceCurrency = useMemo(() => {
     if ("fromAccount" in exchange) {
@@ -304,8 +304,8 @@ const Body = ({
         swapId,
         toAccount,
         magnitudeAwareRate,
-        sourceCurrency,
-        targetCurrency,
+        sourceCurrency: sourceCurrency as CryptoOrTokenCurrency | null,
+        targetCurrency: targetCurrency as CryptoOrTokenCurrency | null,
       });
 
       const isSwapTransaction = exchangeMode === "swap";

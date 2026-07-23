@@ -9,6 +9,7 @@ import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settin
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useCounterValueCellViewModel } from "LLD/components/Cells/CounterValueCell/useCounterValueCellViewModel";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export type AddressListItemViewModel = Readonly<{
   displayName: string;
@@ -29,7 +30,7 @@ export function useAddressListItemViewModel(
 ): AddressListItemViewModel {
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const parentAccount =
     account.type === "TokenAccount" ? lookupParentAccount(account.parentId) : undefined;
   const networkCurrency =

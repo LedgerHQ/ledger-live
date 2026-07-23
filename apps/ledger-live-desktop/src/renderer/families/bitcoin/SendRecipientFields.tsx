@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { PendingOperation } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { BitcoinAccount } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -37,7 +38,7 @@ const m = connect(
     props: { account: BitcoinAccount; parentAccount: BitcoinAccount | null | undefined },
   ) => {
     const confirmationsNb = confirmationsNbForCurrencySelector(state, {
-      currency: getMainAccount(props.account, props.parentAccount).currency,
+      currency: getMainAccount(props.account, props.parentAccount).currency as CryptoCurrency,
     });
     return {
       ...props,

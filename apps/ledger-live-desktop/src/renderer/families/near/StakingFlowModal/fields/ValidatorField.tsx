@@ -10,6 +10,7 @@ import ValidatorSearchInput, {
 import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "~/renderer/families/near/shared/components/ValidatorRow";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
@@ -28,7 +29,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const renderItem = (validator: NearValidatorItem) => {
     return (
       <ValidatorRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         key={validator.validatorAddress}
         validator={validator}
         unit={unit}

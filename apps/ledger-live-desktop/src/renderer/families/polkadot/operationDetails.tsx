@@ -3,6 +3,7 @@ import startCase from "lodash/startCase";
 import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Currency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { OperationType } from "@ledgerhq/types-live";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
@@ -66,7 +67,7 @@ export const OperationDetailsValidators = ({
   account,
   isTransactionField,
 }: OperationDetailsValidatorsProps) => {
-  const { currency } = account;
+  const currency = account.currency as CryptoCurrency;
   const { validators: polkadotValidators } = usePolkadotPreloadData();
   const mappedValidators = useMemo(
     () =>
@@ -112,7 +113,7 @@ export const OperationDetailsRewardFrom = ({
   validatorStash,
   account,
 }: OperationDetailsRewardFromProps) => {
-  const { currency } = account;
+  const currency = account.currency as CryptoCurrency;
   const { validators: polkadotValidators } = usePolkadotPreloadData();
   const validator = useMemo(
     () => polkadotValidators.find(v => v.address === validatorStash),

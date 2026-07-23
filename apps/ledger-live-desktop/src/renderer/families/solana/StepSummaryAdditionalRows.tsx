@@ -7,6 +7,7 @@ import {
   SolanaTokenAccount,
   TransferFeeCalculated,
 } from "@ledgerhq/live-common/families/solana/types";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, getMainAccount } from "@ledgerhq/live-common/account/index";
 import Text from "~/renderer/components/Text";
@@ -81,7 +82,7 @@ function TransferFeeAdditionalRows({
             <CounterValue
               color="neutral.c70"
               fontSize={3}
-              currency={tokenAccount.token}
+              currency={tokenAccount.token as TokenCurrency}
               value={new BigNumber(transferFees.transferFee)}
               alwaysShowSign={false}
               alwaysShowValue

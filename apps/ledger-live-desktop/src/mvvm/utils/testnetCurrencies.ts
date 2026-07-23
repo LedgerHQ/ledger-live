@@ -5,7 +5,7 @@ import uniqBy from "lodash/uniqBy";
 export const getTestnetCurrencies = (
   currencies?: CryptoOrTokenCurrency[],
 ): CryptoOrTokenCurrency[] => {
-  const currenciesToFilter = currencies || listSupportedCurrencies();
+  const currenciesToFilter = currencies || (listSupportedCurrencies() as CryptoOrTokenCurrency[]);
 
   return currenciesToFilter.filter(
     currency => currency.type === "CryptoCurrency" && currency.isTestnetFor,

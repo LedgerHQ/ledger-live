@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -81,14 +82,14 @@ const onboardedStateWithAccounts = {
 function makeItems(count: number): CategorizedAssetItem[] {
   return Array.from({ length: count }, (_, i) => ({
     ...BITCOIN_ASSET,
-    currency: { ...BITCOIN_ASSET.currency, id: `crypto-${i}` },
+    currency: { ...BITCOIN_ASSET.currency, id: `crypto-${i}` } as CryptoOrTokenCurrency,
   }));
 }
 
 function makeStablecoinItems(count: number): CategorizedAssetItem[] {
   return Array.from({ length: count }, (_, i) => ({
     ...STABLECOIN_ASSET,
-    currency: { ...STABLECOIN_ASSET.currency, id: `stablecoin-${i}` },
+    currency: { ...STABLECOIN_ASSET.currency, id: `stablecoin-${i}` } as CryptoOrTokenCurrency,
   }));
 }
 
@@ -132,7 +133,7 @@ function buildMockAssetsData(
 function item(id: string, placeholder = false): AssetTableItem {
   return {
     ...BITCOIN_ASSET,
-    currency: { ...BITCOIN_ASSET.currency, id },
+    currency: { ...BITCOIN_ASSET.currency, id } as CryptoOrTokenCurrency,
     isPlaceholder: placeholder,
   };
 }
@@ -193,7 +194,11 @@ describe("padItems", () => {
 describe("buildPlaceholderAssetItemsFromAssetsData", () => {
   it("classifies tickers present in stablecoinTickers as stablecoin placeholders", () => {
     const data = buildMockAssetsData([
-      { id: STABLECOIN_ASSET.currency.id, ticker: "USDC", currencyObj: STABLECOIN_ASSET.currency },
+      {
+        id: STABLECOIN_ASSET.currency.id,
+        ticker: "USDC",
+        currencyObj: STABLECOIN_ASSET.currency as CryptoOrTokenCurrency,
+      },
     ]);
     const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(
       data,
@@ -208,7 +213,11 @@ describe("buildPlaceholderAssetItemsFromAssetsData", () => {
 
   it("classifies tickers not in stablecoinTickers as crypto placeholders", () => {
     const data = buildMockAssetsData([
-      { id: BITCOIN_ASSET.currency.id, ticker: "BTC", currencyObj: BITCOIN_ASSET.currency },
+      {
+        id: BITCOIN_ASSET.currency.id,
+        ticker: "BTC",
+        currencyObj: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
+      },
     ]);
     const { cryptos, stablecoins } = buildPlaceholderAssetItemsFromAssetsData(data, new Set());
 
@@ -283,7 +292,11 @@ describe("useAssetsViewModel", () => {
 
   it("should navigate to /asset when onItemClick is called with a real item", () => {
     const { result } = renderHook(() => useAssetsViewModel());
-    const realItem: AssetTableItem = { ...BITCOIN_ASSET, isPlaceholder: false };
+    const realItem: AssetTableItem = {
+      ...BITCOIN_ASSET,
+      currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
+      isPlaceholder: false,
+    };
 
     act(() => {
       result.current.sections[0].onItemClick(realItem);
@@ -296,6 +309,7 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
+      currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
       isPlaceholder: true,
       marketId: "bitcoin",
     };
@@ -311,6 +325,7 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
+      currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
       isPlaceholder: true,
       marketId: "urn:crypto:meta-currency:ethereum",
     };
@@ -326,6 +341,7 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
+      currency: BITCOIN_ASSET.currency as CryptoOrTokenCurrency,
       isPlaceholder: true,
       marketId: "urn:crypto:meta-currency:usd_coin",
     };
@@ -341,7 +357,10 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
-      currency: { ...BITCOIN_ASSET.currency, id: "ethereum/erc20/usd_tether__erc20_" },
+      currency: {
+        ...BITCOIN_ASSET.currency,
+        id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
+      } as CryptoOrTokenCurrency,
       isPlaceholder: true,
     };
 
@@ -358,7 +377,10 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
-      currency: { ...BITCOIN_ASSET.currency, id: "ethereum/erc20/usd_tether__erc20_" },
+      currency: {
+        ...BITCOIN_ASSET.currency,
+        id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
+      } as CryptoOrTokenCurrency,
       isPlaceholder: true,
       marketId: "tether",
     };
@@ -652,7 +674,9 @@ describe("useCryptoAssetsViewModel", () => {
   it("navigates to the market page when a placeholder row is activated", () => {
     const usdc = STABLECOIN_ASSET.currency;
     mockUseAssetsData.mockReturnValue({
-      data: buildMockAssetsData([{ id: usdc.id, ticker: "USDC", currencyObj: usdc }]),
+      data: buildMockAssetsData([
+        { id: usdc.id, ticker: "USDC", currencyObj: usdc as CryptoOrTokenCurrency },
+      ]),
       isLoading: false,
     });
     mockUseCategorizedAssetsFromPortfolio.mockReturnValue({

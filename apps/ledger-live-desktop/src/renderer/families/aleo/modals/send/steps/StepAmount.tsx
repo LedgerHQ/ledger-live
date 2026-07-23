@@ -9,6 +9,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import QuickAmountSelector from "../../../shared/QuickAmountSelector";
 import InfoBanner from "../../../shared/InfoBanner";
@@ -38,7 +39,7 @@ const StepAmount = (props: StepProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "main account required");
 
-  const currencyConfig = getAleoCurrencyConfig(mainAccount.currency);
+  const currencyConfig = getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency);
   const isAutoPickingStrategy =
     currencyConfig?.recordPickingStrategy === "auto" &&
     isAleoTransaction(transaction) &&
@@ -59,7 +60,7 @@ const StepAmount = (props: StepProps) => {
         currencyName={currencyName}
         walletConnectSend={walletConnectProxy}
       />
-      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
       {error ? <ErrorBanner error={error} /> : null}
       <Fragment key={account.id}>
         {isAutoPickingStrategy ? (

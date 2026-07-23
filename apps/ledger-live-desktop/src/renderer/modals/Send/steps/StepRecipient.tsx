@@ -11,6 +11,7 @@ import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
 import SendRecipientFields, { getFields } from "../SendRecipientFields";
 import RecipientField from "../fields/RecipientField";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
@@ -158,7 +159,7 @@ const RecipientStepContent = ({
   onResetMaybeRecipient,
 }: RecipientStepContentProps) => (
   <>
-    <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+    <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
     {error ? <ErrorBanner error={error} /> : null}
     {status.errors?.sender ? <SenderErrorBanner error={status.errors.sender} /> : null}
 

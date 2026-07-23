@@ -10,6 +10,7 @@ import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Clock from "~/renderer/icons/Clock";
@@ -169,7 +170,7 @@ const SelectFeeStrategyKaspa = ({
             <FeesValue>
               {s.displayedAmount ? (
                 <CounterValue
-                  currency={feesCurrency}
+                  currency={feesCurrency as CryptoOrTokenCurrency}
                   value={amount.times(2)}
                   color={disabled ? "neutral.c40" : "neutral.c70"}
                   fontSize={3}

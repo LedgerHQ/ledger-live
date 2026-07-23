@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 import { getEnv } from "@ledgerhq/live-env";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
@@ -85,7 +86,11 @@ function AccountRow(props: Props) {
       isDisabled={isDisabled}
       onClick={isDisabled ? undefined : onClickToggleAccount}
     >
-      <CryptoCurrencyIconWithCount currency={account.currency} count={tokenCount} withTooltip />
+      <CryptoCurrencyIconWithCount
+        currency={getDomainCurrencyForAccount(account)}
+        count={tokenCount}
+        withTooltip
+      />
       <Box
         shrink
         grow

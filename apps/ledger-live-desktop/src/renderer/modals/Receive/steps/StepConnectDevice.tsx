@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -28,7 +29,9 @@ export default function StepConnectDevice({
   );
   return (
     <>
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       <DeviceAction
         action={action}
         request={request}

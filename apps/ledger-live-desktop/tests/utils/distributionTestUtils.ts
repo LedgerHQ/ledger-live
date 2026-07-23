@@ -1,6 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { DistributionItem } from "@ledgerhq/types-live";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 
 /**
  * Token currency for tests that need a stable `TokenCurrency` with a custom `id` (e.g. slashed ids)
@@ -13,9 +15,9 @@ export function makeIntegrationTokenCurrency(
 ): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id,
+    id: TokenCurrencyIdSchema.parse(id),
     contractAddress: `0x${id.replace(/\//g, "")}`,
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
     tokenType: "erc20",
     name,
     ticker,

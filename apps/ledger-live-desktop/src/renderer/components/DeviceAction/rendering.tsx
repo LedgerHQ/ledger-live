@@ -10,6 +10,7 @@ import { BigNumber } from "bignumber.js";
 
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -1410,12 +1411,16 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
 
   const unitFromExchange = currencySettingsLocaleSelector(
     stateSettings,
-    sourceAccountCurrency,
+    sourceAccountCurrency as CryptoOrTokenCurrency,
   ).unit;
-  const unitToExchange = currencySettingsLocaleSelector(stateSettings, targetAccountCurrency).unit;
+  const unitToExchange = currencySettingsLocaleSelector(
+    stateSettings,
+    targetAccountCurrency as CryptoOrTokenCurrency,
+  ).unit;
   const unitMainAccount = currencySettingsLocaleSelector(
     stateSettings,
-    getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
+    getMainAccount(exchange.fromAccount, exchange.fromParentAccount)
+      .currency as CryptoOrTokenCurrency,
   ).unit;
 
   const deviceSwapSummaryFields = Object.entries({
@@ -1466,7 +1471,9 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     sourceAccount: (
       <>
-        {sourceAccountCurrency && <CryptoCurrencyIcon currency={sourceAccountCurrency} size={25} />}
+        {sourceAccountCurrency && (
+          <CryptoCurrencyIcon currency={sourceAccountCurrency as CryptoOrTokenCurrency} size={25} />
+        )}
         <EllipsesTextStyled textTransform={"capitalize"} title={sourceAccountName}>
           {sourceAccountName}
         </EllipsesTextStyled>
@@ -1474,7 +1481,9 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
     ),
     targetAccount: (
       <>
-        {targetAccountCurrency && <CryptoCurrencyIcon currency={targetAccountCurrency} size={25} />}
+        {targetAccountCurrency && (
+          <CryptoCurrencyIcon currency={targetAccountCurrency as CryptoOrTokenCurrency} size={25} />
+        )}
         <EllipsesTextStyled textTransform={"capitalize"} title={targetAccountName}>
           {targetAccountName}
         </EllipsesTextStyled>

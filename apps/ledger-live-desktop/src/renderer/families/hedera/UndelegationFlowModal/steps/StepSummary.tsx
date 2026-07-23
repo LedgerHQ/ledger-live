@@ -11,6 +11,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "../types";
 import AmountField from "../../shared/staking/AmountField";
 import ValidatorsSelect from "../../shared/staking/ValidatorsSelect";
@@ -33,7 +34,9 @@ function StepSummary({
 
   return (
     <Box flow={4}>
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error && <ErrorBanner error={error} />}
       <Box>
         <Label mb={4}>

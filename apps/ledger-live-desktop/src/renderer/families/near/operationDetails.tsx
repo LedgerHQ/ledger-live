@@ -8,6 +8,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { Operation } from "@ledgerhq/types-live";
@@ -62,7 +63,7 @@ const OperationDetailsExtra = ({
               color="neutral.c70"
               date={operation.date}
               fontSize={3}
-              currency={account.currency}
+              currency={account.currency as CryptoCurrency}
               value={amount}
               subMagnitude={1}
               style={{

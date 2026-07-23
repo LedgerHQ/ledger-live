@@ -26,6 +26,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { useAccountUnit } from "../hooks/useAccountUnit";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useAccountName, walletSelector } from "../reducers/wallet";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
@@ -65,7 +66,7 @@ type CustomOption = {
 
 const defaultFilter = createFilter({
   stringify: ({ data: { account, accountName } }: CustomOption) => {
-    const currency = getAccountCurrency(account);
+    const currency = getDomainCurrencyForAccount(account);
     return `${currency.ticker}|${currency.name}|${accountName}`;
   },
 });
@@ -123,7 +124,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
   hideDerivationTag = false,
   singleLineLayout = true,
 }: AccountOptionProps) {
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const unit = useAccountUnit(account);
   const name = useAccountName(account);
   const nested = "TokenAccount" === account.type;

@@ -17,6 +17,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { StepProps } from "../Body";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
@@ -41,7 +42,7 @@ const TokenParentSelection = ({
   mainAccount: Account;
 }) => {
   const filterAccountSelect = useCallback(
-    (a: AccountLike) => getAccountCurrency(a).id === mainAccount.currency.id,
+    (a: AccountLike) => getDomainCurrencyForAccount(a).id === mainAccount.currency.id,
     [mainAccount],
   );
   return (
@@ -152,7 +153,9 @@ export default function StepAccount(props: Readonly<StepProps>) {
         name="Step 1"
         isTokenAdd={receiveTokenMode || account?.type === "TokenAccount"}
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoOrTokenCurrency]} />
+      ) : null}
       {accountError ? <ErrorBanner error={accountError} /> : null}
 
       {receiveTokenMode && mainAccount ? (

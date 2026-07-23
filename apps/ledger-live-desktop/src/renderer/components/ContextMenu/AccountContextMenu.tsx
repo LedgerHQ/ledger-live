@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -29,6 +30,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -61,7 +63,7 @@ export default function AccountContextMenu({
   const openSendFlow = useOpenSendFlow();
 
   const menuItems = useMemo(() => {
-    const currency = getAccountCurrency(account);
+    const currency = getDomainCurrencyForAccount(account);
     const mainAccount = getMainAccount(account, parentAccount);
     const family = mainAccount.currency.family;
     const items: ContextMenuItemType[] = [];
@@ -190,7 +192,7 @@ export default function AccountContextMenu({
         callback: () =>
           dispatch(
             openModal("MODAL_BLACKLIST_TOKEN", {
-              token: account.token,
+              token: account.token as TokenCurrency,
             }),
           ),
       });
@@ -212,7 +214,7 @@ export default function AccountContextMenu({
     refreshAccountsOrdering,
     location.pathname,
   ]);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   return (
     <ContextMenuItem
       event={account.type === "Account" ? "Account right click" : "Token right click"}

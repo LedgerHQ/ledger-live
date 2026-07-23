@@ -5,6 +5,7 @@ import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAsset
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { AssetsViewProps, AssetTableItem } from "../types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
 import {
@@ -123,7 +124,11 @@ export function useAssetsViewModel(): AssetsViewProps {
     const toRealItems = (items: typeof categorizedAssets.cryptos): AssetTableItem[] =>
       isEmptyState
         ? []
-        : items.slice(0, MAX_ITEM_DISPLAYED).map(item => ({ ...item, isPlaceholder: false }));
+        : items.slice(0, MAX_ITEM_DISPLAYED).map(item => ({
+            ...item,
+            isPlaceholder: false,
+            currency: item.currency as CryptoOrTokenCurrency,
+          }));
 
     return {
       paddedCryptos: padItems(

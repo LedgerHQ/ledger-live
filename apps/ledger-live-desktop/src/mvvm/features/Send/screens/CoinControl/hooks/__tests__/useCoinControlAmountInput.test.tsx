@@ -68,8 +68,8 @@ function buildParams(overrides?: {
   const currency = getCryptoCurrencyById("bitcoin");
   const account = createMockAccount({
     id: "bitcoin-account",
-    currency,
     ...overrides?.account,
+    currency: (overrides?.account?.currency as typeof currency | undefined) ?? currency,
   });
 
   (getMainAccount as jest.Mock).mockImplementation((acc: Account | unknown) => {

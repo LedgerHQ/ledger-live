@@ -30,6 +30,7 @@ import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const urlDelegationHelp = "https://support.ledger.com/article/360010653260-zd?redirect=false";
 
@@ -65,7 +66,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   const stakingPositions = useStakingPositions(account);
   const { unstakingPositions } = useTezosStakingInfo(account);
   const baker = useBaker(transaction.recipient);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const unit = useAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;

@@ -1,4 +1,5 @@
 import React from "react";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import styled from "styled-components";
 import { useTranslation, Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
@@ -127,7 +128,7 @@ const SelectFeeStrategy = ({
             <FeesValue>
               {s.displayedAmount ? (
                 <CounterValue
-                  currency={feesCurrency}
+                  currency={feesCurrency as CryptoOrTokenCurrency}
                   value={amount}
                   color={disabled ? "neutral.c40" : "neutral.c70"}
                   fontSize={3}

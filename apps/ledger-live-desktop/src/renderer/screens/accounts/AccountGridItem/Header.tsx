@@ -13,6 +13,7 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;
@@ -53,7 +54,7 @@ const Header = ({
   account: AccountLike;
   parentAccount: Account | undefined | null;
 }) => {
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const unit = useAccountUnit(account);
   const name = useAccountName(account);
   let title;

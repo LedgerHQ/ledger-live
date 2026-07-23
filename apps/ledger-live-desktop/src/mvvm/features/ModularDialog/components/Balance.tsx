@@ -2,6 +2,7 @@ import React from "react";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export const balanceItem = (balanceUI: BalanceUI) => {
   const { currency, balance, fiatValue } = balanceUI;
@@ -12,7 +13,12 @@ export const balanceItem = (balanceUI: BalanceUI) => {
   return (
     <div className="flex flex-col items-end gap-4">
       <span className="body-2-semi-bold">
-        <CounterValue currency={currency} value={balance} placeholder="-" color="inherit" />
+        <CounterValue
+          currency={currency as CryptoOrTokenCurrency}
+          value={balance}
+          placeholder="-"
+          color="inherit"
+        />
       </span>
       <span className="body-3 text-muted">
         <FormattedVal unit={currency.units[0]} val={balance} showCode color="inherit" />

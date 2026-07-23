@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
@@ -51,7 +52,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const renderItem = (validator: ValidatorsAppValidator) => {
     return (
       <ValidatorRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         active={chosenVoteAccAddr === validator.voteAccount}
         onClick={onChangeValidator}
         key={validator.voteAccount}

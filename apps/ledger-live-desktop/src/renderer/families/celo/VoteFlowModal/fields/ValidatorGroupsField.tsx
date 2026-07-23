@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -53,7 +54,7 @@ const ValidatorGroupsField = ({
   const renderItem = (validatorGroup: CeloValidatorGroup) => {
     return (
       <ValidatorGroupRow
-        currency={account.currency}
+        currency={account.currency as CryptoCurrency}
         active={chosenValidatorGroupAddress === validatorGroup.address}
         showStake={true}
         onClick={onChangeValidatorGroup}

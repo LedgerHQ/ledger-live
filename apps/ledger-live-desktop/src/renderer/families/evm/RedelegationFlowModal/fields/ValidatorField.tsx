@@ -5,6 +5,7 @@ import type {
   StakingAccount,
   StakingValidatorItem,
 } from "@ledgerhq/live-common/families/evm/staking/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import Box from "~/renderer/components/Box";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -57,7 +58,7 @@ export default function ValidatorField({
   const renderItem = (validator: StakingValidatorItem) => (
     <EvmFamilyValidatorRow
       key={validator.validatorAddress}
-      currency={account.currency}
+      currency={account.currency as CryptoCurrency}
       validator={validator}
       unit={unit}
       active={chosenVoteAccAddr === validator.validatorAddress}

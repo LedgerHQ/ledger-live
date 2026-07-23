@@ -12,6 +12,7 @@ import { useDistribution } from "~/renderer/actions/general";
 import { decodeRouteParam } from "LLD/features/AssetDetail/utils/decodeRouteParam";
 import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigation";
 import type { RightPanelViewModel } from "./types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const ASSET_PATH_PREFIX = "/asset/";
 
@@ -73,7 +74,7 @@ export const useRightPanelViewModel = ({
       : undefined;
 
     return buildSwapNavigationState({
-      defaultCurrency: currency,
+      defaultCurrency: currency as CryptoOrTokenCurrency,
       fromPath: pathname,
       account: preselectedAccount,
       parentAccount,

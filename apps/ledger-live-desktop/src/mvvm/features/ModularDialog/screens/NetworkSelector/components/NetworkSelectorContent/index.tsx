@@ -62,7 +62,7 @@ export const NetworkSelectorContent = ({
       },
     );
 
-    onNetworkSelected(network);
+    onNetworkSelected(network as CryptoOrTokenCurrency);
   };
 
   return <NetworkVirtualList networks={formattedNetworks} onClick={onClick} />;

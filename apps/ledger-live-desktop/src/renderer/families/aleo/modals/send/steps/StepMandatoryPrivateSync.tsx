@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { Flex, IconsLegacy, InfiniteLoader } from "@ledgerhq/react-ui";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { useAleoPrivateSync } from "../../../hooks/useAleoPrivateSync";
 import { getAleoCurrencyConfig } from "../../../shared/utils";
@@ -35,7 +36,9 @@ const StepMandatoryPrivateSync = ({
 }: StepProps) => {
   const { t } = useTranslation();
   const mainAccount = account ? getMainAccount(account, parentAccount ?? undefined) : null;
-  const config = mainAccount ? getAleoCurrencyConfig(mainAccount.currency) : undefined;
+  const config = mainAccount
+    ? getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency)
+    : undefined;
   const nextStep =
     !config || config.recordPickingStrategy === "manual" ? "record-picker" : "amount";
 

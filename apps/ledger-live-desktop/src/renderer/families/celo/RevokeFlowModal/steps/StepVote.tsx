@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
 import invariant from "invariant";
@@ -105,7 +106,7 @@ const StepVote = ({
               transaction.recipient === validatorGroup.address && transaction.index === vote.index;
             return (
               <RevokeVoteRow
-                currency={account.currency}
+                currency={account.currency as CryptoCurrency}
                 active={active}
                 onClick={() => onChange(validatorGroup.address, vote.index)}
                 key={validatorGroup.address + vote.index}

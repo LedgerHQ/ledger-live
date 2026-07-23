@@ -20,6 +20,7 @@ import {
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import uniq from "lodash/uniq";
@@ -78,6 +79,7 @@ import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateForm
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import { Divider } from "@ledgerhq/react-ui/index";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const mapStateToProps = (
   state: State,
@@ -111,7 +113,7 @@ const mapStateToProps = (
       : null;
   const confirmationsNb = mainCurrency
     ? confirmationsNbForCurrencySelector(state, {
-        currency: mainCurrency,
+        currency: mainCurrency as CryptoCurrency,
       })
     : 0;
   const operation = account ? findOperationInAccount(account, operationId) : null;
@@ -151,8 +153,8 @@ const OperationD = (props: Props) => {
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const name = useAccountName(mainAccount);
-  const currency = getAccountCurrency(account);
-  const mainCurrency = getAccountCurrency(mainAccount);
+  const currency = getDomainCurrencyForAccount(account);
+  const mainCurrency = getDomainCurrencyForAccount(mainAccount);
 
   const unit = useAccountUnit(account);
   const cryptoCurrency = mainAccount.currency;
@@ -386,7 +388,11 @@ const OperationD = (props: Props) => {
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
   const getDisplayFeeOverride = specific?.operationDetails?.getDisplayFee;
   const displayFee = useMemo(
-    () => (fee ? (getDisplayFeeOverride?.(operation, mainAccount, feesCurrency) ?? fee) : fee),
+    () =>
+      fee
+        ? (getDisplayFeeOverride?.(operation, mainAccount, feesCurrency as CryptoOrTokenCurrency) ??
+          fee)
+        : fee,
     [getDisplayFeeOverride, operation, mainAccount, feesCurrency, fee],
   );
 
@@ -561,7 +567,7 @@ const OperationD = (props: Props) => {
                     color="neutral.c70"
                     date={date}
                     fontSize={3}
-                    currency={feesCurrency}
+                    currency={feesCurrency as CryptoOrTokenCurrency}
                     value={displayFee}
                     subMagnitude={1}
                     style={{
@@ -658,7 +664,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName = getAccountCurrency(opAccount).name;
+              const subAccountName = getDomainCurrencyForAccount(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent
@@ -772,7 +778,7 @@ const OperationD = (props: Props) => {
           <DataList
             lines={uniqueSenders}
             t={t}
-            cryptoCurrency={cryptoCurrency}
+            cryptoCurrency={cryptoCurrency as CryptoCurrency}
             operation={operation}
           />
         </OpDetailsSection>
@@ -800,7 +806,7 @@ const OperationD = (props: Props) => {
             <DataList
               lines={recipients}
               t={t}
-              cryptoCurrency={cryptoCurrency}
+              cryptoCurrency={cryptoCurrency as CryptoCurrency}
               operation={operation}
             />
           </Box>

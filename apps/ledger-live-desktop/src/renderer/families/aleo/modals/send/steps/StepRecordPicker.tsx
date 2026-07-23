@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import React, { useMemo } from "react";
 import BigNumber from "bignumber.js";
@@ -214,7 +215,7 @@ const StepRecordPicker = ({ account, transaction, status, updateTransaction }: S
 
   const currency =
     account.type === "Account"
-      ? account.currency
+      ? (account.currency as CryptoCurrency)
       : getCryptoCurrencyById(account.token.parentCurrencyId);
   const config = getAleoCurrencyConfig(currency);
 

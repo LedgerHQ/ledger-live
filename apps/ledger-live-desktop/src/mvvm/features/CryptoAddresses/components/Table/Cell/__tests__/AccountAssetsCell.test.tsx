@@ -13,7 +13,7 @@ import { AccountAssetsCell } from "../AccountAssetsCell";
 
 const UNIQUE_CURRENCIES: AccountAssetCurrency[] = [
   ethereumCurrency,
-  usdcToken,
+  usdcToken as AccountAssetCurrency,
   bitcoinCurrency,
   arbitrumCurrency,
   solanaCurrency,
@@ -30,7 +30,9 @@ describe("AccountAssetsCell", () => {
   });
 
   it("shows a tooltip with all asset tickers on hover", async () => {
-    const { user } = render(<AccountAssetsCell currencies={[ethereumCurrency, usdcToken]} />);
+    const { user } = render(
+      <AccountAssetsCell currencies={[ethereumCurrency, usdcToken as AccountAssetCurrency]} />,
+    );
 
     await user.hover(screen.getByTestId("account-assets-cell"));
 

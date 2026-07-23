@@ -14,6 +14,7 @@ import {
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type FeeAssetSelectorProps = Readonly<{
   options: readonly FeeAssetUiOption[];
@@ -43,7 +44,10 @@ function FeeAssetSelectorComponent({
             <ListItemTrailing>
               <span className="flex items-center gap-8">
                 {selectedOption?.currency && (
-                  <CryptoCurrencyIcon currency={selectedOption.currency} size={16} />
+                  <CryptoCurrencyIcon
+                    currency={selectedOption.currency as CryptoOrTokenCurrency}
+                    size={16}
+                  />
                 )}
                 <span className="body-2-semi-bold text-base">{selectedOption?.ticker ?? ""}</span>
               </span>
@@ -69,7 +73,10 @@ function FeeAssetSelectorComponent({
               <span className="flex items-center gap-8">
                 {option.currency && (
                   <span data-testid={`send-fee-asset-icon-${option.id}`}>
-                    <CryptoCurrencyIcon currency={option.currency} size={24} />
+                    <CryptoCurrencyIcon
+                      currency={option.currency as CryptoOrTokenCurrency}
+                      size={24}
+                    />
                   </span>
                 )}
                 <span className="body-2-semi-bold text-base">{option.ticker}</span>

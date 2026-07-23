@@ -4,7 +4,6 @@ import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
@@ -38,7 +37,7 @@ describe("AccountBalanceSummaryFooter", () => {
       },
       currency: {
         id: "babylon",
-      } as unknown as CryptoCurrency,
+      },
     } as CosmosAccount;
 
     beforeEach(() => {
@@ -119,7 +118,7 @@ describe("AccountBalanceSummaryFooter", () => {
         },
         currency: {
           id: "crypto_org_croeseid",
-        } as unknown as CryptoCurrency,
+        },
       } as CosmosAccount;
 
       mockFormatCurrencyUnit(

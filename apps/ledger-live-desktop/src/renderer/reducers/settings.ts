@@ -775,7 +775,7 @@ export const unitForCurrencySelector = (
 
 export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
   if (account.type === "Account") {
-    return unitForCurrencySelector(state, account);
+    return unitForCurrencySelector(state, { currency: account.currency as CryptoCurrency });
   } else {
     return account.token.units[0];
   }

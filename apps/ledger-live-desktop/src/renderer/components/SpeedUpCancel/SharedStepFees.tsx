@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import React, { Fragment, ReactNode } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -35,7 +36,7 @@ export const SharedStepFees = ({
 }: SharedStepFeesProps) => {
   return (
     <Box flow={4}>
-      <CurrencyDownStatusAlert currencies={[account.currency]} />
+      <CurrencyDownStatusAlert currencies={[account.currency as CryptoCurrency]} />
       <Fragment key={accountId}>
         <SendAmountFields
           account={account}

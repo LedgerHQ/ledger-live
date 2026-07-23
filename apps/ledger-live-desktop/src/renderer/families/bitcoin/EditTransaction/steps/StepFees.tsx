@@ -1,4 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React, { Fragment, memo } from "react";
 import { useSelector } from "LLD/hooks/redux";
@@ -45,7 +46,7 @@ const StepFees = ({
 
   return (
     <Box flow={4}>
-      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
       <Fragment key={account.id}>
         <SendAmountFields
           account={mainAccount}

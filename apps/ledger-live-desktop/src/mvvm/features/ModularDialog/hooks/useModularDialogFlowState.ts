@@ -78,8 +78,9 @@ export function useModularDialogFlowState({
   const handleNetworkSelected = useCallback(
     (network: CryptoOrTokenCurrency) => {
       if (!providers) return;
-      const correspondingCurrency =
-        providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
+      const correspondingCurrency = (providers.networks.find(elem =>
+        belongsToSameNetwork(elem, network),
+      ) ?? network) as CryptoOrTokenCurrency;
 
       if (onAccountSelected) {
         goToAccountSelection(correspondingCurrency, network);
@@ -97,7 +98,7 @@ export function useModularDialogFlowState({
           !currencyIds || currencyIds.length === 0 || currencyIds.includes(elem.id);
 
         return isAcceptedCurrency(elem) && isAllowedByFilter;
-      });
+      }) as CryptoOrTokenCurrency[];
     },
     [isAcceptedCurrency, currencyIds],
   );
@@ -163,7 +164,7 @@ export function useModularDialogFlowState({
       const assetItem = assets[0];
 
       if (assetItem.networks.length > 0) {
-        const currency = assetItem.networks[0];
+        const currency = assetItem.networks[0] as CryptoOrTokenCurrency;
 
         handleAssetSelected(currency);
       }

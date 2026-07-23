@@ -24,7 +24,7 @@ const celoCurrency = {
   units: [{ name: "Celo", code: "CELO", magnitude: 18 }],
 } as CryptoCurrency;
 
-const usdtCurrency: TokenCurrency = {
+const usdtCurrency = {
   id: "celo/erc20/usdt",
   type: "TokenCurrency",
   parentCurrencyId: celoCurrency.id,
@@ -33,7 +33,7 @@ const usdtCurrency: TokenCurrency = {
   name: "Tether USD",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
-};
+} as TokenCurrency;
 
 const optionsWithIconsAndBalances: readonly FeeAssetUiOption[] = [
   {

@@ -5,11 +5,12 @@ import Label from "~/renderer/components/Label";
 import { CeloFamily } from "../types";
 import {
   findSubAccountById,
-  getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
@@ -27,8 +28,8 @@ const AccountFooter: NonNullable<CeloFamily["AccountFooter"]> = ({
         : undefined,
     [mainAccount, status.feeCurrencyAccountId],
   );
-  const currency = getAccountCurrency(feeCurrencyAccount ?? account);
-  const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount);
+  const currency = getDomainCurrencyForAccount(feeCurrencyAccount ?? account);
+  const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount) as CryptoOrTokenCurrency;
   const feesUnit = getFeesUnit(feesCurrency);
 
   return (

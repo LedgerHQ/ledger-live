@@ -12,6 +12,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
@@ -61,7 +62,7 @@ export default function AssetCrumb() {
       items.map(({ currency }) => ({
         key: currency.id,
         label: currency.name,
-        currency,
+        currency: currency as CryptoOrTokenCurrency,
       })),
     [],
   );
@@ -100,7 +101,10 @@ export default function AssetCrumb() {
         {({ isOpen }) =>
           activeItem ? (
             <TextLink>
-              <CryptoCurrencyIcon size={20} currency={activeItem.currency} />
+              <CryptoCurrencyIcon
+                size={20}
+                currency={activeItem.currency as CryptoOrTokenCurrency}
+              />
               <Button>{activeItem.currency.name}</Button>
               <AngleDown>
                 {isOpen ? <IconAngleUp size={16} /> : <IconAngleDown size={16} />}

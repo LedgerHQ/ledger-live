@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -59,7 +60,7 @@ const StepSummaryRecipientValue = ({ account, parentAccount, transaction }: Prop
       <Box horizontal alignItems="center" style={{ minWidth: 0 }}>
         {displayCurrency && (
           <RecipientIconWrapper>
-            <CryptoCurrencyIcon size={22} currency={displayCurrency} />
+            <CryptoCurrencyIcon size={22} currency={displayCurrency as CryptoOrTokenCurrency} />
           </RecipientIconWrapper>
         )}
         <Ellipsis ff="Inter" color="neutral.c100" fontSize={4} data-testid="recipient-address">

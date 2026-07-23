@@ -48,7 +48,7 @@ export default function Currencies() {
           value={currency}
           // Mayday we have a problem with <Select /> and its props
           onChange={handleChangeCurrency}
-          currencies={currencies}
+          currencies={currencies as CryptoOrTokenCurrency[]}
           placeholder={t("settings.currencies.selectPlaceholder")}
         />
       </Row>

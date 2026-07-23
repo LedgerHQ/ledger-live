@@ -31,6 +31,8 @@ import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -80,9 +82,9 @@ const StepSummary = (props: StepProps) => {
   const { estimatedFees, amount, totalSpent, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
 
-  const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount);
+  const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount) as CryptoOrTokenCurrency;
   const feesUnit = getFeesUnit(feesCurrency);
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =

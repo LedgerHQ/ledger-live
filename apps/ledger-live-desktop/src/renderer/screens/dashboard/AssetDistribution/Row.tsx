@@ -17,6 +17,7 @@ import { HIDE_BAR_THRESHOLD } from "./constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { DistributionItem } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type Props = {
   item: DistributionItem;
@@ -118,7 +119,9 @@ const Value = styled.div`
 
   ${valueResponsiveStyles}
 `;
-const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => {
+const Row = ({ item, isVisible }: Props) => {
+  const { amount, distribution } = item;
+  const currency = item.currency as CryptoOrTokenCurrency;
   const theme = useTheme();
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);

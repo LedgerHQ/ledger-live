@@ -22,6 +22,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   delegation: Delegation;
@@ -80,7 +81,7 @@ const CTA = styled.div`
 `;
 const Row = ({ account, parentAccount, delegation, stakingEnabled, delegatedAmount }: Props) => {
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const diffInDays = useMemo(() => {

@@ -9,6 +9,7 @@ import Button from "~/renderer/components/Button";
 import Label from "~/renderer/components/Label";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { StepProps } from "../types";
 import SelectAccount from "~/renderer/components/SelectAccount";
 const StepAccount = ({
@@ -33,7 +34,9 @@ const StepAccount = ({
         action="delegation"
         currency="xtz"
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
       <Box flow={1}>
         <Label>{t("delegation.flow.steps.account.toDelegate")}</Label>

@@ -15,6 +15,7 @@ import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -34,7 +35,7 @@ function StepSummary(props: StepProps) {
   const accountUnit = useMaybeAccountUnit(account);
   if (!account || !transaction || !account.cardanoResources.delegation) return null;
 
-  const feesCurrency = getAccountCurrency(account);
+  const feesCurrency = getDomainCurrencyForAccount(account);
   const stakeKeyDeposit = account.cardanoResources.delegation.deposit;
 
   return (

@@ -28,6 +28,8 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { useLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -73,8 +75,8 @@ const StepSummary = (props: StepProps) => {
   const { estimatedFees, amount, totalSpent, errors, warnings } = status;
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
-  const currency = getAccountCurrency(account);
-  const feesCurrency = getFeesCurrency(mainAccount);
+  const currency = getDomainCurrencyForAccount(account);
+  const feesCurrency = getFeesCurrency(mainAccount) as CryptoOrTokenCurrency;
   const feesUnit = getFeesUnit(feesCurrency);
 
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;

@@ -14,6 +14,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -42,7 +43,7 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
     return null;
   }
 
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
 
   return (
     <Box flow={4} mx={40}>

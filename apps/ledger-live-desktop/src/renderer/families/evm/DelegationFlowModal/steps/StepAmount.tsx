@@ -1,3 +1,4 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDelegationVisibilityDelayMinutes } from "@ledgerhq/live-common/families/evm/staking/logic";
@@ -38,7 +39,9 @@ const StepAmount = ({
         action="delegation"
         currency={account.currency.id}
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      {mainAccount ? (
+        <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+      ) : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && tx && mainAccount && (
         <Fragment key={account.id}>

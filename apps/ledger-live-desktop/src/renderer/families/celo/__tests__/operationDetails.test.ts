@@ -5,6 +5,7 @@ import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/ind
 import { NATIVE_FEE_CURRENCY_MARKER } from "@ledgerhq/live-common/families/celo/constants";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 
@@ -60,7 +61,7 @@ const buildToken = (
   id = "celo/erc20/test",
 ): TokenCurrency => ({
   type: "TokenCurrency",
-  id,
+  id: TokenCurrencyIdSchema.parse(id),
   contractAddress,
   parentCurrencyId: celo.id,
   tokenType: "erc20",

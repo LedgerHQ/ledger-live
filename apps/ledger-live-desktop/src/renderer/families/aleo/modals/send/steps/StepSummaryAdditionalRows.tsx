@@ -9,6 +9,7 @@ import Label from "~/renderer/components/Label";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Box from "~/renderer/components/Box";
 import type { BoxProps } from "~/renderer/components/Box/Box";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AleoFamily } from "../../../types";
 import { getAleoCurrencyConfig, isAleoTransaction } from "../../../shared/utils";
 
@@ -34,7 +35,7 @@ const StepSummaryAdditionalRows: NonNullable<AleoFamily["StepSummaryAdditionalRo
   const { t } = useTranslation();
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currencyConfig = getAleoCurrencyConfig(mainAccount.currency);
+  const currencyConfig = getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency);
   const isAutoPickingStrategy = currencyConfig?.recordPickingStrategy === "auto";
   if (
     !isAutoPickingStrategy ||

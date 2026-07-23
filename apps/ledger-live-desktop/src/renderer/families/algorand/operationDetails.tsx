@@ -28,6 +28,7 @@ import {
   OperationDetailsExtraProps,
 } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 const CellIcon = styled(Box)<{ index: number }>`
   flex: 1 0 50%;
@@ -59,7 +60,7 @@ const OperationDetailsExtra = ({
   operation,
 }: OperationDetailsExtraProps<AlgorandAccount, AlgorandOperation>) => {
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const { rewards, memo, assetId } = operation.extra;
   return (
     <>

@@ -11,6 +11,7 @@ import Star from "~/renderer/components/Stars/Star";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TableRow } from "./TableContainer";
 import { useAccountUnit } from "../hooks/useAccountUnit";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type Props = {
   account: AccountLike;
@@ -42,7 +43,7 @@ function TokenRow(props: Props) {
   const { account, parentAccount, onClick, range, nested, disableRounding } = props;
   const onClickRow = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const Row = nested ? NestedRow : TableRow;
   return (

@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "LLD/hooks/redux";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
@@ -63,7 +64,9 @@ export const useMarketCoin = () => {
 
   const { id } = currency || {};
 
-  const ledgerCurrency = assetData && selectCurrency(assetData);
+  const ledgerCurrency = (assetData && selectCurrency(assetData)) as
+    | CryptoOrTokenCurrency
+    | undefined;
 
   const {
     onBuy,

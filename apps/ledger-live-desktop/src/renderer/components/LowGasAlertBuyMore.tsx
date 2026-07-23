@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useLocation, useNavigate } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
@@ -61,7 +62,11 @@ const LowGasAlertBuyMore = ({
 
   if (!gasPriceError) return null;
   return (
-    <Flex onClick={isCurrencySupported("BUY", account.currency) ? onBuyClick : undefined}>
+    <Flex
+      onClick={
+        isCurrencySupported("BUY", account.currency as CryptoCurrency) ? onBuyClick : undefined
+      }
+    >
       <Alert type="warning" data-testid="insufficient-funds-warning">
         <TranslatedError error={gasPriceError} />
       </Alert>

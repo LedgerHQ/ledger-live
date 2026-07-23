@@ -33,7 +33,9 @@ describe("useHiddenBannerViewModel", () => {
   });
 
   it("reports a token as hidden when its currency.id is blacklisted", () => {
-    const { result } = renderViewModel(usdcToken, { blacklistedTokenIds: [usdcToken.id] });
+    const { result } = renderViewModel(usdcToken as CryptoOrTokenCurrency, {
+      blacklistedTokenIds: [usdcToken.id],
+    });
 
     expect(result.current.isHidden).toBe(true);
   });

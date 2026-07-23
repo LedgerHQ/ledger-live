@@ -11,6 +11,8 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import BalanceSelector from "../shared/BalanceSelector";
 import { applyAleoBalanceSourceChange, getAleoCurrencyConfig } from "../shared/utils";
 import { Trans } from "react-i18next";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 export const SelfTransferStepRecipient = ({
   t,
@@ -29,11 +31,11 @@ export const SelfTransferStepRecipient = ({
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const config = getAleoCurrencyConfig(mainAccount.currency);
+  const config = getAleoCurrencyConfig(mainAccount.currency as CryptoCurrency);
 
   // show only Aleo accounts
   const accountFilter = (acc: AccountLike) => {
-    return getAccountCurrency(acc).id === mainAccount.currency.id;
+    return getDomainCurrencyForAccount(acc).id === mainAccount.currency.id;
   };
 
   return (
@@ -44,7 +46,9 @@ export const SelfTransferStepRecipient = ({
         currencyName={currencyName}
       />
       <>
-        {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+        {mainAccount ? (
+          <CurrencyDownStatusAlert currencies={[mainAccount.currency as CryptoCurrency]} />
+        ) : null}
         {error ? <ErrorBanner error={error} /> : null}
         {status.errors?.sender ? (
           <div data-testid="sender-error-container">

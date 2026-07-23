@@ -51,6 +51,7 @@ import { useStake } from "LLD/hooks/useStake";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
+import { getDomainCurrencyForAccount } from "~/renderer/lib/getDomainCurrencyForAccount";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -141,7 +142,7 @@ const ActionItem = ({
 
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
   const navigate = useNavigate();
   const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const onWalletConnectLiveApp = useCallback(() => {
@@ -217,7 +218,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
-  const currency = getAccountCurrency(account);
+  const currency = getDomainCurrencyForAccount(account);
 
   const { isCurrencyAvailable } = useRampCatalog();
 

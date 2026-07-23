@@ -51,7 +51,7 @@ export default function BlacklistedTokens() {
     loadBlacklistedTokenSections(blacklistedTokenIds)
       .then(loadedSections => {
         if (mounted) {
-          setSections(loadedSections);
+          setSections(loadedSections as BlacklistedTokenSection[]);
         }
       })
       .catch(error => {
