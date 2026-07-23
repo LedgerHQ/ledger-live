@@ -11,7 +11,6 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 
 export type Props = {
@@ -28,7 +27,8 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isNotFoundEntityError =
-    error.message === "not found entity" || error instanceof FirmwareNotRecognized;
+    error.message === "not found entity" ||
+    (error as { name?: string })?.name === "FirmwareNotRecognized";
   const providerNumber = useEnv("FORCE_PROVIDER");
 
   const drawerAnalyticsName = `Error: ${
