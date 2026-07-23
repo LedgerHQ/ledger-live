@@ -43,11 +43,8 @@ export default class SwapPage extends CommonPage {
   async openViaDeeplink(params?: string) {
     const deeplinkPath = params ? `${this.baseLink}?${params}` : this.baseLink;
     await openDeeplink(deeplinkPath);
-    // checkVisibility: false — an ambiguous fromToken/toToken can surface a native
-    // "Select account" drawer on top of the webview before it's fully visible (iOS
-    // requires ~75% visible area; the drawer can cover it). Callers already assert
-    // visibility themselves afterward (expectSwapLiveApp/Form, drawer handling), so
-    // this only needs to confirm the webview exists in the tree.
+    // checkVisibility: false — an ambiguous token can open an account-picker drawer
+    // that covers the webview first; callers already check visibility themselves.
     await waitForElementById(app.common.walletApiWebview, undefined, { checkVisibility: false });
   }
 

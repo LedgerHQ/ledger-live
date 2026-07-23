@@ -85,11 +85,8 @@ export async function selectAccountMAD(selector: ModularDialog, account: Account
   await selector.selectAccountByName(account);
 }
 
-// Called after a deeplink that specifies a token but no accountId.
-// The live app requests account resolution via a native picker; this handles
-// both the modular dialog (Wallet 4.0+) and the legacy Electron drawer.
-// Uses a 30s wait for the modular dialog to accommodate cases where it appears
-// after a previous dialog (e.g. invalid-token drawer) was just closed.
+// Resolves the native account picker after a token-only deeplink: the modular
+// dialog (Wallet 4.0+) or the legacy drawer. 30s covers back-to-back dialogs.
 export async function selectAccountFromDeeplinkDrawer(app: Application, account: Account) {
   const isModularDialogVisible = await app.modularDialog.waitForAccountSelectionVisible(30_000);
   if (isModularDialogVisible) {

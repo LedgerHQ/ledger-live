@@ -9,9 +9,7 @@ import {
 import { swapSetup } from "../../../bridge/server";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 
-// On a fresh session (no prior swap), the live app defaults the send field
-// to the highest market-cap asset (BTC); the receive field has no default
-// and shows the "Choose asset" placeholder until a token is selected.
+// Fresh session: send defaults to BTC; receive has no default ("Choose asset").
 const DEFAULT_FROM = "BTC";
 const DEFAULT_TO = "";
 
