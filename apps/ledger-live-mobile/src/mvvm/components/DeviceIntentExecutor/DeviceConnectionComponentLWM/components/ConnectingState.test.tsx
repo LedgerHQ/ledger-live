@@ -4,7 +4,7 @@ import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen } from "~/analytics";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { ConnectingState } from "./ConnectingState";
 
@@ -35,11 +35,11 @@ describe("ConnectingState", () => {
 
   it("should render the connecting title", () => {
     render(
-      <SourceFlowProvider value="my_ledger">
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
         <ConnectingState
           state={{ type: ConnectDeviceUIStateTypes.Connecting, device: makeKnownDevice() }}
         />
-      </SourceFlowProvider>,
+      </DeviceIntentTrackingProvider>,
     );
 
     expect(screen.getByText("Loading")).toBeVisible();
@@ -51,9 +51,9 @@ describe("ConnectingState", () => {
 
     // WHEN
     render(
-      <SourceFlowProvider value="my_ledger">
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
         <ConnectingState state={{ type: ConnectDeviceUIStateTypes.Connecting, device }} />
-      </SourceFlowProvider>,
+      </DeviceIntentTrackingProvider>,
     );
 
     // THEN

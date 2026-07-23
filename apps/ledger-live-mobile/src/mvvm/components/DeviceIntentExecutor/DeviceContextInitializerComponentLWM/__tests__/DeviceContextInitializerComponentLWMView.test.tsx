@@ -8,6 +8,7 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { DeviceContextInitializerComponentLWMView } from "../DeviceContextInitializerComponentLWMView";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import type { InitializerDevice } from "../types";
 
 const device: InitializerDevice = {
@@ -20,12 +21,13 @@ const device: InitializerDevice = {
 
 function renderView(state: EnsureAppReadyState) {
   return render(
-    <DeviceContextInitializerComponentLWMView
-      state={state}
-      device={device}
-      sourceFlow="my_ledger"
-      onCancel={jest.fn()}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+      <DeviceContextInitializerComponentLWMView
+        state={state}
+        device={device}
+        onCancel={jest.fn()}
+      />
+    </DeviceIntentTrackingProvider>,
   );
 }
 

@@ -30,6 +30,7 @@ import {
   trackDeviceflowFailed,
   trackDeviceflowStarted,
   trackDevicePrompted,
+  trackDrawerCloseButtonClicked,
 } from "./trackDeviceIntent";
 
 jest.mock("~/analytics", () => {
@@ -66,7 +67,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     describe("Given a sourceFlow", () => {
       describe("When called", () => {
         it("Then tracks deviceflow_started with the Layer A base properties", () => {
-          trackDeviceflowStarted({ sourceFlow: "swap" });
+          trackDeviceflowStarted({ sourceFlow: "swap", extraProperties: {} });
 
           expect(mockedTrack).toHaveBeenCalledTimes(1);
           expect(mockedTrack).toHaveBeenCalledWith("deviceflow_started", {
@@ -82,7 +83,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     describe("Given a sourceFlow", () => {
       describe("When called", () => {
         it("Then tracks device_prompted with the Layer A base properties", () => {
-          trackDevicePrompted({ sourceFlow: "send" });
+          trackDevicePrompted({ sourceFlow: "send", extraProperties: {} });
 
           expect(mockedTrack).toHaveBeenCalledWith("device_prompted", {
             ...layerABaseProperties,
@@ -101,6 +102,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
             sourceFlow: "earn",
             modelId: DeviceModelId.nanoX,
             transport: "ble",
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("device_connecting", {
@@ -123,6 +125,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
             sourceFlow: "wallet_connect",
             modelId: DeviceModelId.stax,
             transport: "ble",
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("device_connected", {
@@ -144,6 +147,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
           trackAppReady({
             sourceFlow: "add_account",
             modelId: DeviceModelId.nanoSP,
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("app_ready", {
@@ -164,6 +168,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
             sourceFlow: "onboarding",
             modelId: DeviceModelId.europa,
             transport: "usb",
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("deviceflow_completed", {
@@ -181,7 +186,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     describe("Given a sourceFlow", () => {
       describe("When called", () => {
         it("Then tracks deviceflow_aborted with the Layer A base properties", () => {
-          trackDeviceflowAborted({ sourceFlow: "my_ledger" });
+          trackDeviceflowAborted({ sourceFlow: "my_ledger", extraProperties: {} });
 
           expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
             ...layerABaseProperties,
@@ -196,7 +201,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     describe("Given a sourceFlow", () => {
       describe("When called", () => {
         it("Then tracks deviceflow_failed with the Layer A base properties", () => {
-          trackDeviceflowFailed({ sourceFlow: "my_ledger" });
+          trackDeviceflowFailed({ sourceFlow: "my_ledger", extraProperties: {} });
 
           expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
             ...layerABaseProperties,
@@ -211,7 +216,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     it("GIVEN the current page is non-blocking WHEN called THEN it tracks deviceflow_aborted", () => {
       currentRouteNameRef.current = PAGE_CONNECT_APP.DeviceBusy;
 
-      trackDeviceflowCanceled({ sourceFlow: "swap" });
+      trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
         ...layerABaseProperties,
@@ -222,7 +227,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     it("GIVEN the current page is blocking WHEN called THEN it tracks deviceflow_failed", () => {
       currentRouteNameRef.current = PAGE_CONNECT_APP.UnsupportedFirmware;
 
-      trackDeviceflowCanceled({ sourceFlow: "swap" });
+      trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
         ...layerABaseProperties,
@@ -233,7 +238,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     it("GIVEN the current page is a generic device action error WHEN called THEN it tracks deviceflow_failed", () => {
       currentRouteNameRef.current = PAGE_DEVICE_ACTION.Disconnected;
 
-      trackDeviceflowCanceled({ sourceFlow: "send" });
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
 
       expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
         ...layerABaseProperties,
@@ -248,7 +253,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         currentRouteNameRef.current = page;
 
         // WHEN
-        trackDeviceflowCanceled({ sourceFlow: "swap" });
+        trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
         // THEN
         expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
@@ -266,7 +271,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         setIsInTerminalConnectDeviceError(true);
 
         // WHEN
-        trackDeviceflowCanceled({ sourceFlow: "swap" });
+        trackDeviceflowCanceled({ sourceFlow: "swap", extraProperties: {} });
 
         // THEN
         expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
@@ -345,6 +350,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
               deviceModelId: DeviceModelId.nanoS,
               transport: TEST_BLE_TRANSPORT,
             },
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("device_selected", {
@@ -365,6 +371,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
           trackConnectDeviceButtonClicked({
             sourceFlow: "send",
             button: "Retry",
+            extraProperties: {},
           });
 
           expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -383,6 +390,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         sourceFlow: "send",
         modelId: DeviceModelId.stax,
         button: "Retry",
+        extraProperties: {},
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -401,6 +409,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         button: DEVICE_ACTION_BUTTON.Close,
         modelId: DeviceModelId.stax,
         transport: "ble",
+        extraProperties: {},
       });
 
       expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
@@ -409,6 +418,129 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         button: DEVICE_ACTION_BUTTON.Close,
         modelId: DeviceModelId.stax,
         transport: "ble",
+      });
+    });
+  });
+
+  describe("contextual analytics properties propagation", () => {
+    const extraProperties = { manifestId: "swap-live-app", manifestName: "Swap" };
+
+    const trackingHelpers = [
+      {
+        name: "trackDeviceflowStarted",
+        track: () => trackDeviceflowStarted({ sourceFlow: "wallet_api", extraProperties }),
+      },
+      {
+        name: "trackDevicePrompted",
+        track: () => trackDevicePrompted({ sourceFlow: "wallet_api", extraProperties }),
+      },
+      {
+        name: "trackDeviceConnecting",
+        track: () =>
+          trackDeviceConnecting({
+            sourceFlow: "wallet_api",
+            modelId: DeviceModelId.stax,
+            transport: "ble",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackDeviceConnected",
+        track: () =>
+          trackDeviceConnected({
+            sourceFlow: "wallet_api",
+            modelId: DeviceModelId.stax,
+            transport: "ble",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackAppReady",
+        track: () =>
+          trackAppReady({ sourceFlow: "wallet_api", modelId: DeviceModelId.stax, extraProperties }),
+      },
+      {
+        name: "trackDeviceflowCompleted",
+        track: () =>
+          trackDeviceflowCompleted({
+            sourceFlow: "wallet_api",
+            modelId: DeviceModelId.stax,
+            transport: "ble",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackDeviceflowAborted",
+        track: () => trackDeviceflowAborted({ sourceFlow: "wallet_api", extraProperties }),
+      },
+      {
+        name: "trackDeviceflowFailed",
+        track: () => trackDeviceflowFailed({ sourceFlow: "wallet_api", extraProperties }),
+      },
+      {
+        name: "trackDeviceflowCanceled",
+        track: () => trackDeviceflowCanceled({ sourceFlow: "wallet_api", extraProperties }),
+      },
+      {
+        name: "trackDeviceSelected",
+        track: () =>
+          trackDeviceSelected({
+            sourceFlow: "wallet_api",
+            device: {
+              id: "device-id",
+              name: "Ledger Nano S",
+              deviceModelId: DeviceModelId.nanoS,
+              transport: TEST_BLE_TRANSPORT,
+            },
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackConnectDeviceButtonClicked",
+        track: () =>
+          trackConnectDeviceButtonClicked({
+            sourceFlow: "wallet_api",
+            button: "Retry",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackConnectAppButtonClicked",
+        track: () =>
+          trackConnectAppButtonClicked({
+            sourceFlow: "wallet_api",
+            modelId: DeviceModelId.stax,
+            button: "Retry",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackDeviceActionButtonClicked",
+        track: () =>
+          trackDeviceActionButtonClicked({
+            sourceFlow: "wallet_api",
+            button: DEVICE_ACTION_BUTTON.Retry,
+            modelId: DeviceModelId.stax,
+            transport: "ble",
+            extraProperties,
+          }),
+      },
+      {
+        name: "trackDrawerCloseButtonClicked",
+        track: () => trackDrawerCloseButtonClicked({ sourceFlow: "wallet_api", extraProperties }),
+      },
+    ];
+
+    describe.each(trackingHelpers)("$name", ({ track: trackEvent }) => {
+      it("GIVEN contextual analytics properties WHEN tracking THEN it forwards them to the event", () => {
+        // GIVEN
+        const expectedProperties = expect.objectContaining(extraProperties);
+
+        // WHEN
+        trackEvent();
+
+        // THEN
+        expect(mockedTrack).toHaveBeenCalledWith(expect.any(String), expectedProperties);
       });
     });
   });

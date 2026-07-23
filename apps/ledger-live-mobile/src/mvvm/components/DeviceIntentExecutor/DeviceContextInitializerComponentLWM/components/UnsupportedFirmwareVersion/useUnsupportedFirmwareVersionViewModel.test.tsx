@@ -1,9 +1,11 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useUnsupportedFirmwareVersionViewModel } from "./useUnsupportedFirmwareVersionViewModel";
 import type { InitializerDevice } from "../../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
@@ -20,6 +22,11 @@ const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
 const openMyLedgerFirmwareUpdate = jest.fn();
 const onCancel = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -41,12 +48,13 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
   });
 
   it("GIVEN a device WHEN rendering THEN it exposes the view handlers", () => {
-    const { result } = renderHook(() =>
-      useUnsupportedFirmwareVersionViewModel({
-        device,
-        sourceFlow: SOURCE_FLOW,
-        onCancel,
-      }),
+    const { result } = renderHook(
+      () =>
+        useUnsupportedFirmwareVersionViewModel({
+          device,
+          onCancel,
+        }),
+      { wrapper },
     );
 
     expect(result.current).toEqual(
@@ -58,12 +66,13 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
   });
 
   it("GIVEN a device WHEN updating Ledger OS THEN it tracks Update Firmware and opens the firmware update", () => {
-    const { result } = renderHook(() =>
-      useUnsupportedFirmwareVersionViewModel({
-        device,
-        sourceFlow: SOURCE_FLOW,
-        onCancel,
-      }),
+    const { result } = renderHook(
+      () =>
+        useUnsupportedFirmwareVersionViewModel({
+          device,
+          onCancel,
+        }),
+      { wrapper },
     );
 
     act(() => {
@@ -80,12 +89,13 @@ describe("useUnsupportedFirmwareVersionViewModel", () => {
   });
 
   it("GIVEN a device WHEN cancelling THEN it tracks Close and forwards to onCancel", () => {
-    const { result } = renderHook(() =>
-      useUnsupportedFirmwareVersionViewModel({
-        device,
-        sourceFlow: SOURCE_FLOW,
-        onCancel,
-      }),
+    const { result } = renderHook(
+      () =>
+        useUnsupportedFirmwareVersionViewModel({
+          device,
+          onCancel,
+        }),
+      { wrapper },
     );
 
     act(() => {

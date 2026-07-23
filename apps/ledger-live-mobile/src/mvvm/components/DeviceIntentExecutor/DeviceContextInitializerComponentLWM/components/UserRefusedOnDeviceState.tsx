@@ -2,7 +2,8 @@ import React from "react";
 import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { Trans } from "~/context/Locale";
 import { InfoState } from "LLM/components/InfoState";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_APP_BUTTON,
   PAGE_CONNECT_APP,
@@ -17,9 +18,9 @@ type UserRefusedOnDeviceStateProps = BaseInitializerStateProps<
 export function UserRefusedOnDeviceState({
   state,
   device,
-  sourceFlow,
   onCancel,
 }: UserRefusedOnDeviceStateProps) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const modelId = device.modelId;
 
   const handleClose = () => {
@@ -27,6 +28,7 @@ export function UserRefusedOnDeviceState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onCancel();
   };
@@ -35,19 +37,14 @@ export function UserRefusedOnDeviceState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Retry,
+      extraProperties: analyticsProperties,
     });
     state.retry();
   };
 
   return (
     <>
-      <TrackScreen
-        category={PAGE_CONNECT_APP.UserRefused}
-        sourceFlow={sourceFlow}
-        modelId={modelId}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_CONNECT_APP.UserRefused} modelId={modelId} refreshSource />
       <InfoState
         preset="info"
         size="hug"

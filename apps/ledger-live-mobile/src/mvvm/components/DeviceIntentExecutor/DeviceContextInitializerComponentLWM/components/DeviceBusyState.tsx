@@ -2,7 +2,8 @@ import React from "react";
 import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { Trans } from "~/context/Locale";
 import { InfoState } from "LLM/components/InfoState";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_APP_BUTTON,
   PAGE_CONNECT_APP,
@@ -14,7 +15,8 @@ type DeviceBusyStateProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: RetryableStateType.DeviceBusy }>
 >;
 
-export function DeviceBusyState({ state, device, sourceFlow, onCancel }: DeviceBusyStateProps) {
+export function DeviceBusyState({ state, device, onCancel }: DeviceBusyStateProps) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const modelId = device.modelId;
 
   const handleRetry = () => {
@@ -22,6 +24,7 @@ export function DeviceBusyState({ state, device, sourceFlow, onCancel }: DeviceB
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Retry,
+      extraProperties: analyticsProperties,
     });
     state.retry();
   };
@@ -30,19 +33,14 @@ export function DeviceBusyState({ state, device, sourceFlow, onCancel }: DeviceB
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onCancel();
   };
 
   return (
     <>
-      <TrackScreen
-        category={PAGE_CONNECT_APP.DeviceBusy}
-        sourceFlow={sourceFlow}
-        modelId={modelId}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_CONNECT_APP.DeviceBusy} modelId={modelId} refreshSource />
       <InfoState
         preset="info"
         size="hug"

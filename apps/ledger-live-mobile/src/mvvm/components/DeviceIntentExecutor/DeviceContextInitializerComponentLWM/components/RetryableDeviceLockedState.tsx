@@ -1,7 +1,8 @@
 import React from "react";
 import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { RetryableDeviceLocked } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/RetryableDeviceLocked";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_APP_BUTTON,
   PAGE_CONNECT_APP,
@@ -13,11 +14,8 @@ type RetryableDeviceLockedStateProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: RetryableStateType.DeviceLocked }>
 >;
 
-export function RetryableDeviceLockedState({
-  state,
-  device,
-  sourceFlow,
-}: RetryableDeviceLockedStateProps) {
+export function RetryableDeviceLockedState({ state, device }: RetryableDeviceLockedStateProps) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const modelId = device.modelId;
 
   const handleRetry = () => {
@@ -25,19 +23,14 @@ export function RetryableDeviceLockedState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Retry,
+      extraProperties: analyticsProperties,
     });
     state.retry();
   };
 
   return (
     <>
-      <TrackScreen
-        category={PAGE_CONNECT_APP.DeviceLocked}
-        sourceFlow={sourceFlow}
-        modelId={modelId}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_CONNECT_APP.DeviceLocked} modelId={modelId} refreshSource />
       <RetryableDeviceLocked
         deviceModelId={device.modelId}
         onRetry={handleRetry}

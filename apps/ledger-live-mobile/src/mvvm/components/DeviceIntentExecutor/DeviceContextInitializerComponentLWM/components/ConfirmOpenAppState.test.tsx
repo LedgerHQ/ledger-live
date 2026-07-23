@@ -3,6 +3,7 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceInteractionRequiredType } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen } from "~/analytics";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { ConfirmOpenAppState } from "./ConfirmOpenAppState";
 import type { InitializerDevice } from "../types";
@@ -27,12 +28,13 @@ const device: InitializerDevice = {
 
 function renderState() {
   return render(
-    <ConfirmOpenAppState
-      state={{ type: DeviceInteractionRequiredType.ConfirmOpenApp }}
-      device={device}
-      sourceFlow="my_ledger"
-      onCancel={jest.fn()}
-    />,
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+      <ConfirmOpenAppState
+        state={{ type: DeviceInteractionRequiredType.ConfirmOpenApp }}
+        device={device}
+        onCancel={jest.fn()}
+      />
+    </DeviceIntentTrackingProvider>,
   );
 }
 
