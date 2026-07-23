@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/live-common": minor
 ---
 
 Integrate Tron tokens (TRC10/TRC20) into the generic coin framework so the same flows work through both the legacy bridge and the generic bridge:

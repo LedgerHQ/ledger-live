@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-evm": minor
 ---
 
 chore(coin-evm): add per-chain `canUndelegate`

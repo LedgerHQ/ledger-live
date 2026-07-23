@@ -1,5 +1,5 @@
 ---
-"@features/flow-large-screen-upsell": patch
+"@features/flow-large-screen-upsell": minor
 "@shared/feature-flags": minor
 "ledger-live-desktop": minor
 "live-mobile": minor

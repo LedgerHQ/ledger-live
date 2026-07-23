@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Add Ledger Sync introduction translations to Mobile Contacts.

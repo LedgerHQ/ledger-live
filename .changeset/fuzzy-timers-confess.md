@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/types-live": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/types-live": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/live-common": minor
 ---
 
 chore(coin-evm): store delegation shares
