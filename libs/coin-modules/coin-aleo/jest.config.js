@@ -19,7 +19,13 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", ".integ.test.ts"],
+  testPathIgnorePatterns: [
+    "lib/",
+    "lib-es/",
+    ".integration.test.ts",
+    ".integ.test.ts",
+    "__tests__/",
+  ],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",

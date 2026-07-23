@@ -1,47 +1,32 @@
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-env";
-import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import aleoConfig from "../config";
+import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
 import {
-  setCryptoAssetsStore,
-  type FrameworkCryptoAssetsStore,
-} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { mockFeeByTransactionType } from "../__tests__/fixtures/config.fixture";
-import { testnetViewKey, testnetPrivateRecord } from "../__tests__/fixtures/api.fixture";
-import type { AleoCoinConfig } from "../types";
+  testnetViewKey,
+  testnetPrivateRecord,
+  testnetOutgoingPrivateToPublicRecord,
+} from "../__tests__/fixtures/api.fixture";
+import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPrivateBalance } from "./getPrivateBalance";
 
-setCryptoAssetsStore(
-  buildStandaloneCryptoAssetsStore({
-    calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
-    ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
-  }) as unknown as FrameworkCryptoAssetsStore,
-);
-
 describe("getPrivateBalance", () => {
-  const config: AleoCoinConfig = {
-    status: { type: "active" },
-    networkType: "testnet",
-    apiUrls: {
-      node: getEnv("ALEO_NODE_ENDPOINT"),
-      sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-    },
-    feeByTransactionType: mockFeeByTransactionType,
-    feeSafetyMultiplier: 1,
-    isFeeSponsored: true,
-    enableTokens: false,
-    useEncryptedProve: false,
-    recordPickingStrategy: "manual",
-  };
+  const config = getTestnetIntegConfig();
+
+  beforeAll(() => {
+    setupCalStore();
+    aleoConfig.setCoinConfig(() => config);
+  });
 
   it("should sum microcredits across all unspent credits records", async () => {
-    const { balance } = await getPrivateBalance({
+    const { balance, unspentRecords } = await getPrivateBalance({
       config,
       viewKey: testnetViewKey,
-      privateRecords: [testnetPrivateRecord, testnetPrivateRecord],
+      privateRecords: [testnetPrivateRecord, testnetOutgoingPrivateToPublicRecord],
       oldUnspentRecords: [],
     });
 
-    expect(balance).toEqual(new BigNumber(800000 + 800000));
+    expect(unspentRecords.map(r => r.microcredits)).toEqual(["69999", "0"]);
+    expect(balance).toEqual(new BigNumber(69999));
   });
 
   it("should return all decrypted records as unspentRecords", async () => {
@@ -54,10 +39,10 @@ describe("getPrivateBalance", () => {
 
     expect(unspentRecords).toEqual([
       expect.objectContaining({
-        microcredits: "800000",
+        microcredits: "69999",
         decryptedData: expect.objectContaining({
           data: {
-            microcredits: "800000u64.private",
+            microcredits: "69999u64.private",
           },
         }),
       }),
