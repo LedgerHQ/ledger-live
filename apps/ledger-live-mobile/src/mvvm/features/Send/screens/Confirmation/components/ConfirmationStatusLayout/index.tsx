@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
 import { View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Box, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { StatusGradient, type StatusGradientTone } from "LLM/components/StatusGradient";

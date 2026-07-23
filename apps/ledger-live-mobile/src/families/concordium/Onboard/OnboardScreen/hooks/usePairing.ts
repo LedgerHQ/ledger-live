@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
+import { ConcordiumPairingExpiredError } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
@@ -69,7 +70,7 @@ export function usePairing(currency: CryptoCurrency, onPaired: (sessionTopic: st
         },
         error: (error: unknown) => {
           if (
-            (error as { name?: string })?.name === "ConcordiumPairingExpiredError" &&
+            error instanceof ConcordiumPairingExpiredError &&
             retryCountRef.current < MAX_EXPIRED_RETRIES
           ) {
             retryCountRef.current++;

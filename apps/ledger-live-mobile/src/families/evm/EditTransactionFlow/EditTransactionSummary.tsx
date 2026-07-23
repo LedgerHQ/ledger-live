@@ -6,6 +6,7 @@
 
 import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
+import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -105,7 +106,7 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
   const firstError = errors[Object.keys(errors)[0]] ?? bridgeError ?? undefined;
 
   let footerAction;
-  if (firstError && firstError?.name === "NotEnoughGas") {
+  if (firstError && firstError instanceof NotEnoughGas) {
     footerAction = isCurrencySupported(currencyOrToken as CryptoCurrency) ? (
       <Button
         event="SummaryBuyEth"

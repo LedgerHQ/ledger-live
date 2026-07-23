@@ -19,6 +19,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 export default function StepAmount({
   account,
@@ -74,7 +75,7 @@ export default function StepAmount({
   );
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
   const crypto = cryptoFactory(account.currency.id);
-  const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
 
   return (
     <Box flow={1}>

@@ -16,7 +16,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";

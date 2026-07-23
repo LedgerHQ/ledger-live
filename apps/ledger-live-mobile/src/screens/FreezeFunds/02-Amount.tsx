@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

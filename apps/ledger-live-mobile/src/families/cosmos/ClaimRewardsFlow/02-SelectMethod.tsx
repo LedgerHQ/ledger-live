@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "~/context/Locale";
 import type {
   CosmosAccount,

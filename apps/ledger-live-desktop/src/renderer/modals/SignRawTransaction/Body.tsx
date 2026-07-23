@@ -1,3 +1,4 @@
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -101,7 +102,7 @@ export default function Body({ onChangeStepId, onClose, setError, params, stepId
   }, [setError]);
   const handleTransactionError = useCallback(
     (error: Error) => {
-      if (error?.name !== "UserRefusedOnDevice") {
+      if (!(error instanceof UserRefusedOnDevice)) {
         logger.critical(error);
       }
       setTransactionError(error);

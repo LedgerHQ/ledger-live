@@ -40,7 +40,6 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     appName = "BOLOS",
     requireLatestFirmware,
     allowPartialDependencies,
-    allowNonOnboardedDevice,
     skipAppInstallIfNotFound,
     onSuccess,
   } = route.params;
@@ -53,7 +52,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     }),
     [appName, requireLatestFirmware, allowPartialDependencies, skipAppInstallIfNotFound],
   );
-  const action = useAppDeviceAction({ allowNonOnboardedDevice });
+  const action = useAppDeviceAction();
 
   const onDone = useCallback(() => {
     navigation.pop();

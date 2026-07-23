@@ -8,6 +8,7 @@ import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "~/context/Locale";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "~/components/RecipientInput";
@@ -15,6 +16,7 @@ import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import LText from "~/components/LText";
 import TranslatedError from "~/components/TranslatedError";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = {
@@ -55,7 +57,8 @@ const DomainServiceRecipientInput = ({
   );
   const domainErrorHandled = useMemo(
     () =>
-      domainError?.error?.name === "InvalidDomain" || domainError?.error?.name === "NoResolution",
+      (domainError?.error as Error) instanceof InvalidDomain ||
+      (domainError?.error as Error) instanceof NoResolution,
     [domainError],
   );
 
@@ -123,9 +126,9 @@ const DomainServiceRecipientInput = ({
         domainError={domainError}
         domainErrorHandled={domainErrorHandled}
         isForwardResolution={isForwardResolution}
-        noLink={error?.name === "AddressesSanctionedError"}
+        noLink={error instanceof AddressesSanctionedError}
       />
-      {error?.name === "AddressesSanctionedError" ? (
+      {error instanceof AddressesSanctionedError ? (
         <>
           <LText
             testID="send-recipient-error-description"

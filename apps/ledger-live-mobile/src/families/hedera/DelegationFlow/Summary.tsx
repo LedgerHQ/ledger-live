@@ -16,7 +16,7 @@ import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";

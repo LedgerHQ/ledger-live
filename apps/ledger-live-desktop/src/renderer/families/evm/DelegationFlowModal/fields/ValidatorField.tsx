@@ -7,7 +7,6 @@ import type {
   StakingValidatorItem,
 } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
-import { getLedgerValidatorAddress } from "@ledgerhq/live-common/families/evm/staking/ledgerValidator";
 import Box from "~/renderer/components/Box";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
@@ -30,7 +29,6 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
-  const ledgerValidatorAddress = getLedgerValidatorAddress(currencyId);
 
   const { validators, loading, error } = useEvmStakingValidators(currencyId, search);
 
@@ -55,12 +53,8 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr, status 
   // (StrictMode warnings, possible flicker / inconsistent state).
   useEffect(() => {
     if (chosenVoteAccAddr !== "" || validators.length === 0 || loading) return;
-    if (validators[0].validatorAddress?.toLowerCase() === ledgerValidatorAddress?.toLowerCase()) {
-      onChangeValidator(validators[0].validatorAddress, validators[0].validatorId);
-      return;
-    }
-    setShowAll(true);
-  }, [chosenVoteAccAddr, onChangeValidator, validators, loading, ledgerValidatorAddress]);
+    onChangeValidator(validators[0].validatorAddress, validators[0].validatorId);
+  }, [chosenVoteAccAddr, onChangeValidator, validators, loading]);
 
   const valAddressError = status.errors.valAddress;
 

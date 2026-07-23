@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createClosedContactsFeatureIntroduction,
   createContactsListViewModel,
   createContactsSearchViewModel,
-  resolveContactsLedgerSyncIntroductionOpen,
   useContacts,
   useContactsMeContact,
   type ContactsLedgerSyncStatus,
@@ -20,7 +18,7 @@ export function useContactsViewModel(): ContactsViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
+  const [isIntroductionDismissed, setIsIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const labels = useMemo<ContactsPageLabels>(
     () => ({
@@ -48,22 +46,15 @@ export function useContactsViewModel(): ContactsViewModel {
     [],
   );
   const onAddContact = useCallback(() => undefined, []);
-  const onDismissLedgerSyncIntroduction = useCallback(
-    () => setIsLedgerSyncIntroductionDismissed(true),
-    [],
-  );
+  const onDismissIntroduction = useCallback(() => setIsIntroductionDismissed(true), []);
 
   useEffect(() => {
     if (ledgerSyncStatus !== "inactive") {
-      setIsLedgerSyncIntroductionDismissed(false);
+      setIsIntroductionDismissed(false);
     }
   }, [ledgerSyncStatus]);
 
-  const isLedgerSyncIntroductionOpen = resolveContactsLedgerSyncIntroductionOpen({
-    isFeatureIntroductionRequested: false,
-    ledgerSyncStatus,
-    isLedgerSyncIntroductionDismissed,
-  });
+  const isIntroductionOpen = ledgerSyncStatus === "inactive" && !isIntroductionDismissed;
 
   return {
     viewModel,
@@ -75,12 +66,11 @@ export function useContactsViewModel(): ContactsViewModel {
     onOpenContact,
     onAddContact,
     ledgerSyncStatus,
-    featureIntroduction: createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
-      isOpen: isLedgerSyncIntroductionOpen,
+      isOpen: isIntroductionOpen,
       description: t("contacts.ledgerSyncIntroduction.description"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
-      onDismiss: onDismissLedgerSyncIntroduction,
+      onDismiss: onDismissIntroduction,
     },
   };
 }

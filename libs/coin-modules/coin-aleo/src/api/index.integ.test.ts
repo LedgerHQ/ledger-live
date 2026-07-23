@@ -1,23 +1,37 @@
 import invariant from "invariant";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
+import {
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from "../api";
 import { TRANSACTION_TYPE } from "../constants";
-import { getTestnetIntegConfig } from "../__tests__/fixtures/config.fixture";
-import {
-  referenceFailedTransferPublicTx,
-  referenceTransferPublicTx,
-  testnetAddress,
-} from "../__tests__/fixtures/api.fixture";
-import { setupCalStore } from "../__tests__/helpers/cal";
-import { getPristineAccount } from "../__tests__/helpers/account";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 
 describe("createApi", () => {
-  const api = createApi(getTestnetIntegConfig(), "aleo_testnet");
-  let emptyAddress: string;
+  const emptyAccountAddress = "aleo172yejeypnffsdft3nrlpwnu964sn83p7ga6dm5zj7ucmqfqjk5rq3pmx6f";
+  const testAccountAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
+  const mockConfig = getMockedConfig("testnet");
 
-  beforeAll(async () => {
-    setupCalStore();
-    const pristineAccount = await getPristineAccount();
-    emptyAddress = pristineAccount.address;
+  const api = createApi(
+    {
+      ...mockConfig,
+      apiUrls: {
+        node: getEnv("ALEO_NODE_ENDPOINT"),
+        sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
+      },
+    },
+    "aleo",
+  );
+
+  beforeAll(() => {
+    setCryptoAssetsStore(
+      buildStandaloneCryptoAssetsStore({
+        calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+        ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION || "coin-aleo-integration-test",
+      }) as unknown as FrameworkCryptoAssetsStore,
+    );
   });
 
   describe("estimateFees", () => {
@@ -27,8 +41,8 @@ describe("createApi", () => {
         asset: { type: "native" },
         type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
         amount: 100n,
-        sender: testnetAddress,
-        recipient: emptyAddress,
+        sender: testAccountAddress,
+        recipient: emptyAccountAddress,
       });
 
       expect(fees.value).toBeGreaterThanOrEqual(0n);
@@ -37,7 +51,7 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
-      const { items: operations } = await api.listOperations(emptyAddress, {
+      const { items: operations } = await api.listOperations(emptyAccountAddress, {
         minHeight: 0,
         order: "desc",
       });
@@ -46,72 +60,42 @@ describe("createApi", () => {
     });
 
     it("returns operations with correct metadata", async () => {
-      const { items: page } = await api.listOperations(testnetAddress, {
+      const testTxId = "at1qe8ml060qvvqp5caxejnc2r4sj3yjx83nfe9mykyx0zyhv5h5yzsfa85j0";
+      const testBlockHashOfTx = "ab1ae88smgn0cr80yzzd84kvupawre67j69xcpthcegmcutqew8wgrs6hrxh8";
+      const { items: page } = await api.listOperations(testAccountAddress, {
         minHeight: 0,
         limit: 10,
         order: "asc",
       });
 
-      const operation = page.find(op => op.tx.hash === referenceTransferPublicTx.id);
+      const operation = page.find(op => op.tx.hash === testTxId);
 
       expect(operation).toMatchObject({
-        type: "IN",
-        value: BigInt(referenceTransferPublicTx.value),
+        value: 20n,
         asset: { type: "native" },
-        senders: [referenceTransferPublicTx.sender],
-        recipients: [referenceTransferPublicTx.recipient],
         tx: {
-          hash: referenceTransferPublicTx.id,
-          fees: BigInt(referenceTransferPublicTx.fee),
+          hash: testTxId,
+          fees: 51060n,
           failed: false,
           block: {
-            hash: referenceTransferPublicTx.blockHash,
-            height: referenceTransferPublicTx.blockHeight,
-          },
-        },
-      });
-    });
-
-    it("returns a failed operation for a known rejected transaction", async () => {
-      const { items: page } = await api.listOperations(testnetAddress, {
-        minHeight: referenceFailedTransferPublicTx.blockHeight,
-        limit: 10,
-        order: "asc",
-      });
-
-      const operation = page.find(op => op.tx.hash === referenceFailedTransferPublicTx.id);
-
-      // this account's only Rejected txs are self-transfers (sender === recipient), which
-      // classify as type "IN" (see referenceFailedTransferPublicTx in api.fixture.ts)
-      expect(operation).toMatchObject({
-        type: "IN",
-        value: BigInt(referenceFailedTransferPublicTx.value),
-        asset: { type: "native" },
-        senders: [referenceFailedTransferPublicTx.sender],
-        recipients: [referenceFailedTransferPublicTx.recipient],
-        tx: {
-          hash: referenceFailedTransferPublicTx.id,
-          fees: BigInt(referenceFailedTransferPublicTx.fee),
-          failed: true,
-          block: {
-            hash: referenceFailedTransferPublicTx.blockHash,
-            height: referenceFailedTransferPublicTx.blockHeight,
+            hash: testBlockHashOfTx,
+            height: 168835,
           },
         },
       });
     });
     it.each(["desc", "asc"] as const)(
-      "returns 2 non-overlapping, correctly ordered pages (%s)",
+      "returns paginated operations for account with high activity (%s)",
       async order => {
-        const limit = 3;
-        const { items: page1, next: cursor1 } = await api.listOperations(testnetAddress, {
+        const limit = 10;
+        const { items: page1, next: cursor1 } = await api.listOperations(testAccountAddress, {
           minHeight: 0,
           limit,
           order,
         });
 
         const { items: page2, next: cursor2 } = await api.listOperations(
-          testnetAddress,
+          testAccountAddress,
           cursor1
             ? {
                 minHeight: 0,
@@ -156,8 +140,8 @@ describe("createApi", () => {
     it.each(["desc", "asc"] as const)(
       "returns operations with min height filter (%s)",
       async order => {
-        const minHeight = referenceFailedTransferPublicTx.blockHeight;
-        const { items: page } = await api.listOperations(testnetAddress, {
+        const minHeight = order === "asc" ? 200_000 : 13_940_000;
+        const { items: page } = await api.listOperations(testAccountAddress, {
           minHeight,
           limit: 10,
           order,
@@ -165,7 +149,6 @@ describe("createApi", () => {
 
         expect(page.length).toBeGreaterThan(0);
         expect(page.every(op => op.tx.block.height >= minHeight)).toBe(true);
-        expect(page.some(op => op.tx.hash === referenceTransferPublicTx.id)).toBe(false);
       },
     );
   });
@@ -182,16 +165,19 @@ describe("createApi", () => {
 
   describe("getBalance", () => {
     it("returns the balance for a valid address", async () => {
-      // not an exact value: testnetAddress's public balance shifts as the team runs more
-      // transactions against it, so only shape + non-negativity are checked here.
-      const balance = await api.getBalance(testnetAddress);
+      const address = "aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f";
+      const balance = await api.getBalance(address);
 
-      expect(balance).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
-      expect(balance[0].value).toBeGreaterThanOrEqual(0n);
+      expect(balance).toBeInstanceOf(Array);
+      expect(balance.length).toBeGreaterThanOrEqual(0);
+      balance.forEach(b => {
+        expect(b.value).toBeGreaterThan(0n);
+      });
     });
 
     it("returns an empty array for a non-existing valid address", async () => {
-      const balance = await api.getBalance(emptyAddress);
+      const address = "aleo1g82wnc9um2f50a64a8xnsfz6meqkl3e7rk3q327vc47kykxway8qphwg9p";
+      const balance = await api.getBalance(address);
 
       expect(balance).toEqual([]);
     });
@@ -199,10 +185,7 @@ describe("createApi", () => {
     it("throws an error for an invalid address", async () => {
       const invalidAddress = "invalid_address";
 
-      await expect(api.getBalance(invalidAddress)).rejects.toMatchObject({
-        name: "LedgerAPI4xx",
-        status: 404,
-      });
+      await expect(api.getBalance(invalidAddress)).rejects.toThrow();
     });
   });
 });

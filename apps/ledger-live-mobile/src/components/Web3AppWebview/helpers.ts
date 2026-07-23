@@ -629,7 +629,6 @@ function useUiHook({ manifest, onTransactionBroadcast, onPublicKeyUnavailable }:
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
-          allowNonOnboardedDevice: true,
           onSuccess,
           onClose: onCancel,
         });
@@ -637,7 +636,6 @@ function useUiHook({ manifest, onTransactionBroadcast, onPublicKeyUnavailable }:
       "device.select": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
-          allowNonOnboardedDevice: true,
           onSuccess,
           onClose: onCancel,
         });

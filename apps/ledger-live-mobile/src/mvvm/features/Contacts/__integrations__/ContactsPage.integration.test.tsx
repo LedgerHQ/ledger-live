@@ -2,7 +2,6 @@ import React from "react";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import {
   ContactsPage,
-  createClosedContactsFeatureIntroduction,
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
   type ContactsListViewModel,
@@ -33,7 +32,6 @@ function renderContactsPage(
       onOpenContact={onOpenContact}
       onAddContact={onAddContact}
       ledgerSyncStatus={ledgerSyncStatus}
-      featureIntroduction={createClosedContactsFeatureIntroduction()}
       ledgerSyncIntroduction={{
         isOpen: false,
         description: "Contacts are encrypted.",

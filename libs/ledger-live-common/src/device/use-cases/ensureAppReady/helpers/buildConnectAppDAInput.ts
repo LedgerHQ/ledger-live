@@ -103,7 +103,6 @@ export function buildConnectAppDeviceActionInput(params: {
     ),
     requireLatestFirmware: ensureAppReadyInput.requireLatestFirmware,
     allowMissingApplication: false,
-    allowNonOnboardedDevice: false,
     unlockTimeout,
     requiredDerivation: createRequiredDerivation({
       dmk,

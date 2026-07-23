@@ -14,6 +14,7 @@ import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 export default function StepAmount({
   account,
   transaction,
@@ -65,7 +66,7 @@ export default function StepAmount({
     };
   }, [transaction]);
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
-  const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.amount instanceof NotEnoughBalance;
 
   return (
     <Box flow={1}>

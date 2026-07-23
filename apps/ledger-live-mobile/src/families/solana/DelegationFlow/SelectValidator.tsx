@@ -7,7 +7,7 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans } from "~/context/Locale";
 import { FlatList, StyleSheet, View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";

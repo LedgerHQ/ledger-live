@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { RecipientRequired } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TFunction } from "i18next";
@@ -48,7 +49,7 @@ const RecipientFieldBase = ({
         autoFocus={autoFocus}
         withQrCode={!status.recipientIsReadOnly}
         readOnly={status.recipientIsReadOnly}
-        error={hideError || recipientError?.name === "RecipientRequired" ? null : recipientError}
+        error={hideError || recipientError instanceof RecipientRequired ? null : recipientError}
         warning={recipientWarning}
         value={value}
         onChange={onChange}

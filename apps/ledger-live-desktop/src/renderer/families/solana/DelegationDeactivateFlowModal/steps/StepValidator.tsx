@@ -15,6 +15,7 @@ import ValidatorRow from "../../shared/components/ValidatorRow";
 import { StepProps } from "../types";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 export default function StepValidator({
   account,
@@ -44,7 +45,7 @@ export default function StepValidator({
   if (validator === undefined) {
     return null;
   }
-  const notEnoughFundsError = status.errors?.fee?.name === "NotEnoughBalance";
+  const notEnoughFundsError = status.errors?.fee instanceof NotEnoughBalance;
 
   return (
     <Box flow={1}>

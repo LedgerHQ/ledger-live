@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";

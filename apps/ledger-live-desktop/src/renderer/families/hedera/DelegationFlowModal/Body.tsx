@@ -5,6 +5,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { Trans, withTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useHederaValidators } from "@ledgerhq/live-common/families/hedera/react";
@@ -126,7 +127,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   }, [onChangeStepId]);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
+    if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);

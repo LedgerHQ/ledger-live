@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

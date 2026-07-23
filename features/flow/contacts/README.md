@@ -37,7 +37,6 @@ src/
 ├── components/
 │   ├── ContactsButton/                  # My Wallet entry
 │   ├── AddContactDrawer/                 # Native add-contact drawer content and state
-│   ├── ContactsFeatureIntroduction/      # One-time feature introduction dialog (web)
 │   └── ContactsLedgerSyncIntroduction/  # Shared Ledger Sync introduction content
 ├── add/
 │   ├── model/            # Contact-name validation and creation contract

@@ -68,18 +68,16 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "axios": "catalog:",
     "lru-cache": "^7.14.1"
-  },
-  "peerDependencies": {
-    "axios": "catalog:"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.35",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "axios": "catalog:",
     "jest": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:"

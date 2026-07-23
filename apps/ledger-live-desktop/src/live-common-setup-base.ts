@@ -1,6 +1,5 @@
 import os from "os";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
@@ -36,7 +35,6 @@ if (process.env.NODE_ENV !== "production") {
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
-bridgeEnvToNetworkState();
 
 liveBlindSigningReporter.setContext({
   platform: "desktop",

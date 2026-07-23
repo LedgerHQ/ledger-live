@@ -1,5 +1,4 @@
 import { EnvName, setEnv, setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
-import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { listen } from "@ledgerhq/logs";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
@@ -67,6 +66,5 @@ if (process.env.VERBOSE) {
 
 const value = "cli/0.0.0";
 setEnv("LEDGER_CLIENT_VERSION", value);
-bridgeEnvToNetworkState();
 
 BigNumber.set({ DECIMAL_PLACES: getEnv("BIG_NUMBER_DECIMAL_PLACES") });

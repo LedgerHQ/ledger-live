@@ -2,7 +2,6 @@ import Config from "react-native-config";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { listen } from "@ledgerhq/logs";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
@@ -69,7 +68,6 @@ if (process.env.NODE_ENV !== "production") {
 
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
-bridgeEnvToNetworkState();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 setSecp256k1Instance(require("./logic/secp256k1"));

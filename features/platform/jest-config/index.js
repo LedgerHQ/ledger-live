@@ -12,7 +12,6 @@ const swcTransform = {
 const webMocks = {
   "^@ledgerhq/lumen-ui-react(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-web.js"),
-  "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
 const nativeMocks = {

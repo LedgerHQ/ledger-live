@@ -11,6 +11,7 @@ import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/accou
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";
@@ -177,7 +178,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   }, []);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
+    if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);

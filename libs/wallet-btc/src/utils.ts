@@ -89,7 +89,7 @@ function fixedWeight(currency: ICrypto, derivationMode: string): number {
 function inputWeight(derivationMode: string): number {
   const spec = INPUT_WEIGHT_SPECS[derivationMode];
   if (!spec) {
-    throw new UnsupportedDerivation(`Derivation mode ${derivationMode} unknown`);
+    throw UnsupportedDerivation(`Derivation mode ${derivationMode} unknown`);
   }
 
   // base non-witness weight for every input
@@ -115,7 +115,7 @@ function outputWeight(derivationMode: string): number {
   } else if (derivationMode === DerivationModes.LEGACY) {
     outputSize += 25; // DUP + HASH160 + PUSH20 + <20 bytes> + EQUALVERIFY + CHECKSIG
   } else {
-    throw new UnsupportedDerivation(derivationMode);
+    throw UnsupportedDerivation(derivationMode);
   }
 
   return outputSize * 4;

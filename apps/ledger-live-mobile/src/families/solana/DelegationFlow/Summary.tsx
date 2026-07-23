@@ -20,7 +20,7 @@ import { capitalize } from "lodash/fp";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -36,7 +36,9 @@ import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
 import TranslatedError from "../../../components/TranslatedError";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -137,7 +139,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const error = Object.values(status.errors)[0];
   const feeError = status.errors.fee;
   const isUndelagating = transaction.model.kind === "stake.undelegate";
-  const hasErrorWhileDesactivating = isUndelagating && feeError?.name === "NotEnoughBalance";
+  const hasErrorWhileDesactivating = isUndelagating && feeError instanceof NotEnoughBalance;
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -204,8 +206,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       <View style={styles.footer}>
         {hasErrorWhileDesactivating && <NotEnoughFundFeesAlert account={account} />}
 
-        {status.errors.sender &&
-        (status.errors.sender as { name?: string })?.name === "AddressesSanctionedError" ? (
+        {status.errors.sender && status.errors.sender instanceof AddressesSanctionedError ? (
           <>
             <Text color="alert">
               <TranslatedError error={status.errors.sender} />

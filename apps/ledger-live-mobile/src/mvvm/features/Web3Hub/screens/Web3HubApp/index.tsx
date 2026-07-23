@@ -1,5 +1,5 @@
 import React from "react";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import type { AppProps } from "LLM/features/Web3Hub/types";
 import WebPlatformPlayer from "./components/Web3Player";

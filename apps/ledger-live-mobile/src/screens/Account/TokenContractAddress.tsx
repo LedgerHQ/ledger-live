@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "~/context/Locale";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Icons } from "@ledgerhq/native-ui";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";

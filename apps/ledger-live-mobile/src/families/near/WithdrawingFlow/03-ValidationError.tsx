@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";

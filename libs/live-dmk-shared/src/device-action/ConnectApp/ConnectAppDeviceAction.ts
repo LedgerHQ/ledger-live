@@ -70,12 +70,10 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
     >;
 
     const unlockTimeout = this.input.unlockTimeout ?? 0;
-    const allowNonOnboardedDevice = this.input.allowNonOnboardedDevice ?? true;
 
     const getStatusMachine = new GetDeviceStatusDeviceAction({
       input: {
         unlockTimeout,
-        allowNonOnboardedDevice,
       },
     }).makeStateMachine(internalApi);
 
@@ -200,7 +198,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             requireLatestFirmware: _.input.requireLatestFirmware,
             unlockTimeout: _.input.unlockTimeout,
             allowMissingApplication: _.input.allowMissingApplication,
-            allowNonOnboardedDevice: _.input.allowNonOnboardedDevice ?? true,
             requiredDerivation: _.input.requiredDerivation,
             deprecationConfig: _.input.deprecationConfig,
           },
@@ -235,7 +232,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             src: "getStatus",
             input: _ => ({
               unlockTimeout: _.context.input.unlockTimeout,
-              allowNonOnboardedDevice: _.context.input.allowNonOnboardedDevice,
             }),
             onSnapshot: {
               actions: assign({
@@ -586,7 +582,6 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
             src: "getStatus",
             input: _ => ({
               unlockTimeout: _.context.input.unlockTimeout,
-              allowNonOnboardedDevice: _.context.input.allowNonOnboardedDevice,
             }),
             onSnapshot: {
               actions: assign({

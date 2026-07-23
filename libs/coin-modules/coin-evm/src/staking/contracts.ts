@@ -287,8 +287,6 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     },
     value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
     delegationMaxAmountReserve: 10n ** 17n,
-    // Somnia dashboard indexes delegations off-chain; new delegations can take up to 5 minutes to appear on the delegation board.
-    delegationVisibilityDelayMinutes: 5,
     resolveValidatorAddress: async parameters => {
       return typeof parameters[0] === "string" ? parameters[0] : null;
     },

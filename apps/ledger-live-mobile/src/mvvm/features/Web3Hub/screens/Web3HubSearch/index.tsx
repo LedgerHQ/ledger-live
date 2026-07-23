@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { SearchProps } from "LLM/features/Web3Hub/types";
 import useScrollHandler from "LLM/features/Web3Hub/hooks/useScrollHandler";
 import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";

@@ -6,6 +6,7 @@ import invariant from "invariant";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   addPendingOperation,
   getMainAccount,
@@ -256,7 +257,7 @@ const Body = ({
     setSigned(false);
   }, []);
   const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
+    if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);

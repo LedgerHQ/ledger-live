@@ -30,6 +30,7 @@ import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -161,7 +162,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       <View style={styles.footer}>
         <View style={styles.errors}>
           {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
-          {error && error?.name === "AddressesSanctionedError" && (
+          {error && error instanceof AddressesSanctionedError && (
             <SupportLinkError error={error} type="alert" />
           )}
           {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}

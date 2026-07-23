@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -41,7 +42,7 @@ export function useSendFlowOperation({
 
   const onTransactionError = useCallback(
     (error: Error) => {
-      if (error?.name !== "UserRefusedOnDevice") {
+      if (!(error instanceof UserRefusedOnDevice)) {
         logger.critical(error);
       }
       stateActions.dispatchSetError(error);

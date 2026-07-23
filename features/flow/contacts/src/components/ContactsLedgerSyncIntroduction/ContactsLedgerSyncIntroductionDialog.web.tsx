@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { useSingleFireDismiss } from "../internals/useSingleFireDismiss";
 
 type ContactsLedgerSyncIntroductionDialogProps = Readonly<{
   open: boolean;
@@ -15,7 +14,22 @@ export function ContactsLedgerSyncIntroductionDialog({
   dismissLabel,
   onDismiss,
 }: ContactsLedgerSyncIntroductionDialogProps): React.ReactNode {
-  const dismiss = useSingleFireDismiss(onDismiss, open);
+  const hasDismissed = useRef(false);
+
+  useEffect(() => {
+    if (open) {
+      hasDismissed.current = false;
+    }
+  }, [open]);
+
+  const dismiss = () => {
+    if (hasDismissed.current) {
+      return;
+    }
+
+    hasDismissed.current = true;
+    onDismiss();
+  };
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {

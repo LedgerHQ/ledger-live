@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "~/context/Locale";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";

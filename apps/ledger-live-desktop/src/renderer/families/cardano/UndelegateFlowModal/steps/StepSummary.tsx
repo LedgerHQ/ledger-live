@@ -14,6 +14,7 @@ import BigNumber from "bignumber.js";
 import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
 
 const FromToWrapper = styled.div``;
@@ -29,7 +30,7 @@ function StepSummary(props: StepProps) {
   const { estimatedFees, errors, warnings } = status;
   const { feeTooHigh } = warnings;
   const displayError = errors.amount?.message ? errors.amount : "";
-  const notEnoughFundsError = error && error?.name === "CardanoNotEnoughFunds";
+  const notEnoughFundsError = error && error instanceof CardanoNotEnoughFunds;
 
   const accountUnit = useMaybeAccountUnit(account);
   if (!account || !transaction || !account.cardanoResources.delegation) return null;

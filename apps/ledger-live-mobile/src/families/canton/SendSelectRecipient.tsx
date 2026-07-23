@@ -1,3 +1,8 @@
+import {
+  TooManyUtxosCritical,
+  TooManyUtxosWarning,
+  TopologyChangeError,
+} from "@ledgerhq/coin-canton";
 import { CantonAccount, TransactionStatus } from "@ledgerhq/live-common/families/canton/types";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@features/platform-feature-flags";
@@ -30,9 +35,9 @@ function StepRecipientCustomAlert({
   const route = useRoute<ScreenRoute>();
   const llmModularDrawer = useFeature("llmModularDrawer");
 
-  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosCritical";
-  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos?.name === "TooManyUtxosWarning";
-  const topologyChangeError = status?.errors?.topologyChange?.name === "TopologyChangeError";
+  const tooManyUtxosCritical = status?.warnings?.tooManyUtxos instanceof TooManyUtxosCritical;
+  const tooManyUtxosWarning = status?.warnings?.tooManyUtxos instanceof TooManyUtxosWarning;
+  const topologyChangeError = status?.errors?.topologyChange instanceof TopologyChangeError;
 
   const redirectToReonboarding = useCallback(() => {
     if (!account) return;

@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useCallback } from "react";
 import { Image, View, Animated } from "react-native";
 import { useChangeValidatorRotateAnim } from "~/families/shared/useChangeValidatorRotateAnim";
 import { useTheme } from "@react-navigation/native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   handleTransactionStatus,
   denominate,

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   ZCASH_ACTIVATION_DATE,
   ZCASH_ACTIVATION_DATE_STRING,
@@ -62,7 +62,7 @@ const ExportKeyModal = ({ account }: { account: ZcashAccount }) => {
   };
 
   const handleUfvkChanged = (ufvk: string, error?: Error | undefined | null) => {
-    if ((error as { name?: string })?.name === "UserRefusedOnDevice") {
+    if (error instanceof UserRefusedOnDevice) {
       logger.critical(error);
     }
     setUfvkExportError(error);

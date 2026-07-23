@@ -12,6 +12,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 export const StepAmountFooter = ({
   transitionTo,
@@ -57,7 +58,7 @@ const StepAmount = ({
 }: StepProps) => {
   invariant(account && transaction, "account and transaction required");
   const notEnoughFundsError =
-    status.errors.amount && status.errors.amount?.name === "NotEnoughBalance";
+    status.errors.amount && status.errors.amount instanceof NotEnoughBalance;
 
   return (
     <Box flow={1}>

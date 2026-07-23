@@ -34,6 +34,7 @@ import { CosmosDelegationFlowParamList } from "./types";
 import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import TranslatedError from "~/components/TranslatedError";
+import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -222,7 +223,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
-        {status.errors.sender && status.errors.sender?.name === "AddressesSanctionedError" ? (
+        {status.errors.sender && status.errors.sender instanceof AddressesSanctionedError ? (
           <>
             <Text color="alert">
               <TranslatedError error={status.errors.sender} />

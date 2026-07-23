@@ -2,7 +2,7 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -285,7 +285,7 @@ export function useAddressValidation({
     }));
 
     const filteredBridgeErrors: BridgeValidationErrors = { ...bridgeValidation.errors };
-    if (ensResolution && filteredBridgeErrors.recipient?.name === "InvalidAddress") {
+    if (ensResolution && filteredBridgeErrors.recipient instanceof InvalidAddress) {
       delete filteredBridgeErrors.recipient;
     }
 

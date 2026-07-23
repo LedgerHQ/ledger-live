@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { DomainServiceResponseError } from "@ledgerhq/domain-service/hooks/types";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
@@ -10,7 +11,7 @@ type DomainErrorsProps = {
 };
 export const DomainErrorsView = memo(({ domainError, isForwardResolution }: DomainErrorsProps) => {
   const { t } = useTranslation();
-  if (domainError.error?.name === "InvalidDomain") {
+  if (domainError.error instanceof InvalidDomain) {
     return (
       <div data-testid="domain-error-invalid-domain">
         <Alert
@@ -27,7 +28,7 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
   }
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  if (domainError.error?.name === "NoResolution" && isForwardResolution) {
+  if ((domainError.error as Error) instanceof NoResolution && isForwardResolution) {
     return (
       <div data-testid="domain-error-no-resolution">
         <Alert

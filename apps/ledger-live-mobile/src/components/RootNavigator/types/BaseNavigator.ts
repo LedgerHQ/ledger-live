@@ -336,7 +336,6 @@ export type BaseNavigatorStackParamList = {
     appName?: string;
     requireLatestFirmware?: boolean;
     allowPartialDependencies?: boolean;
-    allowNonOnboardedDevice?: boolean;
     skipAppInstallIfNotFound?: boolean;
     onSuccess: (result: AppResult) => void;
     onClose: () => void;

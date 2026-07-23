@@ -64,26 +64,6 @@ export type ContactsLedgerSyncIntroduction = Readonly<{
   onDismiss: () => void;
 }>;
 
-export type ContactsFeatureIntroductionHighlightIcon = "Contact" | "ShieldCheck" | "Devices";
-
-export type ContactsFeatureIntroductionHighlight = Readonly<{
-  title: string;
-  description: string;
-  icon: ContactsFeatureIntroductionHighlightIcon;
-}>;
-
-export type ContactsFeatureIntroduction = Readonly<{
-  isOpen: boolean;
-  title: string;
-  description: string;
-  highlights: readonly ContactsFeatureIntroductionHighlight[];
-  primaryActionLabel: string;
-  secondaryActionLabel: string;
-  heroImageSrc?: string;
-  onComplete: () => void;
-  onDefer: () => void;
-}>;
-
 export type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
   labels: ContactsPageLabels;
@@ -92,7 +72,6 @@ export type ContactsPageSharedProps = Readonly<{
   onOpenContact: (contactId: ContactId) => void;
   onAddContact: () => void;
   ledgerSyncStatus: ContactsLedgerSyncStatus;
-  featureIntroduction: ContactsFeatureIntroduction;
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
 

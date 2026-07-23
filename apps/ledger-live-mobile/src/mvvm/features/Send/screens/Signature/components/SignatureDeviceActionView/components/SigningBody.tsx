@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SimplifiedTransactionConfirm } from "../../SimplifiedTransactionConfirm";
 import { SignatureCancelledState } from "./SignatureCancelledState";
@@ -34,7 +36,7 @@ export function SigningBody({ device, action, request, onResult, onClose }: Sign
 
   if (signError) {
     const isUserRefused =
-      signError?.name === "UserRefusedOnDevice" || signError?.name === "TransactionRefusedOnDevice";
+      signError instanceof UserRefusedOnDevice || signError instanceof TransactionRefusedOnDevice;
 
     return isUserRefused ? (
       <SignatureCancelledState onClose={onClose} onRetry={status.onRetry} />

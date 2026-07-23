@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { TRANSACTION_TYPE } from "../../constants";
 import type { AleoCoinConfig, TransactionType } from "../../types";
 
@@ -29,23 +28,3 @@ export const getMockedConfig = (networkType: "mainnet" | "testnet"): AleoCoinCon
     status: { type: "active" },
   };
 };
-
-/**
- * Real testnet config for *.integ.test.ts files, pointed at the live Aleo testnet node
- * and SDK endpoints. Pass `overrides` for scenario-specific flags (e.g. `enableTokens`).
- */
-export const getTestnetIntegConfig = (overrides?: Partial<AleoCoinConfig>): AleoCoinConfig => ({
-  status: { type: "active" },
-  networkType: "testnet",
-  apiUrls: {
-    node: getEnv("ALEO_NODE_ENDPOINT"),
-    sdk: getEnv("ALEO_TESTNET_SDK_ENDPOINT"),
-  },
-  feeByTransactionType: mockFeeByTransactionType,
-  feeSafetyMultiplier: 1,
-  isFeeSponsored: true,
-  enableTokens: false,
-  useEncryptedProve: false,
-  recordPickingStrategy: "manual",
-  ...overrides,
-});

@@ -33,6 +33,7 @@ import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 type Props = StackNavigatorProps<
@@ -103,7 +104,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, bridge, transaction]);
 
-  const hasNotEnoughtBalanceError = bridgeError?.name === "CardanoNotEnoughFunds";
+  const hasNotEnoughtBalanceError = bridgeError instanceof CardanoNotEnoughFunds;
 
   return (
     <SafeAreaView

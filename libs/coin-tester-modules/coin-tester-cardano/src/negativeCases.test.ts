@@ -1,3 +1,4 @@
+import { CardanoMinAmountError } from "@ledgerhq/coin-cardano/errors";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -116,8 +117,8 @@ describe("Cardano negative cases (Yaci devnet)", () => {
 
   it("rejects a below-min-UTXO amount at craft", async () => {
     const tx = build({ recipient, amount: new BigNumber(100), nonce: 0 });
-    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toMatchObject({
-      name: "CardanoMinAmountError",
-    });
+    await expect(accountBridge.prepareTransaction(account, tx)).rejects.toThrow(
+      CardanoMinAmountError,
+    );
   });
 });

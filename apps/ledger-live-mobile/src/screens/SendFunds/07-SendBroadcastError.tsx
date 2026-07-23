@@ -2,7 +2,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Linking, ScrollView } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";

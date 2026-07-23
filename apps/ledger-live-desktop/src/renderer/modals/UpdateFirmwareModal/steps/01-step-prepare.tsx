@@ -11,7 +11,6 @@ import customLockScreenFetch, {
 } from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import { getEnv } from "@ledgerhq/live-env";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -181,7 +180,7 @@ const StepPrepare = ({
     const task = concat(
       maybeCLSBackup.pipe(
         catchError(e => {
-          if (e instanceof UnexpectedBootloader) {
+          if ((e as { name?: string })?.name === "UnexpectedBootloader") {
             // CLS checks fail when in recovery mode, preventing an update of an
             // unseeded device. This bypasses that check.
             return EMPTY;

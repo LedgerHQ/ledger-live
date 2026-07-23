@@ -34,20 +34,14 @@ import { isDeviceNotOnboardedError } from "@ledgerhq/live-common/device-action/u
  *
  * @returns {Action<AppRequest, AppState, AppResult>} The action for connecting to an app.
  */
-export default function useConnectAppAction({
-  allowNonOnboardedDevice = false,
-}: {
-  allowNonOnboardedDevice?: boolean;
-} = {}): Action<AppRequest, AppState, AppResult> {
+export default function useConnectAppAction(): Action<AppRequest, AppState, AppResult> {
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const action = useMemo(
     () =>
       createAppAction(
-        getEnv("MOCK")
-          ? mockedEventEmitter
-          : connectApp({ isLdmkConnectAppEnabled, allowNonOnboardedDevice }),
+        getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
       ),
-    [allowNonOnboardedDevice, isLdmkConnectAppEnabled],
+    [isLdmkConnectAppEnabled],
   );
   return action;
 }

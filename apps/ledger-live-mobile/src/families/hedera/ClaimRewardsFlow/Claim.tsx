@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { StyleSheet, View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";

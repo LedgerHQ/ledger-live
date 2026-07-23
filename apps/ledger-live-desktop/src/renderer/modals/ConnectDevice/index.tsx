@@ -9,7 +9,6 @@ export type Data = {
   appName?: string;
   requireLatestFirmware?: boolean;
   allowPartialDependencies?: boolean;
-  allowNonOnboardedDevice?: boolean;
   skipAppInstallIfNotFound?: boolean;
   onCancel?: (reason: string) => void;
   onResult: (result: AppResult) => void;
@@ -19,10 +18,9 @@ export default function ConnectDevice({
   appName = "BOLOS",
   requireLatestFirmware,
   allowPartialDependencies,
-  allowNonOnboardedDevice,
   skipAppInstallIfNotFound,
 }: Data) {
-  const action = useConnectAppAction({ allowNonOnboardedDevice });
+  const action = useConnectAppAction();
   const request = useMemo(() => {
     return {
       appName,

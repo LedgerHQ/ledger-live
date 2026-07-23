@@ -7,6 +7,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -107,7 +108,7 @@ const Body = (props: Props) => {
     onChangeStepId("claimRewards");
   }, [onChangeStepId]);
   const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
+    if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);

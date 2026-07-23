@@ -1,9 +1,4 @@
-import {
-  canReceive,
-  canSend,
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { canSend, getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
@@ -403,9 +398,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {canSendResult ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
-      {canReceive(mainAccount, undefined) ? (
-        <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
-      ) : null}
+      <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
     </FadeInButtonsContainer>
   );
 

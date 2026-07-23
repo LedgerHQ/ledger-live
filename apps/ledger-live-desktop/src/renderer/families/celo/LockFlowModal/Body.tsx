@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import Track from "~/renderer/analytics/Track";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -99,7 +100,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     onChangeStepId("amount");
   }, [onChangeStepId]);
   const handleTransactionError = useCallback((error: Error) => {
-    if (error?.name !== "UserRefusedOnDevice") {
+    if (!(error instanceof UserRefusedOnDevice)) {
       logger.critical(error);
     }
     setTransactionError(error);

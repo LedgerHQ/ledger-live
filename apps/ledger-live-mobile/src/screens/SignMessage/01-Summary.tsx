@@ -5,7 +5,7 @@ import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
 import { ScrollView, StyleSheet, View } from "react-native";
-import SafeAreaView from "~/components/SafeAreaView";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import LText from "~/components/LText";
