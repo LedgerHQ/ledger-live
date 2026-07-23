@@ -1,11 +1,6 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import {
-  DeviceOnDashboardExpected,
-  TransportError,
-  TransportStatusError,
-  StatusCodes,
-} from "@ledgerhq/errors";
+import { TransportError, StatusCodes } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -162,11 +157,14 @@ export default function fetchImage({
               subscriber.complete();
             }),
             catchError((e: unknown) => {
+              const eName = (e as { name?: string })?.name;
               if (
-                e instanceof DeviceOnDashboardExpected ||
+                eName === "DeviceOnDashboardExpected" ||
                 (e &&
-                  e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  eName === "TransportStatusError" &&
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    (e as { statusCode: number }).statusCode,
+                  ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {
