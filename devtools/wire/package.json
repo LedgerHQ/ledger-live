@@ -1,0 +1,27 @@
+{
+  "name": "@devtools/wire",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Store-aware protocol builders and transport assembly for DevTools host ⇄ tool communication",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src jest.config.js",
+    "format:check": "oxfmt src jest.config.js --check",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --config jest.config.js",
+    "coverage": "jest --config jest.config.js --coverage"
+  },
+  "dependencies": {
+    "@devtools/protocols": "workspace:*",
+    "@devtools/transport": "workspace:*"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}
