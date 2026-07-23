@@ -167,6 +167,14 @@ export type StakingContractConfig = {
   ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
   canUndelegate?: (delegation: StakingDelegation) => boolean;
+  /**
+   * Multiplier applied to the raw `eth_estimateGas` result before it becomes the
+   * transaction `gasLimit`.  Use when the chain's staking contract has a gas cost
+   * that can exceed the estimate due to on-chain state changes between estimation
+   * and inclusion (e.g. cold-vs-warm SSTORE variance in a ring-buffer).
+   * Defaults to `new BigNumber(1)` (no change) when omitted.
+   */
+  gasMultiplier?: (params: { mode: StakingOperation }) => BigNumber;
 };
 
 export type StakeCreate = {

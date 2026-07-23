@@ -265,6 +265,11 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     canUndelegate: delegation => {
       return delegation.shares?.gte(1e9) ?? true;
     },
+    gasMultiplier: ({ mode }) => {
+      return (["delegate", "undelegate"] as const).includes(mode as "delegate" | "undelegate")
+        ? new BigNumber(1.2)
+        : new BigNumber(1);
+    },
   },
   somnia: {
     contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",
