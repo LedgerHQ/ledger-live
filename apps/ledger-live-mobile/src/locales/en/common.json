@@ -6975,6 +6975,7 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "visibilityDelay": "It can take up to {{numberOfMinutes}} minutes before seeing this delegation on your delegation board.",
             "cta": "Continue"
           },
           "verification": {

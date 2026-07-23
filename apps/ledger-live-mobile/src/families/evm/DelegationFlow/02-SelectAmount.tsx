@@ -7,6 +7,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getMaxEstimatedBalance,
   getUnbondingPeriodDays,
+  getDelegationVisibilityDelayMinutes,
   hasUnbondingPeriod,
   isSeiAccountUnassociated,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
@@ -86,6 +87,7 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
+  const visibilityDelayMinutes = getDelegationVisibilityDelayMinutes(account.currency.id);
   const [showSeiAssociationWarning, setShowSeiAssociationWarning] = useState(false);
   const [checkingSeiAssociation, setCheckingSeiAssociation] = useState(true);
   useEffect(() => {
@@ -180,6 +182,16 @@ export default function SelectAmount({ navigation, route }: Props) {
                     type="info"
                     title={t("cosmos.delegation.flow.steps.starter.steps.1", {
                       numberOfDays: getUnbondingPeriodDays(account.currency.id),
+                    })}
+                  />
+                </View>
+              ) : null}
+              {visibilityDelayMinutes ? (
+                <View style={styles.alertContainer}>
+                  <Alert
+                    type="info"
+                    title={t("evm.delegation.flow.steps.amount.visibilityDelay", {
+                      numberOfMinutes: visibilityDelayMinutes,
                     })}
                   />
                 </View>
