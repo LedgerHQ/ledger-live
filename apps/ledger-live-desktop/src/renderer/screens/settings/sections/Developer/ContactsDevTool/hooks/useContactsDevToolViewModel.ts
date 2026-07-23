@@ -9,13 +9,18 @@ import {
   type ContactsFeatureValuePatch,
 } from "@features/flow-contacts";
 import { setOverride } from "@shared/feature-flags";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { setHasDismissedContactsFeatureIntroduction } from "~/renderer/actions/settings";
+import { hasDismissedContactsFeatureIntroductionSelector } from "~/renderer/reducers/settings";
 import { CONTACTS_FLAG } from "../constants";
 import { ContactsDevToolViewModel } from "../types";
 
 export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
   const dispatch = useDispatch();
   const featureFlag = useFeature(CONTACTS_FLAG);
+  const hasDismissedFeatureIntroduction = useSelector(
+    hasDismissedContactsFeatureIntroductionSelector,
+  );
   const [customFamiliesInput, setCustomFamiliesInput] = useState("");
 
   const isEnabled = featureFlag?.enabled === true;
@@ -71,13 +76,19 @@ export const useContactsDevToolViewModel = (): ContactsDevToolViewModel => {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
   }, [dispatch]);
 
+  const handleToggleFeatureIntroductionDismissed = useCallback(() => {
+    dispatch(setHasDismissedContactsFeatureIntroduction(!hasDismissedFeatureIntroduction));
+  }, [dispatch, hasDismissedFeatureIntroduction]);
+
   return {
     featureFlag,
     isEnabled,
     params,
     customFamiliesInput,
+    hasDismissedFeatureIntroduction,
     handleToggleEnabled,
     handleToggleNewBadge,
+    handleToggleFeatureIntroductionDismissed,
     handleSetEligibleAddressFamilies,
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
