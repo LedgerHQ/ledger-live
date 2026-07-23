@@ -4,7 +4,7 @@ export const hypercore = currency({
   type: "CryptoCurrency",
   id: "hypercore",
   coinType: 60,
-  name: "Hyperliquid (HyperCore)",
+  name: "Hyperliquid",
   managerAppName: "Ethereum",
   ticker: "USDC",
   scheme: "hypercore",
@@ -19,7 +19,7 @@ export const hypercore = currency({
   ],
   explorerViews: [
     {
-      tx: "https://app.hyperliquid.xyz/explorer/tx/$hash",
+      // Address view only (no HyperCore tx hash exposed by the proxy).
       address: "https://app.hyperliquid.xyz/explorer/address/$address",
     },
   ],

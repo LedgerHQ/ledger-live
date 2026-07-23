@@ -24,8 +24,15 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 jest.mock("@ledgerhq/live-common/account/index", () => {
   const framework = jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index");
+  // hypercore disables both send and receive; every other family allows them.
+  const allowsTransfer = (account: unknown, parentAccount: unknown) =>
+    framework.getMainAccount(account, parentAccount).currency.family !== "hypercore";
   return {
-    canSend: jest.fn().mockResolvedValue(true),
+    canSend: jest.fn((account, parentAccount) =>
+      Promise.resolve(allowsTransfer(account, parentAccount)),
+    ),
+    canReceive: (account: unknown, parentAccount: unknown) =>
+      allowsTransfer(account, parentAccount),
     getMainAccount: framework.getMainAccount,
     getAccountCurrency: framework.getAccountCurrency,
     flattenAccounts: framework.flattenAccounts,
@@ -131,5 +138,19 @@ describe("AccountHeaderActions — family slot / fallback logic", () => {
 
     await waitFor(() => expect(screen.getByTestId("send-button")).toBeVisible());
     expect(screen.getByTestId("receive-account-action-button")).toBeVisible();
+  });
+
+  it("hides both send and receive for a family that disables them (hypercore)", async () => {
+    mockFamily.mockReturnValue({} as never);
+    const hypercoreAccount = genAccount("test-hypercore-account", {
+      currency: getCryptoCurrencyById("hypercore"),
+    }) as Account;
+
+    render(<AccountHeaderActions account={hypercoreAccount} parentAccount={undefined} />);
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("receive-account-action-button")).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId("send-button")).not.toBeInTheDocument();
   });
 });
