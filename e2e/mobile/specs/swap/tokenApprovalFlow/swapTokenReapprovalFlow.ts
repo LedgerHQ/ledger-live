@@ -21,7 +21,13 @@ export function runSwapTokenReapprovalFlow(
 ) {
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.REAPPROVAL);
   if (!runHere) {
-    console.warn("[reapproval.swap.spec] Skipping — needs broadcast on");
+    const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+    const bothPlatforms = process.env.E2E_BOTH_PLATFORMS === "true";
+    console.warn(
+      broadcastEnabled && bothPlatforms
+        ? "[reapproval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
+        : "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
+    );
   }
   (runHere ? describe : describe.skip)("Token reapproval - flow", () => {
     beforeAll(async () => {
