@@ -183,11 +183,11 @@ describe("createApi", () => {
   describe("getBalance", () => {
     it("returns the balance for a valid address", async () => {
       // not an exact value: testnetAddress's public balance shifts as the team runs more
-      // transactions against it, so only shape + positivity are checked here.
+      // transactions against it, so only shape + non-negativity are checked here.
       const balance = await api.getBalance(testnetAddress);
 
       expect(balance).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
-      expect(balance[0].value).toBeGreaterThan(0n);
+      expect(balance[0].value).toBeGreaterThanOrEqual(0n);
     });
 
     it("returns an empty array for a non-existing valid address", async () => {

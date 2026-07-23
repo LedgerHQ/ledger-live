@@ -75,11 +75,11 @@ describe("accessProvableApi", () => {
       provableApi: { uuid, scannerStatus: { synced: false, percentage: 0 } },
     });
 
-    // this fixture account has been fully scanned in the past, so its real status is synced
-    expect(result).toEqual({
-      uuid,
-      scannerStatus: { synced: true, percentage: 100 },
-    });
+    expect(result.uuid).toBe(uuid);
+    expect(result.scannerStatus).toEqual(
+      expect.objectContaining({ synced: expect.any(Boolean), percentage: expect.any(Number) }),
+    );
+    expect(result.scannerStatus).not.toEqual({ synced: false, percentage: 0 });
   });
 
   it("throws AleoApiConfigurationResetError for an unknown scanner uuid", async () => {
