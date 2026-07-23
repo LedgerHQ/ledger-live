@@ -1,6 +1,6 @@
 {
   "name": "@devtools/bindings",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "App-specific builders that adapt Ledger Live state into @devtools tool props (one builder per tool)",
   "main": "src/index.ts",

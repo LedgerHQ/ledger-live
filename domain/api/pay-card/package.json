@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-pay-card",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Domain API client for the Ledger Pay Card authentication and session endpoints",
   "main": "src/index.ts",

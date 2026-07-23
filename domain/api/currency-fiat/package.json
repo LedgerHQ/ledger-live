@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-currency-fiat",
-  "version": "0.2.1-next.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Domain API client for fiat currencies (Countervalues Service): RTK Query endpoints typed on @domain/entity-currency-fiat",
   "main": "src/index.ts",

@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.5.0
+
+### Minor Changes
+
+- [#19219](https://github.com/LedgerHQ/ledger-live/pull/19219) [`7094236`](https://github.com/LedgerHQ/ledger-live/commit/7094236545524bae7f501bbee1ee606ece868a14) Thanks [@semeano](https://github.com/semeano)! - Zcash: add PCZT support on LW signer
+
 ## 0.5.0-next.0
 
 ### Minor Changes

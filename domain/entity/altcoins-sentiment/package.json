@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-altcoins-sentiment",
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Domain entity for altcoins sentiment (CMC Altcoin Season Index): canonical Zod schema and type",
   "main": "src/index.ts",

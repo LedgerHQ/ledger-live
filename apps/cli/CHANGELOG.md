@@ -1,5 +1,34 @@
 # @ledgerhq/live-cli
 
+## 26.0.0
+
+### Major Changes
+
+- [#18802](https://github.com/LedgerHQ/ledger-live/pull/18802) [`a5a7fae`](https://github.com/LedgerHQ/ledger-live/commit/a5a7fae90b6921d6c94f3ca1e5f1852ac72938eb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Trim the CLI to its internally-used, Speculos-only commands and drop all non-Speculos transports.
+
+  Kept commands: `getAddress`, `liveData`, `send`, `tokenAllowance`, `generateAddresses`, `generateAppJson`, `generateUtxoAddresses` (e2e), and `version`. All other commands — including `proxy` and `botTransfer` — are removed.
+
+  The CLI no longer ships USB/HID (`node-hid`, `usb`, `@ledgerhq/hw-transport-node-hid`) or HTTP-proxy (`@ledgerhq/hw-transport-http`) transports; only the Speculos transports remain. Passing a non-Speculos device id now fails with an explicit error pointing to the Ledger Live desktop/mobile app or `@ledgerhq/wallet-cli`. The `pnpm build:device-deps` helper is removed as there are no native device bindings left to build.
+
+### Minor Changes
+
+- [#19463](https://github.com/LedgerHQ/ledger-live/pull/19463) [`e793664`](https://github.com/LedgerHQ/ledger-live/commit/e793664c0e9b14a598c55f3dd36ae9803ec5dde3) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint currency accessor and formatting imports to @domain/entity-currency-crypto and @ledgerhq/live-currency-format, removing live-common/currencies barrel dependency where direct alternatives exist.
+
+- [#19462](https://github.com/LedgerHQ/ledger-live/pull/19462) [`660f715`](https://github.com/LedgerHQ/ledger-live/commit/660f715056524ee46a2bcc4d94b0adffdc290aa0) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint currency accessor imports off the `@ledgerhq/live-common/currencies` barrel onto `@domain/entity-currency-crypto` directly. `findCryptoCurrencyByKeyword`, `findCryptoCurrencyById`, and `getCryptoCurrencyById` are now sourced from the domain entity package. Runtime behaviour is unchanged.
+
+### Patch Changes
+
+- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`ca37cfe`](https://github.com/LedgerHQ/ledger-live/commit/ca37cfe7f451b88ebd76a9da7af70fcc6577cc53), [`1f34a90`](https://github.com/LedgerHQ/ledger-live/commit/1f34a9055ccaea91ee2ab98a7b10ef1afc968e85), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`8df21c9`](https://github.com/LedgerHQ/ledger-live/commit/8df21c94922550dd6dfe5448afa79b32cfa94a92), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`2c28696`](https://github.com/LedgerHQ/ledger-live/commit/2c2869679a266a0a330547db0dfb6a13d11b19aa), [`39ed467`](https://github.com/LedgerHQ/ledger-live/commit/39ed467b46543e040bb1d16002f90ff1ec1ef172), [`e26e68e`](https://github.com/LedgerHQ/ledger-live/commit/e26e68e854ecea6ebbe5e26196c8d8e899329c7d), [`bc0573e`](https://github.com/LedgerHQ/ledger-live/commit/bc0573e3bf73e47ad4f8a58e228a3e11e0866e6e), [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7), [`bde85a7`](https://github.com/LedgerHQ/ledger-live/commit/bde85a7ef50cf7990efd2f9bcd7ccc34c0764fb7), [`996c76b`](https://github.com/LedgerHQ/ledger-live/commit/996c76b157553c547f83d877d25199b311ee0f63), [`71884d7`](https://github.com/LedgerHQ/ledger-live/commit/71884d759a86bc36ce3f6776ed1c59a2b984343b), [`b3557c0`](https://github.com/LedgerHQ/ledger-live/commit/b3557c0c7c2b1388f5e0a7270ee4847b1cf53ff6), [`8fd4f90`](https://github.com/LedgerHQ/ledger-live/commit/8fd4f9019c1b3015eaa74ddad62dd786976913f7), [`0040b67`](https://github.com/LedgerHQ/ledger-live/commit/0040b67ca4d65ebf2fede15f625e5958f507d879), [`6627cb7`](https://github.com/LedgerHQ/ledger-live/commit/6627cb7ef2627c6e3ac520d01db6b2deefdfe7f3), [`083452c`](https://github.com/LedgerHQ/ledger-live/commit/083452c72359a52c363e7de95e53b98f0c6ed906), [`3fc5836`](https://github.com/LedgerHQ/ledger-live/commit/3fc583609116bcf40956ccafeaadc733e11040b0), [`cd43e66`](https://github.com/LedgerHQ/ledger-live/commit/cd43e6689983aefdc3548ac6dcfb86521a1535ff), [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7), [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c), [`77c8a26`](https://github.com/LedgerHQ/ledger-live/commit/77c8a264f2c50fc1d10a5267afb2290b24f4f572), [`3e127f7`](https://github.com/LedgerHQ/ledger-live/commit/3e127f7385f5da907d4a08447c3f7582a9ac4f3f), [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10), [`279b755`](https://github.com/LedgerHQ/ledger-live/commit/279b755ce19d8157c75295d21ad18d1cc2503e79), [`eefaded`](https://github.com/LedgerHQ/ledger-live/commit/eefaded9e81566898f1551e144a805efe60390fe), [`ad38c6d`](https://github.com/LedgerHQ/ledger-live/commit/ad38c6da54e35e14c53237f9ca4369091f15e8a0), [`edc897d`](https://github.com/LedgerHQ/ledger-live/commit/edc897d25e91f426065ce4eab89882192cb1327c), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`d631f0d`](https://github.com/LedgerHQ/ledger-live/commit/d631f0dd2480950c5f20dec0c9b4aca515ec63f8), [`44a08fa`](https://github.com/LedgerHQ/ledger-live/commit/44a08fa1cbbd560da60cee496af1ffa49dc380da), [`26e7fbd`](https://github.com/LedgerHQ/ledger-live/commit/26e7fbd02929042b3f32c6d8cb73db6e3d070709), [`92b234f`](https://github.com/LedgerHQ/ledger-live/commit/92b234fb80a0fdeb9a36ed8917d542a912e817ed), [`f2de6f4`](https://github.com/LedgerHQ/ledger-live/commit/f2de6f4813889b9450266aa90d8436569107185d), [`e56f1b5`](https://github.com/LedgerHQ/ledger-live/commit/e56f1b53b0ddcde7dc517aad7bf2bb1a33346d76), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
+  - @ledgerhq/ledger-wallet-framework@2.4.0
+  - @ledgerhq/live-common@36.5.0
+  - @ledgerhq/cryptoassets@13.55.0
+  - @ledgerhq/live-env@2.42.0
+  - @ledgerhq/types-live@6.115.0
+  - @domain/entity-currency-crypto@0.6.0
+  - @ledgerhq/live-currency-format@0.13.0
+  - @ledgerhq/live-countervalues@0.22.1
+  - @ledgerhq/live-dmk-speculos@0.10.2
+
 ## 26.0.0-next.0
 
 ### Major Changes

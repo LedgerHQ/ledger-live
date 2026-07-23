@@ -1,5 +1,13 @@
 # @ledgerhq/live-env
 
+## 2.42.0
+
+### Minor Changes
+
+- [#19439](https://github.com/LedgerHQ/ledger-live/pull/19439) [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Update default values for `CAL_SERVICE_URL` and `CAL_SERVICE_URL_STAGING` to the Gravitee gateway URLs (`https://global.api.prd.ledger.com/cal` and `https://global.api.stg.ledger-test.com/cal`).
+
+- [#19507](https://github.com/LedgerHQ/ledger-live/pull/19507) [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(solana): update default validators summary base url for prod
+
 ## 2.42.0-next.0
 
 ### Minor Changes

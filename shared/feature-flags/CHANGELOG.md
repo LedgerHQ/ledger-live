@@ -1,5 +1,25 @@
 # @shared/feature-flags
 
+## 0.14.0
+
+### Minor Changes
+
+- [#19252](https://github.com/LedgerHQ/ledger-live/pull/19252) [`c75213b`](https://github.com/LedgerHQ/ledger-live/commit/c75213b0c649cc0acfdbabacd62e07848ccee842) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): switch to deviceaction instead of die with FF on new send flow
+
+- [#19568](https://github.com/LedgerHQ/ledger-live/pull/19568) [`45584e4`](https://github.com/LedgerHQ/ledger-live/commit/45584e4b87ad8ffea9a0e6ba48e196d14164c84a) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Show an estimated label for configured providers on completed mobile swaps.
+
+- [#19444](https://github.com/LedgerHQ/ledger-live/pull/19444) [`ea792bc`](https://github.com/LedgerHQ/ledger-live/commit/ea792bc06b9eb9931d75823bff63186202d3e2de) Thanks [@deepyjr](https://github.com/deepyjr)! - Add eligible address family configuration to Contacts feature flags.
+
+- [#19377](https://github.com/LedgerHQ/ledger-live/pull/19377) [`75a33a8`](https://github.com/LedgerHQ/ledger-live/commit/75a33a8ef74a6eef6236bb5db873cadd35643705) Thanks [@deepyjr](https://github.com/deepyjr)! - Register Contacts feature flags and expose Contacts flow access.
+
+- [#19380](https://github.com/LedgerHQ/ledger-live/pull/19380) [`bae43dd`](https://github.com/LedgerHQ/ledger-live/commit/bae43ddc50439d2a7f18852f2b727e24de0169ed) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `card` boolean param to `lwdPayTab` and `lwmPayTab` feature flags
+
+- [#19589](https://github.com/LedgerHQ/ledger-live/pull/19589) [`9479c28`](https://github.com/LedgerHQ/ledger-live/commit/9479c284321915f7d5139746f3f924b1ad2685c3) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep large-screen upsell eligibility read-only and align the fallback CTA link
+
+- [#19378](https://github.com/LedgerHQ/ledger-live/pull/19378) [`fd9da5e`](https://github.com/LedgerHQ/ledger-live/commit/fd9da5e2b3a1e5300d012b826f3707535d07b1d9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add lwmPayTab feature flag for the Pay Tab in LWM
+
+- [#19367](https://github.com/LedgerHQ/ledger-live/pull/19367) [`8238860`](https://github.com/LedgerHQ/ledger-live/commit/8238860c893b0688d2c59a3e042d7a227031547a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add lwdPayTab feature flag for desktop Pay tab
+
 ## 0.14.0-next.0
 
 ### Minor Changes
