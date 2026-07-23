@@ -62,11 +62,11 @@ Avoid multiple scopes – prefer a single more informative value, e.g. use `port
 
 Avoid broad scopes – prefer specifics, e.g. use `coin-modules` instead of `shared`.
 
-Do not use ticket IDs as scopes: `fix(LIVE-1234)` is not valid.
+Do not use ticket IDs as scope: `fix(LIVE-1234)` is not a valid scope. Use in the PR title instead.
 
-## Ticket
+## Tickets
 
-The Jira ticket is optional. Include it when one exists.
+Internal contributions should be related to a Jira ticket. If a ticket does not exist you should create one. If you are making an open source contribution, create a Github issue instead.
 
 ## Description
 
