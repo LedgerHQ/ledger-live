@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-aleo": minor
 ---
 
 test: improve aleo integration tests coverage
