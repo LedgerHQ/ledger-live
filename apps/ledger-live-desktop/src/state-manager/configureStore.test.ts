@@ -1,6 +1,5 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { webcrypto } from "crypto";
 import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
 import { setEnv } from "@shared/env";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
@@ -56,10 +55,6 @@ describe("customCreateStore", () => {
       http.post(`https://${CHALLENGE.json.host}/openid/v1/exchange`, endpoints.tokenExchange),
     );
 
-    // WebCrypto API is used to generate the PKCE pair
-    const globalCrypto = globalThis.crypto;
-    Object.defineProperty(globalThis, "crypto", { configurable: true, value: webcrypto });
-
     beforeAll(() => {
       setEnv("LEDGER_CLIENT_VERSION", "jest");
       setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD", PROD_KEYCLOAK_BASE_URL);
@@ -76,7 +71,6 @@ describe("customCreateStore", () => {
     });
 
     afterAll(() => {
-      Object.defineProperty(globalThis, "crypto", { configurable: true, value: globalCrypto });
       server.close();
     });
 

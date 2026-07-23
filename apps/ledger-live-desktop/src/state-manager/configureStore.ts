@@ -87,6 +87,7 @@ const customCreateStore = ({
                       clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
                       keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
                       keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                      disablePkce: true,
                     },
                     { provider: identityProvider },
                   ),

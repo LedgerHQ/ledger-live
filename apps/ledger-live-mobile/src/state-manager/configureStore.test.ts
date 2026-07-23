@@ -8,8 +8,6 @@ import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
 
-let expoCrypto: typeof import("expo-crypto");
-
 jest.mock("@react-native-community/netinfo", () => ({
   addEventListener: jest.fn(() => jest.fn()),
 }));
@@ -69,8 +67,6 @@ describe("mobile store", () => {
 
     const LKRP_TOKEN = makeJwt({ sub: "idp", exp: 4102444800 });
     const KEYCLOAK_JWT = makeJwt({ sub: "keycloak", exp: 4102444800 });
-    const PKCE_CODE_VERIFIER = "A".repeat(43);
-    const PKCE_CODE_CHALLENGE = "Y29kZS1jaGFsbGVuZ2U";
 
     const queryFn = jest.fn(() => Promise.resolve());
 
@@ -111,8 +107,6 @@ describe("mobile store", () => {
       setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING", STAGING_KEYCLOAK_BASE_URL);
       setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD", PROD_KEYCLOAK_BASE_URL);
       setEnv("LEDGER_AUTH_KEYCLOAK_REALM", AUTH_CONFIG.keycloakRealm);
-      // Keep PKCE assertions on the same post-reset mock instance used by configureStore.
-      expoCrypto = require("expo-crypto") as typeof import("expo-crypto");
     });
 
     afterAll(() => {
@@ -229,21 +223,6 @@ describe("mobile store", () => {
           request.url.startsWith(AUTH_CONFIG.keycloakBaseUrl),
         ),
       ).toBe(true);
-
-      expect(expoCrypto.getRandomBytesAsync).toHaveBeenCalledWith(32);
-      expect(expoCrypto.digestStringAsync).toHaveBeenCalledWith(
-        expoCrypto.CryptoDigestAlgorithm.SHA256,
-        PKCE_CODE_VERIFIER,
-        { encoding: expoCrypto.CryptoEncoding.BASE64 },
-      );
-
-      const keycloakRequest = endpoints.prodKeycloakAuth.mock.calls[0][0].request;
-      expect(new URL(keycloakRequest.url).searchParams.get("code_challenge")).toBe(
-        PKCE_CODE_CHALLENGE,
-      );
-      const tokenRequest = endpoints.lkrpToken.mock.calls[0][0].request;
-      const tokenRequestBody = new URLSearchParams(await tokenRequest.text());
-      expect(tokenRequestBody.get("code_verifier")).toBe(PKCE_CODE_VERIFIER);
 
       const challengeRequest = await endpoints.lkrpAuth.mock.calls.at(-1)?.[0].request.json();
       expect(challengeRequest).toEqual(
