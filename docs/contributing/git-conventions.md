@@ -43,7 +43,7 @@ Types come from Conventional Commit types:
 - `style`
 - `test`
 
-Do not use the legacy `bugfix/` or `support/` branch prefixes. Use `fix/` for bug fixes and `chore/` for maintenance or support work.
+Do not use the legacy `bugfix` or `support`. Use `fix` for bug fixes and `chore` for maintenance or support work.
 
 ## Scope
 
