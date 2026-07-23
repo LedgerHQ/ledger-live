@@ -19,10 +19,10 @@ titles and merge commits.
 
 The canonical rules live in [Git conventions](docs/contributing/git-conventions.md).
 
-### Updating your branch with develop
+## Updating your branch with develop
 
 **Always prefer rebasing** unless your branch contains merge commits from
-sub-features
+sub-features:
 
 - Small, self-contained branches -> rebase: `git rebase origin/develop`
 - Branches with cross-branch merges -> merge: `git merge origin/develop`
