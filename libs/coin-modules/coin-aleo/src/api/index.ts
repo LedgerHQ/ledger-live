@@ -17,7 +17,6 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import coinConfig from "../config";
 import { estimateFees, getBalance, lastBlock, listOperations, validateAddress } from "../logic";
 import { getTransactionType } from "../logic/utils";
@@ -29,7 +28,6 @@ export function createApi(
 ): CoinModuleApi<MemoNotSupported, AleoTransactionIntentData> {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
   coinConfig.setCoinConfig(() => aleoCoinConfig);
-  const currency = getCryptoCurrencyById(currencyId);
 
   return {
     async call() {
@@ -60,15 +58,15 @@ export function createApi(
       return estimateFees({ configOrCurrencyId: aleoCoinConfig, transactionType });
     },
     getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> => {
-      return rejectBalanceOptions(() => getBalance(currency, address), options);
+      return rejectBalanceOptions(() => getBalance(aleoCoinConfig, address), options);
     },
     lastBlock: async (): Promise<BlockInfo> => {
-      return lastBlock(currency);
+      return lastBlock(aleoCoinConfig);
     },
     listOperations: async (address, options) => {
       const { operations, nextCursor } = await listOperations({
         config: aleoCoinConfig,
-        currency,
+        currencyId,
         address,
         options,
         mode: "coin-framework",

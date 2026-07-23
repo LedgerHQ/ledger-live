@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -21,6 +21,7 @@ import type {
   AleoPrivateRecord,
   AleoPrivateTokenBalance,
   AleoDecryptedRecordResponse,
+  AleoCoinConfig,
 } from "../types";
 
 interface TxOpEntry {
@@ -322,7 +323,7 @@ export function applyTransparentBalance(
  */
 export async function resolveTokenSubAccounts({
   enableTokens,
-  currency,
+  config,
   address,
   ledgerAccountId,
   publicOperations,
@@ -332,7 +333,7 @@ export async function resolveTokenSubAccounts({
   initialAccount,
 }: {
   enableTokens: boolean;
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   address: string;
   ledgerAccountId: string;
   publicOperations: AleoOperation[];
@@ -376,7 +377,7 @@ export async function resolveTokenSubAccounts({
       freshTransparentById.set(
         subAccount.id,
         parseAmount(
-          await apiClient.getTokenBalance(currency, subAccount.token.contractAddress, address),
+          await apiClient.getTokenBalance(config, subAccount.token.contractAddress, address),
         ),
       );
     } catch (e) {
@@ -684,7 +685,7 @@ function upsertTxEntry({
 }
 
 export async function buildSubAccountsFromPrivateRecords({
-  currency,
+  config,
   ledgerAccountId,
   allPrivateRecords,
   unspentPrivateRecords,
@@ -693,7 +694,7 @@ export async function buildSubAccountsFromPrivateRecords({
   address,
   calTokens,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   ledgerAccountId: string;
   allPrivateRecords: AleoPrivateRecord[];
   unspentPrivateRecords: AleoPrivateRecord[];
@@ -724,7 +725,7 @@ export async function buildSubAccountsFromPrivateRecords({
       if (!tokenCurrency) return;
 
       const decrypted = await sdkClient.decryptRecord({
-        currency,
+        config,
         ciphertext: record.record_ciphertext,
         viewKey,
       });
@@ -780,7 +781,7 @@ export async function buildSubAccountsFromPrivateRecords({
 
     if (isOutgoingRecord) {
       // OUT: read the actual sent amount and recipient address from the transition inputs.
-      const outDetails = await getTokenOutDetails({ currency, record, viewKey });
+      const outDetails = await getTokenOutDetails({ config, record, viewKey });
       if (outDetails.amount === null) {
         log(
           "aleo/buildSubAccountsFromPrivateRecords",
@@ -793,7 +794,7 @@ export async function buildSubAccountsFromPrivateRecords({
     } else {
       // IN (or Private self-transfer): the record itself contains the correct received amount.
       const decrypted = await sdkClient.decryptRecord({
-        currency,
+        config,
         ciphertext: record.record_ciphertext,
         viewKey,
       });

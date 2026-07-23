@@ -1,20 +1,19 @@
 import BigNumber from "bignumber.js";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { PROGRAM_ID } from "../constants";
 import { sdkClient } from "../network/sdk";
-import type { AleoPrivateRecord, AleoUnspentRecord } from "../types";
+import type { AleoCoinConfig, AleoPrivateRecord, AleoUnspentRecord } from "../types";
 import { parseMicrocredits } from "./utils";
 
 export async function getPrivateBalance({
-  currency,
+  config,
   viewKey,
   privateRecords,
   oldUnspentRecords,
   onProgress,
   signal,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   viewKey: string;
   privateRecords: AleoPrivateRecord[];
   oldUnspentRecords: AleoUnspentRecord[];
@@ -42,7 +41,7 @@ export async function getPrivateBalance({
       };
     } else {
       const decryptedRecord = await sdkClient.decryptRecord({
-        currency,
+        config,
         viewKey,
         ciphertext: record.record_ciphertext,
       });

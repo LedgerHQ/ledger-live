@@ -220,7 +220,7 @@ describe("createApi", () => {
       expect(mockedListOperations).toHaveBeenCalledTimes(1);
       expect(mockedListOperations).toHaveBeenCalledWith({
         config: { ...mockConfig, status: { type: "active" } },
-        currency: expect.any(Object),
+        currencyId: "aleo",
         address: "aleo1test",
         options,
         mode: "coin-framework",
