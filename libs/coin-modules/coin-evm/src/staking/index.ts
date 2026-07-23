@@ -15,6 +15,7 @@ export {
   hasDelegationVisibilityDelay,
   hasRedelegation,
   hasCompound,
+  hasChainRewards,
   prefetchValidators,
   clearValidatorsCache,
 } from "./validators";

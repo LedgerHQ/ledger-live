@@ -104,6 +104,7 @@ export const ManageDropDownItem = ({
 type RowProps = Readonly<{
   account: StakingAccount;
   delegation: StakingMappedDelegation;
+  showRewards: boolean;
   onManageAction: (address: string, action: DelegationActionsModalName) => void;
   onClaimRewards: (address: string) => void;
   onExternalLink: (address: string) => void;
@@ -121,6 +122,7 @@ export function Row({
     status,
   },
   delegation,
+  showRewards,
   onManageAction,
   onClaimRewards,
   onExternalLink,
@@ -250,9 +252,7 @@ export function Row({
       <Column>
         <Discreet>{formattedAmount}</Discreet>
       </Column>
-      <Column>
-        <Discreet>{formattedPendingRewards}</Discreet>
-      </Column>
+      <Column>{showRewards ? <Discreet>{formattedPendingRewards}</Discreet> : null}</Column>
       <Column>
         <DropDown
           items={dropDownItems}
