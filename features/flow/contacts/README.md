@@ -9,6 +9,7 @@ Shared Contacts flow package for Desktop and Mobile.
 
 - Feature-flag configuration (`useContactsFeature`, resolvers)
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
+- Empty contact detail selection and native presentation
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Empty, populated, and search Contacts list view models and their Desktop and Mobile page shells
@@ -28,7 +29,7 @@ entry point. The native entry also exports `ContactsAddContactHeaderButton` via 
 
 - **Component behavior**: test in this package (see `features/flow/README.md` for the cross-flow testing strategy).
 - **Mobile Jest entry**: `src/jest.native.ts` re-exports the native Flow API used by Mobile integration tests. Mobile Jest maps `@features/flow-contacts` to this entry via `moduleNameMapper`.
-- **App wiring**: mobile `__integrations__` tests spread `jest.requireActual("@features/flow-contacts")` and overlay lightweight UI stubs for Lumen RN components.
+- **App wiring**: mobile `__integrations__` tests render the Flow components and mock only app-owned external wiring when required.
 
 ## Structure
 
@@ -38,10 +39,12 @@ src/
 │   ├── ContactsButton/                  # My Wallet entry
 │   ├── AddContactDrawer/                # Native add-contact drawer and web dialog
 │   ├── ContactsFeatureIntroduction/      # One-time feature introduction dialog (web)
+│   ├── ContactAvatar/                    # Shared native list and detail avatar
 │   └── ContactsLedgerSyncIntroduction/  # Shared Ledger Sync introduction content
 ├── add/
 │   ├── model/            # Contact-name validation and creation contract
 ├── featureIntroduction/  # One-time feature intro preference + Ledger Sync priority
+├── detail/               # Empty detail selection and native page components
 ├── hooks/
 ├── list/                 # Shared list view models and page shells
 │   ├── components/

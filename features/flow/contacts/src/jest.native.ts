@@ -1,5 +1,6 @@
 export * from "./add";
 export * from "./detail";
+export * from "./detail/native";
 export * from "./featureIntroduction";
 export * from "./featureFlags";
 export * from "./hooks";
