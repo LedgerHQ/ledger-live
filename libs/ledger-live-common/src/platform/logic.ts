@@ -1,5 +1,4 @@
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { getDomainCurrencyForAccount } from "../currencies/domainAdapters";
 import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
 import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
@@ -8,12 +7,11 @@ import {
 } from "./serializers";
 import type { TrackingAPI } from "./tracking";
 import { LiveAppManifest, TranslatableString } from "./types";
-import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
+import { getAccountCurrency, isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../coin-modules/transaction-types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { Exchange } from "../exchange/types";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -197,8 +195,8 @@ export async function completeExchangeLogic(
     fromParentAccount,
     toAccount,
     toParentAccount,
-    fromCurrency: getDomainCurrencyForAccount(fromAccount),
-    toCurrency: toAccount ? getDomainCurrencyForAccount(toAccount) : undefined,
+    fromCurrency: getAccountCurrency(fromAccount),
+    toCurrency: toAccount ? getAccountCurrency(toAccount) : undefined,
   };
 
   const accountBridge = await getAccountBridge(fromAccount, fromParentAccount);

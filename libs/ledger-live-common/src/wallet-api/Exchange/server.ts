@@ -8,10 +8,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import {
-  getDomainCurrencyForAccount,
-  getDomainTokenFromAccount,
-} from "../../currencies/domainAdapters";
+import { getAccountCurrency } from "../../account";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   createAccountNotFound,
@@ -329,7 +326,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getDomainCurrencyForAccount(fromAccount),
+            fromCurrency: getAccountCurrency(fromAccount),
             toAccount: newTokenAccount ? newTokenAccount : toAccount,
             toParentAccount,
             toCurrency,
@@ -338,7 +335,7 @@ export const handlers = ({
           exchange = {
             fromAccount,
             fromParentAccount,
-            fromCurrency: getDomainCurrencyForAccount(fromAccount),
+            fromCurrency: getAccountCurrency(fromAccount),
           };
         }
 
@@ -870,10 +867,10 @@ async function extractSwapStartParam(
     exchange: {
       fromAccount,
       fromParentAccount,
-      fromCurrency: getDomainCurrencyForAccount(fromAccount),
+      fromCurrency: getAccountCurrency(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
       toParentAccount: toParentAccount,
-      toCurrency: getDomainCurrencyForAccount(newTokenAccount ?? toAccount),
+      toCurrency: getAccountCurrency(newTokenAccount ?? toAccount),
     },
   };
 }
@@ -978,9 +975,7 @@ async function getToCurrency(
       return splTokenCurrency as CryptoOrTokenCurrency;
   }
 
-  return newTokenAccount
-    ? getDomainTokenFromAccount(newTokenAccount)
-    : getDomainCurrencyForAccount(toAccount);
+  return newTokenAccount ? getAccountCurrency(newTokenAccount) : getAccountCurrency(toAccount);
 }
 
 interface StrategyParams {

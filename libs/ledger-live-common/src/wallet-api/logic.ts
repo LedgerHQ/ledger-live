@@ -5,7 +5,6 @@ import {
   SignedOperation,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import { getDomainCurrencyForAccount } from "../currencies/domainAdapters";
 import { withLiveAppContext } from "./blindSigningContext";
 import {
   accountToWalletAPIAccount,
@@ -17,6 +16,7 @@ import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
 import {
   isTokenAccount,
   isAccount,
+  getAccountCurrency,
   getMainAccount,
   makeEmptyTokenAccount,
   getParentAccount,
@@ -656,7 +656,7 @@ export async function completeExchangeLogic(
   const exchange = {
     fromAccount,
     fromParentAccount: fromAccount !== fromParentAccount ? fromParentAccount : undefined,
-    fromCurrency: getDomainCurrencyForAccount(fromAccount),
+    fromCurrency: getAccountCurrency(fromAccount),
     toAccount: newTokenAccount ? newTokenAccount : toAccount,
     toParentAccount: newTokenAccount ? toAccount : toParentAccount,
     toCurrency: toAccount ? getToCurrency(toAccount, newTokenAccount) : undefined,
@@ -715,7 +715,7 @@ export async function completeExchangeLogic(
 }
 
 function getToCurrency(account: AccountLike, tokenAccount?: TokenAccount): CryptoOrTokenCurrency {
-  return getDomainCurrencyForAccount(tokenAccount ?? account);
+  return getAccountCurrency(tokenAccount ?? account);
 }
 
 type StorageGetArgs = {
