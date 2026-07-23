@@ -29,7 +29,7 @@ const tags: string[] = [
 ];
 tags.forEach(tag => $Tag(tag));
 
-describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
+describe("Swap deeplinks", () => {
   const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
   const ethAccount = Account.ETH_3;
   const usdtAccount = TokenAccount.ETH_USDT_1;
@@ -51,7 +51,7 @@ describe("[B2CQA-4152] Swap deeplinks — LWM", () => {
     await swapSetup();
   });
 
-  it("[B2CQA-4152] Swap deeplinks — all scenarios", async () => {
+  it("Swap deeplinks — all scenarios", async () => {
     const reset = async () => {
       await app.swapLiveApp.clearSwapState();
       await app.portfolio.openViaDeeplink();
