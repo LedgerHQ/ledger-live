@@ -39,6 +39,9 @@ export function createApi(config: MultiversXCoinConfig, _currencyId: string): Co
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => {
       return broadcast(api, tx);
     },
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine: (tx: string, signature: string, pubkey?: string) => {
       return combine(tx, signature, pubkey);
     },

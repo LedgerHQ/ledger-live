@@ -467,6 +467,16 @@ describe("createApi", () => {
   });
 
   describe("getBlock", () => {
+    it("returns block when ERC20 transfers require pagination", async () => {
+      const blockHeight = 178347043;
+
+      const block = await api.getBlock(blockHeight);
+
+      expect(block.info.height).toBe(blockHeight);
+      expect(block.info.hash?.length).toBe(64);
+      expect(block.transactions.length).toBeGreaterThan(0);
+    });
+
     it("returns block with proper multi-transfer data", async () => {
       const blockHeight = 176051087;
       const multiTransferTxHash =

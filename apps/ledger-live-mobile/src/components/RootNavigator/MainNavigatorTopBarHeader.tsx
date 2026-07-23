@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { View, Platform } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TopBar } from "LLM/components/TopBar";
 import { ProgressiveBlurView } from "@sbaiahmed1/react-native-blur";
 import { LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import {
   useNavigationBarHeights,
+  useAdjustedSafeAreaInsets,
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
 } from "LLM/hooks/useNavigationBarHeights";
@@ -28,7 +28,7 @@ const TOP_BAR_CONTAINER_BASE = {
 
 export const MainNavigatorTopBarHeader = () => {
   const route = useRoute();
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
   const { top: headerHeight } = useNavigationBarHeights();
 
   const topBarContainerStyle = useMemo(

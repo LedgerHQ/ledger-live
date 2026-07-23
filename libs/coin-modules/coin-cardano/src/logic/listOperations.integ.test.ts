@@ -229,10 +229,9 @@ describe("listOperations", () => {
         cursor: firstPage.next,
       });
 
-      expect(secondPageA.items.length).toBe(secondPageB.items.length);
-      for (let i = 0; i < secondPageA.items.length; i++) {
-        expect(secondPageA.items[i].id).toBe(secondPageB.items[i].id);
-      }
+      // Deterministic total order (date + id tiebreak) → the same cursor must return operations in
+      // identical order, not just the same set (guards cursor-based pagination against a regression).
+      expect(secondPageA.items.map(o => o.id)).toEqual(secondPageB.items.map(o => o.id));
     }, 30000);
 
     it("should return undefined cursor on last page", async () => {

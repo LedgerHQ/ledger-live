@@ -1,8 +1,12 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getMockedCurrency, getMockedHTSTokenCurrency } from "../test/fixtures/currency.fixture";
 import { getTokenFromAsset } from "./getTokenFromAsset";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("getTokenFromAsset", () => {
   const mockCurrency = getMockedCurrency();
@@ -17,8 +21,10 @@ describe("getTokenFromAsset", () => {
 
     const findTokenByAddressInCurrencyMock = jest.fn().mockResolvedValue(mockToken);
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: findTokenByAddressInCurrencyMock,
+      getTokensSyncHash: async () => "",
     });
 
     const result = await getTokenFromAsset(mockCurrency, asset1);

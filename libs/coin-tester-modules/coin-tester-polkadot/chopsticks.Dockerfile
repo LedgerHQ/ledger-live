@@ -1,10 +1,11 @@
-FROM --platform=linux/amd64 node:20
+FROM --platform=linux/amd64 node:lts-alpine
+RUN apk add --no-cache curl
 WORKDIR /coin-tester-polkadot
 COPY . .
 
 RUN npm install -g @acala-network/chopsticks@latest
 
-ENV CHOPSTICKS_CONFIG=/coin-tester-chopsticks/polkadot.yml
+ENV CHOPSTICKS_CONFIG=/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml
 
 EXPOSE 8000
 

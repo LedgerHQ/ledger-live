@@ -1,5 +1,8 @@
 # ethereum-provider
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/ethereum-provider` implements an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193)-compatible Ethereum provider backed by the Ledger Live Wallet API. It bridges dApps embedded in the Ledger Live webview (both Electron and React Native) to Ethereum accounts managed by the connected hardware wallet.
 
 ## What it does

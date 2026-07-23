@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -15,6 +15,7 @@ import {
   getMockedTokenCurrency,
   MOCK_TOKEN_PROGRAM_ID,
 } from "../__tests__/fixtures/currency.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import type { AleoOperation, AleoTokenAccount, AleoPrivateTokenBalance } from "../types";
 import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
@@ -47,6 +48,7 @@ const mockDecryptRecord = jest.mocked(sdkClient.decryptRecord);
 const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
 
 const mockCurrency = getMockedCurrency();
+const mockConfig = getMockedConfig("mainnet");
 const mockTokenCurrency = getMockedTokenCurrency();
 const mockLedgerAccountId = encodeAccountId({
   type: "js",
@@ -102,13 +104,15 @@ function assertAleoTokenAccount(subAccount: TokenAccount): asserts subAccount is
 describe("tokens utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
         if (programName === MOCK_TOKEN_PROGRAM_ID) {
           return mockTokenCurrency;
         }
         return undefined;
       }),
+      getTokensSyncHash: async () => "",
     });
     mockGetTokenBalance.mockResolvedValue("250000u128");
   });
@@ -351,7 +355,7 @@ describe("tokens utils", () => {
 
       const { updatedCoinOperations, subAccounts } = await resolveTokenSubAccounts({
         enableTokens: true,
-        currency: mockCurrency,
+        config: mockConfig,
         address,
         ledgerAccountId,
         publicOperations: [],
@@ -371,7 +375,7 @@ describe("tokens utils", () => {
         operationsCount: 1,
       });
       expect(mockGetTokenBalance).toHaveBeenCalledWith(
-        mockCurrency,
+        mockConfig,
         MOCK_TOKEN_PROGRAM_ID,
         MOCK_ALEO_ADDRESS,
       );
@@ -379,11 +383,7 @@ describe("tokens utils", () => {
         type: "IN",
         accountId: tokenAccountId,
       });
-      expect(mockGetTokenBalance).toHaveBeenCalledWith(
-        mockCurrency,
-        MOCK_TOKEN_PROGRAM_ID,
-        address,
-      );
+      expect(mockGetTokenBalance).toHaveBeenCalledWith(mockConfig, MOCK_TOKEN_PROGRAM_ID, address);
     });
 
     it("should fetch transparent balances for pre-existing sub-accounts after merge", async () => {
@@ -398,7 +398,7 @@ describe("tokens utils", () => {
 
       const { subAccounts } = await resolveTokenSubAccounts({
         enableTokens: true,
-        currency: mockCurrency,
+        config: mockConfig,
         address,
         ledgerAccountId,
         publicOperations: [],
@@ -408,11 +408,7 @@ describe("tokens utils", () => {
         initialAccount: getMockedAccount({ subAccounts: [existingSubAccount] }),
       });
 
-      expect(mockGetTokenBalance).toHaveBeenCalledWith(
-        mockCurrency,
-        MOCK_TOKEN_PROGRAM_ID,
-        address,
-      );
+      expect(mockGetTokenBalance).toHaveBeenCalledWith(mockConfig, MOCK_TOKEN_PROGRAM_ID, address);
       expect(subAccounts).toHaveLength(1);
       const aleoSubAccount = subAccounts[0];
       assertAleoTokenAccount(aleoSubAccount);
@@ -429,7 +425,7 @@ describe("tokens utils", () => {
 
       const { subAccounts } = await resolveTokenSubAccounts({
         enableTokens: true,
-        currency: mockCurrency,
+        config: mockConfig,
         address,
         ledgerAccountId,
         publicOperations: [],
@@ -459,7 +455,7 @@ describe("tokens utils", () => {
 
       const { subAccounts } = await resolveTokenSubAccounts({
         enableTokens: true,
-        currency: mockCurrency,
+        config: mockConfig,
         address,
         ledgerAccountId,
         publicOperations: [],
@@ -491,7 +487,7 @@ describe("tokens utils", () => {
 
       const { updatedCoinOperations, subAccounts } = await resolveTokenSubAccounts({
         enableTokens: false,
-        currency: mockCurrency,
+        config: mockConfig,
         address,
         ledgerAccountId,
         publicOperations: [parentOp],
@@ -796,7 +792,7 @@ describe("tokens utils", () => {
       const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
 
       const { subAccounts } = await buildSubAccountsFromPrivateRecords({
-        currency: mockCurrency,
+        config: mockConfig,
         ledgerAccountId,
         allPrivateRecords: [],
         unspentPrivateRecords: [unspentRecord],
@@ -820,7 +816,7 @@ describe("tokens utils", () => {
       const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
 
       const { subAccounts, privateTokenOpsByAccountId } = await buildSubAccountsFromPrivateRecords({
-        currency: mockCurrency,
+        config: mockConfig,
         ledgerAccountId,
         allPrivateRecords: [incomingRecord],
         unspentPrivateRecords: [],
@@ -864,7 +860,7 @@ describe("tokens utils", () => {
       const calTokens = new Map([[MOCK_TOKEN_PROGRAM_ID, mockTokenCurrency]]);
 
       const { subAccounts } = await buildSubAccountsFromPrivateRecords({
-        currency: mockCurrency,
+        config: mockConfig,
         ledgerAccountId,
         allPrivateRecords: [],
         unspentPrivateRecords: [unspentRecord],

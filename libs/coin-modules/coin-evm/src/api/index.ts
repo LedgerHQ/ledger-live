@@ -5,6 +5,7 @@ import type {
   BlockInfo,
   BroadcastConfig,
   BufferTxData,
+  CallParams,
   CraftedTransaction,
   Cursor,
   FeeEstimation,
@@ -36,17 +37,26 @@ import {
   validateIntent,
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
+import { getNodeApi } from "../network/node";
+import type { EvmCallParams } from "../network/node/types";
 import { getValidatorsPage } from "../staking/validators";
+import { isHexString } from "../utils";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
 // TODO Change to Record<string, EvmConfig> once Celo bridge is removed
 const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 
+// The framework contract passes opaque params (object or array); EVM only accepts the object
+// form { to, data, block? }, and parseCallParams rejects arrays defensively at runtime.
+type EvmCoinModuleApi = CoinModuleApi<MemoNotSupported, BufferTxData> & {
+  call: (params: CallParams) => Promise<string>;
+};
+
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): CoinModuleApi<MemoNotSupported, BufferTxData> {
+): EvmCoinModuleApi {
   configs[currencyId] = config;
   setCoinConfig(id => {
     const evmConfig = configs[id];
@@ -59,6 +69,10 @@ export function createApi(
   return {
     broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
       broadcast(currency, { signature: tx, broadcastConfig }),
+    call: async (params: CallParams): Promise<string> => {
+      const callParams = parseCallParams(params);
+      return getNodeApi(currency).call(currency, callParams);
+    },
     combine,
     craftTransaction: (
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
@@ -102,4 +116,29 @@ export function createApi(
     ): Promise<TransactionValidation> => validateIntent(currency, intent, balances, customFees),
     craftTransactionData,
   };
+}
+
+export function parseCallParams(params: unknown): EvmCallParams {
+  if (Array.isArray(params) || params === null || typeof params !== "object") {
+    throw new TypeError("Invalid EVM call params: expected an object");
+  }
+
+  const { to, data, block } = params as Record<string, unknown>;
+  if (typeof to !== "string" || !isHexString(to, 20)) {
+    throw new TypeError('Invalid EVM call params: "to" must be a 0x-prefixed 20-byte hex address');
+  }
+  if (typeof data !== "string" || !isHexString(data)) {
+    throw new TypeError('Invalid EVM call params: "data" must be 0x-prefixed hex calldata');
+  }
+  if (block !== undefined && typeof block !== "string" && typeof block !== "number") {
+    throw new TypeError('Invalid EVM call params: "block" must be a string or number');
+  }
+  if (typeof block === "string" && block.length === 0) {
+    throw new TypeError('Invalid EVM call params: "block" must be a non-empty string');
+  }
+  if (typeof block === "number" && (!Number.isSafeInteger(block) || block < 0)) {
+    throw new TypeError('Invalid EVM call params: numeric "block" must be a non-negative integer');
+  }
+
+  return block === undefined ? { to, data } : { to, data, block };
 }

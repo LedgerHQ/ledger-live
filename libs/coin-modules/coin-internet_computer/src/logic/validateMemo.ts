@@ -1,5 +1,5 @@
-import { validateMemo as icpValidateMemo } from "@zondax/ledger-live-icp/utils";
+import { validateMemo as validateIcpMemo } from "./validation";
 
 export function validateMemo(memo?: string): boolean {
-  return icpValidateMemo(memo).isValid;
+  return validateIcpMemo(memo).isValid;
 }

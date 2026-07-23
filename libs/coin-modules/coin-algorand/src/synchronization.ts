@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";

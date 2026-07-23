@@ -34,6 +34,9 @@ export function createApi(config: BoilerplateConfig): CoinModuleApi {
 
   return {
     broadcast,
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: craft,
     craftRawTransaction: (

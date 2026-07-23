@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import BigNumber from "bignumber.js";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

@@ -476,32 +476,19 @@ describe("useBalanceGraphViewModel", () => {
       }),
     };
 
-    it("fetches the chart in USD (not the crypto ticker)", () => {
-      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.5 });
-
+    it("fetches the chart in BTC directly (natively supported by CoinGecko)", () => {
       renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
       expect(mockUseGetAssetChartDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ counterCurrency: "usd" }),
+        expect.objectContaining({ counterCurrency: "btc" }),
         expect.anything(),
       );
     });
 
-    it("rescales the USD chart by the USD→BTC rate so the series is populated", () => {
-      const rate = 0.5;
-      mockUseUsdToFiatRate.mockReturnValue({ status: "ready", rate });
-
+    it("serves the BTC-denominated series directly without rescaling", () => {
       const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
 
-      expect(result.current.series[0]?.data).toEqual([100, 110, 120].map(value => value * rate));
-    });
-
-    it("withholds the series (empty, not stale USD values) while the rate is unavailable", () => {
-      mockUseUsdToFiatRate.mockReturnValue({ status: "error", rate: null });
-
-      const { result } = renderVM({ currency: mockBtcCryptoCurrency }, withBtcCounterValue);
-
-      expect(result.current.series[0]?.data).toEqual([]);
+      expect(result.current.series[0]?.data).toEqual([100, 110, 120]);
     });
   });
 

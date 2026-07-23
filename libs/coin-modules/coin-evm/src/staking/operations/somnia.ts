@@ -5,7 +5,7 @@ const somniaProtocol: StakingProtocol<OperationParamsWithValAddress> = {
   undelegate: ({ valAddress, amount }) => [valAddress, amount],
   getStakedBalance: ({ delegator, valAddress }) => {
     if (!delegator) {
-      throw new Error("Somnia need a delegator to retrieve staked balance");
+      throw new Error("Somnia needs a delegator to retrieve staked balance");
     }
     return [delegator, valAddress];
   },

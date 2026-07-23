@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Memo } from "@ledgerhq/live-common/flows/send/types";
+import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useTranslation } from "~/context/Locale";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { useRecipientMemo } from "./useRecipientMemo";
@@ -16,7 +17,7 @@ export function useMemoViewModel({ address, onSkip }: UseMemoViewModelProps) {
   const { transaction } = useSendFlowActions();
 
   const currency = state.account.currency;
-  const currencyId = currency?.id ?? "";
+  const currencyId = getMemoFamilyCurrencyId(currency) ?? "";
 
   const memoLabel = t([
     `send.newSendFlow.memoLabel.${currencyId}`,

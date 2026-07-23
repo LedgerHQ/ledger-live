@@ -10,6 +10,7 @@ import { multiversxConfig } from "../families/multiversx/config";
 import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
+import { hypercoreConfig } from "../families/hypercore/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
 import { kaspaConfig } from "../families/kaspa/config";
 import { nearConfig } from "../families/near/config";
@@ -57,6 +58,7 @@ export const liveConfig: ConfigSchema = {
   ...evmConfig,
   ...fileCoinConfig,
   ...hederaConfig,
+  ...hypercoreConfig,
   ...internetComputerConfig,
   ...kaspaConfig,
   ...nearConfig,

@@ -156,7 +156,6 @@
   "dependencies": {
     "@0no-co/graphql.web": "^1.0.11",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-sui": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

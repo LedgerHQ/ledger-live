@@ -110,8 +110,14 @@ export function useSwapCustomHandlers(
         screen: ScreenName.SwapHistory,
         ...(params?.swapId ? { params: { swapId: params.swapId } } : {}),
       });
+
+      // Remount the webview while the History screen is on top so that pressing
+      // "<" (which pops back to SwapTab) lands on a clean swap form instead of
+      // the multi-step success screen still mounted underneath. Mirrors
+      // navigateToSwapPendingOperation. See LIVE-34563.
+      resetWebview();
     },
-    [navigation],
+    [navigation, resetWebview],
   );
 
   const walletAPISwapHandlers = useCustomExchangeHandlers({

@@ -1,5 +1,5 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   decodeTokenAccountId,
   encodeTokenAccountId,
@@ -14,10 +14,13 @@ import { APTOS_COIN_CHANGE, OP_TYPE } from "../../constants";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 import type { AptosTransaction, TransactionOptions } from "../../types";
 
-jest.mock("@ledgerhq/cryptoassets");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index");
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("Aptos logic", () => {
   describe("getMaxSendBalance", () => {
@@ -452,7 +455,8 @@ describe("Aptos sync logic", () => {
 
     it("should convert Aptos token transactions to operations correctly", async () => {
       (encodeTokenAccountId as jest.Mock).mockReturnValue("token_account_id");
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
           // coin_id is converted to lowercase in txsToOps
           if (address === "0xd111::staked_coin::stakedaptos") {
@@ -736,7 +740,8 @@ describe("Aptos sync logic", () => {
     });
 
     it("should convert Aptos token transactions to operations correctly", async () => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
           if (address === "0x2ebb") {
             return {

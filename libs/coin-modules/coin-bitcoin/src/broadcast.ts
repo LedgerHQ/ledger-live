@@ -1,7 +1,8 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import { Transaction, BtcOperationExtra } from "./types";
 import { getChainAdapter } from "./chain-adapters/registry";
 /**

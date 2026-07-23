@@ -26,7 +26,7 @@ const NON_REDISTRIBUTED = new Set([
 
 // First-party scopes: Ledger-owned workspace packages bundled as source under
 // the same Apache-2.0 license as wallet-cli itself — not third-party.
-const FIRST_PARTY_SCOPES = ["@ledgerhq/", "@shared/", "@domain/"];
+const FIRST_PARTY_SCOPES = ["@ledgerhq/", "@shared/", "@domain/", "@features/"];
 
 const pkg = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
 const notices = await readFile(path.join(root, "THIRD_PARTY_NOTICES.md"), "utf8");

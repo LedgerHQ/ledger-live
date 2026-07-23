@@ -1,6 +1,11 @@
 export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKitBLETransport";
 export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
+export {
+  USB_COMPAT_DEVICE_ID_PREFIX,
+  buildUsbCompatDeviceId,
+  isUsbCompatDeviceId,
+} from "./transport/usbCompatDeviceId";
 export { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 export {

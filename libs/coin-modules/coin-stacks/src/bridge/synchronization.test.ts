@@ -1,4 +1,4 @@
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
@@ -7,7 +7,7 @@ import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
 import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 jest.mock("@ledgerhq/logs");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => ({
   ...jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index"),
@@ -21,7 +21,7 @@ const mockLog = log as jest.MockedFunction<typeof log>;
 beforeEach(() => {
   mockFindTokenById = jest.fn();
   mockFindTokenByAddressInCurrency = jest.fn();
-  (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+  (getCryptoAssetsStore as jest.Mock).mockReturnValue({
     findTokenById: mockFindTokenById,
     findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
   });

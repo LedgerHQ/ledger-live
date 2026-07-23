@@ -1,5 +1,5 @@
 import { blake2b } from "@noble/hashes/blake2b";
-import { bech32m } from "../../bech32m";
+import { bech32m } from "@ledgerhq/wallet-btc/crypto/bech32m";
 import type { ZcashTransferType } from "./types";
 
 // ZIP-316 receiver typecodes

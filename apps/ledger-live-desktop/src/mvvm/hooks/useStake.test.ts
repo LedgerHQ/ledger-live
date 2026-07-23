@@ -7,7 +7,7 @@ import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -40,7 +40,9 @@ const rawTron: AccountRaw = {
   balance: "100000000000000",
 };
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "test_hash",
 });
 

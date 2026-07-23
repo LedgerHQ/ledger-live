@@ -1,4 +1,5 @@
 import {
+  type ConnectedDevice,
   DeviceModelId as DMKDeviceModelId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
@@ -12,7 +13,8 @@ import { PeerRemovedPairing } from "@ledgerhq/errors";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
 import { BaseConnectionErrorTypes, ConnectionErrorTypes } from "./types";
-import { createConnectionError, filterMatchedDevices } from "./utils";
+import { buildMobileCompatDeviceId, createConnectionError, filterMatchedDevices } from "./utils";
+import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 
 const knownDeviceA: KnownDevice = {
   transport: rnBleTransportIdentifier,
@@ -51,6 +53,24 @@ const makeDiscoveredDevice = ({
     },
     transport,
   }) as DiscoveredDevice;
+
+const makeConnectedDevice = ({
+  id = "device-id",
+  type = "BLE",
+  transport = rnBleTransportIdentifier,
+}: {
+  id?: string;
+  type?: ConnectedDevice["type"];
+  transport?: ConnectedDevice["transport"];
+} = {}): ConnectedDevice =>
+  ({
+    id,
+    name: "Ledger Nano X",
+    modelId: DMKDeviceModelId.NANO_X,
+    type,
+    transport,
+    sessionId: "session-id",
+  }) as ConnectedDevice;
 
 describe("mobile connectDevice utils", () => {
   describe("filterMatchedDevices", () => {
@@ -182,6 +202,26 @@ describe("mobile connectDevice utils", () => {
         type: BaseConnectionErrorTypes.Unknown,
         error,
       });
+    });
+  });
+
+  describe("buildMobileCompatDeviceId", () => {
+    it("should keep BLE device ids unchanged", () => {
+      expect(buildMobileCompatDeviceId(makeConnectedDevice({ id: "ble-device-id" }))).toBe(
+        "ble-device-id",
+      );
+    });
+
+    it("should map USB device ids to the legacy HID transport id format", () => {
+      expect(
+        buildMobileCompatDeviceId(
+          makeConnectedDevice({
+            id: "usb_1002",
+            type: "USB",
+            transport: rnHidTransportIdentifier,
+          }),
+        ),
+      ).toBe(buildUsbCompatDeviceId("usb_1002"));
     });
   });
 });

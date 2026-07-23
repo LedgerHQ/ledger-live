@@ -12,29 +12,44 @@ Thanks for contributing! These guidelines apply to internal and external contrib
 3. Follow the [main README](README.md) to get started.
 4. Follow additional setup instructions in the README files of the app or lib you are working on.
 
-## Branch & Commit Conventions
+## Branch, Commit & PR Conventions
 
-### Branch naming
+We use repo-wide conventions for branch names, commit messages, pull request
+titles and merge commit titles. The canonical rules live in
+[Git conventions](docs/contributing/git-conventions.md).
 
-| Prefix | When to use |
-|--------|-------------|
-| `feat/` | Adding a new feature |
-| `bugfix/` | Fixing a bug |
-| `support/` | Refactors, tests, CI, tooling improvements |
+Short version:
 
-### Commit messages
+```text
+branch: <type>/<scope>-<ticket>-<short-description>
+commit: <type>(<scope>): <description>
+pr:     <type>(<scope>): <description> (<ticket>)
+```
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/) and enforce it with [commitlint](https://commitlint.js.org/).
+The Jira ticket is optional. Include it when one exists.
 
-Use `pnpm commit` for an interactive prompt, or `pnpm commitlint --from <target-branch>` to validate your branch.
+Examples:
+
+```text
+branch: chore/automation-LIVE-27608-update-git-guidelines
+commit: chore(automation): harmonize git guidelines
+pr:     chore(automation): harmonize git guidelines (LIVE-27608)
+```
+
+Use `fix/` instead of the legacy `bugfix/` branch prefix, use `chore/` instead
+of `support/`, and do not use gitmoji.
+
+Use `pnpm commit` for an interactive prompt, or
+`pnpm commitlint --from <target-branch>` to validate your branch.
 
 ### Rebase & merge strategy
 
-**Always prefer rebasing** unless your branch contains merge commits from sub-features.
+**Always prefer rebasing** unless your branch contains merge commits from
+sub-features.
 
-- Small, self-contained branches → rebase on `develop`.
-- Branches with cross-branch merges → merge `develop` into them to stay up to date.
-
+- Small, self-contained branches -> rebase on `develop`.
+- Branches with cross-branch merges -> merge `develop` into them to stay up to
+  date.
 
 ## The PR Lifecycle
 
@@ -61,7 +76,6 @@ Before marking your PR ready for review, ensure all of the following pass:
 - Click **"Ready for review"** to convert from Draft — this automatically requests the relevant code owners via `CODEOWNERS`.
 - When a reviewer leaves feedback and you push a fix, **re-request their review** (GitHub "Re-request" button).
 - If you receive a review request for files you don't own, feel free to remove yourself from the Reviewers panel.
-
 
 > [!IMPORTANT]
 > If you are a code owner, see [REVIEWING.md](REVIEWING.md) for reviewer guidance, including your daily review queue.

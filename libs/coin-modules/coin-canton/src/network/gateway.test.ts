@@ -1,6 +1,6 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 import coinConfig from "../config";
 import {
   createMockCantonCurrency,

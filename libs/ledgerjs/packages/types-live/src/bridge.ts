@@ -328,6 +328,7 @@ export interface AccountBridgeExtensions<T extends TransactionCommon = Transacti
   }) => Promise<boolean>;
   isStrategyDisabled?: (args: { transaction: T; feeData: unknown }) => boolean;
   isTransactionConfirmed?: (args: { account: AccountLike; hash: string }) => Promise<boolean>;
+  getWalletApiSpendableBalance?: (account: AccountLike) => BigNumber;
 }
 
 export type AccountBridge<

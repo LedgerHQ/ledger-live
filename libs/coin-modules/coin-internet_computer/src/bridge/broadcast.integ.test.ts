@@ -1,13 +1,10 @@
+import { Cbor, concat, requestIdOf } from "@dfinity/agent";
 import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
 import { BigNumber } from "bignumber.js";
-import { Cbor, concat, requestIdOf } from "@zondax/ledger-live-icp/agent";
-import {
-  createUnsignedSendTransaction,
-  deriveAddressFromPubkey,
-  pubkeyToDer,
-} from "@zondax/ledger-live-icp/utils";
-import { broadcast } from "./broadcast";
 import { ICP_FEES } from "../consts";
+import { createUnsignedSendTransaction } from "../logic/buildTransaction";
+import { deriveAddressFromPubkey, pubkeyToDer } from "../logic/crypto";
+import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   it("throws on insufficient funds", async () => {

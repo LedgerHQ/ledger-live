@@ -1,23 +1,20 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
-import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
-  CRYPTO_CURRENCIES_REGISTRY,
-  CRYPTO_CURRENCY_ALIASES,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import pkg from "../package.json" with { type: "json" };
@@ -33,6 +30,7 @@ if (!process.env.USER_ID) {
 const ledgerClientVersion = `wallet-cli/${pkg.version}`;
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
+bridgeEnvToNetworkState();
 
 /**
  * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana only).
@@ -68,8 +66,6 @@ const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/live-common/families/evm/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () =>
       import("@ledgerhq/live-common/families/evm/platformAdapter").then(m => m.default),
-    loadValidateAddress: () =>
-      import("@ledgerhq/coin-evm/logic/validateAddress").then(m => m.validateAddress),
     loadSigner: () => import("@ledgerhq/live-common/families/evm/signer").then(m => m.default),
     loadBridgeApi: () =>
       import("@ledgerhq/live-common/families/evm/bridge/api").then(m => m.default),
@@ -110,9 +106,6 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
   "solana",
 ];
 
-// The domain registries are the runtime source of truth for currency data.
-setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
-setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,
@@ -123,7 +116,10 @@ setCurrenciesResolver({
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
-// TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
-// instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
-setFrameworkCryptoAssetsStore(setupCalClientStore());
+setFrameworkCryptoAssetsStore(
+  buildStandaloneCryptoAssetsStore({
+    calServiceUrl: getEnv("CAL_SERVICE_URL"),
+    ledgerClientVersion,
+  }),
+);
 registerWalletCliDmkTransport();

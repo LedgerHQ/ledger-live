@@ -1,5 +1,5 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { CoinModuleLoader, MockAccountModule } from "./types";
 import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
@@ -149,10 +149,6 @@ export const loadMockAccountForFamily = makeLoaderCache(family => {
 export function getLoadedMockAccountForFamily(family: string): MockAccountModule | undefined {
   return resolvedMockAccounts.get(family);
 }
-
-export const loadValidateAddressForFamily = makeLoaderCache(family =>
-  loaders.get(family)?.loadValidateAddress?.(),
-);
 
 export const loadSignerForFamily = makeLoaderCache(family => loaders.get(family)?.loadSigner?.());
 

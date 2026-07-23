@@ -45,6 +45,9 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaC
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => {
       return broadcast(api, tx);
     },
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine: (tx: string, signature: string, _pubkey?: string) => {
       return combine(tx, signature);
     },

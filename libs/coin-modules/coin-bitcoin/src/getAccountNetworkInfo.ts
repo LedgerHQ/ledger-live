@@ -1,10 +1,10 @@
 import flow from "lodash/flow";
 import { BigNumber } from "bignumber.js";
 import type { NetworkInfo } from "./types";
-import { getWalletAccount } from "./wallet-btc";
+import { getWalletAccount } from "./getWalletAccount";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInfrastructureError } from "./errors";
-import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
+import { getRelayFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
 const speeds = ["fast", "medium", "slow"];
 
 // Clamp each level to ≥ floor + ε and return integers

@@ -4,10 +4,14 @@ import { Account } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getTotalStakeableAssets } from "./getTotalStakeableAssets";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 const ETH = getCryptoCurrencyById("ethereum");
 const BTC = getCryptoCurrencyById("bitcoin");

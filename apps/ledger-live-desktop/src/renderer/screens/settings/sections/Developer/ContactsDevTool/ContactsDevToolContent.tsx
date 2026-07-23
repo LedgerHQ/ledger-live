@@ -23,6 +23,8 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
     handleSetEligibleAddressFamilies,
     setCustomFamiliesInput,
     handleApplyCustomFamilies,
+    handleLoadPopulatedContacts,
+    handleResetContacts,
     handleResetOverride,
   } = useContactsDevToolViewModel();
 
@@ -72,11 +74,23 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
             </div>
           </div>
 
-          <div className="flex flex-wrap items-start gap-4">
-            <Button appearance="transparent" size="sm" onClick={handleResetOverride}>
-              {t("settings.developer.contactsDevTool.resetOverride")}
-            </Button>
-            <FeatureFlagPreview featureFlag={featureFlag} />
+          <div className="flex flex-col gap-4">
+            <span className="body-2-semi-bold text-muted">
+              {t("settings.developer.contactsDevTool.contactsData")}
+            </span>
+            <Divider />
+            <div className="flex flex-wrap items-center gap-4 pt-8">
+              <Button appearance="accent" size="sm" onClick={handleLoadPopulatedContacts}>
+                {t("settings.developer.contactsDevTool.loadPopulatedContacts")}
+              </Button>
+              <Button appearance="transparent" size="sm" onClick={handleResetContacts}>
+                {t("settings.developer.contactsDevTool.resetContacts")}
+              </Button>
+              <Button appearance="transparent" size="sm" onClick={handleResetOverride}>
+                {t("settings.developer.contactsDevTool.resetOverride")}
+              </Button>
+              <FeatureFlagPreview featureFlag={featureFlag} />
+            </div>
           </div>
         </div>
       )}

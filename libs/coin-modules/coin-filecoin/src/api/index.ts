@@ -29,6 +29,9 @@ export function createApi(config: FilecoinCoinConfig): CoinModuleApi {
 
   return {
     broadcast,
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction,
     estimateFees,

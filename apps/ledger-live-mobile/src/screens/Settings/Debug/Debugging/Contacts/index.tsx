@@ -5,6 +5,7 @@ import { useContactsDevToolViewModel } from "./useContactsDevToolViewModel";
 import {
   ContactsDevToolHeader,
   ContactsEnabledToggle,
+  ContactsSampleDataSection,
   EligibleAddressFamiliesSection,
   FeatureFlagPreview,
   FeatureParamRow,
@@ -21,6 +22,8 @@ export default function DebugContacts() {
     handleToggleNewBadge,
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
+    handleLoadSamples,
+    handleClearContacts,
   } = useContactsDevToolViewModel();
 
   const featureFlagSummary = useMemo(
@@ -41,6 +44,11 @@ export default function DebugContacts() {
       <Box lx={{ paddingHorizontal: "s24", paddingVertical: "s16" }}>
         <ContactsDevToolHeader onRestoreDefaults={handleRestoreDefaults} />
         <ContactsEnabledToggle isEnabled={isEnabled} onToggle={handleToggleEnabled} />
+
+        <ContactsSampleDataSection
+          onLoadSamples={handleLoadSamples}
+          onClearContacts={handleClearContacts}
+        />
 
         <SectionHeader title="FEATURE PARAMETERS" />
 

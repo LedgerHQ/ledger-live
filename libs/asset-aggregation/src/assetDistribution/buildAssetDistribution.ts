@@ -1,4 +1,4 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";

@@ -288,20 +288,12 @@ export async function resolveStakingValidator(
   try {
     const iface = new ethers.Interface(abi);
     const d = iface.decodeFunctionData(functionName, payload);
-    const [, rawAmount] = d;
 
     const validatorAddress = await config.resolveValidatorAddress(d, operation.recipients[0]);
     if (!validatorAddress) return null;
 
-    const scale = config.calldataAmountScale ?? 1n;
-    const amount =
-      rawAmount !== undefined
-        ? new BigNumber(
-            (
-              (typeof rawAmount === "bigint" ? rawAmount : BigInt(String(rawAmount))) * scale
-            ).toString(),
-          )
-        : null;
+    const contractAddress = operation.recipients[0] ?? validatorAddress;
+    const amount = await config.resolveOperationAmount(d, operationType, currency, contractAddress);
     return { validatorAddress, amount };
   } catch {
     return null;

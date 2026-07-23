@@ -1,5 +1,5 @@
 import { apiClient } from "../network/api";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/api");
@@ -7,7 +7,7 @@ jest.mock("../network/api");
 const mockGetLatestBlock = jest.mocked(apiClient.getLatestBlock);
 
 describe("lastBlock", () => {
-  const mockCurrency = getMockedCurrency();
+  const mockConfig = getMockedConfig("mainnet");
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -27,10 +27,10 @@ describe("lastBlock", () => {
 
     mockGetLatestBlock.mockResolvedValue(mockBlockResponse);
 
-    const result = await lastBlock(mockCurrency);
+    const result = await lastBlock(mockConfig);
 
     expect(mockGetLatestBlock).toHaveBeenCalledTimes(1);
-    expect(mockGetLatestBlock).toHaveBeenCalledWith(mockCurrency);
+    expect(mockGetLatestBlock).toHaveBeenCalledWith(mockConfig);
     expect(result).toEqual({
       height: 1234567,
       hash: "ab1234567890",

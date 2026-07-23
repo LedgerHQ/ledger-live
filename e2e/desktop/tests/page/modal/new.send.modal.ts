@@ -15,6 +15,7 @@ export class NewSendModal extends Modal {
     .filter({ visible: true });
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
+  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
@@ -78,6 +79,11 @@ export class NewSendModal extends Modal {
     if (confirm) {
       await this.skipMemoConfirmButton.click();
     }
+  }
+
+  @step("Fill memo/tag: $0")
+  async fillMemo(memo: string) {
+    await this.memoInput.fill(memo);
   }
 
   @step("Fill crypto amount: $0 (switches to crypto mode first)")

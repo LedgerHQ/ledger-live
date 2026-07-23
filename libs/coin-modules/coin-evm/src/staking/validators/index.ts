@@ -4,6 +4,7 @@ import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "../contracts";
 import monadValidatorApi from "./monad";
 import seiValidatorApi from "./sei";
+import somniaValidatorApi from "./somnia";
 import zeroGravityValidatorApi from "./zero_gravity";
 import type { ValidatorApi } from "./types";
 
@@ -21,6 +22,8 @@ export const getValidatorApi = (currencyId: string): ValidatorApi | undefined =>
       return monadValidatorApi;
     case "zero_gravity":
       return zeroGravityValidatorApi;
+    case "somnia":
+      return somniaValidatorApi;
     default:
       return undefined;
   }
@@ -113,6 +116,14 @@ export const getUnbondingPeriodDays = (currencyId: string): number | undefined =
 
 export const getMaxRedelegations = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.maxRedelegations;
+
+export const getDelegationVisibilityDelayMinutes = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.delegationVisibilityDelayMinutes;
+
+export const hasDelegationVisibilityDelay = (currencyId: string): boolean => {
+  const minutes = getDelegationVisibilityDelayMinutes(currencyId);
+  return typeof minutes === "number" && minutes > 0;
+};
 
 export const hasUnbondingPeriod = (currencyId: string): boolean => {
   const days = getUnbondingPeriodDays(currencyId);

@@ -1,4 +1,4 @@
-import { TokenIdSchema, CurrencyIdSchema } from "@shared/schema-primitives";
+import { TokenCurrencyIdSchema, CryptoCurrencyIdSchema } from "@shared/schema-primitives";
 import type { TokenCurrency } from "./schema";
 
 /**
@@ -8,8 +8,8 @@ import type { TokenCurrency } from "./schema";
 export function mockTokenCurrency(overrides?: Partial<TokenCurrency>): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: TokenIdSchema.parse("ethereum/erc20/usd-tether"),
-    parentCurrencyId: CurrencyIdSchema.parse("ethereum"),
+    id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd-tether"),
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
     contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     tokenType: "erc20",
     name: "Tether USD",

@@ -2,6 +2,7 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
 import { convertApiToken, type ApiTokenData } from "./api-token-converter";
 
+/** @deprecated Use @domain/api-currency-token. */
 export interface ApiTokenCurrency {
   type: "token_currency";
   id: string;
@@ -18,6 +19,7 @@ export interface ApiTokenCurrency {
   descriptor?: unknown;
 }
 
+/** @deprecated Use @domain/api-currency-token. */
 export interface ApiCryptoCurrency {
   type: "crypto_currency";
   id: string;
@@ -35,8 +37,10 @@ export interface ApiCryptoCurrency {
   disableCountervalue?: boolean;
 }
 
+/** @deprecated Use @domain/api-currency-token. */
 export type ApiAsset = ApiTokenCurrency | ApiCryptoCurrency;
 
+/** @deprecated Use @domain/api-currency-token. */
 export function convertApiAsset(apiAsset: ApiAsset): CryptoOrTokenCurrency | undefined {
   if (apiAsset.type === "crypto_currency") {
     return convertApiCryptoCurrency(apiAsset);
@@ -97,6 +101,7 @@ function convertApiTokenCurrency(apiToken: ApiTokenCurrency): CryptoOrTokenCurre
   return convertApiToken(apiTokenData);
 }
 
+/** @deprecated Use @domain/api-currency-token. */
 export function convertApiAssets(
   apiAssets: Record<string, ApiAsset>,
 ): Record<string, CryptoOrTokenCurrency> {

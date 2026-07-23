@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
+import { setContacts } from "@domain/entity-contact";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   resolveContactsFeatureParams,
@@ -8,6 +9,7 @@ import {
 } from "@features/flow-contacts";
 import { setOverride } from "@shared/feature-flags";
 import { CONTACTS_FLAG } from "./constants";
+import { createContactsDebugSamples } from "./mockContacts";
 
 export function useContactsDevToolViewModel() {
   const dispatch = useDispatch();
@@ -49,6 +51,14 @@ export function useContactsDevToolViewModel() {
     dispatch(setOverride({ key: CONTACTS_FLAG, value: undefined }));
   }, [dispatch]);
 
+  const handleLoadSamples = useCallback(() => {
+    dispatch(setContacts(createContactsDebugSamples()));
+  }, [dispatch]);
+
+  const handleClearContacts = useCallback(() => {
+    dispatch(setContacts([]));
+  }, [dispatch]);
+
   return {
     featureFlag,
     isEnabled,
@@ -58,5 +68,7 @@ export function useContactsDevToolViewModel() {
     handleToggleNewBadge,
     handleSetEligibleAddressFamilies,
     handleRestoreDefaults,
+    handleLoadSamples,
+    handleClearContacts,
   };
 }

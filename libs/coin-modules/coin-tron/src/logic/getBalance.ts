@@ -16,13 +16,17 @@ export async function getBalance(address: string): Promise<Balance[]> {
   const account = accounts[0];
 
   const nativeBalance: Balance = computeBalance(account);
-  const trc10Balance: Balance[] = extractTrc10Balance(account);
-  const trc20Balance: Balance[] = extractTrc20Balance(account);
+  const trc10Balance: Balance[] = extractTrc10Balance(account, address);
+  const trc20Balance: Balance[] = extractTrc20Balance(account, address);
 
   return [nativeBalance].concat(trc10Balance).concat(trc20Balance);
 }
 
-function extractTrc10Balance(account: AccountTronAPI): Balance[] {
+// TODO: `assetOwner` is only populated here because the generic coin-framework
+// adapter needs it to attach token balances to their sub-account. It is not the
+// natural owner of the token; drop it from coin-tron once the generic adapter no
+// longer requires it.
+function extractTrc10Balance(account: AccountTronAPI, owner: string): Balance[] {
   return (
     account.assetV2?.map(trc => {
       return {
@@ -30,13 +34,14 @@ function extractTrc10Balance(account: AccountTronAPI): Balance[] {
         asset: {
           type: "trc10",
           assetReference: trc.key,
+          assetOwner: owner,
         },
       };
     }) ?? []
   );
 }
 
-function extractTrc20Balance(account: AccountTronAPI): Balance[] {
+function extractTrc20Balance(account: AccountTronAPI, owner: string): Balance[] {
   return account.trc20.map(trc => {
     const [[contractAddress, balance]] = Object.entries(trc);
     return {
@@ -44,6 +49,7 @@ function extractTrc20Balance(account: AccountTronAPI): Balance[] {
       asset: {
         type: "trc20",
         assetReference: contractAddress,
+        assetOwner: owner,
       },
     };
   });

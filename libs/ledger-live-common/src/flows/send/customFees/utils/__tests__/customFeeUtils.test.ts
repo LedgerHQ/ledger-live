@@ -1,4 +1,18 @@
-import { isValidNumberForInput } from "../customFeeUtils";
+import { isValidNumberForInput, normalizeDecimalSeparator } from "../customFeeUtils";
+
+describe("normalizeDecimalSeparator", () => {
+  it("converts a comma decimal separator to a dot", () => {
+    expect(normalizeDecimalSeparator("0,0014")).toBe("0.0014");
+  });
+
+  it("leaves a dot separator untouched (idempotent)", () => {
+    expect(normalizeDecimalSeparator("0.0014")).toBe("0.0014");
+  });
+
+  it("returns an empty string unchanged", () => {
+    expect(normalizeDecimalSeparator("")).toBe("");
+  });
+});
 
 describe("isValidNumberForInput", () => {
   it.each(["Infinity", "-Infinity", "NaN"])("rejects non-finite values for fee inputs", value => {

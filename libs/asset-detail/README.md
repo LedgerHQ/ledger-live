@@ -1,5 +1,8 @@
 # asset-detail
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/asset-detail` is a shared module providing React hooks, types, and utilities for the asset detail screen in Ledger Live. It abstracts the data-fetching and formatting logic needed to display an asset's market data (price, chart, stats) in one place, shared between desktop and mobile.
 
 ## What it does

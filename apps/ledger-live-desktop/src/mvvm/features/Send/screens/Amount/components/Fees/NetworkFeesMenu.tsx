@@ -68,7 +68,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   const { t } = useTranslation();
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
-  const { transaction } = state.transaction;
+  const { transaction, status } = state.transaction;
   const { currentStep } = useFlowWizard();
 
   const mainAccount = useMemo(
@@ -128,13 +128,19 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
 
   const hasMenuOptions = hasPresets || hasCustom || hasCoinControl;
 
+  const networkFeesInfo = sendFeatures.getNetworkFeesInfo(currency, { transaction, status });
+
   const informationIcon = (
     <Tooltip>
       <TooltipTrigger asChild>
         <Information size={16} className="text-muted" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>{t("newSendFlow.feesPaid")}</p>
+        <p>
+          {networkFeesInfo
+            ? t(`newSendFlow.${networkFeesInfo.translationKey}.description`, networkFeesInfo.values)
+            : t("newSendFlow.feesPaid")}
+        </p>
       </TooltipContent>
     </Tooltip>
   );

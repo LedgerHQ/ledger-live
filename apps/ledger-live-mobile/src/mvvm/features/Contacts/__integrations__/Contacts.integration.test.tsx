@@ -2,15 +2,19 @@ import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import type { ContactsPageNativeProps } from "@features/flow-contacts";
 import { ScreenName } from "~/const";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
 
+const mockContactsPage = jest.fn<void, [ContactsPageNativeProps]>();
+
 jest.mock("@features/flow-contacts", () => {
   const flowContacts = jest.requireActual("@features/flow-contacts");
   const React = require("react");
-  const { Pressable, Text, View } = require("react-native");
+  const { Pressable, Text, TextInput, View } = require("react-native");
 
   return {
     ...flowContacts,
@@ -46,32 +50,39 @@ jest.mock("@features/flow-contacts", () => {
         <Text>{addContactLabel}</Text>
       </Pressable>
     ),
-    ContactsPage: ({
-      viewModel,
-      labels,
-      onOpenMe,
-      onAddContact,
-    }: {
-      viewModel: { me: { contactId: string; name: string; addressCount: number } };
-      labels: {
-        searchPlaceholder: string;
-        addContact: string;
-        formatAddressCount: (count: number) => string;
-      };
-      onOpenMe: (contactId: string) => void;
-      onAddContact: () => void;
-    }) => (
-      <View testID="contacts-screen">
-        <Text testID="contacts-search-input">{labels.searchPlaceholder}</Text>
-        <Pressable testID="contacts-me-item" onPress={() => onOpenMe(viewModel.me.contactId)}>
-          <Text>{viewModel.me.name}</Text>
-          <Text>{labels.formatAddressCount(viewModel.me.addressCount)}</Text>
-        </Pressable>
-        <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
-          <Text>{labels.addContact}</Text>
-        </Pressable>
-      </View>
-    ),
+    ContactsPage: (props: ContactsPageNativeProps) => {
+      mockContactsPage(props);
+      const { viewModel, labels, searchQuery, onSearchQueryChange, onOpenContact, onAddContact } =
+        props;
+      const me = "me" in viewModel ? viewModel.me : undefined;
+      const isSearchViewModel = "status" in viewModel;
+      const isNoResults = isSearchViewModel && viewModel.status === "no-results";
+
+      return (
+        <View testID="contacts-screen">
+          <TextInput
+            testID="contacts-search-input"
+            value={searchQuery}
+            onChangeText={onSearchQueryChange}
+            placeholder={labels.searchPlaceholder}
+          />
+          {isNoResults ? (
+            <Text testID="contacts-search-no-results">{labels.searchNoResults}</Text>
+          ) : null}
+          {me ? (
+            <Pressable testID="contacts-me-item" onPress={() => onOpenContact(me.contactId)}>
+              <Text>{me.name}</Text>
+              <Text>{labels.formatAddressCount(me.addressCount)}</Text>
+            </Pressable>
+          ) : null}
+          {isSearchViewModel ? null : (
+            <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
+              <Text>{labels.addContact}</Text>
+            </Pressable>
+          )}
+        </View>
+      );
+    },
   };
 });
 
@@ -191,6 +202,78 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/0 address/);
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+  });
+
+  it("should provide grouped saved contacts from the Contacts slice", async () => {
+    const me = mockMeContact();
+    const contacts = [
+      me,
+      mockContact({ id: "contact-zahra", name: "Zahra" }),
+      mockContact({
+        id: "contact-anna",
+        name: "Anna",
+        addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
+      }),
+      mockContact({ id: "contact-zhanna", name: "Жанна" }),
+    ];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+
+    await waitFor(() => {
+      expect(mockContactsPage).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          viewModel: expect.objectContaining({
+            displayMode: "populated",
+            savedContacts: expect.arrayContaining([
+              expect.objectContaining({ contactId: "contact-anna", addressCount: 2 }),
+              expect.objectContaining({ contactId: "contact-zahra" }),
+              expect.objectContaining({ contactId: "contact-zhanna" }),
+            ]),
+          }),
+        }),
+      );
+    });
+  });
+
+  it("should wire the Mobile query to the shared Contacts search model", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+
+    const input = await screen.findByTestId("contacts-search-input");
+    await user.type(input, "Unknown");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-search-no-results")).toHaveTextContent(
+        "No contact found",
+      );
+      expect(screen.queryByTestId("contacts-me-item")).toBeNull();
+      expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
+    });
+
+    await user.clear(input);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
+      expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+
+    await user.type(input, "Me");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
+      expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
     });
   });
 });

@@ -2,6 +2,9 @@
 
 ## @ledgerhq/devices
 
+> \[!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Logic for all Ledger devices.
 
 ## API

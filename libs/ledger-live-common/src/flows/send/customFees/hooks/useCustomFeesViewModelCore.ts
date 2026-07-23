@@ -21,6 +21,7 @@ import {
   isValidNumberForInput,
   computeSuggestedRange,
   computeMinValue,
+  normalizeDecimalSeparator,
 } from "../utils/customFeeUtils";
 import { resolveFeeDisplayContext } from "../../utils/networkFeesDisplay";
 
@@ -265,7 +266,8 @@ export function useCustomFeesViewModelCore({
   );
 
   const onInputChange = useCallback((key: string, value: string) => {
-    setValues(prev => ({ ...prev, [key]: value }));
+    const normalized = normalizeDecimalSeparator(value);
+    setValues(prev => ({ ...prev, [key]: normalized }));
     setTouched(prev => ({ ...prev, [key]: true }));
   }, []);
 

@@ -50,7 +50,7 @@ describe("listOperations", () => {
 
       const result = await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -59,7 +59,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         address: mockAddress,
         fetchAllPages: true,
         minBlockHeight: 0,
@@ -86,7 +86,7 @@ describe("listOperations", () => {
 
       await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -111,7 +111,7 @@ describe("listOperations", () => {
 
       const result = await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,
         mode: "bridge",
@@ -161,7 +161,7 @@ describe("listOperations", () => {
 
         const result = await listOperations({
           config: mockConfigWithTokens,
-          currency: mockCurrency,
+          currencyId: mockCurrency.id,
           address: mockAddress,
           ledgerAccountId: mockLedgerAccountId,
           mode: "bridge",
@@ -193,7 +193,7 @@ describe("listOperations", () => {
 
         const result = await listOperations({
           config: mockConfigWithTokens,
-          currency: mockCurrency,
+          currencyId: mockCurrency.id,
           address: mockAddress,
           ledgerAccountId: mockLedgerAccountId,
           mode: "bridge",
@@ -238,7 +238,7 @@ describe("listOperations", () => {
 
         const result = await listOperations({
           config: mockConfigWithTokens,
-          currency: mockCurrency,
+          currencyId: mockCurrency.id,
           address: mockAddress,
           ledgerAccountId: mockLedgerAccountId,
           mode: "bridge",
@@ -277,7 +277,7 @@ describe("listOperations", () => {
 
       const result = await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         mode: "coin-framework",
         options: { minHeight: 0, order: "asc" },
@@ -285,7 +285,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         address: mockAddress,
         fetchAllPages: false,
         minBlockHeight: 0,
@@ -309,7 +309,7 @@ describe("listOperations", () => {
 
       const result = await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         mode: "coin-framework",
         options: { minHeight: 0 },
@@ -329,7 +329,7 @@ describe("listOperations", () => {
 
       await listOperations({
         config: mockConfigWithTokens,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         mode: "coin-framework",
         options: { minHeight: 0 },
@@ -348,7 +348,7 @@ describe("listOperations", () => {
 
       await listOperations({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAddress,
         mode: "coin-framework",
         options: {
@@ -361,7 +361,7 @@ describe("listOperations", () => {
 
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledTimes(1);
       expect(mockFetchAccountTransactionsFromHeight).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         address: mockAddress,
         fetchAllPages: false,
         minBlockHeight: 1000,

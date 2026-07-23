@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CurrencyIdSchema } from "@shared/schema-primitives";
+import { CryptoCurrencyIdSchema } from "@shared/schema-primitives";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
 /**
@@ -49,7 +49,7 @@ export const CryptoCurrencySchema = z.object({
   /** Discriminant for the currency union — always `"CryptoCurrency"`. */
   type: z.literal("CryptoCurrency"),
   /** Unique opaque id (e.g. `"bitcoin"`, `"ethereum"`). */
-  id: CurrencyIdSchema,
+  id: CryptoCurrencyIdSchema,
   /** Human-readable display name (e.g. `"Bitcoin"`). */
   name: z.string(),
   /** Ticker used in exchanges and countervalue APIs (e.g. `"BTC"`). */

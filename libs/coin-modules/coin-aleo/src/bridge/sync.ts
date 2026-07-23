@@ -76,8 +76,8 @@ export async function performPublicSync(
   const config = resolveConfig(currency.id);
 
   const [balances, latestBlock] = await Promise.all([
-    getBalance(currency, address),
-    lastBlock(currency),
+    getBalance(config, address),
+    lastBlock(config),
   ]);
 
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
@@ -107,7 +107,7 @@ export async function performPublicSync(
 
   const latestAccountPublicOperations = await listOperations({
     config,
-    currency,
+    currencyId: currency.id,
     address,
     ledgerAccountId,
     mode: "bridge",
@@ -164,7 +164,7 @@ export async function performPublicSync(
   const { updatedCoinOperations: updatedPublicOperations, subAccounts } =
     await resolveTokenSubAccounts({
       enableTokens: config.enableTokens,
-      currency,
+      config,
       address,
       ledgerAccountId,
       publicOperations,
@@ -261,7 +261,7 @@ export async function performPrivateSync({
   const config = resolveConfig(currency.id);
 
   const provableApi = await accessProvableApi({
-    currency,
+    config,
     viewKey,
     provableApi: initialAccount.aleoResources?.provableApi ?? null,
   }).catch(err => {
@@ -310,7 +310,7 @@ export async function performPrivateSync({
     customData: viewKey,
   });
 
-  const latestBlock = await lastBlock(currency);
+  const latestBlock = await lastBlock(config);
   const blockHeight = latestBlock?.height ?? initialAccount?.blockHeight ?? 0;
 
   // When the public sync ran from scratch (e.g. CAL change), reset private cursor to 0
@@ -336,20 +336,20 @@ export async function performPrivateSync({
     rawUnspentTokenRecords,
   ] = await Promise.all([
     fetchAllOwnedRecords({
-      currency,
+      config,
       uuid: provableApi.uuid,
       start: lastPrivateBlockHeight,
       ...(signal && { signal }),
     }),
     fetchAllOwnedRecords({
-      currency,
+      config,
       uuid: provableApi.uuid,
       unspent: true,
       ...(signal && { signal }),
     }),
     config.enableTokens
       ? fetchAllOwnedRecords({
-          currency,
+          config,
           uuid: provableApi.uuid,
           start: tokenSyncStartHeight,
           // empty arrays opt out of the credits.aleo-only filter, returning records for all programs
@@ -360,7 +360,7 @@ export async function performPrivateSync({
       : Promise.resolve([]),
     config.enableTokens
       ? fetchAllOwnedRecords({
-          currency,
+          config,
           uuid: provableApi.uuid,
           unspent: true,
           // empty arrays opt out of the credits.aleo-only filter, returning records for all programs
@@ -397,7 +397,7 @@ export async function performPrivateSync({
 
   const [latestAccountPrivateOperations, patchedPublicOperations] = await Promise.all([
     listPrivateOperations({
-      currency,
+      config,
       viewKey,
       address,
       ledgerAccountId,
@@ -417,7 +417,7 @@ export async function performPrivateSync({
       ...(signal && { signal }),
     }),
     patchPublicOperations({
-      currency,
+      config,
       publicOperations: currentPublicOps,
       privateRecords: rawNewNativePrivateRecords,
       address,
@@ -443,7 +443,7 @@ export async function performPrivateSync({
   signal?.throwIfAborted();
 
   const privateBalanceResult = await getPrivateBalance({
-    currency,
+    config,
     viewKey,
     privateRecords: filteredUnspentRecords,
     oldUnspentRecords: initialAccount.aleoResources?.unspentPrivateRecords ?? [],
@@ -488,7 +488,7 @@ export async function performPrivateSync({
 
     const { subAccounts: tokenSubAccounts, privateTokenOpsByAccountId } =
       await buildSubAccountsFromPrivateRecords({
-        currency,
+        config,
         ledgerAccountId,
         allPrivateRecords: calTokenRecords,
         unspentPrivateRecords: filteredUnspentTokenRecords,

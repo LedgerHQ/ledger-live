@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { Scenario } from "@ledgerhq/coin-tester/main";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -10,7 +10,7 @@ import { CARDANO_TESTNET, FRESH_ADDRESS_PATH, makeAccount } from "../fixtures";
 import { getBridges, TESTNET } from "../helpers";
 import { computePolicyId, mintToken } from "../mintToken";
 import { buildSigner } from "../signer";
-import { killYaci, pollUtxos, spawnYaci, topup } from "../yaci";
+import { pollUtxos, resetDevnet, topup } from "../yaci";
 import { initYaciIndexer, registerAddress, resetRegisteredAddresses } from "../yaciIndexer";
 
 const FUNDING_ADA = 10_000;
@@ -42,8 +42,7 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    await spawnYaci();
-    closeIndexer = initYaciIndexer();
+    await resetDevnet();
 
     const signer = await buildSigner();
     const { accountBridge, currencyBridge, getAddress } = await getBridges(signer, TESTNET);
@@ -71,11 +70,12 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       ticker: "CTT",
       units: [{ name: "Coin Tester Token", code: "CTT", magnitude: 0 }],
     };
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       // Match by asset reference only — buildSubAccounts queries with the bridge's currency.id, which
       // can be the parent "cardano" rather than "cardano_testnet"; the single test token is unambiguous.
       findTokenByAddressInCurrency: async addr => (addr === assetReference ? token : undefined),
       findTokenById: async id => (id === token.id ? token : undefined),
+      getTokensSyncHash: async () => "",
     });
 
     await topup(address, FUNDING_ADA);
@@ -92,6 +92,11 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
       amount: MINT_AMOUNT,
     });
     await pollUtxos(address, u => u.some(x => x.amount.some(a => a.unit === assetReference)));
+
+    // Start MSW only after the devnet admin/faucet/store setup calls (topup, pollUtxos, mintToken): its
+    // passthrough of :10000/:8080 drops the request AbortSignal, so those routed through it can hang.
+    // MSW mocks the Strica sync API used by the sync that follows this setup.
+    closeIndexer = initYaciIndexer();
 
     const account = makeAccount(address, CARDANO_TESTNET);
     tokenSubAccountId = encodeTokenAccountId(account.id, token);
@@ -147,9 +152,8 @@ export const scenarioCardanoTokenYaci: Scenario<GenericTransaction, Account> = {
     },
   ],
 
-  teardown: async () => {
+  teardown: () => {
     closeIndexer?.();
     resetRegisteredAddresses();
-    await killYaci();
   },
 };

@@ -1,5 +1,8 @@
 # wallet-api-exchange-module
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/wallet-api-exchange-module` is a [Wallet API](https://github.com/LedgerHQ/wallet-api) `CustomModule` that exposes swap, sell, and fund exchange flows to Live Apps running inside Ledger Live. It lets dApps initiate exchange transactions through Ledger Live's built-in exchange service without implementing device signing themselves.
 
 ## What it does

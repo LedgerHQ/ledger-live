@@ -35,6 +35,11 @@ type useAssetActionsProps = {
   accounts?: AccountLikeArray;
 };
 
+function getParentCurrencyId(currency?: CryptoCurrency | TokenCurrency): string | undefined {
+  if (!currency) return undefined;
+  return currency.type === "TokenCurrency" ? currency.parentCurrencyId : currency.id;
+}
+
 const iconBuy = IconsLegacy.PlusMedium;
 const iconSell = IconsLegacy.MinusMedium;
 const iconSwap = IconsLegacy.BuyCryptoMedium;
@@ -85,7 +90,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 
   const { getCanStakeCurrency } = useStake();
   const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
-  const family = currency ? getFamilyByCurrencyId(currency.id) : undefined;
+  const parentCurrencyId = getParentCurrencyId(currency);
+  const family = parentCurrencyId ? getFamilyByCurrencyId(parentCurrencyId) : undefined;
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 

@@ -1,16 +1,12 @@
-import { broadcastTron } from "../network";
+import { broadcastHexTron, broadcastTron } from "../network";
 import { broadcast } from "./broadcast";
-import { decodeTransaction } from "./utils";
 
 jest.mock("../network", () => ({
+  broadcastHexTron: jest.fn(),
   broadcastTron: jest.fn(),
 }));
 
-jest.mock("./utils", () => ({
-  decodeTransaction: jest.fn(),
-}));
-
-const mockDecodeTransaction = decodeTransaction as jest.Mock;
+const mockBroadcastHexTron = broadcastHexTron as jest.Mock;
 const mockBroadcastTron = broadcastTron as jest.Mock;
 
 describe("broadcast function", () => {
@@ -18,25 +14,30 @@ describe("broadcast function", () => {
     jest.clearAllMocks();
   });
 
-  it("should broadcast a transaction string successfully", async () => {
-    mockDecodeTransaction.mockResolvedValue({
-      txID: "mockedTxID",
-      raw_data: { some: "data" },
-      raw_data_hex: "abcd1234",
-    });
+  it("should broadcast a transaction string as a byte-preserving full transaction hex", async () => {
+    mockBroadcastHexTron.mockResolvedValue("mockedTxID");
 
-    mockBroadcastTron.mockResolvedValue("mockedTxID");
+    // "0008" (hex-string length of raw_data) + raw_data hex "abcd1234" + signature hex "aabbccdd"
+    const result = await broadcast("0008abcd1234aabbccdd");
 
-    const result = await broadcast("0008abcd1234mocksignature");
-
-    expect(mockDecodeTransaction).toHaveBeenCalledWith("abcd1234");
-    expect(mockBroadcastTron).toHaveBeenCalledWith({
-      txID: "mockedTxID",
-      raw_data: { some: "data" },
-      raw_data_hex: "abcd1234",
-      signature: ["mocksignature"],
-    });
+    // Assembled Transaction protobuf: field 1 (raw_data) = 0x0a 0x04 + abcd1234,
+    // field 2 (signature) = 0x12 0x04 + aabbccdd.
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith("0a04abcd12341204aabbccdd");
+    expect(mockBroadcastTron).not.toHaveBeenCalled();
     expect(result).toBe("mockedTxID");
+  });
+
+  it("encodes multi-byte varint lengths for raw_data >= 128 bytes", async () => {
+    mockBroadcastHexTron.mockResolvedValue("mockedTxID");
+
+    const rawTx = "ab".repeat(130); // 130 bytes → varint 0x82 0x01
+    const signature = "cd".repeat(4);
+    const lengthPrefix = rawTx.length.toString(16).padStart(4, "0"); // "0104"
+
+    await broadcast(`${lengthPrefix}${rawTx}${signature}`);
+
+    // field 1 (raw_data): 0x0a + varint(130)=0x8201 ; field 2 (signature): 0x12 + varint(4)=0x04
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith(`0a8201${rawTx}1204${signature}`);
   });
 
   it("should broadcast a TxObject successfully", async () => {
@@ -50,30 +51,21 @@ describe("broadcast function", () => {
 
     const result = await broadcast(txObject);
 
-    expect(mockDecodeTransaction).not.toHaveBeenCalled();
+    expect(mockBroadcastHexTron).not.toHaveBeenCalled();
     expect(mockBroadcastTron).toHaveBeenCalledWith(txObject);
     expect(result).toBe("mockedTxID");
   });
 
-  it("should throw an error if decodeTransaction fails", async () => {
-    mockDecodeTransaction.mockRejectedValue(new Error("Decoding failed"));
+  it("should throw an error if broadcastHexTron fails", async () => {
+    mockBroadcastHexTron.mockRejectedValue(new Error("Broadcasting failed"));
 
-    await expect(broadcast("0008abcd1234mocksignature")).rejects.toThrow("Decoding failed");
+    await expect(broadcast("0008abcd1234aabbccdd")).rejects.toThrow("Broadcasting failed");
   });
 
-  it("should throw an error if broadcastTron fails", async () => {
-    mockDecodeTransaction.mockResolvedValue({
-      txID: "mockedTxID",
-      raw_data: { some: "data" },
-      raw_data_hex: "abcd1234",
-    });
-
-    mockBroadcastTron.mockRejectedValue(new Error("Broadcasting failed"));
-
-    await expect(broadcast("0008abcd1234mocksignature")).rejects.toThrow("Broadcasting failed");
-  });
-
-  it("should handle invalid transaction format gracefully", async () => {
-    await expect(broadcast("invalidtransaction")).rejects.toThrow();
+  it("should throw on a malformed signed transaction string", async () => {
+    // Non-hex prefix, and a truncated payload whose raw_data is shorter than its length prefix.
+    await expect(broadcast("zzzz")).rejects.toThrow(/malformed/);
+    await expect(broadcast("0008abcd")).rejects.toThrow(/malformed/);
+    expect(mockBroadcastHexTron).not.toHaveBeenCalled();
   });
 });

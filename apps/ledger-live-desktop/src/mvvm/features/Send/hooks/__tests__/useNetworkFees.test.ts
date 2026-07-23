@@ -26,6 +26,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     canEstimateFeePresetsWithZeroAmount: jest.fn(() => false),
     getFeePresetOptions: jest.fn(() => []),
     getFeeCurrencyAccountId: jest.fn(() => null),
+    showFeeCurrencyAmount: jest.fn(() => false),
   },
 }));
 jest.mock("@ledgerhq/live-countervalues-react", () => ({

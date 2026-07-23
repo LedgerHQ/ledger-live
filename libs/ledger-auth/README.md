@@ -1,5 +1,8 @@
 # ledger-auth
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/ledger-auth` provides authentication helpers for Ledger Live apps to authenticate users against Ledger's Keycloak-based OAuth2/OIDC service. It handles the full PKCE authorization code flow, token storage, and silent token refresh, exposing a simple `AuthSDK` facade.
 
 ## What it does

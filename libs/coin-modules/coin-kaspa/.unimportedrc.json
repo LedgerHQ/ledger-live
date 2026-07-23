@@ -61,6 +61,8 @@
     "src/network/submitTransaction.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/index.ts",
+    "src/test/msw-setup.ts",
+    "src/test/msw.mock.ts",
     "src/transaction.ts",
     "src/supportedFeatures.ts"
   ],

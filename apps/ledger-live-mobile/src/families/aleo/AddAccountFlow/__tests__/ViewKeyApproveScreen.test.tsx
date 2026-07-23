@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, TouchableOpacity, Pressable, BackHandler } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { render, screen } from "@tests/test-renderer";
 import type { Account } from "@ledgerhq/types-live";
@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/live-common/families/aleo/react";
 import ViewKeyApproveScreen from "../ViewKeyApproveScreen";
 import { ScreenName } from "~/const";
+import { aleoCurrency, aleoTestnetCurrency } from "../../__mocks__/currency.mock";
 
 type MockViewKeyApprovalReturn = {
   hookState: {
@@ -35,6 +36,10 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: jest.fn(),
   useRoute: jest.fn(),
+  useFocusEffect: jest.fn((callback: () => void | (() => void)) => {
+    const React = require("react");
+    React.useEffect(() => callback(), [callback]);
+  }),
 }));
 
 jest.mock("@ledgerhq/live-common/families/aleo/react", () => ({
@@ -137,8 +142,23 @@ jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
   addAccountsAction: jest.fn(() => ({ type: "ADD_ACCOUNTS" })),
 }));
 
-const ACCOUNT_1 = { id: "account1", freshAddress: "addr1" } as Account;
-const ACCOUNT_2 = { id: "account2", freshAddress: "addr2" } as Account;
+const ACCOUNT_1 = {
+  id: "account1",
+  freshAddress: "addr1",
+  currency: aleoCurrency,
+} as unknown as Account;
+
+const ACCOUNT_2 = {
+  id: "account2",
+  freshAddress: "addr2",
+  currency: aleoCurrency,
+} as unknown as Account;
+
+const ACCOUNT_TESTNET_1 = {
+  id: "accountTestnet1",
+  freshAddress: ACCOUNT_1.freshAddress,
+  currency: aleoTestnetCurrency,
+} as unknown as Account;
 
 const mockParentNavigate = jest.fn();
 const mockNavigation = {
@@ -259,7 +279,9 @@ describe("ViewKeyApproveScreen", () => {
 
     it("shows only accounts whose freshAddress is not already in the wallet", () => {
       const { useSelector } = jest.requireMock("~/context/hooks");
-      useSelector.mockReturnValue([{ id: "existing", freshAddress: "addr1" }]);
+      useSelector.mockReturnValue([
+        { id: "existing", freshAddress: "addr1", currency: aleoCurrency },
+      ]);
 
       renderScreen({
         hookState: { sharePending: true, shareProgress: { completed: 0, total: 1 } },
@@ -267,6 +289,23 @@ describe("ViewKeyApproveScreen", () => {
 
       expect(screen.getByText("account2")).toBeTruthy();
       expect(screen.queryByText("account1")).toBeNull();
+    });
+
+    it("does not filter out a testnet account sharing the same freshAddress as an existing mainnet account", () => {
+      const { useSelector } = jest.requireMock("~/context/hooks");
+      useSelector.mockReturnValue([
+        { id: "existing", freshAddress: "addr1", currency: aleoCurrency },
+      ]);
+
+      renderScreen(
+        { hookState: { sharePending: true, shareProgress: { completed: 0, total: 1 } } },
+        {
+          accountsToAdd: [ACCOUNT_TESTNET_1],
+          currency: { type: "CryptoCurrency" as const, id: aleoTestnetCurrency.id },
+        },
+      );
+
+      expect(screen.getByText("accountTestnet1")).toBeTruthy();
     });
   });
 
@@ -279,8 +318,8 @@ describe("ViewKeyApproveScreen", () => {
     it("does not start the device action and closes the flow", () => {
       const { useSelector } = jest.requireMock("~/context/hooks");
       useSelector.mockReturnValue([
-        { id: "existing1", freshAddress: "addr1" },
-        { id: "existing2", freshAddress: "addr2" },
+        { id: "existing1", freshAddress: "addr1", currency: aleoCurrency },
+        { id: "existing2", freshAddress: "addr2", currency: aleoCurrency },
       ]);
       const mockOnClose = jest.fn();
 
@@ -361,6 +400,37 @@ describe("ViewKeyApproveScreen", () => {
       // Not aborted: onResult still proceeds normally.
       capturedOnResult?.();
       expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("hardware back button (Android)", () => {
+    let mockSubscriptionRemove: jest.Mock;
+
+    beforeEach(() => {
+      mockSubscriptionRemove = jest.fn();
+      jest
+        .spyOn(BackHandler, "addEventListener")
+        .mockReturnValue({ remove: mockSubscriptionRemove });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("registers a handler that prevents default back navigation", () => {
+      renderScreen();
+      expect(BackHandler.addEventListener).toHaveBeenCalledWith(
+        "hardwareBackPress",
+        expect.any(Function),
+      );
+      const [[, handler]] = (BackHandler.addEventListener as jest.Mock).mock.calls;
+      expect(handler()).toBe(true);
+    });
+
+    it("removes the handler when the screen unmounts", () => {
+      const { unmount } = renderScreen();
+      unmount();
+      expect(mockSubscriptionRemove).toHaveBeenCalled();
     });
   });
 

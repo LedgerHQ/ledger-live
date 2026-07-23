@@ -24,6 +24,9 @@ export function createApi(config: CantonCoinConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
+    async call() {
+      throw new Error("call is not supported");
+    },
     broadcast: (_tx: string): Promise<string> => {
       throw new Error("broadcast is not supported");
     },

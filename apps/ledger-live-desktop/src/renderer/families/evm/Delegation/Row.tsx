@@ -187,7 +187,7 @@ export function Row({
             i18nKey={
               status === "activating"
                 ? "ethereum.evmStaking.delegation.undelegateActivatingTooltip"
-                : "ethereum.evmStaking.delegation.undelegateDisabledTooltip"
+                : `ethereum.evmStaking.delegation.undelegateDisabledTooltip.${account.currency.id}`
             }
           >
             <b></b>
@@ -210,6 +210,7 @@ export function Row({
       _canUndelegate,
       redelegateDisabledTooltip,
       status,
+      account.currency.id,
     ],
   );
   const name = validator?.name ?? validatorName ?? validatorAddress;

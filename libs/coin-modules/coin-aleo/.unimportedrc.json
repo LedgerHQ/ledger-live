@@ -11,6 +11,7 @@
   ],
   "ignorePatterns": [
     "**/node_modules/**",
+    "**/__tests__/**",
     "**/*.fixture.ts",
     "**/*.mock.ts",
     "**/*.test.{js,jsx,ts,tsx}"

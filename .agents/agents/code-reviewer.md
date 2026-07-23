@@ -15,6 +15,7 @@ Pay special attention to:
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 - `.agents/skills/coin-modules/SKILL.md` — Module layout, Coin Module API path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
+- `.agents/skills/detect-data-leaks/SKILL.md` — Data leak detection: third-party sinks, risky patterns, and scoring
 - `.agents/skills/typescript/SKILL.md` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
 - `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
 - `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead

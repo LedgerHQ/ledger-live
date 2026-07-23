@@ -1,8 +1,13 @@
-import { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 import type { Transaction } from "../coin-modules/transaction-types";
-import { getWalletAPITransactionSignFlowInfos } from "./converters";
+import { getAccountBridge } from "../bridge";
+import {
+  getWalletAPITransactionSignFlowInfos,
+  resolveWalletApiSpendableBalance,
+} from "./converters";
 import type { WalletAPITransaction } from "./types";
 
 const evmBridge = jest.fn();
@@ -19,6 +24,18 @@ jest.mock("../coin-modules/registry", () => ({
     }
   },
 }));
+
+jest.mock("../bridge", () => ({
+  getAccountBridge: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/logs", () => ({
+  ...jest.requireActual("@ledgerhq/logs"),
+  log: jest.fn(),
+}));
+
+const mockLog = jest.mocked(log);
+const mockGetAccountBridge = jest.mocked(getAccountBridge);
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
@@ -92,5 +109,46 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     expect(canEditFees).toBe(false);
     expect(hasFeesProvided).toBe(false);
     expect(liveTx).toEqual(expectedLiveTx);
+  });
+});
+
+describe("resolveWalletApiSpendableBalance", () => {
+  const account = { spendableBalance: new BigNumber(100) } as AccountLike;
+
+  beforeEach(() => {
+    mockGetAccountBridge.mockReset();
+    mockLog.mockClear();
+  });
+
+  it("returns the bridge's getWalletApiSpendableBalance result", async () => {
+    // Given
+    const bridgeSpendableBalance = new BigNumber(42);
+
+    mockGetAccountBridge.mockResolvedValue({
+      getWalletApiSpendableBalance: jest.fn().mockReturnValue(bridgeSpendableBalance),
+    } as never);
+
+    // When
+    const result = await resolveWalletApiSpendableBalance(account);
+
+    // Then
+    expect(result).toEqual(bridgeSpendableBalance);
+  });
+
+  it("falls back to account.spendableBalance and logs when the bridge lookup fails", async () => {
+    // Given
+    mockGetAccountBridge.mockRejectedValue(new Error("unsupported family"));
+
+    // When
+    const result = await resolveWalletApiSpendableBalance(account);
+
+    // Then
+    expect(result).toEqual(account.spendableBalance);
+    expect(mockLog).toHaveBeenCalledTimes(1);
+    expect(mockLog).toHaveBeenCalledWith(
+      "wallet-api/converters",
+      expect.stringContaining("falling back to account.spendableBalance"),
+      { error: "unsupported family" },
+    );
   });
 });

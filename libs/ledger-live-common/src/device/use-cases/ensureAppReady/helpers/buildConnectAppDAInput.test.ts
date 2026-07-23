@@ -34,7 +34,6 @@ function makeInput(overrides: Partial<EnsureAppReadyInput> = {}): EnsureAppReady
     appName: "Ethereum",
     dependencies: ["1inch"],
     requireLatestFirmware: false,
-    allowPartialDependencies: false,
     ...overrides,
   };
 }
@@ -54,7 +53,7 @@ describe("buildConnectAppDeviceActionInput", () => {
     mockGetCryptoCurrencyById.mockImplementation((id: string) => ({ id }) as any);
   });
 
-  it("builds application, dependency and firmware requirements", () => {
+  it("GIVEN app requirements WHEN building the input THEN missing applications are rejected", () => {
     // GIVEN
     const dmk = makeDmk();
     mockGetMinVersion.mockImplementation((appName, model) => {
@@ -70,7 +69,6 @@ describe("buildConnectAppDeviceActionInput", () => {
       sessionId: "session-1",
       ensureAppReadyInput: makeInput({
         requireLatestFirmware: true,
-        allowPartialDependencies: true,
       }),
       getDeprecationConfig: mockGetDeprecationConfig,
       getMinVersion: mockGetMinVersion,
@@ -100,7 +98,7 @@ describe("buildConnectAppDeviceActionInput", () => {
         },
       ],
       requireLatestFirmware: true,
-      allowMissingApplication: true,
+      allowMissingApplication: false,
       unlockTimeout: 0,
       deprecationConfig: [{ deviceModelId: "nanoS" }],
     });

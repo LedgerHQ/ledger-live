@@ -22,7 +22,7 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { useCurrencyById } from "@ledgerhq/cryptoassets/hooks";
+import { useCurrencyById } from "@features/platform-currencies";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 

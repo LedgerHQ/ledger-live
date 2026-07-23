@@ -10,8 +10,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import { ScreenName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -153,8 +152,8 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   const { useAllAmount } = transaction;
   const { amount } = status;
   const currency = getAccountCurrency(account);
-  const family = getFamilyByCurrencyId(currency.id);
-  const familySendFlow = family ? getCustomSendFlow(family) : null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const familySendFlow = getCustomSendFlow(mainAccount.currency.family);
 
   const transferFee =
     "model" in transaction && transaction.model.commandDescriptor?.command.kind === "token.transfer"
@@ -224,7 +223,12 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
                       </LText>
                       {maxSpendable && (
                         <LText semiBold color="grey">
-                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
+                          <CurrencyUnitValue
+                            showCode
+                            unit={unit}
+                            value={maxSpendable}
+                            showAllDigits={familySendFlow?.showAllDigits}
+                          />
                         </LText>
                       )}
                     </View>

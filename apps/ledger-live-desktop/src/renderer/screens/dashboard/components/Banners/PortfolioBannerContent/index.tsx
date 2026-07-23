@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import RecoverWidgetView from "LLD/features/FinishOnboarding/RecoverWidget/RecoverWidgetView";
@@ -96,7 +95,7 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
   let recoverBannerChildren: React.ReactNode = <PortfolioContentCards />;
 
   if (isActionCardsVisible) {
-    recoverBannerChildren = <ActionContentCards variant={ABTestingVariants.variantA} />;
+    recoverBannerChildren = <ActionContentCards />;
   } else if (isLNSUpsellBannerVisible) {
     recoverBannerChildren = <LNSUpsellBanner location="portfolio" />;
   }

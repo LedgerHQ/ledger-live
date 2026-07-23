@@ -8,7 +8,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { HttpResponse, bypass, http } from "msw";
 import { setupServer } from "msw/node";
 
@@ -67,7 +67,7 @@ export const SOLANA_TSLAX: TokenCurrency = {
   units: [{ name: "TSLAx", code: "TSLAx", magnitude: 8 }],
 };
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
     if (currencyId !== "solana") return undefined;
     const normalizedAddress = address.toLowerCase();
@@ -92,6 +92,7 @@ setupMockCryptoAssetsStore({
     if (id === SOLANA_TSLAX.id) return SOLANA_TSLAX;
     return undefined;
   },
+  getTokensSyncHash: async () => "",
 });
 export const WITHDRAWABLE_AMOUNT = 2e9;
 

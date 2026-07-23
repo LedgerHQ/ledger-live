@@ -1,5 +1,8 @@
 # Card
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development.
+
 Cross-platform card flow scaffold for Ledger Live. Currently exposes a minimal
 `CardScreen` used as a placeholder inside the Pay tab of both apps.
 

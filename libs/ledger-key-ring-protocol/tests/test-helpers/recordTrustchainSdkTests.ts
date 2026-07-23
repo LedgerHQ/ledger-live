@@ -6,11 +6,13 @@ import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { setNetworkState } from "@ledgerhq/live-network";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";
 import { WithDevice } from "../../src/types";
 
 setEnv("GET_CALLS_RETRY", 0);
+setNetworkState({ getCallsRetry: 0 });
 
 export async function recordTestTrustchainSdk(
   file: string | null,

@@ -103,6 +103,13 @@ export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () => (dispatch: AppDis
   );
 };
 
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Replaces `devicesModelList` so debug screens can simulate audience gates (e.g. pretend Nano seen).
+ */
+export const DANGEROUSLY_setDevicesModelListForQa = (devicesModelList: DeviceModelId[]) =>
+  saveSettings({ devicesModelList });
+
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,

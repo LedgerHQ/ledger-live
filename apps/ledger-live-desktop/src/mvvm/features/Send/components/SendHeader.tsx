@@ -12,6 +12,7 @@ import {
   type SendFlowBusinessContext,
   type SendFlowStep,
 } from "@ledgerhq/live-common/flows/send/types";
+import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
@@ -31,7 +32,7 @@ export function SendHeader() {
   const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
   const availableText = useAvailableBalance(state.account.account, headerDisplayMode);
 
-  const currencyId = state.account.currency?.id;
+  const currencyId = getMemoFamilyCurrencyId(state.account.currency);
 
   const sendFlowTrackingProperties = useMemo(
     () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),

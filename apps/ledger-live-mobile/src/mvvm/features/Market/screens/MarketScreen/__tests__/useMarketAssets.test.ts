@@ -342,17 +342,25 @@ describe("useMarketAssets", () => {
   });
 
   describe("crypto countervalue (BTC)", () => {
-    it("requests in USD and rescales rows without waiting for the supported fiat list", () => {
+    it("waits for the supported counter-value list like any fiat currency", () => {
       mockSupportedCounterCurrencies(undefined);
-      mockUsdToFiatRate({ status: "ready", rate: 0.00001 });
+
+      const { result } = renderHook(() => useMarketAssets(), withCounterValue("BTC"));
+
+      expectMarketDataLastCalledWith({ counterCurrency: "btc" }, { enabled: false });
+      expect(result.current.loading).toBe(true);
+    });
+
+    it("requests in BTC directly once the supported list confirms it is native", () => {
+      mockSupportedCounterCurrencies(["usd", "eur", "btc"]);
       mockMarketData({
         data: [createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })],
       });
 
       const { result } = renderHook(() => useMarketAssets(), withCounterValue("BTC"));
 
-      expectMarketDataLastCalledWith({ counterCurrency: "usd" });
-      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("btc", { skip: false });
+      expectMarketDataLastCalledWith({ counterCurrency: "btc" });
+      expect(mockedUseUsdToFiatRate).toHaveBeenCalledWith("usd", { skip: false });
       expect(result.current.loading).toBe(false);
       expect(result.current.assets[0].formattedPrice).toContain("₿");
       expect(result.current.assets[0].formattedMarketCap).toContain("₿");

@@ -5,7 +5,7 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockToken = {
   id: "celo/erc20/celo_dollar",
@@ -49,7 +49,9 @@ describe("celo bridge", () => {
     >;
 
     (
-      jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
     ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     });

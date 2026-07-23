@@ -14,7 +14,7 @@ jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   parseCurrencyUnit: jest.fn((unit, amount) => amount),
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: () => ({
     findTokenById: jest.fn().mockResolvedValue(null),
   }),
