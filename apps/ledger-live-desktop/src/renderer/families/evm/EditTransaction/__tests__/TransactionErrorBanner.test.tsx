@@ -28,8 +28,7 @@ describe("EVM TransactionErrorBanner", () => {
   });
 
   it("hides generic description for NotEnoughGas gasPrice errors", () => {
-    const notEnoughGasError = new Error("not enough gas");
-    Object.setPrototypeOf(notEnoughGasError, NotEnoughGas.prototype);
+    const notEnoughGasError = new NotEnoughGas("not enough gas");
 
     render(
       <TransactionErrorBanner
