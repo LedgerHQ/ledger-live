@@ -1,6 +1,6 @@
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies as _listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { initAccounts } from "~/renderer/actions/accounts";
@@ -29,6 +29,11 @@ export const createAccount = (
   return [account, userData];
 };
 
+// Single `as` safe: pure brand difference on id. Drop when live-common migrates.
+function listSupportedCurrencies(): CryptoCurrency[] {
+  return _listSupportedCurrencies() as CryptoCurrency[];
+}
+
 export const getSupportedCurrencies = () => {
   const currencies = listSupportedCurrencies();
   if (currencies.length === 0) {
@@ -43,7 +48,7 @@ export const getRandomCurrency = (): CryptoCurrency => {
   if (!currency) {
     throw new Error("Failed to sample currency");
   }
-  return currency as CryptoCurrency;
+  return currency;
 };
 
 export const injectMockAccounts = async (
