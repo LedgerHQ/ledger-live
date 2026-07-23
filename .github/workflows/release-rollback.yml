@@ -73,7 +73,9 @@ jobs:
           git push -u origin rollback
 
       - name: Override base version
-        run: pnpm version --new-version ${{ inputs.replacement-version-number }} --no-git-tag-version
+        env:
+          NEW_VERSION: ${{ inputs.replacement-version-number }}
+        run: pnpm version --new-version "$NEW_VERSION" --no-git-tag-version
         working-directory: ${{ inputs.application == 'live-desktop' && 'apps/ledger-live-desktop' || 'apps/ledger-live-mobile' }}
 
       - name: Create version bump changeset

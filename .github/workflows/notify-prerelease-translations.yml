@@ -25,10 +25,10 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: checkout PR
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          gh pr checkout ${{ inputs.prNumber }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ inputs.prNumber }}
+        run: gh pr checkout "$PR_NUMBER"
 
       #time to slack this bad boï
       - name: format message

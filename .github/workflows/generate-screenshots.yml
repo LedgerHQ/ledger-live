@@ -61,9 +61,10 @@ jobs:
 
       - name: Checkout PR
         if: ${{ inputs.number != null }}
-        run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          PR_NUMBER: ${{ inputs.number }}
+        run: gh pr checkout "$PR_NUMBER"
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
