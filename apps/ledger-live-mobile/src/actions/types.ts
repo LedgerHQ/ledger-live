@@ -321,6 +321,7 @@ export enum SettingsActionTypes {
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_HAS_SEEN_WALLET_V4_TOUR = "SET_HAS_SEEN_WALLET_V4_TOUR",
+  SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION = "SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION",
   SET_PRODUCT_TOUR_COMPLETED = "SET_PRODUCT_TOUR_COMPLETED",
   SET_HAS_SEEN_Q2_WALLET_V4_TOUR = "SET_HAS_SEEN_Q2_WALLET_V4_TOUR",
   SET_DO_NOT_ASK_AGAIN_SKIP_MEMO = "SET_DO_NOT_ASK_AGAIN_SKIP_MEMO",
@@ -410,6 +411,8 @@ export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnaly
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasSeenWalletV4TourPayload = SettingsState["hasSeenWalletV4Tour"];
+export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
+  SettingsState["hasDismissedContactsFeatureIntroduction"];
 export type SettingsSetDoNotAskAgainSkipMemoPayload = SettingsState["doNotAskAgainSkipMemo"];
 export type SettingsSetProductTourCompletedPayload = SettingsState["productTourCompleted"];
 export type SettingsSetHasSeenQ2WalletV4TourPayload = SettingsState["hasSeenQ2WalletV4Tour"];
@@ -483,6 +486,7 @@ export type SettingsPayload =
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetHasSeenWalletV4TourPayload
+  | SettingsSetHasDismissedContactsFeatureIntroductionPayload
   | SettingsSetDoNotAskAgainSkipMemoPayload
   | SettingsSetProductTourCompletedPayload
   | SettingsSetHasSeenQ2WalletV4TourPayload

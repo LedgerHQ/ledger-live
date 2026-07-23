@@ -1,7 +1,6 @@
 # @features/flow-contacts
 
-> [!CAUTION]
-> **Status: UNSTABLE** — In active development as part of the Contacts feature.
+> [!CAUTION] > **Status: UNSTABLE** — In active development as part of the Contacts feature.
 
 Shared Contacts flow package for Desktop and Mobile.
 
@@ -38,7 +37,7 @@ src/
 ├── components/
 │   ├── ContactsButton/                  # My Wallet entry
 │   ├── AddContactDrawer/                # Native add-contact drawer and web dialog
-│   ├── ContactsFeatureIntroduction/      # One-time feature introduction dialog (web)
+│   ├── ContactsFeatureIntroduction/      # One-time feature introduction (web dialog, native drawer content)
 │   ├── ContactAvatar/                    # Shared native list and detail avatar
 │   └── ContactsLedgerSyncIntroduction/  # Shared Ledger Sync introduction content
 ├── add/
