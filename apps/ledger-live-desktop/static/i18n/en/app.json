@@ -8684,13 +8684,14 @@
   "largeScreenUpsellModal": {
     "optedIn": {
       "title": "See more. Tap less. Save {{discount}}%",
-      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off."
+      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off.",
+      "cta": "Explore touchscreen signers"
     },
     "optedOut": {
-      "title": "Spot scams. See every detail",
-      "subtitle": "Review clearly on a touchscreen signer and spot scams with advanced security checks."
-    },
-    "cta": "Explore touchscreen signers"
+      "title": "Spot scams before signing",
+      "subtitle": "Learn more about advanced security features that enable real-time threat detection.",
+      "cta": "Learn more"
+    }
   },
   "modularAssetDrawer": {
     "addAccounts": {
