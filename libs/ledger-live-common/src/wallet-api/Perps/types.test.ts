@@ -127,6 +127,21 @@ const cases: Array<[string, ActionWithNonce, object]> = [
       nonce: 99,
     },
   ],
+  [
+    "userSetAbstraction",
+    {
+      nonce: 5,
+      action: {
+        type: "userSetAbstraction",
+        abstraction: true,
+      },
+    },
+    {
+      type: "userSetAbstraction",
+      abstraction: true,
+      nonce: 5,
+    },
+  ],
 ];
 
 describe("convertAction", () => {

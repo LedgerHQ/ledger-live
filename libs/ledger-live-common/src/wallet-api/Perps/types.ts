@@ -56,12 +56,16 @@ export type Action =
       asset: number; // index of coin
       isBuy: boolean; // cross-leverage
       ntli: number;
+    }
+  | {
+      type: "userSetAbstraction";
+      abstraction: boolean;
     };
 export function convertAction(action: ActionWithNonce): SignerAction {
   return {
     ...action.action,
     nonce: action.nonce,
-  };
+  } as SignerAction;
 }
 type Order = {
   a: number; // Asset
