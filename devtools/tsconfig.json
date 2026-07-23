@@ -1,4 +1,10 @@
 {
   "files": [],
-  "references": [{ "path": "./shell"}],
+  "references": [
+    { "path": "./shell" },
+    { "path": "./feature-flags/" },
+    { "path": "./registry" },
+    { "path": "./transport" },
+    { "path": "./protocols" }
+  ]
 }

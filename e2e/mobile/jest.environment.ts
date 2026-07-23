@@ -34,7 +34,7 @@ import * as cliCommandsUtils from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "./page/index";
-import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
+import type { ServerData } from "../../apps/ledger-live-mobile/src/e2e/bridge/types";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
@@ -184,6 +184,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       getLabelOfElement: NativeElementHelpers.getLabelOfElement,
       IsIdPresent: NativeElementHelpers.isIdPresent,
       IsIdVisible: NativeElementHelpers.isIdVisible,
+      scrollByPixels: NativeElementHelpers.scrollByPixels,
       scrollToId: NativeElementHelpers.scrollToId,
       scrollToText: NativeElementHelpers.scrollToText,
       tapByElement: NativeElementHelpers.tapByElement,

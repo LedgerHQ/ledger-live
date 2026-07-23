@@ -12,6 +12,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { useStakingContractAddress } from "@ledgerhq/live-common/families/evm/staking/react";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -105,6 +106,11 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const { account, validatorAddress, source = "Account Page" } = params;
 
   const bridge = useAccountBridge<EvmTransaction>(account, undefined);
+  const contractAddress = useStakingContractAddress(account.currency.id, {
+    mode: "redelegate",
+    valAddress: validatorAddress ?? undefined,
+  });
+
   const {
     transaction,
     setTransaction,
@@ -122,7 +128,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     const transaction = bridge.updateTransaction(baseTransaction, {
       mode: "redelegate",
       valAddress: validatorAddress ?? "",
-      recipient: account.freshAddress,
+      recipient: contractAddress ?? account.freshAddress,
       ...(sourceDelegation && { amount: sourceDelegation.amount }),
     } as unknown as Partial<EvmTransaction>);
     return {

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import {
   getDerivationScheme,
@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Trc10Asset, Trc20Asset } from "./tokenFixtures";
 
 export const TRON = getCryptoCurrencyById("tron");

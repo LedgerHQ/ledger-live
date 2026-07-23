@@ -45,7 +45,7 @@ export function OperationsHistoryOptionsSheet({
             <Spot appearance="icon" icon={Icon} />
             <ListItemContent>
               <ListItemTitle>{title}</ListItemTitle>
-              <ListItemDescription>{description}</ListItemDescription>
+              <ListItemDescription numberOfLines={2}>{description}</ListItemDescription>
             </ListItemContent>
           </ListItemLeading>
         </ListItem>

@@ -1,12 +1,12 @@
 import invariant from "invariant";
 import { AccountId, TransactionId } from "@hashgraph/sdk";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
 import { InvalidAddress } from "@ledgerhq/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import type { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, Currency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { HederaCoinConfig } from "../config";

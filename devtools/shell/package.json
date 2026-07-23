@@ -1,16 +1,23 @@
 {
   "name": "@devtools/shell",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Ledger Live DevTools — cross-platform debug component",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src jest",
     "format:check": "oxfmt src jest --check",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "pnpm run test:web && pnpm run test:native",
     "test:native": "jest --config jest.native.config.js",
     "test:web": "jest --config jest.config.js",

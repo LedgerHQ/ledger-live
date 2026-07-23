@@ -165,16 +165,11 @@ jobs:
         run: pnpm i
       - name: Check formatting of affected libraries
         id: format-check-libs
-        # TODO(LIVE-31553): remove continue-on-error once the release cycle has
-        # the format:check scripts on HEAD (~2 weeks). format:check does not yet
-        # exist on release branches, so keep this non-blocking to not break release.
-        continue-on-error: true
+        if: github.base_ref == 'develop' || github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
         run: pnpm exec nx run-many -t format:check --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
       - name: Lint affected libraries
         id: lint-libs
         run: pnpm exec nx run-many -t lint --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false -- --quiet
-      - name: Check export rules
-        run: pnpm exec nx run @ledgerhq/client-ids:check-export-rules
       - name: Typecheck affected libraries
         id: typecheck-libs
         run: pnpm exec nx run-many -t typecheck --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false

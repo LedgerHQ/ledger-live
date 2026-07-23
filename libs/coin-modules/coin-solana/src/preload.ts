@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { flow } from "lodash/fp";
 import { ChainAPI } from "./network";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";

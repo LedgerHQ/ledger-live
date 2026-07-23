@@ -1,7 +1,7 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { BitcoinAccount, Transaction as BtcTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import resolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
@@ -289,7 +289,6 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     });
 
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
-    await currencyBridge.preload();
     const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
     const getAddress = resolver(signerContext);
     // Can also test LEGACY here

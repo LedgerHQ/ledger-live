@@ -1,6 +1,6 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CeloAccount, Transaction } from "../types";

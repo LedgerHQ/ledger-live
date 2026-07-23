@@ -8,7 +8,7 @@ import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
 

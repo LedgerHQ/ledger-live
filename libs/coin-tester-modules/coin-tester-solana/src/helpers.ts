@@ -12,7 +12,7 @@ import { getCoinFrameworkAccountBridge } from "@ledgerhq/live-common/bridge/gene
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";

@@ -2,13 +2,12 @@ import React, { useEffect, useState, ReactNode, useCallback } from "react";
 import { Provider } from "react-redux";
 import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
+import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import {
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-  listSupportedFiats,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { selectSupportedFiats } from "@domain/entity-currency-fiat";
+import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
@@ -24,6 +23,7 @@ import {
   getBle,
   getHistory,
   getKnownDevices,
+  getLargeScreenUpsellModalState,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -44,6 +44,7 @@ import {
   INITIAL_STATE as settingsState,
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
+  migrateLegacyStarredMarketCoins,
 } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { importMarket } from "~/actions/market";
@@ -101,6 +102,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         settingsData,
         accountsData,
         postOnboardingState,
+        largeScreenUpsellModalState,
         marketState,
         marketListConfigState,
         marketBannerState,
@@ -120,6 +122,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
+        retry(getLargeScreenUpsellModalState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketState, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketListConfig, MAX_RETRIES, RETRY_DELAY),
         retry(getMarketBannerState, MAX_RETRIES, RETRY_DELAY),
@@ -149,6 +152,11 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (settingsData && typeof settingsData.counterValue === "string") {
         settingsData.counterValue = migrateLegacyCryptoCounterValue(settingsData.counterValue);
       }
+      if (settingsData?.starredMarketCoins) {
+        settingsData.starredMarketCoins = migrateLegacyStarredMarketCoins(
+          settingsData.starredMarketCoins,
+        );
+      }
 
       store.dispatch(importSettings(settingsData));
 
@@ -177,6 +185,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       backfillOnboardingDate(store);
+
+      if (largeScreenUpsellModalState) {
+        store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+      }
 
       if (marketState) {
         store.dispatch(importMarket(marketState));
@@ -261,10 +273,8 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      await Promise.all([
-        hydrateCurrencies(),
-        updateSupportedCountervalues(store, settingsData),
-      ]).finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
+      updateSupportedCountervalues(store, settingsData);
+      await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
         error instanceof Error
@@ -323,21 +333,9 @@ async function hydrateCurrencies() {
   });
 }
 
-async function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
-  const supportedFiats = await retry(listSupportedFiats, MAX_RETRIES, RETRY_DELAY);
-  const bitcoin = getCryptoCurrencyById("bitcoin");
-  const ethereum = getCryptoCurrencyById("ethereum");
-  const possibleIntermediaries = [bitcoin, ethereum];
-
-  const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-    .map(currency => ({
-      value: currency.ticker,
-      ticker: currency.ticker,
-      label: `${currency.name} - ${currency.ticker}`,
-      currency,
-    }))
-    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-
+function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+  const supportedFiats = selectSupportedFiats(store.getState());
+  const supportedCounterValues = buildSupportedCounterValues(supportedFiats);
   store.dispatch(setSupportedCounterValues(supportedCounterValues));
 
   if (

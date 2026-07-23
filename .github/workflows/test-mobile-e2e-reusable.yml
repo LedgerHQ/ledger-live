@@ -235,8 +235,8 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            e2e/tooling/filter
             libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
-            scripts/resolve-e2e-test-filter.mjs
             .pnpmfile.cjs
             tools
             .mise/tasks
@@ -296,6 +296,8 @@ jobs:
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
           fi
+
+          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
           {
           echo "## Workflow Context"
           echo ""
@@ -304,7 +306,7 @@ jobs:
           echo "- **Commit SHA:** ${{ github.sha }}"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
-          echo "- **Filtered pattern:** $FILTER_PATTERN"
+          echo "$FILTER_SUMMARY"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
@@ -352,7 +354,7 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/mobile/specs")"
@@ -615,10 +617,10 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }} 
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
@@ -642,7 +644,7 @@ jobs:
       - name: Restore pre-generated userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
@@ -855,10 +857,10 @@ jobs:
           bot_id: ${{ secrets.GH_BOT_CLIENT_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Build CLI
+      - name: Build e2e dependencies (CLI + libs)
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run @ledgerhq/live-cli:build
+          command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
           disable_cache: false
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
@@ -881,7 +883,7 @@ jobs:
       - name: Restore pre-generated userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
@@ -1114,8 +1116,9 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ios-test-artifacts
-          name: "mobile-e2e-ios-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["mobile","ios",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          name: "mobile-e2e-ios-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","ios",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   qaa-allure-upload-android:
     name: "QAA Allure Upload - Android (Experimental)"
@@ -1136,8 +1139,9 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
-          name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["mobile","android",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["mobile","android",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
@@ -1247,7 +1251,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
+                  "text": `🍏 iOS · FF '${{ env.IOS_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.ios_device }} : ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];
@@ -1257,7 +1261,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
+                  "text": `🤖 Android · FF '${{ env.ANDROID_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.android_device }} : ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
                 }
               }
             ];

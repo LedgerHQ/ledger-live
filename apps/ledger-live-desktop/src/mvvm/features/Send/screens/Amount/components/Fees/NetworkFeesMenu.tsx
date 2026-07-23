@@ -142,7 +142,7 @@ export function NetworkFeesMenu({ display, selection, presets, actions }: Networ
   if (!hasMenuOptions) {
     return (
       <div
-        className="flex w-full items-center justify-between mt-16 mb-12"
+        className="flex w-full items-center justify-between mt-8 mb-12"
         data-testid="send-network-fees-row"
       >
         <span className="flex items-center gap-8">

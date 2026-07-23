@@ -13,10 +13,11 @@ import Circle from "~/components/Circle";
 import LText from "~/components/LText";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 
-type Props = {
+export type Props = Readonly<{
   transaction: Transaction;
   currency: CryptoCurrency;
-};
+  badge?: React.ReactNode;
+}>;
 
 const DefaultRecipientTemplate = memo(({ transaction }: Pick<Props, "transaction">) => {
   const { recipient, recipientDomain } = transaction;
@@ -66,7 +67,7 @@ const RecipientWithResolutionTemplate = memo(({ transaction }: Pick<Props, "tran
 });
 RecipientWithResolutionTemplate.displayName = "RecipientWithResolutionTemplate";
 
-function SummaryToSection({ transaction, currency }: Props) {
+function SummaryToSection({ transaction, currency, badge }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -88,6 +89,7 @@ function SummaryToSection({ transaction, currency }: Props) {
           <QrCode size="S" color={colors.primary.c80} />
         </Circle>
       }
+      labelBadge={badge}
       data={
         shouldTryResolvingDomain ? (
           <RecipientWithResolutionTemplate transaction={transaction} />

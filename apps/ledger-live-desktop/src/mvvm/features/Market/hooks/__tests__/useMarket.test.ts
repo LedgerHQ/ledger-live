@@ -16,10 +16,6 @@ jest.mock("@ledgerhq/live-common/market/hooks/useMarketDataProvider");
 jest.mock("@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider");
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate");
 
-jest.mock("~/renderer/hooks/useInitSupportedCounterValues", () => ({
-  useInitSupportedCounterValues: jest.fn(),
-}));
-
 const mockedUseMarketData = jest.mocked(useMarketData);
 const mockedUseSupportedCounterCurrencies = jest.mocked(useSupportedCounterCurrencies);
 const mockedUseUsdToFiatRate = jest.mocked(useUsdToFiatRate);

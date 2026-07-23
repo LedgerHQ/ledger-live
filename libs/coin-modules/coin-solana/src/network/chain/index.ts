@@ -123,7 +123,15 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
 const remapErrors = (e: unknown) => {
-  throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error");
+  if (e instanceof NetworkError) {
+    throw e;
+  }
+
+  throw new NetworkError(
+    e instanceof Error ? e.message : "Unknown Solana error",
+    {},
+    e instanceof Error ? { cause: e } : undefined,
+  );
 };
 
 const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times = 3) => {
@@ -277,9 +285,19 @@ export function getChainAPI(
       return (async () => {
         const commitment = "confirmed";
 
-        const signature = await connection.sendRawTransaction(buffer, {
-          preflightCommitment: commitment,
-        });
+        let signature: string;
+        try {
+          signature = await connection.sendRawTransaction(buffer, {
+            preflightCommitment: commitment,
+          });
+        } catch (error: unknown) {
+          if (error instanceof SendTransactionError) {
+            const logs = await error.getLogs(connection);
+            throw new NetworkError(error.message, { logs }, { cause: error });
+          }
+
+          throw error;
+        }
 
         if (!recentBlockhash) {
           recentBlockhash = await connection.getLatestBlockhash(commitment);

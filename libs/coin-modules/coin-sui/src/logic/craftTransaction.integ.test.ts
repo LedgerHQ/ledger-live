@@ -7,7 +7,11 @@ import { craftTransaction } from "./craftTransaction";
 const SENDER = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
-describe("craftTransaction", () => {
+// SKIP — Sui JSON-RPC public-endpoint shutdown. This suite targets the public mainnet
+// fullnode (fullnode.mainnet.sui.io), which the Sui Foundation retired (testnet wk of
+// 2026-07-06, mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL.
+// Re-enable after porting the integ config to the GraphQL transport.
+describe.skip("craftTransaction", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {

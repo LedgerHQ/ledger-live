@@ -1,4 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "./types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -35,7 +36,7 @@ describe("getPreferredNewAccountScheme", () => {
   ])(
     "should return a list` of schemes for currency $currencyId",
     ({ currencyId, derivationModes }) => {
-      const currency = getCryptoCurrencyById(currencyId);
+      const currency = getCryptoCurrencyById(currencyId) as unknown as CryptoCurrency;
       const p = getPreferredNewAccountScheme(currency);
       expect(p).toEqual(derivationModes);
     },
@@ -67,7 +68,7 @@ describe("getDefaultPreferredNewAccountScheme", () => {
   ])(
     "should return a default scheme for currency $currencyId",
     ({ currencyId, derivationMode }) => {
-      const currency = getCryptoCurrencyById(currencyId);
+      const currency = getCryptoCurrencyById(currencyId) as unknown as CryptoCurrency;
       const defaultP = getDefaultPreferredNewAccountScheme(currency);
       expect(defaultP).toEqual(derivationMode);
     },
@@ -85,6 +86,7 @@ describe("getDerivationModesForCurrency", () => {
     ["tezos", ["galleonL", "tezboxL", "tezosSecp256k1", "tezosbip44h", "tezbox"]], // disableBIP44
     ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
     ["celo", ["celo", "celoMM", "celoEvm"]], // backward compatible change in getDerivationModesForCurrency
+    ["bittensor", ["polkadotbip44"]], // disableBIP44 ⇒ no default "" mode
   ];
 
   let envBackup: boolean;
@@ -100,9 +102,9 @@ describe("getDerivationModesForCurrency", () => {
     "should return the expected derivation paths for %s with SCAN_FOR_INVALID_PATHS false",
     (currency, paths) => {
       setEnv("SCAN_FOR_INVALID_PATHS", false);
-      expect(getDerivationModesForCurrency(getCryptoCurrencyById(currency))).toEqual(
-        paths.filter(path => !isInvalidDerivationMode(path)),
-      );
+      expect(
+        getDerivationModesForCurrency(getCryptoCurrencyById(currency) as unknown as CryptoCurrency),
+      ).toEqual(paths.filter(path => !isInvalidDerivationMode(path)));
     },
   );
 
@@ -110,7 +112,9 @@ describe("getDerivationModesForCurrency", () => {
     "should return the expected derivation paths for %s with SCAN_FOR_INVALID_PATHS true",
     (currency, paths) => {
       setEnv("SCAN_FOR_INVALID_PATHS", true);
-      expect(getDerivationModesForCurrency(getCryptoCurrencyById(currency))).toEqual(paths);
+      expect(
+        getDerivationModesForCurrency(getCryptoCurrencyById(currency) as unknown as CryptoCurrency),
+      ).toEqual(paths);
     },
   );
 });
@@ -234,7 +238,10 @@ describe("getSeedIdentifierDerivation", () => {
       expectedSeedPath: `44'/1'/0'/0'/0'/0'`,
     },
   ])("$currencyId", ({ currencyId, mode, expectedSeedPath }) => {
-    const fun = getSeedIdentifierDerivation(getCryptoCurrencyById(currencyId), mode);
+    const fun = getSeedIdentifierDerivation(
+      getCryptoCurrencyById(currencyId) as unknown as CryptoCurrency,
+      mode,
+    );
 
     expect(fun).toEqual(expectedSeedPath);
   });

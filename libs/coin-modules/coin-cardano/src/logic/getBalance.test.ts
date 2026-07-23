@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { APITransaction } from "../api/api-types";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";

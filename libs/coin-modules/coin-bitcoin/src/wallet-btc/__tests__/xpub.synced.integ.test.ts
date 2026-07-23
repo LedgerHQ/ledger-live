@@ -7,7 +7,7 @@ import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Crypto from "../crypto/bitcoincash";
 import Xpub from "../xpub";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({

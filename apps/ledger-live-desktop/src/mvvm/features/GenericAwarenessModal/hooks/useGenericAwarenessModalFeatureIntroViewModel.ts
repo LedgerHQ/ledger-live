@@ -3,6 +3,7 @@ import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
 import { useDispatch } from "LLD/hooks/redux";
 import {
   GenericAwarenessModalLayout,
+  resolveAwarenessModalActionLink,
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalFeatureIntro,
 } from "@ledgerhq/live-common/genericAwarenessModal";
@@ -95,7 +96,10 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
         featureIntro.primaryButtonLabel,
         featureIntro.primaryButtonLink,
       );
-      openURL(featureIntro.primaryButtonLink);
+      const actionLink = resolveAwarenessModalActionLink(featureIntro.primaryButtonLink);
+      if (actionLink) {
+        openURL(actionLink);
+      }
     }
     closeDialog({ dismissAppStart: true });
   }, [closeDialog, featureIntro, getContext]);
@@ -108,7 +112,10 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
         featureIntro.secondaryButtonLabel,
         featureIntro.secondaryButtonLink,
       );
-      openURL(featureIntro.secondaryButtonLink);
+      const actionLink = resolveAwarenessModalActionLink(featureIntro.secondaryButtonLink);
+      if (actionLink) {
+        openURL(actionLink);
+      }
     }
     closeDialog({ dismissAppStart: true });
   }, [closeDialog, featureIntro, getContext]);

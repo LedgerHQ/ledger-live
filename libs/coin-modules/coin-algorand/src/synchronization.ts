@@ -6,7 +6,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { SyncConfig, Account, TokenAccount, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { computeAlgoMaxSpendable } from "./bridgeLogic";

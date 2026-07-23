@@ -72,10 +72,15 @@ export function useAssetDetailViewModel() {
     currencyId: currency?.id,
     fallbackLedgerIds: ledgerIds,
   });
-  const { isBuyAvailable, availableOnSwap, isCurrencySupported, secondaryButton } =
-    useAssetActionsAvailability(currency, receiveLedgerIds);
+  const {
+    isBuyAvailable,
+    availableOnSwap,
+    isCurrencySupported,
+    hasAssetAccounts,
+    secondaryButton,
+  } = useAssetActionsAvailability(currency, receiveLedgerIds);
   const hasFooter = isBuyAvailable || secondaryButton !== null;
-  const hideReceiveInBalanceGraph = !isCurrencySupported || secondaryButton === "receive";
+  const hideReceiveInBalanceGraph = !isCurrencySupported || hasAssetAccounts;
   const showFallbackBanner = isCurrencySupported && !isBuyAvailable && !availableOnSwap;
   const robinhoodDisclaimer = useFeature("llRobinhoodDisclaimer");
   const hasPositiveBalance = (distributionItem?.amount ?? 0) > 0;

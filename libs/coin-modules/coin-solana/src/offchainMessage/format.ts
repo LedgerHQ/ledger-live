@@ -77,7 +77,14 @@ export function toOffChainMessageV1(
   if (includeLengthPrefix) {
     const messageLength = Buffer.alloc(2);
     messageLength.writeUInt16LE(messageBuffer.length);
-    return Buffer.concat([signingDomain, version, signerCount, signer, messageLength, messageBuffer]);
+    return Buffer.concat([
+      signingDomain,
+      version,
+      signerCount,
+      signer,
+      messageLength,
+      messageBuffer,
+    ]);
   }
   return Buffer.concat([signingDomain, version, signerCount, signer, messageBuffer]);
 }

@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";

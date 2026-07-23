@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import chunk from "lodash/chunk";
 import range from "lodash/range";

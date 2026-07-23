@@ -11,7 +11,7 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";
@@ -156,8 +156,10 @@ function makeSign(
   };
 }
 
-function makePreload(getChainAPI: (config: Config) => ChainAPI): CurrencyBridge["preload"] {
-  const preload: CurrencyBridge["preload"] = (currency): Promise<SolanaPreloadDataV1> => {
+function makePreload(
+  getChainAPI: (config: Config) => ChainAPI,
+): (currency: CryptoCurrency) => Promise<SolanaPreloadDataV1> {
+  const preload = (currency: CryptoCurrency): Promise<SolanaPreloadDataV1> => {
     const config: Config = {
       endpoint: endpointByCurrencyId(currency.id),
     };
@@ -212,7 +214,6 @@ export function makeBridges({
 
   const currencyBridge: CurrencyBridge = {
     preload: makePreload(getAPI),
-    hydrate: (_data: unknown, _currency: CryptoCurrency) => {},
     scanAccounts: scan,
     getPreloadStrategy,
     nftResolvers,

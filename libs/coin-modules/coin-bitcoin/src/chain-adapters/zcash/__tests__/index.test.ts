@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { BitcoinAccountRaw } from "../../../types";
 import type { BitcoinSigner, SignerContext } from "../../../signer";
 import type { ZcashAccount, ZcashAccountRaw, ZcashPrivateInfo } from "../types";
@@ -19,6 +19,7 @@ jest.mock("@ledgerhq/live-signer-zcash", () => ({
       getAddress: jest.fn(),
       getFullViewingKey: jest.fn(),
       createPaymentTransaction: jest.fn().mockResolvedValue("0500signedtx"),
+      signPcztTransaction: jest.fn(),
     };
   }),
 }));

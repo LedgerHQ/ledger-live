@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -9,10 +9,10 @@ import {
   mapUnbondings,
   canDelegate,
   getValidatorExplorerUrl,
-  prefetchValidators,
   hasUnbondingPeriod,
   getUnbondingPeriodDays,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -40,26 +40,13 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 
-const Delegation = ({ account }: { account: StakingAccount }) => {
+const DelegationBody = ({ account }: { account: StakingAccount }) => {
   const dispatch = useDispatch();
-  const { enabled: isEvmNativeStakingEnabled, params } = useFeature("evmNativeStaking") ?? {};
-  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
-
-  if (!isCurrencySupported || !isEvmNativeStakingEnabled) return null;
-
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
 
-  // Warm the validators cache on the account page so that opening either the
-  // "Earn rewards" info modal or the "Delegate" modal directly never shows an
-  // empty list while the first fetch resolves.
-  useEffect(() => {
-    if (isCurrencySupported && isEvmNativeStakingEnabled) {
-      prefetchValidators(currencyId);
-    }
-  }, [currencyId, isCurrencySupported, isEvmNativeStakingEnabled]);
-
-  const validators = account.stakingResources.validators ?? [];
+  // Use reactive validators (LIVE-33986) so monikers resolve without waiting for account sync.
+  const { validators } = useEvmStakingValidators(currencyId);
 
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
@@ -270,6 +257,16 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
       ) : null}
     </>
   );
+};
+
+// Feature-gate wrapper to avoid conditional hooks while the feature flag resolves.
+const Delegation = ({ account }: { account: StakingAccount }) => {
+  const { enabled: isEvmNativeStakingEnabled, params } = useFeature("evmNativeStaking") ?? {};
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
+
+  if (!isCurrencySupported || !isEvmNativeStakingEnabled) return null;
+
+  return <DelegationBody account={account} />;
 };
 
 const Delegations = ({ account }: { account: Account | TokenAccount }) => {

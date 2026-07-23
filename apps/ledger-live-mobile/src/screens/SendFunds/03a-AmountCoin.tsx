@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { Fragment, useCallback, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
 import Switch from "~/components/Switch";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -11,6 +11,8 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import { ScreenName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { TrackScreen } from "~/analytics";
@@ -54,6 +56,10 @@ type ContentProps = {
   navigation: Props["navigation"];
   route: Props["route"];
 };
+
+function AmountInputHeightGuard({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <View style={styles.amountInputHeightGuard}>{children}</View>;
+}
 
 function SendAmountCoinContent({ navigation, route, account, parentAccount }: ContentProps) {
   const { colors } = useTheme();
@@ -135,17 +141,28 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   }, [setTransaction, bridge, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
   const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
+  const handleUpdateTransaction = useCallback(
+    (updater: (arg0: Transaction) => Transaction) => {
+      if (transaction) setTransaction(updater(transaction));
+    },
+    [setTransaction, transaction],
+  );
 
   const unit = useMaybeAccountUnit(account);
   if (!transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
   const currency = getAccountCurrency(account);
+  const family = getFamilyByCurrencyId(currency.id);
+  const familySendFlow = family ? getCustomSendFlow(family) : null;
 
   const transferFee =
     "model" in transaction && transaction.model.commandDescriptor?.command.kind === "token.transfer"
       ? transaction.model.commandDescriptor.command.extensions?.transferFee
       : undefined;
+
+  // Guards AmountInput's height when a family widget renders below it.
+  const AmountInputWrapper = familySendFlow?.AfterAmountInput ? AmountInputHeightGuard : Fragment;
 
   return (
     <>
@@ -163,22 +180,35 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
-              <AmountInput
-                testID="amount-input"
-                editable={!useAllAmount}
-                account={account}
-                onChange={onChange}
-                value={amount}
-                transferFeeCalculated={transferFee}
-                error={
-                  status.errors.dustLimit
-                    ? status.errors.dustLimit
-                    : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                      ? null
-                      : status.errors.amount
-                }
-                warning={status.warnings.amount}
-              />
+              <AmountInputWrapper>
+                <AmountInput
+                  testID="amount-input"
+                  editable={!useAllAmount}
+                  account={account}
+                  onChange={onChange}
+                  value={amount}
+                  transferFeeCalculated={transferFee}
+                  error={
+                    status.errors.dustLimit
+                      ? status.errors.dustLimit
+                      : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                        ? null
+                        : status.errors.amount
+                  }
+                  warning={status.warnings.amount}
+                />
+              </AmountInputWrapper>
+
+              {familySendFlow?.AfterAmountInput && (
+                <View style={styles.afterAmountInputWrapper}>
+                  <familySendFlow.AfterAmountInput
+                    account={account}
+                    transaction={transaction}
+                    updateTransaction={handleUpdateTransaction}
+                    maxSpendable={maxSpendable}
+                  />
+                </View>
+              )}
 
               <View style={styles.bottomWrapper}>
                 <View style={[styles.available]}>
@@ -287,7 +317,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     flexGrow: 1,
-    marginBottom: 16,
+    marginVertical: 16,
   },
   availableRight: {
     alignItems: "center",
@@ -300,6 +330,15 @@ const styles = StyleSheet.create({
   },
   maxLabel: {
     marginRight: 4,
+  },
+  // Keeps AmountInput's content from clipping when the keyboard shrinks this column;
+  // no flexGrow so it stays at its natural compact height instead of expanding.
+  amountInputHeightGuard: {
+    flexShrink: 1,
+    minHeight: 160,
+  },
+  afterAmountInputWrapper: {
+    flex: 1,
   },
   bottomWrapper: {
     alignSelf: "stretch",

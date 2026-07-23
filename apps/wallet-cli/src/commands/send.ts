@@ -6,20 +6,12 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
 import { TransactionIntentSchema } from "../wallet/intents";
-import type { AccountDescriptor } from "../wallet/models";
-import {
-  WALLET_CLI_DMK_DEVICE_ID,
-  getWalletCliDeviceModelId,
-} from "../device/register-dmk-transport";
+import { prepareIntentDryRun, signAndBroadcastIntent } from "../wallet/sign-and-broadcast";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
-import {
-  getManagerAppNameForCurrencyId,
-  withCurrencyDeviceSession,
-} from "../session/bridge-device-session";
+import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
+import { getManagerAppNameForCurrencyId } from "../session/bridge-device-session";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
-import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
-import { runObservable } from "./run-observable";
 import {
   trackSendCompleted,
   trackSendFailed,
@@ -107,78 +99,6 @@ function classifySendAssetClass(currencyId: string): SendAssetClass {
   return findCryptoCurrencyById(currencyId) ? "native" : "token";
 }
 
-async function runDryRunSend(
-  wallet: WalletAdapter,
-  descriptor: AccountDescriptor,
-  intent: ReturnType<typeof TransactionIntentSchema.parse>,
-  out: ReturnType<typeof createCommandOutput>,
-): Promise<void> {
-  const spin = out.spin("Preparing transaction (dry run)…");
-  const prepared = await wallet.prepareSend(descriptor, intent);
-  spin?.success("Dry run complete (transaction not broadcasted)");
-  out.sendDryRun(prepared);
-}
-
-type RunLiveSendParams = {
-  wallet: WalletAdapter;
-  descriptor: AccountDescriptor;
-  intent: ReturnType<typeof TransactionIntentSchema.parse>;
-  managerAppName: string;
-  deviceTimeoutMs: number | undefined;
-  out: ReturnType<typeof createCommandOutput>;
-  network: string;
-  assetClass: SendAssetClass;
-  amount: string;
-};
-
-async function runLiveSend({
-  wallet,
-  descriptor,
-  intent,
-  managerAppName,
-  deviceTimeoutMs,
-  out,
-  network,
-  assetClass,
-  amount,
-}: RunLiveSendParams): Promise<void> {
-  out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
-  await withCurrencyDeviceSession(
-    descriptor.currencyId,
-    async () => {
-      out.spin(`Preparing ${colors.bold(managerAppName)} transaction…`);
-
-      const deviceModelId = await getWalletCliDeviceModelId();
-      if (deviceModelId === undefined) {
-        throw new Error(
-          "Could not determine device model from the active session. Disconnect and reconnect the device.",
-        );
-      }
-
-      await runObservable({
-        source$: wallet.send(descriptor, intent, {
-          deviceId: WALLET_CLI_DMK_DEVICE_ID,
-          deviceModelId,
-        }),
-        onNext: event => out.sendEvent(event),
-        mapError: error =>
-          WalletCliDeviceError.fromKnownDeviceError(error, {
-            expectedApp: managerAppName,
-            rejectedContext: "sign",
-            deviceModelId,
-          }) ?? error,
-      });
-
-      out.sendComplete();
-      trackSendCompleted({ network, assetClass, amount, device: deviceModelId });
-    },
-    {
-      deviceTimeoutMs,
-      onStateChange: state => out.deviceState(state),
-    },
-  );
-}
-
 export default defineCommand({
   name: "send",
   description: "Sign and broadcast a transaction",
@@ -259,19 +179,29 @@ export default defineCommand({
         const intent = TransactionIntentSchema.parse(intentData);
 
         if (dryRun) {
-          await runDryRunSend(wallet, descriptor, intent, out);
+          // The helper only prepares/validates; `send` owns the terminal envelope (json: dry-run
+          // envelope, human: prepared transaction lines).
+          const prepared = await prepareIntentDryRun({ wallet, descriptor, intent, out });
+          out.sendDryRun(prepared);
           return;
         }
-        await runLiveSend({
+        const { deviceModelId } = await signAndBroadcastIntent({
           wallet,
           descriptor,
           intent,
+          deviceId: WALLET_CLI_DMK_DEVICE_ID,
           managerAppName,
           deviceTimeoutMs: flags["device-timeout"],
           out,
+        });
+        // The helper streams progress but no longer emits the final envelope; `send`'s result IS the
+        // send, so it emits its own terminal envelope here (json: success envelope, human: no-op).
+        out.sendComplete();
+        trackSendCompleted({
           network: ctx.network,
           assetClass,
           amount: flags.amount,
+          device: deviceModelId,
         });
       } catch (error) {
         if (error instanceof WalletCliDeviceError && error.state.code === "rejected") {

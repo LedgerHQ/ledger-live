@@ -1,0 +1,31 @@
+{
+  "name": "@domain/entity-altcoins-sentiment",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Domain entity for altcoins sentiment (CMC Altcoin Season Index): canonical Zod schema and type",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/altcoins-sentiment"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}

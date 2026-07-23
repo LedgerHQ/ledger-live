@@ -4,7 +4,7 @@ import type {
   StakeAction,
   StakeState,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { extractStakeKeyFromAddress } from "../utils";

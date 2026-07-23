@@ -31,5 +31,5 @@ module.exports = {
     "src/index.ts",
     "src/bridge/bridge.fixture.ts",
   ],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
 };

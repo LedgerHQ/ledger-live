@@ -173,9 +173,8 @@ const ImageCropper: React.FC<Props> = props => {
         if (dead) return;
         onResult(res);
       })
-      .catch(e => {
+      .catch(() => {
         if (dead) return;
-        console.error(e);
         onError(new ImageCropError());
       });
     return () => {
@@ -227,13 +226,9 @@ const ImageCropper: React.FC<Props> = props => {
     [setCompleteCropPixel, imageUuid, rotationIncrements, setCropParams, zoom],
   );
 
-  const handleError = useCallback(
-    (e: SyntheticEvent) => {
-      console.error(e);
-      onError(new ImageCropError());
-    },
-    [onError],
-  );
+  const handleError = useCallback(() => {
+    onError(new ImageCropError());
+  }, [onError]);
 
   return (
     <Flex flexDirection="column" justifyContent="center" alignItems="center">

@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getMaxSendBalance } from "../bridge/logic";
 import { MIN_COINS_ON_SHARES_POOL_IN_OCTAS } from "../constants";

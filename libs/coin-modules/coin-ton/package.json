@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-ton",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "Ton Coin integration",
   "keywords": [
     "Ledger",
@@ -47,26 +47,23 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ton/core": "^0.62.0",
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
-    "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "msw": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

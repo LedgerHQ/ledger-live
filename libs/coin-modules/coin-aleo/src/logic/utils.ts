@@ -1,8 +1,15 @@
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type {
+  Account,
+  AccountLike,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import type {
   Operation as CoinFrameworkOperation,
   MemoNotSupported,
@@ -18,7 +25,9 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import aleoConfig from "../config";
 import {
+  BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
   EXPLORER_TRANSFER_TYPES,
+  FAST_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
@@ -45,6 +54,8 @@ import type {
   AleoCoinConfig,
   AleoUnspentRecord,
   AleoTransactionIntent,
+  SigningStrategy,
+  StrategyConfig,
 } from "../types";
 
 const MICROCREDITS_REGEX = /^(\d+)u\d+$/;
@@ -427,6 +438,15 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
     transaction.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
     transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
     isPrivateTokenTransaction(transaction)
+  );
+}
+
+export function isPrivateDestination(transaction: Transaction): boolean {
+  return (
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
+    transaction.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
   );
 }
 
@@ -971,6 +991,37 @@ export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {
   );
 }
 
+export function getMaxPrivateRecordsForAccount(account: AleoAccount | AleoTokenAccount): number {
+  return account.type === "TokenAccount"
+    ? MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION
+    : MAX_PRIVATE_RECORDS_PER_TRANSACTION;
+}
+
+export function getStrategyConfig(
+  account: AleoAccount | AleoTokenAccount,
+): Record<SigningStrategy, StrategyConfig> {
+  const maxRecords = getMaxPrivateRecordsForAccount(account);
+
+  return {
+    fast: { min: 1, max: FAST_PRIVATE_RECORDS_PER_TRANSACTION },
+    balanced: {
+      min: FAST_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION,
+    },
+    full: {
+      min: BALANCED_PRIVATE_RECORDS_PER_TRANSACTION + 1,
+      max: maxRecords,
+    },
+  };
+}
+
+export function isAleoAccount(acc: AccountLike): acc is AleoAccount | AleoTokenAccount {
+  if (acc.type === "Account") {
+    return acc.currency.family === "aleo";
+  }
+  return findCryptoCurrencyById(acc.token.parentCurrencyId)?.family === "aleo";
+}
+
 export const getNextSequenceNumber = (account: AleoAccount): BigNumber => {
   const pendingSequenceNumbers = account.pendingOperations
     .map(op => op.transactionSequenceNumber)
@@ -1115,6 +1166,11 @@ export async function getCalTokens({
   });
 
   return calTokens;
+}
+
+/** Narrows any cross-family transaction shape down to Aleo's own `Transaction` type. */
+export function isAleoTransaction(tx: { family: string }): tx is Transaction {
+  return tx.family === "aleo";
 }
 
 export function isAleoAddressPlaintext(v: string): boolean {

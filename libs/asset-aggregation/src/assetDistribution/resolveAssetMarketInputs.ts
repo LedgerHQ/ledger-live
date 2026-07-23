@@ -52,7 +52,7 @@ export function resolveAssetMarketInputs({
   return {
     marketApiId,
     knownLedgerIds,
-    knownMarketId: marketState?.id,
+    knownMarketId: distributionItem?.marketId ?? distributionItem?.slug ?? marketState?.id,
   };
 }
 

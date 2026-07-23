@@ -1,5 +1,5 @@
 import type { AssetInfo, Cursor, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../../config";
 import { isGatewayEnabled } from "../../network/gateway";
 import { getOperations } from "../../network/gateway";

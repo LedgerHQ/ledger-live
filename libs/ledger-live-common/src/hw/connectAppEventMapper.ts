@@ -28,7 +28,7 @@ import {
   LatestFirmwareVersionRequired,
   UnsupportedFeatureError,
 } from "@ledgerhq/errors";
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 
 import type { SkippedAppOp } from "../apps/types";
 import { SkipReason } from "../apps/types";

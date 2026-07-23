@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "6.29.0",
+  "version": "6.30.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -139,13 +139,10 @@
   },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/api": "catalog:",
     "@polkadot/api-augment": "catalog:",
@@ -155,14 +152,13 @@
     "@polkadot/util": "catalog:",
     "@polkadot/util-crypto": "catalog:",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
-    "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

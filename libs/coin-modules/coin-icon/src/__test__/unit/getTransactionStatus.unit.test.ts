@@ -7,7 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
 import { IconDoMaxSendInstead } from "../../errors";
 import { getSendTransactionStatus, getTransactionStatus } from "../../getTransactionStatus";

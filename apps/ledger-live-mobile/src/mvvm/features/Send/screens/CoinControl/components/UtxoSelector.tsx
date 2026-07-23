@@ -8,6 +8,7 @@ import {
   Subheader,
   SubheaderRow,
   SubheaderTitle,
+  SubheaderInfo,
   Box,
   Checkbox,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -21,6 +22,8 @@ type UtxoSelectorProps = Readonly<{
   coinToSendLabel: string;
   isCustomPickingStrategy: boolean;
   onToggleUtxoExclusion?: (rowKey: string) => void;
+  onInfoPress: () => void;
+  hasAmount: boolean;
 }>;
 
 export const UtxoSelector = ({
@@ -28,55 +31,65 @@ export const UtxoSelector = ({
   coinToSendLabel,
   isCustomPickingStrategy,
   onToggleUtxoExclusion,
+  onInfoPress,
+  hasAmount,
 }: UtxoSelectorProps) => {
   const rows = utxoDisplayData?.utxoRows ?? [];
 
   const handleToggle = React.useCallback(
     (rowKey: string, disabled: boolean) => {
-      if (!isCustomPickingStrategy || disabled) return;
+      if (!isCustomPickingStrategy || disabled || !hasAmount) return;
       onToggleUtxoExclusion?.(rowKey);
     },
-    [isCustomPickingStrategy, onToggleUtxoExclusion],
+    [isCustomPickingStrategy, onToggleUtxoExclusion, hasAmount],
   );
 
   return (
-    <Box lx={{ flexDirection: "column", gap: "s12", flex: 1 }} style={{ minHeight: 0 }}>
+    <Box lx={{ flexDirection: "column", gap: "s8", flex: 1 }} style={{ minHeight: 0 }}>
       <Subheader>
         <SubheaderRow lx={{ paddingHorizontal: "s8" }}>
           <SubheaderTitle>{coinToSendLabel}</SubheaderTitle>
+          <SubheaderInfo onPress={onInfoPress} />
         </SubheaderRow>
       </Subheader>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
-        {rows.map(row => (
-          <ListItem
-            key={row.rowKey}
-            disabled={row.disabled}
-            onPress={
-              isCustomPickingStrategy ? () => handleToggle(row.rowKey, row.disabled) : undefined
-            }
-          >
-            <ListItemLeading>
-              <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12", flex: 1 }}>
-                {isCustomPickingStrategy ? (
-                  <Checkbox
-                    checked={!row.excluded}
-                    disabled={row.disabled}
-                    onCheckedChange={() => handleToggle(row.rowKey, row.disabled)}
-                  />
-                ) : null}
-                <ListItemContent>
-                  <ListItemTitle>{row.titleLabel}</ListItemTitle>
-                  <ListItemDescription>{row.formattedValue}</ListItemDescription>
-                </ListItemContent>
-              </Box>
-            </ListItemLeading>
-            {row.isUsedInTx && !isCustomPickingStrategy && (
-              <ListItemTrailing>
-                <Check />
-              </ListItemTrailing>
-            )}
-          </ListItem>
-        ))}
+        {rows.map(row => {
+          const rowDisabled = row.disabled || !hasAmount;
+          return (
+            <ListItem
+              key={row.rowKey}
+              disabled={rowDisabled}
+              onPress={
+                isCustomPickingStrategy && !rowDisabled
+                  ? () => handleToggle(row.rowKey, rowDisabled)
+                  : undefined
+              }
+            >
+              <ListItemLeading>
+                <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s12", flex: 1 }}>
+                  {isCustomPickingStrategy ? (
+                    <Checkbox
+                      checked={!row.excluded}
+                      disabled={rowDisabled}
+                      onCheckedChange={
+                        !rowDisabled ? () => handleToggle(row.rowKey, rowDisabled) : undefined
+                      }
+                    />
+                  ) : null}
+                  <ListItemContent>
+                    <ListItemTitle>{row.titleLabel}</ListItemTitle>
+                    <ListItemDescription>{row.formattedValue}</ListItemDescription>
+                  </ListItemContent>
+                </Box>
+              </ListItemLeading>
+              {row.isUsedInTx && !isCustomPickingStrategy && !rowDisabled && (
+                <ListItemTrailing>
+                  <Check />
+                </ListItemTrailing>
+              )}
+            </ListItem>
+          );
+        })}
       </ScrollView>
     </Box>
   );

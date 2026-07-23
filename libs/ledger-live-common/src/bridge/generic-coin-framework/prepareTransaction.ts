@@ -3,7 +3,9 @@ import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
-  extractBalances,
+  computeUseAllAmount,
+  getNativeSpendableAfterPending,
+  getPendingTokenSpent,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
@@ -80,7 +82,10 @@ export function genericPrepareTransaction(
     let amount = transaction.amount;
     if (transaction.useAllAmount && transaction.subAccountId) {
       const subAccount = account.subAccounts?.find(acc => acc.id === transaction.subAccountId);
-      amount = subAccount?.spendableBalance ?? amount;
+      if (subAccount) {
+        const pendingTokenSpent = getPendingTokenSpent(subAccount.pendingOperations ?? []);
+        amount = BigNumber.max(0, subAccount.spendableBalance.minus(pendingTokenSpent));
+      }
     }
 
     // Pass any parameters that help estimating fees
@@ -99,76 +104,75 @@ export function genericPrepareTransaction(
       coinModuleApi.craftTransactionData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
+      feesStrategy: transaction.feesStrategy ?? undefined,
+      sponsored: transaction.sponsored,
       gasPrice: transaction.gasPrice,
       maxFeePerGas: transaction.maxFeePerGas,
       maxPriorityFeePerGas: transaction.maxPriorityFeePerGas,
       gasLimit: transaction.customGasLimit,
       gasOptions: transaction.gasOptions,
     });
+
+    const estimated =
+      customParametersFees && !transaction.useAllAmount
+        ? undefined
+        : await coinModuleApi.estimateFees(intent, customFeesParameters);
     const estimation: FeeEstimation = customParametersFees
-      ? { value: BigInt(customParametersFees.toFixed()) }
-      : await coinModuleApi.estimateFees(intent, customFeesParameters);
+      ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
+      : (estimated as FeeEstimation);
     const fees = new BigNumber(estimation.value.toString());
 
-    if (!bnEq(transaction.fees, fees)) {
-      const next: GenericTransaction = {
-        ...transaction,
-        fees,
-        assetReference,
-        assetOwner,
-        customFees: {
-          parameters: {
-            fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
-          },
-        },
-      };
-
-      // Propagate needed fields
-      const fieldsToPropagate = [
-        "type",
-        "storageLimit",
-        "gasPrice",
-        // gas limit must not change in case it is custom
-        ...(transaction.customGasLimit ? [] : ["gasLimit"]),
-        "maxFeePerGas",
-        "maxPriorityFeePerGas",
-        "additionalFees",
-        // Slow/medium/fast presets produced by the coin-module: surfaced as-is
-        // so the UI can render fee presets without ever fetching them itself.
-        // Families that don't produce them leave this untouched.
-        "gasOptions",
-      ];
-
-      for (const field of fieldsToPropagate) {
-        propagateField(estimation, field, next);
-      }
-
-      if (
-        transaction.useAllAmount ||
-        ["stake", "unstake", "finalize_unstake", "delegate", "undelegate", "redelegate"].includes(
-          transaction.mode ?? "",
-        )
-      ) {
-        // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
-        const { amount } = await coinModuleApi.validateIntent(
-          transactionToIntent(
-            account,
-            {
-              ...transaction,
-              assetOwner,
-              assetReference,
-            },
-            bridgeApi.computeIntentType,
-            coinModuleApi.craftTransactionData,
-          ),
-          extractBalances(account, getAssetFromTokenForCurrency),
-        );
-        next.amount = new BigNumber(amount.toString());
-      }
-      return next;
+    let nextAmount = transaction.amount;
+    if (transaction.useAllAmount) {
+      // token: full token balance (fees are paid in the native unit), else compute from the estimation
+      nextAmount = transaction.subAccountId
+        ? amount
+        : computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
     }
 
-    return transaction;
+    if (
+      bnEq(transaction.fees, fees) &&
+      bnEq(transaction.amount, nextAmount) &&
+      (transaction.assetReference ?? "") === assetReference &&
+      (transaction.assetOwner ?? "") === assetOwner
+    ) {
+      return transaction;
+    }
+
+    const next: GenericTransaction = {
+      ...transaction,
+      fees,
+      amount: nextAmount,
+      assetReference,
+      assetOwner,
+      customFees: {
+        parameters: {
+          fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
+        },
+      },
+    };
+
+    // Propagate needed fields
+    const fieldsToPropagate = [
+      "type",
+      "storageLimit",
+      "gasPrice",
+      // gas limit must not change in case it is custom
+      ...(transaction.customGasLimit ? [] : ["gasLimit"]),
+      "maxFeePerGas",
+      "maxPriorityFeePerGas",
+      "additionalFees",
+      // Slow/medium/fast presets produced by the coin-module: surfaced as-is
+      // so the UI can render fee presets without ever fetching them itself.
+      // Families that don't produce them leave this untouched.
+      "gasOptions",
+    ];
+
+    for (const field of fieldsToPropagate) {
+      propagateField(estimation, field, next);
+    }
+
+    return next;
   };
 }
 

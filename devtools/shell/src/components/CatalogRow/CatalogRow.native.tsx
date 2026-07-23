@@ -10,7 +10,7 @@ import {
   Box,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { IconComponent } from "../../categoryConfig.native";
+import type { IconComponent } from "../../categoryConfig";
 
 export interface CatalogRowProps {
   readonly title: string;

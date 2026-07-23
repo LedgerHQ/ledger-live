@@ -7,7 +7,11 @@ import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
 import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
@@ -17,7 +21,7 @@ import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { init } from "../e2e/bridge/client";
+import { init } from "~/e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
@@ -42,7 +46,9 @@ import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
+import ExperimentalHeader, {
+  useIsExperimentalHeaderVisible,
+} from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
@@ -91,7 +97,7 @@ import {
   customLogEventMapper,
   initializeDatadogProvider,
 } from "./datadog";
-import { datadogIdSelector, isDummyDatadogId } from "@ledgerhq/client-ids/store";
+import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
@@ -99,6 +105,7 @@ import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setu
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
 import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
+import { useAutoFinishPostOnboarding } from "LLM/features/PostOnboarding/hooks/useAutoFinishPostOnboarding";
 logStartupEvent("After js imports");
 
 if (Config.DISABLE_YELLOW_BOX) {
@@ -230,6 +237,7 @@ function App() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useAutoDismissPostOnboardingEntryPoint();
+  useAutoFinishPostOnboarding();
 
   return (
     <>
@@ -263,6 +271,16 @@ function App() {
  * SafeAreaView).
  */
 function AppView() {
+  const insets = useSafeAreaInsets();
+  const isExperimentalHeaderVisible = useIsExperimentalHeaderVisible();
+
+  // When ExperimentalHeader is visible it occupies the top safe-area space so
+  // components inside the navigator must not re-apply insets.top.
+  const adjustedInsets = useMemo(
+    () => (isExperimentalHeaderVisible ? { ...insets, top: 0 } : insets),
+    [insets, isExperimentalHeaderVisible],
+  );
+
   // TODO: Normally, we should use a SafeAreaView as root view to avoid
   // importing it everywhere and recalculating the insets.
   return (
@@ -275,9 +293,11 @@ function AppView() {
       }}
     >
       <ExperimentalHeader />
-      <View style={{ flex: 1 }}>
-        <RootNavigator />
-      </View>
+      <SafeAreaInsetsContext.Provider value={adjustedInsets}>
+        <View style={{ flex: 1 }}>
+          <RootNavigator />
+        </View>
+      </SafeAreaInsetsContext.Provider>
     </View>
   );
 }

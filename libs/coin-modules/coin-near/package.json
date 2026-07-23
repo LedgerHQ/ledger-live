@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-near",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "description": "Near Coin integration",
   "keywords": [
     "Ledger",
@@ -46,22 +46,18 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
-    "invariant": "^2.2.2",
     "near-api-js": "^3.0.2",
     "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

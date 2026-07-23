@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getStakingABI } from "./abis";
 import { buildStakingTransactionParams } from "./transactionData";
 import { STAKING_CONTRACTS } from "./contracts";
@@ -20,7 +20,6 @@ const delegateIntent = (
     asset: { type: "native" },
     recipient: "0xRecipient",
     sender: "0xSender",
-    feesStrategy: "medium",
     data: { type: "buffer", value: Buffer.from([]) },
     ...fields,
   }) as unknown as TransactionIntent<MemoNotSupported, BufferTxData>;
@@ -117,6 +116,39 @@ describe("buildStakingTransactionParams", () => {
     const { value } = buildStakingTransactionParams(asCurrency(currencyId), intent);
 
     expect(value).toEqual(1000000000000000000n);
+  });
+});
+
+describe("0G / zero_gravity delegate", () => {
+  it("encodes sender as the delegate(address) arg, routes to valAddress, carries amount as value", () => {
+    const intent = delegateIntent({
+      valAddress: "0x0000000000000000000000000000000000000001",
+      sender: "0x0000000000000000000000000000000000000002",
+    });
+
+    const { to, data, value } = buildStakingTransactionParams(asCurrency("zero_gravity"), intent);
+
+    const iface = new ethers.Interface(getStakingABI("zero_gravity") as ethers.InterfaceAbi);
+    expect("0x" + data.toString("hex")).toEqual(
+      iface.encodeFunctionData("delegate", ["0x0000000000000000000000000000000000000002"]),
+    );
+    expect(to).toEqual("0x0000000000000000000000000000000000000001");
+    expect(value).toEqual(1000000000000000000n);
+  });
+
+  it("throws when valAddress is missing", () => {
+    expect(() => {
+      buildStakingTransactionParams(asCurrency("zero_gravity"), delegateIntent({}));
+    }).toThrow("0G staking requires a validator address");
+  });
+
+  it("throws when delegator is missing", () => {
+    expect(() => {
+      buildStakingTransactionParams(
+        asCurrency("zero_gravity"),
+        delegateIntent({ valAddress: "0x0000000000000000000000000000000000000001", sender: "" }),
+      );
+    }).toThrow("zero_gravity staking requires delegator");
   });
 });
 

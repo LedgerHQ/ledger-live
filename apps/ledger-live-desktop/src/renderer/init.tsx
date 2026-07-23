@@ -8,19 +8,23 @@ import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/logic/backfillOnboardingDate";
+import {
+  LARGE_SCREEN_UPSELL_MODAL,
+  restoreLargeScreenUpsellModalState,
+} from "@domain/entity-large-screen-upsell-modal";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
-import { hardReset } from "~/renderer/reset";
 import "~/renderer/styles/global";
 import { registerTransportModules } from "~/renderer/live-common-setup";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
+import { currencyFiatApi } from "@domain/api-currency-fiat";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
@@ -126,14 +130,6 @@ async function init() {
       });
     }
   }
-  const hardResetFlag = window.localStorage.getItem("hard-reset");
-  const wasHardReset = hardResetFlag === "1";
-
-  if (wasHardReset) {
-    await hardReset();
-    // Keep the flag so Default.tsx can detect it for redirect, it will be cleared there
-  }
-
   const store = createStore({
     dbMiddleware,
   });
@@ -142,6 +138,7 @@ async function init() {
   setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
+  dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate(undefined, { subscribe: false }));
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
@@ -204,16 +201,15 @@ async function init() {
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
-  // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
-  if (wasHardReset) {
-    settingsToLoad.hasCompletedOnboarding = false;
-  }
 
   // Legacy crypto counter-values were persisted as ticker (BTC/ETH); migrate them to Ledger ids.
   if (typeof settingsToLoad.counterValue === "string") {
     settingsToLoad.counterValue = migrateLegacyCryptoCounterValue(settingsToLoad.counterValue);
   }
+
+  // supportedCounterValues is now derived at runtime from @domain/entity-currency-fiat — strip stale persisted copy.
+  delete (settingsToLoad as Record<string, unknown>).supportedCounterValues;
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
@@ -347,6 +343,11 @@ async function init() {
   }
 
   backfillOnboardingDate(store);
+
+  const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
+  if (largeScreenUpsellModalState !== undefined) {
+    store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
 

@@ -122,7 +122,7 @@ describe("useDynamicContent", () => {
     expect(mockedFlush).not.toHaveBeenCalled();
   });
 
-  it("should skip tracking for local cards", async () => {
+  it("should track local cards through Segment", async () => {
     const { result } = renderHook(() => useDynamicContent(), {
       overrideInitialState: state => ({
         ...state,
@@ -139,8 +139,10 @@ describe("useDynamicContent", () => {
       });
     });
 
-    expect(mockedTrack).not.toHaveBeenCalled();
-    expect(mockedFlush).not.toHaveBeenCalled();
+    expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
+      campaign: "local-card",
+    });
+    expect(mockedFlush).toHaveBeenCalledTimes(1);
   });
 
   it("should strip non-numeric displayedPosition before tracking", async () => {
@@ -155,6 +157,36 @@ describe("useDynamicContent", () => {
 
     expect(mockedTrack).toHaveBeenCalledWith(ContentCardEvent.Clicked, {
       campaign: "card-1",
+    });
+  });
+
+  it("should ignore duplicate clicked events while the first is in flight", async () => {
+    let resolveTrack: (() => void) | undefined;
+    mockedTrack.mockImplementation(
+      () =>
+        new Promise<void>(resolve => {
+          resolveTrack = resolve;
+        }),
+    );
+
+    const { result } = renderHook(() => useDynamicContent());
+
+    let firstClick: Promise<void> | undefined;
+    let secondClick: Promise<void> | undefined;
+    act(() => {
+      firstClick = result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "card-1",
+      });
+      secondClick = result.current.trackContentCardEvent(ContentCardEvent.Clicked, {
+        campaign: "card-1",
+      });
+    });
+
+    expect(mockedTrack).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveTrack?.();
+      await Promise.all([firstClick, secondClick]);
     });
   });
 

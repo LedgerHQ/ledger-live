@@ -14,6 +14,7 @@ export function PnlDetailDrawer({
   bodyText,
   items = [],
   footer,
+  discreet = false,
   testID,
   pageName,
   source,
@@ -37,7 +38,7 @@ export function PnlDetailDrawer({
         ) : null}
         <Box lx={{ gap: "s16" }}>
           {items.map(item => (
-            <PnlDetailRow key={item.title} item={item} />
+            <PnlDetailRow key={item.title} item={item} discreet={discreet} />
           ))}
         </Box>
         {footer ? (

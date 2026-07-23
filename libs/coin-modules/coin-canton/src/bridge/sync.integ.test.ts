@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import {
   getDerivationModesForCurrency,
@@ -116,7 +116,6 @@ describe.skip("sync (devnet)", () => {
         const result = await getAccountShape(
           {
             ...ACCOUNT_SHAPE_INFO,
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             initialAccount: {
               xpub,
               operations,
@@ -191,7 +190,6 @@ describe.skip("sync (devnet)", () => {
           extra: { uid: "uid-1" },
         };
 
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         const initialAccount = {
           xpub,
           operations: [operation],

@@ -5,7 +5,7 @@ import type { BitcoinAccount } from "../types";
 
 /**
  * Resolve the wallet-btc Account from a Live account.
- * Placed in a separate file to avoid circular dependency with wallet.ts (which uses rbfHelpers).
+ * Placed in a separate file to avoid circular dependency with wallet.ts (which uses rbfFees).
  */
 export const getWalletAccount = (account: LiveAccount): WalletAccount => {
   const walletAccount = (account as BitcoinAccount).bitcoinResources?.walletAccount;

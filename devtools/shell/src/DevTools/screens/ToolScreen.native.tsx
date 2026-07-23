@@ -1,7 +1,7 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { ToolShell } from "../../components/ToolShell/ToolShell.native";
-import { useToolScreenViewModel } from "./useToolScreenViewModel.native";
-import type { ToolScreenProps } from "../navigation.native";
+import { ToolShell } from "../../components";
+import { useToolScreenViewModel } from "./useToolScreenViewModel";
+import type { ToolScreenProps } from "../navigation";
 
 export function ToolScreen(props: ToolScreenProps) {
   const { tool } = useToolScreenViewModel(props);

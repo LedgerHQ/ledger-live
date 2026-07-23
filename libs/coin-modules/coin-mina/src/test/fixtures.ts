@@ -1,9 +1,9 @@
 import { MinaUnsignedTransaction } from "@ledgerhq/coin-mina/types";
 import { MinaSigner } from "@ledgerhq/coin-mina/types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account } from "@ledgerhq/types-live";
 import { DeviceId } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

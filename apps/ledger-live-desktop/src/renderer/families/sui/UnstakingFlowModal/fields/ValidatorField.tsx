@@ -18,7 +18,7 @@ export default function ValidatorField({ account, transaction, onChange }: Props
   const stakes = useSuiMappedStakingPositions(account);
   const stake = stakes.find(x => x.stakedSuiId === transaction.stakedSuiId);
   return (
-    <Box mb={4}>
+    <Box mb={4} data-testid="sui-unstake-validator-field">
       <Label>{t("sui.unstake.flow.steps.amount.fields.validator")}</Label>
       <Select
         value={stake}

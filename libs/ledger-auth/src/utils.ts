@@ -39,10 +39,3 @@ export function stringToBytes(value: string): ArrayBuffer {
   const bytes = new TextEncoder().encode(value);
   return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
 }
-
-const RANDOM_VALUE_BYTE_LENGTH = 32;
-
-export function createRandomBase64UrlValue(): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(RANDOM_VALUE_BYTE_LENGTH));
-  return bytesToBase64Url(bytes);
-}

@@ -1,5 +1,5 @@
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Flex, Text } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";

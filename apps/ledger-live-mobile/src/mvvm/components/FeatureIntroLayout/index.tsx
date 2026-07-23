@@ -1,6 +1,10 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  hasAwarenessModalActionButton,
+  resolveAwarenessModalActionLink,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 import { Image, Linking, StyleSheet } from "react-native";
 import { useThemedAwarenessModalImage } from "LLM/features/GenericAwarenessModal/hooks/useThemedAwarenessModalImage";
 import type { FeatureIntroLayoutProps } from "./types";
@@ -34,13 +38,19 @@ export function FeatureIntroLayout({ onClose, viewModel }: FeatureIntroLayoutPro
     secondaryButtonLink,
   } = content;
   const { imageUrl, showImage } = useThemedAwarenessModalImage({ imageUrlLight, imageUrlDark });
+  const showPrimaryButton = hasAwarenessModalActionButton(primaryButtonLabel, primaryButtonLink);
+  const showSecondaryButton = hasAwarenessModalActionButton(
+    secondaryButtonLabel,
+    secondaryButtonLink,
+  );
 
   const handleButtonPress = async (link: string, onPress: () => void) => {
     onPress();
 
-    if (link) {
+    const actionLink = resolveAwarenessModalActionLink(link);
+    if (actionLink) {
       try {
-        await Linking.openURL(link);
+        await Linking.openURL(actionLink);
       } catch {
         // TODO: track("malformed_url")
       } finally {
@@ -115,20 +125,26 @@ export function FeatureIntroLayout({ onClose, viewModel }: FeatureIntroLayoutPro
         })}
       </Box>
 
-      <Button
-        appearance="base"
-        size="lg"
-        onPress={() => handleButtonPress(primaryButtonLink, viewModel.onPrimaryPress)}
-      >
-        {primaryButtonLabel}
-      </Button>
-      <Button
-        appearance="gray"
-        size="lg"
-        onPress={() => handleButtonPress(secondaryButtonLink, viewModel.onSecondaryPress)}
-      >
-        {secondaryButtonLabel}
-      </Button>
+      {showPrimaryButton ? (
+        <Button
+          appearance="base"
+          size="lg"
+          testID="generic-awareness-modal-primary-button"
+          onPress={() => handleButtonPress(primaryButtonLink, viewModel.onPrimaryPress)}
+        >
+          {primaryButtonLabel}
+        </Button>
+      ) : null}
+      {showSecondaryButton ? (
+        <Button
+          appearance="gray"
+          size="lg"
+          testID="generic-awareness-modal-secondary-button"
+          onPress={() => handleButtonPress(secondaryButtonLink, viewModel.onSecondaryPress)}
+        >
+          {secondaryButtonLabel}
+        </Button>
+      ) : null}
     </Box>
   );
 }

@@ -10,7 +10,7 @@ import {
   LoadingStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
+import { identitiesSlice } from "@domain/entity-client-identity";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { settingsStoreSelector } from "~/reducers/settings";

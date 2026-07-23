@@ -55,10 +55,7 @@ export const signMessage =
       // Step 1 — V1 without length prefix (finalised sRFC 38 spec).
       const v1NoLength = toOffChainMessageV1(message, account.freshAddress, false);
       try {
-        const sig = await signer.signMessage(
-          account.freshAddressPath,
-          v1NoLength.toString("hex"),
-        );
+        const sig = await signer.signMessage(account.freshAddressPath, v1NoLength.toString("hex"));
         signedMessage = v1NoLength;
         return sig;
       } catch (err) {

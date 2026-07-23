@@ -47,16 +47,20 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const { displayMode } = useSendAmountDisplayMode();
 
   const accountName = useMaybeAccountName(state.account.account);
-  const spendableBalanceText = useAvailableBalance(state.account.account, displayMode);
   const [currentStep, currentStepConfig] = useCurrentSendFlowStep();
+  const headerDisplayMode = currentStep === SEND_FLOW_STEP.COIN_CONTROL ? "crypto" : displayMode;
+  const spendableBalanceText = useAvailableBalance(state.account.account, headerDisplayMode);
 
   const currencyName = state.account.currency?.ticker ?? "";
   const showTitle = currentStepConfig?.showTitle !== false;
   const isCustomFeesStep = currentStep === SEND_FLOW_STEP.CUSTOM_FEES;
+  const isCoinControlStep = currentStep === SEND_FLOW_STEP.COIN_CONTROL;
   let title = "";
   if (showTitle) {
     if (isCustomFeesStep) {
       title = t("send.newSendFlow.customFees.title");
+    } else if (isCoinControlStep) {
+      title = t("send.newSendFlow.coinControl.title");
     } else {
       title = t("send.newSendFlow.title", { currency: currencyName });
     }

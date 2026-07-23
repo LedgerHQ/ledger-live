@@ -1,5 +1,3 @@
-/* eslint @typescript-eslint/consistent-type-assertions: 0 */
-
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { BitcoinInput, Transaction } from "./types";

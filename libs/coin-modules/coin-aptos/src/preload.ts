@@ -1,5 +1,5 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getValidators } from "./network/validators";
 import { setAptosPreloadData } from "./preload-data";
 import { AptosPreloadData, AptosValidator } from "./types";

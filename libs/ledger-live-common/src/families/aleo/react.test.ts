@@ -7,14 +7,21 @@ import { renderHook, act } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Subject } from "rxjs";
+import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { AleoAccount } from "./types";
+import type { Transaction } from "../../generated/types";
+import type { AleoAccount, AleoUnspentRecord } from "./types";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "./constants";
-import { useAleoViewKeyApproval, buildAccountsWithViewKeys, useAleoPrivateSync } from "./react";
+import {
+  useAleoViewKeyApproval,
+  buildAccountsWithViewKeys,
+  useAleoPrivateSync,
+  useAleoQuickAmountSelector,
+} from "./react";
 import { ALEO_ACCOUNT_1, makeAleoAccount } from "./__mocks__/account.mock";
 
 const mockCreateAction = jest.fn();
@@ -37,6 +44,7 @@ jest.mock("../../hw/connectApp", () => ({
 }));
 
 jest.mock("./utils", () => ({
+  ...jest.requireActual("./utils"),
   patchAccountWithViewKey: jest.fn((account: Account, viewKey: string) => ({
     ...account,
     id: `${account.id}:patched:${viewKey}`,
@@ -1213,5 +1221,163 @@ describe("useAleoPrivateSync", () => {
         }),
       );
     });
+  });
+});
+
+describe("useAleoQuickAmountSelector", () => {
+  function makeRecord(microcredits: string): AleoUnspentRecord {
+    return { microcredits } as unknown as AleoUnspentRecord;
+  }
+
+  function makeAccountWithRecords(records: AleoUnspentRecord[]): AleoAccount {
+    return {
+      ...ALEO_ACCOUNT_1,
+      aleoResources: {
+        transparentBalance: new BigNumber(0),
+        privateBalance: new BigNumber(0),
+        unspentPrivateRecords: records,
+        provableApi: null,
+        lastPrivateSyncDate: null,
+      },
+    } as AleoAccount;
+  }
+
+  function makePrivateTransaction(overrides?: Record<string, unknown>): Transaction {
+    return {
+      family: "aleo",
+      mode: "transfer_private",
+      amount: new BigNumber(0),
+      useAllAmount: false,
+      properties: { amountRecordCommitments: [], feeRecordCommitment: null },
+      ...overrides,
+    } as unknown as Transaction;
+  }
+
+  const manyRecords = Array.from({ length: 16 }, (_, i) => makeRecord(`${(20 - i) * 100000}`));
+  const sixRecords = Array.from({ length: 6 }, (_, i) => makeRecord(`${(6 - i) * 100000}`));
+
+  it("throws for an account of another family", () => {
+    const account = {
+      ...makeAccountWithRecords(manyRecords),
+      currency: { ...ALEO_ACCOUNT_1.currency, family: "bitcoin" },
+    };
+    const transaction = makePrivateTransaction();
+
+    expect(() =>
+      renderHook(() =>
+        useAleoQuickAmountSelector({
+          account,
+          transaction,
+          updateTransaction: jest.fn(),
+        }),
+      ),
+    ).toThrow();
+  });
+
+  it("still computes tiles for a public-mode aleo transaction — privacy gating is a caller concern", () => {
+    const account = makeAccountWithRecords(manyRecords);
+    const transaction = makePrivateTransaction({ mode: "transfer_public" });
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({
+        account,
+        transaction,
+        updateTransaction: jest.fn(),
+      }),
+    );
+
+    expect(result.current.strategyData).toHaveLength(3);
+    expect(result.current.selectedRecordsCount).toBe(0);
+  });
+
+  it("computes fast/balanced/full tiers from the sorted unspent records", () => {
+    const account = makeAccountWithRecords(manyRecords);
+    const transaction = makePrivateTransaction();
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({
+        account,
+        transaction,
+        updateTransaction: jest.fn(),
+      }),
+    );
+
+    expect(result.current.strategyData.map(tile => tile.strategy)).toEqual([
+      "fast",
+      "balanced",
+      "full",
+    ]);
+    expect(result.current.strategyData.map(tile => tile.availableCount)).toEqual([4, 8, 14]);
+    expect(result.current.strategyData.map(tile => tile.rangeSum.toString())).toEqual([
+      "7400000",
+      "13200000",
+      "18900000",
+    ]);
+    expect(result.current.totalSpendableBalance.toString()).toBe("18900000");
+  });
+
+  it("disables tiers past the available record count and marks the last reachable tier as send-max", () => {
+    const account = makeAccountWithRecords(sixRecords);
+    const transaction = makePrivateTransaction();
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({
+        account,
+        transaction,
+        updateTransaction: jest.fn(),
+      }),
+    );
+
+    const [fast, balanced, full] = result.current.strategyData;
+    expect(fast.disabled).toBe(false);
+    expect(balanced.disabled).toBe(false);
+    expect(balanced.isSendMax).toBe(true);
+    expect(full.disabled).toBe(true);
+  });
+
+  it("selectStrategy calls updateTransaction with the tier sum for a non-max tile", () => {
+    const account = makeAccountWithRecords(manyRecords);
+    const transaction = makePrivateTransaction();
+    const updateTransaction = jest.fn();
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({ account, transaction, updateTransaction }),
+    );
+
+    result.current.selectStrategy(result.current.strategyData[0]);
+
+    expect(updateTransaction).toHaveBeenCalledTimes(1);
+    const updated = updateTransaction.mock.calls[0][0](transaction);
+    expect(updated.useAllAmount).toBe(false);
+    expect((updated.amount as BigNumber).toString()).toBe("7400000");
+  });
+
+  it("selectStrategy calls updateTransaction with useAllAmount for the capped full tile", () => {
+    const account = makeAccountWithRecords(manyRecords);
+    const transaction = makePrivateTransaction();
+    const updateTransaction = jest.fn();
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({ account, transaction, updateTransaction }),
+    );
+
+    result.current.selectStrategy(result.current.strategyData[2]);
+
+    const updated = updateTransaction.mock.calls[0][0](transaction);
+    expect(updated.useAllAmount).toBe(true);
+  });
+
+  it("selectStrategy does nothing for a disabled tile", () => {
+    const account = makeAccountWithRecords(sixRecords);
+    const transaction = makePrivateTransaction();
+    const updateTransaction = jest.fn();
+
+    const { result } = renderHook(() =>
+      useAleoQuickAmountSelector({ account, transaction, updateTransaction }),
+    );
+
+    result.current.selectStrategy(result.current.strategyData[2]);
+
+    expect(updateTransaction).not.toHaveBeenCalled();
   });
 });

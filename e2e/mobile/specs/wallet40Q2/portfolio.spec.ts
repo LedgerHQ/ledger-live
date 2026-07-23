@@ -1,0 +1,96 @@
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { setTeamOwner } from "helpers/allure/allure-helper";
+import { FF_LWM_WALLET_40_Q2 } from "utils/featureFlagUtils";
+
+const testConfig = {
+  tmsLinks: [
+    "B2CQA-4345",
+    "B2CQA-4339",
+    "B2CQA-4346",
+    "B2CQA-4343",
+    "B2CQA-4341",
+    "B2CQA-4340",
+    "B2CQA-4351",
+    "B2CQA-4350",
+  ],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+};
+
+const ACCOUNT = Account.INJ_1;
+const CURRENCY = ACCOUNT.currency;
+const TICKER = CURRENCY.ticker;
+
+setTeamOwner(Team.WALLET_XP);
+describe("Wallet 4.0 Q2 - Portfolio", () => {
+  beforeAll(async () => {
+    await app.init({
+      userdata: "skip-onboarding",
+      speculosApp: CURRENCY.speculosApp,
+      featureFlags: FF_LWM_WALLET_40_Q2,
+    });
+    await app.mainNavigation.waitForWallet40Ready();
+  });
+
+  testConfig.tmsLinks.forEach(link => $TmsLink(link));
+  testConfig.tags.forEach(tag => $Tag(tag));
+
+  it("check quick action buttons visibility and no balance title", async () => {
+    await app.portfolio.checkQuickActionTransferButtonVisibility();
+    await app.portfolio.checkQuickActionSwapButtonVisibility();
+    await app.portfolio.checkQuickActionBuyButtonVisibility();
+    await app.portfolio.checkNoBalanceTitleVisibility();
+  });
+
+  it("adds an account and change the app state", async () => {
+    await app.portfolio.addAccount();
+    await app.addAccount.importWithYourLedger();
+    await app.modularDrawer.performSearchByTicker(TICKER);
+    await app.modularDrawer.selectCurrencyByTicker(TICKER);
+    await app.modularDrawer.selectNetwork(CURRENCY.name);
+    await app.addAccount.addAccountAtIndex(ACCOUNT.accountName, CURRENCY.id, ACCOUNT.index);
+    await app.common.tapCloseWithConfirmationButton();
+    await app.mainNavigation.tapWallet40Tab("home");
+  });
+
+  it("check quick action buttons visibility and normal balance title", async () => {
+    await app.portfolio.checkQuickActionTransferButtonVisibility();
+    await app.portfolio.checkQuickActionSwapButtonVisibility();
+    await app.portfolio.checkQuickActionBuyButtonVisibility();
+    await app.portfolio.checkNormalBalanceTitleVisibility();
+    await app.portfolio.checkPortfolioBalanceAnalyticsPillVisibility();
+  });
+
+  it("navigates to the analytics screen", async () => {
+    await app.portfolio.tapPortfolioBalanceAnalyticsPill();
+    await app.portfolio.expectBalanceToBeVisible();
+    await app.common.goToPreviousPage();
+  });
+
+  it("navigates to the buy screen", async () => {
+    await app.portfolio.pressQuickActionBuyButton();
+    await app.buySell.expectBuyScreenToBeVisible();
+  });
+
+  setTeamOwner(Team.SWAP);
+  it("navigates to the swap screen", async () => {
+    await app.mainNavigation.openPortfolioViaDeeplink();
+
+    await app.portfolio.pressQuickActionSwapButton();
+    await app.swapLiveApp.expectSwapLiveApp();
+  });
+
+  it("performs the transfer bottom sheet actions", async () => {
+    await app.mainNavigation.openPortfolioViaDeeplink();
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();
+    await app.portfolio.checkTransferBottomSheetSendButtonVisibility();
+    await app.portfolio.checkTransferBottomSheetBankTransferButtonVisibility();
+    await app.portfolio.pressTransferBottomSheetReceiveButton();
+    await app.modularDrawer.checkSelectAssetPage();
+    await app.portfolio.closeBottomSheet();
+
+    await app.portfolio.pressQuickActionTransferButton();
+    await app.portfolio.pressTransferBottomSheetSendButton();
+    await app.send.expectFirstStep();
+  });
+});

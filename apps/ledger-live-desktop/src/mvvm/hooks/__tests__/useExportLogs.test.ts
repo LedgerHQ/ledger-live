@@ -1,7 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { useExportLogs } from "../useExportLogs";
-import { UserId } from "@ledgerhq/client-ids/ids";
-import { initialIdentitiesState } from "@ledgerhq/client-ids/store";
+import { UserId, initialIdentitiesState } from "@domain/entity-client-identity";
 import type { State } from "~/renderer/reducers";
 import logger from "~/renderer/logger";
 import { saveLogs } from "~/helpers/saveLogs";

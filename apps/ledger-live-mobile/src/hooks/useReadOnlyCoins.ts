@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 
 export const useReadOnlyCoins = ({ maxDisplayed }: { maxDisplayed: number }) => {

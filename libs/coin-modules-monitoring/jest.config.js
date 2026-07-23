@@ -3,7 +3,7 @@ const transformIncludePatterns = ["ky", "@mysten", "@scure", "@noble"];
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.ts"],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

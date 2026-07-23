@@ -35,8 +35,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>)
 
   return {
     scanAccounts,
-    preload: async () => ({}),
-    hydrate: () => {},
   };
 }
 

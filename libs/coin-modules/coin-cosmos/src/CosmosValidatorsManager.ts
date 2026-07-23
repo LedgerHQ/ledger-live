@@ -1,7 +1,7 @@
 import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
 import { CosmosAPI } from "./network/Cosmos";

@@ -1,5 +1,5 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { firstValueFrom, toArray } from "rxjs";
 import * as signTransactionModule from "../common-logic/transaction/sign";
 import * as gateway from "../network/gateway";
@@ -135,7 +135,6 @@ describe("onboard", () => {
         party_id: newPartyId,
         party_name: "test-party-name",
         public_key_fingerprint: "test-fingerprint",
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         transactions: {} as any,
         challenge_nonce: "test-nonce",
         challenge_deadline: 1735689599,

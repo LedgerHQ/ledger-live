@@ -2,12 +2,11 @@ import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, StakingRedelegation } from "@ledgerhq/types-live";
 import type { RedelegationStrategy } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";
 import { getStakingABI } from "./abis";
-import { getValidatorAddressById } from "./validators/monad";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
@@ -260,14 +259,13 @@ export async function resolveRedelegationValidators(
 
 /**
  * Resolve the validator address for a single DELEGATE, UNDELEGATE or WITHDRAW operation.
- *
- * The validator address is the first ABI argument for all three operations.
  * Follows the same payload-resolution strategy as `resolveRedelegationValidators`:
  * cached `contractPayload` first, then RPC fallback.
  *
- * NOTE: the returned `amount` is only meaningful for DELEGATE/UNDELEGATE, where the
- * second ABI argument is the staked amount. For WITHDRAW the second argument is a slot
- * identifier (`withdrawId`), not an amount, so callers should rely on `operation.value`.
+ * NOTE: `amount` is decoded from the second ABI argument and is `null` when absent (e.g.
+ * Monad/0G `delegate` where the stake is `msg.value`) or when it is a non-numeric slot
+ * identifier (e.g. WITHDRAW's `withdrawId`). Callers should use `operation.value` when
+ * `amount` is `null`.
  *
  * Returns `null` when the payload cannot be obtained or decoded.
  */
@@ -290,14 +288,9 @@ export async function resolveStakingValidator(
   try {
     const iface = new ethers.Interface(abi);
     const d = iface.decodeFunctionData(functionName, payload);
-    const [first, rawAmount] = d;
+    const [, rawAmount] = d;
 
-    const validatorAddress =
-      typeof first === "string"
-        ? first
-        : typeof first === "bigint"
-          ? await getValidatorAddressById(currency.id, first)
-          : null;
+    const validatorAddress = await config.resolveValidatorAddress(d, operation.recipients[0]);
     if (!validatorAddress) return null;
 
     const scale = config.calldataAmountScale ?? 1n;

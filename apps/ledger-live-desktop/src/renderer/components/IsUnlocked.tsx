@@ -83,7 +83,6 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
     setIsHardResetting(true);
     try {
       await hardReset();
-      window.api?.reloadRenderer();
     } catch {
       setIsHardResetting(false);
     }

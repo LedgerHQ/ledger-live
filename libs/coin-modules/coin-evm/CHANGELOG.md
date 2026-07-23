@@ -1,5 +1,85 @@
 # @ledgerhq/coin-evm
 
+## 4.6.0
+
+### Minor Changes
+
+- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
+
+- [#19453](https://github.com/LedgerHQ/ledger-live/pull/19453) [`e478b6e`](https://github.com/LedgerHQ/ledger-live/commit/e478b6ee02a1ef105f07b2ba0d1f04292855bc91) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with runtime validation, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19621](https://github.com/LedgerHQ/ledger-live/pull/19621) [`bc0573e`](https://github.com/LedgerHQ/ledger-live/commit/bc0573e3bf73e47ad4f8a58e228a3e11e0866e6e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix EVM staking operation history showing the user's own address instead of the staking contract as recipient
+
+- [#19273](https://github.com/LedgerHQ/ledger-live/pull/19273) [`fad98a1`](https://github.com/LedgerHQ/ledger-live/commit/fad98a1d33675605d646959a1b1a2b648b2f59f2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Adapters and network explorers now return `Operation<MemoNotSupported>` from `@ledgerhq/coin-module-framework` instead of `Operation` from `@ledgerhq/types-live`, removing the restricted dependency from `adapters/`, `network/`, and `logic/`.
+
+- [#19694](https://github.com/LedgerHQ/ledger-live/pull/19694) [`2b4a016`](https://github.com/LedgerHQ/ledger-live/commit/2b4a016a8c2f2a635c50928bb2f78b63d96ff67f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): lowercase validator explorer URL
+
+- [#19620](https://github.com/LedgerHQ/ledger-live/pull/19620) [`d3862bb`](https://github.com/LedgerHQ/ledger-live/commit/d3862bb82e8084b624f65ef6d22d3eb151e0f18f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(evm): register somnia contract
+
+- [#19243](https://github.com/LedgerHQ/ledger-live/pull/19243) [`07c4724`](https://github.com/LedgerHQ/ledger-live/commit/07c47249db7aa923af0a29a6dc8fb0c0264a08c7) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with compile-time-safe builder, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19450](https://github.com/LedgerHQ/ledger-live/pull/19450) [`682c34b`](https://github.com/LedgerHQ/ledger-live/commit/682c34b48b800e4963a06e2731ff16d116af42f9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G (zero_gravity) delegate: add protocol encoder, stake fetcher (getDelegation + convertToTokens), and STAKING_CONFIG entry. Fix Blockscout adapter to derive methodId from input calldata when the API field is absent, so staking ops keep their DELEGATE type after confirmation.
+
+- [#19401](https://github.com/LedgerHQ/ledger-live/pull/19401) [`083452c`](https://github.com/LedgerHQ/ledger-live/commit/083452c72359a52c363e7de95e53b98f0c6ed906) Thanks [@YazhuEth](https://github.com/YazhuEth)! - coin-evm now reads `feesStrategy` and `sponsored` from the `customFees` fee-estimation parameters instead of the transaction intent. The generic-coin-framework bridge and the EVM swap job fold these fields into `customFees.parameters` accordingly, aligning with the coin-module framework where both are deprecated on `TransactionIntent`.
+
+- [#19035](https://github.com/LedgerHQ/ledger-live/pull/19035) [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).
+
+- [#19465](https://github.com/LedgerHQ/ledger-live/pull/19465) [`50660af`](https://github.com/LedgerHQ/ledger-live/commit/50660af751c2306802f1fefb2499cbf353f79cc4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Replace `typeof d[0]` type-sniffing in `resolveStakingValidator` with a per-chain `resolveValidatorAddress` on `StakingContractConfig`. Fixes 0G operation drawer pointing to delegator address instead of validator.
+
+- [#19283](https://github.com/LedgerHQ/ledger-live/pull/19283) [`a952f84`](https://github.com/LedgerHQ/ledger-live/commit/a952f84063e5f791b9c757827570d59d048c43bf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): clear remaining crypto assets store mentions
+
+- [#19680](https://github.com/LedgerHQ/ledger-live/pull/19680) [`ff9d1d2`](https://github.com/LedgerHQ/ledger-live/commit/ff9d1d29fbc3d6a4d75e3ca145e3a9df0dda50c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): drop incoming root-trace duplicates in `listOperations`
+
+- [#19409](https://github.com/LedgerHQ/ledger-live/pull/19409) [`ddc6499`](https://github.com/LedgerHQ/ledger-live/commit/ddc6499ebc483a853d82ca3c00d0927169c8e0ed) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Pass `to` into staking selector cache to support factory-per-validator chains
+
+### Patch Changes
+
+- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
+  - @ledgerhq/ledger-wallet-framework@2.4.0
+  - @ledgerhq/live-env@2.42.0
+  - @ledgerhq/evm-tools@1.13.1
+  - @ledgerhq/live-network@2.6.8
+
+## 4.6.0-next.0
+
+### Minor Changes
+
+- [#19683](https://github.com/LedgerHQ/ledger-live/pull/19683) [`4b73f23`](https://github.com/LedgerHQ/ledger-live/commit/4b73f23260ecc28574f46a7fd0f5cd7627d6d13f) Thanks [@ysitbon](https://github.com/ysitbon)! - Consume currency accessors and currency types from `@ledgerhq/ledger-wallet-framework` instead of `@ledgerhq/cryptoassets`/`@ledgerhq/types-cryptoassets`. Value accessors now resolve through the framework's injected `CurrenciesResolver`; `CryptoCurrency`/`TokenCurrency`/`Unit`/`ExplorerView` types are imported from the framework.
+
+- [#19453](https://github.com/LedgerHQ/ledger-live/pull/19453) [`e478b6e`](https://github.com/LedgerHQ/ledger-live/commit/e478b6ee02a1ef105f07b2ba0d1f04292855bc91) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with runtime validation, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19621](https://github.com/LedgerHQ/ledger-live/pull/19621) [`bc0573e`](https://github.com/LedgerHQ/ledger-live/commit/bc0573e3bf73e47ad4f8a58e228a3e11e0866e6e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Fix EVM staking operation history showing the user's own address instead of the staking contract as recipient
+
+- [#19273](https://github.com/LedgerHQ/ledger-live/pull/19273) [`fad98a1`](https://github.com/LedgerHQ/ledger-live/commit/fad98a1d33675605d646959a1b1a2b648b2f59f2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Adapters and network explorers now return `Operation<MemoNotSupported>` from `@ledgerhq/coin-module-framework` instead of `Operation` from `@ledgerhq/types-live`, removing the restricted dependency from `adapters/`, `network/`, and `logic/`.
+
+- [#19694](https://github.com/LedgerHQ/ledger-live/pull/19694) [`2b4a016`](https://github.com/LedgerHQ/ledger-live/commit/2b4a016a8c2f2a635c50928bb2f78b63d96ff67f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): lowercase validator explorer URL
+
+- [#19620](https://github.com/LedgerHQ/ledger-live/pull/19620) [`d3862bb`](https://github.com/LedgerHQ/ledger-live/commit/d3862bb82e8084b624f65ef6d22d3eb151e0f18f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(evm): register somnia contract
+
+- [#19243](https://github.com/LedgerHQ/ledger-live/pull/19243) [`07c4724`](https://github.com/LedgerHQ/ledger-live/commit/07c47249db7aa923af0a29a6dc8fb0c0264a08c7) Thanks [@jprudent](https://github.com/jprudent)! - Add configurable getBlock internal-tx source list with compile-time-safe builder, split node trace RPC methods, and behaviour-preserving default fallback semantics
+
+- [#19450](https://github.com/LedgerHQ/ledger-live/pull/19450) [`682c34b`](https://github.com/LedgerHQ/ledger-live/commit/682c34b48b800e4963a06e2731ff16d116af42f9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Wire 0G (zero_gravity) delegate: add protocol encoder, stake fetcher (getDelegation + convertToTokens), and STAKING_CONFIG entry. Fix Blockscout adapter to derive methodId from input calldata when the API field is absent, so staking ops keep their DELEGATE type after confirmation.
+
+- [#19401](https://github.com/LedgerHQ/ledger-live/pull/19401) [`083452c`](https://github.com/LedgerHQ/ledger-live/commit/083452c72359a52c363e7de95e53b98f0c6ed906) Thanks [@YazhuEth](https://github.com/YazhuEth)! - coin-evm now reads `feesStrategy` and `sponsored` from the `customFees` fee-estimation parameters instead of the transaction intent. The generic-coin-framework bridge and the EVM swap job fold these fields into `customFees.parameters` accordingly, aligning with the coin-module framework where both are deprecated on `TransactionIntent`.
+
+- [#19035](https://github.com/LedgerHQ/ledger-live/pull/19035) [`07bfc2c`](https://github.com/LedgerHQ/ledger-live/commit/07bfc2cbcf3c63b55224dec2aef1818d22c2315c) Thanks [@YazhuEth](https://github.com/YazhuEth)! - generic coin-framework bridge: compute the send-max (`useAllAmount`) amount once in `prepareTransaction` and reuse it in `signOperation`, instead of recomputing it via `validateIntent` in `prepareTransaction`, `signOperation` and `estimateMaxSpendable`. The amount is `parameters.amount` when the coin exposes it (Tezos), the token sub-account balance for token sends, otherwise `spendableBalance - max(reserve, fees)` (coin-evm now exposes `reserve`/`amountScale` for delegate). Pending operations are subtracted so the amount stays consistent with `getTransactionStatus` (LIVE-22227, LIVE-22228, LIVE-22229).
+
+- [#19465](https://github.com/LedgerHQ/ledger-live/pull/19465) [`50660af`](https://github.com/LedgerHQ/ledger-live/commit/50660af751c2306802f1fefb2499cbf353f79cc4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Replace `typeof d[0]` type-sniffing in `resolveStakingValidator` with a per-chain `resolveValidatorAddress` on `StakingContractConfig`. Fixes 0G operation drawer pointing to delegator address instead of validator.
+
+- [#19283](https://github.com/LedgerHQ/ledger-live/pull/19283) [`a952f84`](https://github.com/LedgerHQ/ledger-live/commit/a952f84063e5f791b9c757827570d59d048c43bf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-evm): clear remaining crypto assets store mentions
+
+- [#19680](https://github.com/LedgerHQ/ledger-live/pull/19680) [`ff9d1d2`](https://github.com/LedgerHQ/ledger-live/commit/ff9d1d29fbc3d6a4d75e3ca145e3a9df0dda50c5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): drop incoming root-trace duplicates in `listOperations`
+
+- [#19409](https://github.com/LedgerHQ/ledger-live/pull/19409) [`ddc6499`](https://github.com/LedgerHQ/ledger-live/commit/ddc6499ebc483a853d82ca3c00d0927169c8e0ed) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Pass `to` into staking selector cache to support factory-per-validator chains
+
+### Patch Changes
+
+- Updated dependencies [[`8f30c75`](https://github.com/LedgerHQ/ledger-live/commit/8f30c75ecb553a720722f1e039b4aec53fce2a87), [`0f85077`](https://github.com/LedgerHQ/ledger-live/commit/0f850774ae3b46fd4a06c0da5762d3d4211b26af), [`a15b864`](https://github.com/LedgerHQ/ledger-live/commit/a15b864576d901f15d480070b475314c3b23c1dd), [`fc44f1e`](https://github.com/LedgerHQ/ledger-live/commit/fc44f1e6ddcca939c117e0cb8bc49c404163b003), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158), [`6ef44af`](https://github.com/LedgerHQ/ledger-live/commit/6ef44afa6807ace32b3f6620173868f2ef20e158)]:
+  - @ledgerhq/ledger-wallet-framework@2.4.0-next.0
+  - @ledgerhq/live-env@2.42.0-next.0
+  - @ledgerhq/evm-tools@1.13.1-next.0
+  - @ledgerhq/live-network@2.6.8-next.0
+
 ## 4.5.0
 
 ### Minor Changes

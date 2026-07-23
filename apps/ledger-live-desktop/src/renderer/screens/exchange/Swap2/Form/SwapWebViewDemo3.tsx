@@ -405,8 +405,12 @@ const SwapWebView = ({
           return Promise.resolve({});
         }
       },
-      "custom.swapRedirectToHistory": async () => {
-        redirectToHistory();
+      "custom.swapRedirectToHistory": async ({
+        params,
+      }: {
+        params?: { swapId?: string };
+      } = {}) => {
+        redirectToHistory({ swapId: params?.swapId });
       },
       "custom.saveSwapToHistory": async ({
         params,
@@ -590,7 +594,7 @@ const SwapWebView = ({
         />
       )}
 
-      <SwapWebAppWrapper>
+      <SwapWebAppWrapper data-testid={`swap-web-app-container-${isEmbedded ? "embedded" : "full"}`}>
         <Web3AppWebview
           manifest={manifestWithHash}
           inputs={{

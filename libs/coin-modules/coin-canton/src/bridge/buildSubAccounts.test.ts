@@ -1,4 +1,4 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { TransferProposal } from "../network/gateway";

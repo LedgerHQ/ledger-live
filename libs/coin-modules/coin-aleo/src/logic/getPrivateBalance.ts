@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { PROGRAM_ID } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type { AleoPrivateRecord, AleoUnspentRecord } from "../types";

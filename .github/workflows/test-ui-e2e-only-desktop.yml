@@ -139,6 +139,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  E2E_DESKTOP_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
+  E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+
 jobs:
   prepare-devices:
     name: "Prepare device matrix"
@@ -199,8 +203,6 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
       COINAPPS: ${{ github.workspace }}/coin-apps
-      E2E_DESKTOP_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
-      E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
       E2E_GENERATED_USERDATA_DIR: ${{ inputs.build_type != 'js' && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
@@ -279,7 +281,7 @@ jobs:
       - name: Build Playwright grep filter from inputs
         id: test-filter
         run: |
-          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+          RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests")"
@@ -299,15 +301,14 @@ jobs:
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
           REPEAT_EACH="${{ inputs.repeat_each }}"
 
-          if [ -z "$FILTER_PATTERN" ]; then
-            FILTER_PATTERN="(none)"
-          fi
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
           fi
           if [ -z "$REPEAT_EACH" ]; then
             REPEAT_EACH="(none)"
           fi
+
+          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
           {
             echo "## Workflow Context"
             echo ""
@@ -315,7 +316,7 @@ jobs:
             echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
             echo "- **Commit SHA:** ${{ github.sha }}"
             echo "- **Device selected:** $DEVICE"
-            echo "- **Filtered pattern:** $FILTER_PATTERN"
+            echo "$FILTER_SUMMARY"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
@@ -350,7 +351,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.9.0
+        uses: tespkg/actions-cache/restore@v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
@@ -502,8 +503,9 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   qaa-allure-upload-device2:
     name: "QAA Allure Upload - device 2 (Experimental)"
@@ -526,8 +528,9 @@ jobs:
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
-          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -608,14 +611,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device1}) : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux (${device1}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux (${device2}) : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux (${device2}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },
@@ -652,7 +655,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
+                    "text": `🐧 linux · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
                   }
                 },
                 { "type": "divider" },

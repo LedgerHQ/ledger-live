@@ -1,5 +1,5 @@
 import type { Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { EpochInfo, StakePool } from "../api/api-types";
 import { fetchEpochInfo } from "../api/getEpochInfo";
 import { fetchPoolList } from "../api/getPools";

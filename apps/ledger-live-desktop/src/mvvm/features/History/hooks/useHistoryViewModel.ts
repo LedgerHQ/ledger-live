@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useMemo } from "react";
-import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
-  convertThresholdFromUsdToCountervalueMinorUnit,
-  floorThresholdToCurrencyMinorUnit,
+  formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
 import { addExtraTrackingPairs } from "~/renderer/reducers/countervaluesExtraTracking";
@@ -29,66 +24,6 @@ import { track } from "~/renderer/analytics/segment";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import { HISTORY_DUST_FILTER_THRESHOLD_USD } from "../constants";
-
-export function formatDustFilterThreshold({
-  countervaluesState,
-  counterValueCurrency,
-  locale,
-  thresholdUsd,
-}: {
-  countervaluesState?: CounterValuesState;
-  counterValueCurrency: Currency;
-  locale: string | undefined | null;
-  thresholdUsd: number;
-}) {
-  const formatThreshold = (currency: Currency, unit: Unit = currency.units[0]) => {
-    const thresholdMinorUnit =
-      floorThresholdToCurrencyMinorUnit(thresholdUsd, currency) ?? new BigNumber(0);
-
-    return formatCurrencyUnit(unit, thresholdMinorUnit, {
-      showCode: true,
-      locale: locale ?? undefined,
-    });
-  };
-  const formatCounterValueThreshold = (currency: Currency, thresholdMinorUnit: BigNumber) => {
-    const unit = currency.units[0];
-    const amount = thresholdMinorUnit.div(new BigNumber(10).pow(unit.magnitude));
-    const fractionDigits = Math.min(Math.max(unit.magnitude + 2, 4), 8);
-    const formattedAmount = new Intl.NumberFormat(locale ?? undefined, {
-      maximumFractionDigits: fractionDigits,
-      minimumFractionDigits: 0,
-      useGrouping: false,
-    }).format(amount.toNumber());
-
-    return unit.prefixCode
-      ? `${unit.code}${formattedAmount}`
-      : `${formattedAmount}\u00A0${unit.code}`;
-  };
-
-  const referenceThreshold = formatThreshold(SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY, {
-    ...SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.units[0],
-    code: "US$",
-  });
-
-  if (counterValueCurrency.ticker === SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY.ticker) {
-    return referenceThreshold;
-  }
-
-  if (!countervaluesState) return referenceThreshold;
-
-  const counterValueThresholdMinorUnit = convertThresholdFromUsdToCountervalueMinorUnit({
-    counterValueCurrency,
-    countervaluesState,
-    thresholdUsd,
-  });
-
-  if (!counterValueThresholdMinorUnit) return referenceThreshold;
-
-  return `${referenceThreshold} (${formatCounterValueThreshold(
-    counterValueCurrency,
-    counterValueThresholdMinorUnit,
-  )})`;
-}
 
 export type HistoryViewModel = {
   showBackButton: boolean;
@@ -165,7 +100,7 @@ export function useHistoryViewModel(): HistoryViewModel {
   const dustFilterThreshold = useMemo(() => {
     if (!counterValueCurrency) return "";
 
-    return formatDustFilterThreshold({
+    return formatSmallValueOperationsThreshold({
       countervaluesState,
       counterValueCurrency,
       locale,
@@ -174,7 +109,12 @@ export function useHistoryViewModel(): HistoryViewModel {
   }, [countervaluesState, counterValueCurrency, locale]);
   const onToggleHideSmallValueTokenOperations = useCallback(() => {
     if (!showDustFilterOption) return;
-    setHideSmallValueTokenOperations(!hideSmallValueTokenOperations);
+    const enabled = !hideSmallValueTokenOperations;
+    track("button_clicked", {
+      button: "dust_filter",
+      enabled,
+    });
+    setHideSmallValueTokenOperations(enabled);
   }, [hideSmallValueTokenOperations, setHideSmallValueTokenOperations, showDustFilterOption]);
 
   return {

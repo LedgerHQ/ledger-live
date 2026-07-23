@@ -1,5 +1,10 @@
 module.exports = (path, options) => {
   // Call the defaultResolver, so we leverage its cache, error handling, etc.
+  //
+  // @features/flow-* packages rely on package.json conditional exports
+  // ("react-native" / "default"). Those are handled via
+  // testEnvironmentOptions.customExportConditions in jest.config.js — do not
+  // strip exports for flow packages here.
   return options.defaultResolver(path, {
     ...options,
     // Use packageFilter to process parsed `package.json` before the resolution (see https://www.npmjs.com/package/resolve#resolveid-opts-cb)

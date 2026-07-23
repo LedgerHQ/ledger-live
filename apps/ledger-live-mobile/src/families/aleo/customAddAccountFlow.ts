@@ -1,3 +1,4 @@
+import { sameAccountIdentity } from "@ledgerhq/live-wallet/addAccounts";
 import { NavigatorName, ScreenName } from "~/const";
 import type { CustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 
@@ -28,5 +29,6 @@ export default {
   onScanDeviceAccountsBack: ({ navigation }) => {
     navigation.goBack();
   },
-  scanDeviceAccountsCtaI18nKey: "aleo.addAccount.stepScanAccounts.cta.shareViewKeys",
+  scanDeviceAccountsCtaI18nKey: "aleo.addAccount.stepScanAccounts.cta.shareKey",
+  isAlreadyImportedAccount: sameAccountIdentity,
 } satisfies CustomAddAccountFlow;

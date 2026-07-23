@@ -1,12 +1,7 @@
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("Flare (external node)", () => {
-  beforeAll(() => {
-    setupCalClientStore();
-  });
-
   describe("getBlock", () => {
     let module: ReturnType<typeof createApi>;
 

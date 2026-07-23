@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";

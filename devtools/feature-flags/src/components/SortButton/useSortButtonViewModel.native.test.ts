@@ -1,6 +1,6 @@
 import { renderHook } from "jest/render.native";
 import type { SortCategory, SortDirection } from "../../hooks";
-import { useSortButtonViewModel } from "./useSortButtonViewModel.native";
+import { useSortButtonViewModel } from "./useSortButtonViewModel";
 
 function input(category: SortCategory, direction: SortDirection, setSort = jest.fn()) {
   return { category, direction, setSort };

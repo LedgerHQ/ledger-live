@@ -4,6 +4,7 @@ import PortfolioNavigator from "../PortfolioNavigator";
 import SwapNavigator from "../SwapNavigator";
 import EarnLiveAppNavigator from "../EarnLiveAppNavigator";
 import CardLandingNavigator from "LLM/features/Card";
+import PayTabNavigator from "LLM/features/PayTab";
 import { Tab } from "./tabNavigator";
 import type { Wallet40TabNavigatorProps } from "./types";
 import { SwapWallet40Header } from "~/screens/Swap/LiveApp/components/SwapWallet40Header";
@@ -16,6 +17,7 @@ function Wallet40SwapTabHeader() {
 export function Wallet40TabNavigator({
   tabBar,
   screenOptions,
+  isPayTabEnabled,
 }: Readonly<Wallet40TabNavigatorProps>): React.JSX.Element {
   return (
     <Tab.Navigator tabBar={tabBar} screenOptions={screenOptions}>
@@ -32,7 +34,11 @@ export function Wallet40TabNavigator({
         })}
       />
       <Tab.Screen name={NavigatorName.Earn} component={EarnLiveAppNavigator} />
-      <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
+      {isPayTabEnabled ? (
+        <Tab.Screen name={NavigatorName.PayTab} component={PayTabNavigator} />
+      ) : (
+        <Tab.Screen name={NavigatorName.CardTab} component={CardLandingNavigator} />
+      )}
     </Tab.Navigator>
   );
 }

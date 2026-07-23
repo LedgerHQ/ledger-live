@@ -9,6 +9,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
 import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { exportWalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
@@ -58,6 +59,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "wallet",
   "market",
   "marketBanner",
+  LARGE_SCREEN_UPSELL_MODAL,
   "knownDevices",
   "cryptoAssets",
   "identities",
@@ -224,7 +226,6 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
       decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
     } catch (err) {
       log("db", "setEncryptionKey failure: " + String(err));
-      console.error(err);
       throw new DBWrongPassword();
     }
   }
@@ -244,7 +245,6 @@ async function removeEncryptionKey() {
         decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
       } catch (err) {
         log("db", "removeEncryptionKey failure: " + String(err));
-        console.error(err);
         throw err;
       }
     }
@@ -372,7 +372,9 @@ async function resetAll() {
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
   encryptionKeys = {}; // Clear encryption keys to prevent re-encryption of old data
-  await fs.unlink(path.resolve(DBPath, "app.json"));
+  await fs.unlink(path.resolve(DBPath, "app.json")).catch((e: NodeJS.ErrnoException) => {
+    if (e.code !== "ENOENT") throw e;
+  });
 }
 function isEncryptionKeyCorrect(encryptionKey: string) {
   const [ns, keyPath] = encryptedDataPaths[0]; // conventionally we check the first path

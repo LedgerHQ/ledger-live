@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { APIGetPoolList, EpochInfo, StakePool } from "../api/api-types";
 import { fetchEpochInfo } from "../api/getEpochInfo";
 import { fetchPoolList } from "../api/getPools";

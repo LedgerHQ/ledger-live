@@ -3,11 +3,13 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import type { AnalyticsOptInPromptHostProps } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import AnalyticsOptInScreen from "LLD/features/AnalyticsOptInPrompt/screens/AnalyticsOptInScreen";
+import { AnalyticsOptInScreenV2 } from "LLD/features/AnalyticsOptInScreenV2";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { useDrawerLogic } from "../hooks/useDrawerLogic";
+import { useShouldUseAnalyticsOptInScreenV2 } from "../hooks/useShouldUseAnalyticsOptInScreenV2";
 
-const AnalyticsOptInPrompt = memo(
+const AnalyticsOptInPromptLegacyDrawer = memo(
   ({ onClose, onSubmit, isOpened, entryPoint }: AnalyticsOptInPromptHostProps) => {
     const { colors } = useTheme();
     const { step, setStep, handleRequestBack, handleRequestClose, preventClosable } =
@@ -40,6 +42,18 @@ const AnalyticsOptInPrompt = memo(
     );
   },
 );
+
+AnalyticsOptInPromptLegacyDrawer.displayName = "AnalyticsOptInPromptLegacyDrawer";
+
+const AnalyticsOptInPrompt = memo((props: AnalyticsOptInPromptHostProps) => {
+  const shouldUseScreenV2 = useShouldUseAnalyticsOptInScreenV2(props.entryPoint);
+
+  if (shouldUseScreenV2) {
+    return <AnalyticsOptInScreenV2 {...props} />;
+  }
+
+  return <AnalyticsOptInPromptLegacyDrawer {...props} />;
+});
 
 AnalyticsOptInPrompt.displayName = "AnalyticsOptInPrompt";
 export default withV3StyleProvider(AnalyticsOptInPrompt);

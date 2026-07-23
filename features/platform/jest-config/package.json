@@ -1,0 +1,23 @@
+{
+  "name": "@features/platform-jest-config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared jest config + generic Lumen stubs for features/flow packages (dual web/native projects)",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "index.js",
+    "mocks",
+    "setup"
+  ],
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "react": "catalog:"
+  }
+}

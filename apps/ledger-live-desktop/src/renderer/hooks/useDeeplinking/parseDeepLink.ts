@@ -21,6 +21,7 @@ import {
   MarketRoute,
   AssetRoute,
   PerpsRoute,
+  PayTabRoute,
   RecoverRoute,
   RecoverRestoreFlowRoute,
   PostOnboardingRoute,
@@ -269,6 +270,13 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
     case "perps": {
       const route: PerpsRoute = {
         type: "perps",
+      };
+      return route;
+    }
+
+    case "paytab": {
+      const route: PayTabRoute = {
+        type: "paytab",
       };
       return route;
     }

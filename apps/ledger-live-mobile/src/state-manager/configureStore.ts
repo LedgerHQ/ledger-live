@@ -10,12 +10,15 @@ import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
-import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
+import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@ledgerhq/live-env";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
+import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
+import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
@@ -36,6 +39,20 @@ export const store = configureStore({
             ...cvsApiExtra({
               countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
             }),
+            ...marketSentimentApiExtra({
+              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+            }),
+            ...altcoinsSentimentApiExtra({
+              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+            }),
+            ...pushDevicesApiExtra({
+              pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+            }),
+            ...payCardApiExtra({
+              // LIVE-33829: force mocks until Pay Card API base URL is wired.
+              payCardApiMocksEnabled: true,
+            }),
           },
         },
       }),
@@ -43,6 +60,7 @@ export const store = configureStore({
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({
+          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),

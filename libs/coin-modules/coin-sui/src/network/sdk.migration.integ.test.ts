@@ -202,7 +202,12 @@ function assertIdsSubset<T>(
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
+// SKIP — Sui JSON-RPC public-endpoint shutdown. The JSON-RPC reference leg of this parity
+// suite hits the public mainnet fullnode (fullnode.mainnet.sui.io), retired by the Sui
+// Foundation (mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL, so
+// cross-transport parity can no longer run. Re-enable once a GraphQL-only live baseline
+// replaces the JSON-RPC reference.
+describe.skip("JSON-RPC vs GraphQL shape parity (live mainnet)", () => {
   // ----- Read-side: balances ----------------------------------------------
 
   describe("getAllBalancesCached", () => {

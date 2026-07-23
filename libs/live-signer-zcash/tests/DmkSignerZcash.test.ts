@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { SignerZcashBuilder } from "@ledgerhq/device-signer-kit-zcash";
 import { DmkSignerZcash } from "../src/DmkSignerZcash";
+import type { PcztTransaction } from "../src/types";
 
 jest.mock("@ledgerhq/device-signer-kit-zcash", () => ({
   SignerZcashBuilder: jest.fn(),
@@ -18,6 +19,7 @@ describe("DmkSignerZcash", () => {
     getAddress: jest.fn(),
     getFullViewingKey: jest.fn(),
     signTransaction: jest.fn(),
+    signPcztTransaction: jest.fn(),
   };
 
   let signer: DmkSignerZcash;
@@ -402,6 +404,114 @@ describe("DmkSignerZcash", () => {
       });
 
       await expect(signer.createPaymentTransaction(baseArg)).resolves.toBe("00signed");
+    });
+  });
+
+  describe("signPcztTransaction", () => {
+    const orchardSig = new Uint8Array(64).fill(0xab);
+    const transparentSig = new Uint8Array(72).fill(0xcd);
+
+    // Minimal valid-shaped PCZT — the mock doesn't inspect fields
+    const minimalPczt: PcztTransaction = {
+      global: {
+        txVersion: 5,
+        versionGroupId: 0x26a7270a,
+        consensusBranchId: 0xc2d6d0b4,
+        fallbackLockTime: null,
+        expiryHeight: 0,
+        coinType: 133,
+        txModifiable: 0,
+      },
+      transparentInputs: [],
+      transparentOutputs: [],
+      orchardBundle: null,
+    };
+
+    it("returns orchard spendAuthSigs and empty transparentInputSigs for a pure-Orchard transaction", async () => {
+      const result = { orchard: [{ spendAuthSig: orchardSig }], transparentInputSigs: [] };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      expect(await signer.signPcztTransaction(minimalPczt)).toEqual(result);
+      expect(mockSignerZcash.signPcztTransaction).toHaveBeenCalledWith(minimalPczt, {
+        skipOpenApp: true,
+      });
+    });
+
+    it("preserves spendAuthSig order: N actions return N signatures in action order", async () => {
+      const sigs = [0x01, 0x02, 0x03].map(b => new Uint8Array(64).fill(b));
+      const result = {
+        orchard: sigs.map(spendAuthSig => ({ spendAuthSig })),
+        transparentInputSigs: [],
+      };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalPczt);
+
+      expect(out.orchard).toHaveLength(3);
+      out.orchard.forEach((sig, i) => {
+        expect(sig.spendAuthSig[0]).toBe(i + 1);
+      });
+    });
+
+    it("returns both orchard sigs and transparentInputSigs for a mixed transaction", async () => {
+      const result = {
+        orchard: [{ spendAuthSig: orchardSig }],
+        transparentInputSigs: [transparentSig],
+      };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalPczt);
+
+      expect(out.orchard).toHaveLength(1);
+      expect(out.transparentInputSigs).toHaveLength(1);
+      expect(out.transparentInputSigs[0]).toBe(transparentSig);
+    });
+
+    it("rejects with UserRefusedOnDevice when the user declines on device (6985)", async () => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          _tag: "ZcashAppCommandError",
+          errorCode: "6985",
+        }),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toMatchObject({
+        name: "UserRefusedOnDevice",
+      });
+    });
+
+    it("rejects with a mapped error when the device action returns error status", async () => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({ _tag: "SignPcztTransactionDAError" }),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toThrow(
+        "SignPcztTransactionDAError",
+      );
+    });
+
+    it("rejects when the observable emits a transport error", async () => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createTransportErrorObservable(new Error("transport down")),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toThrow("transport down");
+    });
+
+    it("rejects instead of hanging when the device action is stopped", async () => {
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createStoppedObservable(),
+      });
+
+      await expect(signer.signPcztTransaction(minimalPczt)).rejects.toThrow(
+        "Unexpected device action status: stopped",
+      );
     });
   });
 

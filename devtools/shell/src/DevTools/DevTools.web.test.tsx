@@ -1,5 +1,5 @@
 import { render, screen } from "jest/render";
-import { DevTools } from "./DevTools.web";
+import { DevTools } from "./DevTools";
 
 jest.mock("@devtools/registry", () => ({
   ...jest.requireActual("@devtools/registry"),

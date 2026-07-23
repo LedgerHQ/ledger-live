@@ -15,9 +15,13 @@ const mockAvailability = (
   availableOnSwap: boolean,
   { isResolved = true, isCurrencySupported = true } = {},
 ) =>
-  jest
-    .mocked(useTradeAvailability)
-    .mockReturnValue({ availableOnBuy, availableOnSwap, isCurrencySupported, isResolved });
+  jest.mocked(useTradeAvailability).mockReturnValue({
+    availableOnBuy,
+    availableOnSell: false,
+    availableOnSwap,
+    isCurrencySupported,
+    isResolved,
+  });
 
 describe("FallbackBanner", () => {
   beforeEach(() => jest.clearAllMocks());

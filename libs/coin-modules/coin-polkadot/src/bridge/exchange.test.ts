@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
-
 import { Account } from "@ledgerhq/types-live";
 import { getSerializedAddressParameters } from "./exchange";
 

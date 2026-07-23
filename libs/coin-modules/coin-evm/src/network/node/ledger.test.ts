@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { Transaction } from "ethers";

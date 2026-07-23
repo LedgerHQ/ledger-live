@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-concordium",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Concordium coin integration",
   "keywords": [
     "Ledger",
@@ -173,7 +173,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/concordium-core": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -190,7 +189,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",

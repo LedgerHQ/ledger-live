@@ -6,7 +6,7 @@ import type { Observer as TransportObserver, DescriptorEvent } from "@ledgerhq/h
 import { HwTransportError } from "@ledgerhq/errors";
 import type { ApduMock } from "~/logic/createAPDUMock";
 import { hookRejections } from "~/logic/debugReject";
-import { e2eBridgeClient } from "../../../e2e/bridge/client";
+import { e2eBridgeClient } from "~/e2e/bridge/client";
 
 export type DeviceMock = {
   id: string;

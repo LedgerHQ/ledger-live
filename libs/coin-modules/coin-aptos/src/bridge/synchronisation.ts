@@ -9,7 +9,7 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../network";

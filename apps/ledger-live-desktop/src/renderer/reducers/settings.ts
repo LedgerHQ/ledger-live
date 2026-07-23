@@ -5,11 +5,11 @@ import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
   findCryptoCurrencyById,
-  listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import {
   AccountLike,
   DeviceInfo,
@@ -123,7 +123,6 @@ export type SettingsState = {
     acceptedProviders: string[];
   };
   vaultSigner: VaultSigner;
-  supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [key: string]: number };
   anonymousBrazeId: string | null;
@@ -227,7 +226,6 @@ export const INITIAL_STATE: SettingsState = {
   },
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
-  supportedCounterValues: [],
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   dismissedContentCards: {} as Record<string, number>,
   anonymousBrazeId: null,
@@ -284,7 +282,6 @@ type HandlersPayloads = {
     imageHash: string;
   };
   SET_VAULT_SIGNER: VaultSigner;
-  SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
   SET_DISMISSED_CONTENT_CARDS: {
     id: string;
@@ -437,20 +434,6 @@ const handlers: SettingsHandlers = {
     ...state,
     vaultSigner: payload,
   }),
-  SET_SUPPORTED_COUNTER_VALUES: (state: SettingsState, { payload }) => {
-    let activeCounterValue = state.counterValue;
-    if (
-      activeCounterValue &&
-      !payload.find(({ currency }) => counterValueIdOf(currency) === activeCounterValue)
-    ) {
-      activeCounterValue = INITIAL_STATE.counterValue;
-    }
-    return {
-      ...state,
-      supportedCounterValues: payload,
-      counterValue: activeCounterValue,
-    };
-  },
   DEPRECATION_DO_NOT_REMIND: (state: SettingsState, { payload }) => {
     return {
       ...state,
@@ -657,17 +640,15 @@ export type SupportedCountervaluesData = {
   currency: Currency;
 };
 
-export const getsupportedCountervalues = async (): Promise<SupportedCountervaluesData[]> => {
-  const supportedFiats = await listSupportedFiats();
-  const data = [...supportedFiats, ...possibleIntermediaries]
+export function getsupportedCountervalues(fiats: FiatCurrency[]): SupportedCountervaluesData[] {
+  return [...fiats, ...possibleIntermediaries]
     .map(currency => ({
       value: currency.ticker,
       label: `${currency.name} - ${currency.ticker}`,
       currency,
     }))
-    .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-  return data;
-};
+    .sort((a, b) => a.currency.name.localeCompare(b.currency.name));
+}
 // TODO refactor selectors to *Selector naming convention
 
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
@@ -875,8 +856,10 @@ export const showClearCacheBannerSelector = (state: State) => state.settings.sho
 export const overriddenFeatureFlagsSelector = (state: State) => state.featureFlags.overrides;
 export const featureFlagsButtonVisibleSelector = (state: State) => state.featureFlags.bannerVisible;
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
-export const supportedCounterValuesSelector = (state: State) =>
-  state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = createSelector(
+  selectSupportedFiats,
+  getsupportedCountervalues,
+);
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;

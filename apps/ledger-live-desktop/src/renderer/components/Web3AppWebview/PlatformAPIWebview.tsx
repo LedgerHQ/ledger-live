@@ -24,7 +24,8 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
@@ -98,7 +99,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const walletState = useSelector(walletSelector);
     const listAccounts = useListPlatformAccounts(walletState, accounts);
-    const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+    const { deactivatedCurrencyIds: _deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(
+      !!useEnv("MOCK"),
+    );
+    const deactivatedCurrencyIds = useMemo(
+      () => new Set(_deactivatedCurrencyIds),
+      [_deactivatedCurrencyIds],
+    );
     const listCurrencies = useListPlatformCurrencies(deactivatedCurrencyIds);
 
     const { openAssetAndAccountPromise } = useOpenAssetAndAccount();

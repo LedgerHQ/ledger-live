@@ -238,58 +238,141 @@ describe("genericPrepareTransaction", () => {
     );
   });
 
-  describe("delegation gas estimation (useAllAmount)", () => {
-    const delegationAccount = {
+  it("uses customFees.parameters.fees without calling estimateFees", async () => {
+    const estimateFees = jest.fn();
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      customFees: { parameters: { fees: new BigNumber(900) } },
+    } as GenericTransaction);
+
+    expect(estimateFees).not.toHaveBeenCalled();
+    expect((result as any).fees.toString()).toBe("900");
+  });
+
+  it("keeps the custom fee value but still fetches coin parameters on send-max", async () => {
+    // a custom total fee overrides only the value; additionalFees still come from estimateFees
+    const estimateFees = jest
+      .fn()
+      .mockResolvedValue({ value: 50n, parameters: { additionalFees: 100n } });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(
+      { ...account, spendableBalance: new BigNumber(1_000_000) },
+      {
+        ...baseTransaction,
+        customFees: { parameters: { fees: new BigNumber(900) } },
+        mode: "send",
+        useAllAmount: true,
+      } as GenericTransaction,
+    );
+
+    expect(estimateFees).toHaveBeenCalled();
+    expect((result as any).amount.toString()).toBe("999000");
+  });
+
+  describe("useAllAmount (send-max) amount", () => {
+    const fundedAccount = {
       ...account,
       spendableBalance: new BigNumber(1_000_000_000),
     };
 
-    it("passes transaction amount to fee estimation for delegation with useAllAmount", async () => {
-      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(100) });
-      (getCoinModuleApi as jest.Mock).mockReturnValue({
-        estimateFees,
-        validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
+    it("computes delegate send-max from reserve/amountScale params, without validateIntent", async () => {
+      const estimateFees = jest.fn().mockResolvedValue({
+        value: new BigNumber(100),
+        parameters: { reserve: 5500n, amountScale: 1000n },
       });
+      const validateIntent = jest.fn();
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees, validateIntent });
 
       const prepareTransaction = genericPrepareTransaction("testnet", "local");
-      await prepareTransaction(delegationAccount, {
+      const result = await prepareTransaction(fundedAccount, {
         ...baseTransaction,
         mode: "delegate",
         useAllAmount: true,
       } as GenericTransaction);
 
-      expect(transactionToIntent).toHaveBeenCalledWith(
-        delegationAccount,
-        expect.objectContaining({ amount: baseTransaction.amount }),
-        undefined,
-        undefined,
-      );
+      expect((result as any).amount.toString()).toBe("999994000");
+      expect(validateIntent).not.toHaveBeenCalled();
     });
 
-    it("passes transaction amount to fee estimation for non-delegation modes with useAllAmount", async () => {
+    it("computes the send-max amount for non-delegation modes with useAllAmount", async () => {
       const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(1_200_000) });
-      (getCoinModuleApi as jest.Mock).mockReturnValue({
-        estimateFees,
-        validateIntent: jest.fn().mockResolvedValue({ amount: 0n }),
-      });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
 
       const prepareTransaction = genericPrepareTransaction("testnet", "local");
-      await prepareTransaction(delegationAccount, {
+      const result = await prepareTransaction(fundedAccount, {
         ...baseTransaction,
         mode: "send",
         useAllAmount: true,
       } as GenericTransaction);
 
-      expect(transactionToIntent).toHaveBeenCalledWith(
-        delegationAccount,
-        expect.objectContaining({ amount: baseTransaction.amount }),
-        undefined,
-        undefined,
+      expect((result as any).amount.toString()).toBe("998800000");
+    });
+
+    it("uses parameters.amount when the coin module provides it", async () => {
+      const estimateFees = jest.fn().mockResolvedValue({
+        value: new BigNumber(100),
+        parameters: { amount: 12345n },
+      });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(fundedAccount, {
+        ...baseTransaction,
+        mode: "send",
+        useAllAmount: true,
+      } as GenericTransaction);
+
+      expect((result as any).amount.toString()).toBe("12345");
+    });
+
+    it("subtracts funds committed by pending native operations from the send-max", async () => {
+      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(1_200_000) });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(
+        {
+          ...fundedAccount,
+          // pending OUT send commits its value + fee against the native balance until next sync
+          pendingOperations: [
+            { type: "OUT", value: new BigNumber(10_000_000), fee: new BigNumber(1_200_000) },
+          ],
+        },
+        {
+          ...baseTransaction,
+          mode: "send",
+          useAllAmount: true,
+        } as GenericTransaction,
       );
+
+      // 1000000000 - (10000000 + 1200000) pending - 1200000 fee
+      expect((result as any).amount.toString()).toBe("987600000");
+    });
+
+    it("refreshes the send-max amount even when fees are unchanged", async () => {
+      // fees already equal the estimation, so the early return path must still set the amount
+      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(500) });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(fundedAccount, {
+        ...baseTransaction,
+        fees: new BigNumber(500),
+        amount: new BigNumber(0),
+        mode: "send",
+        useAllAmount: true,
+      } as GenericTransaction);
+
+      expect((result as any).amount.toString()).toBe("999999500");
     });
   });
 
-  it("estimates using the token account spendable balance when sending all amount", async () => {
+  it("uses the token account spendable balance when sending all amount", async () => {
     (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
       accountId: "test-sub-account",
       token: undefined,
@@ -298,13 +381,10 @@ describe("genericPrepareTransaction", () => {
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
       amount: BigInt(transaction.amount.toFixed()),
     }));
-    (getCoinModuleApi as jest.Mock).mockReturnValue({
-      estimateFees,
-      validateIntent: intent => Promise.resolve({ amount: intent.amount }),
-    });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
     const prepareTransaction = genericPrepareTransaction("testnet", "local");
 
-    await prepareTransaction(
+    const result = await prepareTransaction(
       {
         ...account,
         subAccounts: [{ id: "test-sub-account", spendableBalance: new BigNumber(100) }],
@@ -317,6 +397,41 @@ describe("genericPrepareTransaction", () => {
     );
 
     expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ amount: 100n }), {});
+    expect((result as any).amount.toString()).toBe("100");
+  });
+
+  it("subtracts pending token operations from the token send-max", async () => {
+    (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
+      accountId: "test-sub-account",
+      token: undefined,
+    });
+    const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
+    (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
+      amount: BigInt(transaction.amount.toFixed()),
+    }));
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    const result = await prepareTransaction(
+      {
+        ...account,
+        subAccounts: [
+          {
+            id: "test-sub-account",
+            spendableBalance: new BigNumber(100),
+            pendingOperations: [{ type: "OUT", value: new BigNumber(30) }],
+          },
+        ],
+      },
+      {
+        subAccountId: "test-sub-account",
+        useAllAmount: true,
+        amount: new BigNumber(0),
+      } as GenericTransaction,
+    );
+
+    // 100 token spendable - 30 committed by the pending token send
+    expect((result as any).amount.toString()).toBe("70");
   });
 
   it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {

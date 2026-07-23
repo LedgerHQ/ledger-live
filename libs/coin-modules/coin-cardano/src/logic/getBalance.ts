@@ -1,5 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { APITransaction } from "../api/api-types";

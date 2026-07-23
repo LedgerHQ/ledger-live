@@ -190,6 +190,7 @@ const AccountScreenInner = ({
         gradientColor={getCurrencyColor(currency) || colors.primary.c80}
       />
       <AnimatedFlatListWithRefreshControl
+        accountId={mainAccount.id}
         style={{ flex: 1 }}
         contentContainerStyle={{
           paddingTop: 48, //CurrencyHeader height

@@ -6,6 +6,8 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 // These tests cover the general Ledger Wallet app behavior
 
+const SMOKE_TAGS = ["@smoke", "@NanoSP", "@NanoX", "@LNS"];
+
 test.describe("App.json cleanup", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -17,7 +19,7 @@ test.describe("App.json cleanup", () => {
   test(
     "cleanup removes stale app.json.* files on boot",
     {
-      tag: ["@smoke", "@NanoSP", "@NanoX", "@LNS"],
+      tag: SMOKE_TAGS,
     },
     async ({ page, userdataDestinationPath }) => {
       await page.title();
@@ -33,7 +35,7 @@ test.describe("Identities migration from legacy user", () => {
 
   test(
     "after boot with skip-onboarding userdata, user id is in store identities (same value), deviceIds [], new datadogId",
-    { tag: ["@smoke", "@NanoSP", "@NanoX", "@LNS"] },
+    { tag: SMOKE_TAGS },
     async ({ app, page, userdataFile }) => {
       // must match tests/userdata/skip-onboarding.json (app.json no longer has data.user after identities persist)
       const expectedUserId = "08cf3393-c5eb-4ea7-92de-0deea22e3971";

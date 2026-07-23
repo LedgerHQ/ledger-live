@@ -1,16 +1,11 @@
 import { AssertionError, fail } from "assert";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
-import BigNumber from "bignumber.js";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
-import tokenData from "../../fixtures/ethereum-erc20-usd__coin.json";
 import {
   coinOperation1,
   coinOperation2,
@@ -18,22 +13,6 @@ import {
   coinOperation4,
 } from "../../fixtures/ledger.fixtures";
 import * as LEDGER_API from "./ledger";
-
-setupMockCryptoAssetsStore({
-  findTokenByAddressInCurrency: async (
-    _address: string,
-    _currencyId: string,
-  ): Promise<TokenCurrency | undefined> => {
-    if (_address === tokenData.contractAddress.toLowerCase()) {
-      return {
-        ...tokenData,
-        type: "TokenCurrency" as const,
-      } as TokenCurrency;
-    }
-    return undefined;
-  },
-  getTokensSyncHash: async () => "0",
-});
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -47,14 +26,6 @@ const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
     chainId: 1,
   },
 }) as CryptoCurrency;
-
-const accountId = encodeAccountId({
-  type: "js",
-  version: "2",
-  currencyId: "ethereum",
-  xpubOrAddress: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-  derivationMode: "",
-});
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -199,7 +170,6 @@ describe("EVM Family", () => {
           await LEDGER_API.getOperations(
             badCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
           fail("Promise should have been rejected");
@@ -228,7 +198,6 @@ describe("EVM Family", () => {
         await LEDGER_API.getOperations(
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          accountId,
           0,
         );
 
@@ -247,181 +216,199 @@ describe("EVM Family", () => {
         const response = await LEDGER_API.getOperations(
           fakeCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          accountId,
           0,
         );
+
+        const addr = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
+        const txHash = coinOperation1.hash;
+        const blockHash = coinOperation1.block.hash;
+        const fees = BigInt(coinOperation1.gas_used) * BigInt(coinOperation1.gas_price);
+        const nftReceiver = "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C";
+        const tx1 = {
+          hash: txHash,
+          block: {
+            height: coinOperation1.block.height,
+            hash: blockHash,
+            time: new Date(coinOperation1.block.time),
+          },
+          fees,
+          date: new Date(coinOperation1.block.time),
+          failed: false,
+          feesPayer: addr,
+        };
+        const tx2 = {
+          hash: txHash,
+          block: {
+            height: coinOperation2.block.height,
+            hash: blockHash,
+            time: new Date(coinOperation2.block.time),
+          },
+          fees,
+          date: new Date(coinOperation2.block.time),
+          failed: false,
+          feesPayer: addr,
+        };
+        const tx3 = {
+          hash: txHash,
+          block: {
+            height: coinOperation3.block.height,
+            hash: blockHash,
+            time: new Date(coinOperation3.block.time),
+          },
+          fees,
+          date: new Date(coinOperation3.block.time),
+          failed: false,
+          feesPayer: eip55.encode(coinOperation3.from),
+        };
+        const tx4 = {
+          hash: txHash,
+          block: {
+            height: coinOperation4.block.height,
+            hash: blockHash,
+            time: new Date(coinOperation4.block.time),
+          },
+          fees,
+          date: new Date(coinOperation4.block.time),
+          failed: false,
+          feesPayer: eip55.encode(coinOperation4.from),
+        };
 
         expect(response).toEqual({
           lastCoinOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-FEES",
-              accountId,
-              blockHash: coinOperation1.block.hash,
-              blockHeight: coinOperation1.block.height,
-              date: new Date(coinOperation1.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation1.gas_used).times(coinOperation1.gas_price),
-              hash: coinOperation1.hash,
-              hasFailed: false,
-              nftOperations: [],
-              subOperations: [],
-              internalOperations: [],
-              recipients: [eip55.encode(coinOperation1.to)],
-              senders: [eip55.encode(coinOperation1.from)],
-              transactionSequenceNumber: new BigNumber(coinOperation1.nonce_value),
+              id: `${addr}-${txHash}-FEES`,
               type: "FEES",
-              value: new BigNumber(coinOperation1.value),
+              senders: [addr],
+              recipients: [eip55.encode(coinOperation1.to)],
+              value: 0n,
+              asset: { type: "native" },
+              tx: tx1,
+              details: { sequence: 75 },
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT",
-              accountId,
-              blockHash: coinOperation2.block.hash,
-              blockHeight: coinOperation2.block.height,
-              date: new Date(coinOperation2.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation2.gas_used).times(coinOperation2.gas_price),
-              hash: coinOperation2.hash,
-              hasFailed: false,
-              nftOperations: [],
-              subOperations: [],
-              internalOperations: [],
-              recipients: [eip55.encode(coinOperation2.to)],
-              senders: [eip55.encode(coinOperation2.from)],
-              transactionSequenceNumber: new BigNumber(coinOperation2.nonce_value),
+              id: `${addr}-${txHash}-OUT`,
               type: "OUT",
-              value: new BigNumber(coinOperation2.value),
+              senders: [addr],
+              recipients: [eip55.encode(coinOperation2.to)],
+              value: 10n,
+              asset: { type: "native" },
+              tx: tx2,
+              details: { sequence: 75 },
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
-              accountId,
-              blockHash: coinOperation3.block.hash,
-              blockHeight: coinOperation3.block.height,
-              date: new Date(coinOperation3.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation3.gas_used).times(coinOperation3.gas_price),
-              hash: coinOperation3.hash,
-              hasFailed: false,
-              nftOperations: [],
-              subOperations: [],
-              internalOperations: [],
-              recipients: [eip55.encode(coinOperation3.to)],
+              id: `${addr}-${txHash}-IN`,
+              type: "IN",
               senders: [eip55.encode(coinOperation3.from)],
-              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
-              type: "IN",
-              value: new BigNumber(coinOperation3.value),
+              recipients: [addr],
+              value: 100n,
+              asset: { type: "native" },
+              tx: tx3,
+              details: { sequence: 75 },
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN",
-              accountId,
-              blockHash: coinOperation4.block.hash,
-              blockHeight: coinOperation4.block.height,
-              date: new Date(coinOperation4.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation4.gas_used).times(coinOperation4.gas_price),
-              hash: coinOperation4.hash,
-              hasFailed: false,
-              nftOperations: [],
-              subOperations: [],
-              internalOperations: [],
-              recipients: [eip55.encode(coinOperation4.to)],
-              senders: [eip55.encode(coinOperation4.from)],
-              transactionSequenceNumber: new BigNumber(coinOperation4.nonce_value),
+              id: `${addr}-${txHash}-IN`,
               type: "IN",
-              value: new BigNumber(coinOperation4.value),
+              senders: [eip55.encode(coinOperation4.from)],
+              recipients: [addr],
+              value: 100n,
+              asset: { type: "native" },
+              tx: tx4,
+              details: { sequence: 75 },
             },
           ],
           lastNftOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A+49183440411075624253866807957299276245920874859439606792850319902048050479106+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0",
-              accountId,
-              blockHash: coinOperation2.block.hash,
-              blockHeight: coinOperation2.block.height,
-              contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
-              date: new Date(coinOperation2.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation2.gas_used).times(coinOperation2.gas_price),
-              hash: coinOperation2.hash,
-              recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC721",
-              tokenId:
-                "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-              transactionSequenceNumber: new BigNumber(coinOperation2.nonce_value),
+              id: `${txHash}-erc721-0-NFT_OUT`,
               type: "NFT_OUT",
-              value: new BigNumber("1"),
+              senders: [addr],
+              recipients: [nftReceiver],
+              value: 1n,
+              asset: {
+                type: "erc721",
+                assetReference: eip55.encode(coinOperation2.erc721_transfer_events[0].contract),
+                assetOwner: addr,
+              },
+              tx: tx2,
+              details: {
+                ledgerOpType: "NFT_OUT",
+                tokenId: coinOperation2.erc721_transfer_events[0].token_id,
+                assetAmount: "1",
+                assetSenders: [addr],
+                assetRecipients: [nftReceiver],
+              },
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734666+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_0",
-              accountId,
-              blockHash: coinOperation3.block.hash,
-              blockHeight: coinOperation3.block.height,
-              contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-              date: new Date(coinOperation3.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation3.gas_used).times(coinOperation3.gas_price),
-              hash: coinOperation3.hash,
-              recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC1155",
-              tokenId:
-                "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
+              id: `${txHash}-erc1155-0-0-NFT_OUT`,
               type: "NFT_OUT",
-              value: new BigNumber("1"),
+              senders: [addr],
+              recipients: [nftReceiver],
+              value: 1n,
+              asset: {
+                type: "erc1155",
+                assetReference: eip55.encode(coinOperation3.erc1155_transfer_events[0].contract),
+                assetOwner: addr,
+              },
+              tx: tx3,
+              details: {
+                ledgerOpType: "NFT_OUT",
+                tokenId: coinOperation3.erc1155_transfer_events[0].transfers[0].id,
+                assetAmount: "1",
+                assetSenders: [addr],
+                assetRecipients: [nftReceiver],
+              },
             },
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+0x2953399124F0cBB46d2CbACD8A89cF0599974963+49183440411075624253866807957299276245920874859439606792850319904247073734665+ethereum-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-NFT_OUT-i0_1",
-              accountId,
-              blockHash: coinOperation3.block.hash,
-              blockHeight: coinOperation3.block.height,
-              contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
-              date: new Date(coinOperation3.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation3.gas_used).times(coinOperation3.gas_price),
-              hash: coinOperation3.hash,
-              recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC1155",
-              tokenId:
-                "49183440411075624253866807957299276245920874859439606792850319904247073734665",
-              transactionSequenceNumber: new BigNumber(coinOperation3.nonce_value),
+              id: `${txHash}-erc1155-0-1-NFT_OUT`,
               type: "NFT_OUT",
-              value: new BigNumber("2"),
+              senders: [addr],
+              recipients: [nftReceiver],
+              value: 2n,
+              asset: {
+                type: "erc1155",
+                assetReference: eip55.encode(coinOperation3.erc1155_transfer_events[0].contract),
+                assetOwner: addr,
+              },
+              tx: tx3,
+              details: {
+                ledgerOpType: "NFT_OUT",
+                tokenId: coinOperation3.erc1155_transfer_events[0].transfers[1].id,
+                assetAmount: "2",
+                assetSenders: [addr],
+                assetRecipients: [nftReceiver],
+              },
             },
           ],
           lastTokenOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
-              accountId: accountId,
-              blockHash: coinOperation1.block.hash,
-              blockHeight: coinOperation1.block.height,
-              contract: eip55.encode(coinOperation1.to),
-              date: new Date(coinOperation1.block.time),
-              extra: {},
-              fee: new BigNumber(coinOperation1.gas_used).times(coinOperation1.gas_price),
-              hash: coinOperation1.hash,
-              recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
-              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              transactionSequenceNumber: new BigNumber(coinOperation1.nonce_value),
+              id: `${txHash}-erc20-0-OUT`,
               type: "OUT",
-              value: new BigNumber("100000000000000"),
+              senders: [addr],
+              recipients: [eip55.encode(coinOperation1.transfer_events[0].to)],
+              value: 100000000000000n,
+              asset: {
+                type: "erc20",
+                assetReference: eip55.encode(coinOperation1.transfer_events[0].contract),
+                assetOwner: addr,
+              },
+              tx: tx1,
+              details: {
+                ledgerOpType: "OUT",
+                assetAmount: coinOperation1.transfer_events[0].count,
+                assetSenders: [addr],
+                assetRecipients: [eip55.encode(coinOperation1.transfer_events[0].to)],
+              },
             },
           ],
           lastInternalOperations: [
             {
-              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
-              accountId,
-              blockHash: coinOperation2.block.hash,
-              blockHeight: coinOperation2.block.height,
-              date: new Date(coinOperation2.block.time),
-              extra: {},
-              fee: new BigNumber("0"),
-              hasFailed: false,
-              hash: coinOperation2.hash,
-              recipients: [eip55.encode(coinOperation2.actions[0].to)],
-              senders: [eip55.encode(coinOperation2.actions[0].from)],
+              id: `${txHash}-internal-0-IN`,
               type: "IN",
-              value: new BigNumber(coinOperation2.actions[0].value),
+              senders: [eip55.encode(coinOperation2.actions[0].from)],
+              recipients: [addr],
+              value: BigInt(coinOperation2.actions[0].value),
+              asset: { type: "native" },
+              tx: { ...tx2, fees: 0n },
+              details: { internal: true, hasFailed: false },
             },
           ],
           nextPagingToken: "",
@@ -451,7 +438,6 @@ describe("EVM Family", () => {
           const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
           expect(response.lastNftOperations).toEqual([]);
@@ -480,7 +466,6 @@ describe("EVM Family", () => {
           const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
 
@@ -496,7 +481,6 @@ describe("EVM Family", () => {
           const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
 
@@ -512,7 +496,6 @@ describe("EVM Family", () => {
           const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
 
@@ -528,7 +511,6 @@ describe("EVM Family", () => {
           const response = await LEDGER_API.getOperations(
             fakeCurrency,
             "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-            accountId,
             0,
           );
 

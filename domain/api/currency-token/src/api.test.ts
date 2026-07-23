@@ -216,6 +216,27 @@ describe("cryptoAssetsApi requests", () => {
     expect(url).toContain("id=ethereum");
   });
 
+  it("getTokensSyncHash preserves a path prefix in the base URL (Gravitee /cal prefix)", async () => {
+    mockFetch([{ id: "ethereum" }], { "X-Ledger-Commit": "abc123" });
+    const store = configureStore({
+      reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+      middleware: gdm =>
+        gdm({
+          thunk: {
+            extraArgument: calApiExtra({
+              calServiceUrl: "https://global.api.prd.ledger.com/cal",
+              ledgerClientVersion: "1.2.3",
+            }),
+          },
+        }).concat(cryptoAssetsApi.middleware),
+    });
+
+    await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
+
+    const url = String(fetchSpy.mock.calls[0][0]);
+    expect(url).toContain("https://global.api.prd.ledger.com/cal/v1/currencies");
+  });
+
   it("getTokensSyncHash errors with 404 on an empty currency array", async () => {
     mockFetch([], { "X-Ledger-Commit": "commit-hash" });
     const store = makeStore();

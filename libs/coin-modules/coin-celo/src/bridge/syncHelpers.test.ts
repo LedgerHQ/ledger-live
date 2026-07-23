@@ -1,7 +1,7 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/sync";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount, makeOperation, makeTokenAccount } from "./syncHelpers.fixtures";

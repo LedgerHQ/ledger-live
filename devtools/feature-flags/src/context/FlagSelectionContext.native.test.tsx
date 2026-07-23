@@ -6,7 +6,7 @@ import {
   FlagSelectionProvider,
   useFlagSelectionActions,
   useFlagSelectionState,
-} from "./FlagSelectionContext.native";
+} from "./FlagSelectionContext";
 
 jest.mock("@ledgerhq/lumen-ui-rnative", () => ({
   ...jest.requireActual("@ledgerhq/lumen-ui-rnative"),

@@ -12,8 +12,6 @@ export async function getCoinFrameworkCurrencyBridge(
 ): Promise<CurrencyBridge> {
   const signer = customSigner ?? (await getSigner(network));
   return {
-    preload: () => Promise.resolve({}),
-    hydrate: () => undefined,
     scanAccounts: makeScanAccounts({
       getAccountShape: genericGetAccountShape(network, kind),
       getAddressFn: signer.getAddress.bind(signer),

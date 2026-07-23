@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.57.0",
+  "version": "0.58.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -60,13 +60,11 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@solana/spl-token": "catalog:",
     "@solana/web3.js": "catalog:",
     "bignumber.js": "^9.1.2",
     "bs58": "catalog:",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "ky": "1.7.5",
     "lodash": "^4.17.21",
@@ -77,6 +75,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",

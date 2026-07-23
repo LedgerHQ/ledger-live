@@ -6,7 +6,6 @@
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
     "src/hw-getAddress.ts",
-    "src/specs.ts",
     "src/transaction.ts"
   ],
   "ignorePatterns": [
@@ -18,19 +17,18 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util",
+    "@ledgerhq/types-cryptoassets"
+  ],
   "ignoreUnimported": [
     "src/index.ts",
-    "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/index.ts",
-    "src/test/speculos-deviceActions.ts",
     "src/supportedFeatures.ts",
     "src/network/hgraph.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "expect",
     "lodash",
     "rxjs"
   ]

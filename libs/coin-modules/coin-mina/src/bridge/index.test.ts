@@ -1,21 +1,8 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SignRawOperationArg0 } from "@ledgerhq/types-live";
 import { MinaCoinConfig } from "../config";
 import { MinaAccount, MinaSigner } from "../types";
-import { createBridges, buildCurrencyBridge, buildAccountBridge } from ".";
-
-describe("buildCurrencyBridge", () => {
-  const currencyBridge = buildCurrencyBridge(jest.fn() as SignerContext<MinaSigner>);
-
-  it("preload resolves to empty object", async () => {
-    expect(await currencyBridge.preload({} as CryptoCurrency)).toEqual({});
-  });
-
-  it("hydrate does not throw", () => {
-    expect(() => currencyBridge.hydrate({} as CryptoCurrency, {} as CryptoCurrency)).not.toThrow();
-  });
-});
+import { createBridges, buildAccountBridge } from ".";
 
 describe("buildAccountBridge", () => {
   const accountBridge = buildAccountBridge(jest.fn() as SignerContext<MinaSigner>);
@@ -52,8 +39,6 @@ describe("createBridges", () => {
         assignToAccountRaw: expect.any(Function),
       },
       currencyBridge: {
-        preload: expect.any(Function),
-        hydrate: expect.any(Function),
         scanAccounts: expect.any(Function),
       },
     });

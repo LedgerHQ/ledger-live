@@ -4,9 +4,9 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
 
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
@@ -15,6 +15,7 @@ import type { StakingContractConfig } from "../../types/staking";
 import { getStakingABI } from "../abis";
 import { STAKING_CONTRACTS } from "../contracts";
 import type { ValidatorApi } from "./types";
+import { callGetValidator } from "./monadResolver";
 
 // Monad staking precompile read functions are marked `nonpayable` (not `view`)
 // in the ABI because precompiles can consume all gas on invalid arguments — but
@@ -77,22 +78,6 @@ const validatorNameCache = makeLRUCache(
 );
 
 type ValidatorSetRaw = [boolean, bigint, bigint[]];
-// getValidator returns 12 fields; we only type/validate the ones we read:
-// [0] authAddress, [2] stake, [4] commission, [10] secpPubkey (bytes -> hex string).
-type ValidatorRaw = [
-  string,
-  unknown,
-  bigint,
-  unknown,
-  bigint,
-  unknown,
-  unknown,
-  unknown,
-  unknown,
-  unknown,
-  string,
-];
-
 function isValidatorSetRaw(value: unknown): value is ValidatorSetRaw {
   return (
     Array.isArray(value) &&
@@ -100,16 +85,6 @@ function isValidatorSetRaw(value: unknown): value is ValidatorSetRaw {
     typeof value[1] === "bigint" &&
     Array.isArray(value[2]) &&
     value[2].every(item => typeof item === "bigint")
-  );
-}
-
-function isValidatorRaw(value: unknown): value is ValidatorRaw {
-  return (
-    Array.isArray(value) &&
-    typeof value[0] === "string" &&
-    typeof value[2] === "bigint" &&
-    typeof value[4] === "bigint" &&
-    typeof value[10] === "string"
   );
 }
 
@@ -167,18 +142,6 @@ const resolveContext = (currencyId: string): ResolvedContext | undefined => {
   }
 };
 
-const callGetValidator = async (
-  provider: JsonRpcProvider,
-  iface: ethers.Interface,
-  contractAddress: string,
-  valId: bigint,
-): Promise<ValidatorRaw | null> => {
-  const data = iface.encodeFunctionData("getValidator", [valId]);
-  const raw = await provider.call({ to: contractAddress, data });
-  const decoded = iface.decodeFunctionResult("getValidator", raw);
-  return isValidatorRaw(decoded) ? decoded : null;
-};
-
 const fetchValidatorDetails = async (
   currencyId: string,
   provider: JsonRpcProvider,
@@ -229,35 +192,6 @@ const fetchValidatorDetails = async (
   }
 
   return items;
-};
-
-export const getValidatorAddressById = async (
-  currencyId: string,
-  valId: bigint,
-): Promise<string | null> => {
-  const ctx = resolveContext(currencyId);
-  if (!ctx) return null;
-
-  try {
-    return await withApi(
-      ctx.currency,
-      async provider => {
-        const iface = new ethers.Interface(ctx.abi);
-        const decoded = await callGetValidator(provider, iface, ctx.contractAddress, valId);
-        if (!decoded) return null;
-        const [, , , , , , , , , , secpPubkey] = decoded;
-        return ethers.computeAddress(secpPubkey);
-      },
-      ctx.node,
-    );
-  } catch (error) {
-    log("coin-evm/staking", "getValidatorAddressById: getValidator call failed", {
-      currencyId,
-      valId: valId.toString(),
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return null;
-  }
 };
 
 const fetchPage = async (

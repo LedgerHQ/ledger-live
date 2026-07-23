@@ -28,5 +28,9 @@ module.exports = {
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  // @ledgerhq/disable-network-setup (nock) is intentionally not enabled — like coin-tezos,
+  // because nock@14 + msw/node conflict for axios-based clients (@ledgerhq/live-network).
+  // Network guard: unit tests mock the client; msw tests use onUnhandledRequest: "error".
+  // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
 };

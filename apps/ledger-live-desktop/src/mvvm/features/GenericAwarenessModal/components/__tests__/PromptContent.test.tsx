@@ -38,19 +38,29 @@ describe("PromptContent", () => {
 
   it.each([
     ["primary", { primaryButtonLabel: "", primaryButtonLink: "https://example.com/primary" }],
-    ["primary", { primaryButtonLabel: "Primary", primaryButtonLink: "" }],
     [
       "secondary",
       { secondaryButtonLabel: "", secondaryButtonLink: "https://example.com/secondary" },
     ],
-    ["secondary", { secondaryButtonLabel: "Secondary", secondaryButtonLink: "" }],
-  ] as const)("should hide the %s button when label or link is empty", (button, patch) => {
+  ] as const)("should hide the %s button when label is empty", (button, patch) => {
     render(<PromptContent {...baseProps} {...patch} />);
 
     expect(
       screen.queryByTestId(`generic-awareness-modal-${button}-button`),
     ).not.toBeInTheDocument();
   });
+
+  it.each([
+    ["primary", { primaryButtonLabel: "Primary", primaryButtonLink: "" }],
+    ["secondary", { secondaryButtonLabel: "Secondary", secondaryButtonLink: "" }],
+  ] as const)(
+    "should show the %s button when label is present and link is empty",
+    (button, patch) => {
+      render(<PromptContent {...baseProps} {...patch} />);
+
+      expect(screen.getByTestId(`generic-awareness-modal-${button}-button`)).toBeVisible();
+    },
+  );
 
   it("should call onPrimaryClick when the primary button is pressed", async () => {
     const { user } = render(<PromptContent {...baseProps} />);

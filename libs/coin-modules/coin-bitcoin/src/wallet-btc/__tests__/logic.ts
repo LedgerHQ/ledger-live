@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { isValidRecipient } from "../../logic";
 import { InvalidAddress } from "@ledgerhq/errors";
 

@@ -1,5 +1,20 @@
-import type { StakingContractConfig } from "../types/staking";
+import { ethers } from "ethers";
+import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
+import { getValidatorAddressById } from "./validators/monadResolver";
+
+export function getStakingContractAddress(
+  currencyId: string,
+  ctx?: { mode: StakingOperation; valAddress?: string },
+): string | undefined {
+  const config = STAKING_CONTRACTS[currencyId];
+  if (!config) return undefined;
+  try {
+    return config.contractAddress(ctx);
+  } catch {
+    return undefined;
+  }
+}
 
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
@@ -69,6 +84,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // Reserve 0.1 SEI (≈ 830k gas at 120 gwei) so that fee spikes between
     // prepareTransaction and broadcast do not cause the staking precompile to revert.
     delegationMaxAmountReserve: 10n ** 17n, // 0.1 SEI in wei (10^17)
+    resolveValidatorAddress: async d => {
+      return typeof d[0] === "string" ? d[0] : null;
+    },
   },
 
   // Celo staking
@@ -81,6 +99,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       undelegate: "revokeDelegatedGovernanceVotes",
       getStakedBalance: "getAccountTotalLockedGold",
       getUnstakedBalance: "getTotalPendingWithdrawals",
+    },
+    resolveValidatorAddress: async d => {
+      return typeof d[0] === "string" ? d[0] : null;
     },
   },
 
@@ -135,6 +156,11 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // Including the delegation-queue delay (1–2 epochs), the maximum wait is ~3 epochs ≈ 17 h.
     // Source: https://docs.monad.xyz/monad-arch/consensus/staking (WITHDRAWAL_DELAY constant)
     unbondingPeriodDays: 0.75,
+    resolveValidatorAddress: d => {
+      return typeof d[0] === "bigint"
+        ? getValidatorAddressById("monad", d[0])
+        : Promise.resolve(null);
+    },
   },
 
   // 0G staking - factory-per-validator model.
@@ -153,6 +179,8 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       undelegate: "undelegate",
       getStakedBalance: "getDelegation",
     },
+    // https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions#delegateaddress-delegatoraddress
+    calldataAmountScale: 10n ** 9n,
     apiConfig: {
       baseUrl: "https://api.0g.exploreme.pro",
       validatorsEndpoint: "/api/v2/validators?limit=100",
@@ -163,7 +191,21 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     explorerConfig: {
       validatorUrl: "https://explorer.0g.ai/mainnet/validators/$address/delegators",
     },
+    resolveValidatorAddress: async (_, contractAddress) => {
+      return contractAddress ? ethers.getAddress(contractAddress) : null;
+    },
   },
-
-  // TODO: add Somnia next
+  somnia: {
+    contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",
+    functions: {
+      delegate: "delegateStake",
+      undelegate: "undelegateStake",
+      getStakedBalance: "getDelegationInfo",
+      claimReward: "claimDelegatorRewards",
+    },
+    value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
+    resolveValidatorAddress: async parameters => {
+      return typeof parameters[0] === "string" ? parameters[0] : null;
+    },
+  },
 };

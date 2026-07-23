@@ -50,7 +50,7 @@ export default function CryptoAddressesListItem({
   const displayedAssetsCount = subAccountsCount + 1;
 
   return (
-    <ListItem onPress={handlePress} lx={lx}>
+    <ListItem onPress={handlePress} lx={lx} testID={`crypto-address-item-${account.currency.id}`}>
       <AccountItem
         account={account}
         balance={account.balance}

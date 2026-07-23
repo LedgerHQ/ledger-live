@@ -1,5 +1,5 @@
 import { Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { STAKING_CONTRACTS, STAKING_CONFIG } from "../staking";
 
 export const getStakes = async (

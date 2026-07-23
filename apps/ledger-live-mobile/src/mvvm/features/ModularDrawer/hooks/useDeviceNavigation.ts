@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";

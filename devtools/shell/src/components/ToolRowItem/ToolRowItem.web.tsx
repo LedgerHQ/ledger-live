@@ -1,5 +1,5 @@
 import type { Tool } from "@devtools/registry";
-import { ToolRow } from "../ToolRow/ToolRow.web";
+import { ToolRow } from "../ToolRow/ToolRow";
 
 interface ToolRowItemProps {
   tool: Tool;

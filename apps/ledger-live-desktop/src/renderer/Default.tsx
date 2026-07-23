@@ -57,6 +57,7 @@ import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/re
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
+import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
@@ -67,6 +68,7 @@ import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
+import { LargeScreenUpsellModalMount } from "LLD/features/LargeScreenUpsell";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -78,6 +80,7 @@ const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const PortfolioPage = lazy(() => import("LLD/features/Portfolio/screens/PortfolioPage"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
+const DevToolsScreen = lazy(() => import("LLD/features/DevTools/screens/DevToolsScreen"));
 const Card = lazy(() => import("~/renderer/screens/card"));
 const Manager = lazy(() => import("~/renderer/screens/manager"));
 const Exchange = lazy(() => import("~/renderer/screens/exchange"));
@@ -107,7 +110,9 @@ const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
 const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
+const PayTab = lazy(() => import("LLD/features/PayTab"));
 const History = lazy(() => import("LLD/features/History"));
+const Contacts = lazy(() => import("LLD/features/Contacts"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -271,6 +276,7 @@ const MainAppContent = ({
       <Routes>
         <Route path="/" element={withSuspense(PortfolioPage)({})} />
         <Route path="/settings/*" element={withSuspense(Settings)({})} />
+        <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
         <Route path="/accounts" element={withSuspense(Accounts)({})} />
         <Route
           path="/cryptos"
@@ -294,6 +300,7 @@ const MainAppContent = ({
         />
         <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
         <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+        <Route path="/paytab" element={withSuspense(PayTab)({})} />
         <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
         <Route path="/manager/*" element={withSuspense(Manager)({})} />
         <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
@@ -319,6 +326,7 @@ const MainAppContent = ({
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
         <Route path="/history" element={withSuspense(History)({})} />
+        <Route path="/contacts" element={withSuspense(Contacts)({})} />
       </Routes>
     </Page>
     <Drawer />
@@ -337,7 +345,9 @@ export const MainAppLayout = () => {
 
   const backgroundImage = getPageBackground(pathname, theme);
 
-  const useWallet40Layout = isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
+  const useWallet40Layout = isWallet40Page(pathname, {
+    shouldDisplayAggregatedAssets,
+  });
 
   useEffect(() => {
     preloadBackgrounds();
@@ -353,6 +363,7 @@ export const MainAppLayout = () => {
         </>
       )}
       <GenericAwarenessModalAppStart />
+      <LargeScreenUpsellModalMount />
       <SyncNewAccounts priority={2} />
 
       <div
@@ -364,7 +375,10 @@ export const MainAppLayout = () => {
         style={
           useWallet40Layout
             ? backgroundImage
-              ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
+              ? {
+                  backgroundImage: `url(${backgroundImage})`,
+                  backgroundSize: BACKGROUND_SIZE,
+                }
               : undefined
             : {
                 backgroundColor: styledComponentsTheme.colors.background.default,
@@ -422,6 +436,7 @@ export default function Default() {
   useRecoverRestoreOnboarding();
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
+  useSuppressQ2TourForNewUsers();
 
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
@@ -453,18 +468,7 @@ export default function Default() {
       return;
     }
 
-    const wasHardReset = window.localStorage.getItem("hard-reset") === "1";
-
-    // If we just did a hard reset and onboarding is not completed, force redirect to onboarding
-    // even if we're on the settings page (where the reset button is)
-    if (wasHardReset && !hasCompletedOnboarding) {
-      navigate("/onboarding", { replace: true });
-      window.localStorage.removeItem("hard-reset");
-      updateIdentify();
-      return;
-    }
-
-    // Normal onboarding check (when not after a reset)
+    // Normal onboarding check
     const userIsOnboardingOrSettingUp =
       pathname.includes("onboarding") ||
       pathname.includes("recover") ||

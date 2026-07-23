@@ -26,7 +26,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { urls } from "~/utils/urls";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { e2eBridgeClient } from "../../../e2e/bridge/client";
+import { e2eBridgeClient } from "~/e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";

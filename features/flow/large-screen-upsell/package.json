@@ -1,0 +1,57 @@
+{
+  "name": "@features/flow-large-screen-upsell",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Large-screen upsell decision engine plus portable modal screen/content/utils scaffold",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell"
+  },
+  "dependencies": {
+    "@domain/entity-large-screen-upsell-modal": "workspace:*",
+    "@features/platform-feature-flags": "workspace:*",
+    "@shared/feature-flags": "workspace:^"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "clsx": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
+    "tailwind-merge": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -3,16 +3,12 @@ import {
   BottomSheet,
   BottomSheetHeader,
   BottomSheetView,
-  Link,
   OptionList,
   OptionListContent,
   OptionListItem,
   OptionListItemContent,
   OptionListItemText,
   OptionListTrigger,
-  Subheader,
-  SubheaderRow,
-  SubheaderTitle,
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
@@ -25,8 +21,6 @@ type StrategySelectProps = Readonly<{
   options: readonly StrategyOptionWithLabel[];
   value: string;
   strategyLabel: string;
-  learnMoreLabel: string;
-  onLearnMorePress: () => void;
 }>;
 
 export const StrategySelect = ({
@@ -34,8 +28,6 @@ export const StrategySelect = ({
   options,
   value,
   strategyLabel,
-  learnMoreLabel,
-  onLearnMorePress,
 }: StrategySelectProps) => {
   const bottomSheetRef = useBottomSheetRef();
 
@@ -69,17 +61,7 @@ export const StrategySelect = ({
 
   return (
     <Box lx={{ flexDirection: "column", gap: "s12", paddingHorizontal: "s8" }}>
-      <Subheader>
-        <Box>
-          <SubheaderRow lx={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <SubheaderTitle>{strategyLabel}</SubheaderTitle>
-            <Link appearance="accent" underline={false} onPress={onLearnMorePress} size="md">
-              {learnMoreLabel}
-            </Link>
-          </SubheaderRow>
-        </Box>
-      </Subheader>
-      <OptionListTrigger onPress={handleOpenSheet}>
+      <OptionListTrigger label={strategyLabel} onPress={handleOpenSheet}>
         {selectedOption != null && <Text lx={{ color: "base" }}>{selectedOption.label}</Text>}
       </OptionListTrigger>
       <BottomSheet

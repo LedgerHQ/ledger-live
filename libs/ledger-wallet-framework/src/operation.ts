@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCurrenciesResolver } from "./currencies/resolver";
 import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";
 import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
 import { decodeAccountId } from "./account/accountId";
@@ -256,7 +256,9 @@ export const isAddressPoisoningOperation = (
 ): boolean => {
   if (!operation.value.isZero() || account.type !== "TokenAccount") return false;
 
-  const family = getCryptoCurrencyById(account.token.parentCurrencyId).family;
+  const family = getCurrenciesResolver().getCryptoCurrencyById(
+    account.token.parentCurrencyId,
+  ).family;
 
   if (options?.families) {
     return options.families.includes(family);

@@ -1,4 +1,4 @@
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import transactionModule, { formatTransaction } from "./transaction";

@@ -6,6 +6,8 @@ import { track } from "./segment";
 
 const HELP = "Help";
 
+// Exception: help_viewed is kept as a track event (not a Page event) because it is an
+// in-context impression rather than a new screen load. Documented exception to the *_viewed convention.
 function trackHelpViewed(p: { command?: string } = {}): void {
   track("help_viewed", { page: HELP, ...(p.command ? { command: p.command } : {}) });
 }

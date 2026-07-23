@@ -2,7 +2,7 @@ import querystring from "querystring";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";

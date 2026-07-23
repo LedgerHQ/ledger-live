@@ -1,10 +1,11 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "../../types";
 import { createFixtureNFT } from "./nfts";
 import { NFTs, NFTs_BASE, NFTs_POLYGON, NFTs_SOLANA } from "./nftsSamples";
 
-const POL = getCryptoCurrencyById("polygon");
-const BASE = getCryptoCurrencyById("base");
-const SOLANA = getCryptoCurrencyById("solana");
+const POL = getCryptoCurrencyById("polygon") as unknown as CryptoCurrency;
+const BASE = getCryptoCurrencyById("base") as unknown as CryptoCurrency;
+const SOLANA = getCryptoCurrencyById("solana") as unknown as CryptoCurrency;
 describe("nfts fixtures", () => {
   it("createFixtureNFT", () => {
     const FIXTURE = createFixtureNFT("account-mock");

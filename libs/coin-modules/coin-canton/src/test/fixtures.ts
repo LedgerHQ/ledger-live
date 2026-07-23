@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import {
   createEmptyHistoryCache,
@@ -6,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig, { type CantonCoinConfig } from "../config";

@@ -26,13 +26,16 @@ import {
   OpDetailsTitle,
   TextEllipsis,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { useTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/hooks";
+import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
 
 const OperationDetailsPostAccountSection = ({
   operation,
 }: OperationDetailsPostAccountSectionProps<HederaAccount, HederaOperation>) => {
   const { t } = useTranslation();
-  const { token } = useTokenByAddressInCurrency(operation.extra.associatedTokenId || "", "hedera");
+  const { data: token } = useFindTokenByAddressInCurrencyQuery(
+    { contract_address: operation.extra.associatedTokenId || "", network: "hedera" },
+    { skip: !operation.extra.associatedTokenId },
+  );
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
@@ -88,7 +91,10 @@ const OperationDetailsPostAlert = ({
   const dispatch = useDispatch();
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
   const associatedTokenId = extra?.associatedTokenId;
-  const { token } = useTokenByAddressInCurrency(associatedTokenId || "", "hedera");
+  const { data: token } = useFindTokenByAddressInCurrencyQuery(
+    { contract_address: associatedTokenId || "", network: "hedera" },
+    { skip: !associatedTokenId },
+  );
 
   if (operation.type !== "ASSOCIATE_TOKEN") {
     return null;
@@ -131,7 +137,10 @@ const OperationDetailsPostAlert = ({
 };
 
 const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
-  const { token } = useTokenByAddressInCurrency(operation.extra.associatedTokenId || "", "hedera");
+  const { data: token } = useFindTokenByAddressInCurrencyQuery(
+    { contract_address: operation.extra.associatedTokenId || "", network: "hedera" },
+    { skip: !operation.extra.associatedTokenId },
+  );
 
   if (!token) {
     return <Box flex="1" />;

@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { Address, Cell } from "@ton/core";
@@ -586,12 +586,10 @@ const cases: Array<{
     // Cast via unknown to avoid direct any assertions
     tx: {
       ...baseTx,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       payload: { type: "fake-type", as: "is" } as unknown as Transaction["payload"],
     },
     rawTx: {
       ...baseRawTx,
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       payload: { type: "fake-type", as: "is" } as unknown as TransactionRaw["payload"],
     },
   },

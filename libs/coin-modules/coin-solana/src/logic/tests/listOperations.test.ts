@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
 import { http, HttpResponse } from "msw";

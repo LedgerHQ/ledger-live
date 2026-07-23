@@ -41,6 +41,7 @@ export class HistoryPage extends AppPage {
   private readonly operationRows = this.page.locator(`[data-testid^='history-operation-row-']`);
   private readonly operationType = this.page.getByTestId("history-operation-type");
 
+  private readonly actionsMenuButton = this.page.getByTestId("history-actions-menu-button");
   private readonly exportCsvButton = this.page.getByTestId("history-export-csv-button");
   private readonly exportDialog = this.page.getByTestId("history-export-dialog");
   private readonly exportFirstAccount = this.exportDialog.getByRole("checkbox").first();
@@ -127,6 +128,7 @@ export class HistoryPage extends AppPage {
 
   @step("Click Export CSV button")
   async clickExportCsv() {
+    await this.actionsMenuButton.click();
     await this.exportCsvButton.click();
     await expect(this.exportDialog).toBeVisible();
   }

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
@@ -203,10 +203,11 @@ export type NodeApi = {
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<BlockReceiptInfo[]>;
-  traceBlock?: (
+  traceBlockErigon?: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
   ) => Promise<TraceBlockItem[]>;
+  traceBlockGeth?: (currency: CryptoCurrency, blockHeight: number) => Promise<TraceBlockItem[]>;
   getOptimismAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
   getScrollAdditionalFees: (currency: CryptoCurrency, transaction: string) => Promise<BigNumber>;
 };

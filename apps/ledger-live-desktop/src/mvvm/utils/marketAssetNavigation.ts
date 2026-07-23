@@ -1,5 +1,3 @@
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-
 /** `/asset` when Wallet 4.0 aggregated assets is on, else `/market` (market deeplinks). */
 export function getAssetsDetailPathPrefix(
   shouldDisplayAggregatedAssets: boolean,
@@ -32,14 +30,4 @@ export function getAssetDetailPath(currencyId: string): string {
 /** True for asset (`/asset/:id`) or legacy market (`/market/:id`) detail pages (not the `/market` list). */
 export function isAssetOrMarketDetailPath(pathname: string): boolean {
   return /^\/(asset|market)\/[^/]+(?:\/|$)/.test(pathname);
-}
-
-/**
- * Resolves a deeplink path segment to a canonical Ledger crypto currency id.
- * Used when Wallet 4.0 aggregated assets is off (legacy market/asset screens).
- */
-export function resolveLegacyCryptoCurrencyId(path: string): string | null {
-  const normalizedPath = path.trim().toLowerCase();
-  if (!normalizedPath) return null;
-  return findCryptoCurrencyById(normalizedPath)?.id ?? null;
 }

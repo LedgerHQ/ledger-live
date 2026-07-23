@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl, type StakeObject } from "@mysten/sui/jsonRpc";
@@ -38,7 +38,12 @@ const SHAPE_INFO = {
 
 const SYNC_CONFIG = { blacklistedTokenIds: [], paginationConfig: {} };
 
-describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
+// SKIP — Sui JSON-RPC public-endpoint shutdown. The JSON-RPC reference leg of this parity
+// suite hits the public mainnet fullnode (fullnode.mainnet.sui.io), retired by the Sui
+// Foundation (mainnet wk of 2026-07-20) as JSON-RPC is deprecated for gRPC/GraphQL, so
+// cross-transport parity can no longer run. Re-enable once a GraphQL-only live baseline
+// replaces the JSON-RPC reference.
+describe.skip("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
   // Two back-to-back syncs (JSON-RPC + GraphQL) on a high-traffic validator
   // address; ~70s under normal mainnet latency. Bumped above the 60s default.
   test("balance, spendable and suiResources.stakes match across transports", async () => {

@@ -1,7 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
-import { CategoryCard } from "./CategoryCard.web";
+import { CategoryCard } from "./CategoryCard";
 import { Category } from "@devtools/registry";
 import type { Tool } from "@devtools/registry";
 

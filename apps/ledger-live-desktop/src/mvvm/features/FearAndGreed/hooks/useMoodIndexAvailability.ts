@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { isMoodIndexAvailable } from "@ledgerhq/live-common/cmc-client/utils/fearAndGreed";
+import { isMoodIndexAvailable } from "@features/flow-fear-and-greed";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
 export const useMoodIndexAvailability = (): boolean => {

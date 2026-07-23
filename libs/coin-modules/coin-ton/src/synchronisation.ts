@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { decodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { WalletContractV4 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";

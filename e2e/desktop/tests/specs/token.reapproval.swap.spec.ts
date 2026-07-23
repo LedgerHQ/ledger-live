@@ -13,11 +13,12 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 
-const fromAccount = TokenAccount.ETH_USDT_1;
-const toAccount = Account.ETH_1;
+const fromAccount = TokenAccount.ETH_USDT_3;
+const toAccount = Account.ETH_3;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
   SwapProvider.LIFI,
@@ -57,7 +58,7 @@ test.describe("Token reapproval - flow", () => {
   test(
     "Swap - token reapproval flow",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",

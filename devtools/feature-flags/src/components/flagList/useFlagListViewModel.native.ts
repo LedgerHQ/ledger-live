@@ -1,7 +1,7 @@
 import type { FeatureId } from "@shared/feature-flags";
 import type { FeatureFlagsToolProps } from "../../types";
 import { useFeatureFlagsFilters, useSortFlag } from "../../hooks";
-import type { ToolBarProps } from "../toolBar/ToolBar.native";
+import type { ToolBarProps } from "../toolBar/ToolBar";
 
 export interface FlagListViewProps {
   readonly toolBarProps: ToolBarProps;

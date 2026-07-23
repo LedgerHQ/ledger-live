@@ -1,5 +1,5 @@
 import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 
 import { APITransaction } from "./api/api-types";

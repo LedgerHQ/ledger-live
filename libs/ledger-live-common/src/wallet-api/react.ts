@@ -23,8 +23,10 @@ import type { Feature, FeatureId } from "@shared/feature-flags";
 import {
   accountToWalletAPIAccount,
   currencyToWalletAPICurrency,
+  getAccountIdFromWalletAccountId,
   setWalletApiIdForAccountId,
 } from "./converters";
+import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
@@ -110,6 +112,12 @@ export interface UiHook {
     onSuccess: (address: string) => void;
     onCancel: () => void;
     onError: (error: Error) => void;
+  }) => void;
+  // account.getPublicKey has no usable public key (e.g. a Tezos account that must be re-added).
+  // The RPC still rejects; this only surfaces a native message to the user.
+  "account.publicKeyUnavailable": (params: {
+    account: AccountLike;
+    parentAccount: Account | undefined;
   }) => void;
   "message.sign": (params: {
     account: AccountLike;
@@ -291,6 +299,7 @@ export function useWalletAPIServer({
   uiHook: {
     "account.request": uiAccountRequest,
     "account.receive": uiAccountReceive,
+    "account.publicKeyUnavailable": uiAccountPublicKeyUnavailable,
     "message.sign": uiMessageSign,
     "storage.get": uiStorageGet,
     "storage.set": uiStorageSet,
@@ -1224,10 +1233,41 @@ export function useWalletAPIServer({
   }, [accounts, manifest, server, tracking]);
 
   useEffect(() => {
-    server.setHandler("account.getPublicKey", ({ accountId }) => {
-      return accountGetPublicKeyLogic({ manifest, accounts, tracking }, accountId);
+    server.setHandler("account.getPublicKey", async ({ accountId }) => {
+      try {
+        return await accountGetPublicKeyLogic({ manifest, accounts, tracking }, accountId);
+      } catch (error) {
+        // Surface a native message, then let the RPC reject as before. Match by name (not just
+        // instanceof, per createCustomErrorClass) so it holds even if the error loses its
+        // prototype (e.g. serialized to a plain object across a transport).
+        const isPublicKeyUnavailable =
+          error instanceof AccountPublicKeyUnavailable ||
+          (typeof error === "object" &&
+            error !== null &&
+            (error as { name?: unknown }).name === "AccountPublicKeyUnavailable");
+        if (isPublicKeyUnavailable && uiAccountPublicKeyUnavailable) {
+          try {
+            const localAccountId = getAccountIdFromWalletAccountId(accountId);
+            const account = localAccountId
+              ? accounts.find(a => a.id === localAccountId)
+              : undefined;
+            if (account) {
+              uiAccountPublicKeyUnavailable({
+                account,
+                // getParentAccount returns the account itself for a main account; a real parent
+                // only exists for token accounts.
+                parentAccount:
+                  account.type === "TokenAccount" ? getParentAccount(account, accounts) : undefined,
+              });
+            }
+          } catch {
+            // Best-effort native prompt: never let a UI failure replace the original RPC rejection.
+          }
+        }
+        throw error;
+      }
     });
-  }, [accounts, manifest, server, tracking]);
+  }, [accounts, manifest, server, tracking, uiAccountPublicKeyUnavailable]);
 
   useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {

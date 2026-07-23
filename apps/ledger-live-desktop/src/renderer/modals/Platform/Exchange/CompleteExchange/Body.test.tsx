@@ -1,6 +1,6 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -58,6 +58,7 @@ describe("CompleteExchange Body", () => {
         fromParentAccount: undefined,
         fromCurrency: currency,
         toAccount: account,
+        toParentAccount: undefined,
         toCurrency: currency,
       } as ExchangeSwap,
       transaction: {} as Transaction,

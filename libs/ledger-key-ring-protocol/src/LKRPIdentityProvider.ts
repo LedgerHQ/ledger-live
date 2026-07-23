@@ -7,10 +7,10 @@ import {
   type KeycloakToken,
 } from "@ledgerhq/ledger-auth";
 import getApi, {
-  type ChallengeSignature,
   type Challenge as ChallengeJson,
   type LKRPChallenge,
   LKRPChallengeSchema,
+  type WeakChallengeSignature,
 } from "./api";
 import type { MemberCredentials } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
@@ -47,9 +47,9 @@ export class LkrpIdentityProvider implements IdentityProvider {
 
   private signChallenge(challenge: LKRPChallenge): {
     challenge: ChallengeJson;
-    signature: ChallengeSignature;
+    signature: WeakChallengeSignature;
   } {
-    if (!this.keypair || !this.trustchainId) {
+    if (!this.keypair) {
       throw new WalletAuthNoCredentialsError(this.brokerId);
     }
 
@@ -62,7 +62,9 @@ export class LkrpIdentityProvider implements IdentityProvider {
       signature: {
         credential: credentialForPubKey(this.keypair.pubkey),
         signature: crypto.to_hex(crypto.sign(hash, keypair)),
-        attestation: crypto.to_hex(liveAuthentication(this.trustchainId)),
+        attestation: this.trustchainId
+          ? crypto.to_hex(liveAuthentication(this.trustchainId))
+          : undefined,
       },
     };
   }

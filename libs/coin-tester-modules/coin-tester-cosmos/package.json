@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cosmos",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Ledger Cosmos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -66,9 +66,7 @@
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "chalk": "^4.1.2",
@@ -76,6 +74,7 @@
     "expect": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
@@ -84,7 +83,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "^5",
-    "ts-node": "^10.9.2",
     "typescript": "catalog:"
   }
 }

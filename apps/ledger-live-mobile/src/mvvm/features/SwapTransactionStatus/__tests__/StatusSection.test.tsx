@@ -10,9 +10,11 @@ const ethereum = getCryptoCurrencyById("ethereum");
 function renderStatusSection({
   sendStatus = "pending",
   receiveStatus = "pending",
+  showReceivedAmountEstimated = false,
 }: {
   sendStatus?: TransactionStatusValue;
   receiveStatus?: TransactionStatusValue;
+  showReceivedAmountEstimated?: boolean;
 } = {}) {
   return render(
     <StatusSection
@@ -22,6 +24,7 @@ function renderStatusSection({
       receiveStatus={receiveStatus}
       sentAmount="0.1 BTC"
       receivedAmount="2 ETH"
+      showReceivedAmountEstimated={showReceivedAmountEstimated}
       isLoading={false}
     />,
   );
@@ -44,6 +47,39 @@ describe("StatusSection", () => {
     expect(screen.getByText("Receiving ETH")).toBeVisible();
     expect(screen.getByText("Refunded")).toBeVisible();
     expect(screen.getByText("Cancelled")).toBeVisible();
+  });
+
+  it("should render the estimated label under the received amount when enabled", () => {
+    renderStatusSection({
+      sendStatus: "finished",
+      receiveStatus: "finished",
+      showReceivedAmountEstimated: true,
+    });
+
+    expect(screen.getByText("(Estimated)")).toBeVisible();
+  });
+
+  it("should not render the estimated label when disabled", () => {
+    renderStatusSection({ sendStatus: "finished", receiveStatus: "finished" });
+
+    expect(screen.queryByText("(Estimated)")).toBeNull();
+  });
+
+  it("should not render the estimated label while the received amount is unavailable", () => {
+    render(
+      <StatusSection
+        sendCurrency={bitcoin}
+        receiveCurrency={ethereum}
+        sendStatus="finished"
+        receiveStatus="finished"
+        sentAmount="0.1 BTC"
+        receivedAmount={undefined}
+        showReceivedAmountEstimated
+        isLoading={false}
+      />,
+    );
+
+    expect(screen.queryByText("(Estimated)")).toBeNull();
   });
 
   it("should hide title and status labels while loading", () => {

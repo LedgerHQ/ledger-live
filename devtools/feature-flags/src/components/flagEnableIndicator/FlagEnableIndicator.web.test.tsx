@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { FlagEnableIndicator } from "./FlagEnableIndicator.web";
+import { FlagEnableIndicator } from "./FlagEnableIndicator";
 
 describe("FlagEnableIndicator", () => {
   it("renders 'On' with success styling when enabled", () => {

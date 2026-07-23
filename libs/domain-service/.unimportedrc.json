@@ -1,4 +1,11 @@
 {
-  "entry": ["src/index.ts"],
-  "ignoreUnused": ["react-dom"]
+  "entry": [
+    "src/index.ts"
+  ],
+  "ignoreUnused": [
+    "react-dom"
+  ],
+  "ignoreUnresolved": [
+    "@ledgerhq/types-cryptoassets"
+  ]
 }

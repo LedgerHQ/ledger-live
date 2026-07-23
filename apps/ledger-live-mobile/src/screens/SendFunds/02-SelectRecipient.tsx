@@ -41,6 +41,7 @@ import { useExpiryDurationInput } from "LLM/features/ExpiryDuration/hooks/useExp
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
 import perFamilySendSelectRecipient from "../../generated/SendSelectRecipient";
+import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
 import {
   getTokenExtensions,
   hasProblematicExtension,
@@ -206,6 +207,19 @@ export default function SendSelectRecipient({ route }: Props) {
       });
     }
 
+    const family = mainAccount.currency.family;
+    const familySendFlow = getCustomSendFlow(family);
+
+    if (familySendFlow?.navigateAfterRecipient) {
+      const handled = familySendFlow.navigateAfterRecipient({
+        navigation,
+        account,
+        parentAccount: parentAccount ?? undefined,
+        transaction,
+      });
+      if (handled) return;
+    }
+
     return navigation.navigate(ScreenName.SendAmountCoin, {
       accountId: account.id,
       parentId: parentAccount?.id,
@@ -213,10 +227,11 @@ export default function SendSelectRecipient({ route }: Props) {
     });
   }, [
     account,
+    mainAccount,
     transaction,
     shouldSkipAmount,
     navigation,
-    parentAccount?.id,
+    parentAccount,
     route.params,
     memoTag?.isEmpty,
     memoTagDrawerState,

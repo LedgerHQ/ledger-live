@@ -2,7 +2,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
@@ -675,6 +675,7 @@ async function getBlockReceipts(
 
 async function traceBlockGeth(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number,
 ): Promise<TraceBlockItem[]> {
   const rpcBlockTag = ethers.toQuantity(blockHeight); // convert to hex string
@@ -693,16 +694,16 @@ async function traceBlockGeth(
       throw error;
     });
   if (!Array.isArray(debugResults)) throw new Error("Invalid debug_traceBlockByNumber response");
-  const items = gethCallTracerToTraceBlockItems(blockHeight, debugResults);
-  return items;
+  return normalizeTraceBlockItems(gethCallTracerToTraceBlockItems(blockHeight, debugResults));
 }
 
 async function traceBlockErigon(
   api: JsonRpcProvider,
+  _currency: CryptoCurrency,
   blockHeight: number | "latest",
 ): Promise<TraceBlockItem[]> {
   const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
-  return await api.send("trace_block", [blockTag]).catch(error => {
+  const traces = await api.send("trace_block", [blockTag]).catch(error => {
     if (isUnsupportedRpcMethodError(error)) {
       throw new UnsupportedRpcMethodError("trace_block is not supported by this RPC provider", {
         method: "trace_block",
@@ -711,35 +712,15 @@ async function traceBlockErigon(
     }
     throw error;
   });
+  return normalizeTraceBlockItems(traces);
 }
 
-function isNumber(value: unknown): value is number {
-  return typeof value === "number";
-}
-
-async function callTraceBlock(
-  api: JsonRpcProvider,
-  blockHeight: number | "latest",
-): Promise<TraceBlockItem[]> {
-  return await traceBlockErigon(api, blockHeight).catch(error => {
-    if (isNumber(blockHeight)) {
-      return traceBlockGeth(api, blockHeight);
-    }
-    throw error;
-  });
-}
-
-async function traceBlock(
-  api: JsonRpcProvider,
-  _currency: CryptoCurrency,
-  blockHeight: number | "latest",
-): Promise<TraceBlockItem[]> {
-  const traces = await callTraceBlock(api, blockHeight);
-  if (!Array.isArray(traces)) throw new Error("Invalid trace_block response");
+function normalizeTraceBlockItems(traces: TraceBlockItem[]): TraceBlockItem[] {
+  if (!Array.isArray(traces)) throw new Error("Invalid trace block response");
 
   return traces.map((trace, index) => {
     if (!isTraceBlockItem(trace)) {
-      throw new Error(`Malformed trace_block response at index ${index} ${JSON.stringify(trace)}`);
+      throw new Error(`Malformed trace block response at index ${index} ${JSON.stringify(trace)}`);
     }
     return trace;
   });
@@ -888,7 +869,8 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),
     getBlockReceipts: make(getBlockReceipts, config),
-    traceBlock: make(traceBlock, config),
+    traceBlockErigon: make(traceBlockErigon, config),
+    traceBlockGeth: make(traceBlockGeth, config),
     getGasEstimation: makeGetGasEstimation(config),
     getFeeData: make(getFeeData, config),
     broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),

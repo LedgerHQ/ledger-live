@@ -4,15 +4,15 @@ import type { FlagDisplayState } from "../../types";
 import {
   useFeatureFlagsToolActions,
   useFeatureFlagsToolState,
-} from "../../context/FeatureFlagsToolContext.native";
-import { useFlagSelectionActions } from "../../context/FlagSelectionContext.native";
-import { FlagRow } from "./FlagRow.native";
+} from "../../context/FeatureFlagsToolContext";
+import { useFlagSelectionActions } from "../../context/FlagSelectionContext";
+import { FlagRow } from "./FlagRow";
 
-jest.mock("../../context/FeatureFlagsToolContext.native", () => ({
+jest.mock("../../context/FeatureFlagsToolContext", () => ({
   useFeatureFlagsToolActions: jest.fn(),
   useFeatureFlagsToolState: jest.fn(),
 }));
-jest.mock("../../context/FlagSelectionContext.native", () => ({
+jest.mock("../../context/FlagSelectionContext", () => ({
   useFlagSelectionActions: jest.fn(),
 }));
 

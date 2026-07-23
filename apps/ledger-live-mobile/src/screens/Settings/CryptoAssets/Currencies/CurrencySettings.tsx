@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans, useTranslation } from "~/context/Locale";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import Slider from "@react-native-community/slider";
 import { useTheme } from "@react-navigation/native";

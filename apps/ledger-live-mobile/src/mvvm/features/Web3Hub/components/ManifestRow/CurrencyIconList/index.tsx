@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 
 const ICON_SIZE = 20;

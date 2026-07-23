@@ -1,10 +1,10 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **1.0.1**.
+Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.0.1**.
 
-## Status (v1)
+## Status (v2)
 
-wallet-cli is the stable v1 CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity.
+wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups.
 
 **Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
 
@@ -23,6 +23,11 @@ wallet-cli is the stable v1 CLI for USB-based Ledger Wallet flows. Its scope is 
 | `swap status`                         | Read the current swap status from the partner API.                                                                                                                                                              |
 | `assets token` / `assets token-by-id` | Resolve token metadata by contract address or token id.                                                                                                                                                         |
 | `genuine-check`                       | Check whether the connected Ledger device is genuine.                                                                                                                                                           |
+| `earn yields` / `earn positions`      | List yield opportunities (per-network deposit targets with `-n ethereum`/`-n solana`) and active staking/vault positions for an account. **No device** required.                                                |
+| `earn deposit` / `earn withdraw`      | Stake / deposit into a vault, or unstake / redeem. Ethereum ERC-4626 vaults and Solana native staking. Signs on the **device**; `--dry-run` validates without signing.                                          |
+| `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
+| `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
+| `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
 
@@ -40,6 +45,13 @@ pnpm wallet-cli start -- genuine-check --help
 pnpm wallet-cli start -- swap quote --help
 pnpm wallet-cli start -- swap execute --help
 pnpm wallet-cli start -- swap status --help
+pnpm wallet-cli start -- earn yields --help
+pnpm wallet-cli start -- earn positions --help
+pnpm wallet-cli start -- earn deposit --help
+pnpm wallet-cli start -- earn withdraw --help
+pnpm wallet-cli start -- ring init --help
+pnpm wallet-cli start -- ring encrypt --help
+pnpm wallet-cli start -- ring decrypt --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
@@ -50,7 +62,7 @@ Most commands support `--output human` (default) or `--output json`.
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
 - **pnpm** and this monorepo checked out; install dependencies per [repo commands](../../docs/repo-commands.md) (e.g. `mise install`, `pnpm i`)
-- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, or `receive --verify`
+- A **Ledger** on USB when using `account discover`, `send`, `swap execute`, `receive --verify`, `earn deposit`/`earn withdraw`, `genuine-check`, or `ring init`
 - **Linux:** USB/HID build deps, for example:
 
   ```bash
@@ -95,3 +107,16 @@ This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cl
 ## Agent guidance
 
 AI agents should read the [ledger-wallet-cli agent skill](../../.claude/skills/ledger-wallet-cli/SKILL.md) before running wallet-cli commands. It maps informal user requests to commands and documents hardware-wallet safety rules, session labels, USB sandbox requirements, and device-contention constraints.
+
+The skill also **ships inside the compiled binary**, so it is available even from an installed npm package with no repo checkout, via the `skill` command group:
+
+```bash
+wallet-cli skill list                       # list embedded skills
+wallet-cli skill retrieve ledger-wallet-cli # print SKILL.md (or --file references/business-logic.md)
+wallet-cli skill install --agent claude     # write into ./.claude/skills (also: cursor, codex, agents)
+wallet-cli skill install --dir ./my-skills  # write into an explicit directory
+```
+
+`skill install` maps `--agent` (`claude`, `cursor`, `codex`, `agents`) to the matching `.<agent>/skills` directory (`agents` → `.agents/skills`) under the current working directory, or the user home directory with `--global`. `--dir` overrides both. Existing files are preserved unless `--force` is passed.
+
+The embedded content is generated from the canonical `.agents/skills/` directory (`.claude/skills` is just a symlink to it) into `src/skills/manifest.gen.ts` by `pnpm generate:skills`. That file is **generated, not committed** (gitignored like `.bunli/commands.gen.ts`) and is regenerated automatically before `typecheck`, `test`, and `build` via the `pretypecheck` / `pretest` / `prebuild` npm hooks. `pnpm check:skills` validates that generation succeeds (every shipped skill is found in the sources).

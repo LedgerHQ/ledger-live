@@ -1,11 +1,12 @@
 import { ethers } from "ethers";
 import network from "@ledgerhq/live-network";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { clearValidatorsCache, getValidators } from "./index";
-import { fetchMonadStakes, getValidatorAddressById } from "./monad";
+import { fetchMonadStakes } from "./monad";
+import { getValidatorAddressById } from "./monadResolver";
 
 jest.mock("../../config", () => ({
   __esModule: true,
@@ -15,8 +16,9 @@ jest.mock("../../network/node/rpc.common", () => ({
   __esModule: true,
   withApi: jest.fn(),
 }));
-jest.mock("@ledgerhq/cryptoassets", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/currencies", () => ({
   __esModule: true,
+  ...jest.requireActual("@ledgerhq/ledger-wallet-framework/currencies"),
   getCryptoCurrencyById: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-network", () => ({
@@ -216,7 +218,6 @@ describe("staking/validators/monad", () => {
     // Repo filename is the lowercase secp hex without the `0x` prefix.
     mockedNetwork.mockResolvedValueOnce({
       data: { name: "GalaxyDigital" },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     const page = await getValidators("monad");
@@ -541,7 +542,6 @@ describe("staking/validators/monad", () => {
       );
       mockedNetwork.mockResolvedValueOnce({
         data: { name: "GalaxyDigital" },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const stakes = await fetchStakes();

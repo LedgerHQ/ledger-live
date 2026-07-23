@@ -15,14 +15,16 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 function renderViewModel({
   blacklistedTokenIds = [],
   starredMarketCoins = [],
+  currencyId = bitcoin.id,
   marketId,
 }: {
   blacklistedTokenIds?: string[];
   starredMarketCoins?: string[];
+  currencyId?: string;
   marketId?: string;
 } = {}) {
   return renderHook(
-    () => useAssetCoinOptionsViewModel({ currency: bitcoin, currencyId: bitcoin.id, marketId }),
+    () => useAssetCoinOptionsViewModel({ currency: bitcoin, currencyId, marketId }),
     {
       overrideInitialState: (state: State): State => ({
         ...state,
@@ -82,14 +84,15 @@ describe("useAssetCoinOptionsViewModel", () => {
     expect(store.getState().settings.starredMarketCoins).toContain("shiba-inu");
   });
 
-  it("prefers marketId over currencyId as the star key so favourites stay aligned with the Market list", () => {
-    const { result, store } = renderViewModel({ marketId: "bitcoin-coingecko-id" });
+  it("persists DAI's market id instead of the DAI V2 Ledger token id", () => {
+    const daiV2Id = "ethereum/erc20/dai_stablecoin_v2_0";
+    const { result, store } = renderViewModel({ currencyId: daiV2Id, marketId: "dai" });
 
     act(() => result.current.onToggleFavourite());
 
     const { starredMarketCoins } = store.getState().settings;
-    expect(starredMarketCoins).toContain("bitcoin-coingecko-id");
-    expect(starredMarketCoins).not.toContain(bitcoin.id);
+    expect(starredMarketCoins).toContain("dai");
+    expect(starredMarketCoins).not.toContain(daiV2Id);
   });
 
   it("persists the hidden state and tracks analytics in both directions", () => {

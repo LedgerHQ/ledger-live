@@ -8,10 +8,23 @@ import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 // The domain registry is the runtime source of truth for currency data.
 setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
 
 setWalletAPIVersion(WALLET_API_VERSION);
 

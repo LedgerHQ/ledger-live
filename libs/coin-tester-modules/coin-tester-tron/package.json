@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tron",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "description": "Ledger Tron Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -61,7 +61,6 @@
     "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "^1.8.0",
@@ -73,16 +72,16 @@
     "tronweb": "6.2.0"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^5",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "ts-node": "^10",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "rimraf": "^5",
+    "typescript": "catalog:"
   }
 }

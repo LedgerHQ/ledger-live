@@ -17,7 +17,6 @@ loadLocaleData(defaultLanguage);
 
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";
-import { Platform } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 global.Buffer = require("buffer").Buffer;
@@ -37,9 +36,8 @@ if (!console.assert) {
 
 process.browser = true; // for readable-stream/lib/_stream_writable.js
 
-// // Polyfill for AbortSignal.throwIfAborted on Android
-const isAndroid = Platform.OS === "android";
-if (isAndroid && typeof AbortSignal !== "undefined" && !AbortSignal.prototype.throwIfAborted) {
+// Polyfill for AbortSignal.throwIfAborted
+if (typeof AbortSignal !== "undefined" && !AbortSignal.prototype.throwIfAborted) {
   AbortSignal.prototype.throwIfAborted = function () {
     if (this.aborted) {
       throw new DOMException("The operation was aborted.", "AbortError");

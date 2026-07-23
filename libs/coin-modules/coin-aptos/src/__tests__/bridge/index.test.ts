@@ -2,7 +2,7 @@ jest.mock("../../network/validators", () => ({
   getValidators: jest.fn(() => Promise.resolve([])),
 }));
 
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { createBridges } from "../../bridge";
@@ -14,7 +14,7 @@ describe("Aptos bridge interface", () => {
   describe("currencyBridge", () => {
     it("should have a preload method that returns a promise", async () => {
       const cryptoCurrency = getCryptoCurrencyById("aptos");
-      const result = bridge.currencyBridge.preload(cryptoCurrency);
+      const result = bridge.currencyBridge.preload?.(cryptoCurrency);
       expect(result).toBeInstanceOf(Promise);
       await expect(result).resolves.toMatchObject({ validatorsWithMeta: [] });
     });
@@ -22,7 +22,7 @@ describe("Aptos bridge interface", () => {
     it("should have a hydrate method that is a function", () => {
       expect(bridge.currencyBridge.hydrate).toBeInstanceOf(Function);
       const cryptoCurrency = getCryptoCurrencyById("aptos");
-      const result = bridge.currencyBridge.hydrate({}, cryptoCurrency);
+      const result = bridge.currencyBridge.hydrate?.({}, cryptoCurrency);
       expect(result).toBeUndefined();
     });
 

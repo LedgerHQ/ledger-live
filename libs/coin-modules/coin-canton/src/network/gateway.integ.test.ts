@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
 import { createMockCantonCurrency, setupMockCoinConfig } from "../test/fixtures";
 import type { OnboardingPrepareResponse, Party } from "../types/gateway";
@@ -25,7 +25,6 @@ const mockCurrency = createMockCantonCurrency();
  * `@ledgerhq/errors` module from live-network, which breaks instanceof and disables retries.
  */
 function readErr(error: object): { name?: string; status?: number; message: string } {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- narrow API error fields
   const rec = error as Record<string, unknown>;
   const out: { name?: string; status?: number; message: string } = {
     message: typeof rec.message === "string" ? rec.message : "",

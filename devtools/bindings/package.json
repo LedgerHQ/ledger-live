@@ -1,0 +1,47 @@
+{
+  "name": "@devtools/bindings",
+  "version": "0.2.0",
+  "private": true,
+  "description": "App-specific builders that adapt Ledger Live state into @devtools tool props (one builder per tool)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@devtools/registry": "workspace:*",
+    "@features/platform-feature-flags": "workspace:*",
+    "@shared/feature-flags": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:",
+    "jest-sonar": "0.2.16"
+  }
+}

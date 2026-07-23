@@ -20,7 +20,7 @@ export default function StablecoinMockAccountGenerator({ title, desc }: Props) {
       const accounts = await generateStablecoinAccounts();
       await injectMockAccounts(accounts, true);
     } catch (error) {
-      console.error("Failed to generate stablecoin accounts:", error);
+      console.warn("Failed to generate stablecoin accounts:", error);
       alert(t("settings.developer.mockAccounts.alerts.generateError"));
     } finally {
       setLoading(false);

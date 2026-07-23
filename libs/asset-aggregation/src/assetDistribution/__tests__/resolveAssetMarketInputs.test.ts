@@ -36,15 +36,35 @@ describe("resolveAssetMarketInputs", () => {
       fallbackId: "fallback",
     });
 
-    expect(result.marketApiId).toBe("binancecoin");
+    expect(result).toMatchObject({
+      marketApiId: "binancecoin",
+      knownMarketId: "binancecoin",
+    });
+  });
+
+  it("resolves DAI V2 to its canonical market id", () => {
+    const result = resolveAssetMarketInputs({
+      distributionItem: item(cryptoCurrency("ethereum/erc20/dai_stablecoin_v2_0"), {
+        marketId: "dai",
+      }),
+    });
+
+    expect(result).toMatchObject({
+      knownLedgerIds: ["ethereum/erc20/dai_stablecoin_v2_0"],
+      knownMarketId: "dai",
+    });
   });
 
   it("falls back to distributionItem.slug when marketId is missing", () => {
     const result = resolveAssetMarketInputs({
       distributionItem: item(cryptoCurrency("bsc"), { slug: "binancecoin" }),
+      marketState: { id: "another-id" },
     });
 
-    expect(result.marketApiId).toBe("binancecoin");
+    expect(result).toMatchObject({
+      marketApiId: "binancecoin",
+      knownMarketId: "binancecoin",
+    });
   });
 
   it("falls back to distributionItem.currency.id when marketId and slug are missing", () => {

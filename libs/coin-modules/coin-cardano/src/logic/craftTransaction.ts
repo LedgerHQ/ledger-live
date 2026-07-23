@@ -6,7 +6,7 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import {
   Transaction as TyphonTransaction,
   address as TyphonAddress,
@@ -18,6 +18,7 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY, MEMO_LABEL } from "../constants";
+import { CardanoMinAmountError } from "../errors";
 import {
   type DerivedUtxo,
   deriveUtxos,
@@ -163,10 +164,11 @@ function addStakingCertificates(
 }
 
 /**
- * Add the output(s) for a native ADA send and return the change address. A send-all routes the
- * remaining ADA to the recipient (via change) while keeping any tokens the sender holds on the
- * sender — a max-ADA send must not transfer them. A fixed-amount send adds an explicit recipient
- * output and change returns to the sender. Mirrors the legacy buildSendAdaTransaction behaviour.
+ * Add the output(s) for a native ADA send and return the change address. A send-all keeps any
+ * tokens the sender holds on the sender (a max-ADA send must not transfer them) and returns the
+ * recipient as the change address — the explicit recipient ADA output is added by the caller's
+ * send-all branch. A fixed-amount send adds an explicit recipient output and change returns to the
+ * sender. Mirrors the legacy buildSendAdaTransaction behaviour.
  */
 function addNativeOutputs(
   typhonTx: TyphonTransaction,
@@ -200,7 +202,7 @@ function addNativeOutputs(
     new BigNumber(protocolParams.utxoCostPerByte),
   );
   if (amount.lt(minAda)) {
-    throw new Error("Transaction amount is below the minimum required for an output");
+    throw new CardanoMinAmountError("", { amount: minAda.div(1e6).toString() });
   }
   typhonTx.addOutput({ address: recipientAddress, amount, tokens: [] });
   return senderAddress;
@@ -332,8 +334,8 @@ export async function buildUnsignedTransaction(
     addAccountObligations(typhonTx, currency, stakeKey, delegation);
   }
 
-  // changeAddress is the sender for sends/staking; for a send-all it is the recipient, so the
-  // entire balance (minus fee) lands there with no explicit recipient output.
+  // changeAddress is the sender for fixed-amount sends/staking; for a send-all it is the recipient
+  // (the send-all branch below sends the balance minus fee there as an explicit output).
   let changeAddress: TyphonTypes.CardanoAddress = senderAddress;
 
   const isTokenTransfer = isTokenAsset(intent.asset);
@@ -357,21 +359,44 @@ export async function buildUnsignedTransaction(
   // inputs (smaller tx, lower fee) — mirrors the legacy builder's largest-first ordering.
   inputs.sort((a, b) => b.amount.comparedTo(a.amount));
 
-  // A max-ADA native send must spend the ENTIRE UTXO set. Typhon's prepareTransaction does
-  // minimal coin selection over the inputs it is given (it stops as soon as the outputs + fee are
-  // covered), so for a sweep we force every UTXO as a mandatory input and hand it nothing to
-  // select — all remaining ADA then lands in the change output (whose address is the recipient).
-  // Every other intent lets Typhon select the minimal set from the available inputs.
   const sweepAll = intent.intentType === "transaction" && !isTokenTransfer && !!intent.useAllAmount;
-  if (sweepAll) {
-    inputs.forEach(input => typhonTx.addInput(input));
-  }
-
   const baseOutputCount = typhonTx.getOutputs().length;
-  const prepared = typhonTx.prepareTransaction({
-    inputs: sweepAll ? [] : inputs,
-    changeAddress,
-  });
+
+  let prepared: TyphonTransaction;
+  if (sweepAll) {
+    // Send-all: spend every UTXO and compute the fee + recipient amount explicitly instead of
+    // using Typhon's change mechanism, whose <2 ADA dust guard would fold the whole low balance
+    // into the fee (LIVE-33176). Mirrors the bridge fix in buildSendAdaTransaction.
+    inputs.forEach(input => typhonTx.addInput(input));
+
+    const availableAda = typhonTx.getInputAmount().ada.plus(typhonTx.getAdditionalInputAda());
+    const committedAda = typhonTx.getOutputAmount().ada.plus(typhonTx.getAdditionalOutputAda());
+    const spendableAda = availableAda.minus(committedAda);
+
+    const fee = typhonTx.calculateFee([
+      { address: changeAddress, amount: spendableAda, tokens: [] },
+    ]);
+    const recipientAmount = spendableAda.minus(fee);
+
+    const minRecipientUtxo = typhonTx.calculateMinUtxoAmountBabbage({
+      address: changeAddress,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: [],
+    });
+    if (recipientAmount.lt(minRecipientUtxo)) {
+      // After fees the balance can't fund an output above the Babbage min-UTXO floor — the funds
+      // are below the network's economic dust threshold and cannot be sent (not lost to fee).
+      throw new CardanoMinAmountError("", { amount: minRecipientUtxo.div(1e6).toString() });
+    }
+
+    typhonTx.setFee(fee);
+    typhonTx.addOutput({ address: changeAddress, amount: recipientAmount, tokens: [] });
+    prepared = typhonTx;
+  } else {
+    // Typhon selects the minimal input set from the available inputs and returns change to the
+    // sender (or, for a token send-all, sweeps token-bearing UTXOs — see addTokenOutput).
+    prepared = typhonTx.prepareTransaction({ inputs, changeAddress });
+  }
 
   if (customFees) {
     applyCustomFee(prepared, baseOutputCount, new BigNumber(customFees.value.toString()));

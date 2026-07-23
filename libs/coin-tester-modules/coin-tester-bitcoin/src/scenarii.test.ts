@@ -19,8 +19,8 @@ describe("Bitcoin Deterministic Tester", () => {
   });
 });
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
-  process.on(e as any, async () => {
-    await killAtlas();
+["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
+  process.on(e as any, () => {
+    killAtlas().catch(() => {});
   }),
 );

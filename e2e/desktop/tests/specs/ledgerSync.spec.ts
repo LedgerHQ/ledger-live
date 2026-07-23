@@ -8,6 +8,7 @@ import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { expectPulledDataToMatchAccountChanges } from "tests/utils/ledgerSyncPulledDataUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.LS;
 const firstAccountId = accounts[0].id;
@@ -67,7 +68,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   test(
     "Sync instances, rename and delete accounts, delete instance then delete the backup",
     {
-      tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: deviceTagsWithoutLNS(),
       annotation: {
         type: "TMS",
         description: "B2CQA-2303, B2CQA-2302, B2CQA-2300, B2CQA-2297, B2CQA-2296",

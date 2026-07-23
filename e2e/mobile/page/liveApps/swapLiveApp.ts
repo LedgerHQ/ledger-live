@@ -112,6 +112,12 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.getQuotesButton);
   }
 
+  @Step("Verify get quotes CTA is hidden")
+  async expectQuotesButtonNotVisible() {
+    await expectWebElementNotVisible(this.getQuotesButton);
+    await expectWebElementNotVisible(this.quotesButtonDisabled);
+  }
+
   @Step("Wait for quotes")
   async waitForQuotes() {
     await waitWebElementByTestId(this.numberOfQuotes);
@@ -343,11 +349,15 @@ export default class SwapLiveAppPage {
   async verifySwapAmountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
     await waitWebElementByTestId(this.fromAccountErrorId);
     const errorText: string = await getWebElementText(this.fromAccountErrorId);
-    if (typeof expectedMessage === "string") {
-      jestExpect(errorText).toContain(expectedMessage);
-    } else {
-      jestExpect(errorText).toMatch(expectedMessage);
-    }
+    jestExpect(errorText).toMatch(expectedMessage);
+
+    await this.expectQuotesButtonNotVisible();
+  }
+
+  @Step("Verify swap cross account error message match: $0")
+  async verifySwapCrossAccountErrorMessageIsCorrect(expectedMessage: string | RegExp) {
+    // Cross-account warnings render in the same from-account error slot as amount errors.
+    await this.verifySwapAmountErrorMessageIsCorrect(expectedMessage);
   }
 
   @Step("Verify swap CTA banner displayed")

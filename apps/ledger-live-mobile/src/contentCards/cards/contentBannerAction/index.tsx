@@ -1,19 +1,23 @@
 import React, { useCallback, useEffect } from "react";
-import { GestureResponderEvent } from "react-native";
 import {
+  Box,
   ContentBanner,
   ContentBannerContent,
   ContentBannerDescription,
   ContentBannerTitle,
+  InteractiveIcon,
   MediaBanner,
   MediaBannerDescription,
   MediaBannerTitle,
   Pressable,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
+import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { ContentCardBuilder } from "~/contentCards/cards/utils";
 import type { ContentCardProps } from "~/contentCards/cards/types";
+
+const CONTENT_BANNER_CLOSE_LABEL = "Close content banner";
 
 const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
   const { title, metadata } = props;
@@ -29,23 +33,16 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
 
   useEffect(() => metadata.actions?.onView?.());
 
-  const handleDismiss = useCallback(
-    (event?: GestureResponderEvent) => {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      metadata.actions?.onDismiss?.();
-    },
-    [metadata.actions],
-  );
+  const handleDismiss = useCallback(() => {
+    metadata.actions?.onDismiss?.();
+  }, [metadata.actions]);
 
   if (imageBackground && imageBackground.length > 0) {
     return (
       <MediaBanner
         key={metadata.id}
         imageUrl={imageBackground}
-        onClose={handleDismiss}
+        onClose={metadata.actions?.onDismiss ? handleDismiss : undefined}
         onPress={metadata.actions?.onClick}
       >
         {title ? <MediaBannerTitle>{title}</MediaBannerTitle> : null}
@@ -55,15 +52,31 @@ const ContentBannerActionCard = ContentCardBuilder<ContentCardProps>(props => {
   }
 
   return (
-    <Pressable onPress={metadata.actions?.onClick} key={metadata.id}>
-      <ContentBanner onClose={handleDismiss}>
-        <Spot appearance="icon" icon={icon} size={48} />
-        <ContentBannerContent>
-          <ContentBannerTitle>{title ?? ""}</ContentBannerTitle>
-          {description ? <ContentBannerDescription>{description}</ContentBannerDescription> : null}
-        </ContentBannerContent>
-      </ContentBanner>
-    </Pressable>
+    <Box key={metadata.id} lx={{ position: "relative", width: "full" }}>
+      <Pressable onPress={metadata.actions?.onClick}>
+        <ContentBanner>
+          <Spot appearance="icon" icon={icon} size={48} />
+          <ContentBannerContent>
+            <ContentBannerTitle>{title ?? ""}</ContentBannerTitle>
+            {description ? (
+              <ContentBannerDescription>{description}</ContentBannerDescription>
+            ) : null}
+          </ContentBannerContent>
+        </ContentBanner>
+      </Pressable>
+      {metadata.actions?.onDismiss ? (
+        <Box lx={{ position: "absolute", top: "s8", right: "s8", zIndex: 1 }}>
+          <InteractiveIcon
+            testID="content-banner-close-button"
+            iconType="stroked"
+            icon={Close}
+            size={16}
+            onPress={handleDismiss}
+            accessibilityLabel={CONTENT_BANNER_CLOSE_LABEL}
+          />
+        </Box>
+      ) : null}
+    </Box>
   );
 });
 

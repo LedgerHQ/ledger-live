@@ -1,5 +1,6 @@
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { NodeApi } from "@ledgerhq/coin-evm/network/node/types";
+import type { Account } from "@ledgerhq/types-live";
 import { isTransactionConfirmed } from "./isTransactionConfirmed";
 
 jest.mock("@ledgerhq/coin-evm/network/node/index", () => ({
@@ -19,7 +20,6 @@ function mockNodeApi(overrides: Partial<jest.Mocked<NodeApi>> = {}): jest.Mocked
     broadcastTransaction: jest.fn(),
     getBlockByHeight: jest.fn(),
     getBlockReceipts: jest.fn(),
-    traceBlock: jest.fn(),
     getOptimismAdditionalFees: jest.fn(),
     getScrollAdditionalFees: jest.fn(),
     ...overrides,
@@ -37,28 +37,28 @@ describe("isTransactionConfirmed", () => {
   });
 
   test("should return true if blockHeight is not null", async () => {
-    const currency = { id: "external-coin" } as any;
+    const account = { type: "Account", currency: { id: "external-coin" } } as Account;
     const hash = "transactionHash";
     const blockHeight = 12345;
 
     nodeApiMock.getTransaction.mockResolvedValue({ blockHeight } as any);
 
-    const result = await isTransactionConfirmed({ currency, hash });
+    const result = await isTransactionConfirmed({ account, hash });
 
     expect(result).toBe(true);
-    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency, hash);
   });
 
   test("should return false if blockHeight is null", async () => {
-    const currency = { id: "external-coin" } as any;
+    const account = { type: "Account", currency: { id: "external-coin" } } as Account;
     const hash = "transactionHash";
     const blockHeight = null;
 
     nodeApiMock.getTransaction.mockResolvedValue({ blockHeight } as any);
 
-    const result = await isTransactionConfirmed({ currency, hash });
+    const result = await isTransactionConfirmed({ account, hash });
 
     expect(result).toBe(false);
-    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(currency, hash);
+    expect(nodeApiMock.getTransaction).toHaveBeenCalledWith(account.currency, hash);
   });
 });

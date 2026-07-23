@@ -30,6 +30,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import { St, StepId, StepProps } from "./types";
 import { findDelegationByValidator } from "./utils";
 import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 
 export type Data = {
   account: Account;
@@ -114,12 +115,16 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
         findDelegationByValidator(validatorAddressFromParams, delegations)) ||
       getDelegationWithMaximumReward(delegations);
 
+    const contractAddress = getStakingContractAddress(account.currency.id, {
+      mode: "claimReward",
+      valAddress: delegation.validatorAddress,
+    });
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "claimReward",
       valAddress: delegation.validatorAddress,
       valId: delegation.validatorId,
-      recipient: account.freshAddress,
+      recipient: contractAddress ?? account.freshAddress,
     }) as unknown as EvmTransaction;
     return {
       account,

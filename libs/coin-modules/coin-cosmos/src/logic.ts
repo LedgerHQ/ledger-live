@@ -1,5 +1,5 @@
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import * as bech32 from "bech32";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -12,6 +12,7 @@ import type {
   CosmosMappedDelegationInfo,
   CosmosMappedRedelegation,
   CosmosMappedUnbonding,
+  CosmosOperationMode,
   CosmosRedelegation,
   CosmosSearchFilter,
   CosmosUnbonding,
@@ -27,11 +28,26 @@ export const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 export const COSMOS_MIN_FEES = new BigNumber(6000); // 6000 uAtom
 
 const DUMMY_PAYLOAD = Buffer.from("28ff5c6d57d8cfd492b6fb42614536ed648e01fd", "hex");
+
+// croeseid testnet has no own cryptoFactory entry; it reuses crypto_org's params.
+const resolveChainCurrencyId = (currencyId: string): string =>
+  currencyId === "crypto_org_croeseid" ? "crypto_org" : currencyId;
+
 export const getCosmosDummyRecipient = (currencyId: string): string => {
-  // croeseid testnet has no own chain in cryptoFactory; it reuses crypto_org's prefix
-  const id = currencyId === "crypto_org_croeseid" ? "crypto_org" : currencyId;
+  const id = resolveChainCurrencyId(currencyId);
   return bech32.encode(cryptoFactory(id).prefix, bech32.toWords(DUMMY_PAYLOAD));
 };
+
+// Compound embeds a plain delegate that epoching chains reject unless wrapped (LIVE-33994).
+export const isCompoundRewardSupported = (currencyId: string): boolean =>
+  !cryptoFactory(resolveChainCurrencyId(currencyId)).stakingMessages.wrapped;
+
+// Downgrade compound → plain claim on chains where compound isn't supported.
+export const resolveClaimRewardMode = (
+  currencyId: string,
+  mode: CosmosOperationMode,
+): CosmosOperationMode =>
+  mode === "claimRewardCompound" && !isCompoundRewardSupported(currencyId) ? "claimReward" : mode;
 
 export function mapDelegations(
   delegations: CosmosDelegation[],

@@ -79,5 +79,24 @@ describe("handleAssetDetailDeeplink", () => {
       const screenRoute = result?.routes[0].state?.routes[1]?.state?.routes[0];
       expect(screenRoute?.params).toMatchObject({ source: "deeplink_market" });
     });
+
+    it("forwards marketState to params for token deeplinks", () => {
+      const marketState = {
+        id: "ethereum/erc20/usd_tether__erc20_",
+        ledgerIds: ["ethereum/erc20/usd_tether__erc20_"],
+      };
+
+      const result = handleAssetDetailDeeplink({
+        currencyId: "ethereum/erc20/usd_tether__erc20_",
+        source: "deeplink_market",
+        marketState,
+      });
+
+      const screenRoute = result?.routes[0].state?.routes[1]?.state?.routes[0];
+      expect(screenRoute?.params).toMatchObject({
+        currencyId: "ethereum/erc20/usd_tether__erc20_",
+        marketState,
+      });
+    });
   });
 });

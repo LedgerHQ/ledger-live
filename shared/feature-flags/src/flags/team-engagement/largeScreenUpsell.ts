@@ -44,7 +44,7 @@ export const largeScreenUpsell = flagWith(
       modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },
       opted_in: { link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program" },
       opted_out: {
-        link: "https://support.ledger.com/article/Ledger-Nano-Limitations?redirect=false",
+        link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
       },
     },
   },

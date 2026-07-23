@@ -1,4 +1,4 @@
-name: "[Coin] - Coin Tester - Scheduled"
+name: "[Coin] - Coin Tester - Scheduled and Manual"
 
 on:
   schedule:
@@ -11,16 +11,16 @@ on:
   workflow_dispatch:
     inputs:
       chain:
-        description: "Coin family to test, separated by commas (,)"
+        description: 'Coin family to test, separated with commas (,), or "all" to run all coins (default)'
         required: false
-        default: ""
+        default: "all"
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano"
 
 jobs:
   is-affected:
@@ -56,7 +56,13 @@ jobs:
         run: |
           CHAINS=()
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.chain }}" != "" ]]; then
-            IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
+            if [[ "${{ github.event.inputs.chain }}" == "all" ]]; then
+              for coin in $COIN_TESTER_CURRENCIES; do
+                CHAINS+=("$coin")
+              done
+            else
+              IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
+            fi
           elif echo "${{ steps.affected.outputs.paths }}" | grep -qE "(^|/| )coin-tester(/| |$)"; then
             echo "Detected base coin-tester → adding all coins"
             for coin in $COIN_TESTER_CURRENCIES; do

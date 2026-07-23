@@ -28,7 +28,7 @@ import {
 } from "@ledgerhq/errors";
 import { GasPriceTooLow } from "../errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { getGasTracker } from "../network/gasTracker";
@@ -197,7 +197,7 @@ async function validateGas(
   } else if (
     intent.recipient &&
     totalFees > nativeBalance.value - (nativeBalance.locked ?? 0n) &&
-    !intent.sponsored
+    estimatedFees.parameters?.sponsored !== true
   ) {
     errors.gasPrice = new NotEnoughGas(undefined, {
       // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
@@ -420,7 +420,7 @@ export async function validateIntent(
   const amountSpentFromSpendableBalance =
     isStakingIntent(intent) && intent.mode !== "delegate" ? 0n : amount;
   const totalSpent =
-    isNative(intent.asset) && !intent.sponsored
+    isNative(intent.asset) && estimatedFees.parameters?.sponsored !== true
       ? amountSpentFromSpendableBalance + totalFees
       : amountSpentFromSpendableBalance;
 

@@ -7,6 +7,7 @@ import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/featu
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useSelector } from "LLD/hooks/redux";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import {
@@ -474,6 +475,25 @@ describe("useAddressValidation", () => {
     expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
       expect.objectContaining({
         recipient: "0xResolved",
+      }),
+    );
+  });
+
+  it("passes the current transaction to bridge validation", () => {
+    const transaction = { family: "bitcoin", recipient: "" } as Transaction;
+
+    renderHook(() =>
+      useAddressValidation({
+        searchValue: "valid_address",
+        currency: mockAccount.currency,
+        account: mockAccount,
+        transaction,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transaction,
       }),
     );
   });

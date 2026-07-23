@@ -8,7 +8,8 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
-import { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 
 jest.mock("../useAddressValidation");
 jest.mock("../../../../context/SendFlowContext");
@@ -126,6 +127,35 @@ describe("useRecipientAddressModalViewModel", () => {
     result.current.handleAddressSelect("new_address", "ens_name");
 
     expect(onAddressSelected).toHaveBeenCalledWith("new_address", "ens_name", true);
+  });
+
+  it("passes the current transaction to address validation", () => {
+    const transaction = { family: "bitcoin", recipient: "" } as Transaction;
+    mockedUseSendFlowData.mockReturnValue({
+      recipientSearch: { ...mockRecipientSearch, value: "some_address" },
+      state: {
+        ...DEFAULT_STATE,
+        transaction: {
+          ...DEFAULT_STATE.transaction,
+          transaction,
+        },
+      },
+      uiConfig: {} as never,
+      isRecipientAddressComplete: false,
+    });
+
+    renderHook(() =>
+      useRecipientAddressModalViewModel({
+        account: mockAccount,
+        currency: mockAccount.currency,
+        onAddressSelected: jest.fn(),
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(mockedUseAddressValidation).toHaveBeenCalledWith(
+      expect.objectContaining({ transaction }),
+    );
   });
 
   it("shows sanctioned banner when address is sanctioned", () => {

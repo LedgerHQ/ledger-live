@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getEnv } from "@ledgerhq/live-env";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { compact } from "lodash/fp";

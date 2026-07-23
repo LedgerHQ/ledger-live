@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import { track } from "~/analytics";
@@ -40,6 +40,7 @@ export function useMarketCategories({
   const { data: trendingCategories } = useGetTrendingCategoriesQuery();
   const entryCategory = routeCategory ?? DEFAULT_CATEGORY;
   const [selectedCategory, setSelectedCategory] = useState<MarketListCategory>(entryCategory);
+  const lastAppliedEntryCategory = useRef<MarketListCategory | undefined>(undefined);
 
   const tabs = useMemo<MarketCategoryTab[]>(
     () => [
@@ -56,7 +57,10 @@ export function useMarketCategories({
 
   useFocusEffect(
     useCallback(() => {
-      setSelectedCategory(entryCategory);
+      if (lastAppliedEntryCategory.current !== entryCategory) {
+        lastAppliedEntryCategory.current = entryCategory;
+        setSelectedCategory(entryCategory);
+      }
     }, [entryCategory]),
   );
 

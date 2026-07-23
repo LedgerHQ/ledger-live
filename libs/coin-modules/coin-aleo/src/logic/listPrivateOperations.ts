@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type {
   AleoOperation,

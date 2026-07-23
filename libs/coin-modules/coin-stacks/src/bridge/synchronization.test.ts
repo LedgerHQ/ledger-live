@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-assertions */
 import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
 import * as accountIndex from "@ledgerhq/ledger-wallet-framework/account/index";
 import { log } from "@ledgerhq/logs";

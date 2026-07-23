@@ -13,6 +13,7 @@ import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomIm
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
 import DebugDeviceIntentExecutor from "~/screens/Settings/Debug/Features/DeviceIntentExecutor";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
+import DebugLargeScreenUpsell from "LLM/features/LargeScreenUpsell/Debug";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
@@ -30,6 +31,8 @@ import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
 import DebugLumenVisualization from "~/screens/Settings/Debug/Debugging/LumenVisualization";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
+import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
+import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
 import DebugPlayground from "~/screens/Settings/Debug/Playground";
@@ -365,6 +368,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugLargeScreenUpsell}
+        component={DebugLargeScreenUpsell}
+        options={{
+          title: "Large-screen upsell",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugInstallSetOfApps}
         component={DebugInstallSetOfApps}
         options={{
@@ -411,6 +421,20 @@ export default function SettingsNavigator() {
         component={DebugWallet40}
         options={{
           title: "Wallet 4.0",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugContacts}
+        component={DebugContacts}
+        options={{
+          title: "Contacts",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDevTools}
+        component={DebugDevTools}
+        options={{
+          headerShown: false,
         }}
       />
       <Stack.Screen

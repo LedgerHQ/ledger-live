@@ -8,7 +8,7 @@ import { getErc20ApproveData } from "@ledgerhq/live-common/families/evm/getErc20
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { parseCurrencyUnit } from "@ledgerhq/live-currency-format";
 import { waitForTransactionConfirmation } from "@ledgerhq/live-common/families/evm/waitForConfirmation";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";

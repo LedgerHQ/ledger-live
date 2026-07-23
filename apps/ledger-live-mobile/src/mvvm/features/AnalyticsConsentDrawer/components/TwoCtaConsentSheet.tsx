@@ -8,6 +8,8 @@ type TwoCtaConsentSheetProps = Readonly<{
   description: React.ReactNode;
   primaryLabel: string;
   secondaryLabel: string;
+  primaryTestID?: string;
+  secondaryTestID?: string;
   onPrimary: () => void;
   onSecondary: () => void;
   privacyPolicyUrl: string;
@@ -18,6 +20,8 @@ export function TwoCtaConsentSheet({
   description,
   primaryLabel,
   secondaryLabel,
+  primaryTestID,
+  secondaryTestID,
   onPrimary,
   onSecondary,
   privacyPolicyUrl,
@@ -38,10 +42,22 @@ export function TwoCtaConsentSheet({
           </Box>
         </Box>
         <Box lx={{ width: "full", gap: "s16" }}>
-          <Button appearance="base" size="lg" lx={{ width: "full" }} onPress={onPrimary}>
+          <Button
+            appearance="base"
+            size="lg"
+            lx={{ width: "full" }}
+            testID={primaryTestID}
+            onPress={onPrimary}
+          >
             {primaryLabel}
           </Button>
-          <Button appearance="gray" size="lg" lx={{ width: "full" }} onPress={onSecondary}>
+          <Button
+            appearance="gray"
+            size="lg"
+            lx={{ width: "full" }}
+            testID={secondaryTestID}
+            onPress={onSecondary}
+          >
             {secondaryLabel}
           </Button>
         </Box>

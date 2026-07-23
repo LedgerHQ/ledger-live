@@ -54,8 +54,8 @@ export const defaultBridgeExtensions: Required<AccountBridgeExtensions> = {
   getFormattedFeeFields: () => {
     throw new Error("getFormattedFeeFields is not supported for this currency");
   },
-  hasMinimumFundsToCancel: () => false,
-  hasMinimumFundsToSpeedUp: () => false,
+  hasMinimumFundsToCancel: async () => false,
+  hasMinimumFundsToSpeedUp: async () => false,
   isStrategyDisabled: () => false,
   isTransactionConfirmed: async () => {
     throw new Error("isTransactionConfirmed is not supported for this currency");

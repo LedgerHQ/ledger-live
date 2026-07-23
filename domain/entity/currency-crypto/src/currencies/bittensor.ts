@@ -3,7 +3,9 @@ import { currency } from "../define";
 export const bittensor = currency({
   type: "CryptoCurrency",
   id: "bittensor",
-  coinType: 1005,
+  // Polkadot coin type (354), not the SLIP-0044 1005 slot: Bittensor reuses the Polkadot app.
+  // Dual-maintained with @ledgerhq/cryptoassets (currencies.domain-parity test).
+  coinType: 354,
   name: "Bittensor",
   managerAppName: "Polkadot",
   ticker: "TAO",

@@ -447,6 +447,44 @@ describe("estimateFees", () => {
     });
   });
 
+  it("forwards stakedBalance and unstakedBalance to the logic estimate for send-max", async () => {
+    (networkApi.getAccountByAddress as jest.Mock).mockResolvedValueOnce({
+      type: "user",
+      balance: 1000,
+      revealed: true,
+      address: "tz1test",
+      publicKey: "edpktest",
+      counter: 0,
+      delegationLevel: 0,
+      delegationTime: "2021-01-01T00:00:00Z",
+      numTransactions: 0,
+      firstActivityTime: "2021-01-01T00:00:00Z",
+      stakedBalance: 200,
+      unstakedBalance: 300,
+    });
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      amount: 500n,
+    });
+
+    await api.estimateFees({
+      intentType: "transaction",
+      type: "send",
+      sender: "tz1test",
+      recipient: "tz1recipient",
+      amount: 0n,
+      useAllAmount: true,
+    } as TransactionIntent);
+
+    expect(logicEstimateFees).toHaveBeenCalledWith(
+      expect.objectContaining({
+        account: expect.objectContaining({ stakedBalance: 200n, unstakedBalance: 300n }),
+      }),
+    );
+  });
+
   it("should throw taquito errors", async () => {
     logicEstimateFees.mockResolvedValue({
       estimatedFees: DEFAULT_ESTIMATED_FEES,
@@ -498,6 +536,31 @@ describe("estimateFees", () => {
       sender: "tz1test",
       recipient: "tz1validator",
       amount: 0n,
+    } as TransactionIntent);
+
+    expect(result).toEqual({
+      value: DEFAULT_ESTIMATED_FEES,
+      parameters: {
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      },
+    });
+  });
+
+  it("should not throw for cannot_stake_with_unfinalizable_unstake errors", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+      taquitoError:
+        "proto.alpha.cannot_stake_with_unfinalizable_unstake_requests_to_another_delegate",
+    });
+    const result = await api.estimateFees({
+      intentType: "staking",
+      type: "stake",
+      sender: "tz1test",
+      recipient: "tz1validator",
+      amount: 1000n,
     } as TransactionIntent);
 
     expect(result).toEqual({

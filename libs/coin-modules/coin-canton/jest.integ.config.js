@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   /** Long integ tests (onboarding + party polling) need headroom; avoids racing the poll helper. */

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.10.8",
+  "version": "1.11.0",
   "private": true,
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -60,13 +60,11 @@
   "dependencies": {
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/psbtv2": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "1.9.7",
     "bignumber.js": "^9.1.2",
@@ -78,15 +76,15 @@
     "msw": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.3",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "tsx": "^4.19.3",
+    "typescript": "catalog:"
   }
 }

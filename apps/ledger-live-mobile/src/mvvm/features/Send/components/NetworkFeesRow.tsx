@@ -98,11 +98,16 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     infoBottomSheetRef.current?.present();
   }, [infoBottomSheetRef]);
 
+  const canOpenFeeSelector =
+    viewModel.showFeePresets ||
+    !!viewModel.uiConfig?.hasCustomFees ||
+    !!viewModel.uiConfig?.hasCoinControl;
+
   const handleOpenSelector = useCallback(() => {
-    if (viewModel.showFeePresets) {
+    if (canOpenFeeSelector) {
       selectorBottomSheetRef.current?.present();
     }
-  }, [viewModel.showFeePresets, selectorBottomSheetRef]);
+  }, [canOpenFeeSelector, selectorBottomSheetRef]);
 
   const handleSelectStrategy = useCallback(
     (strategy: string) => {
@@ -147,7 +152,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         <Pressable
           style={styles.rightSection}
           onPress={handleOpenSelector}
-          disabled={!viewModel.showFeePresets}
+          disabled={!canOpenFeeSelector}
         >
           <View style={styles.feeValue}>
             <Text typography="body3" lx={{ color: "base" }}>
@@ -160,7 +165,7 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
               {viewModel.strategyLabel}
             </Text>
           </View>
-          {viewModel.showFeePresets ? <ChevronDown size={16} /> : null}
+          {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
         </Pressable>
       </View>
 

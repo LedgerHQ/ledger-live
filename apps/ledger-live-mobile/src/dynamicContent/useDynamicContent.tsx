@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "~/context/hooks";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
@@ -102,14 +102,23 @@ const useDynamicContent = () => {
     ],
   );
 
+  const clickedCampaignsInFlightRef = useRef(new Set<string>());
+
   const trackContentCardEvent = useCallback(
     async (event: ContentCardInteractionEvent, params: ContentCardEventProperties) => {
-      const cardId = params.campaign;
+      const campaign = params.campaign;
       if (
-        typeof cardId === "string" &&
-        (localMobileCards.some(c => c.id === cardId) || localWalletCards.some(c => c.id === cardId))
-      )
+        event === ContentCardEvent.Clicked &&
+        typeof campaign === "string" &&
+        clickedCampaignsInFlightRef.current.has(campaign)
+      ) {
         return;
+      }
+
+      if (event === ContentCardEvent.Clicked && typeof campaign === "string") {
+        clickedCampaignsInFlightRef.current.add(campaign);
+      }
+
       try {
         await track(event, finalizeContentCardEventProperties(params));
         if (event === ContentCardEvent.Clicked) {
@@ -119,9 +128,13 @@ const useDynamicContent = () => {
         }
       } catch {
         // Analytics must never block the user action that follows.
+      } finally {
+        if (event === ContentCardEvent.Clicked && typeof campaign === "string") {
+          clickedCampaignsInFlightRef.current.delete(campaign);
+        }
       }
     },
-    [localMobileCards, localWalletCards],
+    [],
   );
 
   return {

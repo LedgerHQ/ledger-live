@@ -1,5 +1,5 @@
 import type { StringMemo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import * as cbors from "@stricahq/cbors";
 import { crypto } from "@stricahq/typhonjs";
 import { getAllTransactionsByKeys } from "../api/fetchTransactions";

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.24.0",
+  "version": "2.25.0",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -120,8 +120,8 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

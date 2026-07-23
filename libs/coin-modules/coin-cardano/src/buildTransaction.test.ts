@@ -1,6 +1,7 @@
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
+import { CardanoMinAmountError } from "./errors";
 import { getCardanoAccountFixture } from "./fixtures/accounts";
 import { getProtocolParamsFixture } from "./fixtures/protocolParams";
 import { Transaction } from "./types";
@@ -109,6 +110,47 @@ describe("buildTransaction", () => {
       const transaction = await buildTransaction(account, txPayload);
       const withdrawals = transaction.getWithdrawals();
       expect(withdrawals.length).toBe(1);
+    });
+  });
+
+  describe("send all (useAllAmount)", () => {
+    const sendAllPayload: Transaction = {
+      ...txPayload,
+      amount: new BigNumber(0),
+      useAllAmount: true,
+    };
+
+    it("sends the full balance minus a realistic fee, not the whole balance as fee (LIVE-33176)", async () => {
+      // Fixture holds a single 100 ADA UTXO.
+      const account = getCardanoAccountFixture({ delegation: undefined });
+      account.cardanoResources.protocolParams = getProtocolParamsFixture();
+
+      const transaction = await buildTransaction(account, sendAllPayload);
+
+      const fee = transaction.getFee();
+      // The real linear fee is well under 1 ADA; the dust-guard bug set it to the whole ~balance.
+      expect(fee.lt(1e6)).toBe(true);
+
+      const outputs = transaction.getOutputs();
+      expect(outputs).toHaveLength(1);
+      // Recipient receives balance − fee, and inputs balance outputs + fee exactly.
+      expect(outputs[0].amount.plus(fee).toString()).toBe((100e6).toString());
+    });
+
+    it("throws CardanoMinAmountError when the balance is below the dust threshold and cannot be sent", async () => {
+      const account = getCardanoAccountFixture({ delegation: undefined });
+      account.cardanoResources.protocolParams = getProtocolParamsFixture();
+      account.balance = new BigNumber(1e6);
+      account.spendableBalance = new BigNumber(1e6);
+      // A ~1 ADA balance: after fees the leftover is below the Babbage min-UTXO floor, so no valid
+      // output can be created. The fix surfaces this clearly instead of folding it into the fee.
+      account.cardanoResources.utxos = [
+        { ...account.cardanoResources.utxos[0], amount: new BigNumber(1e6) },
+      ];
+
+      await expect(buildTransaction(account, sendAllPayload)).rejects.toBeInstanceOf(
+        CardanoMinAmountError,
+      );
     });
   });
 

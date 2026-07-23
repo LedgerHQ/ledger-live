@@ -1,7 +1,7 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const polygon = getCryptoCurrencyById("polygon");

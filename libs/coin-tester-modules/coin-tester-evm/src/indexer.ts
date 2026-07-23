@@ -764,7 +764,7 @@ const getEtherscanOpsMap = (action: string) => {
 let server: SetupServerApi;
 export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
   const handlers = [
-    http.get("https://crypto-assets-service.api.ledger.com/v1/currencies", ({ request }) => {
+    http.get("https://global.api.prd.ledger.com/cal/v1/currencies", ({ request }) => {
       const response: Array<{ id: string; type: string }> = [];
       const url = new URL(request.url);
       const id = url.searchParams.get("id");
@@ -785,7 +785,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
       return HttpResponse.json(response, { headers: { "X-Ledger-Commit": "hash" } });
     }),
-    http.get("https://crypto-assets-service.api.ledger.com/v1/tokens", ({ request }) => {
+    http.get("https://global.api.prd.ledger.com/cal/v1/tokens", ({ request }) => {
       const response: Array<{
         id: string;
         contract_address: string;

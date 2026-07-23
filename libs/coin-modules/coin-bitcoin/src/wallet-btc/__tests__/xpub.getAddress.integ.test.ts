@@ -1,5 +1,5 @@
 import coininfo from "coininfo";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 import { DerivationModes } from "..";
 import BitcoinLikeStorage from "../storage";

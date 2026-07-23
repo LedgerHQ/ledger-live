@@ -3,12 +3,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
-import {
-  bigNumberToBigIntDeep,
-  buildOptimisticOperation,
-  extractBalances,
-  transactionToIntent,
-} from "./utils";
+import { bigNumberToBigIntDeep, buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -38,6 +33,8 @@ export const genericSignOperation =
         const customFees = bigNumberToBigIntDeep({
           value: transaction.fees ?? new BigNumber(0),
           parameters: {
+            feesStrategy: transaction.feesStrategy ?? undefined,
+            sponsored: transaction.sponsored,
             gasLimit: transaction.customGasLimit ?? transaction.gasLimit,
             gasPrice: transaction.gasPrice,
             maxFeePerGas: transaction.maxFeePerGas,
@@ -45,40 +42,7 @@ export const genericSignOperation =
             additionalFees: transaction.additionalFees,
           },
         });
-        if (transaction.useAllAmount) {
-          const draftTransaction = {
-            mode: transaction.mode,
-            recipient: transaction.recipient,
-            amount: transaction.amount ?? 0,
-            useAllAmount: !!transaction.useAllAmount,
-            assetReference: transaction?.assetReference || "",
-            assetOwner: transaction?.assetOwner || "",
-            subAccountId: transaction.subAccountId || "",
-            memoType: transaction.memoType || "",
-            memoValue: transaction.memoValue || "",
-            tag: transaction.tag,
-            family: transaction.family,
-            feesStrategy: transaction.feesStrategy,
-            data: transaction.data,
-            type: transaction.type,
-            sponsored: transaction.sponsored,
-            valAddress: transaction?.valAddress || "",
-            valId: transaction?.valId,
-            dstValAddress: transaction?.dstValAddress || "",
-          };
-          // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
-          const { amount } = await coinModuleApi.validateIntent(
-            transactionToIntent(
-              account,
-              draftTransaction,
-              bridgeApi.computeIntentType,
-              coinModuleApi.craftTransactionData,
-            ),
-            extractBalances(account, bridgeApi.getAssetFromToken),
-            customFees,
-          );
-          transaction.amount = new BigNumber(amount.toString());
-        }
+        // amount is already finalized by prepareTransaction; sign it as-is
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath, {

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import polkadotAPI from "../network";
 import { CoreTransaction } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";

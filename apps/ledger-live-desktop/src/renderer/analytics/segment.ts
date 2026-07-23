@@ -17,7 +17,7 @@ import { useCallback, useContext } from "react";
 import type * as Redux from "redux";
 import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
@@ -145,6 +145,30 @@ const getBackupHubAttributes = () => {
   };
 };
 
+const getProductTourAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const productTour = analyticsFeatureFlagMethod("lwdProductTour");
+
+  return {
+    lwdProductTour: !!productTour?.enabled,
+  };
+};
+
+const getLargeScreenUpsellAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const flag = analyticsFeatureFlagMethod("largeScreenUpsell");
+  const params = flag?.params;
+
+  return {
+    enabled: !!flag?.enabled,
+    modalEnabled: !!params?.modal?.enabled,
+    killThreshold: params?.modal?.killThreshold,
+    cadenceDays: params?.modal?.cadenceDays,
+    cooldownDays: params?.cooldownDays,
+    discount: params?.discount,
+  };
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -259,6 +283,8 @@ const extraProperties = (store: ReduxStore) => {
   const madAttributes = getMADAttributes();
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
+  const productTourAttributes = getProductTourAttributes();
+  const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
     ? {
@@ -329,6 +355,8 @@ const extraProperties = (store: ReduxStore) => {
     ...mevProtectionAttributes,
     ...addAccountAttributes,
     ...backupHubAttributes,
+    ...productTourAttributes,
+    largeScreenUpsellAttributes,
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,

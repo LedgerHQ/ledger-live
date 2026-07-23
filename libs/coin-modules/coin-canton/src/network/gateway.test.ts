@@ -1,6 +1,6 @@
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";
 import {
   createMockCantonCurrency,
@@ -117,7 +117,6 @@ describe("isPartyAlreadyExists", () => {
 
 describe("getPartyById and getPartyByPubKey", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -167,7 +166,6 @@ describe("getPartyById and getPartyByPubKey", () => {
 
 describe("prepareOnboarding", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -206,7 +204,6 @@ describe("prepareOnboarding", () => {
 
 describe("submitOnboarding", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
   const prepareResponse = createMockOnboardingPrepareResponse();
 
@@ -229,7 +226,6 @@ describe("submitOnboarding", () => {
     });
 
     expect(result).toEqual(submitResponse);
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const call = mockNetwork.mock.calls[0][0] as { data: Record<string, unknown> };
     expect(call.data).not.toHaveProperty("application_signature");
   });
@@ -245,7 +241,6 @@ describe("submitOnboarding", () => {
       applicationSignature: "app-sig",
     });
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const call = mockNetwork.mock.calls[0][0] as { data: { application_signature?: string } };
     expect(call.data.application_signature).toBe("app-sig");
   });
@@ -253,7 +248,6 @@ describe("submitOnboarding", () => {
 
 describe("isTopologyChangeRequired", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -294,7 +288,6 @@ describe("isTopologyChangeRequired", () => {
 describe("isTopologyChangeRequiredCached", () => {
   const mockCurrency = createMockCantonCurrency();
   const pubKey = "test-pub-key";
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -330,7 +323,6 @@ describe("isTopologyChangeRequiredCached", () => {
 
 describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferPreApproval", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -409,7 +401,6 @@ describe("getLedgerEnd, getOperations, getPendingTransferProposals, getTransferP
 
 describe("prepare and submit transaction helpers", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -640,7 +631,6 @@ describe("prepare and submit transaction helpers", () => {
 
 describe("getCalTokensCached", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -707,7 +697,6 @@ describe("getCalTokensCached", () => {
 
 describe("getBalance", () => {
   const mockCurrency = createMockCantonCurrency();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -770,12 +759,10 @@ describe("getBalance", () => {
 });
 
 describe("getEnabledInstruments", () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {
@@ -857,12 +844,10 @@ describe("getEnabledInstruments", () => {
 });
 
 describe("getEnabledInstrumentsCached", () => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
 
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockNetwork = network as jest.MockedFunction<typeof network>;
 
   beforeAll(() => {

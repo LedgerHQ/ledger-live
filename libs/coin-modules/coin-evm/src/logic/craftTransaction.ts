@@ -2,10 +2,11 @@ import {
   BufferTxData,
   CraftedTransaction,
   FeeEstimation,
+  FeesStrategy,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Transaction, TransactionLike } from "ethers";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";
@@ -68,7 +69,7 @@ export async function craftTransaction(
     const node = getNodeApi(currency);
     const feeData = await node.getFeeData(currency, {
       type,
-      feesStrategy: transactionIntent.feesStrategy,
+      feesStrategy: customFees?.parameters?.feesStrategy as FeesStrategy | undefined,
     });
 
     if (type === TransactionTypes.legacy && feeData.gasPrice) {

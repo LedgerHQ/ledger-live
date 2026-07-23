@@ -3,7 +3,7 @@ import type { FiatCurrency } from "./schema";
 import type { SupportedFiatsState } from "./types";
 import { buildFallbackFiats } from "./internals";
 
-const initialState: SupportedFiatsState = { fiats: buildFallbackFiats() };
+const initialState: SupportedFiatsState = { fiats: buildFallbackFiats(), fiatsReady: false };
 
 export const supportedFiatsSlice = createSlice({
   name: "supportedFiats",
@@ -19,7 +19,11 @@ export const supportedFiatsSlice = createSlice({
         state.fiats = action.payload;
       }
     },
+    /** Signals that the first CVS query has settled. Idempotent. Never persisted. */
+    setFiatsReady: state => {
+      state.fiatsReady = true;
+    },
   },
 });
 
-export const { setFiats } = supportedFiatsSlice.actions;
+export const { setFiats, setFiatsReady } = supportedFiatsSlice.actions;

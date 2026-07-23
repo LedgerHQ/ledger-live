@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { HttpResponse, http } from "msw";
 import coinConfig from "../config";
@@ -99,7 +99,6 @@ describe("getAccount", () => {
 
     jest
       .spyOn(node.default, "fetchStakingInfo")
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       .mockResolvedValue(undefined as unknown as SidecarStakingInfo);
 
     mockServer.use(
@@ -185,7 +184,6 @@ describe("getAccount", () => {
 
     jest
       .spyOn(node.default, "fetchStakingInfo")
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       .mockResolvedValue(stakingInfoResponseStub as SidecarStakingInfo);
 
     mockServer.use(

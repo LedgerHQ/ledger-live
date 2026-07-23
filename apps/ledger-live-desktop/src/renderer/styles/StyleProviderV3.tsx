@@ -1,12 +1,13 @@
 import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
-import { DefaultTheme, ThemeProvider, useTheme } from "styled-components";
+import { DefaultTheme, useTheme } from "styled-components";
 import defaultTheme from "./theme";
 import {
   GlobalStyle,
   defaultTheme as v3DefaultTheme,
   palettes as v3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
+import { StyleProvider as PlatformStyleProvider } from "@features/platform-style";
 
 type Props = {
   children: React.ReactNode;
@@ -29,10 +30,10 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
   );
 
   return (
-    <ThemeProvider theme={theme}>
+    <PlatformStyleProvider theme={theme}>
       <GlobalStyle />
       {children}
-    </ThemeProvider>
+    </PlatformStyleProvider>
   );
 };
 

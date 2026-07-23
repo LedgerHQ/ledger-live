@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type {
   BalanceOptions,
   MemoNotSupported,

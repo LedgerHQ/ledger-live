@@ -1,7 +1,7 @@
 import { AccountNotSupported } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "../types";
 import type { Account, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 
 export const shouldShowNewAccount = (

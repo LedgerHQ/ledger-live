@@ -1,7 +1,7 @@
 import { findSubAccountById, getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getFees } from "./api";
+import { getFees } from "./network";
 import { createTransaction } from "./createTransaction";
 import type { Transaction } from "./types";
 

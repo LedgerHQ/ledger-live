@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation } from "@ledgerhq/types-live";
 import {
   fetchRedelegations,
@@ -326,6 +326,30 @@ describe("redelegations", () => {
           validatorAddress: ethers.computeAddress(
             "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
           ),
+        });
+      });
+    });
+
+    describe("delegate (0G, recipient-keyed validator)", () => {
+      it("resolves the validator address from operation.recipients[0] ignoring decoded[0]", async () => {
+        const op = makeOperation({
+          type: "DELEGATE",
+          recipients: ["0x2222222222222222222222222222222222222222"],
+          extra: {
+            contractPayload: new ethers.Interface(
+              getStakingABI("zero_gravity")!,
+            ).encodeFunctionData("delegate", ["0x1111111111111111111111111111111111111111"]),
+          },
+        });
+
+        const result = await resolveStakingValidator(
+          { id: "zero_gravity" } as CryptoCurrency,
+          op,
+          "delegate",
+        );
+
+        expect(result).toMatchObject({
+          validatorAddress: "0x2222222222222222222222222222222222222222",
         });
       });
     });

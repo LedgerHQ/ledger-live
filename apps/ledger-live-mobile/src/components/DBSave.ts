@@ -1,4 +1,5 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import isEqual from "lodash/isEqual";
@@ -17,6 +18,7 @@ import {
   saveIdentities,
   saveKnownDevices,
   saveLargeMoverState,
+  saveLargeScreenUpsellModalState,
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
@@ -37,7 +39,7 @@ import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
-import { exportIdentitiesForPersistence } from "@ledgerhq/client-ids/store";
+import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import {
   exportCountervalues,
@@ -172,6 +174,8 @@ const knownDevicesNotEquals = (a: State, b: State) => a.knownDevices !== b.known
 
 const getPostOnboardingStateChanged = (a: State, b: State) =>
   !isEqual(a.postOnboarding, b.postOnboarding);
+const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
+  !isEqual(a.largeScreenUpsellModal, b.largeScreenUpsellModal);
 
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
@@ -251,6 +255,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getPostOnboardingStateChanged,
     lense: postOnboardingSelector,
+  });
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.largeScreenUpsellModal,
+    save: saveLargeScreenUpsellModalState,
+    throttle: 500,
+    getChangesStats: getLargeScreenUpsellModalStateChanged,
+    lense: largeScreenUpsellModalSelector,
   });
 
   useDBSaveEffect({

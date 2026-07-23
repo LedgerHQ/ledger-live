@@ -57,6 +57,27 @@ describe("usePortfolioSectionActions", () => {
       });
     });
 
+    it("forwards the canonical Market id from a portfolio asset", () => {
+      const { result } = renderHook(() => usePortfolioSectionActions(false, "stablecoin"), {
+        overrideInitialState: withFlagOverrides({
+          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        }),
+      });
+
+      act(() => {
+        result.current.onItemPress({ ...btcAsset, marketId: "dai" });
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+        screen: ScreenName.AssetDetail,
+        params: {
+          currencyId: mockBtcCryptoCurrency.id,
+          source: "portfolio",
+          marketState: { id: "dai", ledgerIds: [mockBtcCryptoCurrency.id] },
+        },
+      });
+    });
+
     it("navigates to MarketDetail for placeholder assets when aggregatedAssets is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({

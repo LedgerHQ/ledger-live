@@ -15,8 +15,7 @@ export type StatusAPIResponse = {
 
 export const APIJWTSchema = z.object({
   access_token: z.jwt(),
-  // permissions: { [trustchainId]: { [path]: string } }
-  permissions: z.record(z.string(), z.record(z.string(), z.string())),
+  permissions: z.optional(z.record(z.string(), z.record(z.string(), z.string()))),
 });
 export type APIJWT = z.infer<typeof APIJWTSchema>;
 
@@ -51,6 +50,10 @@ export const LKRPChallengeSchema = z.object({
   tlv: z.hex().min(1),
 });
 export type LKRPChallenge = z.infer<typeof LKRPChallengeSchema>;
+
+export type WeakChallengeSignature = Omit<ChallengeSignature, "attestation"> & {
+  attestation?: string;
+};
 
 export type ChallengeSignature = {
   credential: {
@@ -122,7 +125,7 @@ const getApi = (apiBaseURL: string) => {
 
   async function oidcPostChallengeResponse(request: {
     challenge: Challenge;
-    signature: ChallengeSignature;
+    signature: WeakChallengeSignature;
   }): Promise<string> {
     const { data } = await network<unknown>({
       url: `${apiBaseURL}/openid/v1/authenticate`,

@@ -44,7 +44,7 @@ describe("ESDT tokens sync functionality", () => {
     // Contains a known token
     expect(
       (synced.subAccounts as TokenAccount[]).find(
-        a => getAccountCurrency(a)?.id === "multiversx/esdt/4d45582d343535633537",
+        a => getAccountCurrency(a)?.id === "elrond/esdt/4d45582d343535633537",
       ),
     ).toBeTruthy();
   });

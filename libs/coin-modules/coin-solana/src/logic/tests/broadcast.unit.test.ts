@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import {
   BlockhashWithExpiryBlockHeight,

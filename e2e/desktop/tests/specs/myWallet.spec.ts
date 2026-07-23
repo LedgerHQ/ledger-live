@@ -3,6 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Wallet 4.0 - My Wallet", () => {
   test.use({
@@ -15,13 +16,14 @@ test.describe("Wallet 4.0 - My Wallet", () => {
         enabled: true,
         params: { path: "/refer-a-friend" },
       },
+      lwdBackupHub: { enabled: false },
     },
   });
 
   test(
     "Open My Wallet and navigate to key sections",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-5405, B2CQA-5424, B2CQA-5425, B2CQA-5426, B2CQA-5427",

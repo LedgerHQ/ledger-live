@@ -5,6 +5,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
+import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   test.use({
@@ -15,7 +16,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   test(
     "Portfolio happy path: zero balance state, then verify balance and analytics",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4343",
@@ -52,7 +53,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
   test(
     "Portfolio happy path: with zero-balance account, then verify balance and analytics",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4350, B2CQA-4340, B2CQA-4342, B2CQA-4345",
@@ -84,7 +85,7 @@ test.describe("Portfolio Wallet 4.0 - With Funds", () => {
   test(
     "Portfolio happy path: with funds, then verify balance and quick actions",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4347, B2CQA-4339",
@@ -110,7 +111,7 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test(
     "Portfolio no seen device: verify reborn quick actions are displayed",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4348",
@@ -135,7 +136,7 @@ test.describe("Portfolio Wallet 4.0 - add funded account", () => {
   test(
     "Portfolio: with zero-balance account, then add funded account and verify balance and quick actions",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
         description: "B2CQA-4351",

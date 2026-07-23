@@ -14,9 +14,11 @@ import type { NetworkInfo, TronMemo } from "../types";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
 
 // Byte sizes of the fully signed transaction (raw_data + signature + protobuf wrapping).
-// Mirrors bridge/utils.ts:getEstimatedBlockSize. Using craftTransaction's raw_data_hex alone
-// would underestimate by ~50% because it doesn't include the signature/outer envelope.
-const estimatedTxSize = (intent: TransactionIntent<TronMemo>): number => {
+// Approximates bridge/utils.ts:getEstimatedBlockSize — using craftTransaction's raw_data_hex alone
+// would underestimate by ~50% because it doesn't include the signature/outer envelope. The `vote`
+// size is a flat estimate: TransactionIntent carries no vote count, so unlike getEstimatedBlockSize
+// it does not grow per vote (a minor bandwidth under-estimate for multi-vote intents).
+export const estimatedTxSize = (intent: TransactionIntent<TronMemo>): number => {
   switch (intent.type) {
     case "send":
       if (intent.asset.type === "trc10") return 285; // TransferAssetContract
@@ -36,7 +38,7 @@ const estimatedTxSize = (intent: TransactionIntent<TronMemo>): number => {
   }
 };
 
-const estimateEnergy = async (intent: TransactionIntent<TronMemo>): Promise<number> => {
+export const estimateEnergy = async (intent: TransactionIntent<TronMemo>): Promise<number> => {
   if (intent.asset.type !== "trc20" || !intent.asset.assetReference) {
     return 0;
   }
@@ -55,27 +57,39 @@ const estimateEnergy = async (intent: TransactionIntent<TronMemo>): Promise<numb
       `triggerConstantContract failed: ${response.result.code ?? "unknown"} ${response.result.message ?? ""}`.trim(),
     );
   }
-  return response.energy_used ?? 0;
+  // A successful simulation that omits energy_used (or returns a non-numeric value) is uncertainty,
+  // not "0 energy". Defaulting to 0 would let a TRC20 transfer report a zero/under-stated fee; throw
+  // so callers fall back to the pessimistic flat fee instead.
+  const energyUsed = response.energy_used;
+  if (energyUsed === undefined || !Number.isFinite(energyUsed)) {
+    throw new Error("triggerConstantContract returned no energy_used for a TRC20 transfer");
+  }
+  return energyUsed;
 };
 
-const computeBandwidthFee = (
+export const computeBandwidthFee = (
   size: number,
   networkInfo: NetworkInfo,
   params: ChainParameters,
 ): BigNumber => {
-  const freeAvailable = networkInfo.freeNetLimit.minus(networkInfo.freeNetUsed);
-  const stakedAvailable = networkInfo.netLimit.minus(networkInfo.netUsed);
+  // Clamp each bucket to ≥ 0 before summing: a node reporting used > limit in one bucket must not
+  // eat into the other's availability, nor inflate the shortfall beyond `size`.
+  const freeAvailable = BigNumber.maximum(
+    0,
+    networkInfo.freeNetLimit.minus(networkInfo.freeNetUsed),
+  );
+  const stakedAvailable = BigNumber.maximum(0, networkInfo.netLimit.minus(networkInfo.netUsed));
   const available = freeAvailable.plus(stakedAvailable);
   const missing = BigNumber.maximum(0, new BigNumber(size).minus(available));
   return missing.multipliedBy(params.transactionFee);
 };
 
-const computeEnergyFee = (
+export const computeEnergyFee = (
   energyNeeded: number,
   networkInfo: NetworkInfo,
   params: ChainParameters,
 ): BigNumber => {
-  const available = networkInfo.energyLimit.minus(networkInfo.energyUsed);
+  const available = BigNumber.maximum(0, networkInfo.energyLimit.minus(networkInfo.energyUsed));
   const missing = BigNumber.maximum(0, new BigNumber(energyNeeded).minus(available));
   return missing.multipliedBy(params.energyFee);
 };

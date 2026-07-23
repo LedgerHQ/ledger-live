@@ -536,11 +536,17 @@ export async function listOperationsV2({
     tokenOperations.push(...result.newTokenOperations);
   }
 
+  // Drop `NONE` operations (account is neither sender nor recipient; value 0) to stay consistent with getBlock,
+  // which only emits real transfer participants. Fees are represented separately, so this never discards a fee.
+  // See BACK-11641.
+  const removeNone = (ops: Operation<HederaOperationExtra>[]) =>
+    ops.filter(op => op.type !== "NONE");
+
   return {
-    tokenOperations,
+    tokenOperations: removeNone(tokenOperations),
     coinOperations: skipFeesForTokenOperations
-      ? coinOperations.filter(op => op.type !== "FEES")
-      : coinOperations,
+      ? removeNone(coinOperations).filter(op => op.type !== "FEES")
+      : removeNone(coinOperations),
     nextCursor: mergeResult.nextCursor,
   };
 }

@@ -3,7 +3,7 @@ import type { ColorValue } from "react-native";
 import MissingIcon from "~/icons/MissingIcon";
 import { Acre } from "~/icons/providers/Acre";
 import { Babylon } from "~/icons/providers/Babylon";
-import { ChorusOne } from "~/icons/providers/ChorusOne";
+import { Bitwise } from "~/icons/providers/Bitwise";
 import { Coinbase } from "~/icons/providers/Coinbase";
 import { EigenLayer } from "~/icons/providers/EigenLayer";
 import { Figment } from "~/icons/providers/Figment";
@@ -30,8 +30,9 @@ export function EvmStakingDrawerProviderIcon({ icon = "", outline }: Props) {
       return <Acre size={ICON_SIZE} outline={outline} />;
     case "Babylon":
       return <Babylon size={ICON_SIZE} outline={outline} />;
+    case "Bitwise":
     case "ChorusOne":
-      return <ChorusOne size={ICON_SIZE} outline={outline} />;
+      return <Bitwise size={ICON_SIZE} outline={outline} />;
     case "Coinbase":
       return <Coinbase size={ICON_SIZE} outline={outline} />;
     case "EigenLayer":

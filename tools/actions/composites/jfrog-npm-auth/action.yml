@@ -1,0 +1,19 @@
+name: JFrog npm auth
+description: OIDC login to JFrog and configure npm for the given Artifactory npm registry.
+inputs:
+  registry:
+    description: Artifactory npm registry host and path (same shape as jfrog-npm registry input).
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: jfrog-login
+      if: ${{ inputs.registry != '' }}
+      uses: ledgerhq/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
+    - id: jfrog-npm
+      if: ${{ inputs.registry != '' }}
+      uses: ledgerhq/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
+      with:
+        token: ${{ steps.jfrog-login.outputs.oidc-token }}
+        registry: ${{ inputs.registry }}
+        npmrc-location: "$HOME/.npmrc"

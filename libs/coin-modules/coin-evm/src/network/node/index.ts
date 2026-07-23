@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getCoinConfig } from "../../config";
 import { UnknownNode } from "../../errors";
 import { createLedgerNodeApi } from "./ledger";

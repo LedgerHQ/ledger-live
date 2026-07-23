@@ -29,8 +29,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>)
   });
 
   return {
-    preload: async () => Promise.resolve({}),
-    hydrate: () => {},
     scanAccounts,
   };
 }

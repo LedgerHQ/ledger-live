@@ -37,12 +37,16 @@ module.exports = {
       ...sharedConfig,
       displayName: "unit",
       testPathIgnorePatterns: [...sharedConfig.testPathIgnorePatterns, ".*\\.msw\\.test\\.[tj]s"],
-      setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+      setupFilesAfterEnv: [
+        "@ledgerhq/wallet-framework-test-setup",
+        "@ledgerhq/disable-network-setup",
+      ],
     },
     {
       ...sharedConfig,
       displayName: "msw",
       testMatch: ["**/*.msw.test.ts"],
+      setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
       setupFiles: ["./src/test/helpers/msw-setup.ts"],
     },
   ],

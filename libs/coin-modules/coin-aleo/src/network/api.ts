@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { LiveNetworkResponse } from "@ledgerhq/live-network/network";
 import type {
   AleoLatestBlockResponse,

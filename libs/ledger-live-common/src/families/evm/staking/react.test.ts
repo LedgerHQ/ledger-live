@@ -13,6 +13,7 @@ import {
   useEvmFamilyPreloadData,
   useEvmFamilyMappedDelegations,
   useEvmFamilyDelegationsQuerySelector,
+  useStakingContractAddress,
 } from "./react";
 import { GenericTransaction } from "bridge/generic-coin-framework/types";
 
@@ -632,5 +633,34 @@ describe("useEvmFamilyDelegationsQuerySelector", () => {
       expect.objectContaining({ validatorAddress: "0x02" }),
     ]);
     expect(result.current.value).toBeUndefined();
+  });
+});
+
+describe("useStakingContractAddress", () => {
+  it("returns the celo contract address with no ctx", () => {
+    const { result } = renderHook(() => useStakingContractAddress("celo"));
+    expect(result.current).toEqual("0x55E1A0C8f376964bd339167476063bFED7f213d5");
+  });
+
+  it("returns the validator address for zero_gravity delegate with valAddress", () => {
+    const { result } = renderHook(() =>
+      useStakingContractAddress("zero_gravity", {
+        mode: "delegate",
+        valAddress: "0x1111111111111111111111111111111111111111",
+      }),
+    );
+    expect(result.current).toEqual("0x1111111111111111111111111111111111111111");
+  });
+
+  it("returns undefined for zero_gravity delegate without valAddress", () => {
+    const { result } = renderHook(() =>
+      useStakingContractAddress("zero_gravity", { mode: "delegate" }),
+    );
+    expect(result.current).toEqual(undefined);
+  });
+
+  it("returns undefined for an unknown currencyId", () => {
+    const { result } = renderHook(() => useStakingContractAddress("unknown_chain"));
+    expect(result.current).toEqual(undefined);
   });
 });

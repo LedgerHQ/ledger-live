@@ -2,7 +2,7 @@ import { renderHook, act } from "tests/testSetup";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import { format } from "@ledgerhq/live-common/market/utils/currencyFormatter";
 import type { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";

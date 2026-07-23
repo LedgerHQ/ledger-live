@@ -19,13 +19,16 @@
     "src/test/helpers/msw-fixtures.ts",
     "src/test/helpers/msw-setup.ts",
     "src/supportedFeatures.ts",
-    "src/logic/index.ts"
+    "src/logic/index.ts",
+    "src/test/testUtils.ts"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnused": [
-    "lodash"
+    "lodash",
+    "@ledgerhq/cryptoassets"
   ]
 }

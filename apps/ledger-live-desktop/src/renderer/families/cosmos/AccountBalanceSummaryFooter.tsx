@@ -13,6 +13,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
@@ -158,7 +159,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
               <Trans
                 i18nKey="account.undelegatingTooltip"
                 values={{
-                  timelockInDays: 21,
+                  timelockInDays: cryptoFactory(account.currency.id).unbondingPeriod,
                 }}
               />
             }

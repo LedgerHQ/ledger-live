@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";

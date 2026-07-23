@@ -5,11 +5,16 @@
  * loading), this module imports the CLI once per Bun test-worker and calls runMain() directly.
  * Subsequent calls cost ~5–10ms instead of ~500ms.
  *
- * Isolation guarantees:
- *   - Tests within a file run sequentially (Bun default), so stdout/stderr capture,
- *     env-var patching, and DMK state are safe without locks.
- *   - Each test file runs in a separate Bun worker with its own module scope,
- *     so module-level state is isolated across files.
+ * Concurrency / state notes:
+ *   - `bun test` runs every test file in a single process, sequentially. There is no
+ *     per-file worker isolation: module-level state (the cached CLI graph below, the
+ *     HTTP interceptor, and any `mock.module(...)` registrations) is SHARED across files.
+ *   - Within that single process, tests run one at a time, so stdout/stderr capture,
+ *     env-var patching, and DMK state are safe without locks as long as each call cleans
+ *     up after itself (see the `finally` block in runCli).
+ *   - Because module mocks are global, any test file that `mock.module(...)`s a module
+ *     also imported by these CLI runs must restore it (or avoid mocking shared modules)
+ *     so it does not bleed into other files.
  *
  * HTTP interception:
  *   Installed once per worker (idempotent). Uses a module-level variable for the current

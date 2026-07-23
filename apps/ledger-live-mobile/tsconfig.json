@@ -2,12 +2,13 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "moduleResolution": "bundler",
+    "customConditions": ["react-native", "@ledgerhq/source"],
     "module": "preserve",
     "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",
     "lib": ["es2022", "DOM"],
-    "types": ["node", "react", "jest", "jest-allure2-reporter/globals"],
+    "types": ["node", "react", "jest"],
     "noEmit": true,
     "target": "esnext",
     "paths": {

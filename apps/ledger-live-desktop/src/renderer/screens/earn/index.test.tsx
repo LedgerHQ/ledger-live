@@ -102,6 +102,7 @@ describe("Earn screen", () => {
       initialState: withFlagOverrides({
         ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
         stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        swapToEarn: { enabled: true, params: { foo: "bar" } } as never,
       }),
     });
 
@@ -116,6 +117,9 @@ describe("Earn screen", () => {
     expect(goToURL).toContain("lang=");
     expect(goToURL).toContain("uiVersion=");
     expect(goToURL).toContain("lw40enabled=");
+    expect(goToURL).toContain(
+      `swapToEarn=${encodeURIComponent(JSON.stringify({ enabled: true, params: { foo: "bar" } }))}`,
+    );
     useLocationSpy.mockRestore();
   });
 
@@ -159,6 +163,40 @@ describe("Earn screen", () => {
 
     expect(lastCall.inputs.uiVersion).toBe("v3");
     expect(lastCall.inputs.lw40enabled).toBe("true");
+  });
+
+  it("passes swapToEarn with enabled and params when the feature is enabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        swapToEarn: { enabled: true, params: { foo: "bar" } } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.swapToEarn).toBe(
+      JSON.stringify({ enabled: true, params: { foo: "bar" } }),
+    );
+  });
+
+  it("passes swapToEarn with enabled=false and no params key when the feature is disabled", () => {
+    render(<Earn />, {
+      initialState: withFlagOverrides({
+        ptxEarnLiveApp: { enabled: true, params: { manifest_id: "earn-manifest-id" } },
+        stakePrograms: { enabled: true, params: { list: [], redirects: {} } } as never,
+        swapToEarn: { enabled: false } as never,
+      }),
+    });
+
+    const lastCall = mockWebPlatformPlayer.mock.calls.at(-1)?.[0] as unknown as {
+      inputs: Record<string, string | undefined>;
+    };
+
+    expect(lastCall.inputs.swapToEarn).toBe(JSON.stringify({ enabled: false }));
   });
 
   it("passes uiVersion v4 when earn simulator is enabled", () => {

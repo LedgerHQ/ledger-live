@@ -4,6 +4,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 const DELEGATION_AMOUNT = "1";
 const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-available");
@@ -26,7 +27,7 @@ test.describe("SEI EVM Native Staking - Delegate flow", () => {
   test(
     `[${delegation.account.currency.name}] Delegate: start delegate, validator selected, confirm transaction`,
     {
-      tag: ["@NanoSP", "@NanoX", "@Flex", "@Stax", "@NanoGen5", "@sei_evm", "@family-evm"],
+      tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
       annotation: {
         type: "TMS",
         description: "B2CQA-5964",

@@ -1,6 +1,6 @@
 {
   "entry": [
-    "src/index.ts",
+    "src/api/index.ts",
     "src/bridge/js.ts",
     "src/config.ts",
     "src/network/index.ts",
@@ -14,8 +14,6 @@
     "src/helpers/handleTransactionStatus.ts",
     "src/helpers/hasMinimumDelegableBalance.ts",
     "src/helpers/randomizeProviders.ts",
-    "src/specs.ts",
-    "src/speculos-deviceActions.ts",
     "src/transaction.ts",
     "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
@@ -31,5 +29,6 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"]
+    "jest-util"
+  ]
 }

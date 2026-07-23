@@ -44,10 +44,9 @@ import {
   validateEarnDepositScreen,
   validateLargeMoverCurrencyIds,
   validateLargeMoverLedgerIds,
-  validateMarketCurrencyId,
-  validateMarketListCategory,
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
+import { resolveMarketOrAssetDeeplinkIntent } from "./deeplinks/resolveMarketOrAssetDeeplinkIntent";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
 import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
@@ -362,6 +361,7 @@ export const DeeplinksProvider = ({
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
+  const lwmPayTabFlag = useFeature("lwmPayTab");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -507,6 +507,16 @@ export const DeeplinksProvider = ({
                               [ScreenName.Borrow]: "borrow",
                             },
                           },
+                          ...(lwmPayTabFlag?.enabled && {
+                            /**
+                             * ie: "ledgerlive://paytab" will open the Pay tab
+                             */
+                            [NavigatorName.PayTab]: {
+                              screens: {
+                                [ScreenName.PayTab]: "paytab",
+                              },
+                            },
+                          }),
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**
@@ -677,59 +687,42 @@ export const DeeplinksProvider = ({
             return getStateFromPath(url.href?.split("://")[1], config);
           }
 
-          if (hostname === "market") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
+          // Handle market & asset deeplinks - resolve the target before navigation.
+          if (hostname === "market" || hostname === "asset") {
+            const intent = resolveMarketOrAssetDeeplinkIntent({
+              hostname,
+              pathname,
+              shouldDisplayAggregatedAssets,
+              shouldDisplayAssetDiscoverability,
+              categoryParam: searchParams.get("category"),
+            });
 
-              if (!validatedCurrencyId) {
-                return handleMarketBannerDeeplink();
-              }
-
-              if (shouldDisplayAggregatedAssets) {
+            switch (intent.type) {
+              case "asset-detail":
                 return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
-                  source: "deeplink_market",
+                  currencyId: intent.currencyId,
+                  source: intent.source,
+                  marketState: intent.marketState,
                 });
-              }
-
-              url.pathname = `/${validatedCurrencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            const validatedCategory = shouldDisplayAssetDiscoverability
-              ? validateMarketListCategory(searchParams.get("category"))
-              : undefined;
-            return handleMarketBannerDeeplink(validatedCategory);
-          }
-
-          // Handle asset deeplink - validate currencyId before navigation
-          if (hostname === "asset") {
-            const currencyIdFromPath = pathname.replace("/", "");
-            if (currencyIdFromPath) {
-              const validatedCurrencyId = validateMarketCurrencyId(currencyIdFromPath);
-
-              if (!validatedCurrencyId) {
+              case "legacy-path":
+                url.pathname = `/${intent.currencyId}`;
+                return getStateFromPath(url.href?.split("://")[1], config);
+              case "market-banner":
+                return handleMarketBannerDeeplink(intent.category);
+              case "portfolio":
                 return getStateFromPath("portfolio", config);
-              }
-
-              if (shouldDisplayAggregatedAssets) {
-                return handleAssetDetailDeeplink({
-                  currencyId: validatedCurrencyId,
-                  source: "deeplink_asset",
-                });
-              }
-
-              url.pathname = `/${validatedCurrencyId}`;
-              return getStateFromPath(url.href?.split("://")[1], config);
-            }
-            if (shouldDisplayAggregatedAssets) {
-              return getStateFromPath("portfolio", config);
+              case "continue":
+                break;
             }
           }
 
           // Handle modular drawer deeplinks (receive & add-account)
           if (hostname === "receive" || hostname === "add-account") {
             return handleModularDrawerDeeplink(hostname, searchParams, dispatch, config);
+          }
+
+          if (hostname === "paytab" && !lwmPayTabFlag?.enabled) {
+            return getStateFromPath("card", config);
           }
 
           if (hostname === "earn") {
@@ -922,6 +915,7 @@ export const DeeplinksProvider = ({
     genericAwarenessModalFlag?.enabled,
     lwmProductTourFlag?.enabled,
     lwmBackupHubFlag?.enabled,
+    lwmPayTabFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

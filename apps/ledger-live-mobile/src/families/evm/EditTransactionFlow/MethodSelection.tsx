@@ -52,25 +52,35 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     if (transactionToEdit) setTransaction(transactionToEdit);
   }, [transactionToEdit, setTransaction]);
 
-  const haveFundToCancel = useMemo(
-    () =>
-      transactionToEdit
-        ? bridge.hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit })
-        : false,
-    [bridge, mainAccount, transactionToEdit],
-  );
+  const [haveFundToCancel, setHaveFundToCancel] = useState(false);
+  const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
 
-  const haveFundToSpeedup = useMemo(
-    () =>
-      transactionToEdit
-        ? bridge.hasMinimumFundsToSpeedUp({
+  useEffect(() => {
+    if (!transactionToEdit) return;
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const [cancel, speedup] = await Promise.all([
+          bridge.hasMinimumFundsToCancel({ mainAccount, transactionToUpdate: transactionToEdit }),
+          bridge.hasMinimumFundsToSpeedUp({
             account,
             mainAccount,
             transactionToUpdate: transactionToEdit,
-          })
-        : false,
-    [bridge, account, mainAccount, transactionToEdit],
-  );
+          }),
+        ]);
+        if (!cancelled) {
+          setHaveFundToCancel(cancel);
+          setHaveFundToSpeedup(speedup);
+        }
+      } catch {
+        // ignore: leave the funds flags unchanged on failure
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [bridge, account, mainAccount, transactionToEdit]);
 
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>();
 
@@ -111,21 +121,28 @@ function MethodSelectionComponent({ navigation, route }: Props) {
    * If you have a better way to do this, please do!
    */
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | undefined;
     const setTransactionHasBeenValidatedCallback = async () => {
-      const hasBeenConfirmed = await bridge.isTransactionConfirmed({
-        currency: mainAccount.currency,
-        hash: operation.hash,
-      });
-      if (hasBeenConfirmed) {
-        // stop polling as soon as we have a confirmation
-        clearInterval(intervalId);
-        setTransactionHasBeenValidated(true);
+      try {
+        const hasBeenConfirmed = await bridge.isTransactionConfirmed({
+          account: mainAccount,
+          hash: operation.hash,
+        });
+        if (hasBeenConfirmed) {
+          // stop polling as soon as we have a confirmation
+          clearInterval(intervalId);
+          setTransactionHasBeenValidated(true);
+        }
+      } catch {
+        // best-effort polling: swallow transient errors and keep polling
       }
     };
 
-    setTransactionHasBeenValidatedCallback();
-    const intervalId = setInterval(
-      () => setTransactionHasBeenValidatedCallback(),
+    void setTransactionHasBeenValidatedCallback();
+    intervalId = setInterval(
+      () => {
+        void setTransactionHasBeenValidatedCallback();
+      },
       mainAccount.currency.blockAvgTime
         ? mainAccount.currency.blockAvgTime * 1000
         : getEnv("DEFAULT_TRANSACTION_POLLING_INTERVAL"),
@@ -134,13 +151,19 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     return () => {
       clearInterval(intervalId);
     };
-  }, [bridge, mainAccount.currency, operation.hash]);
+  }, [bridge, mainAccount, operation.hash]);
 
-  if (transactionHasBeenValidated) {
+  useEffect(() => {
+    if (!transactionHasBeenValidated) return;
+    // Only surface the "already validated" screen while the user is still on the
+    // method selection screen (mirrors desktop where the banner only gates the
+    // form). Once the user has moved forward to sign/broadcast, the broadcast
+    // handler owns the error, so we must not navigate over it.
+    if (!navigation.isFocused()) return;
     navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
       error: new TransactionHasBeenValidatedError(),
     });
-  }
+  }, [transactionHasBeenValidated, navigation]);
 
   useEffect(() => {
     log("[edit transaction]", "Transaction to edit", transaction);

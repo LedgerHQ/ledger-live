@@ -14,16 +14,16 @@ export const useDrawerLogic = ({ entryPoint, onClose }: UseDrawerLogicProps) => 
 
   const isNotOnBoarding = entryPoint !== EntryPoint.onboarding;
 
-  const { shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
+  const { shouldWeTrack, flow, variant } = useAnalyticsOptInPrompt({ entryPoint });
 
   const handleRequestBack = () => {
     setStep(prevState => prevState - 1);
-    track("button_clicked", { button: "back", entryPoint }, shouldWeTrack);
+    track("button_clicked", { button: "back", entryPoint, flow, variant }, shouldWeTrack);
   };
 
   const handleRequestClose = () => {
     onClose();
-    track("button_clicked", { button: "close", entryPoint }, shouldWeTrack);
+    track("button_clicked", { button: "close", entryPoint, flow, variant }, shouldWeTrack);
   };
 
   useEffect(() => {

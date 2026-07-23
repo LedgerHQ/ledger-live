@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "25.0.0",
+  "version": "26.0.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
   "dependencies": {
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -38,7 +39,6 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
-    "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

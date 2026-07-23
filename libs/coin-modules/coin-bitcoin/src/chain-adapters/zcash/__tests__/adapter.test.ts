@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { BitcoinAccount, TransactionStatus } from "../../../types";
+import type { BitcoinAccount, BitcoinOutput, TransactionStatus } from "../../../types";
 import type { SignerContext } from "../../../signer";
 import type {
   ZcashTransferType,
@@ -9,7 +9,9 @@ import type {
   SpendableNote,
   DecryptedOutput,
 } from "../types";
+import { Observable } from "rxjs";
 import { getChainAdapter } from "../../registry";
+import { setZcashShieldedEnabled } from "../constants";
 
 // Load the zcash adapter (side-effect registration)
 import "../index";
@@ -39,6 +41,19 @@ function makeTx(
     transferType,
     ...extra,
   };
+}
+
+function makeUtxo(value: BigNumber, overrides: Partial<BitcoinOutput> = {}): BitcoinOutput {
+  return {
+    hash: "aa".repeat(32),
+    outputIndex: 0,
+    blockHeight: 1000,
+    address: "t1utxoaddress",
+    value,
+    rbf: false,
+    isChange: false,
+    ...overrides,
+  } as BitcoinOutput;
 }
 
 function makeSpendableNote(overrides: Partial<SpendableNote> = {}): SpendableNote {
@@ -99,24 +114,66 @@ function makeOrchardOutputNote(
 describe("zcash chain adapter — transaction routing", () => {
   const adapter = getChainAdapter("zcash");
 
-  // signOperation is not yet implemented — returns undefined for all transfer types
+  // Routing is driven by the zcashShielded feature flag. The suite runs with the
+  // flag ON by default (so the shielded PCZT hooks are exercised); the tests that
+  // assert the legacy fallback toggle it OFF explicitly. Reset after each test so
+  // the module-level flag never leaks across tests.
+  beforeEach(() => setZcashShieldedEnabled(true));
+  afterEach(() => setZcashShieldedEnabled(false));
+
   describe("signOperation", () => {
-    const allTransferTypes: ZcashTransferType[] = [
+    // Contract: routing is flag-driven, not transferType-driven. flag ON ⇒ every
+    // flow (including Public→Public / transparent t→t) goes through PCZT and
+    // returns an Observable; flag OFF ⇒ every flow returns undefined (legacy).
+    describe.each([
+      { label: "ON", enabled: true },
+      { label: "OFF", enabled: false },
+    ])("zcashShielded flag $label", ({ enabled }) => {
+      beforeEach(() => setZcashShieldedEnabled(enabled));
+
+      it.each<ZcashTransferType>([
+        "transparent",
+        "transparent-to-shielded",
+        "shielded-to-transparent",
+        "shielded",
+      ])(
+        enabled
+          ? "returns an Observable (PCZT) for %s transfers"
+          : "returns undefined (legacy) for %s transfers",
+        transferType => {
+          const result = adapter.signOperation!(
+            makeZcashAccount({ ufvk: "testufvk" }),
+            "device",
+            makeTx(transferType),
+            mockSignerContext,
+          );
+          if (enabled) expect(result).toBeInstanceOf(Observable);
+          else expect(result).toBeUndefined();
+        },
+      );
+    });
+  });
+
+  // Contract check: with the flag OFF, EVERY hook short-circuits to the legacy
+  // Bitcoin path (undefined) regardless of transfer type — including shielded
+  // flows, which the UI never surfaces while the flag is off.
+  describe("zcashShielded flag OFF ⇒ all hooks fall back to legacy", () => {
+    beforeEach(() => setZcashShieldedEnabled(false));
+
+    it.each<ZcashTransferType>([
       "transparent",
       "transparent-to-shielded",
       "shielded-to-transparent",
       "shielded",
-    ];
-    it.each<ZcashTransferType>(allTransferTypes)(
-      "returns undefined for %s transactions (PCZT not yet implemented)",
+    ])(
+      "signOperation/prepareTransaction/getTransactionStatus/estimateMaxSpendable are undefined for %s",
       transferType => {
-        const result = adapter.signOperation!(
-          makeZcashAccount(),
-          "device",
-          makeTx(transferType),
-          mockSignerContext,
-        );
-        expect(result).toBeUndefined();
+        const account = makeZcashAccount({ ufvk: "testufvk" });
+        const tx = makeTx(transferType);
+        expect(adapter.signOperation!(account, "device", tx, mockSignerContext)).toBeUndefined();
+        expect(adapter.prepareTransaction!(account, tx)).toBeUndefined();
+        expect(adapter.getTransactionStatus!(account, tx)).toBeUndefined();
+        expect(adapter.estimateMaxSpendable!(account, undefined, tx)).toBeUndefined();
       },
     );
   });
@@ -124,7 +181,8 @@ describe("zcash chain adapter — transaction routing", () => {
   // ── prepareTransaction ──────────────────────────────────────────────
 
   describe("prepareTransaction", () => {
-    it("returns undefined for transparent transfers (Bitcoin legacy path)", () => {
+    it("returns undefined for transparent transfers when the flag is OFF (Bitcoin legacy path)", () => {
+      setZcashShieldedEnabled(false);
       const result = adapter.prepareTransaction!(makeZcashAccount(), makeTx("transparent"));
       expect(result).toBeUndefined();
     });
@@ -202,11 +260,49 @@ describe("zcash chain adapter — transaction routing", () => {
       expect(result.changeAmount?.toNumber()).toBe(0);
     });
 
-    it("returns undefined for transparent-to-shielded (Bitcoin legacy path)", () => {
+    it("enriches transparent-to-shielded with fee/change from transparent UTXOs (no note spends)", async () => {
       const account = makeZcashAccount({ transactions: [] });
-      const tx = makeTx("transparent-to-shielded", new BigNumber(1000));
-      const result = adapter.prepareTransaction!(account, tx);
-      expect(result).toBeUndefined();
+      const tx = makeTx("transparent-to-shielded", new BigNumber(100_000), {
+        recipient: UA_ORCHARD_ONLY,
+        selectedUtxos: [makeUtxo(new BigNumber(1_000_000))],
+      });
+      const result = (await adapter.prepareTransaction!(account, tx)) as ZcashTransaction;
+
+      // 1 t-in + Orchard recipient + shielded change: orchard = max(2, 2) = 2;
+      // transparent = 1; logical = 3 → fee = 15_000.
+      // change = 1_000_000 - 100_000 - 15_000 = 885_000. No Orchard note spends.
+      expect(result.selectedNotes).toEqual([]);
+      expect(result.zcashFee?.toNumber()).toBe(15_000);
+      expect(result.changeAmount?.toNumber()).toBe(885_000);
+    });
+
+    it("computes transparent-to-shielded useAllAmount as balance minus fee (no change)", async () => {
+      const account = makeZcashAccount({ transactions: [] });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(0), {
+        recipient: UA_ORCHARD_ONLY,
+        useAllAmount: true,
+        selectedUtxos: [makeUtxo(new BigNumber(1_000_000))],
+      });
+      const result = (await adapter.prepareTransaction!(account, tx)) as ZcashTransaction;
+
+      // 1 t-in + single Orchard recipient: orchard = max(2, 1) = 2; transparent = 1;
+      // logical = 3 → fee = 15_000. amount = 1_000_000 - 15_000 = 985_000.
+      expect(result.amount.toNumber()).toBe(985_000);
+      expect(result.zcashFee?.toNumber()).toBe(15_000);
+      expect(result.changeAmount?.toNumber()).toBe(0);
+      expect(result.selectedNotes).toEqual([]);
+    });
+
+    it("returns transparent-to-shielded with empty notes when balance is insufficient", async () => {
+      const account = makeZcashAccount({ transactions: [] });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(100_000), {
+        recipient: UA_ORCHARD_ONLY,
+        selectedUtxos: [makeUtxo(new BigNumber(1_000))],
+      });
+      const result = (await adapter.prepareTransaction!(account, tx)) as ZcashTransaction;
+
+      expect(result.selectedNotes).toEqual([]);
+      expect(result.zcashFee).toBeUndefined();
     });
 
     it("returns a Promise for shielded-to-transparent (no spendable notes)", async () => {
@@ -220,7 +316,8 @@ describe("zcash chain adapter — transaction routing", () => {
   // ── getTransactionStatus ───────────────────────────────────────────
 
   describe("getTransactionStatus", () => {
-    it("returns undefined for transparent transfers (Bitcoin legacy path)", () => {
+    it("returns undefined for transparent transfers when the flag is OFF (Bitcoin legacy path)", () => {
+      setZcashShieldedEnabled(false);
       const result = adapter.getTransactionStatus!(makeZcashAccount(), makeTx("transparent"));
       expect(result).toBeUndefined();
     });
@@ -346,6 +443,44 @@ describe("zcash chain adapter — transaction routing", () => {
       expect(result.estimatedFees.toNumber()).toBe(10_000);
       expect(result.totalSpent.toNumber()).toBe(110_000);
     });
+
+    it("returns no errors for a valid transparent-to-shielded transaction", async () => {
+      const account = makeZcashAccount({ orchardBalance: new BigNumber(0) });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(100_000), {
+        recipient: UA_ORCHARD_ONLY,
+        zcashFee: new BigNumber(15_000),
+        selectedUtxos: [makeUtxo(new BigNumber(1_000_000))],
+      });
+      const result = (await adapter.getTransactionStatus!(account, tx)) as TransactionStatus;
+
+      expect(Object.keys(result.errors)).toHaveLength(0);
+      expect(result.estimatedFees.toNumber()).toBe(15_000);
+      expect(result.totalSpent.toNumber()).toBe(115_000);
+    });
+
+    it("returns NotEnoughBalance for transparent-to-shielded exceeding the transparent balance", async () => {
+      const account = makeZcashAccount({ orchardBalance: new BigNumber(0) });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(100_000), {
+        recipient: UA_ORCHARD_ONLY,
+        zcashFee: new BigNumber(15_000),
+        selectedUtxos: [makeUtxo(new BigNumber(50_000))],
+      });
+      const result = (await adapter.getTransactionStatus!(account, tx)) as TransactionStatus;
+
+      expect(result.errors.amount).toBeInstanceOf(Error);
+      expect(result.errors.amount.name).toBe("NotEnoughBalance");
+    });
+
+    it("returns recipient error for transparent-to-shielded without recipient", async () => {
+      const account = makeZcashAccount({ orchardBalance: new BigNumber(0) });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(100_000), {
+        zcashFee: new BigNumber(15_000),
+        selectedUtxos: [makeUtxo(new BigNumber(1_000_000))],
+      });
+      const result = (await adapter.getTransactionStatus!(account, tx)) as TransactionStatus;
+
+      expect(result.errors.recipient).toBeInstanceOf(Error);
+    });
   });
 
   // ── computeAccountBalance ──────────────────────────────────────
@@ -370,7 +505,8 @@ describe("zcash chain adapter — transaction routing", () => {
   // ── estimateMaxSpendable ───────────────────────────────────────────
 
   describe("estimateMaxSpendable", () => {
-    it("returns undefined for transparent transfers", () => {
+    it("returns undefined for transparent transfers when the flag is OFF", () => {
+      setZcashShieldedEnabled(false);
       const result = adapter.estimateMaxSpendable!(
         makeZcashAccount(),
         undefined,
@@ -422,6 +558,17 @@ describe("zcash chain adapter — transaction routing", () => {
       const account = makeZcashAccount({ transactions: [] });
       const result = (await adapter.estimateMaxSpendable!(account, undefined, null)) as BigNumber;
       expect(result).toBeUndefined();
+    });
+
+    it("returns transparent balance minus shielding fee for transparent-to-shielded", async () => {
+      const account = makeZcashAccount({ transactions: [] });
+      const tx = makeTx("transparent-to-shielded", new BigNumber(0), {
+        selectedUtxos: [makeUtxo(new BigNumber(1_000_000))],
+      });
+      const result = (await adapter.estimateMaxSpendable!(account, undefined, tx)) as BigNumber;
+      // 1 t-in + 1 Orchard recipient: orchard = max(2, 1) = 2; transparent = 1;
+      // logical = 3 → fee = 15_000.
+      expect(result.toNumber()).toBe(985_000);
     });
   });
 });

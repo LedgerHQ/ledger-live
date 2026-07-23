@@ -5,7 +5,7 @@ import type { FeatureFlagsToolProps } from "../../types";
 import { buildOverridesExport } from "../../utils/exportOverrides";
 import { saveFile } from "../../utils/saveFile";
 import { readFile } from "../../utils/readFile";
-import { useFlagListViewModel } from "./useFlagListViewModel.web";
+import { useFlagListViewModel } from "./useFlagListViewModel";
 
 jest.mock("../../utils/saveFile");
 jest.mock("../../utils/readFile");

@@ -46,11 +46,12 @@ describe("ContentBannerActionCard", () => {
     expect(screen.getByText("Promo title")).toBeVisible();
     expect(screen.getByText("Promo body")).toBeVisible();
 
-    await user.press(screen.getByText("Promo title"));
-    expect(actions.onClick).toHaveBeenCalledTimes(1);
-
     await user.press(screen.getByTestId("content-banner-close-button"));
     expect(actions.onDismiss).toHaveBeenCalledTimes(1);
+    expect(actions.onClick).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Promo title"));
+    expect(actions.onClick).toHaveBeenCalledTimes(1);
   });
 
   it("when Braze sends `image_background`: MediaBanner, close must not fire CTA", async () => {

@@ -46,6 +46,7 @@ const targets = [
   "ShouldUseReceiveOptions",
   "PendingTransferProposals",
   "customAddAccountFlow",
+  "customSendFlow",
 ];
 
 async function genTarget(target) {

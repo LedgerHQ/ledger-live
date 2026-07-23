@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
@@ -7,7 +6,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import cryptoFactory from "../crypto/factory";
 import { Currency } from "../crypto/types";
 

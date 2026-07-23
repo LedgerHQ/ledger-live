@@ -2,7 +2,7 @@ name: "Failed Tests Summary"
 description: "Writes a GitHub job summary with a ready-to-copy Filter pattern that reruns only the failed/broken E2E tests. Shared by mobile and desktop e2e workflows."
 inputs:
   results-path:
-    description: "Directory containing the test results (Allure *-result.json for Playwright, Jest --json e2e-test-results-*.json for Detox)"
+    description: "Directory containing the Allure *-result.json files (both Playwright and Detox emit these; each file is one test attempt, retries share a historyId)"
     required: true
   runner:
     description: >-
@@ -28,16 +28,22 @@ runs:
       run: |
         set -euo pipefail
 
-        # jq filter escaping every char that is special in a JS regex, so the emitted
-        # Filter pattern is a literal alternation once split on '|' by the workflow.
-        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|\\\\/-])"; "\\" + .c);'
+        # jq filter escaping every char that is special in a JS regex (plus the
+        # comma), so the emitted Filter pattern is a literal alternation once split
+        # on the unescaped '|' and ',' separators by the workflow resolver
+        # (e2e/tooling/filter/resolve.mjs).
+        JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
 
         case "$RUNNER" in
           detox)
             # Detox selects whole spec files via a regex tested against file path/content,
-            # so the reusable unit is the failed spec file (basename). Source: Jest --json.
+            # so the reusable unit is the failed spec file (basename). Source: Allure
+            # *-result.json so a pass on a Detox retry clears the earlier failure — the raw
+            # Jest --json only records the failing attempt and would over-include specs.
+            # The spec file comes from the `sourceFile` label set by e2e/mobile/jest.config.js
+            # (mobile Allure results carry only test titles, never the file path otherwise).
             shopt -s nullglob
-            files=("$RESULTS_DIR"/e2e-test-results-*.json)
+            files=("$RESULTS_DIR"/*-result.json)
             shopt -u nullglob
             ;;
           playwright)
@@ -62,50 +68,77 @@ runs:
           exit 0
         fi
 
+        # ITEMS_JQ produces the exact list of rerun units this runner selects by, as a JSON
+        # array. FILTER_PATTERN and failed_count are both derived from it, so the count can
+        # never diverge from what users actually rerun.
         if [ "$RUNNER" = "detox" ]; then
-          # Failed spec files (basename), deduplicated.
-          FAILED_LIST=$(jq -rs '
-            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") ]
-            | unique | .[]
-          ' "${files[@]}")
-          FILTER_PATTERN=$(jq -rs "$JQ_ESC"'
-            [ .[].testResults[]? | select(.status == "failed") | .name | sub(".*/"; "") | esc ]
-            | unique | join("|")
-          ' "${files[@]}")
+          # Spec files (basename) that still have a genuinely-failing test after retries.
+          # Each Allure result is one attempt; retries of a test share a historyId. A test
+          # "finally failed" when it has a failed/broken attempt and never passed. A spec
+          # file is included when it holds at least one such test. The spec basename is read
+          # from the `sourceFile` label (set by e2e/mobile/jest.config.js).
+          ITEMS_JQ='
+            def specFile:
+              ([ (.labels // [])[] | select(.name == "sourceFile") | .value ][0] // "")
+              | sub(".*/"; "");
+            [ .[] | { id: (.historyId // .fullName // .name), spec: specFile, status: .status } ]
+            | group_by(.id)
+            | map(select(
+                (any(.[]; .status == "failed" or .status == "broken"))
+                and (all(.[]; .status != "passed"))
+              ) | .[0].spec)
+            | map(select(. != "")) | unique
+          '
         else
           # Failed/broken test titles that never passed (a pass on retry clears the failure).
-          FAILED_LIST=$(jq -rs '
+          ITEMS_JQ='
             [ .[] | { name: .name, status: .status } ] as $all
             | ( $all | map(select(.status == "passed") | .name) | unique ) as $passed
             | $all | map(select(.status == "failed" or .status == "broken") | .name)
-              | unique | map(select(. as $n | ($passed | index($n)) | not)) | .[]
-          ' "${files[@]}")
-          FILTER_PATTERN=$(jq -rs "$JQ_ESC"'
-            [ .[] | { name: .name, status: .status } ] as $all
-            | ( $all | map(select(.status == "passed") | .name) | unique ) as $passed
-            | $all | map(select(.status == "failed" or .status == "broken") | .name)
-              | unique | map(select(. as $n | ($passed | index($n)) | not)) | map(esc) | join("|")
-          ' "${files[@]}")
+              | unique | map(select(. as $n | ($passed | index($n)) | not))
+          '
         fi
 
-        FAILED_COUNT=0
-        [ -n "$FAILED_LIST" ] && FAILED_COUNT=$(printf '%s\n' "$FAILED_LIST" | grep -c '' || true)
+        if [ "$RUNNER" = "playwright" ]; then
+          MAP_TO_PATTERN='map(esc + "(?! [^@])")'
+        else
+          MAP_TO_PATTERN='map(esc)'
+        fi
+        FILTER_PATTERN=$(jq -rs "$JQ_ESC$ITEMS_JQ | $MAP_TO_PATTERN | join(\"|\")" "${files[@]}")
+        FAILED_COUNT=$(jq -rs "$ITEMS_JQ"' | length' "${files[@]}")
+
+        # Robust "did anything fail" gate: counts finally-failing tests (not rerun items),
+        # keyed by historyId/fullName/name so a missing field can't zero it out. This keeps
+        # the summary rendering even when e.g. a detox result lacks its sourceFile label and
+        # FAILED_COUNT (spec files) comes out empty.
+        FF_COUNT=$(jq -rs '
+          group_by(.historyId // .fullName // .name)
+          | map(select(
+              (any(.[]; .status == "failed" or .status == "broken"))
+              and (all(.[]; .status != "passed"))
+            ))
+          | length
+        ' "${files[@]}")
 
         echo "failed_count=$FAILED_COUNT" >> "$GITHUB_OUTPUT"
+        echo "filter_pattern=$FILTER_PATTERN" >> "$GITHUB_OUTPUT"
 
-        if [ "$FAILED_COUNT" -eq 0 ]; then
-          echo "filter_pattern=" >> "$GITHUB_OUTPUT"
+        if [ "${FF_COUNT:-0}" -eq 0 ]; then
           exit 0
         fi
 
-        echo "filter_pattern=$FILTER_PATTERN" >> "$GITHUB_OUTPUT"
 
         {
-          echo "<details><summary>Copy this into the **Filter pattern** input to rerun:</summary>"
           echo ""
-          echo '```'
-          echo "$FILTER_PATTERN"
-          echo '```'
-          echo ""
-          echo "</details>"
+          if [ -n "$FILTER_PATTERN" ]; then
+            echo "<details><summary>Copy this into the **Filter pattern** input to rerun:</summary>"
+            echo ""
+            echo '```'
+            echo "$FILTER_PATTERN"
+            echo '```'
+            echo ""
+            echo "</details>"
+          else
+            echo "> ⚠️ Could not build a rerun filter pattern from these results."
+          fi
         } >> "$GITHUB_STEP_SUMMARY"

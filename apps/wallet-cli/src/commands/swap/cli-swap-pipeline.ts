@@ -427,6 +427,7 @@ export async function runFullSwapPipeline(
           flowId,
           fromCurrency: fromCurrency.id,
           toCurrency: toCurrency.id,
+          provider,
           fromAmount: amount,
           toAmount: amountExpectedTo.toFixed(),
         });

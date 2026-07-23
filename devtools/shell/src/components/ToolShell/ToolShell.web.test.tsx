@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { mockDevToolsConfig } from "jest/test-utils";
-import { ToolShell } from "./ToolShell.web";
+import { ToolShell } from "./ToolShell";
 import { DevToolsProvider } from "../../context";
 import { Category } from "@devtools/registry";
 

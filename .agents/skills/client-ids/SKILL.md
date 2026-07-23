@@ -1,83 +1,80 @@
 ---
 name: client-ids
-description: Privacy-protected ID management with @ledgerhq/client-ids — DeviceId, UserId, DatadogId, export-rules.json
+description: Privacy-protected ID management with @domain/entity-client-identity — DeviceId, UserId, DatadogId, export-rules.json
 ---
 
-# Client IDs Library (`@ledgerhq/client-ids`)
+# Client Identity Domain (`@domain/entity-client-identity`)
 
-## Privacy & Security — `@ledgerhq/client-ids`
+## Privacy & Security
 
-Sensitive identifiers (DeviceId, UserId, DatadogId) must always use the `@ledgerhq/client-ids` library:
+Sensitive identifiers (DeviceId, UserId, DatadogId) must always use the domain entity package:
 
 - **Never** use raw string IDs for devices, users, or analytics.
-- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@ledgerhq/client-ids/ids`.
+- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@domain/entity-client-identity`.
 - ID values are only accessible through explicit export methods (e.g., `exportUserIdForSomething()`).
-- Every export method must be allowlisted in `libs/client-ids/export-rules.json` with a justification.
+- Every export method must be allowlisted in `domain/entity/client-identity/export-rules.json`.
 - Export IDs only at system boundaries (API calls, persistence) — never in the middle of processing.
-- `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by default — this is by design.
+- `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by design.
 
 ---
 
-## Purpose
+## Package layout
 
-The `client-ids` library provides **unified, privacy-protected ID management** for Ledger Live. It isolates sensitive identifiers (DeviceId, UserId, DatadogId) and prevents accidental exposure through logging or serialization.
+| Package | Location | What it contains |
+|---|---|---|
+| `@domain/entity-client-identity` | `domain/entity/client-identity/` | DeviceId, UserId, DatadogId classes + Redux slice, selectors, persistence |
+| `@domain/api-push-devices` | `domain/api/push-devices/` | RTK Query mutation + Redux sync middleware |
 
 ## Core Principles
 
-### 1. **All ID Usage Must Go Through This Library**
+### 1. All ID Usage Must Go Through This Package
 
 - **Never** create raw string IDs for devices, users, or analytics
-- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@ledgerhq/client-ids/ids`
+- **Always** use `DeviceId`, `UserId`, or `DatadogId` classes from `@domain/entity-client-identity`
 - IDs are protected by Symbols and automatically redacted in logs/JSON
 
-### 2. **Privacy Protection**
+### 2. Privacy Protection
 
 - IDs are stored in Symbol fields to prevent accidental access
 - `toString()` and `toJSON()` return `[DeviceId:REDACTED]` by default
 - Actual ID values are only accessible through **explicit export methods**
 
-### 3. **Explicit Use Cases**
+### 3. Explicit Use Cases
 
 - Every ID usage must be **explicitly declared** through a dedicated export method (e.g., `exportUserIdForSomethingSomething()`)
 - Export methods represent **specific, documented use cases** and can only be called from allowlisted files
-- The `export-rules.json` file serves as a **registry of all allowed use cases**, ensuring each ID export is intentional and justified
-- **Export at the last end**: Only export IDs at system boundaries (API calls, persistence) - never in the middle of processing
-- The `check-export-rules.mjs` script enforces that all ID exports match declared use cases at build time
+- The `export-rules.json` file in `domain/entity/client-identity/` serves as a **registry of all allowed use cases**
+- The `check-export-rules.mjs` script enforces the allowlist at build time
 
 ## Usage Requirements
 
-### Creating IDs
+### Using an existing ID for a new use case
 
-Two scenarios:
-
-**1. Using an existing ID for a new use case:**
-- Add a new export method (e.g., `exportUserIdForSomethingSomething()`)
-- Add your file to `libs/client-ids/export-rules.json` allowlist:
+- Add a new export method on the class (e.g., `exportUserIdForSomethingSomething()`)
+- Add your file to `domain/entity/client-identity/export-rules.json`:
   ```json
   {
-    "libs/client-ids/src/ids/UserId.ts": {
+    "domain/entity/client-identity/src/ids/UserId.ts": {
       "exportUserIdForSomethingSomething": [
-        "your/new/file/path.ts"  // Add here
+        "your/new/file/path.ts"
       ]
     }
   }
   ```
-- Justify the usage in a code comment explaining why this file needs to export the ID
 - Use the method only from the allowlisted file (at the system boundary)
 
-**2. Introducing a new kind of ID:**
-- Create a new class in `libs/client-ids/src/ids/` (e.g., `NewId.ts`)
+### Introducing a new kind of ID
+
+- Create a new class in `domain/entity/client-identity/src/ids/` (e.g., `NewId.ts`)
 - Follow the pattern from `DeviceId.ts`: Symbol storage, redacted toString/toJSON, export methods
 - Add export methods with allowlist rules in `export-rules.json`
 
 ```typescript
-import { DeviceId } from "@ledgerhq/client-ids/ids";
+import { DeviceId } from "@domain/entity-client-identity";
 
-// ✅ Correct: Use the library
+// ✅ Correct: Use the domain entity
 const deviceId = DeviceId.fromString("device-123");
 
 // ❌ Wrong: Don't use raw strings
 const deviceId = "device-123"; // BAD
 ```
-
-

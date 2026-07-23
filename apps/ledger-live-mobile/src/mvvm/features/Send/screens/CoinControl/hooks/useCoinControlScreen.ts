@@ -24,6 +24,7 @@ export type CoinControlScreenViewModel =
       transactionActions: SendFlowTransactionActions;
       onReview: () => void;
       onGetFunds: () => void;
+      onSelectCustomFees: () => void;
     };
 
 export function useCoinControlScreen(): CoinControlScreenViewModel {
@@ -43,6 +44,10 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
     close();
   }, [close]);
 
+  const onSelectCustomFees = useCallback(() => {
+    navigation.navigate(ScreenName.SendFlowCustomFees);
+  }, [navigation]);
+
   if (!account || !transaction || !status || !uiConfig || !transactionActions) {
     return { ready: false };
   }
@@ -58,5 +63,6 @@ export function useCoinControlScreen(): CoinControlScreenViewModel {
     transactionActions,
     onReview,
     onGetFunds,
+    onSelectCustomFees,
   };
 }

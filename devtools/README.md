@@ -20,6 +20,7 @@ DevTools is unaware of its environment. Every piece of host-specific information
 devtools/
 ├── shell/            # @devtools/shell — <DevTools /> entry point, navigation, layout
 ├── registry/         # @devtools/registry — static tool metadata + DevToolsConfig union
+├── bindings/         # @devtools/bindings — app-specific prop builders
 ├── feature-flags/    # @devtools/feature-flags — Feature Flags tool
 └── <tool-name>/      # @devtools/<tool-name> — any future tool
 ```
@@ -88,7 +89,7 @@ For any component with non-trivial interaction logic, extract a `useXxxViewModel
 ### Tool boundaries
 
 - **Tools never import other tools.** No cross-tool dependencies, ever.
-- **External dependencies are limited to `shared/`, `domain/`, and `features/`** for truly generic types or utilities (Zod schemas, RTK slices, selectors). If the import feels specific to your tool's domain, it belongs in the tool itself.
+- **Keep tools decoupled from the app.** App state and wiring arrive as props, built in `@devtools/bindings` — the only bridge between app implementation and debug tools. Pure, app-agnostic code (types, utilities, a lib the tool exercises) can be imported directly.
 - **A tool's component never imports from `@devtools/shell` or `@devtools/registry`.** It takes its props directly so it can also be rendered standalone, outside the shell.
 
 ### Lazy loading
@@ -104,10 +105,62 @@ DevTools packages do **not** run Tailwind themselves — they rely on the host a
 
 If a class doesn't render, check those two points first.
 
+## TypeScript configuration
+
+### Platform resolution
+
+Packages that contain both `.web` and `.native` files use two separate tsconfig files to give the IDE and `tsc` the correct resolution context per platform:
+
+```
+my-tool/
+├── tsconfig.json          ← base: shared compilerOptions, files: []
+├── tsconfig.web.json      ← extends base, moduleSuffixes: [".web", ""], includes src/**/* excluding .native.*
+└── tsconfig.native.json   ← extends base, moduleSuffixes: [".native", ""], includes src/**/* excluding .web.*
+```
+
+`moduleSuffixes` is the mechanism that makes bare imports platform-aware. A bare import `./Foo` resolves to `Foo.web.tsx` under the web config and `Foo.native.tsx` under the native config — no explicit extension needed in the import path.
+
+The base `tsconfig.json` acts as a pure compilerOptions bag with `files: []`. This prevents it from claiming any files, ensuring the IDE always assigns source files to the correct platform config rather than the base.
+
+### Scripts
+
+Any script that invokes `tsc` must target a platform config explicitly, not the base:
+
+```json
+"typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json"
+```
+
+Omitting `-p` resolves to `tsconfig.json`, which has `files: []` and checks nothing.
+
+### Registering in the solution tsconfig
+
+Register the package in `devtools/tsconfig.json`:
+
+```json
+{ "path": "./my-tool" },
+```
+
+The package's `tsconfig.json` is itself a [solution-style tsconfig](https://www.typescriptlang.org/docs/handbook/project-references.html) (`files: []` + `references`) that delegates to the platform-specific configs:
+
+```json
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
+}
+```
+
+This is required because VS Code assigns each source file to whichever referenced project claims it — it does not auto-discover `tsconfig.*.json` files outside the reference graph. A file that falls outside the graph gets an inferred project with the wrong resolution context.
+
+Packages that have only web files (no native variants) follow the same base + web split but only need `tsconfig.web.json` in the package references.
+
 ## Packages
 
 - `@devtools/shell` — `<DevTools />`, navigation, layout, lazy-load runtime, `DevToolsProvider` / `useToolProps`
 - `@devtools/registry` — static map of tool metadata + `loader`s, and the `DevToolConfig` discriminated union that types host configs
+- `@devtools/bindings` — app-specific prop builders (one hook per tool) that adapt Ledger Live state into each tool's props
 - `@devtools/<tool>` — each tool package, default-exporting its React component
 
 ## Usage
@@ -116,7 +169,7 @@ The host imports `DevTools` and `DevToolsConfig` from the shell, and builds a ty
 
 ```tsx
 import { DevTools, type DevToolsConfig } from "@devtools/shell";
-import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
+import { useFeatureFlagsToolProps } from "@devtools/bindings";
 
 export default function DevToolsPage() {
   const featureFlagsProps = useFeatureFlagsToolProps();

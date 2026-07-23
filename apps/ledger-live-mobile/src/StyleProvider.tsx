@@ -1,14 +1,9 @@
 import React, { useMemo } from "react";
-import { ThemeProvider } from "styled-components/native";
+import { StyleProvider as PlatformStyleProvider } from "@features/platform-style";
 import { palettes, defaultTheme } from "@ledgerhq/native-ui/styles/index";
 import { Theme as UITheme } from "@ledgerhq/native-ui/styles/theme";
 import { lightTheme as light, darkTheme as dark } from "./colors";
-import {
-  ThemeProvider as LumenThemeProvider,
-  Languages,
-  type SupportedLocale,
-} from "@ledgerhq/lumen-ui-rnative";
-import { ledgerLiveThemes as lumenThemes } from "@ledgerhq/lumen-design-core";
+import { Languages, type SupportedLocale } from "@ledgerhq/lumen-ui-rnative";
 import { useSelector } from "~/context/hooks";
 import { languageSelector } from "~/reducers/settings";
 
@@ -47,10 +42,8 @@ export default function StyleProvider({ children, selectedPalette }: Props): Rea
   }, [selectedLanguage]);
 
   return (
-    <ThemeProvider theme={t}>
-      <LumenThemeProvider themes={lumenThemes} colorScheme={selectedPalette} locale={locale}>
-        {children}
-      </LumenThemeProvider>
-    </ThemeProvider>
+    <PlatformStyleProvider theme={t} selectedPalette={selectedPalette} locale={locale}>
+      {children}
+    </PlatformStyleProvider>
   );
 }

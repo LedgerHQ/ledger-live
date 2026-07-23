@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { ChainAdapter } from "./chain-adapters/types";
 import { getChainAdapter } from "./chain-adapters/registry";
 import type { BitcoinSigner, SignerContext } from "./signer";

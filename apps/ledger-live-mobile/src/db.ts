@@ -20,6 +20,7 @@ import type {
   SettingsState,
 } from "./reducers/types";
 import type { HistoryState } from "./reducers/history";
+import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import {
   mapPersistedKnownDeviceToKnownDevice,
   type KnownDevicesState,
@@ -29,7 +30,7 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
 import { type PersistedCAL } from "@domain/api-currency-token";
-import { PersistedIdentities } from "@ledgerhq/client-ids/store";
+import type { PersistedIdentities } from "@domain/entity-client-identity";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -272,6 +273,16 @@ export function getPostOnboardingState(): Promise<PostOnboardingState> {
 
 export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
   await storage.save("postOnboarding", obj);
+}
+
+export function getLargeScreenUpsellModalState(): Promise<LargeScreenUpsellModalState | null> {
+  return storage.get("largeScreenUpsellModal") as Promise<LargeScreenUpsellModalState | null>;
+}
+
+export async function saveLargeScreenUpsellModalState(
+  largeScreenUpsellModalState: LargeScreenUpsellModalState,
+): Promise<void> {
+  await storage.save("largeScreenUpsellModal", largeScreenUpsellModalState);
 }
 
 export function getMarketState(): Promise<MarketState> {

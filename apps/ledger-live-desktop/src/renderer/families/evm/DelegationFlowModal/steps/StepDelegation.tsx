@@ -1,4 +1,5 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { getStakingContractAddress } from "@ledgerhq/coin-evm/staking/index";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -24,15 +25,20 @@ export default function StepDelegation({
   const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
   const updateValidator = useCallback(
     (address: string, valId?: string) => {
-      onUpdateTransaction(_tx =>
-        bridge.updateTransaction(transaction, {
+      const contractAddress = getStakingContractAddress(account.currency.id, {
+        mode: "delegate",
+        valAddress: address,
+      });
+      onUpdateTransaction(tx =>
+        bridge.updateTransaction(tx, {
           mode: "delegate",
           valAddress: address,
           valId,
+          recipient: contractAddress ?? account.freshAddress,
         }),
       );
     },
-    [bridge, onUpdateTransaction, transaction],
+    [bridge, onUpdateTransaction, account.currency.id, account.freshAddress],
   );
 
   const chosenVoteAccAddr = transaction.valAddress || "";

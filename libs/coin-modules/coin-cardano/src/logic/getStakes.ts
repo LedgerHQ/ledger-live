@@ -1,5 +1,5 @@
 import type { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { buildStake, fetchDelegation } from "./stake";
 
 /**

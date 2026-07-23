@@ -47,8 +47,7 @@ describe("Testing setup on Solana", () => {
     it("should call the underlying signer for off-chain message signature", async () => {
       const freshAddressPath = "44'/60'/0'/0/0";
       const freshAddress = "8DpKDisipx6f76cEmuGvCX9TrA3SjeR76HaTRePxHBDe";
-      const message =
-        "4c6f6e67204f66662d436861696e2054657374204d6573736167652e";
+      const message = "4c6f6e67204f66662d436861696e2054657374204d6573736167652e";
       const result = await messageSigner.signMessage(
         {} as Transport,
         { freshAddressPath: freshAddressPath, freshAddress } as Account,
@@ -66,9 +65,7 @@ describe("Testing setup on Solana", () => {
       );
 
       expect(result.signature).toEqual(BASE58_ENVELOPE);
-      expect(
-        bs58.encode(bs58.decode(result.signature).subarray(1, 65)),
-      ).toEqual(BASE58_SIGNATURE);
+      expect(bs58.encode(bs58.decode(result.signature).subarray(1, 65))).toEqual(BASE58_SIGNATURE);
       expect(result.rsv).toBeUndefined();
     });
   });

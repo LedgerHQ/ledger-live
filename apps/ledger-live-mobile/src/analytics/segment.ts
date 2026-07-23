@@ -27,7 +27,7 @@ import {
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
-import { userIdSelector, isDummyUserId } from "@ledgerhq/client-ids/store";
+import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import {
   analyticsEnabledSelector,
   trackingEnabledSelector,
@@ -285,6 +285,14 @@ const getBackupHubAttributes = () => {
   };
 };
 
+const getProductTourAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmProductTour: false };
+  const flag = analyticsFeatureFlagMethod("lwmProductTour");
+  return {
+    lwmProductTour: !!flag?.enabled,
+  };
+};
+
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? { enabled: false },
   ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? { enabled: false },
@@ -424,6 +432,7 @@ const extraProperties = async (store: AppStore) => {
   )?.time;
 
   const backupHubAttributes = getBackupHubAttributes();
+  const productTourAttributes = getProductTourAttributes();
 
   return {
     ...mandatoryProperties,
@@ -461,6 +470,7 @@ const extraProperties = async (store: AppStore) => {
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...backupHubAttributes,
+    ...productTourAttributes,
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,

@@ -1,18 +1,20 @@
 import { WalletAuthInvalidChallengeError, WalletAuthInvalidTokenError } from "./errors";
 import { HttpKeycloakService } from "./keycloakService";
-import { createPkcePair } from "./pkce";
+import { createPkcePairWithWebCrypto, type CreatePkcePair } from "./pkce";
 import type { AuthConfig, IdentityProvider, KeycloakService, KeycloakToken } from "./types";
 import { getTokenState } from "./utils";
 
 export class AuthSDK {
-  private token?: KeycloakToken;
+  private token?: Promise<KeycloakToken>;
   private readonly idP: IdentityProvider;
+  private readonly createPkcePair: CreatePkcePair;
   private readonly keycloakService: KeycloakService;
 
   constructor(
     private readonly config: AuthConfig,
     {
       provider,
+      createPkcePair = createPkcePairWithWebCrypto,
       fetch = globalThis.fetch,
       keycloakService = new HttpKeycloakService(
         config.keycloakBaseUrl,
@@ -21,20 +23,65 @@ export class AuthSDK {
       ),
     }: {
       provider: IdentityProvider;
+      createPkcePair?: CreatePkcePair;
       fetch?: typeof globalThis.fetch;
       keycloakService?: KeycloakService;
     },
   ) {
     this.idP = provider;
+    this.createPkcePair = createPkcePair;
     this.keycloakService = keycloakService;
   }
 
-  async authenticate(): Promise<KeycloakToken> {
-    if (this.token && getTokenState(this.token.accessToken) === "valid") {
+  async withToken<T>({
+    queryFn,
+    refreshAndRetryWhen,
+  }: {
+    queryFn: (token: KeycloakToken) => Promise<T>;
+    refreshAndRetryWhen?: (result: T) => boolean;
+  }): Promise<T> {
+    const token = await this.getToken();
+    return queryFn(token).then(async (result: T) => {
+      if (!refreshAndRetryWhen?.(result)) return result;
+      const refreshedToken = await this.getToken(true);
+      return queryFn(refreshedToken);
+    });
+  }
+
+  private async getToken(forceRefresh = false): Promise<KeycloakToken> {
+    if (forceRefresh) {
+      this.token = undefined;
+    }
+
+    if (this.token) {
+      const cachedToken = this.token;
+      const token = await cachedToken;
+      if (getTokenState(token.accessToken) === "valid") {
+        return token;
+      }
+
+      if (this.token === cachedToken) {
+        this.token = this.createTokenPromise();
+      }
       return this.token;
     }
 
-    const pkce = this.config.disablePkce ? undefined : await createPkcePair();
+    this.token = this.createTokenPromise();
+    return this.token;
+  }
+
+  private createTokenPromise(): Promise<KeycloakToken> {
+    const tokenPromise = this.fetchToken().catch(error => {
+      if (this.token === tokenPromise) {
+        this.token = undefined;
+      }
+      throw error;
+    });
+    return tokenPromise;
+  }
+
+  private async fetchToken(): Promise<KeycloakToken> {
+    const pkce = this.config.disablePkce ? undefined : await this.createPkcePair();
     const redirectUri = `${this.keycloakService.realmBaseUrl}/broker/${this.idP.brokerId}/endpoint`;
 
     const challenge = await this.keycloakService.getChallenge({
@@ -59,8 +106,6 @@ export class AuthSDK {
       throw new WalletAuthInvalidTokenError();
     }
 
-    this.token = identityProviderTokenResponse;
-
-    return this.token;
+    return identityProviderTokenResponse;
   }
 }

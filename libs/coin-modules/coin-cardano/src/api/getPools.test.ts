@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { fetchPoolDetails } from "./getPools";
 
 jest.mock("@ledgerhq/live-network/network");

@@ -11,8 +11,15 @@ import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryp
 import {
   CRYPTO_CURRENCIES_REGISTRY,
   CRYPTO_CURRENCY_ALIASES,
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
 import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
+import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import pkg from "../package.json" with { type: "json" };
 import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
@@ -106,10 +113,17 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
 // The domain registries are the runtime source of truth for currency data.
 setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
+setCurrenciesResolver({
+  getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  findCryptoCurrencyByScheme,
+  listCryptoCurrencies,
+  hasCryptoCurrencyId,
+});
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
-setupCalClientStore();
+setFrameworkCryptoAssetsStore(setupCalClientStore());
 registerWalletCliDmkTransport();

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
-import { userIdSelector } from "@ledgerhq/client-ids/store";
+import { userIdSelector } from "@domain/entity-client-identity";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -37,11 +37,13 @@ import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
+import ContactsDevTool from "./ContactsDevTool";
 import FeaturesAndFlowsDevTool from "./FeaturesAndFlowsDevTool";
 import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 import GenericAwarenessModalDevTool from "./GenericAwarenessModalDevTool";
 import GenericAwarenessModalDevScreen from "./GenericAwarenessModalDevTool/screens/GenericAwarenessModalDevScreen";
+import OpenDevToolsRow from "./OpenDevToolsRow";
 import InfoStateDevTool from "./InfoStateDevTool";
 import InfoStateDevScreen from "./InfoStateDevTool/screens/InfoStateDevScreen";
 import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
@@ -149,7 +151,9 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+      <OpenDevToolsRow />
       <WalletFeaturesDevTool />
+      <ContactsDevTool />
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />

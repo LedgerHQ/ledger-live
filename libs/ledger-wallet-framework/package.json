@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -48,11 +48,6 @@
       "require": "./lib/account/index.js",
       "default": "./lib-es/account/index.js"
     },
-    "./bot": {
-      "@ledgerhq/source": "./src/bot/index.ts",
-      "require": "./lib/bot/index.js",
-      "default": "./lib-es/bot/index.js"
-    },
     "./bridge": {
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
@@ -94,7 +89,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
@@ -102,7 +96,6 @@
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
@@ -117,6 +110,8 @@
     "uuid": "11.1.0"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@types/imurmurhash": "^0.1.4",
     "@types/node": "catalog:",

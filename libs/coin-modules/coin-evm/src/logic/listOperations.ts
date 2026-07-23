@@ -1,62 +1,19 @@
-import {
-  AssetInfo,
+import type {
   Page,
   MemoNotSupported,
   Operation,
   ListOperationsOptions,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { log } from "@ledgerhq/logs";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { getExplorerApi } from "../network/explorer";
 
-const CONTRACT_INTERACTION_KINDS = new Set<string>([
-  "SmartContractInteraction",
-  "SmartContractDeployment",
-]);
+// the sort parameter has a double meaning:
+// - legacy (for the bridge): it's used to sort the operations in the result list. Explorer always queried in "desc" order.
+// - new: it's used to sort AND query the explorer with the correct order.
 
-/** Smart-contract fields copied from explorer `extra` into framework `details`. */
-function contractDetailsFromLiveExtra(
-  extra: LiveOperation["extra"],
-): Record<string, unknown> | undefined {
-  if (!extra || typeof extra !== "object") return undefined;
-  const src = extra as Record<string, unknown>;
-  const out: Record<string, unknown> = {};
-
-  const contractInteraction = src.contractInteraction;
-  if (
-    typeof contractInteraction === "string" &&
-    CONTRACT_INTERACTION_KINDS.has(contractInteraction)
-  ) {
-    out.contractInteraction = contractInteraction;
-  }
-
-  const contractAddress = src.contractAddress;
-  if (typeof contractAddress === "string") {
-    out.contractAddress = contractAddress;
-  }
-
-  const contractPayload = src.contractPayload;
-  if (typeof contractPayload === "string") {
-    out.contractPayload = contractPayload;
-  }
-
-  return Object.keys(out).length > 0 ? out : undefined;
-}
-
-type AssetConfig =
-  | { type: "native"; internal?: boolean; parent?: LiveOperation }
-  | { type: "token"; owner: string; parent?: LiveOperation };
-
-function extractStandard(op: LiveOperation): string {
-  if (!op.standard) return "erc20";
-  if (["ERC721", "ERC1155"].includes(op.standard)) return op.standard.toLowerCase();
-
-  return "token"; // NOTE: old default
-}
-
-/** Operation types that carry semantic meaning and must not be overridden with generic IN/OUT. */
-const SEMANTIC_OP_TYPES: Set<OperationType> = new Set([
+// the limit parameter is a newly introduced parameter for pagination. It's used to switch between "legacy" and "new" behavior.
+// see tests for a full description of the behavior.
+const SEMANTIC_OP_TYPES = new Set([
   "DELEGATE",
   "UNDELEGATE",
   "REDELEGATE",
@@ -66,17 +23,12 @@ const SEMANTIC_OP_TYPES: Set<OperationType> = new Set([
   "NFT_OUT",
 ]);
 
-/**
- * Type from the perspective of the requested address (IN when they receive, OUT when they send).
- * Only overrides for generic types (e.g. NONE, FEES); preserves semantic types (DELEGATE, NFT_*, etc.)
- * so that staking and NFT operations are not shown as plain IN/OUT in history.
- */
 function typeFromAddressPerspective(
   senders: string[],
   recipients: string[],
   requestedAddress: string,
-  rawType: OperationType,
-): OperationType {
+  rawType: string,
+): string {
   if (SEMANTIC_OP_TYPES.has(rawType)) return rawType;
   const addressLower = requestedAddress.toLowerCase();
   const inSenders = senders.some(s => s.toLowerCase() === addressLower);
@@ -86,125 +38,6 @@ function typeFromAddressPerspective(
   return rawType;
 }
 
-function computeValue(op: LiveOperation): bigint {
-  // amount = amount effectively transferred, fees are reported separately in tx.fees.
-  return BigInt(op.value.toFixed(0));
-}
-
-/**
- * Gas is paid once per tx. Explorers sometimes put a different `fee` on token transfer operations than on the parent
- * coin tx (probably related to L2), so it is not a second on-chain charge — we use the parent fee.
- *
- */
-function computeTxFee(asset: AssetConfig, op: LiveOperation): LiveOperation["fee"] {
-  if (asset.type === "token" && asset.parent) {
-    return asset.parent.fee;
-  }
-  return op.fee;
-}
-
-function computeFailed(asset: AssetConfig, op: LiveOperation): boolean {
-  if (asset.type === "token" && asset.parent) {
-    return asset.parent.hasFailed ?? false;
-  }
-
-  return op.hasFailed ?? false;
-}
-
-function computeFeesPayer(asset: AssetConfig, op: LiveOperation): string | undefined {
-  // Important: do not use the op sender as fee payer by default, it may be wrong or ambiguous for token operations.
-  // We prefer leaving fee payer unset if unknown.
-  const isTokenOrInternal = asset.type === "token" || (asset.type === "native" && asset.internal);
-  const referenceOperation = isTokenOrInternal ? asset.parent : op;
-  return referenceOperation?.senders?.length === 1 ? referenceOperation?.senders[0] : undefined;
-}
-
-function toOperation(
-  currency: string,
-  address: string,
-  asset: AssetConfig,
-  op: LiveOperation,
-): Operation<MemoNotSupported> {
-  if (op.value.isNaN() || op.fee.isNaN()) {
-    log("evm/listOperations", "Found NaN value on operation", {
-      currency,
-      address,
-      operation: op.hash,
-      assetType: asset.type,
-      assetIsInternal: asset.type === "native" && !!asset.internal,
-      ...(op.contract ? { assetReference: op.contract } : {}),
-    });
-  }
-
-  const assetInfo: AssetInfo = { type: asset.type };
-
-  if (asset.type === "token") {
-    assetInfo.assetReference = op.contract ?? "";
-    assetInfo.assetOwner = asset.owner;
-    assetInfo.type = extractStandard(op);
-  }
-
-  const type = typeFromAddressPerspective(op.senders, op.recipients, address, op.type);
-  const value = computeValue(op);
-  const failed = computeFailed(asset, op);
-  const feesPayer = computeFeesPayer(asset, op);
-
-  const internalOpDetail =
-    asset.type === "native" && asset.internal ? { internal: asset.internal } : {};
-  const tokenOpDetail =
-    asset.type === "token"
-      ? {
-          ledgerOpType: type,
-          assetAmount: op.value.toFixed(0),
-          assetSenders: op.senders,
-          assetRecipients: op.recipients,
-          parentSenders: asset.parent?.senders ?? [],
-          parentRecipients: asset.parent?.recipients ?? [],
-        }
-      : {};
-
-  const txFee = computeTxFee(asset, op);
-
-  const contractDetail =
-    contractDetailsFromLiveExtra(op.extra) ??
-    (asset.type === "token" && asset.parent
-      ? contractDetailsFromLiveExtra(asset.parent.extra)
-      : undefined);
-
-  return {
-    id: op.id,
-    type,
-    senders: op.senders,
-    recipients: op.recipients,
-    value,
-    asset: assetInfo,
-    tx: {
-      hash: op.hash,
-      block: {
-        height: op.blockHeight ?? 0,
-        hash: op.blockHash ?? "",
-        time: op.date,
-      },
-      fees: BigInt(txFee.toFixed(0)),
-      date: op.date,
-      failed,
-      ...(feesPayer ? { feesPayer } : {}),
-    },
-    details: {
-      sequence: op.transactionSequenceNumber,
-      ...internalOpDetail,
-      ...tokenOpDetail,
-      ...contractDetail,
-    },
-  };
-}
-
-// the sort parameter has a double meaning:
-// - legacy (for the bridge): it's used to sort the operations in the result list. Explorer always queried in "desc" order.
-// - new: it's used to sort AND query the explorer with the correct order.
-
-// the limit parameter is a newly introduced parameter for pagination. It's used to switch between "legacy" and "new" behavior.
-// see tests for a full description of the behavior.
 export async function listOperations(
   currency: CryptoCurrency,
   address: string,
@@ -221,7 +54,6 @@ export async function listOperations(
   } = await explorerApi.getOperations(
     currency,
     address,
-    `js:2:${currency.id}:${address}:`,
     options.minHeight,
     undefined,
     options.cursor,
@@ -230,79 +62,117 @@ export async function listOperations(
   );
 
   const tokenOrNftHashes = new Set(
-    [...lastTokenOperations, ...lastNftOperations].map(op => op.hash),
+    [...lastTokenOperations, ...lastNftOperations].map(op => op.tx.hash),
   );
   const tokenNftOrInternalHashes = new Set(
-    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations].map(op => op.hash),
+    [...lastTokenOperations, ...lastNftOperations, ...lastInternalOperations].map(op => op.tx.hash),
   );
 
   const addressLower = address.toLowerCase();
-  const isAddressInOp = (op: LiveOperation): boolean =>
+  const isAddressInOp = (op: Operation<MemoNotSupported>): boolean =>
     op.senders.some(s => s.toLowerCase() === addressLower) ||
     op.recipients.some(r => r.toLowerCase() === addressLower);
   const tokenOpHashesWhereAddressInvolved = new Set(
-    [...lastTokenOperations, ...lastNftOperations].filter(isAddressInOp).map(op => op.hash),
+    [...lastTokenOperations, ...lastNftOperations].filter(isAddressInOp).map(op => op.tx.hash),
   );
 
-  const parents: Record<string, LiveOperation> = {};
+  const parents: Record<string, Operation<MemoNotSupported>> = {};
   const nativeOperations: Operation<MemoNotSupported>[] = [];
 
   for (const coinOperation of lastCoinOperations) {
     // Store parent reference for token/NFT/internal operations
-    if (tokenNftOrInternalHashes.has(coinOperation.hash)) {
-      parents[coinOperation.hash] = coinOperation;
+    if (tokenNftOrInternalHashes.has(coinOperation.tx.hash)) {
+      parents[coinOperation.tx.hash] = coinOperation;
     }
 
     // Emit native operation so the fee-payer and any native transfer are represented.
     // Skip FEES-only (value 0) when the same tx has a token/NFT op for this address to avoid duplicate.
     const isFeesOnlyWithTokenOpForAddress =
-      coinOperation.value.isZero() &&
-      tokenOrNftHashes.has(coinOperation.hash) &&
-      tokenOpHashesWhereAddressInvolved.has(coinOperation.hash);
+      coinOperation.value === 0n &&
+      tokenOrNftHashes.has(coinOperation.tx.hash) &&
+      tokenOpHashesWhereAddressInvolved.has(coinOperation.tx.hash);
     if (!isFeesOnlyWithTokenOpForAddress) {
-      nativeOperations.push(toOperation(currency.id, address, { type: "native" }, coinOperation));
+      nativeOperations.push(coinOperation);
     }
   }
 
-  const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map<
-    Operation<MemoNotSupported>
-  >(op =>
-    toOperation(
-      currency.id,
-      address,
-      { type: "token", owner: address, parent: parents[op.hash] },
-      op,
-    ),
-  );
-  // Some explorers (e.g. Blockscout on Somnia) report the top-level call trace as an
-  // internal transaction, duplicating the native transfer already present in txlist.
-  // When an internal tx and its parent coin tx both have the queried address as sender,
-  // the native value is already accounted for in the coin operation — drop the internal one.
-  // Analogous to the traceAddress.length === 0 check in getBlock's traceBlockItemsToOperationsByHash,
-  // but using sender matching since txlistinternal does not expose traceAddress.
-  // The `getBlock` path uses a richer `(address, peer, amount)` key in `rootTraceDedup.ts`;
-  // the two should be unified once listOperations moves to the `BlockOperation` shape.
-  const isRootTrace = (op: LiveOperation): boolean => {
-    const parent = parents[op.hash];
+  // Gas is paid once per tx. Token/NFT sub-ops carry fees from their own explorer record (etherscan),
+  // or inherit the parent tx (ledger explorer). Override to always use the parent's fees so the fee
+  // is not double-counted and the fee payer is correct.
+  const enrichTokenWithParent = (op: Operation<MemoNotSupported>): Operation<MemoNotSupported> => {
+    const parent = parents[op.tx.hash];
+    if (!parent) return op;
+    const parentContractDetails: Record<string, unknown> = {};
+    if (parent.details?.contractInteraction && !op.details?.contractInteraction) {
+      parentContractDetails.contractInteraction = parent.details.contractInteraction;
+    }
+    if (parent.details?.contractAddress && !op.details?.contractAddress) {
+      parentContractDetails.contractAddress = parent.details.contractAddress;
+    }
+    if (parent.details?.contractPayload && !op.details?.contractPayload) {
+      parentContractDetails.contractPayload = parent.details.contractPayload;
+    }
+    return {
+      ...op,
+      tx: {
+        ...op.tx,
+        fees: parent.tx.fees,
+        failed: parent.tx.failed,
+        ...(parent.tx.feesPayer ? { feesPayer: parent.tx.feesPayer } : {}),
+      },
+      details: {
+        ...(op.details ?? {}),
+        parentSenders: parent.senders,
+        parentRecipients: parent.recipients,
+        ...parentContractDetails,
+      },
+    };
+  };
+
+  const tokenOperations = [...lastTokenOperations, ...lastNftOperations].map(enrichTokenWithParent);
+
+  // Some Blockscout explorers (0G, Somnia) report the root call as an internal tx, duplicating
+  // the native transfer already in txlist. Drop it using sender-match (outgoing) or
+  // (recipient, peer, amount) triple (incoming), since traceAddress is not exposed by txlistinternal.
+  const isRootTrace = (op: Operation<MemoNotSupported>): boolean => {
+    const parent = parents[op.tx.hash];
     if (!parent) return false;
+
     const internalSenderMatch = op.senders.some(s => s.toLowerCase() === addressLower);
     const parentSenderMatch = parent.senders.some(s => s.toLowerCase() === addressLower);
-    return internalSenderMatch && parentSenderMatch;
+    if (internalSenderMatch && parentSenderMatch) return true;
+
+    const internalRecipientMatch = op.recipients.some(r => r.toLowerCase() === addressLower);
+    const parentRecipientMatch = parent.recipients.some(r => r.toLowerCase() === addressLower);
+    const peerMatch = op.senders.some(s =>
+      parent.senders.some(ps => ps.toLowerCase() === s.toLowerCase()),
+    );
+    return internalRecipientMatch && parentRecipientMatch && op.value === parent.value && peerMatch;
+  };
+
+  // For internal ops, override block.hash and fees from parent (etherscan sets block.hash = ""),
+  // but intentionally do NOT override tx.failed — each internal op has its own error state.
+  const enrichInternalWithParent = (
+    op: Operation<MemoNotSupported>,
+  ): Operation<MemoNotSupported> => {
+    const parent = parents[op.tx.hash];
+    if (!parent) return op;
+    return {
+      ...op,
+      tx: {
+        ...op.tx,
+        block: { ...op.tx.block, hash: parent.tx.block.hash },
+        fees: parent.tx.fees,
+        ...(parent.tx.feesPayer ? { feesPayer: parent.tx.feesPayer } : {}),
+      },
+    };
   };
 
   const internalOperations = lastInternalOperations
     .filter(op => !isRootTrace(op))
-    .map<Operation<MemoNotSupported>>(op => {
-      const parent = parents[op.hash];
-      return toOperation(
-        currency.id,
-        address,
-        { type: "native", internal: true, parent },
-        parent ? { ...op, fee: parent.fee, blockHash: parent.blockHash } : op,
-      );
-    });
+    .map(enrichInternalWithParent);
 
-  const hasValidType = (operation: Operation): boolean =>
+  const hasValidType = (operation: Operation<MemoNotSupported>): boolean =>
     [
       "NONE",
       "FEES",
@@ -319,7 +189,6 @@ export async function listOperations(
 
   const isAddressInvolved = (op: Operation<MemoNotSupported>): boolean => {
     // some explorers return addresses with uppercase letters (eg eip-55 encoded addresses)
-    const addressLower = address.toLowerCase();
     const isIncluded = (list: string[]): boolean =>
       list.some(item => item.toLowerCase() === addressLower);
     return isIncluded(op.senders) || isIncluded(op.recipients);
@@ -352,17 +221,14 @@ export async function listOperations(
       op.senders[0]?.toLowerCase() === addr &&
       op.recipients[0]?.toLowerCase() === addr;
 
-    const asType = (
-      op: Operation<MemoNotSupported>,
-      type: OperationType,
-    ): Operation<MemoNotSupported> =>
+    const asType = (op: Operation<MemoNotSupported>, type: string): Operation<MemoNotSupported> =>
       op.type === type
         ? op
         : {
             ...op,
             id: `${op.id}_${type}`,
             type,
-            details: { ...op.details, ledgerOpType: type },
+            details: { ...(op.details ?? {}), ledgerOpType: type },
           };
 
     const result: Operation<MemoNotSupported>[] = [];
@@ -377,7 +243,13 @@ export async function listOperations(
     return result;
   }
 
-  const nativeExpanded = expandSelfSendToTwoOps(nativeOperations, address);
+  // TODO: etherscan emits FEES for any contract call regardless of transferred value; remap
+  // sender-only ops to OUT until adapters use consistent value-based classification.
+  const nativeWithPerspective = nativeOperations.map(op => ({
+    ...op,
+    type: typeFromAddressPerspective(op.senders, op.recipients, address, op.type),
+  }));
+  const nativeExpanded = expandSelfSendToTwoOps(nativeWithPerspective, address);
   const tokenExpanded = expandSelfSendToTwoOps(tokenOperations, address);
 
   const operations = nativeExpanded

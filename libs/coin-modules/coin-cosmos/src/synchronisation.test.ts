@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

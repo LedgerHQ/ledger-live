@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import "./embed-usb-native";
+import { resolve } from "node:path";
 import { createCLI } from "@bunli/core";
 import "./live-common-setup";
 import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
@@ -20,7 +21,10 @@ import OperationsCommand from "./commands/operations";
 import ReceiveCommand from "./commands/receive";
 import SendCommand from "./commands/send";
 import SwapGroup from "./commands/swap/index";
+import EarnGroup from "./commands/earn/index";
 import GenuineCheckCommand from "./commands/genuine-check";
+import RingGroup from "./commands/ring/index";
+import SkillGroup from "./commands/skill/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -41,7 +45,10 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(ReceiveCommand);
   cli.command(SendCommand);
   cli.command(SwapGroup);
+  cli.command(EarnGroup);
   cli.command(GenuineCheckCommand);
+  cli.command(RingGroup);
+  cli.command(SkillGroup);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
 }
@@ -52,6 +59,17 @@ function normalizeNegatedFlags(argv: string[]): string[] {
 }
 
 if (import.meta.main) {
+  // The dev launcher (`pnpm wallet-cli start`) runs from the package dir, so fall back to INIT_CWD
+  // (where pnpm was invoked). cwd === PACKAGE_ROOT only holds from source, never in the shipped
+  // binary. Done once here so downstream code just resolves against process.cwd().
+  const PACKAGE_ROOT = resolve(import.meta.dir, "..");
+  if (process.cwd() === PACKAGE_ROOT && process.env.INIT_CWD) {
+    try {
+      process.chdir(process.env.INIT_CWD);
+    } catch {
+      // Stale/removed INIT_CWD: keep the current cwd rather than crash every command at startup.
+    }
+  }
   const argv = normalizeNegatedFlags(process.argv.slice(2));
   try {
     startAnalytics();

@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+import { useTokensData } from "@features/platform-currencies";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import SelectToken, { type Props } from "./01-SelectToken";
 import { HEDERA_ACCOUNT_1, HEDERA_ASSOCIATED_SUBACCOUNT } from "../__mocks__/account.mock";
 import { htsToken, erc20Token } from "../__mocks__/currency.mock";
 
-jest.mock("@ledgerhq/cryptoassets/cal-client/hooks/useTokensData");
+jest.mock("@features/platform-currencies");
 
 const mockedUseTokensData = jest.mocked(useTokensData);
 const mockNavigate = jest.fn();
@@ -35,7 +35,7 @@ describe("AssociateTokenFlow - select token", () => {
       isError: false,
       loadNext: jest.fn(),
       refetch: jest.fn(),
-    });
+    } as unknown as ReturnType<typeof useTokensData>);
   });
 
   it("should render the token list", () => {

@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 

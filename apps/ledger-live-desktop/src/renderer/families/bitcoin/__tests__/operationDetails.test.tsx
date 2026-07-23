@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TFunction } from "i18next";
 import { Operation } from "@ledgerhq/types-live";
 import { DataList } from "~/renderer/drawers/OperationDetails";

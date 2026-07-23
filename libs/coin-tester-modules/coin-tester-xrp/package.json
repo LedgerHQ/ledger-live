@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-xrp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Ledger XRP Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -75,15 +75,15 @@
     "ripple-keypairs": "^2.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^5.0.5",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "ts-node": "^10.9.2",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "rimraf": "^5.0.5",
+    "typescript": "catalog:"
   }
 }
