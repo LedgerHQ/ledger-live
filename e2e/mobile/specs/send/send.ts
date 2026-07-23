@@ -9,7 +9,7 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "../../utils/initUtil";
 
-const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
+export const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
 const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera"]);
 
 export type SendTestOptions = {
@@ -18,7 +18,10 @@ export type SendTestOptions = {
   liveDataOptions?: LiveDataCommandOptions;
 };
 
-const beforeAllFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
+export const beforeAllFunction = async (
+  transaction: TransactionType,
+  options?: SendTestOptions,
+) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),
@@ -114,11 +117,10 @@ export function runSendTest(
 
     it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName}`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
+      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
       await app.send.setAmountAndContinue(transaction.amount);
-
-      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await verifySendAndOperationDetails(transaction, amountWithCode);
     });
   });

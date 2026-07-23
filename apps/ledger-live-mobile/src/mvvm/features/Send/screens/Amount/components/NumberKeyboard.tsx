@@ -57,6 +57,13 @@ export function NumberKeyboard({ onKeyPress, allowDecimal = true }: NumberKeyboa
           {row.map(key => (
             <Pressable
               key={key}
+              testID={
+                key === "delete"
+                  ? "keyboard-key-delete"
+                  : key === "."
+                    ? "keyboard-key-decimal"
+                    : `keyboard-key-${key}`
+              }
               style={({ pressed }) => [styles.key, pressed && styles.keyActive]}
               onPress={() => handlePress(key)}
               android_ripple={{ color: "rgba(255, 255, 255, 0.1)", borderless: false }}
