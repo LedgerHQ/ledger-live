@@ -59,6 +59,7 @@ export function accountToWalletAPIAccount(
       name: `${parentAccountName} (${account.token.ticker})`,
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
+      readiness: parentAccount.readiness,
     };
   }
   const name = accountNameWithDefaultSelector(walletState, account);
@@ -72,6 +73,7 @@ export function accountToWalletAPIAccount(
     spendableBalance: account.spendableBalance,
     blockHeight: account.blockHeight,
     lastSyncDate: account.lastSyncDate,
+    readiness: account.readiness,
   };
 }
 
