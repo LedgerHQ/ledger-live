@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-framework-test-setup",
-  "version": "0.1.1",
+  "version": "0.1.2-next.0",
   "private": true,
   "description": "Jest setup for wallet-framework tests — wires CurrenciesResolver and CryptoAssetsStore stubs for all coin-module and shared-lib test environments",
   "keywords": [

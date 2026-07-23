@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-currency-token",
-  "version": "0.2.1",
+  "version": "0.2.2-next.0",
   "private": true,
   "description": "Domain API client for token currencies (Crypto Asset List): RTK Query endpoints typed on @domain/entity-currency-token",
   "main": "src/index.ts",

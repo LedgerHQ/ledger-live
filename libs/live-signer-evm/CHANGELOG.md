@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-evm
 
+## 0.21.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.11-next.0
+
 ## 0.21.1
 
 ### Patch Changes

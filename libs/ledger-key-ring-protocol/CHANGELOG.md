@@ -1,5 +1,12 @@
 # @ledgerhq/live-wallet
 
+## 0.17.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
 ## 0.17.0
 
 ### Minor Changes

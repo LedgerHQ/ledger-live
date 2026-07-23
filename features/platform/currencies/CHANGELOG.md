@@ -1,5 +1,22 @@
 # @features/platform-currencies
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
+- [#19771](https://github.com/LedgerHQ/ledger-live/pull/19771) [`6b75426`](https://github.com/LedgerHQ/ledger-live/commit/6b7542690a99a365c4b80dfd1fe65e2be594494b) Thanks [@ysitbon](https://github.com/ysitbon)! - Declare `@reduxjs/toolkit` as a runtime dependency (moved from `devDependencies`). `buildStandaloneCryptoAssetsStore` calls `configureStore` at runtime, so consumers building a standalone store need RTK resolvable as a real dependency.
+
+- [#19798](https://github.com/LedgerHQ/ledger-live/pull/19798) [`a55b810`](https://github.com/LedgerHQ/ledger-live/commit/a55b81007d49369f18b7ff15b6579c9a0d5de876) Thanks [@ysitbon](https://github.com/ysitbon)! - Add useCurrencyById and useTokenByAddressInCurrency hooks; repoint mobile from @ledgerhq/cryptoassets to @features/platform-currencies and @domain/entity-currency-crypto
+
+### Patch Changes
+
+- Updated dependencies [[`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6)]:
+  - @domain/entity-currency-crypto@0.7.0-next.0
+  - @domain/api-currency-token@0.2.2-next.0
+  - @features/platform-feature-flags@0.6.2-next.0
+
 ## 0.3.0
 
 ### Minor Changes

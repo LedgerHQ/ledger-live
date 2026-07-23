@@ -1,5 +1,13 @@
 # @ledgerhq/live-currency-format
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#19802](https://github.com/LedgerHQ/ledger-live/pull/19802) [`6ed8225`](https://github.com/LedgerHQ/ledger-live/commit/6ed8225f2434f70d587aa046e39262c21b538f27) Thanks [@ysitbon](https://github.com/ysitbon)! - Replace direct @ledgerhq/cryptoassets value imports with domain registry accessors
+
+- [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
+
 ## 0.13.0
 
 ### Minor Changes

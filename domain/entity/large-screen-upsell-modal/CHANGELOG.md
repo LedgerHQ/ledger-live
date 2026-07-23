@@ -1,5 +1,11 @@
 # @domain/entity-large-screen-upsell-modal
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#19713](https://github.com/LedgerHQ/ledger-live/pull/19713) [`9357647`](https://github.com/LedgerHQ/ledger-live/commit/93576473a2ffc466d06d27f752b8b89de77a64f5) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add large-screen upsell QA debug screen and domain setters for simulating modal state
+
 ## 0.2.0
 
 ### Minor Changes
