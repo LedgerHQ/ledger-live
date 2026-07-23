@@ -2,7 +2,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import {

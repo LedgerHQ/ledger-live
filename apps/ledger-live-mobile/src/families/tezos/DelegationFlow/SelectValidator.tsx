@@ -10,7 +10,7 @@ import {
   KeyboardEventListener,
   ListRenderItem,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation, Trans } from "~/context/Locale";
 import { Icons } from "@ledgerhq/native-ui";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

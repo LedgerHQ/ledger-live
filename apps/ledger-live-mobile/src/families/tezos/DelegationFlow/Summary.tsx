@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
