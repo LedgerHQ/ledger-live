@@ -92,13 +92,10 @@ process.on("SIGINT", () => {
       if (log !== undefined) console.log(log);
     },
     error: error => {
+      const message = typeof error?.message === "string" ? error.message : String(error);
+      const errorName = typeof error?.name === "string" ? error.name : "Error";
       const e: Error =
-        error instanceof Error
-          ? error
-          : Object.assign(
-              new Error(typeof error?.message === "string" ? error.message : String(error)),
-              { name: typeof error?.name === "string" ? error.name : "Error" },
-            );
+        error instanceof Error ? error : Object.assign(new Error(message), { name: errorName });
       if (process.env.VERBOSE || process.env.VERBOSE_FILE) console.error(e);
       else console.error(String((e && e.message) || e));
       process.exit(1);

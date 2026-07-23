@@ -20,6 +20,8 @@ import {
 } from "./helpers";
 
 export { createCustomErrorClass, addCustomErrorDeserializer };
+// Kept for wallet-api-core@1.35.0 (external) which imports these; remove once it's updated upstream
+export { serializeError, deserializeError } from "./helpers";
 
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");

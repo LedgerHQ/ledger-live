@@ -266,7 +266,7 @@ if (getEnv("MOCK")) {
             if (maybeKey === "error") {
               const obj = rawEvents as Record<string, unknown>;
               return Object.assign(
-                new Error(typeof obj.message === "string" ? obj.message : String(obj)),
+                new Error(typeof obj.message === "string" ? obj.message : "unknown reason"),
                 { name: typeof obj.name === "string" ? obj.name : "Error" },
                 obj,
               ) as Error;
