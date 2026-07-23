@@ -59,7 +59,10 @@ export type Action =
     }
   | {
       type: "userSetAbstraction";
-      abstraction: boolean;
+      hyperliquidChain: "Mainnet" | "Testnet";
+      signatureChainId: string; // chainId in hex format. Ex: 0xa4b1 for Arbitrum
+      user: Address; // User address — NOT sent to the device; device computes it
+      abstraction: "disabled" | "unifiedAccount" | "portfolioMargin";
     };
 export function convertAction(action: ActionWithNonce): SignerAction {
   return {
