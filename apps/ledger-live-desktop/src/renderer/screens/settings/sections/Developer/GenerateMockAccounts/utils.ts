@@ -37,13 +37,13 @@ export const getSupportedCurrencies = () => {
   return currencies;
 };
 
-export const getRandomCurrency = () => {
+export const getRandomCurrency = (): CryptoCurrency => {
   const currencies = getSupportedCurrencies();
   const currency = sample(currencies);
   if (!currency) {
     throw new Error("Failed to sample currency");
   }
-  return currency;
+  return currency as CryptoCurrency;
 };
 
 export const injectMockAccounts = async (
@@ -63,7 +63,7 @@ export const generateRandomAccounts = (count: number): [Account, AccountUserData
     .fill(null)
     .map(() => {
       const currency = getRandomCurrency();
-      return createAccount(currency as CryptoCurrency);
+      return createAccount(currency);
     });
 };
 
