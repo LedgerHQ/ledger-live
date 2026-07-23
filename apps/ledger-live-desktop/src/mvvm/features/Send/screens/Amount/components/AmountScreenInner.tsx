@@ -80,10 +80,17 @@ export function AmountScreenInner({
       page: "step amount",
       quick_amount: activeQuickAction,
       fee_strategy: viewModel.selectedFeeStrategy ?? null,
+      input_mode: viewModel.inputMode,
       ...sendFlowTrackingProperties,
     });
     onReview();
-  }, [onReview, viewModel.quickActions, viewModel.selectedFeeStrategy, sendFlowTrackingProperties]);
+  }, [
+    onReview,
+    viewModel.quickActions,
+    viewModel.selectedFeeStrategy,
+    viewModel.inputMode,
+    sendFlowTrackingProperties,
+  ]);
 
   return (
     <AmountScreenView
