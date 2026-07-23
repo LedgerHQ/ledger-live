@@ -82,8 +82,12 @@ Tools and resources for building on Ledger are at the [Ledger Developer Portal](
 
 #### Request Copilot while still in Draft
 
-> [!TIP] > <img width="500" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
+> [!TIP]
+>
+> <img width="500" alt="Request Copilot on a Draft PR" src="https://github.com/user-attachments/assets/1326c947-61bc-4793-b70c-9e39b04eb630" />
 
 #### Re-request review after pushing fixes
 
-> [!TIP] > <img width="500" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
+> [!TIP]
+>
+> <img width="500" alt="Re-request review on a reviewer that did the review" src="https://github.com/user-attachments/assets/80f83822-0557-4375-8ed6-a4aebfcb5d10" />
