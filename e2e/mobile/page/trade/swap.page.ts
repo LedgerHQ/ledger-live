@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { retryUntilTimeout } from "../../utils/retry";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -151,7 +152,12 @@ export default class SwapPage extends CommonPage {
     await waitForElementById(this.swapSuccessTitleId, 120000, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
-    await tapByIdAndExpectToDisappear("NavigationHeaderCloseButton", { timeout: 60000 });
+    await retryUntilTimeout(async () => {
+      await app.common.closePage();
+      if (await IsIdVisible(this.swapSuccessTitleId, 1000)) {
+        throw new Error("swap-success-title still visible after close tap");
+      }
+    }, 60000);
   }
 
   @Step("Selected provider: $0")

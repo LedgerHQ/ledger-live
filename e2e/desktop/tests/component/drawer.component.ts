@@ -24,6 +24,8 @@ export class Drawer extends Component {
   @step("Wait for drawer to be hidden")
   async waitForDrawerToBeHidden() {
     await this.content.waitFor({ state: "hidden" });
+    await this.closeButton.waitFor({ state: "hidden" });
+    await this.drawerOverlay.waitFor({ state: "detached" });
   }
 
   public getAccountButton = (accountName: string) =>
