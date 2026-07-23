@@ -7,7 +7,13 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
-const currencies = [
+type AddAccountTestCase = {
+  readonly currency: Currency;
+  readonly xrayTicket: string;
+  readonly portfolioAssetName?: string;
+};
+
+const currencies: AddAccountTestCase[] = [
   {
     currency: Currency.BTC,
     xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073, B2CQA-786",
@@ -15,7 +21,11 @@ const currencies = [
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },
   { currency: Currency.XRP, xrayTicket: "B2CQA-2505, B2CQA-2647, B2CQA-2675" },
-  { currency: Currency.DOT, xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676" },
+  {
+    currency: Currency.DOT,
+    xrayTicket: "B2CQA-2504, B2CQA-2648, B2CQA-2676",
+    portfolioAssetName: Currency.DOT.name,
+  },
   { currency: Currency.TRX, xrayTicket: "B2CQA-2508, B2CQA-2649, B2CQA-2677" },
   { currency: Currency.ADA, xrayTicket: "B2CQA-2500, B2CQA-2650, B2CQA-2678" },
   { currency: Currency.XLM, xrayTicket: "B2CQA-2506, B2CQA-2651, B2CQA-2679" },
@@ -26,7 +36,11 @@ const currencies = [
   { currency: Currency.SOL, xrayTicket: "B2CQA-2642, B2CQA-2656, B2CQA-2684" },
   { currency: Currency.GRAM, xrayTicket: "B2CQA-2643, B2CQA-2657, B2CQA-2685" },
   { currency: Currency.APT, xrayTicket: "B2CQA-3644, B2CQA-3645, B2CQA-3646" },
-  { currency: Currency.BASE, xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228" },
+  {
+    currency: Currency.BASE,
+    xrayTicket: "B2CQA-4226, B2CQA-4227, B2CQA-4228",
+    portfolioAssetName: Currency.ETH.name,
+  },
   { currency: Currency.ZEC, xrayTicket: "B2CQA-4296, B2CQA-4297, B2CQA-4298" },
 ];
 
@@ -75,7 +89,17 @@ for (const currency of currencies) {
         await app.portfolio.expectBalanceVisibility();
         if (await isAssetSectionEnabled(app.getPage())) {
           await app.portfolio.assetsView.waitForAssetsToLoad();
-          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
+          if (currency.portfolioAssetName) {
+            await app.portfolio.assetsView.expectSingleAggregatedRow(
+              "cryptos",
+              currency.portfolioAssetName,
+            );
+          } else {
+            await app.portfolio.assetsView.expectAssetVisibleInSection(
+              "cryptos",
+              currency.currency,
+            );
+          }
           await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
           await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
         }
