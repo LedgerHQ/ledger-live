@@ -22,6 +22,7 @@ import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
+import type { PayCardPersistedState } from "@domain/entity-pay-card";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -56,6 +57,7 @@ type DatabaseValues = {
   wallet: ExportedWalletState;
   market: Market;
   marketBanner: MarketBanner;
+  payCard: PayCardPersistedState;
   knownDevices: KnownDevices;
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;

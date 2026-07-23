@@ -26,6 +26,7 @@ import {
 
 import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   persistedLargeScreenUpsellModalSelector,
@@ -118,6 +119,18 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
     if (oldState.marketBanner !== newState.marketBanner) {
       setKey("app", "marketBanner", marketBannerStoreSelector(newState));
+    }
+
+    return res;
+  }
+
+  if (action.type.startsWith("payCard/")) {
+    const oldState = store.getState();
+    const res = next(action);
+    const newState = store.getState();
+
+    if (oldState.payCard !== newState.payCard) {
+      setKey("app", "payCard", payCardPersistedSelector(newState));
     }
 
     return res;
