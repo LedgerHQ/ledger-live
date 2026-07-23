@@ -6,6 +6,7 @@ import {
   type IdPAuthParams,
   type KeycloakToken,
 } from "@ledgerhq/ledger-auth";
+import type { TypedStartListening } from "@reduxjs/toolkit";
 import getApi, {
   type Challenge as ChallengeJson,
   type LKRPChallenge,
@@ -14,15 +15,35 @@ import getApi, {
 } from "./api";
 import type { MemberCredentials, Trustchain } from "./types";
 import { convertLiveCredentialsToKeyPair, credentialForPubKey, liveAuthentication } from "./utils";
+import { trustchainStoreActionTypePrefix, type TrustchainStore } from "./store";
 
-type PartialTrustchainStore = {
+interface PartialTrustchainStore {
   trustchain: Pick<Trustchain, "rootId"> | null;
   memberCredentials: MemberCredentials | null;
-};
+}
 
-export class LkrpIdentityProvider implements IdentityProvider {
+interface StateWithTrustchain {
+  trustchain: TrustchainStore;
+}
+
+export interface LkrpIdentityProviderOptions<State extends StateWithTrustchain> {
+  startListening?: TypedStartListening<State>;
+}
+
+export class LkrpIdentityProvider<
+  State extends StateWithTrustchain = StateWithTrustchain,
+> implements IdentityProvider {
   readonly brokerId = "lkrp";
   private trustchainStore: PartialTrustchainStore | undefined;
+
+  constructor({ startListening }: LkrpIdentityProviderOptions<State> = {}) {
+    startListening?.({
+      predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
+      effect: (_action, listenerApi) => {
+        this.setTrustchainStore(listenerApi.getState().trustchain);
+      },
+    });
+  }
 
   async authenticate(request: IdPAuthParams): Promise<KeycloakToken> {
     const challenge = LkrpIdentityProvider.checkChallenge(request.challenge);

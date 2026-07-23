@@ -210,6 +210,18 @@
         "env": "GIT_REPO_USER"
       },
       {
+        "env": "LEDGER_AUTH_CLIENT_ID"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_REALM"
+      },
+      {
         "env": "LEDGER_INTERNAL_ARGS"
       },
       {

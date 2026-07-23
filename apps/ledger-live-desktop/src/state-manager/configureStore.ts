@@ -7,8 +7,8 @@ import {
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
+import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import { trustchainStoreActionTypePrefix } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
@@ -19,11 +19,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
-import {
-  createFeatureFlagsMiddleware,
-  selectFeature,
-  type PartialFeatures,
-} from "@shared/feature-flags";
+import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
 type Props = {
   state?: State;
@@ -42,35 +38,9 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
 }: Props) => {
-  const listenerMiddleware = createListenerMiddleware();
-
-  const lkrpIdentityProvider = new LkrpIdentityProvider();
-  listenerMiddleware.startListening({
-    predicate: action => action.type.startsWith(trustchainStoreActionTypePrefix),
-    effect(_action, listenerApi) {
-      const { trustchain } = listenerApi.getState() as State;
-      lkrpIdentityProvider.setTrustchainStore(trustchain);
-    },
-  });
-
-  const authSDKRef: { current?: AuthSDK } = {};
-  const authSDK = new AuthSDK(
-    {
-      clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
-      keycloakBaseUrl: getEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"),
-      keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
-    },
-    { provider: lkrpIdentityProvider },
-  );
-  const syncAuthSDK = (currentState: State) => {
-    authSDKRef.current = selectFeature(currentState, "lwdAuth").enabled ? authSDK : undefined;
-  };
-  listenerMiddleware.startListening({
-    predicate: action => action.type.startsWith("featureFlags/"),
-    effect(_action, listenerApi) {
-      syncAuthSDK(listenerApi.getState() as State);
-    },
-  });
+  // This listenerMiddleware is cross-scope as it is preferable to have one instance per store
+  // Source: https://github.com/reduxjs/redux-toolkit/discussions/3665
+  const listenerMiddleware = createListenerMiddleware<State>();
 
   const store = configureStore({
     reducer: reducers,
@@ -103,9 +73,24 @@ const customCreateStore = ({
                 // LIVE-33829: force mocks until Pay Card API base URL is wired.
                 payCardApiMocksEnabled: true,
               }),
-              get authSDK() {
-                return authSDKRef.current;
-              },
+              ...authApiExtra({
+                authFeatureId: "lwdAuth",
+                startListening: listenerMiddleware.startListening,
+                providerParams: {
+                  identityProvider: new LkrpIdentityProvider<State>({
+                    startListening: listenerMiddleware.startListening,
+                  }),
+                },
+                createAuthProvider: (environment, { identityProvider }) =>
+                  new AuthSDK(
+                    {
+                      clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                      keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
+                      keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    },
+                    { provider: identityProvider },
+                  ),
+              }),
             },
           },
         }).prepend(listenerMiddleware.middleware),
@@ -133,7 +118,7 @@ const customCreateStore = ({
         ),
     devTools: __DEV__,
   });
-  syncAuthSDK(store.getState());
+
   return store;
 };
 

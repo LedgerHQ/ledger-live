@@ -182,6 +182,7 @@
     "@sbaiahmed1/react-native-blur": "4.5.5",
     "@segment/analytics-react-native": "2.21.4",
     "@segment/sovran-react-native": "1.1.3",
+    "@shared/auth": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
     "@shopify/flash-list": "2.2.0",

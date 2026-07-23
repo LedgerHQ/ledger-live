@@ -1,11 +1,13 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { configureStore, createListenerMiddleware } from "@reduxjs/toolkit";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import type { Challenge as ChallengeJson, WeakChallengeSignature } from "../api";
 import { LkrpIdentityProvider } from "../LKRPIdentityProvider";
+import { getInitialStore, importTrustchainStoreState, type TrustchainStore } from "../store";
 import type { MemberCredentials } from "../types";
-import { credentialForPubKey, liveAuthentication } from "../utils";
+import { credentialForPubKey, initMemberCredentials, liveAuthentication } from "../utils";
 import { CHALLENGE } from "../__mocks__/challenge";
 
 type SignedChallengeRequest = {
@@ -57,6 +59,61 @@ describe("LkrpIdentityProvider (integration, MSW)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     server.resetHandlers();
+  });
+
+  it("synchronizes credentials after Trustchain import actions", async () => {
+    endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json(AUTHORIZATION_CODE));
+    endpoints.lkrpToken.mockImplementation(() =>
+      HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
+    );
+    endpoints.tokenExchange.mockImplementation(() =>
+      HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
+    );
+
+    const listenerMiddleware = createListenerMiddleware<{ trustchain: TrustchainStore }>();
+    const lkrpIdentityProvider = new LkrpIdentityProvider<{ trustchain: TrustchainStore }>({
+      startListening: listenerMiddleware.startListening,
+    });
+    const store = configureStore({
+      reducer: {
+        trustchain: (
+          state = getInitialStore(),
+          action: { type: string; payload?: { trustchain?: TrustchainStore } },
+        ) => action.payload?.trustchain ?? state,
+      },
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+    });
+    const request = {
+      challenge: { tlv: CHALLENGE.tlv, json: CHALLENGE.json },
+      clientId: CLIENT_ID,
+      redirectUri: REDIRECT_URI,
+    };
+
+    store.dispatch({ type: "unrelated/action" });
+    await expect(lkrpIdentityProvider.authenticate(request)).rejects.toMatchObject({
+      name: "WalletAuthNoCredentialsError",
+    });
+    expect(endpoints.lkrpAuth).not.toHaveBeenCalled();
+
+    store.dispatch(
+      importTrustchainStoreState({ trustchain: null, memberCredentials: MEMBER_CREDENTIALS }),
+    );
+    await lkrpIdentityProvider.authenticate(request);
+    expect(await endpoints.lkrpAuth.mock.calls[0][0].request.json()).toHaveProperty(
+      "signature.credential.publicKey",
+      MEMBER_CREDENTIALS.pubkey,
+    );
+
+    const updatedMemberCredentials = initMemberCredentials();
+    store.dispatch(
+      importTrustchainStoreState({ trustchain: null, memberCredentials: updatedMemberCredentials }),
+    );
+    await lkrpIdentityProvider.authenticate(request);
+    expect(await endpoints.lkrpAuth.mock.calls[1][0].request.json()).toHaveProperty(
+      "signature.credential.publicKey",
+      updatedMemberCredentials.pubkey,
+    );
   });
 
   it("retrieves a Keycloak JWT with PKCE", async () => {

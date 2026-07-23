@@ -10,7 +10,7 @@ export type AuthToken = {
 };
 
 export type WithTokenOptions<T> = {
-  queryFn: (token: AuthToken) => Promise<T>;
+  queryFn: (token?: AuthToken) => Promise<T>;
   refreshAndRetryWhen?: (result: T) => boolean;
 };
 
@@ -26,5 +26,5 @@ const AuthProviderSchema = z.custom<AuthProvider>(
     typeof value.withToken === "function",
 );
 export const AuthenticatedBaseQueryExtraSchema = z.object({
-  authSDK: AuthProviderSchema,
+  authProvider: AuthProviderSchema,
 });

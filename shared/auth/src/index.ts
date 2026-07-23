@@ -1,5 +1,22 @@
+export {
+  authApiExtra,
+  type AuthApiExtra,
+  type AuthApiExtraOptions,
+  type AuthFeatureId,
+} from "./api";
+
 export { createAuthenticatedBaseQuery } from "./createAuthenticatedBaseQuery";
-export { AuthenticatedBaseQueryMissingAuthSDKError } from "./errors";
+
+export * from "./errors";
+
+export {
+  authEnvironmentReducer,
+  authEnvironmentSelector,
+  setAuthEnvironment,
+  type AuthEnvironment,
+  type AuthEnvironmentState,
+} from "./data";
+
 export type {
   AuthenticatedBaseQueryExtraOptions,
   AuthProvider,

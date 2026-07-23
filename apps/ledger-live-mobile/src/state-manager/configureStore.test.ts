@@ -1,7 +1,7 @@
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import type { AuthSDK } from "@ledgerhq/ledger-auth";
+import { setAuthEnvironment, type AuthProvider } from "@shared/auth";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -49,10 +49,13 @@ jest.mock("~/firebase/remoteConfig", () => ({
 }));
 
 describe("mobile store", () => {
-  describe("AuthSDK flow", () => {
+  describe("auth provider flow", () => {
+    const PROD_KEYCLOAK_BASE_URL = "http://keycloak-prod.test";
+    const STAGING_KEYCLOAK_BASE_URL = "http://keycloak-staging.test";
+
     const AUTH_CONFIG = {
       clientId: "ledger-keycloak",
-      keycloakBaseUrl: "http://keycloak.test",
+      keycloakBaseUrl: PROD_KEYCLOAK_BASE_URL,
       keycloakRealm: "ledger-bc-customers",
     };
 
@@ -72,15 +75,20 @@ describe("mobile store", () => {
     const queryFn = jest.fn(() => Promise.resolve());
 
     const endpoints = {
-      keycloakAuth: jest.fn<Response, [{ request: Request }]>(),
+      prodKeycloakAuth: jest.fn<Response, [{ request: Request }]>(),
+      stagingKeycloakAuth: jest.fn<Response, [{ request: Request }]>(),
       lkrpAuth: jest.fn<Response, [{ request: Request }]>(),
       lkrpToken: jest.fn<Response, [{ request: Request }]>(),
       tokenExchange: jest.fn<Response, [{ request: Request }]>(),
     };
     const server = setupServer(
       http.get(
-        `${AUTH_CONFIG.keycloakBaseUrl}/realms/${AUTH_CONFIG.keycloakRealm}/protocol/openid-connect/auth`,
-        endpoints.keycloakAuth,
+        `${PROD_KEYCLOAK_BASE_URL}/realms/${AUTH_CONFIG.keycloakRealm}/protocol/openid-connect/auth`,
+        endpoints.prodKeycloakAuth,
+      ),
+      http.get(
+        `${STAGING_KEYCLOAK_BASE_URL}/realms/${AUTH_CONFIG.keycloakRealm}/protocol/openid-connect/auth`,
+        endpoints.stagingKeycloakAuth,
       ),
       http.post(`https://${CHALLENGE.json.host}/openid/v1/authenticate`, endpoints.lkrpAuth),
       http.post(`https://${CHALLENGE.json.host}/openid/v1/token`, endpoints.lkrpToken),
@@ -97,10 +105,11 @@ describe("mobile store", () => {
       server.resetHandlers();
 
       // Use the post-reset instance so configureStore reads these environment values.
-      const { setEnv } = require("@ledgerhq/live-env") as typeof import("@ledgerhq/live-env");
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
       setEnv("LEDGER_CLIENT_VERSION", "jest");
       setEnv("LEDGER_AUTH_CLIENT_ID", AUTH_CONFIG.clientId);
-      setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL", AUTH_CONFIG.keycloakBaseUrl);
+      setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING", STAGING_KEYCLOAK_BASE_URL);
+      setEnv("LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD", PROD_KEYCLOAK_BASE_URL);
       setEnv("LEDGER_AUTH_KEYCLOAK_REALM", AUTH_CONFIG.keycloakRealm);
       // Keep PKCE assertions on the same post-reset mock instance used by configureStore.
       expoCrypto = require("expo-crypto") as typeof import("expo-crypto");
@@ -110,31 +119,45 @@ describe("mobile store", () => {
       server.close();
     });
 
-    it("should keep AuthSDK undefined when ledger auth is disabled by default", async () => {
+    it("should execute without a token when ledger auth is disabled by default", async () => {
       const { store } = require("./configureStore");
 
-      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
-        expect(extra.authSDK).toBeUndefined();
-      });
+      await dispatchThunk(store, (_dispatch, _getState, extra) =>
+        extra.authProvider.withToken({ queryFn }),
+      );
+
+      expect(queryFn).toHaveBeenCalledWith();
+      expect(endpoints.prodKeycloakAuth).not.toHaveBeenCalled();
+      expect(endpoints.stagingKeycloakAuth).not.toHaveBeenCalled();
     });
 
-    it("should clear AuthSDK when ledger auth is disabled at runtime", async () => {
+    it("should keep a stable auth provider facade when ledger auth is disabled at runtime", async () => {
       const { store } = require("./configureStore");
-      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+      let injectedAuthProvider: AuthProvider | undefined;
 
       await dispatchThunk(store, async (_dispatch, _getState, extra) => {
-        expect(extra.authSDK).toBeDefined();
+        injectedAuthProvider = extra.authProvider;
+      });
+
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+      store.dispatch(setAuthEnvironment("PROD"));
+
+      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
+        expect(extra.authProvider).toBe(injectedAuthProvider);
       });
 
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: false } }));
 
-      await dispatchThunk(store, async (_dispatch, _getState, extra) => {
-        expect(extra.authSDK).toBeUndefined();
-      });
+      await dispatchThunk(store, (_dispatch, _getState, extra) =>
+        extra.authProvider.withToken({ queryFn }),
+      );
+
+      expect(queryFn).toHaveBeenCalledWith();
+      expect(endpoints.prodKeycloakAuth).not.toHaveBeenCalled();
     });
 
-    it("should authenticate with attestation when trustchain store has a root id", async () => {
-      endpoints.keycloakAuth.mockImplementation(() =>
+    it("should use the staging Keycloak URL for a staging Trustchain SDK", async () => {
+      endpoints.stagingKeycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
       );
       endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
@@ -146,6 +169,39 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      store.dispatch(setAuthEnvironment("STAGING"));
+      store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
+      store.dispatch(
+        importTrustchainStoreState({
+          trustchain: null,
+          memberCredentials: MEMBER_CREDENTIALS,
+        }),
+      );
+
+      await dispatchThunk(store, async (_dispatch, _getState, extra) =>
+        extra.authProvider.withToken({
+          queryFn,
+          refreshAndRetryWhen: () => true,
+        }),
+      );
+
+      expect(endpoints.stagingKeycloakAuth).toHaveBeenCalled();
+    });
+
+    it("should authenticate with attestation when trustchain store has a root id", async () => {
+      endpoints.prodKeycloakAuth.mockImplementation(() =>
+        HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
+      );
+      endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
+      endpoints.lkrpToken.mockImplementation(() =>
+        HttpResponse.json({ access_token: LKRP_TOKEN, token_type: "Bearer" }),
+      );
+      endpoints.tokenExchange.mockImplementation(() =>
+        HttpResponse.json({ access_token: KEYCLOAK_JWT, token_type: "Bearer" }),
+      );
+
+      const { store } = require("./configureStore");
+      store.dispatch(setAuthEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
@@ -159,7 +215,7 @@ describe("mobile store", () => {
       );
 
       await dispatchThunk(store, async (_dispatch, _getState, extra) =>
-        extra.authSDK?.withToken({
+        extra.authProvider.withToken({
           queryFn,
           refreshAndRetryWhen: () => true,
         }),
@@ -168,6 +224,11 @@ describe("mobile store", () => {
       expect(queryFn).toHaveBeenCalledWith(
         expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
       );
+      expect(
+        endpoints.prodKeycloakAuth.mock.calls.every(([{ request }]) =>
+          request.url.startsWith(AUTH_CONFIG.keycloakBaseUrl),
+        ),
+      ).toBe(true);
 
       expect(expoCrypto.getRandomBytesAsync).toHaveBeenCalledWith(32);
       expect(expoCrypto.digestStringAsync).toHaveBeenCalledWith(
@@ -176,7 +237,7 @@ describe("mobile store", () => {
         { encoding: expoCrypto.CryptoEncoding.BASE64 },
       );
 
-      const keycloakRequest = endpoints.keycloakAuth.mock.calls[0][0].request;
+      const keycloakRequest = endpoints.prodKeycloakAuth.mock.calls[0][0].request;
       expect(new URL(keycloakRequest.url).searchParams.get("code_challenge")).toBe(
         PKCE_CODE_CHALLENGE,
       );
@@ -198,7 +259,7 @@ describe("mobile store", () => {
     });
 
     it("should authenticate without attestation when trustchain store only has credentials", async () => {
-      endpoints.keycloakAuth.mockImplementation(() =>
+      endpoints.prodKeycloakAuth.mockImplementation(() =>
         HttpResponse.json({ tlv: CHALLENGE.tlv, json: CHALLENGE.json }),
       );
       endpoints.lkrpAuth.mockImplementation(() => HttpResponse.json("auth-code-xyz"));
@@ -210,6 +271,7 @@ describe("mobile store", () => {
       );
 
       const { store } = require("./configureStore");
+      store.dispatch(setAuthEnvironment("PROD"));
       store.dispatch(setOverride({ key: "lwmAuth", value: { enabled: true } }));
       store.dispatch(
         importTrustchainStoreState({
@@ -219,7 +281,7 @@ describe("mobile store", () => {
       );
 
       await dispatchThunk(store, async (_dispatch, _getState, extra) =>
-        extra.authSDK?.withToken({
+        extra.authProvider.withToken({
           queryFn,
           refreshAndRetryWhen: () => true,
         }),
@@ -247,7 +309,7 @@ describe("mobile store", () => {
 type AuthThunk = (
   dispatch: unknown,
   getState: unknown,
-  extra: { authSDK?: AuthSDK },
+  extra: { authProvider: AuthProvider },
 ) => Promise<unknown>;
 type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
 function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {

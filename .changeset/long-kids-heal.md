@@ -1,5 +1,6 @@
 ---
 "@ledgerhq/ledger-key-ring-protocol": minor
+"@shared/auth": minor
 "@shared/env": minor
 "@shared/feature-flags": minor
 "ledger-live-desktop": minor
