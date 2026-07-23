@@ -50,7 +50,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
 - **Dead-code tooling — explicit exports + knip (new packages):** For a **new** package, flag either (a) a `.unimportedrc.json` or a script running the bare `unimported` binary (`"unimported": "unimported"`), or (b) a `./*` wildcard in `package.json#exports`. New packages must enumerate explicit, minimal `exports` (no `./*`, so knip can detect unused files) and use `knip` via a root `knip.json` `workspaces` entry. The repo is migrating dead-code detection off `unimported` (see `.agents/skills/knip-migration/SKILL.md`).
-- **`minimumReleaseAgeExclude`**: Flag any addition to this list in `pnpm-workspace.yaml` — only `@ledgerhq/*` is permitted; JFrog enforces the same gate in CI so bypassing it locally will still fail.
+- **Updating `minimumReleaseAgeExclude` is forbidden.** If there are changes to `pnpm-workspace.yaml`, check that `minimumReleaseAgeExclude` has not been edited. Only `@ledgerhq/*` is permitted; JFrog enforces the same gate in CI so bypassing it locally will still fail.
 
 ## Confidence Scoring
 
