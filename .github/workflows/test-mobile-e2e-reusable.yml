@@ -7,8 +7,12 @@ run-name: >
 # NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
 # It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
+  # Broadcast runs (enable_broadcast) share ONE group regardless of tests_type, so separate
+  # iOS-Only / Android-Only dispatches QUEUE instead of overlapping —
+  # they would otherwise race on the same on-chain accounts across machines, which no per-run
+  # mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    mobile-e2e-${{ github.ref_name }}-${{ inputs.ref || github.sha }}-${{ github.event_name == 'schedule' && github.event.schedule || inputs.tests_type }}-${{ inputs.test_filter && 'filtered' || 'all' }}
+    ${{ inputs.enable_broadcast && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
