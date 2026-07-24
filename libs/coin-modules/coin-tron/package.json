@@ -28,14 +28,14 @@
       "lib-es/*": [
         "lib-es/*"
       ],
-      "bridge": [
-        "lib/bridge/index"
-      ],
       "deviceTransactionConfig": [
-        "lib/bridge/deviceTransactionConfig"
+        "lib/deviceTransactionConfig"
       ],
       "network": [
         "lib/network/index"
+      ],
+      "serialization": [
+        "lib/serialization"
       ],
       "specs": [
         "lib/test/bot-specs"
@@ -44,7 +44,7 @@
         "lib/signer/index"
       ],
       "transaction": [
-        "lib/bridge/transaction"
+        "lib/transaction"
       ],
       "types": [
         "lib/types/index"
@@ -57,20 +57,20 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./bridge": {
-      "@ledgerhq/source": "./src/bridge/index.ts",
-      "require": "./lib/bridge/index.js",
-      "default": "./lib-es/bridge/index.js"
-    },
     "./deviceTransactionConfig": {
-      "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+      "@ledgerhq/source": "./src/deviceTransactionConfig.ts",
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
     },
     "./network": {
       "@ledgerhq/source": "./src/network/index.ts",
       "require": "./lib/network/index.js",
       "default": "./lib-es/network/index.js"
+    },
+    "./serialization": {
+      "@ledgerhq/source": "./src/serialization.ts",
+      "require": "./lib/serialization.js",
+      "default": "./lib-es/serialization.js"
     },
     "./signer": {
       "@ledgerhq/source": "./src/signer/index.ts",
@@ -83,9 +83,9 @@
       "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
-      "@ledgerhq/source": "./src/bridge/transaction.ts",
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
+      "@ledgerhq/source": "./src/transaction.ts",
+      "require": "./lib/transaction.js",
+      "default": "./lib-es/transaction.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

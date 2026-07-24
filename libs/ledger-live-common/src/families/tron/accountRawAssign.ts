@@ -1,4 +1,4 @@
-import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-tron/bridge/serialization";
+import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-tron/serialization";
 
 export default {
   assignFromAccountRaw,

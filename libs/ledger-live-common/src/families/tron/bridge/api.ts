@@ -1,6 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { fetchTronAccount } from "@ledgerhq/coin-tron/network";
-import { getTronResources, defaultTronResources } from "@ledgerhq/coin-tron/bridge/utils";
+import { getTronResources, defaultTronResources } from "@ledgerhq/coin-tron/resources";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

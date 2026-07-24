@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { TransactionStatusRaw } from "../types";
+import type { TransactionStatusRaw } from "./types";
 import { fromTransactionStatusRaw } from "./transaction";
 
 describe("fromTransactionStatusRaw", () => {

@@ -14,7 +14,7 @@ import type {
   TransactionRaw,
   TransactionStatus,
   TransactionStatusRaw,
-} from "../types";
+} from "./types";
 
 // These resource fields are live-derived and not persisted (absent from TransactionStatusRaw).
 // Default them to 0 on deserialization so the required BigNumber fields are never `undefined`.

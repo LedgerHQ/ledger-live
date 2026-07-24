@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
   | {

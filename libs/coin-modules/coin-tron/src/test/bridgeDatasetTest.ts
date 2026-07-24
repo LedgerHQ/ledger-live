@@ -9,7 +9,7 @@ import {
 import type { Account, CurrenciesData, DatasetTest, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { fromTransactionRaw } from "../bridge/transaction";
+import { fromTransactionRaw } from "../transaction";
 import { ACTIVATION_FEES, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getChainParameters } from "../network";
 import type { Transaction, TransactionStatus, TronAccountRaw } from "../types";

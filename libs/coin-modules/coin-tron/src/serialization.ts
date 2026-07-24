@@ -9,7 +9,7 @@ import {
   type TronResourcesRaw,
   type TrongridExtraTxInfo,
   type TrongridExtraTxInfoRaw,
-} from "../types";
+} from "./types";
 
 export const toTronResourcesRaw = ({
   frozen,
