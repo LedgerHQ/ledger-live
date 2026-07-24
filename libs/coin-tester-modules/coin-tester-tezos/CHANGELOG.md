@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-tezos
 
+## 1.3.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b2fe0f0`](https://github.com/LedgerHQ/ledger-live/commit/b2fe0f0b9bf9cb5976f4d7f21e24654d60acfcf2)]:
+  - @ledgerhq/live-common@36.6.0-next.1
+
 ## 1.3.1-next.0
 
 ### Patch Changes

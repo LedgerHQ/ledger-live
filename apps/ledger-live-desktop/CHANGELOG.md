@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 4.13.0-next.2
+
+### Minor Changes
+
+- [#19990](https://github.com/LedgerHQ/ledger-live/pull/19990) [`b2fe0f0`](https://github.com/LedgerHQ/ledger-live/commit/b2fe0f0b9bf9cb5976f4d7f21e24654d60acfcf2) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Revert Cardano firmware app v8.0.4 support (hw-app-cardano bump to 8.0.0)
+
+### Patch Changes
+
+- Updated dependencies [[`b2fe0f0`](https://github.com/LedgerHQ/ledger-live/commit/b2fe0f0b9bf9cb5976f4d7f21e24654d60acfcf2)]:
+  - @ledgerhq/live-common@36.6.0-next.1
+  - @ledgerhq/asset-detail@0.9.1-next.1
+  - @ledgerhq/live-dmk-desktop@0.20.2-next.1
+
 ## 4.13.0-next.1
 
 ### Minor Changes
