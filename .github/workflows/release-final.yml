@@ -123,8 +123,10 @@ jobs:
 
       - name: tag desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+        env:
+          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
+          git tag "@ledgerhq/live-desktop@$DESKTOP_VERSION"
 
       - name: generate mobile changelog
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
@@ -138,8 +140,10 @@ jobs:
 
       - name: tag mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+        env:
+          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
         run: |
-          git tag live-mobile@${{ steps.mobile-version.outputs.version }}
+          git tag "live-mobile@$MOBILE_VERSION"
 
       - name: push changes
         env:
@@ -151,15 +155,19 @@ jobs:
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
+          DESKTOP_CHANGELOG_PATH: ${{ steps.desktop-changelog.outputs.path }}
         run: |
-          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
+          gh release create "@ledgerhq/live-desktop@$DESKTOP_VERSION" -F "$DESKTOP_CHANGELOG_PATH"
 
       - name: create mobile github release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
+          MOBILE_CHANGELOG_PATH: ${{ steps.mobile-changelog.outputs.path }}
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
-          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
+          gh release create "live-mobile@$MOBILE_VERSION" -F "$MOBILE_CHANGELOG_PATH"
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for desktop

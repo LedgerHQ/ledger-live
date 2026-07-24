@@ -90,8 +90,9 @@ jobs:
         if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
         run: |
-          git checkout ${{ github.event.inputs.ref }}
+          git checkout "$INPUT_REF"
           git checkout -b support/hotfix-merge-conflicts
           git push origin support/hotfix-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
@@ -111,8 +112,9 @@ jobs:
         if: ${{ github.event.inputs.tag_version == 'latest' && steps.release-merge.outcome == 'failure' && steps.release-merge.outputs.status == '409' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
         run: |
-          git checkout ${{ github.event.inputs.ref }}
+          git checkout "$INPUT_REF"
           git checkout -b support/hotfix-release-merge-conflicts
           git push origin support/hotfix-release-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts

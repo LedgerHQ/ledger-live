@@ -282,18 +282,26 @@ jobs:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: prepare status
         id: status
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.username || '' }}
+          COMMENT_BODY: ${{ steps.comment.outputs.body }}
         with:
           script: |
             const fs = require("fs");
             const path = require("path");
 
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
+            const refName = process.env.REF_NAME;
+            const commitAuthor = process.env.COMMIT_AUTHOR;
+            const commentBody = process.env.COMMENT_BODY;
+
+            const { owner, repo } = context.repo;
 
             const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
               owner,
               repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
+              run_id: Number(process.env.GITHUB_RUN_ID),
+              attempt_number: Number(process.env.GITHUB_RUN_ATTEMPT),
             });
 
             const keys = {
@@ -351,7 +359,7 @@ jobs:
             summary += `
 
             Speculos Allure report: ${speculosAllureUrl || "N/A"}
-            ${{ steps.comment.outputs.body }}
+            ${commentBody}
             `
 
             const output = {
@@ -376,17 +384,17 @@ jobs:
 
             fs.writeFileSync("summary-test-desktop.json", JSON.stringify(output), "utf-8");
 
-            if (${{ github.event_name != 'push' }}) return;
+            if (context.eventName !== 'push') return;
 
             const slackPayload = {
               "channel": "C05FKJ7DFAP",
-              "text": "[Alert] Ledger Live Desktop tests failed on ${{github.ref_name}}",
+              "text": "[Alert] Ledger Live Desktop tests failed on ${refName}",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on ${{ github.ref_name }}",
+                    "text": `:warning: [Alert] Ledger Live Desktop tests failed on ${refName}`,
                     "emoji": true
                   }
                 },
@@ -401,7 +409,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `🍪 Speculos NanoSP ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
+                    "text": `🍪 Speculos NanoSP ${process.env.SMOKE_SPECULOS_FIRMWARE_VERSION}: ${report.speculos.pass ? "✅" : "❌"}\nAllure: ${speculosAllureUrl || "N/A"}\n`
                   }
                 },
                 {
@@ -411,7 +419,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": `Commit by ${commitAuthor}\nhttps://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
                   }
                 }
               ]

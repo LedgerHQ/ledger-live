@@ -90,14 +90,17 @@ jobs:
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: create PR to main
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          HOTFIX_DATE: ${{ steps.date.outputs.date }}
+          APPLICATION: ${{ github.event.inputs.application }}
+          TAG_VERSION: ${{ github.event.inputs.tag_version }}
         run: |
           gh pr create \
-            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+            --title ":fire: Hotfix $HOTFIX_DATE (targeting $APPLICATION $TAG_VERSION)"\
             -F ./.github/templates/hotfix.md \
             --base main \
             --head hotfix
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   create-hotfix-fail:
     name: Create Hotfix > Failure Reporting

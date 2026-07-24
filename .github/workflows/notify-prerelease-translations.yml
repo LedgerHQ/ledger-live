@@ -34,10 +34,13 @@ jobs:
       - name: format message
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: message
+        env:
+          PR_NUMBER: ${{ inputs.prNumber || github.event.pull_request.number }}
         with:
           script: |
             const fs = require("fs");
-            const text = "Translations files have changed on ${{ inputs.prNumber || github.event.pull_request.number }}";
+            const prNumber = process.env.PR_NUMBER;
+            const text = `Translations files have changed on ${prNumber}`;
             const output = {
               channel: "C040D9JMVQ8",
               text,
@@ -58,7 +61,7 @@ jobs:
                   "text": {
                     "type": "mrkdwn",
                     "text": `Please make sure all languages are provided before the release.
-              You can see more informations on the <https://github.com/LedgerHQ/ledger-live/pull/${{ inputs.prNumber || github.event.pull_request.number }}|Pull Request>
+              You can see more information on the <https://github.com/LedgerHQ/ledger-live/pull/${prNumber}|Pull Request>
                     `
                   }
                 }
