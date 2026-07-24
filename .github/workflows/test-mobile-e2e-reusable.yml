@@ -96,6 +96,11 @@ on:
         required: false
         type: string
         default: ""
+      stress_cpu:
+        description: "EXPERIMENT: saturate iOS runner CPU during the shard to reproduce resource-contention freezes (temporary; do not merge enabled)"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -701,6 +706,30 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      # EXPERIMENT (temporary): deliberately saturate the runner CPU to test whether
+      # resource contention alone reproduces the app-launch/Detox freeze. Opt-in via
+      # the stress_cpu dispatch input. Busy-loops self-terminate after 40 min as a
+      # safety net in case the "Stop CPU stress" step never runs (shared runners).
+      - name: Start CPU stress (experiment)
+        if: ${{ inputs.stress_cpu }}
+        shell: bash
+        run: |
+          set +e
+          export PATH="/usr/sbin:/usr/bin:/bin:$PATH"
+          NCPU=$(sysctl -n hw.ncpu 2>/dev/null || echo 4)
+          WORKERS=$(( NCPU * 2 ))   # oversubscribe 2x to force scheduler contention
+          ROOT="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          mkdir -p "$ROOT"
+          PIDFILE="$ROOT/cpu-stress.pids"
+          : > "$PIDFILE"
+          echo "🔥 Starting $WORKERS CPU busy-loops on $NCPU logical cores (self-terminate after 2400s)"
+          for ((i=0; i<WORKERS; i++)); do
+            nohup bash -c 'end=$((SECONDS+2400)); while [ $SECONDS -lt $end ]; do :; done' >/dev/null 2>&1 &
+            echo $! >> "$PIDFILE"
+          done
+          echo "PIDs:"; cat "$PIDFILE"
+          exit 0
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -719,6 +748,21 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+
+      - name: Stop CPU stress (experiment)
+        if: ${{ always() && inputs.stress_cpu }}
+        shell: bash
+        run: |
+          set +e
+          export PATH="/usr/sbin:/usr/bin:/bin:$PATH"
+          PIDFILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/cpu-stress.pids"
+          if [[ -f "$PIDFILE" ]]; then
+            while read -r pid; do [[ -n "$pid" ]] && kill "$pid" 2>/dev/null; done < "$PIDFILE"
+            echo "Killed CPU stress processes from $PIDFILE"
+          fi
+          # belt-and-braces: reap any stray busy-loops left on this runner
+          pkill -f 'while \[ \$SECONDS -lt \$end \]' 2>/dev/null || true
+          exit 0
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
