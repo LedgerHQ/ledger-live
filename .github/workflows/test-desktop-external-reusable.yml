@@ -28,7 +28,7 @@ jobs:
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -63,7 +63,7 @@ jobs:
       CI_OS: ubuntu-22.04
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -96,7 +96,7 @@ jobs:
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}
@@ -148,7 +148,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && needs.codechecks.result == 'success' && needs.unit-tests.result == 'success' && needs.e2e-tests-linux.outputs.status == 'success' }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           repository: ${{ inputs.repository }}

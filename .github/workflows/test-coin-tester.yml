@@ -29,7 +29,7 @@ jobs:
       is-affected: ${{ steps.detect.outputs.is-affected }}
       matrix: ${{ steps.detect.outputs.matrix }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: develop
           fetch-depth: 0
@@ -111,7 +111,7 @@ jobs:
         chain: ${{ fromJson(needs.is-affected.outputs.matrix).chain }}
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -131,7 +131,7 @@ jobs:
         uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
 
       - name: Login to JFrog OCI Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
           username: ${{ steps.jfrog-login.outputs.oidc-user }}

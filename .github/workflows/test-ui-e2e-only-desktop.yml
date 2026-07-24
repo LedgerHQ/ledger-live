@@ -226,7 +226,7 @@ jobs:
             coin-apps
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -234,7 +234,7 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout coin-apps (device firmware binaries)
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: LedgerHQ/coin-apps
           ref: master
@@ -359,7 +359,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
@@ -551,7 +551,7 @@ jobs:
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Download Xray Results
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
