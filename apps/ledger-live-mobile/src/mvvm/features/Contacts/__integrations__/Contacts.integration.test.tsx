@@ -77,6 +77,23 @@ function renderContactsButton(overrideInitialState: ReturnType<typeof withFlagOv
   return render(<ContactsButton />, { overrideInitialState });
 }
 
+function withContactsPageReadyState(
+  flagOverrides: Parameters<typeof withFlagOverrides>[0],
+  patchState?: Parameters<typeof withFlagOverrides>[1],
+) {
+  return withFlagOverrides(flagOverrides, state => {
+    const nextState = patchState ? patchState(state) : state;
+
+    return {
+      ...nextState,
+      settings: {
+        ...nextState.settings,
+        hasDismissedContactsFeatureIntroduction: true,
+      },
+    };
+  });
+}
+
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -190,7 +207,7 @@ describe("Contacts integration", () => {
 
   it("should render the empty Contacts list when navigated from My Wallet", async () => {
     const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withFlagOverrides({
+      overrideInitialState: withContactsPageReadyState({
         lwmContacts: { enabled: true, params: { newBadge: false } },
       }),
     });
@@ -219,7 +236,7 @@ describe("Contacts integration", () => {
       mockContact({ id: "contact-zhanna", name: "Жанна" }),
     ];
     const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withFlagOverrides(
+      overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
         state => ({ ...state, contacts: { contacts } }),
       ),
@@ -240,7 +257,7 @@ describe("Contacts integration", () => {
 
   it("should wire the Mobile query to the shared Contacts search model", async () => {
     const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withFlagOverrides({
+      overrideInitialState: withContactsPageReadyState({
         lwmContacts: { enabled: true, params: { newBadge: false } },
       }),
     });
@@ -275,7 +292,7 @@ describe("Contacts integration", () => {
 
   it("should render the empty Me contact detail state", async () => {
     const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withFlagOverrides({
+      overrideInitialState: withContactsPageReadyState({
         lwmContacts: { enabled: true, params: { newBadge: false } },
       }),
     });
@@ -294,7 +311,7 @@ describe("Contacts integration", () => {
   it("should render a distinct empty state for another contact", async () => {
     const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<MyWalletNavigator />, {
-      overrideInitialState: withFlagOverrides(
+      overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
         state => ({
           ...state,

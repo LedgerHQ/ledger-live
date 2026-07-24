@@ -7,11 +7,13 @@ import type { ContactsPageContentProps } from "../../types";
 function createViewModel({
   ledgerSyncStatus = "inactive",
   isIntroductionOpen = true,
+  isFeatureIntroductionOpen = false,
   onDismiss = jest.fn(),
   onActivate = jest.fn(),
 }: {
   ledgerSyncStatus?: "ready" | "checking" | "inactive";
   isIntroductionOpen?: boolean;
+  isFeatureIntroductionOpen?: boolean;
   onDismiss?: jest.Mock;
   onActivate?: jest.Mock;
 } = {}): ContactsPageContentProps {
@@ -39,9 +41,20 @@ function createViewModel({
     onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
     ledgerSyncStatus,
-    featureIntroduction: createClosedContactsFeatureIntroduction(),
+    featureIntroduction: isFeatureIntroductionOpen
+      ? {
+          isOpen: true,
+          title: "Introducing Contacts",
+          description: "Your address book for crypto.",
+          highlights: [],
+          primaryActionLabel: "Try contacts",
+          secondaryActionLabel: "Maybe later",
+          onComplete: jest.fn(),
+          onDefer: jest.fn(),
+        }
+      : createClosedContactsFeatureIntroduction(),
     ledgerSyncIntroduction: {
-      isOpen: isIntroductionOpen,
+      isOpen: isFeatureIntroductionOpen ? false : isIntroductionOpen,
       description:
         "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       dismissLabel: "Got it",
@@ -129,6 +142,36 @@ describe("ContactsPageContent", () => {
       />,
     );
     rerender(<ContactsPageContent {...createViewModel({ ledgerSyncStatus: "inactive" })} />);
+
+    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+  });
+
+  it("should defer the Ledger Sync introduction while the feature introduction is open", () => {
+    const onDismiss = jest.fn();
+    const { rerender } = render(
+      <ContactsPageContent
+        {...createViewModel({
+          ledgerSyncStatus: "inactive",
+          isIntroductionOpen: true,
+          onDismiss,
+          isFeatureIntroductionOpen: true,
+        })}
+      />,
+    );
+
+    expect(screen.queryByText("Turn on Ledger Sync to save contacts")).toBeNull();
+    expect(screen.getByTestId("contacts-feature-introduction-primary")).toBeVisible();
+
+    rerender(
+      <ContactsPageContent
+        {...createViewModel({
+          ledgerSyncStatus: "inactive",
+          isIntroductionOpen: true,
+          onDismiss,
+          isFeatureIntroductionOpen: false,
+        })}
+      />,
+    );
 
     expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
   });
