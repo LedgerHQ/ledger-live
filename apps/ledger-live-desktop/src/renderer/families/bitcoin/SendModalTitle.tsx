@@ -1,3 +1,4 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";
@@ -14,23 +15,26 @@ const ZCASH_SEND_TITLE_KEY: Record<ZcashTransferType, string> = {
   shielded: "zcash.shielded.send.modalTitle.shielded",
 };
 
-const useSendModalTitle = ({
+const SendModalTitle = ({
   account,
   transaction,
+  fallback,
 }: {
   account: Account;
   transaction: Transaction | undefined | null;
-}): string | null => {
+  fallback: React.ReactNode;
+}) => {
   const { t } = useTranslation();
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
 
-  if (!shieldedEnabled) return null;
-  if (account.currency.id !== "zcash") return null;
+  const transferType =
+    shieldedEnabled && account.currency.id === "zcash"
+      ? (transaction as ZcashTransaction | undefined)?.transferType
+      : undefined;
 
-  const transferType = (transaction as ZcashTransaction | undefined)?.transferType;
-  if (!transferType) return null;
+  if (!transferType) return <>{fallback}</>;
 
-  return t(ZCASH_SEND_TITLE_KEY[transferType]);
+  return <>{t(ZCASH_SEND_TITLE_KEY[transferType])}</>;
 };
 
-export default useSendModalTitle;
+export default SendModalTitle;

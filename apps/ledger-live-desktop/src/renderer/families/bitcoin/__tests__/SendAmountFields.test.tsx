@@ -73,6 +73,7 @@ const renderFields = ({
   render(
     <SendAmountFields.component
       account={account as never}
+      parentAccount={null}
       transaction={transaction as never}
       status={{ errors: {}, warnings: {} } as never}
       onChange={onChange}
@@ -197,9 +198,7 @@ describe("bitcoin SendAmountFields", () => {
 
       await user.click(screen.getByTestId("standard-fee-mode-selector"));
 
-      await waitFor(() =>
-        expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument(),
-      );
+      await waitFor(() => expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument());
       expect(track).toHaveBeenCalledWith(
         "button_clicked2",
         expect.objectContaining({ button: "standard" }),

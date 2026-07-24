@@ -24,7 +24,6 @@ import ZcashMemoField from "./ZcashMemoField";
 // type Props = NonNullable<BitcoinFamily["sendRecipientFields"]>["component"]
 type Props = {
   account: BitcoinAccount;
-  parentAccount?: BitcoinAccount | null;
   confirmationsNb: number;
   transaction: Transaction;
   status: TransactionStatus;

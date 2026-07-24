@@ -316,11 +316,17 @@ export type LLDCoinFamily<
 
   /**
    * Allow a family to override the Send modal title (e.g. Zcash
-   * transparent/shielded transfer types). Called during render and may invoke
-   * React hooks. The family owns its own gating (feature flags, currency
-   * checks) and should return null/undefined to fall back to the default title.
+   * transparent/shielded transfer types). Provided as a component so the family
+   * owns its own hooks and gating (feature flags, currency checks) inside its
+   * own render boundary — this keeps the Rules of Hooks satisfied regardless of
+   * which family is resolved at runtime (e.g. EMPTY_FAMILY → bitcoin). Render
+   * `fallback` when the override does not apply.
    */
-  useSendModalTitle?: (_: { account: A; transaction: T | undefined | null }) => string | null;
+  SendModalTitle?: React.ComponentType<{
+    account: A;
+    transaction: T | undefined | null;
+    fallback: React.ReactNode;
+  }>;
 
   /**
    * Allow to override the "Recipient" step in the Send modal.

@@ -14,7 +14,7 @@ import {
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
@@ -123,6 +123,26 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
   accounts: accountsSelector,
 });
+
+// Render an optional family-provided Send modal title component; fall back to the default title.
+const SendModalTitle = ({
+  Component,
+  account,
+  transaction,
+  fallback,
+}: {
+  Component?: React.ComponentType<{
+    account: Account;
+    transaction: TransactionCommon | undefined | null;
+    fallback: React.ReactNode;
+  }>;
+  account: Account | null;
+  transaction: Transaction | undefined | null;
+  fallback: React.ReactNode;
+}) => {
+  if (!Component || !account) return <>{fallback}</>;
+  return <Component account={account} transaction={transaction} fallback={fallback} />;
+};
 const mapDispatchToProps = {
   closeModal,
   openModal,
@@ -230,9 +250,6 @@ const Body = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = useLLDCoinFamily(mainAccount?.currency.family);
 
-  const customSendTitle =
-    specific?.useSendModalTitle?.({ account: mainAccount as Account, transaction }) ?? null;
-
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
     return specific?.createSendSteps?.(params.disableBacks) ?? null;
@@ -294,10 +311,6 @@ const Body = ({
   }
   const error = transactionError || bridgeError;
   const stepperProps = {
-    title:
-      stepId === "warning"
-        ? t("common.information")
-        : (customSendTitle ?? title ?? t("send.title")),
     modalName,
     stepId,
     steps,
@@ -340,7 +353,21 @@ const Body = ({
   }
 
   return (
-    <Stepper {...stepperProps}>
+    <Stepper
+      {...stepperProps}
+      title={
+        stepId === "warning" ? (
+          t("common.information")
+        ) : (
+          <SendModalTitle
+            Component={specific?.SendModalTitle}
+            account={mainAccount}
+            transaction={transaction}
+            fallback={title ?? t("send.title")}
+          />
+        )
+      }
+    >
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalSend" />
     </Stepper>
