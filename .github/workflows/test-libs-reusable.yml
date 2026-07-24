@@ -121,7 +121,7 @@ jobs:
           path: |
             libs/ledger-live-common/src
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         if: ${{ !cancelled() }}
         with:
           script: |
@@ -182,7 +182,7 @@ jobs:
         id: unimported
         run: pnpm exec nx run-many -t unimported --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false
         shell: bash
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         if: ${{ !cancelled() }}
         with:
           script: |
@@ -240,7 +240,7 @@ jobs:
           pattern: outputs-*
           merge-multiple: true
           path: outputs
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: build summary
         with:
           script: |

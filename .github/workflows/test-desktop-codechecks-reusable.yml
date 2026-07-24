@@ -160,7 +160,7 @@ jobs:
     # Only report on push events (e.g. develop, main, release, hotfix).
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: prepare status
         id: status
         with:
