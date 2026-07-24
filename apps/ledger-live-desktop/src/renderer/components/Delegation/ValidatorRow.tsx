@@ -2,7 +2,7 @@ import React, { useRef, useCallback, memo } from "react";
 import { Trans } from "react-i18next";
 import styled, { css } from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ExternalLink from "~/renderer/icons/ExternalLink";

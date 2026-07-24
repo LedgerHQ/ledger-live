@@ -3,7 +3,12 @@ import { render, screen } from "tests/testSetup";
 import { BigNumber } from "bignumber.js";
 import { NetworkSelectorContent } from "../NetworkSelectorContent/index";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+  TokenCurrencySchema,
+  CryptoCurrencySchema,
+} from "@domain/entity-currency";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { mockDomMeasurements } from "../../../../../__tests__/shared";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -15,9 +20,9 @@ bscAccount.spendableBalance = bscAccount.balance;
 
 const bscUsdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  parentCurrencyId: "bsc",
+  parentCurrencyId: CryptoCurrencySchema.shape.id.parse("bsc"),
   tokenType: "bep20",
-  id: "bsc/erc20/usdc",
+  id: TokenCurrencySchema.shape.id.parse("bsc/erc20/usdc"),
   contractAddress: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
   ticker: "USDC",
   name: "USD Coin",
@@ -38,9 +43,9 @@ baseAccount.balance = new BigNumber("1000000000000000000");
 baseAccount.spendableBalance = baseAccount.balance;
 const baseUsdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  parentCurrencyId: "base",
+  parentCurrencyId: CryptoCurrencySchema.shape.id.parse("base"),
   tokenType: "erc20",
-  id: "base/erc20/usd_coin",
+  id: TokenCurrencySchema.shape.id.parse("base/erc20/usd_coin"),
   contractAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   ticker: "USDC",
   name: "USD Coin",

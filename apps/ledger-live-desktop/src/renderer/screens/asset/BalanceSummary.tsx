@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@domain/entity-currency";
 import Chart, { GraphTrackingScreenName } from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";

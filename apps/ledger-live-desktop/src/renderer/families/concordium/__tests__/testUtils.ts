@@ -4,12 +4,12 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { ConcordiumAccount, ConcordiumResources } from "@ledgerhq/coin-concordium/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencySchema } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 
 export const createMockConcordiumCurrency = (): CryptoCurrency => {
   const mockCurrency = {
-    id: "concordium",
+    id: CryptoCurrencySchema.shape.id.parse("concordium"),
     name: "Concordium",
     type: "CryptoCurrency",
     family: "concordium",

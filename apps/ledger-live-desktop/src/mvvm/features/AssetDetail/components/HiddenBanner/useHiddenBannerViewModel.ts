@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { showToken } from "~/renderer/actions/settings";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";

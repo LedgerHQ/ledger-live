@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import BigNumber from "bignumber.js";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Unit } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
 import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";

@@ -1,5 +1,5 @@
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 /**
  * This function retrieves the asset for a given cryptocurrency or token currency

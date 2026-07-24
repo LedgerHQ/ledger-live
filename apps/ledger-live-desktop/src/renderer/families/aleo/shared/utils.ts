@@ -1,6 +1,5 @@
 import type { BigNumber } from "bignumber.js";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import {
   formatCurrencyUnit,
   type formatCurrencyUnitOptions,
@@ -17,7 +16,7 @@ import type {
   AleoCoinConfig,
   Transaction as AleoTransaction,
 } from "@ledgerhq/live-common/families/aleo/types";
-import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency, Unit } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export {
@@ -30,9 +29,10 @@ export const getAleoCurrencyConfig = (
   currency: CryptoCurrency | TokenCurrency,
 ): AleoCoinConfig | undefined => {
   try {
-    const cryptoCurrency = isCryptoCurrency(currency)
-      ? currency
-      : getCryptoCurrencyById(currency.parentCurrencyId);
+    const cryptoCurrency =
+      currency.type === "CryptoCurrency"
+        ? currency
+        : getCryptoCurrencyById(currency.parentCurrencyId);
     return getCurrencyConfiguration<AleoCoinConfig>(cryptoCurrency.id);
   } catch {
     return undefined;

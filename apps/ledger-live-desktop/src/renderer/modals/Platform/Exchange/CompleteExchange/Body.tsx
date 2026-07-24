@@ -6,7 +6,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import { getEnv } from "@shared/env";
-import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@domain/entity-currency";
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";

@@ -1,6 +1,6 @@
 import React from "react";
 import { createCustomErrorClass } from "@ledgerhq/errors";
-import { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency, CryptoCurrency } from "@domain/entity-currency";
 import ErrorBanner from "./ErrorBanner";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 type Props = {

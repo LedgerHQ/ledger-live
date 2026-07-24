@@ -8,7 +8,7 @@ import {
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@shared/env";
-import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, Unit } from "@domain/entity-currency";
 import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import {
   AccountLike,

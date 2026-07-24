@@ -15,7 +15,7 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import ToolTip from "~/renderer/components/Tooltip";
 

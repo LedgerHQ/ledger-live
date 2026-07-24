@@ -1,6 +1,7 @@
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencySchema, CryptoCurrencySchema } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency";
 import type { AssetType } from "../ModularDialog/types";
 
 export const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -14,9 +15,9 @@ export const hederaCurrency = getCryptoCurrencyById("hedera");
 
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "arbitrum/erc20/arbitrum",
+  id: TokenCurrencySchema.shape.id.parse("arbitrum/erc20/arbitrum"),
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-  parentCurrencyId: "arbitrum",
+  parentCurrencyId: CryptoCurrencySchema.shape.id.parse("arbitrum"),
   tokenType: "erc20",
   name: "Arbitrum",
   ticker: "ARB",
@@ -30,9 +31,9 @@ export const arbitrumToken: TokenCurrency = {
 };
 export const usdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/usd__coin",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd__coin"),
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencySchema.shape.id.parse("ethereum"),
   tokenType: "erc20",
   name: "USD Coin",
   ticker: "USDC",

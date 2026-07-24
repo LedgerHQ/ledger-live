@@ -57,7 +57,7 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency";
 import {
   FlowName,
   getCurrencyName,

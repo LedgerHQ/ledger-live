@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema, CryptoCurrencySchema } from "@domain/entity-currency";
 import type { DistributionItem } from "@ledgerhq/types-live";
 
 /**
@@ -13,9 +14,9 @@ export function makeIntegrationTokenCurrency(
 ): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id,
+    id: TokenCurrencySchema.shape.id.parse(id),
     contractAddress: `0x${id.replace(/\//g, "")}`,
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencySchema.shape.id.parse("ethereum"),
     tokenType: "erc20",
     name,
     ticker,

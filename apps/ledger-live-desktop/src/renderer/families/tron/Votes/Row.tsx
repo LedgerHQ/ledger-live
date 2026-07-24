@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { ExplorerView } from "@ledgerhq/types-cryptoassets";
+import { ExplorerView } from "@domain/entity-currency";
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { TableLine } from "./Header";

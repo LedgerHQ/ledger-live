@@ -9,7 +9,7 @@ import {
   Currency,
   TokenCurrency,
   ExplorerView,
-} from "@ledgerhq/types-cryptoassets";
+} from "@domain/entity-currency";
 import {
   Account,
   AnyMessage,

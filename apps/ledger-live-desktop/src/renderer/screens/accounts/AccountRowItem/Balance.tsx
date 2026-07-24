@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { BigNumber } from "bignumber.js";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 class Balance extends PureComponent<{

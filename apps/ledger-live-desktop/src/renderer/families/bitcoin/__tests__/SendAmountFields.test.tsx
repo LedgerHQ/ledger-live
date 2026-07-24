@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { BitcoinAccount, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { track } from "~/renderer/analytics/segment";

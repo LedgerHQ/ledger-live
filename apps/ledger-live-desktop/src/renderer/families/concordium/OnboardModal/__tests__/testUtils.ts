@@ -11,7 +11,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 
 import { createMockAccount, createMockConcordiumCurrency } from "../../__tests__/testUtils";

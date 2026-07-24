@@ -1,4 +1,4 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 export const supportedBuyCurrenciesIds = [
   "bitcoin",
   "ethereum",

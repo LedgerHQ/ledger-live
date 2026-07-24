@@ -13,7 +13,7 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 type BlacklistedTokenSection = {
   parentCurrency: CryptoCurrency;

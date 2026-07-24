@@ -1,5 +1,10 @@
 import { addTestnetCurrencies, getTestnetCurrencies } from "../testnetCurrencies";
-import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+  CryptoCurrencySchema,
+  TokenCurrencySchema,
+} from "@domain/entity-currency";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/coin-modules/registry";
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
@@ -14,7 +19,7 @@ const mockListSupportedCurrencies = listSupportedCurrencies as jest.MockedFuncti
 describe("testnetCurrencies", () => {
   const mockMainnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: CryptoCurrencySchema.shape.id.parse("ethereum"),
     name: "Ethereum",
     ticker: "ETH",
     managerAppName: "Ethereum",
@@ -35,7 +40,7 @@ describe("testnetCurrencies", () => {
 
   const mockTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum_sepolia",
+    id: CryptoCurrencySchema.shape.id.parse("ethereum_sepolia"),
     name: "Ethereum Sepolia",
     managerAppName: "Ethereum",
     coinType: 60,
@@ -57,7 +62,7 @@ describe("testnetCurrencies", () => {
 
   const mockBitcoinTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "bitcoin_testnet",
+    id: CryptoCurrencySchema.shape.id.parse("bitcoin_testnet"),
     name: "Bitcoin Testnet",
     ticker: "BTC",
     managerAppName: "Bitcoin",
@@ -79,11 +84,11 @@ describe("testnetCurrencies", () => {
 
   const mockToken: CryptoOrTokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usdc",
+    id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdc"),
     name: "USD Coin",
     ticker: "USDC",
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencySchema.shape.id.parse("ethereum"),
     tokenType: "erc20",
     units: [
       {

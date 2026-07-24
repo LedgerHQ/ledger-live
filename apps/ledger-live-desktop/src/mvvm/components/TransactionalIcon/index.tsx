@@ -1,7 +1,7 @@
 import React from "react";
 import { DotIcon, mediaImageDotIconSizeMap } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, CryptoCurrency } from "@domain/entity-currency";
 import type { OperationType } from "@ledgerhq/types-live";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { getTransactionalDotConfig } from "./getTransactionalDotConfig";

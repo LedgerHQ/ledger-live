@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 

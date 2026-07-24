@@ -4,7 +4,7 @@ import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";

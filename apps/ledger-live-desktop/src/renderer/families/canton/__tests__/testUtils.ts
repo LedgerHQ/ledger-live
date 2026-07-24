@@ -3,13 +3,13 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencySchema } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {
-    id: "canton_network",
+    id: CryptoCurrencySchema.shape.id.parse("canton_network"),
     name: "Canton",
     type: "CryptoCurrency",
     family: "canton",

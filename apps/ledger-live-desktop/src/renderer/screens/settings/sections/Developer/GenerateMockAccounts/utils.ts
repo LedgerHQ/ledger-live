@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-wallet/store";
 import { getKey } from "~/renderer/storage";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { v4 as uuidv4 } from "uuid";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";

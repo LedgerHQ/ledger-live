@@ -6,7 +6,7 @@ import {
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { useSelector } from "LLD/hooks/redux";
 
 type Props = {

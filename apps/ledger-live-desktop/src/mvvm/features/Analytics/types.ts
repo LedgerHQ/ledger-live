@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
 

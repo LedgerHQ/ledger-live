@@ -3,7 +3,8 @@
  */
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 
@@ -24,7 +25,7 @@ const celoCurrency = {
 } as CryptoCurrency;
 
 const usdtCurrency: TokenCurrency = {
-  id: "celo/erc20/usdt",
+  id: TokenCurrencySchema.shape.id.parse("celo/erc20/usdt"),
   type: "TokenCurrency",
   parentCurrencyId: celoCurrency.id,
   tokenType: "erc20",

@@ -1,7 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -29,7 +30,7 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdtEthereum: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/usd_tether__erc20_",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd_tether__erc20_"),
   parentCurrencyId: ethereum.id,
   tokenType: "erc20",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
