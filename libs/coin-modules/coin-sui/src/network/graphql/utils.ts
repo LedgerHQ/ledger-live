@@ -39,9 +39,9 @@ export type StakedSuiJson = {
 type ValidatorMetadataJson = {
   sui_address: string;
   name: string;
-  description: string | null | undefined;
-  image_url: string | null | undefined;
-  project_url: string | null | undefined;
+  description?: string | null;
+  image_url?: string | null;
+  project_url?: string | null;
 };
 
 type StakingPoolJson = {
