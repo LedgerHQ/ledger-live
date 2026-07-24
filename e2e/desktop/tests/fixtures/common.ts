@@ -1,5 +1,5 @@
 import { test as base, Page, ElectronApplication, ChromiumBrowserContext } from "@playwright/test";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
@@ -256,7 +256,7 @@ export const test = base.extend<TestFixtures>({
     }
 
     try {
-      execSync(`pkill -f ${userdataDestinationPath}`);
+      execFileSync("pkill", ["-f", userdataDestinationPath]);
     } catch {
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
