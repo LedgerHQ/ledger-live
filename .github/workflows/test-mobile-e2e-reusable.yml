@@ -523,6 +523,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
+      E2E_WORKER_COUNT: ${{ github.event_name == 'schedule' && '2' || '3' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -588,7 +589,7 @@ jobs:
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
         with:
-          worker_count: 3
+          worker_count: ${{ env.E2E_WORKER_COUNT }}
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install
