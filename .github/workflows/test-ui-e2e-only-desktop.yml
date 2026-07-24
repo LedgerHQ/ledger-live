@@ -588,7 +588,7 @@ jobs:
     needs: [prepare-devices, report-to-allure, report-to-allure-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: Prepare Slack payload
         id: status
         env:
