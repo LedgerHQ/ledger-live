@@ -1,4 +1,4 @@
-import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 

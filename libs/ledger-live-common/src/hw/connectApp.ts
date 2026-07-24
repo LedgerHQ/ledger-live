@@ -1,12 +1,11 @@
 import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import { StatusCodes, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import {
   FirmwareOrAppUpdateRequired,
-  UserRefusedOnDevice,
-  UpdateYourApp,
-  StatusCodes,
   LatestFirmwareVersionRequired,
+  UpdateYourApp,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";

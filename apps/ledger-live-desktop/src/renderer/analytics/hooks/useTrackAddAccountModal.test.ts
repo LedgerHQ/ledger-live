@@ -3,11 +3,11 @@ import { UseTrackAddAccountModal, useTrackAddAccountModal } from "./useTrackAddA
 import { track } from "../segment";
 import {
   CantOpenDevice,
-  UserRefusedOnDevice,
   LockedDeviceError,
-  TransportRaceCondition,
   TransportError,
-} from "@ledgerhq/errors";
+  TransportRaceCondition,
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
 import type { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 

@@ -29,7 +29,8 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
+import { HwTransportError } from "@ledgerhq/hw-transport/errors";
+import { PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 import { isPeerRemovedPairingError } from "../errors";

@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
 import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
-import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { LocalTracer } from "@ledgerhq/logs";
 
 import { LOG_TYPE } from ".";

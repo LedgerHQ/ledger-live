@@ -1,11 +1,7 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import {
-  ManagerNotEnoughSpaceError,
-  StatusCodes,
-  TransportError,
-  DisconnectedDevice,
-} from "@ledgerhq/errors";
+import { DisconnectedDevice, StatusCodes, TransportError } from "@ledgerhq/hw-transport/errors";
+import { ManagerNotEnoughSpaceError } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import getDeviceInfo from "./getDeviceInfo";

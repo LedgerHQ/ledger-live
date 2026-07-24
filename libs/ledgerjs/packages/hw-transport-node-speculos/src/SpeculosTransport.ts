@@ -5,7 +5,7 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   TransportError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
 import { log } from "@ledgerhq/logs";
 
 /**

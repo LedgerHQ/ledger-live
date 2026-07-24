@@ -15,12 +15,11 @@ import {
   type DeviceActionState,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import {
   ConcordiumAddressVerificationFailedError,
   ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
-  LockedDeviceError,
-  UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import {
   type SignerConcordium,

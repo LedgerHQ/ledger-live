@@ -4,13 +4,12 @@ import * as rxjsOperators from "rxjs/operators";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import {
-  DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   LockedDeviceError,
-  TransportStatusError,
   StatusCodes,
-  UnexpectedBootloader,
-} from "@ledgerhq/errors";
+  TransportStatusError,
+} from "@ledgerhq/hw-transport/errors";
+import { DeviceExtractOnboardingStateError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";

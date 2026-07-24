@@ -3,13 +3,15 @@ import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
 import {
-  WebsocketConnectionError,
-  DeviceSocketFail,
   DisconnectedDeviceDuringOperation,
-  TransportStatusError,
-  UserRefusedAllowManager,
-  ManagerDeviceLockedError,
   StatusCodes,
+  TransportStatusError,
+} from "@ledgerhq/hw-transport/errors";
+import {
+  DeviceSocketFail,
+  ManagerDeviceLockedError,
+  UserRefusedAllowManager,
+  WebsocketConnectionError,
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";

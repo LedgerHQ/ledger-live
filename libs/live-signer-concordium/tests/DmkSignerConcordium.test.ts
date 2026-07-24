@@ -1,10 +1,9 @@
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import {
   ConcordiumAddressVerificationFailedError,
   ConcordiumInvalidMaxFeeError,
   ConcordiumTrustedMetadataServiceError,
-  LockedDeviceError,
-  UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { SignerConcordiumBuilder } from "@ledgerhq/device-signer-kit-concordium";
 import { TransactionType, AccountAddress } from "@ledgerhq/concordium-core";

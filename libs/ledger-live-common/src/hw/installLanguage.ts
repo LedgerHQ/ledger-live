@@ -1,9 +1,5 @@
-import {
-  LanguageNotFound,
-  ManagerNotEnoughSpaceError,
-  StatusCodes,
-  TransportError,
-} from "@ledgerhq/errors";
+import { StatusCodes, TransportError } from "@ledgerhq/hw-transport/errors";
+import { LanguageNotFound, ManagerNotEnoughSpaceError } from "@ledgerhq/errors";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 

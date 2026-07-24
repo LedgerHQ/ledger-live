@@ -4,11 +4,8 @@ import ManagerAPI from "../manager/api";
 import { defer, of, throwError } from "rxjs";
 import { anAppBuilder } from "../mock/fixtures/anApp";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
-import {
-  LockedDeviceError,
-  ManagerDeviceLockedError,
-  UnresponsiveDeviceError,
-} from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { ManagerDeviceLockedError, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { quitApp } from "../deviceSDK/commands/quitApp";
 
 // Mocking ManagerAPI

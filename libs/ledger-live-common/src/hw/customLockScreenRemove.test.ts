@@ -1,4 +1,5 @@
-import { StatusCodes, UnexpectedBootloader, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { StatusCodes, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import removeImage, { command } from "./customLockScreenRemove";
 import Transport from "@ledgerhq/hw-transport";
 import { ImageDoesNotExistOnDevice } from "../errors";

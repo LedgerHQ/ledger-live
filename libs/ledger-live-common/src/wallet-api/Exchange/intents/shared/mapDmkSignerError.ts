@@ -1,4 +1,4 @@
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { EthAppPleaseEnableContractData } from "@ledgerhq/live-signer-evm/errors";
 
 function isObjectLike(value: unknown): value is Record<string, unknown> {

@@ -1,4 +1,8 @@
-import { TransportStatusError, StatusCodes, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  StatusCodes,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of } from "rxjs";
 import { withDevice } from "./deviceAccess";

@@ -1,9 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
-import {
-  DisconnectedDeviceDuringOperation,
-  WrongDeviceForAccountPayout,
-  WrongDeviceForAccountRefund,
-} from "@ledgerhq/errors";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
+import { WrongDeviceForAccountPayout, WrongDeviceForAccountRefund } from "@ledgerhq/errors";
 import {
   createExchange,
   ExchangeTypes,

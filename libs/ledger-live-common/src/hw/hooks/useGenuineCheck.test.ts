@@ -3,11 +3,11 @@
  */
 import { renderHook, act } from "@testing-library/react";
 import { of, throwError } from "rxjs";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
 import {
-  UserRefusedAllowManager,
-  DisconnectedDeviceDuringOperation,
-  UnresponsiveDeviceError,
   DeviceSocketFail,
+  UnresponsiveDeviceError,
+  UserRefusedAllowManager,
 } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
 import {

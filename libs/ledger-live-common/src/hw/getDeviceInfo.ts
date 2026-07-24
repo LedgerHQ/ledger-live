@@ -1,5 +1,6 @@
 /* eslint-disable no-bitwise */
-import { DeviceOnDashboardExpected, StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { getVersion } from "../device/use-cases/getVersionUseCase";

@@ -2,12 +2,12 @@ import { renderHook } from "@testing-library/react-native";
 import { useTrackLedgerSyncFlow, UseTrackLedgerSyncFlow } from "./useTrackLedgerSyncFlow";
 import { track } from "../segment";
 import {
-  UserRefusedOnDevice,
-  UserRefusedAllowManager,
-  LockedDeviceError,
   CantOpenDevice,
+  LockedDeviceError,
   TransportError,
-} from "@ledgerhq/errors";
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
+import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackLedgerSyncFlow", () => {

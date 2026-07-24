@@ -1,6 +1,7 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
-import { UserRefusedOnDevice, PinNotSet } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { PinNotSet } from "@ledgerhq/errors";
 import type { APDU } from "../../entities/APDU";
 import type { ReinstallConfigArgs } from "../../entities/ReinstallConfigEntity";
 

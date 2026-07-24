@@ -2,12 +2,12 @@ import { renderHook } from "@testing-library/react-native";
 import { useTrackAddAccountFlow, UseTrackAddAccountFlow } from "./useTrackAddAccountFlow";
 import { track } from "../segment";
 import {
-  UserRefusedOnDevice,
   CantOpenDevice,
   LockedDeviceError,
-  TransportRaceCondition,
   TransportError,
-} from "@ledgerhq/errors";
+  TransportRaceCondition,
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackAddAccountFlow", () => {

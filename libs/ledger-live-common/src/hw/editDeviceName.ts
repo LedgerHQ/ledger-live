@@ -1,5 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
-import { StatusCodes, UserRefusedDeviceNameChange } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedDeviceNameChange } from "@ledgerhq/errors";
 
 /**
  * Specify a new name for a device. This is technically supported on all models

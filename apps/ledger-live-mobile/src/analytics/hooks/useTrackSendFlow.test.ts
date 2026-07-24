@@ -2,12 +2,12 @@ import { renderHook } from "@testing-library/react-native";
 import { useTrackSendFlow, UseTrackSendFlow } from "./useTrackSendFlow";
 import { track } from "../segment";
 import {
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
   CantOpenDevice,
+  LockedDeviceError,
   TransportError,
-} from "@ledgerhq/errors";
+  TransportRaceCondition,
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackSendFlow", () => {

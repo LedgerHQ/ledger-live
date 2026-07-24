@@ -4,8 +4,8 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
-  ManagerDeviceLockedError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { ManagerDeviceLockedError } from "@ledgerhq/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { EmptyError } from "rxjs";
 import { classifyDeviceError } from "./classify-device-error";

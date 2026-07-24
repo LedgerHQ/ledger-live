@@ -1,7 +1,12 @@
 import EventEmitter from "events";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { TransportError, TransportRaceCondition } from "./errors";
-import { StatusCodes, getAltStatusMessage, TransportStatusError } from "@ledgerhq/errors";
+import {
+  TransportRaceCondition,
+  TransportError,
+  StatusCodes,
+  getAltStatusMessage,
+  TransportStatusError,
+} from "./errors";
 import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
 

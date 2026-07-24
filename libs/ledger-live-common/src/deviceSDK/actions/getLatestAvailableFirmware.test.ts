@@ -1,5 +1,5 @@
 import { Observable, of } from "rxjs";
-import { LockedDeviceError, TransportRaceCondition } from "@ledgerhq/errors";
+import { LockedDeviceError, TransportRaceCondition } from "@ledgerhq/hw-transport/errors";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { getDeviceInfoTask, internalGetDeviceInfoTask } from "../tasks/getDeviceInfo";

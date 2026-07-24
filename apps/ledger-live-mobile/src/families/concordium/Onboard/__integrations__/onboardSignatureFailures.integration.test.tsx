@@ -3,7 +3,10 @@ import React from "react";
 import { Linking } from "react-native";
 import { screen, render, waitFor } from "@tests/test-renderer";
 import { server } from "@tests/server";
-import { TransportStatusError, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
+import {
+  DisconnectedDeviceDuringOperation,
+  TransportStatusError,
+} from "@ledgerhq/hw-transport/errors";
 import OnboardScreen from "../OnboardScreen";
 import {
   SESSION_TOPIC,

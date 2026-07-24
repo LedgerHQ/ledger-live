@@ -5,10 +5,10 @@ import {
   CantOpenDevice,
   LockedDeviceError,
   TransportError,
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
   TransportRaceCondition,
-} from "@ledgerhq/errors";
+  UserRefusedOnDevice,
+} from "@ledgerhq/hw-transport/errors";
+import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackSwapFlow", () => {

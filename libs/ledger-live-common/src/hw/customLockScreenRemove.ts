@@ -1,9 +1,9 @@
 import {
-  TransportStatusError,
-  UnexpectedBootloader,
   StatusCodes,
+  TransportStatusError,
   UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, throwError } from "rxjs";
 import { withDevice } from "./deviceAccess";

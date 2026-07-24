@@ -2,7 +2,8 @@ import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
-import { CantOpenDevice, DeviceHalted, FirmwareOrAppUpdateRequired } from "@ledgerhq/errors";
+import { CantOpenDevice } from "@ledgerhq/hw-transport/errors";
+import { DeviceHalted, FirmwareOrAppUpdateRequired } from "@ledgerhq/errors";
 import { open, close } from "../../hw/index";
 
 export { Transport };

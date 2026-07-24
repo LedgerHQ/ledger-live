@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "tests/testSetup";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import OnboardError from "../OnboardError";
 
 describe("OnboardError", () => {

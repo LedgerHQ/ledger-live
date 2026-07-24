@@ -1,6 +1,6 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { TransportError, StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes, TransportError } from "@ledgerhq/hw-transport/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 

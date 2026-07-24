@@ -1,4 +1,4 @@
-import { StatusCodes, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { StatusCodes, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { command as uninstallAllApps } from "./uninstallAllApps";
 import Transport from "@ledgerhq/hw-transport";
 
