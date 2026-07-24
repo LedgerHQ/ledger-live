@@ -8,7 +8,6 @@ import { setEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(120000);
 
@@ -25,7 +24,7 @@ afterAll(() => {
   setTimeoutSpy.mockRestore();
 });
 
-const mockedCoins: CryptoCurrencyId[] = [
+const mockedCoins: string[] = [
   "bitcoin",
   "zcash",
   "ethereum",

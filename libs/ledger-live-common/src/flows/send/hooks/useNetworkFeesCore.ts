@@ -5,7 +5,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import { useAccountBridge } from "../../../bridge/useAccountBridge";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";

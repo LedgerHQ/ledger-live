@@ -1,11 +1,15 @@
-import { Currency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
-export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {
+export function isCryptoCurrency<T extends { type: string }>(
+  currency: T,
+): currency is Extract<T, { type: "CryptoCurrency" }> {
   return currency.type === "CryptoCurrency";
 }
 
-export function isTokenCurrency(currency: Currency): currency is TokenCurrency {
+export function isTokenCurrency<T extends { type: string }>(
+  currency: T,
+): currency is Extract<T, { type: "TokenCurrency" }> {
   return currency.type === "TokenCurrency";
 }
 

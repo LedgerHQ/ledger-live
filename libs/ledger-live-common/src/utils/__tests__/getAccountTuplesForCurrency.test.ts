@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "../../mock/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -63,12 +64,12 @@ describe("getAccountTuplesForCurrency", () => {
   describe("TokenCurrency", () => {
     const aaveToken = {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/aave",
+      id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/aave"),
       name: "Aave Token",
       ticker: "AAVE",
       units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],
       contractAddress: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
       tokenType: "erc20" as const,
     };
 

@@ -5,7 +5,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 describe("evm bridge", () => {
@@ -114,8 +115,8 @@ describe("evm bridge", () => {
   it("computes the asset of an EVM token", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
-      id: "ethereum/erc20/usd__coin",
-      parentCurrencyId: "ethereum",
+      id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd__coin"),
+      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
       tokenType: "erc20",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       name: "USD Coin",
@@ -141,8 +142,8 @@ describe("evm bridge", () => {
   it("normalizes checksum when computing an EVM asset", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
-      id: "flare/erc20/fxrp",
-      parentCurrencyId: "flare",
+      id: TokenCurrencySchema.shape.id.parse("flare/erc20/fxrp"),
+      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("flare"),
       tokenType: "erc20",
       contractAddress: "0xad552a648c74d49e10027ab8a618a3ad4901c5be",
       name: "FXRP",
@@ -168,8 +169,8 @@ describe("evm bridge", () => {
   it("throws if token parent currency does not match", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
-      id: "usdc_on_ethereum",
-      parentCurrencyId: "ethereum",
+      id: TokenCurrencySchema.shape.id.parse("usdc_on_ethereum"),
+      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
       tokenType: "erc20",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       name: "USD Coin",

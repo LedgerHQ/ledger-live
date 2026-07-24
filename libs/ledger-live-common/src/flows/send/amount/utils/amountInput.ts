@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { sanitizeValueString } from "@ledgerhq/ledger-wallet-framework/currencies/sanitizeValueString";
 import { clampDecimals, isOverDecimalLimit, trimTrailingZeros } from "./decimals";

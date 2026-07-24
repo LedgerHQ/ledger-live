@@ -33,7 +33,7 @@ import { getAccountBridge } from "../../bridge";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;

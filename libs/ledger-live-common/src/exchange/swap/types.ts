@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";

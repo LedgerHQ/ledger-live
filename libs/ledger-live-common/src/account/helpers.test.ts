@@ -3,7 +3,8 @@ import { loadBlacklistedTokenSections } from "./helpers";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
@@ -12,7 +13,7 @@ const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
 >;
 
 const mockEthereumCurrency: CryptoCurrency = {
-  id: "ethereum",
+  id: CryptoCurrencySchema.shape.id.parse("ethereum"),
   name: "Ethereum",
   ticker: "ETH",
   type: "CryptoCurrency",
@@ -32,12 +33,12 @@ const mockEthereumCurrency: CryptoCurrency = {
 };
 
 const mockUsdtToken: TokenCurrency = {
-  id: "ethereum/erc20/usdt",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -49,12 +50,12 @@ const mockUsdtToken: TokenCurrency = {
 };
 
 const mockUsdcToken: TokenCurrency = {
-  id: "ethereum/erc20/usdc",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -66,12 +67,12 @@ const mockUsdcToken: TokenCurrency = {
 };
 
 const mockMaticUsdtToken: TokenCurrency = {
-  id: "polygon/erc20/usdt",
+  id: TokenCurrencySchema.shape.id.parse("polygon/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD (Polygon)",
   ticker: "USDT",
   contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-  parentCurrencyId: "polygon",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("polygon"),
   tokenType: "erc20",
   units: [
     {

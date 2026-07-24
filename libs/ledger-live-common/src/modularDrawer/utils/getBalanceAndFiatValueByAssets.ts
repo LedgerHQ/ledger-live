@@ -1,4 +1,6 @@
-import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, FiatCurrency } from "@domain/entity-currency";
+
+type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import {
   groupAccountsByAsset,
   type GroupedAccount,
@@ -18,7 +20,7 @@ export const getBalanceAndFiatValueByAssets = (
   accounts: AccountLike[],
   assets: CryptoOrTokenCurrency[],
   counterValuesState: CounterValuesState,
-  targetCurrency: Currency,
+  targetCurrency: CompatCurrency,
 ): ExtendedAssetType[] => {
   const groupedAccountsByAsset = groupAccountsByAsset(accounts, counterValuesState, targetCurrency);
 

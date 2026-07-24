@@ -6,7 +6,8 @@ import {
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
 import type { ApiAsset } from "../entities";
-import type { CryptoOrTokenCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
@@ -38,7 +39,7 @@ function convertApiAssets(
       } else {
         result[key] = {
           type: "CryptoCurrency" as const,
-          id: asset.id as CryptoCurrencyId,
+          id: CryptoCurrencySchema.shape.id.parse(asset.id),
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,

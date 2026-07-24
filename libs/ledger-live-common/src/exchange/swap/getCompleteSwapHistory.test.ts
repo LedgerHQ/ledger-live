@@ -4,7 +4,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { genAccount } from "../../mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 
 setCryptoAssetsStore({
@@ -17,11 +18,11 @@ const ethereum = getCryptoCurrencyById("ethereum");
 
 const makeTokenCurrency = (id: string): TokenCurrency => ({
   type: "TokenCurrency",
-  id,
+  id: TokenCurrencySchema.shape.id.parse(id),
   name: "Mock Token",
   ticker: "MTK",
   contractAddress: "0x0000000000000000000000000000000000000001",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   units: [{ name: "MTK", code: "MTK", magnitude: 18 }],
 });

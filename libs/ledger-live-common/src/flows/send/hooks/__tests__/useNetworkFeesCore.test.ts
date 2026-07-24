@@ -10,7 +10,7 @@ import { useAccountBridge } from "../../../../bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import type { SendFlowUiConfig } from "../../types";
 
 jest.mock("../../../../bridge/descriptor/send/features");
@@ -43,7 +43,7 @@ const mockCurrency = {
   family: "bitcoin",
   ticker: "BTC",
   units: [btcUnit],
-} as unknown as import("@ledgerhq/types-cryptoassets").Currency;
+} as unknown as import("@domain/entity-currency").Currency;
 
 const mockAccount = {
   type: "Account",

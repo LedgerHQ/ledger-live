@@ -1,8 +1,6 @@
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-
 export type MigrationAddress =
-  | { currencyId: CryptoCurrencyId; address: string; xpub?: never }
-  | { currencyId: CryptoCurrencyId; xpub: string; address?: never };
+  | { currencyId: string; address: string; xpub?: never }
+  | { currencyId: string; xpub: string; address?: never };
 
 export const migrationAddresses: MigrationAddress[] = [
   // bitcoin

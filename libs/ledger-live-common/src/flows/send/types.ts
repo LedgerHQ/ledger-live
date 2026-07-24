@@ -1,5 +1,5 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import type { FlowStatus, FlowStatusActions, FlowStepConfig, FlowConfig } from "../wizard/types";
 

@@ -1,7 +1,7 @@
 import { concat, defer, from, of, type Observable } from "rxjs";
 import { catchError, switchMap } from "rxjs/operators";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { runSignTransactionEvm } from "../shared/signTransactionEvm";

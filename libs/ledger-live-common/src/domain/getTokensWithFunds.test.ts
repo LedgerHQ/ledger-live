@@ -1,7 +1,8 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../currencies/index";
 import { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { getTokensWithFunds } from "./getTokensWithFunds";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -18,9 +19,9 @@ const ETH = getCryptoCurrencyById("ethereum");
 // Create mock tokens for tests
 const ZRX_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/0x_project",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/0x_project"),
   contractAddress: "0xE41d2489571d322189246DaFA5ebDe1F4699F498",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   name: "0x Project",
   ticker: "ZRX",
@@ -31,9 +32,9 @@ const ZRX_TOKEN: TokenCurrency = {
 
 const REP_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/augur",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/augur"),
   contractAddress: "0x1985365e9f78359a9B6AD760e32412f4a445E862",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   name: "Augur",
   ticker: "REP",

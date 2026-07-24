@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import childProcess from "child_process";
@@ -29,7 +28,7 @@ type Args = {
    * comma seperated currencyIds
    * eg: --currencies ethereum,polygon,bitcoin
    */
-  currencies?: CryptoCurrencyId;
+  currencies?: string;
   /**
    * absolute path for the output folder for the json file
    * eg: --outputFolderPath ~/outputs/

@@ -261,6 +261,7 @@
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
     "@features/platform-env": "workspace:^",
@@ -415,7 +416,6 @@
   "devDependencies": {
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

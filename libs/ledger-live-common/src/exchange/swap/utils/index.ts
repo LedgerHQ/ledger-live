@@ -1,5 +1,5 @@
 import { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getSwapProvider } from "../../providers/swap";

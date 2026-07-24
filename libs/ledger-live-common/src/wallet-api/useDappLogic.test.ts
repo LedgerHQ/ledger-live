@@ -8,7 +8,8 @@ import BigNumber from "bignumber.js";
 import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
 import { AppBranch, AppPlatform, Visibility } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrencySchema } from "@domain/entity-currency";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 jest.mock("./converters", () => ({
@@ -72,7 +73,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 
 const mockCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: CryptoCurrencySchema.shape.id.parse("ethereum"),
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",

@@ -3,7 +3,7 @@ import { getCurrencyBridge } from "../../bridge";
 import { CantonCurrencyBridge, CantonAccount } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import coinConfig from "@ledgerhq/coin-canton/config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import BigNumber from "bignumber.js";

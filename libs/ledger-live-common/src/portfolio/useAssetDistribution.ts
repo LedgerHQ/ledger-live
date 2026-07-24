@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, FiatCurrency } from "@domain/entity-currency";
+
+type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { buildAssetDistribution } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";
@@ -21,7 +23,7 @@ export type AssetDistributionResult = {
 
 export type UseAssetDistributionOpts = {
   accounts: Account[];
-  to: Currency;
+  to: CompatCurrency;
   product: "lld" | "llm";
   version: string;
   showEmptyAccounts?: boolean;

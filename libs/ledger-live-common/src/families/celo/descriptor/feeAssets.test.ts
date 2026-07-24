@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencySchema } from "@domain/entity-currency";
 import { celoFeeAssets } from "./feeAssets";
 
 const celoCurrency = {
@@ -13,7 +14,7 @@ const celoCurrency = {
 } as CryptoCurrency;
 
 const usdtCurrency: TokenCurrency = {
-  id: "celo/erc20/usdt",
+  id: TokenCurrencySchema.shape.id.parse("celo/erc20/usdt"),
   type: "TokenCurrency",
   parentCurrencyId: celoCurrency.id,
   tokenType: "erc20",

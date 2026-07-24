@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
