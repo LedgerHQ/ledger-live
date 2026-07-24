@@ -45,6 +45,7 @@ describe("SynchronizeWithQrCode", () => {
 
     // First verify Show QR tab works
     await user.press(screen.queryAllByText(/show qr/i)[0]);
+    expect(screen.getByText("Sync with another Ledger Wallet app")).toBeVisible();
     expect(screen.getByTestId("ws-qr-code-displayed")).toBeVisible();
 
     // Switch to Scan tab to enable camera scanning

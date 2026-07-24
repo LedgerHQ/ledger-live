@@ -14,6 +14,7 @@ describe("scanQRCode", () => {
     await user.press(await screen.findByText(/scan qr code/i));
 
     expect(screen.queryAllByText(/show qr/i)).toHaveLength(2);
+    expect(screen.getByText("Sync with another Ledger Wallet app")).toBeVisible();
     expect(screen.getByTestId("ws-scan-camera")).toBeVisible();
   });
 });
