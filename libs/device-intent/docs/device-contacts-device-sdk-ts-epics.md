@@ -7,7 +7,7 @@ feature. Create all three epics and every ticket below in the **DSDK** Jira
 project (not LIVE). It is deliberately split by independently reviewable
 behavior:
 
-1. a reusable Contacts kit and a sample app validation surface;
+1. a reusable Contacts kit and a web playground validation surface;
 2. Ethereum clear-signing integration;
 3. Tron clear-signing integration.
 
@@ -31,8 +31,14 @@ Ethereum and omitted for other blockchain families. Before implementing the
 ## Epic 1 — `[TS][Contacts] Contacts management kit`
 
 **Goal:** deliver `@ledgerhq/device-contacts-kit`, a protocol-level Contacts API
-that can be used by any host, then prove every management `Command` against a
-device in the web sample app.
+that can be used by any host, then validate every management operation against a
+device in the web playground.
+
+`ContactsManager` is stateless. It only drives device interactions: taking
+caller input, running the device operation, and returning the device output
+(including proof material). It does not store anything, own the address book, or
+handle persistence. The host is responsible for persisting and managing the
+address book.
 
 **Epic acceptance criteria**
 
@@ -45,8 +51,8 @@ consume.
   the binder uses its injected `dmk`, `sessionId`, and, where applicable,
   `appName` to construct and execute the `DeviceAction`. All layers are fully
   unit tested.
-- The web playground supports all management operations, persists the complete
-address book locally, and validates each operation on a compatible device.
+- The web playground supports all six management operations, persists the
+complete address book locally, and validates them on a compatible device.
 
 ### Ticket 1.1 — `[TS][Contacts] Scaffold package`
 
@@ -127,7 +133,7 @@ single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
 - Return the new group handle/proofs or the new address proof.
 
-**Type suggestion**
+**Suggested types**
 
 The `Command` input/output should closely follow the firmware specification.
 The composed `DeviceAction` should expose a richer host-facing shape that echoes the
@@ -173,7 +179,7 @@ type RegisterExternalAddressDeviceActionOutput = {
 validation on the device.
 - Tests cover both new and existing contact-group flows.
 - Tests cover the default open-app path and `skipOpenApp`.
-- The sample app playground can create an external address and persist every returned
+- The web playground can create an external address and persist every returned
 proof value locally.
 
 ### Ticket 1.4 — `[TS][Contacts] Renaming an external contact`
@@ -192,7 +198,7 @@ single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
 - Return the replacement group-level `hmacProof`.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type RenameExternalContactDeviceActionInput = {
@@ -225,7 +231,7 @@ user's validation on the device.
 - Tests prove that the `DeviceAction` navigates to the dashboard and never calls
 `openApp`.
 - Tests cover an unsupported OS version and a successful proof replacement.
-- The sample-app flow can rename a persisted external contact.
+- The web playground can rename a persisted external contact.
 
 ### Ticket 1.5 — `[TS][Contacts] Editing an external address identifier`
 
@@ -243,7 +249,7 @@ single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
 - Return the replacement address-level `hmacRest`.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type EditExternalAddressIdentifierDeviceActionInput = {
@@ -286,7 +292,7 @@ type EditExternalAddressIdentifierDeviceActionOutput = {
 `openApp` `DeviceAction` and while `EDIT IDENTIFIER` awaits the user's
 validation on the device.
 - Tests preserve the contact-group proof and replace only `hmacRest`.
-- The sample app can edit an external address and persist the returned proof.
+- The web playground can edit an external address and persist the returned proof.
 
 ### Ticket 1.6 — `[TS][Contacts] Editing an external address scope`
 
@@ -303,7 +309,7 @@ single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
 - Return the replacement address-level `hmacRest`.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type EditExternalAddressScopeDeviceActionInput = {
@@ -344,7 +350,7 @@ type EditExternalAddressScopeDeviceActionOutput = {
 `openApp` `DeviceAction` and while `EDIT SCOPE` awaits the user's validation
 on the device.
 - Tests preserve the address identifier and contact-group proof.
-- The sample app can edit a scope and persist the returned proof.
+- The web playground can edit a scope and persist the returned proof.
 
 ### Ticket 1.7 — `[TS][Contacts] Registering a Ledger account contact`
 
@@ -358,7 +364,7 @@ internal `UseCase`.
 - Check the app minimum version using the version-requirements API.
 - Return the Ledger-account `hmacProof`.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type RegisterLedgerAccountDeviceActionInput = {
@@ -390,7 +396,7 @@ type RegisterLedgerAccountDeviceActionOutput = {
 `openApp` `DeviceAction` and while `REGISTER LEDGER ACCOUNT` awaits the
 user's validation on the device.
 - Tests cover app opening, skipped app opening, and the returned proof.
-- The sample app can register and locally persist a Ledger account contact.
+- The web playground can register and locally persist a Ledger account contact.
 
 ### Ticket 1.8 — `[TS][Contacts] Renaming a Ledger account contact`
 
@@ -404,7 +410,7 @@ internal `UseCase`.
 - Check the app minimum version using the version-requirements API.
 - Return the replacement Ledger-account `hmacProof`.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type RenameLedgerAccountDeviceActionInput = {
@@ -439,11 +445,11 @@ type RenameLedgerAccountDeviceActionOutput = {
 `openApp` `DeviceAction` and while `EDIT LEDGER ACCOUNT` awaits the user's
 validation on the device.
 - Tests replace only the Ledger-account proof.
-- The sample app can rename and persist a Ledger account contact.
+- The web playground can rename and persist a Ledger account contact.
 
 ### Ticket 1.9 — `[TS][Contacts] Playground integration`
 
-Add a **Contacts** section to the device-sdk-ts web sample app. It is the
+Add a **Contacts** section to the device-sdk-ts web playground. It is the
 end-to-end validation surface for every ticket in this epic and the signer
 epics.
 
@@ -451,8 +457,10 @@ The playground invokes only the public management methods on `ContactsManager`;
 it does not call internal `UseCase`s, `Command`s, or `DeviceAction`s directly.
 
 Persist a full address-book model in browser local storage.
+The playground implementation owns its persistence format, serialization, and
+address-book manipulation. These choices are not part of the Contacts kit API.
 
-**Type suggestion**
+**Suggested types**
 
 ```ts
 type AddressBook = {
@@ -494,24 +502,43 @@ kept for operation payloads and must match the linked contact group. External
 contact/address models do not expose `derivationPath`; implementations use the
 kit-owned internal constant.
 
-Local storage must encode `bigint` values as decimal strings and opaque byte
-values explicitly, then restore their SDK types when loading.
+`id` and `contactGroupId` are client-side identifiers for host storage and UI
+linking only. They are not device values and never appear in the kit or signer
+contracts, where records are linked by the device value `groupHandle`.
 
 **Acceptance criteria**
 
 - The UI invokes all six public management methods on `ContactsManager` and
-  renders their intermediate `DeviceAction` states/errors.
-- The UI does not call internal `UseCase`s, `Command`s, or `DeviceAction`s
-  directly.
+  renders the progress states and errors emitted by each method.
+- The UI stays unaware of kit internals: it does not reference `UseCase`s,
+  `Command`s, `DeviceAction`s, or the app binder directly.
 - A single canonical address-book contract is reused by the playground and
   signer integrations, or explicit family adapters are provided. The model
   preserves blockchain family, chain reference, group linkage, and opaque proof
   material without exposing the external-contact derivation path.
 - The UI persists and reloads the full address book.
 - Successful flows update only the proof fields returned by the corresponding
-`Command`.
-- A documented manual validation matrix covers each management `Command` on a
-compatible device.
+`ContactsManager` method.
+- A documented manual validation matrix covers all six public `ContactsManager`
+operations on a compatible device.
+
+### Ticket 1.10 — `[TS][Contacts] Exposing reusable address-book utilities`
+
+Optional follow-up. While building the playground (Ticket 1.9), the developer
+will likely write helpers to serialize proof values, look up contacts and
+addresses, and update the address book after a successful operation. This ticket
+moves the generic ones into `@ledgerhq/device-contacts-kit` so other hosts can
+reuse them.
+
+Decide per helper whether it is host-agnostic (belongs in the kit) or specific
+to the browser/UI (stays in the playground).
+
+**Acceptance criteria**
+
+- Only host-agnostic helpers already used by the playground are moved into the
+  kit. Browser and UI-specific code stays in the playground.
+- Moved helpers are documented and fully unit tested.
+- Optional: this ticket does not block the playground or Epic 1.
 
 ---
 
@@ -538,6 +565,11 @@ Add an optional `addressBook` to `SignerEthBuilder`. It must be a complete
 snapshot of the address book; mutation and persistence remain the host's
 responsibility.
 
+Building this snapshot from the canonical address book filters by
+`blockchainFamily`: only EVM-family contacts and accounts belong in an
+`EvmAddressBook`. Family selection happens here, so the signer's in-flow
+matching never needs `blockchainFamily` and the EVM models do not carry it.
+
 ```ts
 type EvmAddressBook = {
   contactGroups: EvmContactGroup[];
@@ -546,14 +578,13 @@ type EvmAddressBook = {
 };
 
 type EvmContactGroup = {
-  id: string;
   contactName: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
 };
 
 type EvmExternalAddress = {
-  contactGroupId: string;
+  groupHandle: Uint8Array;
   scope: string;
   address: `0x${string}`;
   chainId: bigint;
@@ -580,17 +611,31 @@ Ledger-account contact to the device.
 
 ### Ticket 2.2 — `[TS][Contacts] Providing matching external contacts in the Ethereum signer`
 
+Use `ProvideContactCommand` (for `PROVIDE CONTACT`) in the Ethereum signing
+flows. It is a public, standalone `Command` in `@ledgerhq/device-contacts-kit`,
+not attached to `ContactsManager`. If it does not exist in the kit yet, add it
+here; otherwise reuse it.
+
 Before each Ethereum signing entrypoint sends its signing APDU, match the
 transaction `to` address against `EvmExternalAddress` records for the
-transaction chain. On a match, provide the corresponding contact group and
-external address to the device.
+transaction chain. On a match, send `ProvideContactCommand` with the matched
+contact group and external address before signing.
 
 - Firmware `Command`: [PROVIDE CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Contact).
+- Match on recipient `address` + `chainId` only. Blockchain family is already
+resolved upstream (the signer receives an EVM-only `EvmAddressBook`), so a
+same-address record in another family is never present here. Within EVM,
+`chainId` disambiguates the same address across chains.
+- The matching lives in the Ethereum signer (exact location left to the
+implementer) and is a pure, independently testable step.
+- Insert the provide step into the existing signing flows, following the
+signer's established clear-signing patterns. Do not add a new public API or make
+the host call a separate Contacts API.
 - Apply this consistently to every signer entrypoint that has a transaction
-recipient. Do not make the host call a separate Contacts API.
+recipient.
 - No match must preserve existing signing behavior.
 
-Suggested internal DeviceAction contract:
+**Suggested types**
 
 ```ts
 type ProvideEvmContactInput = {
@@ -608,24 +653,46 @@ type ProvideEvmContactOutput = void;
 
 **Acceptance criteria**
 
+- `ProvideContactCommand` exists in the kit as a public standalone `Command`,
+fully unit tested (payload encoding and response decoding); this ticket adds it
+if missing and never duplicates it.
+- The Ethereum signer's contact-matching step is fully unit tested,
+independently of device I/O.
 - Tests cover an exact recipient/chain match, no match, and a same-address
 different-chain non-match.
-- The composed signing `DeviceAction` exposes provide-contact progress before signing.
-- The web sample app can sign a transaction to a saved external contact and
+- The provide step is inserted into the existing signing flows and exposes its
+progress through the signing `DeviceAction` before signing.
+- A failed provide follows the firmware/API error policy and is surfaced as a
+typed signer `DeviceAction` error.
+- The web playground can sign a transaction to a saved external contact and
 verify the device's clear-signing display.
 
 ### Ticket 2.3 — `[TS][Contacts] Providing matching Ledger account contacts in the Ethereum signer`
 
+Use `ProvideLedgerAccountContactCommand` (for `PROVIDE LEDGER ACCOUNT CONTACT`)
+in the Ethereum signing flows. It is a public, standalone `Command` in
+`@ledgerhq/device-contacts-kit`, not attached to `ContactsManager`. If it does
+not exist in the kit yet, add it here; otherwise reuse it.
+
 Before each Ethereum signing entrypoint sends its signing APDU, match the
 transaction `from` account context against `EvmLedgerAccountContact` records
-by derivation path and chain. On a match, provide the Ledger-account contact to
-the device.
+by derivation path and chain. On a match, send
+`ProvideLedgerAccountContactCommand` with the matched Ledger-account contact
+before signing.
 
 - Firmware `Command`: [PROVIDE LEDGER ACCOUNT CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Ledger-Account-Contact).
+- Match on `derivationPath` + `chainId` only. Blockchain family is already
+resolved upstream (the signer receives an EVM-only `EvmAddressBook`), so a
+same-path account in another family — e.g. Tron — is never present here. Within
+EVM, `chainId` disambiguates the same path across chains.
 - Match by device-account identity, not by an address string supplied by an
 untrusted transaction payload.
+- The matching lives in the Ethereum signer (exact location left to the
+implementer) and is a pure, independently testable step.
+- Insert the provide step into the existing signing flows, following the
+signer's established clear-signing patterns. Do not add a new public API.
 
-Suggested internal DeviceAction contract:
+**Suggested types**
 
 ```ts
 type ProvideEvmLedgerAccountContactInput = {
@@ -640,10 +707,17 @@ type ProvideEvmLedgerAccountContactOutput = void;
 
 **Acceptance criteria**
 
+- `ProvideLedgerAccountContactCommand` exists in the kit as a public standalone
+`Command`, fully unit tested (payload encoding and response decoding); this
+ticket adds it if missing and never duplicates it.
+- The Ethereum signer's account-matching step is fully unit tested,
+independently of device I/O.
 - Tests cover matching and non-matching derivation paths and chain IDs.
-- A failed provide `DeviceAction` follows the firmware/API error policy and is
-surfaced as a typed signer `DeviceAction` error.
-- The web sample app can sign from a saved Ledger-account contact and verify
+- The provide step is inserted into the existing signing flows and exposes its
+progress through the signing `DeviceAction` before signing.
+- A failed provide follows the firmware/API error policy and is surfaced as a
+typed signer `DeviceAction` error.
+- The web playground can sign from a saved Ledger-account contact and verify
 the device's clear-signing display.
 
 ---
@@ -670,6 +744,11 @@ clear-signing on a compatible device.
 Add an optional `addressBook` to the Tron signer builder. The model must retain
 the same proof material as the Contacts kit, with Tron-specific identifiers.
 
+Building this snapshot from the canonical address book filters by
+`blockchainFamily`: only Tron-family contacts and accounts belong in a
+`TronAddressBook`. Family selection happens here, so the signer's in-flow
+matching never needs `blockchainFamily` and the Tron models do not carry it.
+
 ```ts
 type TronAddressBook = {
   contactGroups: TronContactGroup[];
@@ -678,14 +757,13 @@ type TronAddressBook = {
 };
 
 type TronContactGroup = {
-  id: string;
   contactName: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
 };
 
 type TronExternalAddress = {
-  contactGroupId: string;
+  groupHandle: Uint8Array;
   scope: string;
   address: string;
   hmacRest: Uint8Array;
@@ -710,15 +788,27 @@ type TronLedgerAccountContact = {
 
 ### Ticket 3.2 — `[TS][Contacts] Providing matching external contacts in the Tron signer`
 
+Use `ProvideContactCommand` (for `PROVIDE CONTACT`) in the Tron signing flows.
+It is a public, standalone `Command` in `@ledgerhq/device-contacts-kit`, not
+attached to `ContactsManager`. If it does not exist in the kit yet, add it here;
+otherwise reuse it.
+
 Before a Tron signing entrypoint sends its signing APDU, match the transaction
-recipient to an external address record and provide the matching contact to the
-device.
+recipient to an external address record. On a match, send `ProvideContactCommand`
+with the matched contact before signing.
 
 - Firmware `Command`: [PROVIDE CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Contact).
+- Match on recipient `address` only (Tron has a single chain). Blockchain family
+is already resolved upstream (the signer receives a Tron-only `TronAddressBook`),
+so a same-address record in another family is never present here.
 - Normalize addresses only through existing Tron signer utilities; do not
 introduce a second normalization implementation.
+- The matching lives in the Tron signer (exact location left to the
+implementer) and is a pure, independently testable step.
+- Insert the provide step into the existing signing flows, following the
+signer's established clear-signing patterns. Do not add a new public API.
 
-Suggested internal DeviceAction contract:
+**Suggested types**
 
 ```ts
 type ProvideTronContactInput = {
@@ -735,19 +825,43 @@ type ProvideTronContactOutput = void;
 
 **Acceptance criteria**
 
+- `ProvideContactCommand` exists in the kit as a public standalone `Command`,
+fully unit tested (payload encoding and response decoding); this ticket adds it
+if missing and never duplicates it.
+- The Tron signer's contact-matching step is fully unit tested, independently of
+device I/O.
 - Tests cover match, no match, and normalized-equivalent addresses.
-- The web sample app can sign to a saved Tron external contact and confirm the
+- The provide step is inserted into the existing signing flows and exposes its
+progress through the signing `DeviceAction` before signing.
+- A failed provide follows the firmware/API error policy and is surfaced as a
+typed signer `DeviceAction` error.
+- The web playground can sign to a saved Tron external contact and confirm the
 contact is clear-signed on device.
 
 ### Ticket 3.3 — `[TS][Contacts] Providing matching Ledger account contacts in the Tron signer`
 
+Use `ProvideLedgerAccountContactCommand` (for `PROVIDE LEDGER ACCOUNT CONTACT`)
+in the Tron signing flows. It is a public, standalone `Command` in
+`@ledgerhq/device-contacts-kit`, not attached to `ContactsManager`. If it does
+not exist in the kit yet, add it here; otherwise reuse it.
+
 Before a Tron signing entrypoint sends its signing APDU, match the selected
-signing account against the saved Ledger-account contacts by derivation path,
-then provide the matching account contact to the device.
+signing account against the saved Ledger-account contacts by derivation path. On
+a match, send `ProvideLedgerAccountContactCommand` with the matched account
+contact before signing.
 
 - Firmware `Command`: [PROVIDE LEDGER ACCOUNT CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Ledger-Account-Contact).
+- Match on `derivationPath` only (Tron has a single chain). Blockchain family is
+already resolved upstream (the signer receives a Tron-only `TronAddressBook`), so
+a same-path account in another family — e.g. Ethereum — is never present here.
+- Match by device-account identity, not by an address string supplied by an
+untrusted transaction payload.
+- The matching lives in the Tron signer (exact location left to the
+implementer) and is a pure, independently testable step.
+- Insert the provide step into the existing signing flows, following the
+signer's established clear-signing patterns. Do not add a new public API.
 
-Suggested internal DeviceAction contract:
+**Suggested types**
 
 ```ts
 type ProvideTronLedgerAccountContactInput = {
@@ -761,15 +875,25 @@ type ProvideTronLedgerAccountContactOutput = void;
 
 **Acceptance criteria**
 
+- `ProvideLedgerAccountContactCommand` exists in the kit as a public standalone
+`Command`, fully unit tested (payload encoding and response decoding); this
+ticket adds it if missing and never duplicates it.
+- The Tron signer's account-matching step is fully unit tested, independently of
+device I/O.
 - Tests cover matching and non-matching derivation paths.
-- The web sample app can sign from a saved Tron Ledger-account contact and
+- The provide step is inserted into the existing signing flows and exposes its
+progress through the signing `DeviceAction` before signing.
+- A failed provide follows the firmware/API error policy and is surfaced as a
+typed signer `DeviceAction` error.
+- The web playground can sign from a saved Tron Ledger-account contact and
 verify the device's clear-signing display.
 
 ---
 
 ## Cross-epic completion criteria
 
-- Every firmware `Command` has unit coverage and a manual sample-app validation
+- Every firmware `Command` has unit coverage, and every public operation
+(management and signer clear-signing) has a manual playground validation
 scenario on a compatible device.
 - No Contacts operation persists state in the kit or signers; hosts own the
 address book and only persist returned proof material after success.
