@@ -1961,16 +1961,15 @@ export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
       // `getValidatorsApy` and `getLatestSuiSystemState` are independent calls;
       // a missing APY entry (race, partial response) defaults to 0 to honour
       // the `SuiValidator.apy: number` contract. Matches the GraphQL branch.
-      return activeValidators.map(item => {
-        const v: SuiValidator = {
-          ...item,
-          apy: hash[item.suiAddress] ?? 0,
-        };
-        if (!v.description) delete v.description;
-        if (!v.imageUrl) delete v.imageUrl;
-        if (!v.projectUrl) delete v.projectUrl;
-        return v;
-      });
+      return activeValidators.map(
+        ({ description, imageUrl, projectUrl, ...rest }): SuiValidator => ({
+          ...rest,
+          ...(description ? { description } : {}),
+          ...(imageUrl ? { imageUrl } : {}),
+          ...(projectUrl ? { projectUrl } : {}),
+          apy: hash[rest.suiAddress] ?? 0,
+        }),
+      );
     },
     graphql: getValidatorsGraphQL,
   });
