@@ -588,29 +588,40 @@ jobs:
       - name: Pre-flight runner resource check
         shell: bash
         run: |
-          set -uo pipefail
+          # Diagnostic only: never fail the job. GitHub runs run-steps with `bash -e`
+          # by default, so disable errexit explicitly here.
+          set +e
+          # sysctl lives in /usr/sbin, which isn't always on the runner PATH.
+          export PATH="/usr/sbin:/usr/bin:/bin:$PATH"
           echo "::group::Runner resource pre-flight"
-          total_bytes=$(sysctl -n hw.memsize)
-          page_size=$(sysctl -n hw.pagesize)
-          stats=$(vm_stat)
-          pages_free=$(echo "$stats"      | awk '/Pages free/          {gsub("\\.","",$3); print $3}')
-          pages_inactive=$(echo "$stats"  | awk '/Pages inactive/      {gsub("\\.","",$3); print $3}')
-          pages_spec=$(echo "$stats"      | awk '/Pages speculative/   {gsub("\\.","",$3); print $3}')
-          reclaimable=$(( (pages_free + pages_inactive + pages_spec) * page_size ))
-          used_pct=$(awk -v t="$total_bytes" -v r="$reclaimable" 'BEGIN { printf "%.1f", (t - r) / t * 100 }')
-          loadavg=$(sysctl -n vm.loadavg | tr -d '{}')
-          booted=$(xcrun simctl list devices booted | grep -c Booted || true)
-          echo "Total memory : $(( total_bytes / 1024 / 1024 )) MB"
-          echo "Approx used  : ${used_pct}%"
-          echo "Load average :${loadavg}"
+          used_pct=""
+          if command -v sysctl >/dev/null 2>&1 && command -v vm_stat >/dev/null 2>&1; then
+            total_bytes=$(sysctl -n hw.memsize)
+            page_size=$(sysctl -n hw.pagesize)
+            stats=$(vm_stat)
+            pages_free=$(echo "$stats"      | awk '/Pages free/          {gsub("\\.","",$3); print $3}')
+            pages_inactive=$(echo "$stats"  | awk '/Pages inactive/      {gsub("\\.","",$3); print $3}')
+            pages_spec=$(echo "$stats"      | awk '/Pages speculative/   {gsub("\\.","",$3); print $3}')
+            reclaimable=$(( (pages_free + pages_inactive + pages_spec) * page_size ))
+            used_pct=$(awk -v t="$total_bytes" -v r="$reclaimable" 'BEGIN { if (t > 0) printf "%.1f", (t - r) / t * 100 }')
+            loadavg=$(sysctl -n vm.loadavg | tr -d '{}')
+            echo "Total memory : $(( total_bytes / 1024 / 1024 )) MB"
+            echo "Approx used  : ${used_pct}%"
+            echo "Load average :${loadavg}"
+          else
+            echo "sysctl/vm_stat unavailable; skipping memory computation"
+          fi
+          booted=$(xcrun simctl list devices booted 2>/dev/null | grep -c Booted || true)
           echo "Booted sims  : ${booted}"
           echo "::endgroup::"
           # Non-blocking: surface an annotation so a starved runner is legible up-front
           # instead of manifesting later as an unexplained app-launch/Detox timeout.
           THRESHOLD="${RUNNER_MEM_WARN_PCT:-75}"
-          if awk -v u="$used_pct" -v th="$THRESHOLD" 'BEGIN { exit !(u > th) }'; then
+          if [[ -n "$used_pct" ]] && awk -v u="$used_pct" -v th="$THRESHOLD" 'BEGIN { exit !(u > th) }'; then
             echo "::warning title=High runner memory before iOS e2e::Runner memory ~${used_pct}% used (>${THRESHOLD}%) before booting simulators; app launch may stall on this reused runner."
           fi
+          # Diagnostic only — never fail the job on this step.
+          exit 0
 
       - name: Boot iOS Simulator in Background
         # TEMP: pinned to branch ci/e2e-clean-ios-simulator-state to test the clean-state reset; revert to @develop before merge
