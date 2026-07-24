@@ -48,7 +48,7 @@ and tears down its own Speculos by default; pass `speculosApiPort` to reuse an
 already-running device.
 
 ```ts
-import { openBorrowPosition, closeBorrowPosition } from "../../scripts/borrow/borrowFlow";
+import { openBorrowPosition, closeBorrowPosition } from "@ledgerhq/live-e2e-shared/borrow/borrowFlow";
 
 const rpcUrl = process.env.EVM_RPC_URL!;
 
@@ -71,9 +71,9 @@ test.afterAll(async () => {
 `openBorrowPosition` / `closeBorrowPosition` are thin wrappers. All options mirror the
 CLI flags.
 
-### `tests/utils/borrowSetup.ts` helper
+### `@ledgerhq/live-e2e-shared/borrow/borrowSetup` helper
 
-For specs, prefer the ready-made wrappers in `tests/utils/borrowSetup.ts` — they default the
+For specs, prefer the ready-made wrappers in `borrowSetup` — they default the
 account to `ETH_4`, read the RPC from `EVM_RPC_URL`, and **no-op when broadcast is disabled**
 (`DISABLE_TRANSACTION_BROADCAST !== "0"`), so a hook can't try to broadcast in a run where the
 test itself is skipped:
@@ -91,7 +91,7 @@ Per-test roles:
 | withdraw / close | `beforeAll(ensureLoanOpen)` | precondition a loan for the UI to act on     |
 
 ```ts
-import { resetLoanState } from "tests/utils/borrowSetup";
+import { resetLoanState } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 
 test.beforeAll(async () => {
   test.setTimeout(600_000); // an open is 3 mainnet txs (~6 min)

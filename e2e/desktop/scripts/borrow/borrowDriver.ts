@@ -1,4 +1,10 @@
-import { DEFAULT_RPC_URL, runBorrow, type BorrowFlowOptions, type Flow } from "./borrowFlow";
+import { resolve as resolvePath } from "node:path";
+import {
+  DEFAULT_RPC_URL,
+  runBorrow,
+  type BorrowFlowOptions,
+  type Flow,
+} from "@ledgerhq/live-e2e-shared/borrow/borrowFlow";
 
 const FLOWS: Flow[] = ["open", "close", "repay", "withdraw"];
 const FLOW_SET = new Set<string>(FLOWS);
@@ -29,6 +35,10 @@ function parseArgs(argv: string[]): BorrowFlowOptions {
     loanAmount: get("loan-amount"),
     repayAmount: get("repay-amount"),
     withdrawAmount: get("withdraw-amount"),
+    nanoAppCatalogPath: resolvePath(
+      __dirname,
+      "../../tests/artifacts/appVersion/nano-app-catalog.json",
+    ),
   };
 }
 

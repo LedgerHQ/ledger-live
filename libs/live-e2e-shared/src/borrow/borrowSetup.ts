@@ -1,8 +1,4 @@
-import {
-  openBorrowPosition,
-  closeBorrowPosition,
-  DEFAULT_RPC_URL,
-} from "../../scripts/borrow/borrowFlow";
+import { openBorrowPosition, closeBorrowPosition, DEFAULT_RPC_URL } from "./borrowFlow";
 
 const DEFAULT_ACCOUNT = "ETH_4";
 const DEFAULT_COLLATERAL = "0.0002"; // wBTC
@@ -14,6 +10,7 @@ export interface BorrowSetupOptions {
   collateralAmount?: string;
   loanAmount?: string;
   marketId?: string;
+  nanoAppCatalogPath?: string;
 }
 
 const broadcastEnabled = (): boolean => process.env.DISABLE_TRANSACTION_BROADCAST === "0";
@@ -36,6 +33,7 @@ export async function ensureLoanOpen(options: BorrowSetupOptions = {}): Promise<
     collateralAmount: options.collateralAmount ?? DEFAULT_COLLATERAL,
     loanAmount: options.loanAmount ?? DEFAULT_LOAN,
     marketId: options.marketId,
+    nanoAppCatalogPath: options.nanoAppCatalogPath,
   });
 }
 
@@ -53,5 +51,6 @@ export async function resetLoanState(options: BorrowSetupOptions = {}): Promise<
     account: options.account ?? DEFAULT_ACCOUNT,
     rpcUrl: resolveRpc(options.rpcUrl),
     all: true,
+    nanoAppCatalogPath: options.nanoAppCatalogPath,
   });
 }

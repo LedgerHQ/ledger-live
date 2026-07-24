@@ -1,13 +1,7 @@
-import { resolve as resolvePath } from "node:path";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import {
-  specs,
-  startSpeculos,
-  stopSpeculos,
-  type SpeculosDevice,
-} from "@ledgerhq/live-e2e-shared/speculos";
+import { Account } from "../enum/Account";
+import { specs, startSpeculos, stopSpeculos, type SpeculosDevice } from "../speculos";
 import {
   DEFAULT_MARKET_ID,
   ETHEREUM_CHAIN_ID,
@@ -43,6 +37,8 @@ export interface BorrowFlowOptions {
    * When set, the caller owns the device lifecycle and on-device approval.
    */
   speculosApiPort?: number;
+  /** Speculos nano-app-version catalog path; sets E2E_NANO_APP_VERSION_PATH when booting own Speculos. */
+  nanoAppCatalogPath?: string;
   marketId?: string;
   collateralAmount?: string;
   loanAmount?: string;
@@ -222,10 +218,11 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<void> {
       setEnv("PLAYWRIGHT_RUN", true);
       // The Speculos app-version catalog is read via live-env; default it to the
       // checked-in desktop catalog unless the caller already set one.
-      if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
-        setEnv(
-          "E2E_NANO_APP_VERSION_PATH",
-          resolvePath(__dirname, "../../tests/artifacts/appVersion/nano-app-catalog.json"),
+      if (options.nanoAppCatalogPath) {
+        setEnv("E2E_NANO_APP_VERSION_PATH", options.nanoAppCatalogPath);
+      } else if (!getEnv("E2E_NANO_APP_VERSION_PATH")) {
+        throw new Error(
+          "Missing Speculos app-version catalog: pass nanoAppCatalogPath or set E2E_NANO_APP_VERSION_PATH",
         );
       }
       const spec = specs[specKey];

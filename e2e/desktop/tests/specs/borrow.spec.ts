@@ -1,3 +1,4 @@
+import { resolve as resolvePath } from "node:path";
 import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
@@ -9,13 +10,14 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { resetLoanState } from "tests/utils/borrowSetup";
+import { resetLoanState } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 
 test.describe.configure({ mode: "serial" });
 
 const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const LOAN_AMOUNT = "1";
+const NANO_APP_CATALOG = resolvePath(__dirname, "../artifacts/appVersion/nano-app-catalog.json");
 
 const coldStartTags = buildTags({ currencyId: coldStartAccount.currency.id });
 
@@ -82,12 +84,12 @@ test.describe("Borrow open loan", () => {
 
   test.beforeAll(async () => {
     test.setTimeout(600_000);
-    await resetLoanState();
+    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
   });
 
   test.afterAll(async () => {
     test.setTimeout(600_000);
-    await resetLoanState();
+    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
   });
 
   test(
