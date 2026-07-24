@@ -2,6 +2,9 @@ import { groupAccountsOperationsByDay } from "./groupOperations";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { createOperation, createAccount as baseCreateAccount } from "./pending.test";
 import BigNumber from "bignumber.js";
+import { genAccount } from "../mocks/account";
+import type { TokenCurrency } from "../types";
+import { makeEmptyTokenAccount } from "./helpers";
 
 // Wrapper around createOperation to set transactionSequenceNumber and optional date override
 const createOp = (id: string, isoDate: string, sequence?: bigint, isPending = false): Operation => {
@@ -122,5 +125,48 @@ describe("groupAccountOperationsByDay", () => {
 
     expect(result.sections.length).toBe(1);
     expect(result.sections[0].data.map((op: Operation) => op.id)).toEqual(["op1"]);
+  });
+
+  it("filters expanded internal operations with their owning account", () => {
+    const parentAccount = genAccount("parent", { operationsSize: 0 });
+    // oxlint-disable-next-line typescript/consistent-type-assertions
+    const token = {
+      parentCurrencyId: parentAccount.currency.id,
+      contractAddress: "0xtoken",
+    } as TokenCurrency;
+    const tokenAccount = makeEmptyTokenAccount(parentAccount, token);
+    const zeroValueTokenOperation = {
+      ...createOp("zero-value-token", "2024-01-01T10:00:00Z"),
+      accountId: tokenAccount.id,
+      value: new BigNumber(0),
+    };
+    const nonZeroValueTokenOperation = {
+      ...createOp("non-zero-value-token", "2024-01-01T10:00:00Z"),
+      accountId: tokenAccount.id,
+      value: new BigNumber(1),
+    };
+    const parentOperation = {
+      ...createOp("parent-operation", "2024-01-01T10:00:00Z"),
+      accountId: parentAccount.id,
+      type: "NONE" as const,
+      internalOperations: [zeroValueTokenOperation, nonZeroValueTokenOperation],
+    };
+    parentAccount.operations = [parentOperation];
+    parentAccount.operationsCount = 1;
+    parentAccount.subAccounts = [tokenAccount];
+
+    for (const withSubAccounts of [false, true]) {
+      const result = groupAccountsOperationsByDay([parentAccount], {
+        count: 10,
+        withSubAccounts,
+        filterOperation: (operation, account) =>
+          !(account.type === "TokenAccount" && operation.value.isZero()),
+      });
+
+      expect(result.sections).toHaveLength(1);
+      expect(result.sections[0].data.map(operation => operation.id)).toEqual([
+        "non-zero-value-token",
+      ]);
+    }
   });
 });

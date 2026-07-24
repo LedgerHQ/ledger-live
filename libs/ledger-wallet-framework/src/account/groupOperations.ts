@@ -88,7 +88,9 @@ export function groupAccountsOperationsByDay(
   inputAccounts: AccountLikeArray,
   { count, withSubAccounts, filterOperation }: GroupOpsByDayOpts,
 ): DailyOperations {
-  const accounts = withSubAccounts ? flattenAccounts(inputAccounts) : inputAccounts;
+  const allAccounts = flattenAccounts(inputAccounts);
+  const accounts = withSubAccounts ? allAccounts : inputAccounts;
+  const accountsById = new Map(allAccounts.map(account => [account.id, account]));
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
   // Track indexes of account.pendingOperations[] for each account
@@ -155,7 +157,12 @@ export function groupAccountsOperationsByDay(
         indexes[bestOpInfo.accountI]++;
       }
 
-      const ops = flattenOperationWithInternalsAndNfts(bestOp);
+      const fallbackAccount = accounts[bestOpInfo.accountI];
+      const ops = flattenOperationWithInternalsAndNfts(bestOp).filter(
+        operation =>
+          !filterOperation ||
+          filterOperation(operation, accountsById.get(operation.accountId) ?? fallbackAccount),
+      );
       return {
         ops,
         date: bestOp.date,
