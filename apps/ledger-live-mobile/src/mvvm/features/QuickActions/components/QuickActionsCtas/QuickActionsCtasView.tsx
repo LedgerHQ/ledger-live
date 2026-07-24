@@ -25,6 +25,8 @@ const QuickActionsCtasView = ({ quickActions, isVariant = false }: QuickActionsC
           {isVariant ? (
             <Text
               typography="body3SemiBold"
+              numberOfLines={1}
+              adjustsFontSizeToFit
               lx={{
                 textAlign: "center",
                 color: action.disabled ? "disabled" : "base",
