@@ -34,17 +34,16 @@ Ethereum and omitted for other blockchain families. Before implementing the
 that can be used by any host, then validate every management operation against a
 device in the web playground.
 
-`ContactsManager` is stateless. It only drives device interactions: taking
-caller input, running the device operation, and returning the device output
-(including proof material). It does not store anything, own the address book, or
-handle persistence. The host is responsible for persisting and managing the
-address book.
-
 **Epic acceptance criteria**
 
 - The published kit exposes a `ContactsManager` and builder, with reusable
 version requirements that both `DeviceAction` instances and Ledger Wallet can
 consume.
+- `ContactsManager` is stateless. It only drives device interactions: taking
+caller input, running the device operation, and returning the device output
+(including proof material). It does not store anything, own the address book, or
+handle persistence. The host is responsible for persisting and managing the
+address book.
 - Every Contacts management APDU is implemented by a `Command`,
   `DeviceAction`, and internal `UseCase` trio. Each `ContactsManager` method
   resolves its `UseCase`; the `UseCase` delegates to `ContactsAppBinder`; and
@@ -124,7 +123,7 @@ internal `UseCase`.
 
 - Firmware `Command`: [REGISTER IDENTITY](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Register-Identity).
 - Open `appName` by default, then check the resolved app minimum version using
-the version-requirements API.
+[the version-requirements API](#ticket-12--tscontacts-define-reusable-version-requirements).
 - Accept `skipOpenApp: true` to omit only the open-app `DeviceAction`; retain the
 version guard.
 - Support both a new contact group and adding an address to an existing group.
@@ -243,7 +242,7 @@ the internal `UseCase`.
 
 - Firmware `Command`: [EDIT IDENTIFIER](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Edit-Identifier).
 - Open the coin app by default; support `skipOpenApp: true`.
-- Check the app minimum version using the version-requirements API.
+- Check the app minimum version using [the version-requirements API](#ticket-12--tscontacts-define-reusable-version-requirements).
 - `derivationPath` is temporary for external-address operations. The kit owns a
 single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
@@ -303,7 +302,7 @@ the internal `UseCase`.
 
 - Firmware `Command`: [EDIT SCOPE](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Edit-Scope).
 - Open the coin app by default; support `skipOpenApp: true`.
-- Check the app minimum version using the version-requirements API.
+- Check the app minimum version using [the version-requirements API](#ticket-12--tscontacts-define-reusable-version-requirements).
 - `derivationPath` is temporary for external-address operations. The kit owns a
 single internal constant for now and does not expose this parameter publicly;
 it will no longer be passed to the `Command` later.
@@ -361,7 +360,7 @@ internal `UseCase`.
 
 - Firmware `Command`: [REGISTER LEDGER ACCOUNT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Register-Ledger-Account).
 - Open the coin app by default; support `skipOpenApp: true`.
-- Check the app minimum version using the version-requirements API.
+- Check the app minimum version using [the version-requirements API](#ticket-12--tscontacts-define-reusable-version-requirements).
 - Return the Ledger-account `hmacProof`.
 
 **Suggested types**
@@ -407,7 +406,7 @@ internal `UseCase`.
 
 - Firmware `Command`: [EDIT LEDGER ACCOUNT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Edit-Ledger-Account).
 - Open the coin app by default; support `skipOpenApp: true`.
-- Check the app minimum version using the version-requirements API.
+- Check the app minimum version using [the version-requirements API](#ticket-12--tscontacts-define-reusable-version-requirements).
 - Return the replacement Ledger-account `hmacProof`.
 
 **Suggested types**
@@ -524,7 +523,7 @@ operations on a compatible device.
 
 ### Ticket 1.10 — `[TS][Contacts] Exposing reusable address-book utilities`
 
-Optional follow-up. While building the playground (Ticket 1.9), the developer
+Optional follow-up. While building the playground, the developer
 will likely write helpers to serialize proof values, look up contacts and
 addresses, and update the address book after a successful operation. This ticket
 moves the generic ones into `@ledgerhq/device-contacts-kit` so other hosts can
@@ -622,6 +621,10 @@ transaction chain. On a match, send `ProvideContactCommand` with the matched
 contact group and external address before signing.
 
 - Firmware `Command`: [PROVIDE CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Contact).
+- Before sending the provide `Command`, check app-version compatibility using the
+[reusable version requirements](#ticket-12--tscontacts-define-reusable-version-requirements).
+If the app does not support Contacts,
+skip providing and preserve existing signing behavior.
 - Match on recipient `address` + `chainId` only. Blockchain family is already
 resolved upstream (the signer receives an EVM-only `EvmAddressBook`), so a
 same-address record in another family is never present here. Within EVM,
@@ -660,6 +663,8 @@ if missing and never duplicates it.
 independently of device I/O.
 - Tests cover an exact recipient/chain match, no match, and a same-address
 different-chain non-match.
+- Tests cover an incompatible app version: the provide step is skipped and
+signing proceeds unchanged.
 - The provide step is inserted into the existing signing flows and exposes its
 progress through the signing `DeviceAction` before signing.
 - A failed provide follows the firmware/API error policy and is surfaced as a
@@ -681,6 +686,10 @@ by derivation path and chain. On a match, send
 before signing.
 
 - Firmware `Command`: [PROVIDE LEDGER ACCOUNT CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Ledger-Account-Contact).
+- Before sending the provide `Command`, check app-version compatibility using the
+[reusable version requirements](#ticket-12--tscontacts-define-reusable-version-requirements).
+If the app does not support Contacts,
+skip providing and preserve existing signing behavior.
 - Match on `derivationPath` + `chainId` only. Blockchain family is already
 resolved upstream (the signer receives an EVM-only `EvmAddressBook`), so a
 same-path account in another family — e.g. Tron — is never present here. Within
@@ -713,6 +722,8 @@ ticket adds it if missing and never duplicates it.
 - The Ethereum signer's account-matching step is fully unit tested,
 independently of device I/O.
 - Tests cover matching and non-matching derivation paths and chain IDs.
+- Tests cover an incompatible app version: the provide step is skipped and
+signing proceeds unchanged.
 - The provide step is inserted into the existing signing flows and exposes its
 progress through the signing `DeviceAction` before signing.
 - A failed provide follows the firmware/API error policy and is surfaced as a
@@ -798,6 +809,10 @@ recipient to an external address record. On a match, send `ProvideContactCommand
 with the matched contact before signing.
 
 - Firmware `Command`: [PROVIDE CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Contact).
+- Before sending the provide `Command`, check app-version compatibility using the
+[reusable version requirements](#ticket-12--tscontacts-define-reusable-version-requirements).
+If the app does not support Contacts,
+skip providing and preserve existing signing behavior.
 - Match on recipient `address` only (Tron has a single chain). Blockchain family
 is already resolved upstream (the signer receives a Tron-only `TronAddressBook`),
 so a same-address record in another family is never present here.
@@ -831,6 +846,8 @@ if missing and never duplicates it.
 - The Tron signer's contact-matching step is fully unit tested, independently of
 device I/O.
 - Tests cover match, no match, and normalized-equivalent addresses.
+- Tests cover an incompatible app version: the provide step is skipped and
+signing proceeds unchanged.
 - The provide step is inserted into the existing signing flows and exposes its
 progress through the signing `DeviceAction` before signing.
 - A failed provide follows the firmware/API error policy and is surfaced as a
@@ -851,6 +868,10 @@ a match, send `ProvideLedgerAccountContactCommand` with the matched account
 contact before signing.
 
 - Firmware `Command`: [PROVIDE LEDGER ACCOUNT CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Ledger-Account-Contact).
+- Before sending the provide `Command`, check app-version compatibility using the
+[reusable version requirements](#ticket-12--tscontacts-define-reusable-version-requirements).
+If the app does not support Contacts,
+skip providing and preserve existing signing behavior.
 - Match on `derivationPath` only (Tron has a single chain). Blockchain family is
 already resolved upstream (the signer receives a Tron-only `TronAddressBook`), so
 a same-path account in another family — e.g. Ethereum — is never present here.
@@ -881,6 +902,8 @@ ticket adds it if missing and never duplicates it.
 - The Tron signer's account-matching step is fully unit tested, independently of
 device I/O.
 - Tests cover matching and non-matching derivation paths.
+- Tests cover an incompatible app version: the provide step is skipped and
+signing proceeds unchanged.
 - The provide step is inserted into the existing signing flows and exposes its
 progress through the signing `DeviceAction` before signing.
 - A failed provide follows the firmware/API error policy and is surfaced as a
