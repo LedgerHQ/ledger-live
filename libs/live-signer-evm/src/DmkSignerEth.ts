@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   EthAppPleaseEnableContractData,
   LockedDeviceError,
@@ -56,10 +57,13 @@ export class DmkSignerEth implements EvmSigner {
       ),
     );
     liveBlindSigningReporter.setContext({ sessionId });
+    const calUrl = getEnv("CAL_SERVICE_URL");
+    const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
     const contextModule = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
       .setChain(ContextModuleChainID.Ethereum)
+      .setCalConfig({ url: calUrl, mode: calMode, branch: "main" })
       .build();
     this.signer = new SignerEthBuilder({
       dmk,
