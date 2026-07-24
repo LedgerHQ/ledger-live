@@ -143,7 +143,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | Service | Domain | Managed by | Env |
 |---|---|---|---|
 | **Coin Integration** | | | |
-| EVM third-party RPCs | `rpc.bitlayer.org`, `bsc-dataseed.binance.org`, `polygon-mainnet.g.alchemy.com`, …<br>_⚠️ per-network non-Ledger fallbacks; config is source of truth_ | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod / testnet |
+| EVM third-party RPCs | `rpc.bitlayer.org`, `rpc.mantle.xyz`, `rpc.energyweb.org`, `somnia-rpc.publicnode.com`, `unichain-rpc.publicnode.com`, …<br>_Currently 16 networks configured with `node.type: "external"` (10 mainnet + 6 testnet); config is source of truth_ | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod / testnet |
 | Aptos testnet | `api.testnet.aptoslabs.com` | [env](/libs/env/src/env.ts) | testnet |
 | Sui testnet | `fullnode.testnet.sui.io`, `graphql.testnet.sui.io` | [env](/libs/env/src/env.ts) | testnet |
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
