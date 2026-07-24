@@ -1,8 +1,8 @@
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   type ContactsLedgerSyncStatus,
-  type ContactsPageLabels,
-  type ContactsPageNativeProps,
+  type ContactsListViewLabels,
+  type ContactsListViewNativeProps,
   resolveContactsLedgerSyncIntroductionOpen,
   useContacts,
   useContactsFeatureIntroductionState,
@@ -21,7 +21,7 @@ import type { ContactsPageViewModel } from "../types";
 export function useContactsPageViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<MyWalletNavigatorStackParamList>>();
-  const labels = useMemo<ContactsPageLabels>(
+  const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
@@ -54,7 +54,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const contacts = useContacts();
   const viewModel = useContactsSearchViewModel(searchQuery);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
-  const onOpenContact = useCallback<ContactsPageNativeProps["onOpenContact"]>(
+  const onOpenContact = useCallback<ContactsListViewNativeProps["onOpenContact"]>(
     contactId => {
       if (!contacts.some(contact => contact.id === contactId && contact.addresses.length === 0)) {
         return;

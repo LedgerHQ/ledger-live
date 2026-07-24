@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactDetailPage } from "@features/flow-contacts";
+import { ContactDetailView } from "@features/flow-contacts";
 import { TrackScreen } from "~/analytics";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
@@ -13,7 +13,7 @@ export function ContactDetailScreen(): React.JSX.Element | null {
   return (
     <>
       <TrackScreen category="Contacts" />
-      <ContactDetailPage {...viewModel.pageProps} />
+      <ContactDetailView {...viewModel.pageProps} />
     </>
   );
 }

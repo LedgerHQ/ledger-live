@@ -1,12 +1,12 @@
 import React from "react";
 import {
   ContactsAddContactDialog,
-  ContactsPage,
+  ContactsListView,
   type ContactsAddContactDialogProps,
-  type ContactsPageProps,
+  type ContactsListViewProps,
 } from "@features/flow-contacts";
 
-export type ContactsViewProps = ContactsPageProps &
+export type ContactsViewProps = ContactsListViewProps &
   Readonly<{
     addContactDialog: ContactsAddContactDialogProps;
   }>;
@@ -14,7 +14,7 @@ export type ContactsViewProps = ContactsPageProps &
 export function ContactsView({ addContactDialog, ...pageProps }: Readonly<ContactsViewProps>) {
   return (
     <>
-      <ContactsPage {...pageProps} />
+      <ContactsListView {...pageProps} />
       <ContactsAddContactDialog {...addContactDialog} />
     </>
   );
