@@ -3,6 +3,12 @@ import { EIP712Message } from "@ledgerhq/types-live";
 import { lastValueFrom, of } from "rxjs";
 import { DmkSignerEth } from "../src/DmkSignerEth";
 import { SignTransactionDAStep } from "@ledgerhq/device-signer-kit-ethereum";
+import { getEnv } from "@ledgerhq/live-env";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
+
+jest.mock("@ledgerhq/live-env", () => ({
+  getEnv: jest.fn(),
+}));
 
 describe("DmkSignerEth", () => {
   const dmkMock = {
@@ -19,6 +25,7 @@ describe("DmkSignerEth", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
 
     signer = new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
   });
@@ -616,6 +623,45 @@ describe("DmkSignerEth", () => {
         // THEN
         expect(error).toEqual(new Error("Method not implemented."));
       }
+    });
+  });
+
+  describe("CAL config wiring", () => {
+    let setCalConfigSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setCalConfigSpy = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+    });
+
+    afterEach(() => {
+      setCalConfigSpy.mockRestore();
+    });
+
+    it("passes prod mode and the env URL for a prod endpoint", () => {
+      const url = "https://global.api.prd.ledger.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "prod", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
+      const url = "https://global.api.stg.ledger-test.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "test", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
+      const url = "https://global.api.stg.example.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "test", branch: "main" });
     });
   });
 });
