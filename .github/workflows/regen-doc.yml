@@ -84,35 +84,42 @@ jobs:
       - name: create summary (failure)
         if: failure() && inputs.number != null
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INPUT_LOGIN: ${{ inputs.login }}
+          RUN_ID: ${{ github.run_id }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### ❌ Documentation regeneration failed
 
-            @${{ inputs.login }}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${{ github.run_id }}) for more information.`;
+            @${process.env.INPUT_LOGIN}: you can check [the action logs](https://github.com/LedgerHQ/ledger-live/runs/${process.env.RUN_ID}) for more information.`;
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (success)
         if: inputs.number != null && steps.check-status.outputs.status != 0
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INPUT_LOGIN: ${{ inputs.login }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### 🚀 Documentation regenerated
 
-            @${{ inputs.login }}: the documentation has been regenerated and a commit has been pushed to your branch.`;
+            @${process.env.INPUT_LOGIN}: the documentation has been regenerated and a commit has been pushed to your branch.`;
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (no change)
         if: inputs.number != null && steps.check-status.outputs.status == 0
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INPUT_LOGIN: ${{ inputs.login }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const fs = require("fs");
             const body = `#### ✨ No changes detected
 
-            @${{ inputs.login }}: the documentation is already up to date.`;
+            @${process.env.INPUT_LOGIN}: the documentation is already up to date.`;
             fs.writeFileSync("summary.txt", body, "utf8");
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}
@@ -134,23 +141,29 @@ jobs:
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: report start
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INPUT_NUMBER: ${{ inputs.number }}
+          INPUT_LOGIN: ${{ inputs.login }}
+          INPUT_COMMENT_ID: ${{ inputs.commentId }}
+          SERVER_URL: ${{ github.server_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
           retries: 3
           script: |
-            const {repo: {owner, repo}, run_id} = context
-            const issue_number = ${{ inputs.number }}
+            const {repo: {owner, repo}} = context
             const body = `\
-            @${{ inputs.login }}: triggered \`/regen-doc\`
+            @${process.env.INPUT_LOGIN}: triggered \`/regen-doc\`
 
-            [Regenerating Documentation: workflow started](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Regenerating Documentation: workflow started](${process.env.SERVER_URL}/${process.env.REPOSITORY}/actions/runs/${process.env.RUN_ID})
             `;
 
             await github.rest.issues.updateComment({
               owner,
               repo,
-              comment_id: "${{ inputs.commentId }}",
+              comment_id: Number(process.env.INPUT_COMMENT_ID),
               body,
             });
 
@@ -172,6 +185,12 @@ jobs:
           name: summary.txt
       - name: report job status
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          INPUT_COMMENT_ID: ${{ inputs.commentId }}
+          SERVER_URL: ${{ github.server_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          WORKSPACE: ${{ github.workspace }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
@@ -179,12 +198,12 @@ jobs:
           script: |
             const fs = require("fs");
             const {repo: {owner, repo}} = context;
-            const summary = fs.readFileSync("${{ github.workspace }}/summary.txt", "utf8");
+            const summary = fs.readFileSync(`${process.env.WORKSPACE}/summary.txt`, "utf8");
 
             const body = `\
             ${summary}
 
-            [Regenerating Documentation: workflow ended](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Regenerating Documentation: workflow ended](${process.env.SERVER_URL}/${process.env.REPOSITORY}/actions/runs/${process.env.RUN_ID})
             `;
 
             const output = {
@@ -193,11 +212,11 @@ jobs:
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
 
-            if(${{ inputs.commentId != '' }}) {
+            if(process.env.INPUT_COMMENT_ID) {
               await github.rest.issues.updateComment({
                 owner,
                 repo,
-                comment_id: "${{ inputs.commentId }}",
+                comment_id: Number(process.env.INPUT_COMMENT_ID),
                 body
               });
             }

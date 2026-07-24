@@ -38,8 +38,9 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
+          gh pr checkout "$PR_NUMBER"
 
       - name: Checkout push/ref
         if: ${{ github.event_name != 'pull_request' }}
@@ -53,17 +54,21 @@ jobs:
 
       - name: Build matrix from affected paths or manual input
         id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CHAIN_INPUT: ${{ github.event.inputs.chain }}
+          AFFECTED_PATHS: ${{ steps.affected.outputs.paths }}
         run: |
           CHAINS=()
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.chain }}" != "" ]]; then
-            if [[ "${{ github.event.inputs.chain }}" == "all" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" && "$CHAIN_INPUT" != "" ]]; then
+            if [[ "$CHAIN_INPUT" == "all" ]]; then
               for coin in $COIN_TESTER_CURRENCIES; do
                 CHAINS+=("$coin")
               done
             else
-              IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
+              IFS=',' read -ra CHAINS <<< "$CHAIN_INPUT"
             fi
-          elif echo "${{ steps.affected.outputs.paths }}" | grep -qE "(^|/| )coin-tester(/| |$)"; then
+          elif echo "$AFFECTED_PATHS" | grep -qE "(^|/| )coin-tester(/| |$)"; then
             echo "Detected base coin-tester → adding all coins"
             for coin in $COIN_TESTER_CURRENCIES; do
               CHAINS+=("$coin")
@@ -71,13 +76,13 @@ jobs:
           else
             # Otherwise, only add coins that appear individually
             for coin in $COIN_TESTER_CURRENCIES; do
-              if echo "${{ steps.affected.outputs.paths }}" | grep -qw "$coin"; then
+              if echo "$AFFECTED_PATHS" | grep -qw "$coin"; then
                 CHAINS+=("$coin")
               fi
             done
           fi
           # If it's a scheduled job and no chain is detected, run all chains by default
-          if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
+          if [ "$EVENT_NAME" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
             for coin in $COIN_TESTER_CURRENCIES; do
               CHAINS+=("$coin")
             done
@@ -94,10 +99,14 @@ jobs:
           fi
 
       - name: Debug affected paths (for troubleshooting)
+        env:
+          AFFECTED_PATHS: ${{ steps.affected.outputs.paths }}
+          IS_AFFECTED: ${{ steps.detect.outputs.is-affected }}
+          MATRIX: ${{ steps.detect.outputs.matrix }}
         run: |
-          echo "Affected paths: ${{ steps.affected.outputs.paths }}"
-          echo "Is affected: ${{ steps.detect.outputs.is-affected }}"
-          echo "Matrix: ${{ steps.detect.outputs.matrix }}"
+          echo "Affected paths: $AFFECTED_PATHS"
+          echo "Is affected: $IS_AFFECTED"
+          echo "Matrix: $MATRIX"
 
   coin-tester:
     name: Coin Tester - ${{ matrix.chain }}

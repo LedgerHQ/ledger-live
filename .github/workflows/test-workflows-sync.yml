@@ -68,31 +68,43 @@ jobs:
 
       - name: Set default inputs for PR triggers
         id: set-defaults
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          INPUT_BASE_BRANCH: ${{ inputs.base_branch }}
+          INPUT_SKIP_CHECK: ${{ inputs.skip_check }}
+          INPUT_CHECK_FOLDERS: ${{ inputs.check_folders }}
+          INPUT_FAIL_ON_CHANGES: ${{ inputs.fail_on_changes }}
+          INPUT_BYPASS_LABEL: ${{ inputs.bypass_label }}
+          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           # Set defaults when triggered by PR (not workflow_call)
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "base_branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            echo "base_branch=$BASE_REF" >> $GITHUB_OUTPUT
             echo "skip_check=false" >> $GITHUB_OUTPUT
             echo "check_folders=.github/workflows/" >> $GITHUB_OUTPUT
             echo "fail_on_changes=true" >> $GITHUB_OUTPUT
             echo "bypass_label=skip-sync-check" >> $GITHUB_OUTPUT
             # For pull_request events, the PR number is always available
-            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           else
-            echo "base_branch=${{ inputs.base_branch }}" >> $GITHUB_OUTPUT
-            echo "skip_check=${{ inputs.skip_check }}" >> $GITHUB_OUTPUT
-            echo "check_folders=${{ inputs.check_folders }}" >> $GITHUB_OUTPUT
-            echo "fail_on_changes=${{ inputs.fail_on_changes }}" >> $GITHUB_OUTPUT
-            echo "bypass_label=${{ inputs.bypass_label }}" >> $GITHUB_OUTPUT
-            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+            echo "base_branch=$INPUT_BASE_BRANCH" >> $GITHUB_OUTPUT
+            echo "skip_check=$INPUT_SKIP_CHECK" >> $GITHUB_OUTPUT
+            echo "check_folders=$INPUT_CHECK_FOLDERS" >> $GITHUB_OUTPUT
+            echo "fail_on_changes=$INPUT_FAIL_ON_CHANGES" >> $GITHUB_OUTPUT
+            echo "bypass_label=$INPUT_BYPASS_LABEL" >> $GITHUB_OUTPUT
+            echo "pr_number=$INPUT_PR_NUMBER" >> $GITHUB_OUTPUT
           fi
 
       - name: Check for bypass conditions
         id: bypass-check
+        env:
+          SKIP_CHECK: ${{ steps.set-defaults.outputs.skip_check }}
+          BYPASS_LABEL: ${{ steps.set-defaults.outputs.bypass_label }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
         run: |
-          SKIP_CHECK="${{ steps.set-defaults.outputs.skip_check }}"
-          BYPASS_LABEL="${{ steps.set-defaults.outputs.bypass_label }}"
-
           # Skip check if requested via input parameter (for workflow_call)
           if [ "$SKIP_CHECK" = "true" ]; then
             echo "should_skip=true" >> $GITHUB_OUTPUT
@@ -102,8 +114,8 @@ jobs:
           fi
 
           # Check for bypass label on PR (for pull_request events) - last-resort escape hatch
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if echo '${{ toJson(github.event.pull_request.labels.*.name) }}' | jq -r '.[]' | grep -q "^${BYPASS_LABEL}$"; then
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            if echo "$PR_LABELS_JSON" | jq -r '.[]' | grep -Fxq "$BYPASS_LABEL"; then
               echo "should_skip=true" >> $GITHUB_OUTPUT
               echo "skip_reason=PR label: $BYPASS_LABEL" >> $GITHUB_OUTPUT
               echo "⚠️  Workflow synchronization check bypassed via PR label: $BYPASS_LABEL"
@@ -119,32 +131,32 @@ jobs:
         if: steps.bypass-check.outputs.should_skip == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_BRANCH: ${{ steps.set-defaults.outputs.base_branch }}
+          CHECK_FOLDERS: ${{ steps.set-defaults.outputs.check_folders }}
+          FAIL_ON_CHANGES: ${{ steps.set-defaults.outputs.fail_on_changes }}
+          PR_NUMBER: ${{ steps.set-defaults.outputs.pr_number }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPOSITORY: ${{ github.repository }}
         run: |
-          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
-          CHECK_FOLDERS="${{ steps.set-defaults.outputs.check_folders }}"
-          FAIL_ON_CHANGES="${{ steps.set-defaults.outputs.fail_on_changes }}"
-          PR_NUMBER="${{ steps.set-defaults.outputs.pr_number }}"
-
           # Fetch base branch for comparison
-          git fetch origin $BASE_BRANCH
+          git fetch origin -- "$BASE_BRANCH"
 
           echo "🔍 Checking synchronization against $BASE_BRANCH..."
           echo "📁 Monitoring folders: $CHECK_FOLDERS"
 
           # Build git diff path arguments
           IFS=',' read -ra FOLDERS <<< "$CHECK_FOLDERS"
-          DIFF_ARGS=""
+          DIFF_PATHS=()
           for folder in "${FOLDERS[@]}"; do
             folder=$(echo "$folder" | xargs)
             if [ -n "$folder" ]; then
-              DIFF_ARGS="$DIFF_ARGS -- '$folder'"
+              DIFF_PATHS+=("$folder")
             fi
           done
 
           # Get all files that have drifted from base in monitored folders
-          DRIFTED_CMD="git diff --name-only origin/$BASE_BRANCH HEAD $DIFF_ARGS"
-          echo "🔍 Running: $DRIFTED_CMD"
-          DRIFTED=$(eval $DRIFTED_CMD || true)
+          echo "🔍 Running: git diff --name-only origin/$BASE_BRANCH HEAD -- ${DIFF_PATHS[*]}"
+          DRIFTED=$(git diff --name-only "origin/$BASE_BRANCH" HEAD -- "${DIFF_PATHS[@]}" || true)
 
           if [ -z "$DRIFTED" ]; then
             echo "workflows_changed=false" >> $GITHUB_OUTPUT
@@ -163,9 +175,9 @@ jobs:
           # If we have a PR number, fetch the files the PR itself changed and subtract them
           # so that intentional workflow changes don't trigger a failure
           PR_CHANGED=""
-          if [ -n "$PR_NUMBER" ] && [ "${{ github.event_name }}" != "" ]; then
+          if [ -n "$PR_NUMBER" ] && [ "$EVENT_NAME" != "" ]; then
             echo "🔍 Fetching PR #$PR_NUMBER files from GitHub API..."
-            PR_CHANGED=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" \
+            PR_CHANGED=$(gh api "repos/$REPOSITORY/pulls/${PR_NUMBER}/files" \
               --paginate --jq '.[].filename' 2>/dev/null || true)
 
             # Filter to only monitored folders
@@ -206,9 +218,10 @@ jobs:
 
       - name: Show file differences
         if: steps.analyze.outputs.workflows_changed == 'true' && steps.bypass-check.outputs.should_skip == 'false'
+        env:
+          BASE_BRANCH: ${{ steps.set-defaults.outputs.base_branch }}
+          CHECK_FOLDERS: ${{ steps.set-defaults.outputs.check_folders }}
         run: |
-          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
-          CHECK_FOLDERS="${{ steps.set-defaults.outputs.check_folders }}"
 
           echo "::group::📋 File differences in monitored folders"
 
@@ -228,8 +241,9 @@ jobs:
 
       - name: Provide guidance
         if: steps.analyze.outputs.can_proceed == 'false' && steps.bypass-check.outputs.should_skip == 'false'
+        env:
+          BASE_BRANCH: ${{ steps.set-defaults.outputs.base_branch }}
         run: |
-          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
           echo "::notice::💡 To resolve this issue, rebase your branch: git rebase origin/$BASE_BRANCH"
           echo "::notice::   This ensures consistent behavior across all PRs"
 

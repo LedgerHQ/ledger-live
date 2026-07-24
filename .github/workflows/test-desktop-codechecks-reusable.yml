@@ -163,29 +163,41 @@ jobs:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: prepare status
         id: status
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.username || '' }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          CODECHECKS_RESULT: ${{ needs.codechecks.result }}
+          UNIT_TESTS_RESULT: ${{ needs.unit-tests.result }}
         with:
           script: |
             const fs = require("fs");
 
+            const refName = process.env.REF_NAME;
+            const commitAuthor = process.env.COMMIT_AUTHOR;
+            const repository = process.env.REPOSITORY;
+            const runId = process.env.RUN_ID;
+
             const typecheck = {
-              pass: ${{ needs.codechecks.result == 'success' }},
-              status: "${{ needs.codechecks.result }}",
+              pass: process.env.CODECHECKS_RESULT === "success",
+              status: process.env.CODECHECKS_RESULT,
             };
 
             const unitTests = {
-              pass: ${{ needs.unit-tests.result == 'success' }},
-              status: "${{ needs.unit-tests.result }}",
+              pass: process.env.UNIT_TESTS_RESULT === "success",
+              status: process.env.UNIT_TESTS_RESULT,
             };
 
             const slackPayload = {
               "channel": "C05FKJ7DFAP",
-              "text": "[Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+              "text": "[Alert] Ledger Live Desktop lint & unit tests failed on ${refName}",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":warning: [Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+                    "text": `:warning: [Alert] Ledger Live Desktop lint & unit tests failed on ${refName}`,
                     "emoji": true
                   }
                 },
@@ -210,7 +222,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": `Commit by ${commitAuthor}\nhttps://github.com/${repository}/actions/runs/${runId}`
                   }
                 }
               ]

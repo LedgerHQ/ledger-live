@@ -262,6 +262,9 @@ jobs:
       - name: Resolve per-platform Speculos device
         id: devices
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoX' }}
         run: |
           # Per-platform mapping for scheduled nightly runs (QAA-1193)
           declare -A PLATFORM_DEVICE=(
@@ -269,25 +272,30 @@ jobs:
             [android]=nanoX   # Android - LNX
           )
 
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "$EVENT_NAME" = "schedule" ]; then
             echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> $GITHUB_OUTPUT
             echo "android_device=${PLATFORM_DEVICE[android]}"  >> $GITHUB_OUTPUT
           else
-            INPUT_DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+            INPUT_DEVICE="$SPECULOS_DEVICE_INPUT"
             echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT
             echo "android_device=$INPUT_DEVICE" >> $GITHUB_OUTPUT
           fi
 
       - name: Write summary
+        env:
+          FILTER_PATTERN: ${{ inputs.test_filter || '' }}
+          IOS_DEVICE: ${{ steps.devices.outputs.ios_device }}
+          ANDROID_DEVICE: ${{ steps.devices.outputs.android_device }}
+          BUILD_TYPE: ${{ inputs.production_firebase && 'production' || 'testing' }}
+          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          SMOKE_TESTS: ${{ inputs.smoke_tests }}
+          TEST_EXECUTION_ANDROID: ${{ inputs.test_execution_android || '(not provided)' }}
+          TEST_EXECUTION_IOS: ${{ inputs.test_execution_ios || '(not provided)' }}
+          WORKFLOW_REF: ${{ github.ref_name }}
+          TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          SLACK_NOTIF_STATUS: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}
         run: |
-          FILTER_PATTERN="${{ inputs.test_filter || '' }}"
-          IOS_DEVICE="${{ steps.devices.outputs.ios_device }}"
-          ANDROID_DEVICE="${{ steps.devices.outputs.android_device }}"
-          BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
-          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
-          SMOKE_TESTS="${{ inputs.smoke_tests }}"
-          TEST_EXECUTION_ANDROID="${{ inputs.test_execution_android || '(not provided)' }}"
-          TEST_EXECUTION_IOS="${{ inputs.test_execution_ios || '(not provided)' }}"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$FILTER_PATTERN" ]; then
@@ -301,9 +309,9 @@ jobs:
           {
           echo "## Workflow Context"
           echo ""
-          echo "- **Workflow source branch:** ${{ github.ref_name }}"
-          echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
-          echo "- **Commit SHA:** ${{ github.sha }}"
+          echo "- **Workflow source branch:** $WORKFLOW_REF"
+          echo "- **Triggered branch:** $TRIGGERED_BRANCH"
+          echo "- **Commit SHA:** $COMMIT_SHA"
           echo "- **iOS device:** $IOS_DEVICE"
           echo "- **Android device:** $ANDROID_DEVICE"
           echo "$FILTER_SUMMARY"
@@ -312,9 +320,9 @@ jobs:
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-          echo "- **Slack notification:** ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'enabled' || 'disabled' }}"
-          echo "- **Android Feature Flags:** ${{ env.ANDROID_FEATURE_FLAGS }}"
-          echo "- **iOS Feature Flags:** ${{ env.IOS_FEATURE_FLAGS }}"
+          echo "- **Slack notification:** $SLACK_NOTIF_STATUS"
+          echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
+          echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
           echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
           } >> $GITHUB_STEP_SUMMARY
 
@@ -337,9 +345,11 @@ jobs:
 
       - name: Determine cache keys
         id: cache-keys
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           PREFIX=""
-          if [ "${{ github.ref_name }}" = "develop" ]; then
+          if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT

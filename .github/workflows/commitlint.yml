@@ -47,6 +47,17 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live"
       - name: Lint commits
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          INPUTS_FROM: ${{ inputs.from }}
         run: |
           set -o pipefail
-          pnpm commitlint --from ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || (inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1') }} --verbose
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            FROM="origin/$BASE_REF"
+          elif [ -n "$INPUTS_FROM" ]; then
+            FROM="origin/$INPUTS_FROM"
+          else
+            FROM="HEAD^1"
+          fi
+          pnpm commitlint --from "$FROM" --verbose

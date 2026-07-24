@@ -24,8 +24,9 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr checkout ${{ github.event.pull_request.number }}
+          gh pr checkout "$PR_NUMBER"
       - name: checkout branch (not PR)
         if: ${{ github.event_name != 'pull_request' }}
         run: |

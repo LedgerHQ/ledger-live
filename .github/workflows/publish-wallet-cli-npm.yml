@@ -43,6 +43,10 @@ jobs:
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger wallet-cli sign and JFrog publish
+        env:
+          INPUT_REF: ${{ inputs.ref || github.sha }}
+          VERSION_OVERRIDE: ${{ inputs.version_override || '' }}
+          JFROG_REGISTRY: ${{ inputs.registry || 'jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green' }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -52,9 +56,9 @@ jobs:
               ref: "main",
               workflow_id: "nightly-wallet-cli.yml",
               inputs: {
-                ref: "${{ inputs.ref || github.sha }}",
-                version_override: "${{ inputs.version_override || '' }}",
+                ref: process.env.INPUT_REF,
+                version_override: process.env.VERSION_OVERRIDE,
                 publish_to_jfrog: "true",
-                jfrog_registry: "${{ inputs.registry || 'jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green' }}"
+                jfrog_registry: process.env.JFROG_REGISTRY
               }
             });
