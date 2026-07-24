@@ -89,6 +89,20 @@
   },
   {
     "type": "function",
+    "name": "rewards",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
+    "name": "delegatorShares",
+    "stateMutability": "view",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }]
+  },
+  {
+    "type": "function",
     "name": "withdrawCount",
     "stateMutability": "view",
     "inputs": [],

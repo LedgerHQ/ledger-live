@@ -11,6 +11,7 @@ import {
   canWithdraw,
   getRedelegation,
   getValidatorExplorerUrl,
+  hasChainRewards,
   mapDelegations,
   mapUnbondings,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
@@ -61,6 +62,7 @@ function Delegations({ account }: { account: StakingAccount }) {
   const accountName = useAccountName(account);
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
+  const canClaimRewards = hasChainRewards(currency.id);
   const [delegation, setDelegation] = useState<StakingMappedDelegation>();
   const [undelegation, setUndelegation] = useState<StakingMappedUnbonding>();
 
@@ -337,7 +339,7 @@ function Delegations({ account }: { account: StakingAccount }) {
         });
       }
 
-      if (delegation.pendingRewards?.gt(0)) {
+      if (canClaimRewards && delegation.pendingRewards?.gt(0)) {
         result.push({
           label: t("delegation.actions.collectRewards"),
           Icon: (props: IconProps) => (
@@ -370,6 +372,7 @@ function Delegations({ account }: { account: StakingAccount }) {
     return result;
   }, [
     account,
+    canClaimRewards,
     colors.fog,
     colors.green,
     colors.yellow,
@@ -404,7 +407,7 @@ function Delegations({ account }: { account: StakingAccount }) {
         data={data}
         actions={actions}
       />
-      {totalRewardsAvailable.gt(0) && (
+      {canClaimRewards && totalRewardsAvailable.gt(0) && (
         <>
           <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
           <View style={[styles.rewardsWrapper]}>
