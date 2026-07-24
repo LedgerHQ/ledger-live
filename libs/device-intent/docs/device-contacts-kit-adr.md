@@ -15,7 +15,7 @@
 ## TL;DR
 
 We add a new Device Management Kit package, **`@ledgerhq/device-contacts-kit`**,
-that exposes a single class, **`ContactsManagement`**, structured like the
+that exposes a single class, **`ContactsManager`**, structured like the
 existing signer kits (`device-signer-kit-ethereum`). It wraps the firmware
 Address Book device commands behind typed, observable **DeviceActions** so that
 any host (Ledger Wallet, Ledger Button, CLI) can drive contact management on the
@@ -25,11 +25,11 @@ Decisions at a glance:
 
 | # | Decision | Choice |
 |---|----------|--------|
-| 1 | App-open + version gating | `ensureAppReady` (in LW) installs/gates; the kit **also** runs the device-context step (`openApp` or `goToDashboard`, idempotent) + version check itself, so it is usable without DIE. The required min version is **resolved internally** by the instance (injectable for tests), not passed in. |
+| 1 | App-open + version gating | `ensureAppReady` (in LW) installs/gates; the kit **also** runs the device-context step (`openApp` or `goToDashboard`, idempotent) + version check itself, so it is usable without DIE. Every coin-app action can opt out of its `openApp` step with `skipOpenApp: true` when the caller already opened the app; the version check still runs. The required min version is **resolved internally** by the instance (injectable for tests), not passed in. |
 | 2 | Method return type | Each method returns a **composed DeviceAction** (device-context step → version guard → command), emitting intermediate device-interaction states. |
-| 3 | Naming | Package `@ledgerhq/device-contacts-kit`, class `ContactsManagement`. |
-| 4 | Instantiation | **Builder** (`ContactsManagementBuilder`), **one instance per device context** (`appName` bound at build time; min version resolved internally). |
-| 5 | Open app vs go to dashboard | The device-context step is **one of two distinct device actions**: **`openApp(appName)`** (parameterized) for coin-app commands, or **`goToDashboard()`** (no param) for `renameExternalContact` (which gates on OS version). The dashboard is not an app. |
+| 3 | Naming | Package `@ledgerhq/device-contacts-kit`, class `ContactsManager`. |
+| 4 | Instantiation | **Builder** (`ContactsManagerBuilder`), **one instance per device context** (`appName` bound at build time; min version resolved internally). |
+| 5 | Open app vs go to dashboard | The device-context step is **one of two distinct device actions**: **`openApp(appName)`** (parameterized, and skippable with `skipOpenApp: true`) for coin-app commands, or **`goToDashboard()`** (no param) for `renameExternalContact` (which gates on OS version). The dashboard is not an app. |
 | 6 | Family encoding | Kit is **encoding-agnostic**: it takes an already-serialized identifier + explicit `blockchainFamily` + chain descriptor. Per-family encoding lives in the caller. |
 | 7 | Convenience "edit both" | Kit exposes **only granular** 1:1 device commands; the address+scope combo is orchestrated by the LW intent job. |
 | 8 | Derivation path | Kit owns a **default Address Book derivation path** for external-contact commands (overridable); Ledger-account methods take the real `derivationPath`. |
@@ -49,7 +49,7 @@ flowchart TB
     end
 
     subgraph SDK["device-sdk-ts"]
-        Kit["@ledgerhq/device-contacts-kit<br/><b>ContactsManagement</b><br/>openApp / go to dashboard → version guard → command"]
+        Kit["@ledgerhq/device-contacts-kit<br/><b>ContactsManager</b><br/>openApp (skippable) / go to dashboard → version guard → command"]
         Helpers["static version helpers<br/>getAppMinVersion(app, model)<br/>getOsMinVersion(model)"]
         DMK["@ledgerhq/device-management-kit"]
     end
@@ -62,7 +62,7 @@ flowchart TB
     Kit --> DMK --> Dev
 
     Helpers -->|composed into getMinVersion per-flow| DIE
-    Helpers -.->|used internally by ContactsManagement| Kit
+    Helpers -.->|used internally by ContactsManager| Kit
 
     OtherHosts["Other hosts<br/>(Ledger Button, CLI)"] -.->|build + run directly| Kit
 
@@ -113,9 +113,9 @@ Two facts shaped the design:
 
 ```mermaid
 flowchart LR
-    subgraph Kit["ContactsManagement (device-contacts-kit)"]
+    subgraph Kit["ContactsManager (device-contacts-kit)"]
         direction TB
-        K1["device-context step (idempotent):<br/>openApp(appName) OR goToDashboard()"]
+        K1["device-context step (idempotent):<br/>openApp(appName), skippable OR goToDashboard()"]
         K2["version guard (app or OS min version)"]
         K3["send Address Book command"]
         K4["remap device errors → typed DAError"]
@@ -125,7 +125,7 @@ flowchart LR
     subgraph LWJob["LW intent job"]
         direction TB
         J1["read currentAppName from DeviceExtractedContext"]
-        J2["build ContactsManagement (appName)"]
+        J2["build ContactsManager (appName)"]
         J3["run method, map DeviceActionState → JobState"]
         J4["orchestrate multi-command combos (edit id + scope)"]
         J1 --> J2 --> J3 --> J4
@@ -155,13 +155,13 @@ flowchart LR
 ```mermaid
 sequenceDiagram
     actor Job as LW intent job
-    participant Kit as ContactsManagement
+    participant Kit as ContactsManager
     participant DMK
     participant Dev as Device (coin app)
 
     Job->>Kit: build({dmk, sessionId, appName})
     Job->>Kit: registerExternalAddress(input)
-    Kit->>DMK: openApp(appName) — no-op if DIE already opened it
+    Kit->>DMK: openApp(appName) — omitted with skipOpenApp: true
     Kit->>Kit: version guard (>= minVersion)
     Kit->>Dev: REGISTER IDENTITY APDU(s)
     Dev-->>Kit: UserActionRequired (confirm on device)
@@ -176,7 +176,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor Job as LW intent job
-    participant Kit as ContactsManagement
+    participant Kit as ContactsManager
     participant DMK
     participant Dev as Device
 
@@ -204,7 +204,7 @@ depending only on `@ledgerhq/device-management-kit` (no `@ledgerhq/context-modul
 there is no clear-signing context to resolve here).
 
 ```ts
-type ContactsManagementBuilderArgs = {
+type ContactsManagerBuilderArgs = {
   dmk: DeviceManagementKit;
   sessionId: DeviceSessionId;
   /** Coin app name (e.g. "Ethereum"), used by the openApp step of coin-app commands. */
@@ -221,7 +221,7 @@ type ContactsManagementBuilderArgs = {
   };
 };
 
-new ContactsManagementBuilder(args).build(): ContactsManagement;
+new ContactsManagerBuilder(args).build(): ContactsManager;
 ```
 
 Only `appName` is bound per instance ⇒ **one instance per coin app**. Each
@@ -229,7 +229,8 @@ method's composed DeviceAction begins with a **device-context step**, which is
 one of two distinct DMK device actions:
 
 - **coin-app commands** → `openApp(appName)` (parameterized by the instance
-  `appName`), then gate the **app** version via `getAppMinVersion(appName, model)`;
+  `appName`, and skippable per action with `skipOpenApp: true`), then gate the
+  **app** version via `getAppMinVersion(appName, model)`;
 - **`renameExternalContact`** → `goToDashboard()` (no param), then gate the
   **OS** version via `getOsMinVersion(model)`. It does **not** use `appName`.
 
@@ -238,8 +239,14 @@ it already knows `appName` and can read the device model from the session
 (`dmk.getConnectedDevice({ sessionId }).modelId`). The lookup is injectable
 purely for testing.
 
+`ApplicationChecker` from `@ledgerhq/device-management-kit` is a candidate for
+the app-version guard. The final version-requirements API and implementation
+will be decided when that work is specified.
+
 Because `renameExternalContact` runs its own `goToDashboard` device action, it
 can be called from any instance regardless of the `appName` it was built with.
+`skipOpenApp` is only available to coin-app actions; dashboard navigation for
+`renameExternalContact` is always performed.
 
 ### Public methods
 
@@ -249,22 +256,24 @@ DeviceAction is internally composed:
 
 ```mermaid
 flowchart LR
-    A["device-context step (idempotent):<br/>openApp(appName) OR goToDashboard()"] --> B["version guard<br/>(app or OS min, resolved internally)"] --> C["Address Book command"] --> D["typed error remap"]
+    A["device-context step (idempotent):<br/>openApp(appName), skippable OR goToDashboard()"] --> B["version guard<br/>(app or OS min, resolved internally)"] --> C["Address Book command"] --> D["typed error remap"]
 ```
 
 Granular commands only (1:1 with firmware commands):
 
 | Method | Firmware command | Device-context step |
 |--------|------------------|---------------------|
-| `registerExternalAddress` | `REGISTER IDENTITY` | `openApp(appName)` |
-| `editExternalAddressIdentifier` | `EDIT IDENTIFIER` | `openApp(appName)` |
-| `editExternalAddressScope` | `EDIT SCOPE` | `openApp(appName)` |
+| `registerExternalAddress` | `REGISTER IDENTITY` | `openApp(appName)` (or skip with `skipOpenApp: true`) |
+| `editExternalAddressIdentifier` | `EDIT IDENTIFIER` | `openApp(appName)` (or skip with `skipOpenApp: true`) |
+| `editExternalAddressScope` | `EDIT SCOPE` | `openApp(appName)` (or skip with `skipOpenApp: true`) |
 | `renameExternalContact` | `EDIT CONTACT NAME` | **`goToDashboard()`** |
-| `registerLedgerAccount` | `REGISTER LEDGER ACCOUNT` | `openApp(appName)` |
-| `renameLedgerAccount` | `EDIT LEDGER ACCOUNT` | `openApp(appName)` |
+| `registerLedgerAccount` | `REGISTER LEDGER ACCOUNT` | `openApp(appName)` (or skip with `skipOpenApp: true`) |
+| `renameLedgerAccount` | `EDIT LEDGER ACCOUNT` | `openApp(appName)` (or skip with `skipOpenApp: true`) |
 
 The device-context step is one of the two distinct device actions above:
-`openApp(appName)` gates the app version; `goToDashboard()` gates the OS version.
+`openApp(appName)` (unless `skipOpenApp: true`) gates the app version;
+`goToDashboard()` gates the OS version. Skipping the app-open action does not
+skip the app-version guard.
 
 The convenience "edit identifier **and** scope" combo is **not** a kit method:
 the LW intent job runs `editExternalAddressIdentifier` then
@@ -353,7 +362,7 @@ export function getOsMinVersion(model?: DeviceModelId): string | undefined;
 
 These helpers are consumed in two independent ways:
 
-1. **Inside the kit** — `ContactsManagement` calls them itself for its own
+1. **Inside the kit** — `ContactsManager` calls them itself for its own
    version guard (coin-app methods → `getAppMinVersion`, `renameExternalContact`
    → `getOsMinVersion`), which is why the min version is not a builder argument.
 2. **In LW** — to build the `getMinVersion` used by `ensureAppReady`. Here LW
@@ -391,7 +400,7 @@ contacts flow can pass its composed function.
      go-to-dashboard initialization), not open a coin app. How DIE expresses this
      today is open — see open question 1.
 2. In the job: read `deviceExtractedContext.currentAppName` /
-   `currentAppVersion`, build `ContactsManagement`, run the method, and map
+   `currentAppVersion`, build `ContactsManager`, run the method, and map
    `DeviceActionState` → `JobState`.
 3. Persist proof material only on `completed` (and `partial-result` for the
    convenience combo), per the EVM intents doc.
@@ -443,5 +452,6 @@ contacts flow can pass its composed function.
 - Callers own family serialization (more responsibility in the intent/coin-family
   layer).
 - The dashboard/OS gating story is not fully resolved (see open questions).
-- Slight redundancy: the kit's idempotent `openApp` + version check re-runs work
-  DIE already did (cheap, but not free).
+- Slight redundancy: unless callers opt into `skipOpenApp: true`, the kit's
+  idempotent `openApp` + version check re-runs work DIE already did (cheap, but
+  not free).
