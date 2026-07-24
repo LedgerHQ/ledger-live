@@ -20,6 +20,12 @@ The source contracts are:
 real SDK types should use the representation exposed by the device SDK (for
 example, `Uint8Array`), not stringify those values for convenience.
 
+`chainId` is an Ethereum-only unsigned integer of up to 8 bytes. Generic
+Contacts models should represent it as `chainId?: bigint`: required for
+Ethereum and omitted for other blockchain families. Before implementing the
+`Command` encoding, clarify with firmware whether HMAC computation uses a fixed
+8-byte or minimum-length representation.
+
 ---
 
 ## Epic 1 — `[TS][Contacts] Contacts management kit`
@@ -133,7 +139,7 @@ type RegisterExternalAddressDeviceActionInput = {
   scope: string;
   identifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   existingContactGroup?: {
     groupHandle: Uint8Array;
     hmacProof: Uint8Array;
@@ -147,7 +153,7 @@ type RegisterExternalAddressDeviceActionOutput = {
   scope: string;
   identifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -246,7 +252,7 @@ type EditExternalAddressIdentifierDeviceActionInput = {
   previousIdentifier: Uint8Array;
   newIdentifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -259,7 +265,7 @@ type EditExternalAddressIdentifierDeviceActionOutput = {
   previousIdentifier: Uint8Array;
   identifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -306,7 +312,7 @@ type EditExternalAddressScopeDeviceActionInput = {
   newScope: string;
   identifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -319,7 +325,7 @@ type EditExternalAddressScopeDeviceActionOutput = {
   scope: string;
   identifier: Uint8Array;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -359,7 +365,7 @@ type RegisterLedgerAccountDeviceActionInput = {
   accountName: string;
   derivationPath: string;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   skipOpenApp?: boolean;
 };
 
@@ -367,7 +373,7 @@ type RegisterLedgerAccountDeviceActionOutput = {
   accountName: string;
   derivationPath: string;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   hmacProof: Uint8Array;
 };
 ```
@@ -406,7 +412,7 @@ type RenameLedgerAccountDeviceActionInput = {
   newAccountName: string;
   derivationPath: string;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   hmacProof: Uint8Array;
   skipOpenApp?: boolean;
 };
@@ -416,7 +422,7 @@ type RenameLedgerAccountDeviceActionOutput = {
   accountName: string;
   derivationPath: string;
   blockchainFamily: string;
-  chainId: number;
+  chainId?: bigint;
   hmacProof: Uint8Array;
 };
 ```
@@ -458,7 +464,6 @@ type AddressBook = {
 type ContactGroup = {
   id: string;
   contactName: string;
-  derivationPath: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
 };
@@ -469,7 +474,8 @@ type ExternalAddress = {
   groupHandle: Uint8Array;
   scope: string;
   address: string;
-  chainId: number;
+  blockchainFamily: string;
+  chainId?: bigint;
   hmacRest: Uint8Array;
 };
 
@@ -477,12 +483,19 @@ type LedgerAccountContact = {
   id: string;
   accountName: string;
   derivationPath: string;
-  chainId: number;
+  blockchainFamily: string;
+  chainId?: bigint;
   hmacProof: Uint8Array;
 };
 ```
 
+`ContactGroup.groupHandle` is canonical. The copy on each `ExternalAddress` is
+kept for operation payloads and must match the linked contact group. External
+contact/address models do not expose `derivationPath`; implementations use the
+kit-owned internal constant.
 
+Local storage must encode `bigint` values as decimal strings and opaque byte
+values explicitly, then restore their SDK types when loading.
 
 **Acceptance criteria**
 
@@ -490,6 +503,10 @@ type LedgerAccountContact = {
   renders their intermediate `DeviceAction` states/errors.
 - The UI does not call internal `UseCase`s, `Command`s, or `DeviceAction`s
   directly.
+- A single canonical address-book contract is reused by the playground and
+  signer integrations, or explicit family adapters are provided. The model
+  preserves blockchain family, chain reference, group linkage, and opaque proof
+  material without exposing the external-contact derivation path.
 - The UI persists and reloads the full address book.
 - Successful flows update only the proof fields returned by the corresponding
 `Command`.
@@ -531,7 +548,6 @@ type EvmAddressBook = {
 type EvmContactGroup = {
   id: string;
   contactName: string;
-  derivationPath: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
 };
@@ -540,14 +556,14 @@ type EvmExternalAddress = {
   contactGroupId: string;
   scope: string;
   address: `0x${string}`;
-  chainId: number;
+  chainId: bigint;
   hmacRest: Uint8Array;
 };
 
 type EvmLedgerAccountContact = {
   accountName: string;
   derivationPath: string;
-  chainId: number;
+  chainId: bigint;
   hmacProof: Uint8Array;
 };
 ```
@@ -556,6 +572,9 @@ type EvmLedgerAccountContact = {
 
 - The model retains every field required to provide an external contact or
 Ledger-account contact to the device.
+- The signer reuses the canonical address-book contract or provides an explicit
+  EVM adapter. The public model does not expose the external-contact derivation
+  path.
 - The builder remains backwards compatible when no address book is supplied.
 - Unit tests cover construction with and without contacts.
 
@@ -578,8 +597,7 @@ type ProvideEvmContactInput = {
   contactName: string;
   scope: string;
   address: `0x${string}`;
-  chainId: number;
-  derivationPath: string;
+  chainId: bigint;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -613,7 +631,7 @@ Suggested internal DeviceAction contract:
 type ProvideEvmLedgerAccountContactInput = {
   accountName: string;
   derivationPath: string;
-  chainId: number;
+  chainId: bigint;
   hmacProof: Uint8Array;
 };
 
@@ -633,15 +651,15 @@ the device's clear-signing display.
 ## Epic 3 — `[TS][Contacts] Tron signer contact clear signing`
 
 **Goal:** provide matching Contacts data in Tron signing flows with the same
-behavioral guarantees as Ethereum, while preserving Tron-specific address and
-chain handling.
+behavioral guarantees as Ethereum, while preserving Tron-specific address
+handling.
 
 **Epic acceptance criteria**
 
 - The Tron signer optionally accepts a complete address-book snapshot that
-preserves all proof material and uses the agreed Tron chain representation.
+preserves all proof material.
 - Tron signing flows match recipients and signing accounts against saved
-external and Ledger-account contacts for the active chain.
+external and Ledger-account contacts.
 - Matches are provided automatically to the device before signing, with typed
 `DeviceAction` progress and errors; non-matches preserve the existing flow.
 - The web playground validates external-contact and Ledger-account contact
@@ -650,8 +668,7 @@ clear-signing on a compatible device.
 ### Ticket 3.1 — `[TS][Contacts] Accepting an address book in the Tron signer`
 
 Add an optional `addressBook` to the Tron signer builder. The model must retain
-the same proof material as the Contacts kit, with Tron-specific identifiers and
-chain references.
+the same proof material as the Contacts kit, with Tron-specific identifiers.
 
 ```ts
 type TronAddressBook = {
@@ -663,7 +680,6 @@ type TronAddressBook = {
 type TronContactGroup = {
   id: string;
   contactName: string;
-  derivationPath: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
 };
@@ -672,30 +688,31 @@ type TronExternalAddress = {
   contactGroupId: string;
   scope: string;
   address: string;
-  chainId: string | number;
   hmacRest: Uint8Array;
 };
 
 type TronLedgerAccountContact = {
   accountName: string;
   derivationPath: string;
-  chainId: string | number;
   hmacProof: Uint8Array;
 };
 ```
 
 **Acceptance criteria**
 
-- The exact Tron chain-reference representation is agreed with the firmware
-contract before implementation.
+- Tron models omit `chainId`, which the firmware specification only includes
+  for Ethereum.
+- The signer reuses the canonical address-book contract or provides an explicit
+  Tron adapter. The public model does not expose the external-contact
+  derivation path.
 - The builder remains backwards compatible without an address book.
 - Unit tests cover construction and the address-book serialization boundary.
 
 ### Ticket 3.2 — `[TS][Contacts] Providing matching external contacts in the Tron signer`
 
 Before a Tron signing entrypoint sends its signing APDU, match the transaction
-recipient to an external address record for the active Tron chain and provide
-the matching contact to the device.
+recipient to an external address record and provide the matching contact to the
+device.
 
 - Firmware `Command`: [PROVIDE CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Contact).
 - Normalize addresses only through existing Tron signer utilities; do not
@@ -708,8 +725,6 @@ type ProvideTronContactInput = {
   contactName: string;
   scope: string;
   address: string;
-  chainId: string | number;
-  derivationPath: string;
   groupHandle: Uint8Array;
   hmacProof: Uint8Array;
   hmacRest: Uint8Array;
@@ -727,8 +742,8 @@ contact is clear-signed on device.
 ### Ticket 3.3 — `[TS][Contacts] Providing matching Ledger account contacts in the Tron signer`
 
 Before a Tron signing entrypoint sends its signing APDU, match the selected
-signing account against the saved Ledger-account contacts by derivation path
-and active chain, then provide the matching account contact to the device.
+signing account against the saved Ledger-account contacts by derivation path,
+then provide the matching account contact to the device.
 
 - Firmware `Command`: [PROVIDE LEDGER ACCOUNT CONTACT](https://ledgerhq.atlassian.net/wiki/spaces/FW/pages/6992035925/Address+Book+Final+Specifications#Provide-Ledger-Account-Contact).
 
@@ -738,7 +753,6 @@ Suggested internal DeviceAction contract:
 type ProvideTronLedgerAccountContactInput = {
   accountName: string;
   derivationPath: string;
-  chainId: string | number;
   hmacProof: Uint8Array;
 };
 
@@ -747,7 +761,7 @@ type ProvideTronLedgerAccountContactOutput = void;
 
 **Acceptance criteria**
 
-- Tests cover matching and non-matching derivation paths and chains.
+- Tests cover matching and non-matching derivation paths.
 - The web sample app can sign from a saved Tron Ledger-account contact and
 verify the device's clear-signing display.
 
