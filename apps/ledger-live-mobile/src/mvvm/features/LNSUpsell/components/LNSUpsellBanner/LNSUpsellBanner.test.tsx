@@ -4,6 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { track } from "~/analytics";
 import { LNSUpsellBanner } from ".";
 
@@ -16,11 +17,15 @@ describe("LNSUpsellBanner", () => {
   });
 
   describe.each([
-    { location: "accounts", page: "Accounts" },
-    { location: "manager", page: "Manager" },
-    { location: "wallet", page: "Wallet" },
-    { location: "notification_center", page: "NotificationPanel" },
-  ] as const)("on the $page page", ({ location, page }) => {
+    { location: "accounts", placement: "accounts", page: "Accounts" },
+    { location: "manager", placement: "my-ledger", page: "Manager" },
+    { location: "wallet", placement: "homepage", page: "Wallet" },
+    {
+      location: "notification_center",
+      placement: "notification-center",
+      page: "NotificationPanel",
+    },
+  ] as const)("on the $page page", ({ location, placement, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
@@ -31,8 +36,23 @@ describe("LNSUpsellBanner", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
+    it("should not render if its large-screen upsell placement is disabled", () => {
+      renderBanner({ largeScreenPlacementEnabled: false });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should render with legacy large-screen upsell params missing banners", () => {
+      renderBanner({ hasLargeScreenBannersParam: false });
+      expect(screen.getByText(t(`lnsUpsell.opted_in.cta`))).toBeVisible();
+    });
+
     it("should not render if the user uses another device", () => {
       renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should not render if the user also owns a large-screen device", () => {
+      renderBanner({ devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax] });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
@@ -108,11 +128,32 @@ describe("LNSUpsellBanner", () => {
       devicesModelList = [DeviceModelId.nanoS],
       targetedByHighTierUpsell = false,
       brazePlacement = false,
+      largeScreenPlacementEnabled = true,
+      hasLargeScreenBannersParam = true,
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
         opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
         opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
+      };
+      const largeScreenUpsellParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
+
+      if (!largeScreenUpsellParams) {
+        throw new Error("Expected large-screen upsell default params");
+      }
+
+      const { banners: _banners, ...legacyLargeScreenUpsellParams } = largeScreenUpsellParams;
+      const largeScreenUpsell = {
+        ...FEATURE_FLAGS_DEFAULTS.largeScreenUpsell,
+        params: hasLargeScreenBannersParam
+          ? {
+              ...largeScreenUpsellParams,
+              banners: {
+                ...largeScreenUpsellParams.banners,
+                [placement]: largeScreenPlacementEnabled,
+              },
+            }
+          : legacyLargeScreenUpsellParams,
       };
 
       render(<LNSUpsellBanner location={location} />, {
@@ -127,6 +168,7 @@ describe("LNSUpsellBanner", () => {
             featureFlags: {
               overrides: {
                 llmNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
+                largeScreenUpsell,
                 ...(brazePlacement
                   ? {
                       lwmWallet40: {
