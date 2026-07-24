@@ -323,4 +323,93 @@ describe("Contacts integration", () => {
     expect(mockNavigate).toHaveBeenCalledWith(-1);
     expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
   });
+
+  it("should render the Me empty detail state when Me is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
+    expect(screen.getByText("No saved addresses for you")).toBeVisible();
+    expect(
+      screen.getByText("Save your wallet addresses to receive crypto by name next time."),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
+  });
+
+  it("should render a saved contact empty detail state when an empty contact is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
+    expect(screen.getByText("No saved addresses for Ada")).toBeVisible();
+    expect(
+      screen.getByText("Save their wallet addresses to send to them by name next time."),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
+  });
+
+  it("should not render the detail state when a contact with addresses is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+
+    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+  });
+
+  it("should clear the detail state when selecting a contact with addresses after an empty contact", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+
+    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+  });
 });

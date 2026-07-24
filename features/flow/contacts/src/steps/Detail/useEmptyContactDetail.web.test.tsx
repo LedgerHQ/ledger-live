@@ -51,4 +51,13 @@ describe("useEmptyContactDetail", () => {
 
     expect(result.current).toBeUndefined();
   });
+
+  it("should return undefined when no contact is selected", () => {
+    const Wrapper = makeWrapper([mockMeContact()]);
+    const { result } = renderHook(() => useEmptyContactDetail(undefined), {
+      wrapper: Wrapper,
+    });
+
+    expect(result.current).toBeUndefined();
+  });
 });

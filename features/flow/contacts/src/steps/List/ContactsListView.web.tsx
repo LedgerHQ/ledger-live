@@ -1,10 +1,26 @@
 import React from "react";
+import { ContactDetailView } from "../Detail/ContactDetailView.web";
 import { ContactsLedgerSyncIntroductionDialog } from "../Introduction/LedgerSync/ContactsLedgerSyncIntroductionDialog.web";
 import { ContactsFeatureIntroductionDialog } from "../Introduction/Feature/ContactsFeatureIntroductionDialog.web";
 import type { ContactsListViewProps } from "./types";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
 import { ContactsList } from "./components/ContactsList/ContactsList.web";
 import { ContactsPageLayout } from "./components/PageLayout/ContactsPageLayout.web";
+
+function renderContactsDetailPane(
+  isLedgerSyncChecking: boolean,
+  detail: ContactsListViewProps["detail"],
+): React.ReactNode {
+  if (isLedgerSyncChecking) {
+    return <ContactsLedgerSyncLoadingPane testId="contacts-ledger-sync-detail-loading" />;
+  }
+
+  if (!detail) {
+    return undefined;
+  }
+
+  return <ContactDetailView {...detail} />;
+}
 
 export function ContactsListView(props: ContactsListViewProps): React.ReactNode {
   const isLedgerSyncChecking = props.ledgerSyncStatus === "checking";
@@ -32,11 +48,7 @@ export function ContactsListView(props: ContactsListViewProps): React.ReactNode 
               contactsList
             )
           }
-          detail={
-            isLedgerSyncChecking ? (
-              <ContactsLedgerSyncLoadingPane testId="contacts-ledger-sync-detail-loading" />
-            ) : undefined
-          }
+          detail={renderContactsDetailPane(isLedgerSyncChecking, props.detail)}
         />
       </div>
       <ContactsFeatureIntroductionDialog {...props.featureIntroduction} />

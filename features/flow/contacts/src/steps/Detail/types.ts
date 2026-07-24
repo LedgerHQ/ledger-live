@@ -2,9 +2,10 @@ import type { Contact } from "@domain/entity-contact";
 
 export type ContactDetailLabels = Readonly<{
   addAddress: string;
-  emptyStateTitle: string;
+  emptyMeTitle: string;
+  emptyContactTitle: (name: string) => string;
   emptyMeDescription: string;
-  formatEmptyContactDescription: (name: string) => string;
+  emptyContactDescription: (name: string) => string;
   formatAddressCount: (count: number) => string;
 }>;
 

@@ -32,10 +32,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
-      emptyStateTitle: t("contacts.detail.emptyState.title"),
+      emptyMeTitle: t("contacts.detail.emptyState.title"),
+      emptyContactTitle: () => t("contacts.detail.emptyState.title"),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
-      formatEmptyContactDescription: name =>
-        t("contacts.detail.emptyState.contactDescription", { name }),
+      emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],

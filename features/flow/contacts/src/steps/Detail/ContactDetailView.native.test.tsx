@@ -6,9 +6,10 @@ import { ContactDetailView } from "./ContactDetailView.native";
 
 const labels: ContactDetailLabels = {
   addAddress: "Add address",
-  emptyStateTitle: "No address yet",
+  emptyMeTitle: "No address yet",
+  emptyContactTitle: () => "No address yet",
   emptyMeDescription: "Save a wallet address to receive crypto.",
-  formatEmptyContactDescription: name => `Save wallet address to send to ${name}`,
+  emptyContactDescription: name => `Save wallet address to send to ${name}`,
   formatAddressCount: count => `${count} address`,
 };
 
