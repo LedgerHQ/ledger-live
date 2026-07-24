@@ -173,6 +173,11 @@ export type HederaOperationExtra = {
   targetStakingNodeId?: number | null;
   previousStakingNodeId?: number | null;
   stakedAmount?: BigNumber;
+  // set on an HTS token or native HBAR operation when the user's funds were moved
+  // by a third party (spender) through a previously-granted allowance (mirror row
+  // is_approval=true on the user's negative leg). Data-only; not surfaced in
+  // operation details yet.
+  isApproval?: boolean;
 };
 
 export type HederaValidator = {
