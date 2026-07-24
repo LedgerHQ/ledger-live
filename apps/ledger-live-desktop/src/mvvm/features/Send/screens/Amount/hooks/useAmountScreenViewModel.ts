@@ -192,6 +192,7 @@ export function useAmountScreenViewModel({
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),
     secondaryValue: amountInput.secondaryValue,
+    inputMode: amountInput.inputMode,
     quickActions: trackedQuickActions,
     showQuickActions: quickActionsAvailableBalance.gt(0),
     amountMessage,
