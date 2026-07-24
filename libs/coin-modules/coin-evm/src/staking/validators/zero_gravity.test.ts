@@ -139,6 +139,9 @@ describe("staking/validators/zero_gravity", () => {
       convertToTokensAmount: bigint,
       withdrawCount = 0n,
       withdrawEntries: Array<[bigint, string, bigint]> = [],
+      totalPendingRewards = 0n,
+      totalDelegatorShares = 0n,
+      commissionPpm = 0n,
     ) {
       return jest.fn(async ({ data }: { data?: string }) => {
         const desc = zg0Iface.parseTransaction({ data: data ?? "0x" });
@@ -159,6 +162,15 @@ describe("staking/validators/zero_gravity", () => {
           const entry = withdrawEntries[index];
           if (!entry) throw new Error(`no withdraw entry at index ${index}`);
           return zg0Iface.encodeFunctionResult("getWithdraw", entry);
+        }
+        if (desc?.name === "rewards") {
+          return zg0Iface.encodeFunctionResult("rewards", [totalPendingRewards]);
+        }
+        if (desc?.name === "delegatorShares") {
+          return zg0Iface.encodeFunctionResult("delegatorShares", [totalDelegatorShares]);
+        }
+        if (desc?.name === "commissionRate") {
+          return zg0Iface.encodeFunctionResult("commissionRate", [commissionPpm]);
         }
         throw new Error(`unexpected call: ${desc?.name}`);
       });
@@ -190,6 +202,89 @@ describe("staking/validators/zero_gravity", () => {
         amount: 500n,
         state: "active",
       });
+    });
+
+    it("sets amountRewarded proportionally after commission deduction", async () => {
+      // delegator holds 500 of 1000 total shares, 10% commission, 1000n total rewards
+      // net = 1000 * (1_000_000 - 100_000) / 1_000_000 = 900
+      // delegator share = 900 * 500 / 1000 = 450
+      setupProvider(makeCallHandler(500n, 500n, 0n, [], 1000n, 1000n, 100_000n));
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toEqual(450n);
+    });
+
+    it("does not set amountRewarded when rewards are zero", async () => {
+      setupProvider(makeCallHandler(1000n, 500n, 0n, [], 0n, 1000n, 0n));
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toBeUndefined();
+    });
+
+    it("does not set amountRewarded when totalShares is zero", async () => {
+      setupProvider(makeCallHandler(1000n, 500n, 0n, [], 1000n, 0n, 0n));
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toBeUndefined();
+    });
+
+    it("does not set amountRewarded when reward RPC calls fail", async () => {
+      const callHandler = jest.fn(async ({ data }: { data?: string }) => {
+        const desc = zg0Iface.parseTransaction({ data: data ?? "0x" });
+        if (desc?.name === "getDelegation") {
+          return zg0Iface.encodeFunctionResult("getDelegation", [
+            "0x0000000000000000000000000000000000000000",
+            1000n,
+          ]);
+        }
+        if (desc?.name === "convertToTokens") {
+          return zg0Iface.encodeFunctionResult("convertToTokens", [500n]);
+        }
+        if (desc?.name === "withdrawCount") {
+          return zg0Iface.encodeFunctionResult("withdrawCount", [0n]);
+        }
+        throw new Error("RPC error");
+      });
+      setupProvider(callHandler);
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toBeUndefined();
+    });
+
+    it("clamps commission to 1_000_000 when contract returns an out-of-range value", async () => {
+      setupProvider(makeCallHandler(1000n, 500n, 0n, [], 1000n, 1000n, 1_500_000n));
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toBeUndefined();
+    });
+
+    it("does not set amountRewarded when reward calls return empty data", async () => {
+      const callHandler = jest.fn(async ({ data }: { data?: string }) => {
+        const desc = zg0Iface.parseTransaction({ data: data ?? "0x" });
+        if (desc?.name === "getDelegation") {
+          return zg0Iface.encodeFunctionResult("getDelegation", [
+            "0x0000000000000000000000000000000000000000",
+            1000n,
+          ]);
+        }
+        if (desc?.name === "convertToTokens") {
+          return zg0Iface.encodeFunctionResult("convertToTokens", [500n]);
+        }
+        if (desc?.name === "withdrawCount") {
+          return zg0Iface.encodeFunctionResult("withdrawCount", [0n]);
+        }
+        return "0x";
+      });
+      setupProvider(callHandler);
+
+      const stakes = await fetchZeroGravityStakes(DELEGATOR, {} as never, CURRENCY);
+
+      expect(stakes[0].amountRewarded).toBeUndefined();
     });
 
     it("filters out validators with shares = 0", async () => {
