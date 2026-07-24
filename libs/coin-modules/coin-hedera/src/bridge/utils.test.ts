@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import BigNumber from "bignumber.js";
@@ -25,10 +25,12 @@ describe("bridge utils", () => {
     const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("hts");
 
     beforeAll(() => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest
           .fn()
           .mockImplementation(async () => tokenCurrencyFromCAL),
+        getTokensSyncHash: async () => "",
       });
     });
 
@@ -171,12 +173,14 @@ describe("bridge utils", () => {
         balance: 500,
       });
 
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: jest.fn().mockImplementation(async (address: string) => {
           if (address === erc20Token.contractAddress) return erc20Token;
           if (address === htsToken.contractAddress) return htsToken;
           return undefined;
         }),
+        getTokensSyncHash: async () => "",
       });
 
       const result = await buildCalTokenMap({
@@ -197,7 +201,11 @@ describe("bridge utils", () => {
       const mockToken = getMockedERC20TokenCurrency({ contractAddress: "0xABC" });
       const findMock = jest.fn().mockResolvedValue(mockToken);
 
-      setupMockCryptoAssetsStore({ findTokenByAddressInCurrency: findMock });
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
+        findTokenByAddressInCurrency: findMock,
+        getTokensSyncHash: async () => "",
+      });
 
       await buildCalTokenMap({
         erc20Tokens: [

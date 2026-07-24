@@ -1,24 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "checkJs": false,
-    "jsx": "react-native",
-    "lib": ["es2017", "DOM"],
-    "types": ["node", "jest"],
-    "skipLibCheck": true,
     "noEmit": true,
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "experimentalDecorators": true,
+    "jsx": "react-native",
+    "types": ["node", "jest"],
     "paths": {
       "*": ["./*"],
-      "LLM/*": ["../../apps/ledger-live-mobile/src/mvvm/*"],
       "~/*": ["../../apps/ledger-live-mobile/src/*"],
-      "@shared/feature-flags": ["../../shared/feature-flags/src"],
-      "@ledgerhq/live-e2e-shared/*": ["../../libs/live-e2e-shared/src/*"],
-      "@ledgerhq/live-common/hw/index": ["../../libs/ledger-live-common/src/hw/index"],
-      "@ledgerhq/live-common/hw/deviceAccess": ["../../libs/ledger-live-common/src/hw/deviceAccess"]
+      "LLM/*": ["../../apps/ledger-live-mobile/src/mvvm/*"]
     }
   },
-  "include": ["types", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "babel.config.js", "jest.config.js", "**/*.js"]
+  "include": ["./types", "./**/*.ts"],
+  "exclude": ["**/node_modules/**", "**/*.js"]
 }

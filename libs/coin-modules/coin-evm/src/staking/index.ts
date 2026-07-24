@@ -10,9 +10,12 @@ export {
   getValidatorExplorerUrl,
   getUnbondingPeriodDays,
   getMaxRedelegations,
+  getDelegationVisibilityDelayMinutes,
   hasUnbondingPeriod,
+  hasDelegationVisibilityDelay,
   hasRedelegation,
   hasCompound,
+  hasChainRewards,
   prefetchValidators,
   clearValidatorsCache,
 } from "./validators";

@@ -278,11 +278,14 @@ export type RunResult = {
  */
 export async function runCli(args: string[], env: Record<string, string> = {}): Promise<RunResult> {
   // Mirror the env defaults set by the old Bun.spawn approach:
-  //   NO_COLOR=1     — disable ANSI escape codes in output
-  //   CLAUDECODE=1   — triggers isInteractive() === false → disables spinner
+  //   NO_COLOR=1            — disable ANSI escape codes in output
+  //   CLAUDECODE=1          — triggers isInteractive() === false → disables spinner
+  //   WALLET_CLI_NO_NUDGE=1 — CLAUDECODE=1 would otherwise fire the first-run nudge
+  //                           into unrelated tests' stderr; opt out by default.
   const mergedEnv: Record<string, string> = {
     NO_COLOR: "1",
     CLAUDECODE: "1",
+    WALLET_CLI_NO_NUDGE: "1",
     ...env,
   };
 

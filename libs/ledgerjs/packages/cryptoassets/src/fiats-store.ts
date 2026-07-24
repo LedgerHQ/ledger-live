@@ -46,6 +46,7 @@ export function buildFiatCurrenciesStore(currencies: FiatCurrency[]): FiatCurren
  *
  * Uses globalThis to ensure a single shared reference across all module instances, which is
  * critical when modules are lazy-loaded and may resolve to separate module copies.
+ * @deprecated Use @domain/entity-currency-fiat.
  */
 export function setFiatCurrenciesStore(currencies: FiatCurrency[]): void {
   globalThis.__ledgerFiatCurrenciesStore = buildFiatCurrenciesStore(currencies);

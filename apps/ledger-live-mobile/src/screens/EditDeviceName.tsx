@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
-import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "~/analytics";
@@ -22,6 +21,7 @@ import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useToastsActions } from "~/actions/toast";
+import { DeviceNameInvalid } from "@ledgerhq/errors";
 
 const mapDispatchToProps = {
   saveBleDeviceName,

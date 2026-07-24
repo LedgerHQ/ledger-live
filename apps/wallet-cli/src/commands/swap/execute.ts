@@ -23,7 +23,7 @@ import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   isDieExecutionProvider,
   resolveSwapProvider,

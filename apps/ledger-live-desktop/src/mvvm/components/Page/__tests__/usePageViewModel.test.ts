@@ -1,7 +1,12 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useLocation } from "react-router";
+import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
 import { SCROLL_TO_TOP_EVENT } from "../constants";
 import { usePageViewModel } from "../usePageViewModel";
+
+jest.mock("LLD/components/RightPanel/useRightPanelSwapAvailability", () => ({
+  useRightPanelSwapAvailability: jest.fn(() => true),
+}));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -9,6 +14,7 @@ jest.mock("react-router", () => ({
 }));
 
 const mockedUseLocation = jest.mocked(useLocation);
+const mockedUseRightPanelSwapAvailability = jest.mocked(useRightPanelSwapAvailability);
 const createLocation = (pathname: string) => ({
   pathname,
   search: "",
@@ -25,6 +31,9 @@ const wallet40WithRightPanelFlags = {
 describe("usePageViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseRightPanelSwapAvailability.mockImplementation(
+      pathname => pathname === "/analytics" || pathname.startsWith("/asset/"),
+    );
   });
 
   it("computes shouldRenderRightPanel based on current pathname and feature flags", () => {

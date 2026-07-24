@@ -1,1 +1,2 @@
-export { getContactInitial } from "./getContactInitial";
+export { getContactAvatarColorClass } from "./getContactAvatarColorClass";
+export { createContactsListSections } from "./createContactsListSections";

@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-solana
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Solana JavaScript bindings via legacy hw-app-solana.

@@ -1,0 +1,137 @@
+# App Store Connect touchpoints for Ledger Live Desktop (packaging is done by
+# electron-builder). The target app is chosen by ENV["APP_IDENTIFIER"], so a
+# nightly/prerelease can never be uploaded to the production record.
+fastlane_require "dotenv"
+fastlane_require "semver"
+fastlane_require "json"
+
+# Plain-Ruby JSON parse (no fastlane plugin dep); path is relative to this file.
+package = JSON.parse(File.read(File.expand_path("../package.json", __dir__)))
+
+def trim_version_number(version)
+  SemVer.parse(version).format "%M.%m.%p"
+end
+
+private_lane :set_api_key do
+  app_store_connect_api_key(
+    key_id: ENV["APPLECONNECT_API_KEY_ID"],
+    issuer_id: ENV["APPLECONNECT_API_ISSUER_ID"],
+    key_content: ENV["APPLECONNECT_API_KEY_CONTENT"],
+    is_key_content_base64: true
+  )
+end
+
+platform :mac do
+  # Ops/scheduled: (re)generate the Mac-only signing material (installer cert +
+  # macOS profiles) in the shared match store; the Apple Distribution cert is shared
+  # with iOS. Run from the "[Apple] Sync Profiles" workflow, not from a build.
+  MAC_APP_IDENTIFIERS = [
+    "com.ledger.live",
+    "com.ledger.live.nightly",
+    "com.ledger.live.prerelease",
+  ].freeze
+
+  desc "private: create a fresh CI keychain for the sync run"
+  private_lane :setup_mac_ci do
+    create_keychain(
+      name: ENV["CI_KEYCHAIN_NAME"],
+      password: ENV["CI_KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+    set_api_key
+  end
+
+  desc "private: (re)generate macOS App Store certs + profiles in the match store"
+  private_lane :refresh_mac_profiles do
+    match(
+      type: "appstore",
+      platform: "macos",
+      app_identifier: MAC_APP_IDENTIFIERS,
+      additional_cert_types: ["mac_installer_distribution"],
+      force: true,
+      generate_apple_certs: true,
+      git_url: ENV["GIT_REPO_URL"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
+  end
+
+  desc "Sync macOS App Store certs + provisioning profiles into the match store"
+  lane :sync_mac_profiles do
+    setup_mac_ci
+    refresh_mac_profiles
+  end
+
+  # Install App Store signing material from the shared (mobile) match store; readonly
+  # so builds never mutate it — rotation is done by the sync lane.
+  desc "Install App Store cert + macOS provisioning profile via match"
+  lane :mac_signing do
+    set_api_key
+    app_id = ENV["APP_IDENTIFIER"]
+    match(
+      type: "appstore",
+      platform: "macos",
+      app_identifier: app_id,
+      additional_cert_types: ["mac_installer_distribution"],
+      git_url: ENV["GIT_REPO_URL"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+      readonly: true,
+      output_path: "./fastlane/certs"
+    )
+    # match's exported profile-path key may carry the macos suffix; try both.
+    profile_path =
+      ENV["sigh_#{app_id}_appstore_macos_profile-path"] ||
+      ENV["sigh_#{app_id}_appstore_profile-path"]
+    unless profile_path && File.exist?(profile_path)
+      UI.user_error!("Could not resolve the MAS provisioning profile path for #{app_id}")
+    end
+    if ENV["GITHUB_ENV"]
+      File.open(ENV["GITHUB_ENV"], "a") do |f|
+        f.puts("MAS_PROVISIONING_PROFILE_PATH=#{File.expand_path(profile_path)}")
+      end
+    end
+    profile_path
+  end
+
+  # Next CFBundleVersion = latest TestFlight build for this app id + version, +1;
+  # exported to $GITHUB_ENV for tools/dist.
+  desc "Compute and export the next Mac App Store build number"
+  lane :mac_build_number do
+    set_api_key
+    version = trim_version_number(package["version"])
+    latest = latest_testflight_build_number(
+      app_identifier: ENV["APP_IDENTIFIER"],
+      version: version,
+      platform: "osx",
+      initial_build_number: 0
+    )
+    build_number = latest + 1
+    UI.message("Next MAS build number for #{ENV["APP_IDENTIFIER"]} #{version}: #{build_number}")
+    if ENV["GITHUB_ENV"]
+      File.open(ENV["GITHUB_ENV"], "a") { |f| f.puts("MAS_BUILD_NUMBER=#{build_number}") }
+    end
+    build_number
+  end
+
+  # Upload the signed .pkg to App Store Connect.
+  desc "Upload a signed .pkg to TestFlight / App Store Connect"
+  lane :mac_upload do |options|
+    set_api_key
+    pilot(
+      pkg: options[:pkg],
+      app_platform: "osx",
+      app_identifier: ENV["APP_IDENTIFIER"],
+      skip_submission: true,
+      skip_waiting_for_build_processing: true,
+      changelog: "#{options[:channel] || "release"} build v#{package["version"]}"
+    )
+  end
+end

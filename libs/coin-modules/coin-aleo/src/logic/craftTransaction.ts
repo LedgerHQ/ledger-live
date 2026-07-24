@@ -4,19 +4,18 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { sdkClient } from "../network/sdk";
-import type { AleoTransactionIntentData, FeeConfiguration } from "../types";
+import type { AleoCoinConfig, AleoTransactionIntentData, FeeConfiguration } from "../types";
 import { mapTransactionIntentToSdkIntent, toHex } from "./utils";
 
 export async function craftTransaction({
-  currency,
+  config,
   txIntent,
   feeConfiguration,
   viewKey,
   tvks,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   txIntent: TransactionIntent<MemoNotSupported, AleoTransactionIntentData>;
   feeConfiguration: FeeConfiguration | null;
   viewKey?: string;
@@ -29,7 +28,7 @@ export async function craftTransaction({
   }
 
   const response = await sdkClient.createRequestFromIntent({
-    currency,
+    config,
     intent,
     feeConfiguration,
     ...(viewKey !== undefined && { viewKey }),

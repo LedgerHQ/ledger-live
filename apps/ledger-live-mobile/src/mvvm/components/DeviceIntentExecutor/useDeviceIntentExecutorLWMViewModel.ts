@@ -12,14 +12,16 @@ import {
   trackDeviceflowCompleted,
   trackDeviceflowStarted,
   trackDrawerCloseButtonClicked,
-  type DeviceUxV2ExtraProperties,
 } from "./utils/trackDeviceIntent";
 import type { InitializerConfig } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { useDeviceIntentExecutorHeaderOverrideRequests } from "./hooks/useDeviceIntentExecutorHeaderOverrideRequests";
 import type { DeviceIntentExecutorHeaderContextValue } from "./utils/DeviceIntentExecutorHeaderContext";
-import type { SourceFlow } from "./utils/SourceFlowContext";
+import type {
+  DeviceIntentTrackingProperties,
+  SourceFlow,
+} from "./utils/DeviceIntentTrackingContext";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -29,7 +31,7 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 > & {
   initializerConfig?: InitializerConfig;
   sourceFlow: SourceFlow;
-  analyticsProperties?: DeviceUxV2ExtraProperties;
+  analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
 export type DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> = {
@@ -56,6 +58,8 @@ type ConnectionTrackingInfo = {
   transport: "ble" | "usb";
 };
 
+const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
+
 function mapConnectionResult(result: DeviceConnectionResult): ConnectionTrackingInfo {
   return {
     modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
@@ -66,7 +70,13 @@ function mapConnectionResult(result: DeviceConnectionResult): ConnectionTracking
 export function useDeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): DeviceIntentExecutorLWMViewModel<JobState, Input, ExtraProps> {
-  const { enabled, sourceFlow, analyticsProperties, onExecutorStateChanged, onUserCancel } = props;
+  const {
+    enabled,
+    sourceFlow,
+    analyticsProperties = emptyAnalyticsProperties,
+    onExecutorStateChanged,
+    onUserCancel,
+  } = props;
 
   const flowStartedRef = useRef(false);
   const initializationCompletedRef = useRef(false);

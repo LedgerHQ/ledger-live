@@ -1,5 +1,8 @@
 # @domain/entity-market-sentiment
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Domain entity for **market sentiment**, backed by the CoinMarketCap Crypto Fear & Greed index.
 
 - `schema.ts` — `FearAndGreedIndexSchema` (canonical `{ value, classification }`).

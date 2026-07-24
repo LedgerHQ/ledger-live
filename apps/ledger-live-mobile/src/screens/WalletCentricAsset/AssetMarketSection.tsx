@@ -7,11 +7,14 @@ import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
 import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
+import { useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
-  const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
+  const { currency: fetchedCurrency } = useMarketCoinData({
     currencyId: resolveMarketId(currency.id),
   });
 
@@ -28,7 +31,7 @@ const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) =
         <MarketPriceSection
           currency={currency}
           selectedCoinData={fetchedCurrency}
-          counterCurrency={counterCurrency}
+          counterValueUnit={counterValueCurrency.units[0]}
         />
       </Flex>
     </SectionContainer>

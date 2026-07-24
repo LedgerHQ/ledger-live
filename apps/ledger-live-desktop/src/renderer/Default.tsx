@@ -24,6 +24,7 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
 import Page from "LLD/components/Page";
+import NightlyLayer from "LLD/components/NightlyLayer";
 import { isWallet40Page } from "LLD/components/Page/utils";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
@@ -68,7 +69,6 @@ import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
-import { LargeScreenUpsellModalMount } from "LLD/features/LargeScreenUpsell";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -201,50 +201,6 @@ export const TopBannerContainer = styled.div`
   }
 `;
 
-const NightlyLayerR = () => {
-  const children = [];
-  const w = 200;
-  const h = 100;
-  for (let y = 0.5; y < 20; y++) {
-    for (let x = 0.5; x < 20; x++) {
-      children.push(
-        <div
-          style={{
-            position: "absolute",
-            textAlign: "center",
-            top: y * h,
-            left: x * w,
-            transform: "rotate(-45deg)",
-          }}
-        >
-          PRERELEASE
-          <br />
-          {__APP_VERSION__}
-        </div>,
-      );
-    }
-  }
-  return (
-    <div
-      style={{
-        position: "fixed",
-        pointerEvents: "none",
-        opacity: 0.1,
-        color: "#777",
-        width: "100%",
-        height: "100%",
-        top: 0,
-        right: 0,
-        zIndex: 999999999999,
-      }}
-    >
-      {children}
-    </div>
-  );
-};
-
-const NightlyLayer = React.memo(NightlyLayerR);
-
 // Wrapper component for RecoverPlayer with FeatureToggle
 const RecoverPlayerWithFeatureToggle = () => {
   return (
@@ -363,7 +319,6 @@ export const MainAppLayout = () => {
         </>
       )}
       <GenericAwarenessModalAppStart />
-      <LargeScreenUpsellModalMount />
       <SyncNewAccounts priority={2} />
 
       <div
@@ -392,9 +347,7 @@ export const MainAppLayout = () => {
         />
       </div>
 
-      {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
-        <NightlyLayer />
-      ) : null}
+      <NightlyLayer />
 
       <KeyboardContent sequence="CRASH_TEST">
         <LetThisCrashForCrashTest />

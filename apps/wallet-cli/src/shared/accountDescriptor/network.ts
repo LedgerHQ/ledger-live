@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 /**
  * A Network identifies a blockchain by name and environment.
@@ -90,7 +90,7 @@ export class UnknownNetworkError extends Error {
  *   "solana_devnet"    → { name: "solana",   env: "devnet" }   (isTestnetFor = "solana")
  *   "ethereum_goerli"  → { name: "ethereum", env: "goerli" }   (isTestnetFor = "ethereum")
  *
- * Throws UnknownNetworkError if the currencyId is not known to @ledgerhq/cryptoassets.
+ * Throws UnknownNetworkError if the currencyId is not found in the currency registry.
  */
 export function networkFromCurrencyId(currencyId: string): Network {
   let currency;
@@ -98,7 +98,7 @@ export function networkFromCurrencyId(currencyId: string): Network {
     currency = getCryptoCurrencyById(currencyId);
   } catch {
     throw new UnknownNetworkError(
-      `Unknown currencyId "${currencyId}": not found in @ledgerhq/cryptoassets`,
+      `Unknown currencyId "${currencyId}": not found in currency registry`,
     );
   }
   if (currency.isTestnetFor) {

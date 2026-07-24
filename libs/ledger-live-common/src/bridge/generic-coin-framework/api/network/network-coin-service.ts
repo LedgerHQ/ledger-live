@@ -215,5 +215,9 @@ export const getNetworkCoinModuleApi = (networkFamily: string) =>
     validateAddress(_address: string): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
+    // TODO(BACK-11825): wire to the coin-service `call` endpoint once it is exposed over the network.
+    async call() {
+      throw new Error("call is not supported");
+    },
     craftTransactionData,
   }) satisfies CoinModuleApi<any> & BridgeApi;

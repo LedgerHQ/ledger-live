@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-mobile-e2e-tests",
-  "version": "0.29.0",
+  "version": "0.30.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",
@@ -28,8 +28,6 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-transform-dynamic-import": "7.27.1",
-    "@babel/plugin-transform-modules-commonjs": "7.27.1",
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
     "@ledgerhq/devices": "workspace:*",
@@ -55,8 +53,6 @@
     "@types/lodash": "4.17.0",
     "@types/ws": "8.5.10",
     "allure-commandline": "2.28.0",
-    "babel-jest": "catalog:",
-    "babel-plugin-module-resolver": "^5.0.2",
     "bignumber.js": "9.1.2",
     "body-parser": "2.2.2",
     "cors": "2.8.5",

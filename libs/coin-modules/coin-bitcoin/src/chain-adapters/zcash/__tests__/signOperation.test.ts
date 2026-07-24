@@ -18,7 +18,7 @@ import { ZcashUtxoNotInAccount } from "../../../errors";
 import type { Transaction } from "../../../types";
 import type { SignerContext } from "../../../signer";
 // Imported here so jest.mocked() can configure the mock return value in beforeEach.
-import { getWalletAccount } from "../../../wallet-btc";
+import { getWalletAccount } from "../../../getWalletAccount";
 
 jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
@@ -62,7 +62,7 @@ jest.mock("@ledgerhq/live-signer-zcash", () => ({
 // above variable declarations, so any outer ref would hit the TDZ. The actual
 // mock return value is configured in beforeEach via jest.mocked(getWalletAccount).
 
-jest.mock("../../../wallet-btc", () => ({
+jest.mock("../../../getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 
@@ -279,17 +279,28 @@ afterEach(() => {
 // ── Suite 1: Orchestration flow ────────────────────────────────────────────
 
 describe("signOperation — orchestration flow", () => {
-  it("returns undefined for every transferType when the flag is OFF (Bitcoin legacy fallback)", () => {
+  it("returns undefined for transparent transfer types when the flag is OFF (Bitcoin legacy fallback)", () => {
     setZcashShieldedEnabled(false);
     const account = makeAccount();
     const signerContext = makeSignerContext();
-    for (const transferType of [
-      "transparent",
-      "transparent-to-shielded",
-      "shielded-to-transparent",
-      "shielded",
-    ] as const) {
+    for (const transferType of ["transparent", "transparent-to-shielded"] as const) {
       expect(callSignOperation(account, makeTx(transferType), signerContext)).toBeUndefined();
+    }
+  });
+
+  it("returns an error Observable for shielded-input types when the flag is OFF", async () => {
+    // The legacy transparent path cannot represent Orchard note spends: it would
+    // strip the shielded bundle, compute a wrong ZIP-244 txid, and the network
+    // would reject with "Missing inputs". Fail early with a clear error.
+    setZcashShieldedEnabled(false);
+    const account = makeAccount();
+    const signerContext = makeSignerContext();
+    for (const transferType of ["shielded", "shielded-to-transparent"] as const) {
+      const obs = callSignOperation(account, makeTx(transferType), signerContext);
+      expect(obs).toBeInstanceOf(Observable);
+      await expect(lastValueFrom(obs!)).rejects.toThrow(
+        `Zcash ${transferType} transactions require the zcashShielded feature to be enabled`,
+      );
     }
   });
 

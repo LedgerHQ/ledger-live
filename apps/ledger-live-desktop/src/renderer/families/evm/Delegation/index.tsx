@@ -11,6 +11,7 @@ import {
   getValidatorExplorerUrl,
   hasUnbondingPeriod,
   getUnbondingPeriodDays,
+  hasChainRewards,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -111,6 +112,7 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
   );
 
   const hasDelegations = delegations.length > 0;
+  const showRewards = hasChainRewards(currencyId);
   // Only surface the "Pending undelegation" section when the chain enforces an unbonding
   // period (Acceptance Criteria: Tracking). Instant-withdrawal chains never have pending
   // unbondings so showing the header would be misleading.
@@ -176,12 +178,13 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
         </TableHeader>
         {hasDelegations ? (
           <>
-            <Header />
+            <Header showRewards={showRewards} />
             {mappedDelegations.map(delegation => (
               <Row
                 key={`${delegation.validatorAddress}-${delegation.status}`}
                 account={account}
                 delegation={delegation}
+                showRewards={showRewards}
                 onManageAction={onRedirect}
                 onClaimRewards={onRowClaimRewards}
                 onExternalLink={onExternalLink}

@@ -155,6 +155,9 @@ jobs:
     steps:
       - name: Parse speculos device input
         id: parse
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoSP' }}
         run: |
           declare -A WEEKDAY_DEVICE=(
             [1]=nanoSP    # Monday     - LNSP
@@ -163,20 +166,20 @@ jobs:
             [4]=flex      # Thursday   - Flex
             [5]=nanoGen5  # Friday     - NG5
           )
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
             echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
             echo "device_2=skipped" >> $GITHUB_OUTPUT
             echo "is_dual=false"   >> $GITHUB_OUTPUT
             printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
+          elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             echo "device_1=nanoSP" >> $GITHUB_OUTPUT
             echo "device_2=stax" >> $GITHUB_OUTPUT
             echo "is_dual=true" >> $GITHUB_OUTPUT
             echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}' >> $GITHUB_OUTPUT
           else
-            DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+            DEVICE="$SPECULOS_DEVICE_INPUT"
             echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
             echo "device_2=skipped" >> $GITHUB_OUTPUT
             echo "is_dual=false" >> $GITHUB_OUTPUT
@@ -292,14 +295,19 @@ jobs:
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write workflow context to GitHub Summary
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
+          TEST_EXECUTION: ${{ inputs.test_execution || '(not provided)' }}
+          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          REPEAT_EACH: ${{ inputs.repeat_each }}
+          WORKFLOW_REF: ${{ github.workflow_ref }}
+          TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
         run: |
-          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
           DEVICE="$SPECULOS_DEVICE"
-          BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
-          TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
-          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
-          REPEAT_EACH="${{ inputs.repeat_each }}"
 
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
@@ -312,15 +320,15 @@ jobs:
           {
             echo "## Workflow Context"
             echo ""
-            echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-            echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
-            echo "- **Commit SHA:** ${{ github.sha }}"
+            echo "- **Workflow source branch:** $WORKFLOW_REF"
+            echo "- **Triggered branch:** $TRIGGERED_BRANCH"
+            echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICE"
             echo "$FILTER_SUMMARY"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Feature Flags:** ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}"
+            echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
           } >> $GITHUB_STEP_SUMMARY

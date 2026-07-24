@@ -32,6 +32,9 @@ export function createApi(config: AlgorandCoinConfig): CoinModuleApi<AlgorandMem
 
   return {
     broadcast,
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: craftApiTransaction,
     estimateFees: (_transactionIntent: TransactionIntent<AlgorandMemo>) => estimateFees(),

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -16,10 +16,14 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "remote": "pnpm --filter @devtools/relay start",
+    "dev:remote": "concurrently \"pnpm run dev\" \"pnpm --filter @devtools/relay start\""
   },
   "dependencies": {
     "@devtools/shell": "workspace:*",
+    "@devtools/wire": "workspace:*",
+    "@devtools/protocols": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
@@ -115,6 +119,7 @@
     "@types/react-inspector": "^4.0.6",
     "@types/react-table": "^7.7.20",
     "@types/semver": "catalog:",
+    "concurrently": "^8.0.0",
     "autoprefixer": "^10.4.21",
     "@tailwindcss/postcss": "^4.1.0",
     "jest": "catalog:",

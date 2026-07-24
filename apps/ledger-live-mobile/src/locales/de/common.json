@@ -28,6 +28,7 @@
     "cryptoAsset" : "Krypto-Vermögenswert",
     "skip" : "Überspringen",
     "next" : "Weiter",
+    "new" : "Neu",
     "noCryptoFound" : "Keine Krypto-Werte gefunden",
     "needHelp" : "Brauchst du Hilfe?",
     "edit" : "Bearbeiten",
@@ -126,6 +127,10 @@
     "AccountNeedResync" : {
       "title" : "Bitte versuche es noch einmal",
       "description" : "Konto ist veraltet. Eine Synchronisierung ist erforderlich"
+    },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Konto muss erneut hinzugefügt werden",
+      "description" : "Ledger Wallet konnte den öffentlichen Schlüssel dieses Kontos nicht abrufen. Bitte entferne das Konto und füge es erneut hinzu, um fortzufahren"
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
@@ -479,6 +484,9 @@
     "FeeRequired" : {
       "title" : "Gebühren sind erforderlich"
     },
+    "FeeTooHigh" : {
+      "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
+    },
     "FeeTooLow" : {
       "title" : "Die Gebühren sind zu niedrig, um vom Netzwerk akzeptiert zu werden. Bitte erhöhe diese"
     },
@@ -532,6 +540,10 @@
     },
     "InvalidExplorerResponse" : {
       "title" : "Ungültige Antwort vom {{currencyName}}-Explorer"
+    },
+    "InvalidTransactionError" : {
+      "title" : "Ungültige Transaktion",
+      "description" : "Die Transaktion stimmt nicht mehr mit dem Blockchain-Status überein. Bitte starte den Vorgang erneut."
     },
     "LanguageInstallRefusedOnDevice" : {
       "title" : "Sprachinstallation auf dem Gerät abgelehnt",
@@ -902,11 +914,17 @@
     "TezosNotEnoughStaked" : {
       "title" : "Unzureichender Staking-Kontostand"
     },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Das Beenden des Stakings bei deinem vorherigen Validator muss zuerst abgeschlossen sein"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Bitte leere zuerst alle Unterkonten"
     },
     "NotSupportedLegacyAddress" : {
       "title" : "Das Legacy-Adressformat wird nicht mehr unterstützt"
+    },
+    "RecipientRequired" : {
+      "title" : "Empfängeradresse ist erforderlich"
     },
     "SourceHasMultiSign" : {
       "title" : "Bitte deaktiviere Multisign, um {{currencyName}} zu senden"
@@ -1375,6 +1393,17 @@
         }
       }
     }
+  },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Mehr anzeigen. Weniger tippen. Spare {{discount}}%",
+      "subtitle" : "Genieße einen größeren Bildschirm, eine smartere Transaktionsprüfung, erweiterten Schutz und exklusive {{discount}}% Rabatt."
+    },
+    "optedOut" : {
+      "title" : "Betrug erkennen. Jedes Detail ansehen",
+      "subtitle" : "Alles übersichtlich auf einem Touchscreen-Signer prüfen und Betrug dank fortschrittlicher Sicherheitsprüfungen erkennen."
+    },
+    "cta" : "Touchscreen Signer entdecken"
   },
   "earn" : {
     "simulator" : {
@@ -2971,6 +3000,8 @@
     "month" : "1M",
     "year" : "1J",
     "all" : "Alle",
+    "second_short" : "s",
+    "minute_short" : "Min.",
     "since" : {
       "day" : "vergangener Tag",
       "week" : "vergangene Woche",
@@ -3042,7 +3073,8 @@
       "more" : "Optionen für den Transaktionsverlauf",
       "hideDustTransactions" : "Blende Staub (Dust)-Transaktionen aus",
       "showDustTransactions" : "Zeige Staub (Dust)-Transaktionen an",
-      "dustTransactionsDescription" : "Transaktionen unter {{threshold}} in deiner Hauptwährung werden ausgeblendet."
+      "dustTransactionsHiddenDescription" : "Transaktionen unter {{threshold}} werden ausgeblendet.",
+      "dustTransactionsDisplayedDescription" : "Transaktionen unter {{threshold}} werden angezeigt."
     }
   },
   "operationDetails" : {
@@ -4191,7 +4223,8 @@
               "sendPending" : "Sende {{ticker}}",
               "sendCompleted" : "Gesendet {{ticker}}",
               "receivePending" : "{{ticker}} empfangen",
-              "receiveCompleted" : "Erhalte {{ticker}}"
+              "receiveCompleted" : "Erhalte {{ticker}}",
+              "estimated" : "(Geschätzt)"
             },
             "details" : {
               "networkFees" : "Netzgebühren",
@@ -4565,6 +4598,10 @@
           "description" : "Du hast die Transaktion abgelehnt. Deine Assets sind nicht betroffen.",
           "close" : "Schließen",
           "retry" : "Wiederholen"
+        },
+        "error" : {
+          "retry" : "Wiederholen",
+          "close" : "Schließen"
         }
       },
       "confirmation" : {
@@ -4581,6 +4618,7 @@
         "maxPriorityFee" : "Max. Prioritätsgebühr ({{unit}})",
         "gasLimit" : "Gaslimit ({{unit}})",
         "feePerByte" : "Gebührenbetrag ({{unit}})",
+        "feesAmount" : "Gebührenbetrag ({{unit}})",
         "suggested" : "Empfohlen",
         "nextBlock" : "Nächster Block",
         "networkFeesInFiat" : "Netzwerkgebühren in {{currency}}",
@@ -6735,7 +6773,8 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Benutzerdefinierten Validator hinzufügen",
-      "sectionLabel" : "Delegierung"
+      "sectionLabel" : "Delegierung",
+      "pendingUnstakeWarning" : "Du kannst den Validator jetzt wechseln, kannst aber erst mit dem neuen Staking beginnen, wenn das ausstehende Staking bei deinem aktuellen Validator in ca. 4 Tagen abgeschlossen ist."
     },
     "staking" : {
       "sectionLabel" : "Staking",
@@ -9453,6 +9492,13 @@
       "openMenuA11yLabel" : "Chart-Optionen",
       "hideTransactions" : "Aktivität im Preischart ausblenden",
       "showTransactions" : "Aktivität im Preischart anzeigen"
+    },
+    "footer" : {
+      "moreOptions" : {
+        "accessibilityLabel" : "Weitere Optionen",
+        "sell" : "Verkaufen",
+        "earn" : "Verdienen"
+      }
     }
   },
   "assetSelection" : {
@@ -9922,7 +9968,8 @@
     "swap" : "Swappen",
     "earn" : "Verdienen",
     "yield" : "Ertrag",
-    "card" : "Card"
+    "card" : "Card",
+    "paytab" : "Bezahlen"
   },
   "syncIndicator" : {
     "accessibilityLabel" : {
@@ -9969,6 +10016,10 @@
       "backup" : "Backup",
       "help" : "Hilfe",
       "referral" : "Empfehlung"
+    },
+    "contacts" : {
+      "title" : "Kontakte",
+      "description" : "Kontakte verwalten"
     },
     "backupHub" : {
       "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -10049,16 +10100,64 @@
         "description" : "Bestätige die Offenlegung des Viewkeys auf deinem Gerät",
         "cancelAlert" : "Du kannst einzelne Konten auf deinem Gerät ablehnen. Wenn du alle Konten stornierst, werden keine weiteren Konten zu deinem Portfolio hinzugefügt.",
         "cancelAllBtn_one" : "Abbrechen",
-        "cancelAllBtn_other" : "Alle stornieren"
+        "cancelAllBtn_other" : "Alle stornieren",
+        "redirecting" : "Weiterleiten ..."
+      },
+      "stepNoAccountsAdded" : {
+        "title" : "Es wurden keine {{currency}}-Konten hinzugefügt",
+        "description" : "Du hast für keines der ausgewählten Konten Viewkeys offengelegt. Viewkeys sind zum Anzeigen deines privaten Guthabens in Ledger Wallet erforderlich."
       },
       "stepScanAccounts" : {
         "cta" : {
-          "shareViewKeys" : "Viewkeys teilen"
+          "shareKey_one" : "Viewkey offenlegen",
+          "shareKey_other" : "Viewkeys offenlegen"
         }
       }
     },
     "accountActions" : {
       "publicToPrivate" : "Selbstüberweisung"
+    },
+    "send" : {
+      "balanceSelection" : {
+        "title" : "Kontostand auswählen",
+        "convertToPrivate" : "Übertragung von öffentlich",
+        "convertToPublic" : "Übertragung von privat",
+        "sendPublicly" : "Öffentlich senden",
+        "sendPrivately" : "Privat senden"
+      },
+      "balanceSelector" : {
+        "public" : "Öffentlich",
+        "private" : "Privat",
+        "lastUpdate" : "Letzte Aktualisierung: {{label}}",
+        "recently" : "Kürzlich"
+      },
+      "mandatoryPrivateSync" : {
+        "title" : "Synchronisierung deines privaten Guthabens ({{percentage}}%)",
+        "desc" : "Bitte warten",
+        "errorTitle" : "Private Synchronisierung fehlgeschlagen.",
+        "errorDesc" : "Etwas ist schiefgelaufen, bitte versuche es noch einmal."
+      },
+      "quickAmountSelector" : {
+        "title" : "Schnellauswahl",
+        "strategies" : {
+          "fast" : "Schnell",
+          "balanced" : "Ausgeglichen",
+          "full" : "Voll"
+        },
+        "recordCount_one" : "{{count}} Eintrag",
+        "recordCount_other" : "{{count}} Einträge",
+        "unavailable" : "Nicht verfügbar",
+        "noValue" : "—",
+        "spendableBalance" : "Maximal ausgabefähiger Betrag:",
+        "tooltip" : {
+          "desc" : "Absender, Betrag und Empfänger sind on-chain verborgen. Bis zu {{max}} Einträge pro Sendung."
+        }
+      },
+      "summary" : {
+        "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern.",
+        "recordsUsed" : "Genutzte Einträge",
+        "signingTime" : "Signierzeit"
+      }
     },
     "balancesSection" : "Kontostand",
     "info" : {
@@ -10070,6 +10169,34 @@
         "title" : "Privater Saldo",
         "description" : "Der abgeschirmte Kontostand im Aleo-Netzwerk. Dieser Kontostand ist nur für dich sichtbar und erfordert die Erstellung eines Nachweises für private Transaktionen."
       }
+    },
+    "account" : {
+      "syncButton" : {
+        "startSync" : "Synchronisierung starten",
+        "stopSync" : "Synchronisierung anhalten",
+        "syncAgain" : "Erneut synchronisieren",
+        "lastSync" : "Letzte Synchronisierung: {{date}}"
+      }
+    },
+    "operations" : {
+      "type" : {
+        "public" : "Öffentlich",
+        "private" : "Privat"
+      }
+    },
+    "shared" : {
+      "sponsoredByProvable" : "Gesponsert von Provable"
+    }
+  },
+  "contacts" : {
+    "title" : "Kontakte",
+    "addContact" : "Kontakt hinzufügen",
+    "searchPlaceholder" : "Kontakt suchen",
+    "me" : {
+      "name" : "Ich",
+      "addressCount_zero" : "0 Adresse",
+      "addressCount_one" : "{{count}} Adresse",
+      "addressCount_other" : "{{count}} Adressen"
     }
   }
 }

@@ -1,5 +1,8 @@
 # live-hooks
 
+> [!WARNING]
+> **Status: DEPRECATED** — Planned for removal. Migrate to a standard npm package such as `usehooks-ts`.
+
 `@ledgerhq/live-hooks` is a small collection of shared React hooks used across Ledger Live desktop and mobile. It centralises common UI performance patterns — debouncing and throttling — so they don't need to be re-implemented in each app.
 
 ## What it does

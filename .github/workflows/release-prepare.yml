@@ -82,8 +82,9 @@ jobs:
       - name: create PR to develop
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          TARGET_REF: ${{ inputs.ref }}
         run: |
-          git checkout ${{ github.event.inputs.ref }}
+          git checkout "$TARGET_REF"
           git checkout -b support/release-merge-conflicts
           git push origin support/release-merge-conflicts
           gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts

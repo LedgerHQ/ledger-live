@@ -17,7 +17,7 @@ export function ContactsAddContactListItem({
   onAddContact,
 }: ContactsAddContactListItemProps): React.ReactNode {
   return (
-    <ListItem className="mt-16" onClick={onAddContact} data-testid="contacts-add-contact">
+    <ListItem onClick={onAddContact} data-testid="contacts-add-contact">
       <ListItemLeading>
         <div
           className="flex size-48 shrink-0 items-center justify-center rounded-full bg-muted-transparent text-base"

@@ -1,9 +1,4 @@
 import { useRef, useEffect } from "react";
-import {
-  UserRefusedAllowManager,
-  UserRefusedDeviceNameChange,
-  UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
@@ -69,13 +64,13 @@ export const useTrackManagerSectionEvents = ({
       track("Deleted Custom Lock Screen", defaultPayload, isTrackingEnabled);
     }
 
-    if ((error as unknown) instanceof UserRefusedAllowManager) {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel denied", defaultPayload, isTrackingEnabled);
-    } else if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+    } else if (error?.name === "UserRefusedDeviceNameChange") {
       // user refused device name change
       track("Renamed Device cancelled", defaultPayload, isTrackingEnabled);
-    } else if ((error as unknown) instanceof UserRefusedFirmwareUpdate) {
+    } else if (error?.name === "UserRefusedFirmwareUpdate") {
       // user refused OS update
       track("User refused OS update via LL", defaultPayload, isTrackingEnabled);
     }

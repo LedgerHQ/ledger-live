@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";

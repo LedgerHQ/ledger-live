@@ -111,6 +111,7 @@
     "stop" : "停止",
     "updateNow" : "立即更新",
     "close" : "关闭",
+    "ok" : "确定",
     "eastern" : "东方",
     "western" : "西方",
     "reverify" : "重新验证",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "卡",
+    "paytab" : "付款",
     "menu" : "菜单",
     "stars" : "已标星账户",
     "accounts" : "账户",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "验证者组",
           "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
-          "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+          "ledgerByBitwiseTC" : "Ledger by Bitwise 条款与条件",
           "totalVotes" : "总投票数",
           "commission" : "佣金"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
       "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
-      "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+      "ledgerByBitwiseTC" : "Ledger by Bitwise 条款与条件",
       "emptyState" : {
         "description" : "您可以通过委托资产赚取 SOL 奖励。",
         "info" : "委托机制如何运作",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "验证者",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 条款与条件",
             "ledgerByFigmentTC" : "Ledger by Figment 条款与条件"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "验证者",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 条款与条件",
             "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "验证者",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise 条款与条件",
             "ledgerByFigmentTC" : "Ledger by Figment 条款与条件"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "质押您的 XTZ"
-      }
+      },
+      "pendingUnstakeWarning" : "您现在可以更改验证者，但在当前验证者待处理的解除质押完成（约需 4 天）之前，您将无法在新的验证者处进行质押。"
     },
     "staking" : {
       "header" : "质押",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "分析数据使用同意 (QA)",
         "rowDesc" : "检查已存储的隐私同意版本和同意日期；模拟资产组合分析同意弹窗的过期状态。"
       },
+      "devTools" : {
+        "rowTitle" : "开发工具",
+        "rowDesc" : "打开 DevTools 开发工具界面（功能标志和开发者工具面板）。"
+      },
       "brazeTools" : {
         "title" : "Braze 工具",
         "description" : "生成本地 Braze 卡",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "打开抽屉",
         "showJson" : "显示 JSON",
         "hideJson" : "隐藏 JSON"
+      },
+      "contactsDevTool" : {
+        "title" : "联系人开发工具",
+        "description" : "切换桌面版联系人推出设置（lwdContacts 功能标帜）。",
+        "mainFeatureToggle" : "主功能切换",
+        "featureParameters" : "功能参数",
+        "eligibleAddressFamilies" : "符合条件的地址系列",
+        "customFamiliesHint" : "用于自定义多系列测试的以逗号分隔的系列。",
+        "customFamiliesPlaceholder" : "以太坊虚拟机 (EVM)、恒星币、阿普托斯币",
+        "applyFamilies" : "应用",
+        "resetOverride" : "重置覆盖"
       },
       "cryptoAssetsList" : {
         "title" : "加密资产列表",
@@ -6690,6 +6708,10 @@
       "title" : "不支持该账户。",
       "description" : "请重试或联系客服 ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "账户需要重新添加",
+      "description" : "Ledger Wallet 无法获取此账户的公钥。请移除该账户并重新添加以继续"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "收币人账户没有选择加入所选的 ASA。"
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "质押余额不足"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "必须先完成从上一个验证者处的解除质押"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
@@ -8594,6 +8619,17 @@
       "description" : "由于 Ledger Nano S 的存储容量有限，您将无法全面体验最新功能、区块链升级及安全增强。"
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "查看更多。减少点击。节省 {{discount}}%",
+      "subtitle" : "尽享更大的屏幕、更智能的交易审核、更强的保护，以及专属的 {{discount}}% 优惠。"
+    },
+    "optedOut" : {
+      "title" : "识别骗局。查看所有详情",
+      "subtitle" : "在触摸屏签署设备上清晰审核，并通过高级安全检查发现骗局。"
+    },
+    "cta" : "探索触摸屏签署设备"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "选择您要添加的账户",
@@ -9167,7 +9203,8 @@
       "more" : "交易历史选项",
       "hideDustTransactions" : "隐藏零星小额交易",
       "showDustTransactions" : "显示零星小额交易",
-      "dustTransactionsDescription" : "低于 {{threshold}} 的交易将被隐藏。"
+      "dustTransactionsDescription" : "低于 {{threshold}} 的交易将被隐藏。",
+      "dustTransactionsDisplayedDescription" : "低于 {{threshold}} 的交易将被显示。"
     },
     "exportDialog" : {
       "title" : "导出交易历史",
@@ -9225,7 +9262,22 @@
       "title" : "我的 Ledger",
       "description" : "管理您的 Ledger 设备"
     },
+    "contacts" : {
+      "title" : "联系人",
+      "description" : "管理您的联系人"
+    },
     "explore" : "探索所有 Ledger 设备"
+  },
+  "contacts" : {
+    "title" : "联系人",
+    "addContact" : "添加联系人",
+    "searchPlaceholder" : "搜索联系人",
+    "me" : {
+      "name" : "我",
+      "addressCount_zero" : "0 个地址",
+      "addressCount_one" : "{{count}} 个地址",
+      "addressCount_other" : "{{count}} 个地址"
+    }
   },
   "assetDetails" : {
     "header" : {

@@ -192,6 +192,7 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     transaction?: Transaction;
     justScanned?: boolean;
+    onScanned?: (address: string) => void;
   };
   [ScreenName.BleDevicePairingFlow]: undefined;
   [ScreenName.AnalyticsAllocation]: undefined;
@@ -336,6 +337,7 @@ export type BaseNavigatorStackParamList = {
     appName?: string;
     requireLatestFirmware?: boolean;
     allowPartialDependencies?: boolean;
+    allowNonOnboardedDevice?: boolean;
     skipAppInstallIfNotFound?: boolean;
     onSuccess: (result: AppResult) => void;
     onClose: () => void;

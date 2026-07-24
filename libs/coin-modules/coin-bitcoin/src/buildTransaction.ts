@@ -5,13 +5,15 @@ import {
   Merge,
   type Account as WalletAccount,
   type TransactionInfo as WalletTxInfo,
-} from "./wallet-btc";
+} from "@ledgerhq/wallet-btc/index";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 import type { Transaction, UtxoStrategy, BtcOperationExtra } from "./types";
 import { bitcoinPickingStrategy } from "./types";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import { buildAccountTx } from "./buildAndSign";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 
@@ -145,7 +147,7 @@ export const buildTransaction = async (
     ? true
     : false;
 
-  const txInfo = await wallet.buildAccountTx({
+  const txInfo = await buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
     amount: transaction.useAllAmount ? maxSpendable : transaction.amount,

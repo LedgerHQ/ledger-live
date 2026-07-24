@@ -5,7 +5,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import cardanoBridge, { getAssetFromToken, getTokenFromAsset } from "./api";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const ASSET_REFERENCE = "1234567890123456789012345678901234567890123456789012345a4d59544f4b454e";
 const mockToken = {
@@ -24,7 +24,9 @@ describe("cardano bridge", () => {
   >;
 
   (
-    jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+    jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+      getCryptoAssetsStore: jest.Mock;
+    }
   ).getCryptoAssetsStore.mockReturnValue({
     findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
   });

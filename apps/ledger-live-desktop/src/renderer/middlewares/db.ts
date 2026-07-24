@@ -28,7 +28,7 @@ import { marketStoreSelector } from "../reducers/market";
 import { marketBannerStoreSelector } from "../reducers/marketBanner";
 import {
   LARGE_SCREEN_UPSELL_MODAL,
-  largeScreenUpsellModalSelector,
+  persistedLargeScreenUpsellModalSelector,
 } from "@domain/entity-large-screen-upsell-modal";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
@@ -126,7 +126,7 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   if (action.type.startsWith(`${LARGE_SCREEN_UPSELL_MODAL}/`)) {
     const res = next(action);
     const state = store.getState();
-    setKey("app", LARGE_SCREEN_UPSELL_MODAL, largeScreenUpsellModalSelector(state));
+    setKey("app", LARGE_SCREEN_UPSELL_MODAL, persistedLargeScreenUpsellModalSelector(state));
     return res;
   }
 

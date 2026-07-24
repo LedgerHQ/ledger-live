@@ -20,7 +20,6 @@ export function getMarketDataForDisplay(
 
 export function getMarketAssets({
   marketData,
-  counterCurrency,
   counterValueUnit,
   rate = 1,
   displayRange,
@@ -28,7 +27,6 @@ export function getMarketAssets({
   t,
 }: {
   marketData: MarketCurrencyData[];
-  counterCurrency: string;
   counterValueUnit: Unit;
   rate?: number;
   displayRange: DisplayRange;
@@ -39,7 +37,6 @@ export function getMarketAssets({
 
   return uniqueById.map(item =>
     mapMarketCurrencyToDisplayData(applyUsdRateToMarket(item, rate), {
-      counterCurrency,
       counterValueUnit,
       range: displayRange,
       locale,

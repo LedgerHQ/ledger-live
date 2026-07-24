@@ -1,10 +1,10 @@
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type {
   AleoOperation,
   AleoPrivateRecord,
   EnrichedPrivateRecord,
   AleoTransitionValue,
+  AleoCoinConfig,
 } from "../types";
 import { enrichPrivateRecord } from "../network/utils";
 import { toPrivateBridgeOperation } from "./utils";
@@ -42,7 +42,7 @@ export function buildConsumedRecordTags(
 }
 
 export async function listPrivateOperations({
-  currency,
+  config,
   viewKey,
   address,
   ledgerAccountId,
@@ -51,7 +51,7 @@ export async function listPrivateOperations({
   signal,
   tokenRecords,
 }: {
-  currency: CryptoCurrency;
+  config: AleoCoinConfig;
   viewKey: string;
   address: string;
   ledgerAccountId: string;
@@ -69,7 +69,7 @@ export async function listPrivateOperations({
   let completed = 0;
   const enrichedRecords = await promiseAllBatched(2, recordsToEnrich, async rawRecord => {
     signal?.throwIfAborted();
-    const result = await enrichPrivateRecord({ currency, rawRecord, address, viewKey });
+    const result = await enrichPrivateRecord({ config, rawRecord, address, viewKey });
     onProgress?.(++completed, recordsToEnrich.length);
     return result;
   });

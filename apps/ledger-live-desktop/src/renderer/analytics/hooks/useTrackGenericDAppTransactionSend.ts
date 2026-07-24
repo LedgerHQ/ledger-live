@@ -2,13 +2,6 @@ import { useEffect, useRef } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
@@ -83,7 +76,7 @@ export const useTrackGenericDAppTransactionSend = ({
       track("Secure Channel approved", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof UserRefusedAllowManager) {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel refused", defaultPayload, isTrackingEnabled);
     }
@@ -100,22 +93,22 @@ export const useTrackGenericDAppTransactionSend = ({
       previousOpenAppRequested.current.clear();
     }
 
-    if (previousOpenAppRequested.current.size && error instanceof UserRefusedOnDevice) {
+    if (previousOpenAppRequested.current.size && error?.name === "UserRefusedOnDevice") {
       // user refused to open add during generic DApp transaction flow (send)
       track("User refused to open app", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof CantOpenDevice) {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during generic DApp transaction flow (send)
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportError) {
+    if (error?.name === "TransportError") {
       // transport error during generic DApp transaction flow (send)
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during generic DApp transaction flow (send)
       track("Device locked", defaultPayload, isTrackingEnabled);
     }

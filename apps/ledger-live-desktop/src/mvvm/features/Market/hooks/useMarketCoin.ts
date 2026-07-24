@@ -11,7 +11,11 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { setMarketOptions } from "~/renderer/actions/market";
 import { marketParamsSelector } from "~/renderer/reducers/market";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import {
+  counterValueCurrencySelector,
+  localeSelector,
+  starredMarketCoinsSelector,
+} from "~/renderer/reducers/settings";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
@@ -28,6 +32,8 @@ export const useMarketCoin = () => {
 
   const isStarred = currencyId ? starredMarketCoins.includes(currencyId) : false;
   const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueUnit = counterValueCurrency.units[0];
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
@@ -126,6 +132,7 @@ export const useMarketCoin = () => {
     changeRange,
     range,
     counterCurrency,
+    counterValueUnit,
     changeCounterCurrency,
     currency,
     supportedCounterCurrencies,

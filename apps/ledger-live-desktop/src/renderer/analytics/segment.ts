@@ -19,6 +19,7 @@ import { ReplaySubject } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
+import { getDistributionChannel } from "~/helpers/distributionChannel";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -340,6 +341,7 @@ const extraProperties = (store: ReduxStore) => {
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     platform: "desktop",
+    distributionChannel: getDistributionChannel(),
     systemLanguage: systemLocale.language,
     systemRegion: systemLocale.region,
     osType,

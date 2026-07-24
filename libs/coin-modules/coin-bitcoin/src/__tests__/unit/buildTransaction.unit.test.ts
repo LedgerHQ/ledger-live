@@ -1,14 +1,16 @@
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
 import { bitcoinPickingStrategy } from "../../types";
-import wallet, { TransactionInfo } from "../../wallet-btc";
+import wallet, { TransactionInfo } from "@ledgerhq/wallet-btc/index";
 import { fromTransactionRaw } from "../../transaction";
 import { buildTransaction } from "../../buildTransaction";
+import { buildAccountTx } from "../../buildAndSign";
+
+jest.mock("../../buildAndSign");
 
 import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";
 
-jest.mock("../../wallet-btc", () => ({
-  ...jest.requireActual("../../wallet-btc"),
+jest.mock("../../getWalletAccount", () => ({
   getWalletAccount: jest.fn().mockReturnValue({
     xpub: {
       crypto: "bitcoin",
@@ -33,7 +35,7 @@ describe("buildTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wallet.estimateAccountMaxSpendable = jest.fn().mockResolvedValue(maxSpendable);
-    wallet.buildAccountTx = jest.fn().mockResolvedValue(txInfo);
+    (buildAccountTx as jest.Mock).mockResolvedValue(txInfo);
   });
   it("should throw FeeNotLoaded if feePerByte is not provided", async () => {
     const transaction = fromTransactionRaw({
@@ -69,7 +71,7 @@ describe("buildTransaction", () => {
     const res = await buildTransaction(mockAccount, transaction);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    expect(require("../../wallet-btc").getWalletAccount).toHaveBeenCalledWith(mockAccount);
+    expect(require("../../getWalletAccount").getWalletAccount).toHaveBeenCalledWith(mockAccount);
     expect(res).toEqual(txInfo);
   });
 });

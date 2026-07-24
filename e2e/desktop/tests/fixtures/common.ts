@@ -15,7 +15,7 @@ import {
   runCliStep,
 } from "tests/utils/allureUtils";
 import { isLastRetry } from "tests/utils/testInfoUtils";
-import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
@@ -265,6 +265,9 @@ export const test = base.extend<TestFixtures>({
     page.setDefaultTimeout(120000);
 
     attachNetworkLogging(page, testInfo);
+    // capture main app (Ledger Wallet) network logs, attached to Allure on failure
+    const appCollector = new PageLogCollector();
+    appCollector.attach(page);
 
     if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
       const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
@@ -288,8 +291,8 @@ export const test = base.extend<TestFixtures>({
     });
 
     // capture webview console and network logs for debugging (e.g. swap live app)
-    const webviewCollector = new WebviewLogCollector();
-    webviewCollector.start(electronApp);
+    const webviewCollector = new PageLogCollector();
+    webviewCollector.attachWebview(electronApp);
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
@@ -303,7 +306,14 @@ export const test = base.extend<TestFixtures>({
       const takeSpeculosScreenshot = Boolean(
         speculos.device || (cliCommandsOnApp?.length ?? 0) > 0,
       );
-      await captureArtifacts(page, testInfo, electronApp, takeSpeculosScreenshot, webviewCollector);
+      await captureArtifacts(
+        page,
+        testInfo,
+        electronApp,
+        takeSpeculosScreenshot,
+        webviewCollector,
+        appCollector,
+      );
     }
 
     // Remove video if test passed

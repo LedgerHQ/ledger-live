@@ -91,7 +91,7 @@ export default class IPCTransport extends Transport {
       trace({ type: LOG_TYPE, message: "open success", data: { descriptor } });
       return new IPCTransport(descriptor, requestId);
     } catch (error) {
-      if (error instanceof TransportError) {
+      if ((error as { name?: string })?.name === "TransportError") {
         throw error;
       }
       const err = error as Error;
@@ -133,7 +133,7 @@ export default class IPCTransport extends Transport {
       trace({ type: LOG_TYPE, message: "exchange success", data: { apdu: apduHex } });
       return Buffer.from(result.data, "hex");
     } catch (error) {
-      if (error instanceof TransportError) {
+      if ((error as { name?: string })?.name === "TransportError") {
         throw error;
       }
       const err = error as Error;

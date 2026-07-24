@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/asset-aggregation",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
   "keywords": [
@@ -19,7 +19,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",

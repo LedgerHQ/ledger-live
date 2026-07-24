@@ -1,6 +1,6 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
   importAccountsReduce,
   type ImportItem,
@@ -8,7 +8,9 @@ import {
   type SyncNewAccountsOutput,
 } from "./importAccounts";
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "0",
 });
 

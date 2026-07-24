@@ -21,7 +21,7 @@ packages:
 
 catalog:
   "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.2.0
+  "@ledgerhq/context-module": 2.3.0
   "@ledgerhq/crypto-icons": "2.0.4"
   "@ledgerhq/device-management-kit": 1.7.1
   "@ledgerhq/device-signer-kit-aleo": 0.4.0
@@ -125,7 +125,8 @@ catalog:
   "@types/jest": 30.0.0
   "@typescript-eslint/eslint-plugin": 8.48.1
   "@typescript-eslint/parser": 8.48.1
-  typescript: 6.0.2
+  typescript: "npm:@typescript/typescript6@^6.0.2"
+  "@typescript/native": "npm:typescript@^7.0.2"
   "@types/node": 24.12.0
   "@gorhom/bottom-sheet": 5.2.6
   axios: 1.13.5
@@ -134,7 +135,7 @@ catalog:
   bs58check: ^2.1.2
   class-variance-authority: 0.7.1
   clsx: 2.1.1
-  electron: 42.5.0
+  electron: 43.1.1
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
@@ -204,9 +205,10 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 3.6.0
-  "@ledgerhq/coin-stellar": 6.26.2
-  "@ledgerhq/coin-xrp": 7.25.0
+  "@ledgerhq/coin-hypercore": 0.4.3
+  "@ledgerhq/coin-module-framework": 4.0.2
+  "@ledgerhq/coin-stellar": 6.26.4
+  "@ledgerhq/coin-xrp": 7.25.2
   detox: 20.51.3
 
 overrides:

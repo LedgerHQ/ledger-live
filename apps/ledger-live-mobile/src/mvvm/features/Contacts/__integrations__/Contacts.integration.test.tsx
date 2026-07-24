@@ -2,87 +2,19 @@ import React from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { ScreenName } from "~/const";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
+import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
-
-jest.mock("@features/flow-contacts", () => {
-  const flowContacts = jest.requireActual("@features/flow-contacts");
-  const React = require("react");
-  const { Pressable, Text, View } = require("react-native");
-
-  return {
-    ...flowContacts,
-    ContactsButton: ({
-      title,
-      description,
-      newBadgeLabel,
-      onPress,
-    }: {
-      title: string;
-      description: string;
-      newBadgeLabel?: string;
-      onPress: () => void;
-    }) => (
-      <Pressable testID="my-wallet-contacts-button" onPress={onPress}>
-        <Text>{title}</Text>
-        <Text>{description}</Text>
-        {newBadgeLabel ? <Text testID="contacts-button-new-badge">{newBadgeLabel}</Text> : null}
-      </Pressable>
-    ),
-    ContactsAddContactHeaderButton: ({
-      addContactLabel,
-      onPress,
-    }: {
-      addContactLabel: string;
-      onPress: () => void;
-    }) => (
-      <Pressable
-        testID="contacts-add-contact-header"
-        accessibilityLabel={addContactLabel}
-        onPress={onPress}
-      >
-        <Text>{addContactLabel}</Text>
-      </Pressable>
-    ),
-    ContactsPage: ({
-      viewModel,
-      labels,
-      onOpenMe,
-      onAddContact,
-    }: {
-      viewModel: { me: { contactId: string; name: string; addressCount: number } };
-      labels: {
-        searchPlaceholder: string;
-        addContact: string;
-        formatAddressCount: (count: number) => string;
-      };
-      onOpenMe: (contactId: string) => void;
-      onAddContact: () => void;
-    }) => (
-      <View testID="contacts-screen">
-        <Text testID="contacts-search-input">{labels.searchPlaceholder}</Text>
-        <Pressable testID="contacts-me-item" onPress={() => onOpenMe(viewModel.me.contactId)}>
-          <Text>{viewModel.me.name}</Text>
-          <Text>{labels.formatAddressCount(viewModel.me.addressCount)}</Text>
-        </Pressable>
-        <Pressable testID="contacts-add-contact-row" onPress={onAddContact}>
-          <Text>{labels.addContact}</Text>
-        </Pressable>
-      </View>
-    ),
-  };
-});
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
 
-const mockOnNotificationsPress = jest.fn();
-const mockOnSettingsPress = jest.fn();
-
 const Stack = createNativeStackNavigator();
+const noop = () => undefined;
 
 const contactsNavigationState = {
   index: 1,
@@ -92,14 +24,51 @@ const contactsNavigationState = {
   ],
 };
 
+const contactDetailNavigationState = {
+  index: 1,
+  routes: [
+    { name: ScreenName.MyWallet, key: "my-wallet" },
+    {
+      name: ScreenName.MyWalletContactDetail,
+      key: "contact-detail",
+      params: { contactId: "contact-me" },
+    },
+  ],
+};
+
+const missingContactDetailNavigationState = {
+  index: 1,
+  routes: [
+    { name: ScreenName.MyWallet, key: "my-wallet" },
+    {
+      name: ScreenName.MyWalletContactDetail,
+      key: "contact-detail",
+      params: { contactId: "missing-contact" },
+    },
+  ],
+};
+
+const initialMissingContactDetailNavigationState = {
+  index: 0,
+  routes: [
+    {
+      name: ScreenName.MyWalletContactDetail,
+      key: "contact-detail",
+      params: { contactId: "missing-contact" },
+    },
+  ],
+};
+
+function MyWalletHomeTestScreen() {
+  return <Text testID="my-wallet-home">My Wallet</Text>;
+}
+
 function ContactsGatingTestApp() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name={ScreenName.MyWallet}
-        component={() => <Text testID="my-wallet-home">My Wallet</Text>}
-      />
+      <Stack.Screen name={ScreenName.MyWallet} component={MyWalletHomeTestScreen} />
       <Stack.Screen name={ScreenName.MyWalletContacts} component={ContactsScreen} />
+      <Stack.Screen name={ScreenName.MyWalletContactDetail} component={ContactDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -112,9 +81,9 @@ describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedViewModel.mockReturnValue({
-      onBackPress: jest.fn(),
-      onNotificationsPress: mockOnNotificationsPress,
-      onSettingsPress: mockOnSettingsPress,
+      onBackPress: noop,
+      onNotificationsPress: noop,
+      onSettingsPress: noop,
       hasUnreadNotifications: false,
     });
   });
@@ -176,6 +145,49 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should redirect away from the contact detail when lwmContacts is disabled", async () => {
+    render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: false, params: { newBadge: false } },
+      }),
+    });
+
+    expect(screen.queryByTestId("contacts-detail-screen")).toBeNull();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("my-wallet-home")).toBeVisible();
+    });
+  });
+
+  it("should redirect away from the contact detail when the contact is missing", async () => {
+    render(<ContactsGatingTestApp />, {
+      navigationInitialState: missingContactDetailNavigationState,
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    expect(screen.queryByTestId("contacts-detail-screen")).toBeNull();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("my-wallet-home")).toBeVisible();
+    });
+  });
+
+  it("should replace the first contact detail route with My Wallet when the contact is missing", async () => {
+    render(<ContactsGatingTestApp />, {
+      navigationInitialState: initialMissingContactDetailNavigationState,
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("my-wallet-home")).toBeVisible();
+    });
+  });
+
   it("should render the empty Contacts list when navigated from My Wallet", async () => {
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withFlagOverrides({
@@ -191,6 +203,113 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
       expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/0 address/);
       expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+  });
+
+  it("should provide grouped saved contacts from the Contacts slice", async () => {
+    const me = mockMeContact();
+    const contacts = [
+      me,
+      mockContact({ id: "contact-zahra", name: "Zahra" }),
+      mockContact({
+        id: "contact-anna",
+        name: "Anna",
+        addresses: [mockContactAddress(), mockContactAddress({ id: "address-polygon" })],
+      }),
+      mockContact({ id: "contact-zhanna", name: "Жанна" }),
+    ];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-saved-contact-contact-anna")).toHaveTextContent(
+        /Anna.*2 addresses/,
+      );
+      expect(screen.getByTestId("contacts-saved-contact-contact-zahra")).toHaveTextContent(/Zahra/);
+      expect(screen.getByTestId("contacts-saved-contact-contact-zhanna")).toHaveTextContent(
+        /Жанна/,
+      );
+    });
+  });
+
+  it("should wire the Mobile query to the shared Contacts search model", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+
+    const input = await screen.findByTestId("contacts-search-input");
+    await user.type(input, "Unknown");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-search-no-results")).toHaveTextContent(
+        "No contact found",
+      );
+      expect(screen.queryByTestId("contacts-me-item")).toBeNull();
+      expect(screen.queryByTestId("contacts-add-contact-row")).toBeNull();
+    });
+
+    await user.clear(input);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
+      expect(screen.getByTestId("contacts-add-contact-row")).toBeVisible();
+    });
+
+    await user.type(input, "Me");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-me-item")).toHaveTextContent(/Me/);
+      expect(screen.queryByTestId("contacts-search-no-results")).toBeNull();
+    });
+  });
+
+  it("should render the empty Me contact detail state", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-me-item"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByText("No address yet")).toBeVisible();
+      expect(screen.getByText("Save a wallet address to receive crypto.")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-add-address")).toBeEnabled();
+    });
+  });
+
+  it("should render a distinct empty state for another contact", async () => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({
+          ...state,
+          contacts: { contacts: [mockMeContact(), contact] },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-benoit"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByText("Save a wallet address to send to Benoit")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
     });
   });
 });

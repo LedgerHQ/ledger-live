@@ -7,13 +7,12 @@ jest.mock("../../getAccountNetworkInfo", () => ({
   getAccountNetworkInfo: jest.fn(),
 }));
 
-jest.mock("../../wallet-btc", () => ({
-  ...jest.requireActual("../../wallet-btc"),
+jest.mock("../../getWalletAccount", () => ({
   getWalletAccount: jest.fn(),
 }));
 
 const getAccountNetworkInfo = jest.requireMock("../../getAccountNetworkInfo").getAccountNetworkInfo;
-const getWalletAccount = jest.requireMock("../../wallet-btc").getWalletAccount;
+const getWalletAccount = jest.requireMock("../../getWalletAccount").getWalletAccount;
 
 describe("sameExcludeUTXOs", () => {
   it("returns true for identical arrays", () => {

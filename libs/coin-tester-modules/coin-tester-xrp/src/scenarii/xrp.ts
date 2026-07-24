@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import coinConfig from "@ledgerhq/coin-xrp/config";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { XRP, XRP_LOCAL_RPC, RECIPIENT, makeXrpAccount } from "../fixtures";
 import { buildXrpSigner } from "../signer";
 import { getBridges } from "../helpers";
@@ -85,7 +85,11 @@ export const scenarioXrp: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live XRP — basic Payment scenarios",
 
   setup: async () => {
-    setupMockCryptoAssetsStore();
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
+    });
 
     await spawnRippled();
 

@@ -9,7 +9,7 @@
  */
 
 import type { Spinner } from "yocto-spinner";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";

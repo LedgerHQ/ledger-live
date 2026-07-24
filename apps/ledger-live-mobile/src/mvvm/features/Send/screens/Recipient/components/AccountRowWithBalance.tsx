@@ -12,6 +12,7 @@ type AccountRowWithBalanceProps = Readonly<{
   showSendTo?: boolean;
   disabled?: boolean;
   customName?: string;
+  testID?: string;
 }>;
 
 export function AccountRowWithBalance({
@@ -20,6 +21,7 @@ export function AccountRowWithBalance({
   showSendTo = false,
   disabled = false,
   customName,
+  testID,
 }: AccountRowWithBalanceProps) {
   const { t } = useTranslation();
   const accountName = useMaybeAccountName(account);
@@ -38,6 +40,7 @@ export function AccountRowWithBalance({
       showSendTo={showSendTo}
       isLedgerAccount
       disabled={disabled}
+      testID={testID}
     />
   );
 }

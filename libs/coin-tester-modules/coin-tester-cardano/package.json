@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -60,7 +60,6 @@
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",

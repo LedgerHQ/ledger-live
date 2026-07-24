@@ -1,5 +1,17 @@
 # @domain/entity-currency-fiat
 
+## 0.3.0
+
+### Minor Changes
+
+- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-fiat`: `listFiatCurrencies`, `hasFiatCurrencyTicker`, and `findFiatCurrencyByTicker` (returns `undefined` on miss). Rename the previous `getFiatCurrencyByTicker` (find-semantics) to `findFiatCurrencyByTicker`; the new `getFiatCurrencyByTicker` now throws on a miss, matching the legacy `@ledgerhq/cryptoassets` semantics.
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-fiat`: `listFiatCurrencies`, `hasFiatCurrencyTicker`, and `findFiatCurrencyByTicker` (returns `undefined` on miss). Rename the previous `getFiatCurrencyByTicker` (find-semantics) to `findFiatCurrencyByTicker`; the new `getFiatCurrencyByTicker` now throws on a miss, matching the legacy `@ledgerhq/cryptoassets` semantics.
+
 ## 0.2.0
 
 ### Minor Changes

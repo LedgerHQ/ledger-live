@@ -76,6 +76,8 @@ export function useNetworkFees({
   return useMemo(
     () => ({
       feesRowLabel: t("fees.networkFees"),
+      // A selected preset's fiat value takes precedence here. Coins using `showFeeCurrencyAmount`
+      // have no fee presets today, so this never drops the combined value; revisit if that changes.
       feesRowValue:
         core.selectedPresetFiatValue ??
         (core.displayFeesValue === "-" ? "--" : core.displayFeesValue),

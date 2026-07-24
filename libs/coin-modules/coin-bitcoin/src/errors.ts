@@ -1,12 +1,12 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
+// AccountNeedResync and RbfBuildError now live in @ledgerhq/wallet-btc; re-exported
+// here for backward compatibility with existing @ledgerhq/coin-bitcoin consumers.
+export { AccountNeedResync, RbfBuildError } from "@ledgerhq/wallet-btc/errors";
 
 export const TaprootNotActivated = createCustomErrorClass("TaprootNotActivated");
 
 export const BitcoinInfrastructureError = createCustomErrorClass("InfrastructureError");
-
-export const RbfBuildError = createCustomErrorClass("RbfBuildError");
 
 export const FeeTooLow = createCustomErrorClass("FeeTooLow");
 

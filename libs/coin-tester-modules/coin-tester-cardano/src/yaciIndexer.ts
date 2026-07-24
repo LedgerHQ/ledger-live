@@ -53,8 +53,20 @@ export function resetRegisteredAddresses(): void {
 }
 
 async function yaciGet<T>(path: string): Promise<T | null> {
-  const res = await fetch(`${YACI_STORE_API}${path}`);
-  if (!res.ok) return null;
+  // AbortSignal bounds every devnet read so a hung socket can't stall the run. A transient read failure
+  // (timeout / network) is "not ready yet" → null, so callers' `?? fallback` + the sync retry keep
+  // polling instead of hard-failing (matches isStoreUp/pollUtxos). A response that arrives is parsed
+  // as-is — a bad shape still surfaces.
+  let res: Response;
+  try {
+    res = await fetch(`${YACI_STORE_API}${path}`, { signal: AbortSignal.timeout(2_000) });
+  } catch {
+    return null;
+  }
+  if (!res.ok) {
+    await res.body?.cancel(); // release the socket — undici won't reuse a connection with an unread body
+    return null;
+  }
   return (await res.json()) as T;
 }
 
@@ -118,6 +130,8 @@ export function initYaciIndexer(): () => void {
         method: "POST",
         headers: { "Content-Type": "application/cbor" },
         body: Buffer.from(transaction, "hex"),
+        // Bound the submit too — a hung socket here would stall the run (a write, so a looser ceiling).
+        signal: AbortSignal.timeout(10_000),
       });
       if (!res.ok) {
         return HttpResponse.json({ error: await res.text() }, { status: res.status });

@@ -18,7 +18,6 @@ export function AssetSuggestionsSectionView({
   navigateToAsset,
   onSeeAll,
   locale,
-  counterCurrency,
 }: Readonly<AssetSuggestionsSectionViewProps>) {
   if (!isLoading && data.length === 0) {
     return null;
@@ -44,7 +43,6 @@ export function AssetSuggestionsSectionView({
             <AssetSuggestionRow
               key={currency.id}
               currency={currency}
-              counterCurrency={counterCurrency}
               locale={locale}
               testIdPrefix={testIdPrefix}
               onClick={navigateToAsset}

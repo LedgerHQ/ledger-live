@@ -1,11 +1,13 @@
 import BigNumber from "bignumber.js";
 import { InvalidTransactionError } from "@ledgerhq/errors";
 import { broadcast } from "./broadcast";
-import wallet, { getWalletAccount } from "./wallet-btc";
+import wallet from "@ledgerhq/wallet-btc/index";
+import { getWalletAccount } from "./getWalletAccount";
 import { registerChainAdapter } from "./chain-adapters/registry";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 
-jest.mock("./wallet-btc");
+jest.mock("@ledgerhq/wallet-btc/index");
+jest.mock("./getWalletAccount");
 
 describe("broadcast", () => {
   const mockAccount = {

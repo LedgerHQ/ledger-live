@@ -170,6 +170,24 @@ export const mockedAccountList = [
 export const expectedCurrencyList = [
   {
     type: "CryptoCurrency",
+    id: "aleo",
+    ticker: "ALEO",
+    name: "Aleo",
+    family: "aleo",
+    color: "#121212",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "aleo_testnet",
+    ticker: "ALEO",
+    name: "Aleo (Testnet)",
+    family: "aleo",
+    color: "#121212",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
     id: "algorand",
     ticker: "ALGO",
     name: "Algorand",
@@ -373,15 +391,6 @@ export const expectedCurrencyList = [
     name: "SecretNetwork",
     family: "cosmos",
     color: "#a3b0bd",
-    decimals: 6,
-  },
-  {
-    type: "CryptoCurrency",
-    id: "umee",
-    ticker: "UMEE",
-    name: "Umee",
-    family: "cosmos",
-    color: "#bb90f8",
     decimals: 6,
   },
   {

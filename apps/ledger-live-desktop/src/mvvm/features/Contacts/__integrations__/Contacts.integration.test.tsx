@@ -1,5 +1,6 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
+import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import { render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
@@ -35,6 +36,18 @@ function renderContactsButton(initialState: ReturnType<typeof withFlagOverrides>
     </ContextMenuContext.Provider>,
     { initialState },
   );
+}
+
+function contactsPageInitialState(extra: Record<string, unknown> = {}) {
+  return {
+    ...withFlagOverrides({
+      lwdContacts: { enabled: true, params: { newBadge: false } },
+    }),
+    settings: {
+      hasDismissedContactsFeatureIntroduction: true,
+    },
+    ...extra,
+  };
 }
 
 describe("Contacts integration", () => {
@@ -117,9 +130,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: withFlagOverrides({
-          lwdContacts: { enabled: true, params: { newBadge: false } },
-        }),
+        initialState: contactsPageInitialState(),
       },
     );
 
@@ -127,6 +138,9 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-page-header")).toBeVisible();
     expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    expect(screen.queryByTestId("contacts-ledger-sync-list-loading")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-ledger-sync-detail-loading")).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Contacts" })).toBeVisible();
     expect(screen.getByPlaceholderText("Search contact")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
@@ -147,16 +161,158 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: {
-          ...withFlagOverrides({
-            lwdContacts: { enabled: true, params: { newBadge: false } },
-          }),
-          contacts: { contacts: [] },
-        },
+        initialState: contactsPageInitialState({ contacts: { contacts: [] } }),
       },
     );
 
     expect(screen.getByTestId("contacts-page")).toBeVisible();
     expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+  });
+
+  it("should render saved contacts in alphabetical order when contacts exist", () => {
+    render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-page")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-A")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-B")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-O")).toBeVisible();
+
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
+    expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
+  });
+
+  it("should save a contact from the add-contact CTA", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: withFlagOverrides({
+          lwdContacts: { enabled: true, params: { newBadge: false } },
+        }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+
+    expect(screen.getByTestId("contacts-add-contact-dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
+
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
+
+    await user.click(screen.getByTestId("contacts-add-contact-save"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+      expect(screen.getByText("Ada")).toBeVisible();
+    });
+  });
+
+  it("should filter saved contacts when searching", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.type(screen.getByTestId("contacts-list-search"), "Ben");
+
+    expect(screen.getByTestId("contacts-saved-row-contact-ben")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("contacts-saved-row-contact-olive")).not.toBeInTheDocument();
+  });
+
+  it("should render the no-results state when the search query has no match", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.type(screen.getByTestId("contacts-list-search"), "unknown");
+
+    expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
+    expect(screen.getByText("No contact found")).toBeVisible();
+    expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+  });
+
+  it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {
+    const { user, store } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          settings: { hasDismissedContactsFeatureIntroduction: false },
+        }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-feature-introduction-primary"));
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(screen.queryByTestId("contacts-feature-introduction-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+  });
+
+  it("should defer the feature introduction on Maybe later without persisting dismissal", async () => {
+    mockNavigate.mockClear();
+
+    const { user, store } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          settings: { hasDismissedContactsFeatureIntroduction: false },
+        }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-feature-introduction-secondary"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
   });
 });

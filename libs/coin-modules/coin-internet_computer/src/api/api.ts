@@ -1,17 +1,11 @@
-import type { RequestId } from "@dfinity/agent";
-import { log } from "@ledgerhq/logs";
-import {
-  ledgerIdlFactory,
-  indexIdlFactory,
-  getCanisterIdlFunc,
-  Principal,
-  encodeCanisterIdlFunc,
-  decodeCanisterIdlFunc,
+import { Certificate, Cbor, lookupResultToBuffer, type RequestId } from "@dfinity/agent";
+import type {
   GetAccountIdentifierTransactionsResponse,
   TransactionWithId,
-} from "@zondax/ledger-live-icp";
-import { Certificate, Cbor, getAgent, lookupResultToBuffer } from "@zondax/ledger-live-icp/agent";
-import { fromNullable } from "@zondax/ledger-live-icp/utils";
+} from "@dfinity/ledger-icp";
+import { Principal } from "@dfinity/principal";
+import { fromNullable } from "@dfinity/utils";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
@@ -20,6 +14,14 @@ import {
   MAINNET_LEDGER_CANISTER_ID,
   ICP_NETWORK_URL,
 } from "../consts";
+import { getAgent } from "../network/agent";
+import {
+  decodeCanisterIdlFunc,
+  encodeCanisterIdlFunc,
+  getCanisterIdlFunc,
+  indexIdlFactory,
+  ledgerIdlFactory,
+} from "../network/candid";
 
 function toArrayBuffer(view: ArrayBuffer | Uint8Array): ArrayBuffer {
   if (view instanceof ArrayBuffer) {

@@ -2,13 +2,6 @@ import { useEffect, useRef } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
@@ -87,27 +80,27 @@ export const useTrackSyncFlow = ({
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof UserRefusedAllowManager) {
+    if (error?.name === "UserRefusedAllowManager") {
       // user refused secure channel
       track("Secure Channel refused", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof CantOpenDevice) {
+    if (error?.name === "CantOpenDevice") {
       // device disconnected during ledger synch
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof TransportError) {
+    if (error?.name === "TransportError") {
       // transport error during ledger synch
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
-    if (isLocked || error instanceof LockedDeviceError) {
+    if (isLocked || error?.name === "LockedDeviceError") {
       // device locked during ledger synch
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
 
-    if (previousOpenAppRequested && error instanceof UserRefusedOnDevice) {
+    if (previousOpenAppRequested && error?.name === "UserRefusedOnDevice") {
       // user refused to open Ledger Sync app
       track("User refused to open Ledger Sync app", defaultPayload, isTrackingEnabled);
     }

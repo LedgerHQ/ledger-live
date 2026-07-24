@@ -1,5 +1,8 @@
 # live-dmk-speculos
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 DMK transport adapter for Speculos, Ledger's hardware wallet emulator. Enables automated tests and CI pipelines to run full device-interaction flows without physical Ledger hardware by connecting the Device Management Kit to a running Speculos instance over HTTP/WebSocket.
 
 ## What it does

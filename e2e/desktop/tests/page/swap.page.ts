@@ -1,6 +1,6 @@
 import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
-import { expect } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
@@ -88,6 +88,17 @@ export class SwapPage extends WebViewAppPage {
   private selectSpecificOperationAmountTo = (swapId: string) =>
     this.page.getByTestId(`swap-history-to-amount-${swapId}`);
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
+
+  private async waitForSelectorPopulated(webview: Page, testId: string, timeout: number) {
+    await webview.waitForFunction(
+      selectorTestId => {
+        const el = document.querySelector(`[data-testid='${selectorTestId}']`);
+        return Boolean(el?.textContent && el.textContent.trim().toLowerCase() !== "choose asset");
+      },
+      testId,
+      { timeout },
+    );
+  }
 
   async sendMax() {
     await this.maxSpendableToggle.click();
@@ -371,46 +382,30 @@ export class SwapPage extends WebViewAppPage {
   @step("Check if $0 asset is already selected")
   async checkIfFromAssetIsAlreadySelected(asset: string): Promise<boolean> {
     const webview = await this.getWebView();
-    const selector = webview.getByTestId(this.fromAccountCoinSelector);
 
     try {
-      await webview.waitForFunction(
-        selectorTestId => {
-          const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-          return el && el.textContent && el.textContent !== "Choose asset";
-        },
-        this.fromAccountCoinSelector,
-        { timeout: 5_000 },
-      );
+      await this.waitForSelectorPopulated(webview, this.fromAccountCoinSelector, 5_000);
     } catch {
       // Page context closed or from-selector not yet pre-populated; caller will proceed to manual selection
       return false;
     }
 
-    const text = await selector.textContent();
+    const text = await webview.getByTestId(this.fromAccountCoinSelector).textContent();
     return text?.includes(asset) ?? false;
   }
 
   @step("Check if $0 asset is already selected")
   async checkIfToAssetIsAlreadySelected(asset: string): Promise<boolean> {
     const webview = await this.getWebView();
-    const selector = webview.getByTestId(this.toAccountCoinSelector);
 
     try {
-      await webview.waitForFunction(
-        selectorTestId => {
-          const el = document.querySelector(`[data-testid='${selectorTestId}']`);
-          return el && el.textContent && el.textContent !== "Choose asset";
-        },
-        this.toAccountCoinSelector,
-        { timeout: 5_000 },
-      );
+      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, 5_000);
     } catch {
       // to-selector was not pre-populated; caller will proceed to manual selection
       return false;
     }
 
-    const text = await selector.textContent();
+    const text = await webview.getByTestId(this.toAccountCoinSelector).textContent();
     return text?.includes(asset) ?? false;
   }
 
@@ -463,8 +458,32 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.fromAccountCoinSelector).click();
   }
 
+  @step("Wait for the to-account coin selector to be populated")
+  async waitForToAssetSelectorReady(timeout = 40_000) {
+    const webview = await this.getWebView();
+    try {
+      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, timeout);
+    } catch (error) {
+      // The embedded swap widget can remount (new webview instance) once its default currency
+      // resolves; if that happens mid-poll, retry once against the fresh webview instead of
+      // failing on the now-stale reference.
+      if (!webview.isClosed()) {
+        throw error;
+      }
+      this._webviewPage = undefined;
+      await this.waitForSelectorPopulated(
+        await this.getWebView(),
+        this.toAccountCoinSelector,
+        timeout,
+      );
+    }
+  }
+
   @step("Check currency to swap to contains $0")
   async checkAssetToContains(expected: string) {
+    if (expected.toLowerCase() !== "choose asset") {
+      await this.waitForToAssetSelectorReady();
+    }
     const webview = await this.getWebView();
     await expect(webview.getByTestId(this.toAccountCoinSelector)).toContainText(expected);
   }

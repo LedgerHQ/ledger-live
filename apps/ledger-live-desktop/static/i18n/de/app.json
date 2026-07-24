@@ -111,6 +111,7 @@
     "stop" : "Stoppen",
     "updateNow" : "Jetzt aktualisieren",
     "close" : "Schließen",
+    "ok" : "OK",
     "eastern" : "Östlich",
     "western" : "Westlich",
     "reverify" : "Erneut bestätigen",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "Card",
+    "paytab" : "Bezahlen",
     "menu" : "Menü",
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "Validator-Gruppe",
           "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
-          "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+          "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
           "totalVotes" : "Stimmen insgesamt",
           "commission" : "Provision"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "Auszahlbar",
       "statusUpdateNotice" : "Der Status der Delegation wird bei der Bestätigung der Transaktion aktualisiert.",
       "ledgerByFigmentTC" : "Ledger laut Figment AGBs",
-      "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+      "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
       "emptyState" : {
         "description" : "Du kannst SOL-Belohnungen verdienen, indem du deine Vermögenswerte delegierst.",
         "info" : "So funktioniert Delegation",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
-            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
             "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
-            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
             "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "Validatoren",
-            "ledgerByChorusOneTC" : "AGB zu Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Ledger laut Bitwise AGBs",
             "ledgerByFigmentTC" : "Ledger laut Figment AGBs"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "Stake deine XTZ"
-      }
+      },
+      "pendingUnstakeWarning" : "Du kannst den Validator jetzt wechseln, kannst aber erst mit dem neuen Staking beginnen, wenn das ausstehende Staking bei deinem aktuellen Validator in ca. 4 Tagen abgeschlossen ist."
     },
     "staking" : {
       "header" : "Staking",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "Opt-in-Zustimmung für Analysen (QA)",
         "rowDesc" : "Überprüfe die gespeicherte Version der Datenschutzeinwilligung und das Zustimmungsdatum; simuliere veraltete Zustände für das Zustimmungsfenster der Portfolioanalyse."
       },
+      "devTools" : {
+        "rowTitle" : "Entwicklertools",
+        "rowDesc" : "Öffne die DevTools-Shell (Feature Flag und DevTools-Panel)."
+      },
       "brazeTools" : {
         "title" : "Braze-Tools",
         "description" : "Lokale Braze-Karten erstellen",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "Drawer öffnen",
         "showJson" : "JSON anzeigen",
         "hideJson" : "JSON ausblenden"
+      },
+      "contactsDevTool" : {
+        "title" : "Entwicklungstool für Kontakte",
+        "description" : "Schaltet Rollout-Einstellungen für Kontakte für Desktop ein/aus (Feature Flag lwdContacts).",
+        "mainFeatureToggle" : "Umschalter für die Hauptfunktion",
+        "featureParameters" : "Funktionsparameter",
+        "eligibleAddressFamilies" : "Zulässige Adressfamilien",
+        "customFamiliesHint" : "Kommagetrennte Familien für benutzerdefinierte Multi-Familien-Tests.",
+        "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
+        "applyFamilies" : "Anwenden",
+        "resetOverride" : "Überschreiben zurücksetzen"
       },
       "cryptoAssetsList" : {
         "title" : "Crypto Assets List (CAL)",
@@ -6690,6 +6708,10 @@
       "title" : "Konto wird nicht unterstützt.",
       "description" : "Bitte versuche es noch einmal oder wende dich an den Kundenservice ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Konto muss erneut hinzugefügt werden",
+      "description" : "Ledger Wallet konnte den öffentlichen Schlüssel dieses Kontos nicht abrufen. Bitte entferne das Konto und füge es erneut hinzu, um fortzufahren"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "Unzureichender Staking-Kontostand"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "Das Beenden des Stakings bei deinem vorherigen Validator muss zuerst abgeschlossen sein."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Bitte leere zuerst alle Unterkonten"
@@ -8594,6 +8619,17 @@
       "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein."
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Mehr anzeigen. Weniger tippen. Spare {{discount}}%",
+      "subtitle" : "Genieße einen größeren Bildschirm, eine smartere Transaktionsprüfung, erweiterten Schutz und exklusive {{discount}}% Rabatt."
+    },
+    "optedOut" : {
+      "title" : "Betrug erkennen. Jedes Detail ansehen",
+      "subtitle" : "Alles übersichtlich auf einem Touchscreen-Signer prüfen und Betrug dank fortschrittlicher Sicherheitsprüfungen erkennen."
+    },
+    "cta" : "Touchscreen Signer entdecken"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Wähle die Konten aus, die du hinzufügen möchtest",
@@ -9167,7 +9203,8 @@
       "more" : "Optionen für den Transaktionsverlauf",
       "hideDustTransactions" : "Blende Staub (Dust)-Transaktionen aus",
       "showDustTransactions" : "Zeige Staub (Dust)-Transaktionen an",
-      "dustTransactionsDescription" : "Transaktionen unter {{threshold}} werden ausgeblendet."
+      "dustTransactionsDescription" : "Transaktionen unter {{threshold}} werden ausgeblendet.",
+      "dustTransactionsDisplayedDescription" : "Transaktionen unter {{threshold}} werden angezeigt."
     },
     "exportDialog" : {
       "title" : "Transaktionsverlauf exportieren",
@@ -9225,7 +9262,22 @@
       "title" : "My Ledger",
       "description" : "Verwalte dein Ledger-Gerät"
     },
+    "contacts" : {
+      "title" : "Kontakte",
+      "description" : "Kontakte verwalten"
+    },
     "explore" : "Alle Ledger-Geräte entdecken"
+  },
+  "contacts" : {
+    "title" : "Kontakte",
+    "addContact" : "Kontakt hinzufügen",
+    "searchPlaceholder" : "Kontakt suchen",
+    "me" : {
+      "name" : "Ich",
+      "addressCount_zero" : "0 Adresse",
+      "addressCount_one" : "{{count}} Adresse",
+      "addressCount_other" : "{{count}} Adressen"
+    }
   },
   "assetDetails" : {
     "header" : {

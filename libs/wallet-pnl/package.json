@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-pnl",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Ledger Live wallet-pnl module – per-asset and portfolio Profit & Loss using Average Cost Basis (ACB)",
   "keywords": [
     "Ledger"
@@ -13,15 +13,14 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/wallet-pnl",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/cryptoassets": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:*",
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",

@@ -4,7 +4,6 @@ import { mapDadaMarketToDisplayData } from "../mapDadaMarketToDisplayData";
 const usd = { name: "US Dollar", code: "USD", magnitude: 2 } as Unit;
 const t = ((key: string) => key) as never;
 const options = {
-  counterCurrency: "usd",
   counterValueUnit: usd,
   usdToFiatRate: 1,
   locale: "en",

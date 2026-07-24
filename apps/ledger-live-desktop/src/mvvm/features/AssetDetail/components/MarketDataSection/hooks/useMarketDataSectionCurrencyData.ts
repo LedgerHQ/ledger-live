@@ -1,4 +1,5 @@
 import { useSelector } from "LLD/hooks/redux";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
@@ -8,6 +9,7 @@ export type MarketDataSectionCurrencyData = Readonly<{
   data?: MarketCurrencyData;
   showSkeleton: boolean;
   counterCurrency: string;
+  counterValueUnit: Unit;
   locale: string;
   ledgerCurrencyId?: string;
 }>;
@@ -17,7 +19,9 @@ export function useMarketDataSectionCurrencyData(
   isDistributionLoading: boolean,
   ledgerCurrencyId?: string,
 ): MarketDataSectionCurrencyData {
-  const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
+  const counterValueUnit = counterValueCurrency.units[0];
   const locale = useSelector(localeSelector);
   const hasData = marketData.marketCurrencyData != null;
 
@@ -29,6 +33,7 @@ export function useMarketDataSectionCurrencyData(
       hasData,
     ),
     counterCurrency,
+    counterValueUnit,
     locale,
     ledgerCurrencyId,
   };

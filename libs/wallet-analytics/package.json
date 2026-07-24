@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-analytics",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Shared Analytics chart utilities for Ledger Wallet",
   "keywords": [
@@ -25,7 +25,8 @@
     "@ledgerhq/types-live": "workspace:*"
   },
   "devDependencies": {
-    "@ledgerhq/cryptoassets": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "@swc/core": "catalog:",

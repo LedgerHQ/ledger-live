@@ -4,12 +4,8 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { Account } from "@ledgerhq/types-live";
-import { getReduxStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
-import {
-  extractTokensFromState,
-  PERSISTENCE_VERSION,
-  type PersistedCAL,
-} from "@ledgerhq/cryptoassets/cal-client/persistence";
+import { extractPersistedCALFromState, type PersistedCAL } from "@domain/api-currency-token";
+import { calStore } from "../../live-common-setup";
 
 export type LiveDataJobOpts = ScanCommonOpts &
   Partial<{
@@ -63,11 +59,7 @@ export default {
         );
         appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
 
-        // Extract persisted tokens from the RTK Query cache
-        const reduxStore = getReduxStore();
-        const state = reduxStore.getState();
-        const tokens = extractTokensFromState(state);
-        const persistedTokens: PersistedCAL = { version: PERSISTENCE_VERSION, tokens };
+        const persistedTokens: PersistedCAL = extractPersistedCALFromState(calStore.getState());
         appjsondata.data.cryptoAssets = persistedTokens;
 
         if (opts.appjson) {

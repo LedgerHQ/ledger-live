@@ -90,6 +90,7 @@ function buildCryptoCurrenciesStore(currencies: CryptoCurrency[]): CryptoCurrenc
  * Uses globalThis to ensure a single shared reference across all module instances,
  * which is critical when coin-modules are lazy-loaded and may resolve to separate
  * module copies.
+ * @deprecated Use @domain/entity-currency-crypto.
  */
 export function setCryptoCurrenciesStore(
   currencies: CryptoCurrency[],

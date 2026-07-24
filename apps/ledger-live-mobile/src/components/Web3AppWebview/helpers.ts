@@ -721,6 +721,7 @@ export function useUiHook({
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
+          allowNonOnboardedDevice: true,
           onSuccess,
           onClose: onCancel,
         });
@@ -728,6 +729,7 @@ export function useUiHook({
       "device.select": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
+          allowNonOnboardedDevice: true,
           onSuccess,
           onClose: onCancel,
         });

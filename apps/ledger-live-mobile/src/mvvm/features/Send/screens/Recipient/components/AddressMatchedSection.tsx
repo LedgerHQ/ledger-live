@@ -14,6 +14,7 @@ import {
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import React, { useCallback } from "react";
+import { Keyboard } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
 import { AddressListItem } from "./AddressListItem";
@@ -40,6 +41,7 @@ export function AddressMatchedSection({
   const formatRelativeDate = useFormatRelativeDate();
   const helpSheetRef = useBottomSheetRef();
   const openHelpSheet = useCallback(() => {
+    Keyboard.dismiss();
     helpSheetRef.current?.present();
   }, [helpSheetRef]);
 
@@ -78,7 +80,7 @@ export function AddressMatchedSection({
   };
 
   return (
-    <Box lx={{ flex: 1, flexDirection: "column" }}>
+    <Box lx={{ flexDirection: "column" }}>
       <Subheader lx={{ marginBottom: "s12", marginHorizontal: "s8" }}>
         <SubheaderRow>
           <SubheaderTitle>{t("send.newSendFlow.addressMatched")}</SubheaderTitle>
@@ -94,6 +96,7 @@ export function AddressMatchedSection({
               onSelect={() => onSelect(account.freshAddress)}
               showSendTo
               disabled={isSanctioned || hasBridgeError}
+              testID="new-send-flow-address-confirm"
             />
           ))}
 
@@ -106,6 +109,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -123,6 +127,7 @@ export function AddressMatchedSection({
             }
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -135,6 +140,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(searchValue)}
             showSendTo
             disabled={false}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -158,7 +164,7 @@ export function AddressMatchedSection({
               appearance="info"
               description={t("send.newSendFlow.firstInteraction.description")}
               primaryAction={
-                <Button appearance="transparent" size="sm" onPress={openHelpSheet}>
+                <Button appearance="gray" size="sm" onPress={openHelpSheet}>
                   {t("send.newSendFlow.firstInteraction.learnMore")}
                 </Button>
               }

@@ -7,22 +7,18 @@ jest.mock("LLD/components/TopBar", () => ({
   default: () => <div data-testid="wallet40-topbar">Wallet40TopBar</div>,
 }));
 
-// Mock components that have complex dependencies
-jest.mock("~/renderer/screens/dashboard/ActionContentCards", () => ({
-  __esModule: true,
-  default: () => null,
-}));
-
 jest.mock("LLD/components/RightPanel", () => ({
   __esModule: true,
   default: () => null,
 }));
 
 describe("PageView - TopBar", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   const defaultProps = {
     pageScrollerRef: jest.fn(),
-    shouldDisplayBrazePlacement: false,
-    pathname: "/dashboard",
     shouldRenderRightPanel: false,
   };
 

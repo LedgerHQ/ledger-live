@@ -1,4 +1,4 @@
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { Operation, CryptoAssetsStore } from "@ledgerhq/types-live";
 import { fetchFullTxs } from "../../network/index";
 import { mapTxToOps } from "./misc";

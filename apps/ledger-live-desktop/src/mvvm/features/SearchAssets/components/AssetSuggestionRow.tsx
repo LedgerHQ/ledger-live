@@ -13,6 +13,8 @@ import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/marke
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
+import { useSelector } from "LLD/hooks/redux";
+import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 
 export type AssetSuggestionRowDensity = "compact" | "default";
 
@@ -23,7 +25,6 @@ const ICON_SIZE = {
 
 type AssetSuggestionRowProps = {
   currency: MarketCurrencyData;
-  counterCurrency: string;
   locale: string;
   testIdPrefix: string;
   onClick: (currencyId: string, marketState?: AssetNavigationMarketState) => void;
@@ -32,26 +33,27 @@ type AssetSuggestionRowProps = {
 
 export function AssetSuggestionRow({
   currency,
-  counterCurrency,
   locale,
   testIdPrefix,
   onClick,
   density = "compact",
 }: Readonly<AssetSuggestionRowProps>) {
+  const counterValueUnit = useSelector(counterValueCurrencySelector).units[0];
+  const resolvedLocale = useSelector(localeSelector);
   const priceChange = currency.priceChangePercentage[KeysPriceChange.day];
   const isExpanded = density === "default";
   const iconSize = ICON_SIZE[density];
 
   const formattedPrice = counterValueFormatter({
     value: roundFiatPrice(currency.price ?? 0),
-    currency: counterCurrency,
-    locale,
+    unit: counterValueUnit,
+    locale: resolvedLocale || locale,
   });
 
   const trailing = (
     <>
       <ListItemTitle>{formattedPrice}</ListItemTitle>
-      {priceChange && (
+      {priceChange !== undefined && (
         <Trend
           value={priceChange}
           size={isExpanded ? "sm" : "md"}

@@ -27,7 +27,6 @@ const BOLOS_INITIALIZATION_INPUT: InitializationInput = {
   appName: "BOLOS",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: true,
 };
 
 const ETHEREUM_INITIALIZATION_INPUT: InitializationInput = {

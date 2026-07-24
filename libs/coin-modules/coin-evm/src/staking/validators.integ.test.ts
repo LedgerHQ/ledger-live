@@ -25,6 +25,17 @@ describe("getValidators", () => {
         },
       } as EvmCoinConfig,
     ],
+    [
+      "somnia",
+      {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://somnia-rpc.publicnode.com",
+          },
+        },
+      } as EvmCoinConfig,
+    ],
   ])("fetches validators on '%s'", async (currencyId, config) => {
     setCoinConfig(() => config);
 

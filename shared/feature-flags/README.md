@@ -1,5 +1,8 @@
 # @shared/feature-flags
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Shared feature flags package for Ledger Live. Provides a **Zod-first flag registry**, an RTK slice with resolution logic, and typed selectors — replacing the scattered definitions across `@ledgerhq/types-live`, `@ledgerhq/live-common`, and each app's settings reducer.
 
 ## Quick start

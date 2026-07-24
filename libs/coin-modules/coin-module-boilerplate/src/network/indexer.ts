@@ -7,7 +7,7 @@ export const getTransactions = async (
   address: string,
   params: {
     minHeight: number;
-    cursor?: Cursor;
+    cursor?: Cursor | undefined;
     limit?: number;
     order?: "asc" | "desc";
   },

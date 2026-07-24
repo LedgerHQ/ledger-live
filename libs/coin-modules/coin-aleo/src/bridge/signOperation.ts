@@ -124,7 +124,7 @@ async function buildFeeAuthorization({
   const { account, transaction, config, baseFee, priorityFee, viewKey } = params;
 
   const craftedFeeRequest = await craftTransaction({
-    currency: account.currency,
+    config,
     viewKey,
     feeConfiguration: null,
     txIntent: createFeeTransactionIntent({
@@ -144,7 +144,7 @@ async function buildFeeAuthorization({
   onDeviceSigned();
 
   const result = await sdkClient.createAuthorization({
-    currency: account.currency,
+    config,
     request: feeRequest,
     signatures: config.recordPickingStrategy === "manual" ? signature : [signature],
     viewKey,
@@ -196,7 +196,7 @@ async function executeSigningFlow({
 
   // create authorization for main transaction
   const authorization = await sdkClient.createAuthorization({
-    currency: account.currency,
+    config,
     request,
     signatures,
     viewKey,
@@ -257,7 +257,7 @@ export const buildSignOperation =
             if (o.closed) return;
 
             const craftedRequest = await craftTransaction({
-              currency: account.currency,
+              config,
               viewKey,
               feeConfiguration,
               txIntent,

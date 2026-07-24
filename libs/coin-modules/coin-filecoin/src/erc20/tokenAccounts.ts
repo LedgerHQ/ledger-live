@@ -1,4 +1,4 @@
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { RecipientRequired } from "@ledgerhq/errors";
 import {
   emptyHistoryCache,

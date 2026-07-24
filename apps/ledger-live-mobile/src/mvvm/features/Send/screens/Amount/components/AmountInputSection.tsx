@@ -49,6 +49,7 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
     <View style={styles.container}>
       <View style={styles.inputRow}>
         <AmountInput
+          testID="amount-input"
           value={viewModel.value}
           onChangeText={viewModel.onChangeText}
           currencyText={viewModel.currencyText}

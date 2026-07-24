@@ -1,5 +1,8 @@
 # @domain/entity-currency-fiat
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+
 Zod-first canonical schema and static registry for the `FiatCurrency` domain entity.
 
 ## Responsibility
@@ -26,7 +29,7 @@ parity test compares on that.
 
 | Package | Why |
 |---|---|
-| `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
+| `@shared/schema-primitives` | `FiatCurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 | `@reduxjs/toolkit` | `createSlice` for `supportedFiatsSlice` |
 
@@ -67,7 +70,7 @@ const usd = fiat({
 | Field                 | Type            | Required | Description                                      |
 | --------------------- | --------------- | -------- | ------------------------------------------------ |
 | `type`                | `"FiatCurrency"` | yes     | Discriminant literal                             |
-| `id`                  | `CurrencyId`    | yes      | Unique opaque id (e.g. `"usd"`, `"eur"`)         |
+| `id`                  | `FiatCurrencyId`    | yes      | Unique opaque id (e.g. `"usd"`, `"eur"`)         |
 | `name`                | `string`        | yes      | Human-readable name (e.g. `"US Dollar"`)         |
 | `ticker`              | `string`        | yes      | ISO 4217 ticker (e.g. `"USD"`, `"EUR"`)          |
 | `units`               | `Unit[]`        | yes      | Display units — at least one required            |

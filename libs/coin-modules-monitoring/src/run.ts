@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
-import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { buildStandaloneCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import {
   type CryptoCurrency,
   getCryptoCurrencyById,
@@ -9,9 +9,8 @@ import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { firstValueFrom, reduce } from "rxjs";
 import {
   decodeAccountId,
@@ -158,16 +157,12 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
   LiveConfig.setConfig(liveConfig);
 
-  // Setup CAL client store for monitoring (automatically set as global store)
-  setupCalClientStore();
-
-  // Wire wallet-framework ports to the same cryptoassets global store
-  setFrameworkCryptoAssetsStore({
-    findTokenById: id => getCryptoAssetsStore().findTokenById(id),
-    findTokenByAddressInCurrency: (addr, currencyId) =>
-      getCryptoAssetsStore().findTokenByAddressInCurrency(addr, currencyId),
-    getTokensSyncHash: currencyId => getCryptoAssetsStore().getTokensSyncHash(currencyId),
-  });
+  setCryptoAssetsStore(
+    buildStandaloneCryptoAssetsStore({
+      calServiceUrl: process.env.CAL_SERVICE_URL ?? "https://global.api.prd.ledger.com/cal",
+      ledgerClientVersion: process.env.LEDGER_CLIENT_VERSION ?? "monitoring",
+    }),
+  );
   setCurrenciesResolver({
     getCryptoCurrencyById,
     findCryptoCurrencyById,

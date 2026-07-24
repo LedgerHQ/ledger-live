@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-cosmos
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the testing infrastructure for Cosmos-SDK chains in Ledger
 Live, reusing the cosmos coin module end to end against local devnets. Two
 scenarios run:

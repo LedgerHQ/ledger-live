@@ -1,5 +1,8 @@
 # live-countervalues-react
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-countervalues-react` is the React layer over `@ledgerhq/live-countervalues`. It provides a context provider and hooks so that components can subscribe to fiat countervalue data without managing rate-fetching or caching themselves.
 
 ## What it does

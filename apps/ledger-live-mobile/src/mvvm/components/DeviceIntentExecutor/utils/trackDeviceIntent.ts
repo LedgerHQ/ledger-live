@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
-import type { SourceFlow } from "./SourceFlowContext";
+import type { DeviceIntentTrackingProperties, SourceFlow } from "./DeviceIntentTrackingContext";
 
 export const PAGE_CONNECT_DEVICE = {
   NoKnownDevice: "Connect Device - No Known Device",
@@ -128,16 +128,9 @@ const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
   PAGE_DEVICE_ACTION.InvalidState,
 ]);
 
-/**
- * Generic, caller-owned analytics bag spread into every deviceUxV2 event. Lets any
- * DIE caller attach arbitrary context (e.g. the wallet-api drawer adds the calling
- * live-app's manifestId / manifestName) without the executor knowing the shape.
- */
-export type DeviceUxV2ExtraProperties = Record<string, string | number | boolean | undefined>;
-
 export const getDeviceUxV2BaseProperties = (
   sourceFlow: SourceFlow,
-  extraProperties?: DeviceUxV2ExtraProperties,
+  extraProperties?: DeviceIntentTrackingProperties,
 ) => ({
   ...extraProperties,
   sourceFlow,
@@ -167,7 +160,7 @@ export const getTrackingSubError = (errorType: ConnectDeviceErrorType): string =
 
 export const trackDeviceflowStarted = (params: {
   sourceFlow: SourceFlow;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track(
     "deviceflow_started",
@@ -175,17 +168,21 @@ export const trackDeviceflowStarted = (params: {
   );
 };
 
-export const trackDevicePrompted = (params: { sourceFlow: SourceFlow }): void => {
-  track("device_prompted", getDeviceUxV2BaseProperties(params.sourceFlow));
+export const trackDevicePrompted = (params: {
+  sourceFlow: SourceFlow;
+  extraProperties: DeviceIntentTrackingProperties;
+}): void => {
+  track("device_prompted", getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties));
 };
 
 export const trackDeviceConnecting = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
   transport: "ble" | "usb";
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("device_connecting", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.modelId,
     transport: params.transport,
     matchedDevice: params.modelId,
@@ -196,9 +193,10 @@ export const trackDeviceConnected = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
   transport: "ble" | "usb";
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("device_connected", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.modelId,
     transport: params.transport,
     matchedDevice: params.modelId,
@@ -208,7 +206,7 @@ export const trackDeviceConnected = (params: {
 export const trackAppReady = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("app_ready", {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
@@ -220,7 +218,7 @@ export const trackDeviceflowCompleted = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
   transport: "ble" | "usb";
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("deviceflow_completed", {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
@@ -231,7 +229,7 @@ export const trackDeviceflowCompleted = (params: {
 
 export const trackDeviceflowAborted = (params: {
   sourceFlow: SourceFlow;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track(
     "deviceflow_aborted",
@@ -241,7 +239,7 @@ export const trackDeviceflowAborted = (params: {
 
 export const trackDeviceflowFailed = (params: {
   sourceFlow: SourceFlow;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track(
     "deviceflow_failed",
@@ -251,7 +249,7 @@ export const trackDeviceflowFailed = (params: {
 
 export const trackDeviceflowCanceled = (params: {
   sourceFlow: SourceFlow;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   const currentPage = currentRouteNameRef.current;
   const isTerminalConnectDeviceErrorPage =
@@ -272,9 +270,10 @@ export const trackDeviceflowCanceled = (params: {
 export const trackDeviceSelected = (params: {
   sourceFlow: SourceFlow;
   device: KnownDevice;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("device_selected", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.device.deviceModelId,
     transport: params.device.transport === rnHidTransportIdentifier ? "usb" : "ble",
   });
@@ -283,9 +282,10 @@ export const trackDeviceSelected = (params: {
 export const trackConnectDeviceButtonClicked = (params: {
   sourceFlow: SourceFlow;
   button: string;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("button_clicked", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     button: params.button,
   });
 };
@@ -294,9 +294,10 @@ export const trackConnectAppButtonClicked = (params: {
   sourceFlow: SourceFlow;
   modelId: DeviceModelId;
   button: string;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("button_clicked", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     modelId: params.modelId,
     button: params.button,
   });
@@ -307,9 +308,10 @@ export const trackDeviceActionButtonClicked = (params: {
   button: string;
   modelId?: DeviceModelId;
   transport?: TrackingTransport;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("button_clicked", {
-    ...getDeviceUxV2BaseProperties(params.sourceFlow),
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
     button: params.button,
     ...(params.modelId ? { modelId: params.modelId } : {}),
     ...(params.transport ? { transport: params.transport } : {}),
@@ -318,7 +320,7 @@ export const trackDeviceActionButtonClicked = (params: {
 
 export const trackDrawerCloseButtonClicked = (params: {
   sourceFlow: SourceFlow;
-  extraProperties?: DeviceUxV2ExtraProperties;
+  extraProperties: DeviceIntentTrackingProperties;
 }): void => {
   track("button_clicked", {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),

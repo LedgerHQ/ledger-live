@@ -1,4 +1,4 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
@@ -6,7 +6,7 @@ import { getCalTokens, toCoinFrameworkOperation, toBridgeOperation } from "./uti
 import type { AleoCoinConfig } from "../types";
 
 interface Params {
-  currency: CryptoCurrency;
+  currencyId: string;
   address: string;
   options: ListOperationsOptions;
   config: AleoCoinConfig;
@@ -33,13 +33,13 @@ export async function listOperations(params: CoinFrameworkParams): Promise<Resul
 export async function listOperations(
   params: BridgeParams | CoinFrameworkParams,
 ): Promise<Result<AleoOperation | Operation>> {
-  const { mode, currency, address, options, config } = params;
+  const { mode, currencyId, address, options, config } = params;
   const operations: Array<AleoOperation | Operation> = [];
   const tokenOperations: Array<AleoOperation | Operation> = [];
   const fetchAllPages = mode === "bridge";
 
   const result = await fetchAccountTransactionsFromHeight({
-    currency,
+    config,
     address,
     fetchAllPages,
     minBlockHeight: options.minHeight,
@@ -52,7 +52,7 @@ export async function listOperations(
 
   if (config.enableTokens && mode === "bridge") {
     calTokens = await getCalTokens({
-      currencyId: currency.id,
+      currencyId,
       programNames: result.transactions.map(rawTx => rawTx.program_id),
     });
   }

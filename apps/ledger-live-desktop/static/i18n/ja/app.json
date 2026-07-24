@@ -111,6 +111,7 @@
     "stop" : "停止",
     "updateNow" : "今すぐアップデート",
     "close" : "閉じる",
+    "ok" : "OK",
     "eastern" : "イースタン",
     "western" : "ウエスタン",
     "reverify" : "再確認",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "カード",
+    "paytab" : "支払う",
     "menu" : "メニュー",
     "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "バリデーターグループ",
           "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
-          "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
+          "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
           "totalVotes" : "総投票数",
           "commission" : "コミッション"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "引き出し可能",
       "statusUpdateNotice" : "処理が承認されると、デリゲートのステータスが更新されます。",
       "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
-      "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
+      "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
       "emptyState" : {
         "description" : "資産をデリゲートすることで、SOLで報酬を獲得できます。",
         "info" : "デリゲートの仕組み",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "バリデーター",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One利用規約",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
             "ledgerByFigmentTC" : "Ledger by Figment利用規約"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "バリデーター",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One 利用規約",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
             "ledgerByFigmentTC" : "Ledger by Figment T&Cs"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "バリデーター",
-            "ledgerByChorusOneTC" : "Ledger by Chorus One利用規約",
+            "ledgerByBitwiseTC" : "Ledger by Bitwise利用規約",
             "ledgerByFigmentTC" : "Ledger by Figment利用規約"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "XTZをステーキングする"
-      }
+      },
+      "pendingUnstakeWarning" : "現在バリデーターを変更することは可能ですが、現在のバリデーターからの未完了のステーキング解除が約4日後に完了するまでは、新しいバリデーターでステーキングを行うことはできません。"
     },
     "staking" : {
       "header" : "ステーキング",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "アナリティクスオプトイン同意（QA）",
         "rowDesc" : "保存されているプライバシー同意バージョンと同意日を確認します。ポートフォリオ分析同意モーダルの古い状態をシミュレートします。"
       },
+      "devTools" : {
+        "rowTitle" : "DevTools",
+        "rowDesc" : "DevToolsシェル（機能フラグおよび開発ツールパネル）を開きます。"
+      },
       "brazeTools" : {
         "title" : "Brazeツール",
         "description" : "ローカルBrazeカードを生成",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "ドロワーを開く",
         "showJson" : "JSONを表示",
         "hideJson" : "JSONを非表示"
+      },
+      "contactsDevTool" : {
+        "title" : "Contacts開発ツール",
+        "description" : "デスクトップ版のContactsロールアウト設定を切り替えます（lwdContacts機能フラグ）。",
+        "mainFeatureToggle" : "メイン機能トグル",
+        "featureParameters" : "機能パラメータ",
+        "eligibleAddressFamilies" : "対象アドレスファミリー",
+        "customFamiliesHint" : "カスタムマルチファミリーテスト用のカンマ区切りファミリー。",
+        "customFamiliesPlaceholder" : "evm、stellar、aptos",
+        "applyFamilies" : "適用",
+        "resetOverride" : "上書きをリセット"
       },
       "cryptoAssetsList" : {
         "title" : "暗号資産リスト",
@@ -6690,6 +6708,10 @@
       "title" : "対応していないアカウントです。",
       "description" : "再試行するか、サポートに連絡してください ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "アカウントを再度追加する必要があります",
+      "description" : "Ledger Walletはこのアカウントの公開鍵を取得できませんでした。続けるにはアカウントを削除して再度追加してください"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "送付先アカウントは、選択したASAをオプトインしていません。"
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "ステーキング残高不足"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "先に以前のバリデーターからのステーキング解除を完了する必要があります"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
@@ -8594,6 +8619,17 @@
       "description" : "Ledger Nano Sの限られたメモリでは、最新機能やブロックチェーンの変更、セキュリティ強化が制限されます。"
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "詳細を表示。数回のタップで取引。{{discount}}％OFF",
+      "subtitle" : "大画面、スマートなトランザクション、強化された保護を{{discount}}％OFFでお楽しみください。"
+    },
+    "optedOut" : {
+      "title" : "詐欺を見抜く。すべての詳細を確認する",
+      "subtitle" : "タッチスクリーン搭載の署名用デバイスで詳細を明確に確認し、高度なセキュリティチェックで詐欺を検知しましょう。"
+    },
+    "cta" : "タッチスクリーン搭載の署名用デバイスを詳しく見る"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "追加したいアカウントを選択する",
@@ -9167,7 +9203,8 @@
       "more" : "取引履歴オプション",
       "hideDustTransactions" : "ダストトランザクションを非表示にする",
       "showDustTransactions" : "ダストトランザクションを表示する",
-      "dustTransactionsDescription" : "{{threshold}}未満のトランザクションは非表示になります。"
+      "dustTransactionsDescription" : "{{threshold}}未満のトランザクションは非表示になります。",
+      "dustTransactionsDisplayedDescription" : "{{threshold}}未満のトランザクションは表示されます。"
     },
     "exportDialog" : {
       "title" : "トランザクション履歴をエクスポート",
@@ -9225,7 +9262,22 @@
       "title" : "My Ledger",
       "description" : "Ledgerデバイスを管理する"
     },
+    "contacts" : {
+      "title" : "お問い合せ",
+      "description" : "連絡先の管理"
+    },
     "explore" : "すべてのLedgerデバイスを探索する"
+  },
+  "contacts" : {
+    "title" : "お問い合せ",
+    "addContact" : "連絡先を追加",
+    "searchPlaceholder" : "連絡先を検索",
+    "me" : {
+      "name" : "自分",
+      "addressCount_zero" : "0アドレス",
+      "addressCount_one" : "{{count}}アドレス",
+      "addressCount_other" : "{{count}}アドレス"
+    }
   },
   "assetDetails" : {
     "header" : {

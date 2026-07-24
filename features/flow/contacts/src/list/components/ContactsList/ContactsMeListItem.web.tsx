@@ -24,7 +24,6 @@ export function ContactsMeListItem({
 }: ContactsMeListItemProps): React.ReactNode {
   return (
     <ListItem
-      className="bg-muted"
       onClick={() => onOpen(contact.contactId)}
       data-testid="contacts-me-row"
     >

@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-cardano
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the deterministic testing infrastructure for Cardano in Ledger Live.
 
 ## Features

@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-sentiment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Domain API client for market sentiment (CMC Crypto Fear & Greed): RTK Query endpoint typed on @domain/entity-market-sentiment",
   "main": "src/index.ts",

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { BigNumber } from "bignumber.js";
 import { AccountNotSupported, CurrencyNotSupported } from "@ledgerhq/errors";
 import { initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";

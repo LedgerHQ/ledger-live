@@ -1,27 +1,13 @@
-import { validateAddress as zondaxValidateAddress } from "@zondax/ledger-live-icp/utils";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("@zondax/ledger-live-icp/utils");
+const VALID_ADDRESS = "bc48adb687ce410003215edd17d4c6a576d4fe6b64e242bac382aa88ccf15417";
 
 describe("validateAddress", () => {
-  const mockedZondaxValidateAddress = jest.mocked(zondaxValidateAddress);
-
-  beforeEach(() => {
-    mockedZondaxValidateAddress.mockClear();
+  it("returns true for a valid account identifier", async () => {
+    expect(await validateAddress(VALID_ADDRESS, {})).toBe(true);
   });
 
-  it.each([true, false])(
-    "should call validateAddress from Zondax and return expected value (%s)",
-    async (expectedValue: boolean) => {
-      mockedZondaxValidateAddress.mockReturnValueOnce({ isValid: expectedValue });
-
-      const address = "some random address";
-      const parameters = {};
-      const result = await validateAddress(address, parameters);
-      expect(result).toEqual(expectedValue);
-
-      expect(mockedZondaxValidateAddress).toHaveBeenCalledTimes(1);
-      expect(mockedZondaxValidateAddress).toHaveBeenCalledWith(address);
-    },
-  );
+  it("returns false for an invalid address", async () => {
+    expect(await validateAddress("nothex", {})).toBe(false);
+  });
 });

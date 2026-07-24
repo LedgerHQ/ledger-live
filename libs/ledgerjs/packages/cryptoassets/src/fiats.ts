@@ -212,7 +212,7 @@ export function hasFiatCurrencyTicker(ticker: string): boolean {
 }
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-fiat.
  * @param {*} ticker
  */
 export function findFiatCurrencyByTicker(ticker: string): FiatCurrency | null | undefined {
@@ -220,7 +220,7 @@ export function findFiatCurrencyByTicker(ticker: string): FiatCurrency | null | 
 }
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-fiat.
  * @param {*} ticker
  */
 export function getFiatCurrencyByTicker(ticker: string): FiatCurrency {
@@ -233,9 +233,7 @@ export function getFiatCurrencyByTicker(ticker: string): FiatCurrency {
   return cur;
 }
 
-/**
- *
- */
+/** @deprecated Use @domain/entity-currency-fiat. */
 export function listFiatCurrencies(): FiatCurrency[] {
   return activeFiatCurrenciesStore().fiatCurrenciesArray;
 }

@@ -47,6 +47,9 @@ export function createApi(
 
   return {
     broadcast: (tx: string) => broadcast(tx, currencyId),
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: (transactionIntent: TransactionIntent<ConcordiumMemo>) =>
       craftTransaction(transactionIntent, currencyId),

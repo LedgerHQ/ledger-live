@@ -1,5 +1,8 @@
 # live-signer-celo
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-signer-celo` is the hardware-wallet signer for the Celo blockchain. It wraps the Celo Ledger app's APDU protocol and exposes a typed signer interface consumed by the Celo coin module.
 
 ## What it does

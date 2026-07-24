@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";

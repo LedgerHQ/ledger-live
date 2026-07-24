@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { MainProps } from "LLM/features/Web3Hub/types";
 import useScrollHandler from "LLM/features/Web3Hub/hooks/useScrollHandler";
 import ManifestsList from "LLM/features/Web3Hub/components/ManifestsList";

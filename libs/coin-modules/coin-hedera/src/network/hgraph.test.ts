@@ -477,7 +477,9 @@ describe("hgraphClient", () => {
       expect(firstCall.data.variables).not.toHaveProperty("cursor");
       // Second call should use _gt with cursor
       expect(secondCall.data.query).toContain("_gt: $cursor");
+      expect(secondCall.data.query).not.toContain("$startTimestamp");
       expect(secondCall.data.variables.cursor).toBe("1100000000000000000");
+      expect(secondCall.data.variables).not.toHaveProperty("startTimestamp");
     });
 
     it("should support custom order parameter", async () => {

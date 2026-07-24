@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -92,22 +92,25 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@dfinity/agent": "2.4.1",
+    "@dfinity/candid": "2.4.1",
+    "@dfinity/identity-secp256k1": "2.4.1",
+    "@dfinity/ledger-icp": "2.6.13",
+    "@dfinity/principal": "2.4.1",
+    "@dfinity/utils": "2.14.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@zondax/ledger-live-icp": "1.4.2",
+    "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
+    "cbor": "10.0.11",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@dfinity/agent": "2.4.1",
-    "@dfinity/candid": "2.4.1",
-    "@dfinity/identity-secp256k1": "2.4.1",
-    "@dfinity/principal": "2.4.1",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

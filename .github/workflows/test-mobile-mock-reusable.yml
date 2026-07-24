@@ -129,9 +129,11 @@ jobs:
 
       - name: Determine cache keys
         id: cache-keys
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           PREFIX=""
-          if [ "${{ github.ref_name }}" = "develop" ]; then
+          if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
           echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios') }}-detox-native-ios-3" >> $GITHUB_OUTPUT
@@ -381,6 +383,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -636,6 +643,11 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
@@ -812,6 +824,11 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: |

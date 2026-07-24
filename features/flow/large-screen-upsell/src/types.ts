@@ -1,4 +1,4 @@
-import type { LargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
+import type { RestorableLargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
 import type { Features } from "@shared/feature-flags";
 
 type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params"]>;
@@ -24,7 +24,7 @@ export type LargeScreenUpsellUserState = {
   seenNanoModelIds: NanoDeviceModelId[];
   hasSeenTouchscreenDevice: boolean;
   onboardingDate: Date | null;
-  frequency: LargeScreenUpsellModalState;
+  frequency: RestorableLargeScreenUpsellModalState;
 };
 
 export type LargeScreenUpsellContext = {

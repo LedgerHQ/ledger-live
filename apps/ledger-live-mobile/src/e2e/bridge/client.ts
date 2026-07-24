@@ -30,6 +30,7 @@ import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags"
 import { bleDevicesSelector } from "~/reducers/ble";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel } from "~/services/registerTransports";
+import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -55,6 +56,8 @@ export function init() {
     Config.MOCK = "";
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
+
+  initAppNetworkLogging();
 
   if (ws) {
     ws.close();
@@ -144,6 +147,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "getLogs": {
         const payload = JSON.stringify({
           appLogs: logReport.getLogs(),
+          appNetworkLogs: appNetworkLogStore.getNetworkLogs(),
           webviewNetworkLogs: webviewLogStore.getNetworkLogs(),
           webviewConsoleLogs: webviewLogStore.getConsoleLogs(),
           webviewLoadErrors: webviewLogStore.getLoadErrors(),

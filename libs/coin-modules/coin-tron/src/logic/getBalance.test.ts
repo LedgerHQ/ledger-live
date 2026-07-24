@@ -209,14 +209,28 @@ describe("getBalance", () => {
 
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27_781_772n },
-      { asset: { type: "trc10", assetReference: "1002000" }, value: 26_888_000n },
-      { asset: { type: "trc10", assetReference: "1004031" }, value: 9_856_699n },
       {
-        asset: { type: "trc20", assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7" },
+        asset: { type: "trc10", assetReference: "1002000", assetOwner: address },
+        value: 26_888_000n,
+      },
+      {
+        asset: { type: "trc10", assetReference: "1004031", assetOwner: address },
+        value: 9_856_699n,
+      },
+      {
+        asset: {
+          type: "trc20",
+          assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          assetOwner: address,
+        },
         value: 46_825_830n,
       },
       {
-        asset: { type: "trc20", assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" },
+        asset: {
+          type: "trc20",
+          assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          assetOwner: address,
+        },
         value: 376n,
       },
     ]);

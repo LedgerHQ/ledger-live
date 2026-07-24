@@ -5,7 +5,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockToken = {
   id: "solana/spl/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -44,7 +44,9 @@ describe("solana bridge", () => {
     >;
 
     (
-      jest.requireMock("@ledgerhq/cryptoassets/state") as { getCryptoAssetsStore: jest.Mock }
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
     ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
     });

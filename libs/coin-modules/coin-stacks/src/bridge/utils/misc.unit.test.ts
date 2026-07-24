@@ -1,10 +1,10 @@
-import * as cryptoAssets from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import * as api from "../../network/api";
 import { mapPendingTxToOps, mapTxToOps } from "./misc";
 
 // Mock the CryptoAssets module
-jest.mock("@ledgerhq/cryptoassets/state");
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 // Mock the API module to prevent actual network calls
 jest.mock("../../network/api", () => ({
@@ -18,7 +18,7 @@ const Address = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
 
 beforeEach(() => {
   // Mock CryptoAssetsStore
-  (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+  (getCryptoAssetsStore as jest.Mock).mockReturnValue({
     findTokenById: jest.fn().mockResolvedValue(null),
     findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
   });

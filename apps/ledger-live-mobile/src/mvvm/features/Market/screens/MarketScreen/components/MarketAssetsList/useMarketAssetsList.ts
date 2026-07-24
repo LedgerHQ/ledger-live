@@ -21,6 +21,7 @@ export function useMarketAssetsList({
 }: UseMarketAssetsListParams) {
   const [listHeight, setListHeight] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const [categorySwitcherHeight, setCategorySwitcherHeight] = useState(0);
   const listRef = useRef<SectionList<MarketAssetDisplayData>>(null);
   const scrollOffsetRef = useRef(0);
   const previousCategoryRef = useRef(selectedCategory);
@@ -35,6 +36,10 @@ export function useMarketAssetsList({
 
   const handleHeaderLayout = useCallback((event: LayoutChangeEvent) => {
     setHeaderHeight(event.nativeEvent.layout.height);
+  }, []);
+
+  const handleCategorySwitcherLayout = useCallback((event: LayoutChangeEvent) => {
+    setCategorySwitcherHeight(event.nativeEvent.layout.height);
   }, []);
 
   const keyExtractor = useCallback((item: MarketAssetDisplayData) => item.id, []);
@@ -55,9 +60,13 @@ export function useMarketAssetsList({
     sections,
     contentMinHeight: showSubheader ? headerHeight + listHeight : undefined,
     footerMinHeight: listHeight,
+    emptyFooterHeight: showSubheader
+      ? Math.max(listHeight - headerHeight - categorySwitcherHeight, 0)
+      : listHeight,
     handleScrollEnd,
     handleListLayout,
     handleHeaderLayout,
+    handleCategorySwitcherLayout,
     keyExtractor,
   };
 }

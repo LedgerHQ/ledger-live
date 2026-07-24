@@ -1,24 +1,32 @@
 import React from "react";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { getCustomSendFlow } from "~/screens/SendFunds/utils/customSendFlow";
-import { ALEO_ACCOUNT_1 } from "~/families/aleo/__mocks__/account.mock";
+import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT_1 } from "~/families/aleo/__mocks__/account.mock";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import SendAmountCoin from "./03a-AmountCoin";
 
 jest.mock("LLM/hooks/useAccountScreen", () => ({
   useAccountScreen: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: jest.fn(() => ({
+jest.mock("~/components/CurrencyUnitValue", () => ({
+  __esModule: true,
+  default: jest.fn(() => null),
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const bridge = {
     estimateMaxSpendable: jest.fn(() => Promise.resolve(new BigNumber(0))),
     updateTransaction: jest.fn((t: object, patch: object) => ({ ...t, ...patch })),
-  })),
-}));
+  };
+
+  return { useAccountBridge: jest.fn(() => bridge) };
+});
 
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
@@ -32,6 +40,7 @@ jest.mock("~/screens/SendFunds/utils/customSendFlow", () => ({
 const mockGetCustomSendFlow = jest.mocked(getCustomSendFlow);
 const mockUseAccountScreen = jest.mocked(useAccountScreen);
 const mockUseBridgeTransaction = jest.mocked(useBridgeTransaction);
+const mockCurrencyUnitValue = jest.mocked(CurrencyUnitValue);
 const mockTransaction = {
   family: "aleo",
   recipient: "",
@@ -70,6 +79,7 @@ describe("SendAmountCoin — custom send flow", () => {
     } as never);
 
     mockNavigation.navigate.mockClear();
+    mockCurrencyUnitValue.mockClear();
   });
 
   it("renders without AfterAmountInput when no custom flow", () => {
@@ -87,5 +97,45 @@ describe("SendAmountCoin — custom send flow", () => {
     render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
 
     expect(screen.getByTestId("after-amount-input")).toBeOnTheScreen();
+  });
+
+  it("resolves the custom send flow from the parent chain's family when sending a token", () => {
+    mockUseAccountScreen.mockReturnValue({
+      account: ALEO_TOKEN_ACCOUNT_1,
+      parentAccount: ALEO_ACCOUNT_1,
+    });
+    mockGetCustomSendFlow.mockReturnValue({
+      screens: [],
+      AfterAmountInput: () => <View testID="after-amount-input" />,
+    });
+
+    render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    expect(mockGetCustomSendFlow).toHaveBeenCalledWith("aleo");
+    expect(screen.getByTestId("after-amount-input")).toBeOnTheScreen();
+  });
+
+  it("passes the custom send flow's showAllDigits to the available balance", async () => {
+    mockGetCustomSendFlow.mockReturnValue({ screens: [], showAllDigits: true });
+
+    render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    await waitFor(() => {
+      expect(mockCurrencyUnitValue).toHaveBeenCalledWith(
+        expect.objectContaining({ showAllDigits: true }),
+        undefined,
+      );
+    });
+  });
+
+  it("does not force showAllDigits without a custom send flow", async () => {
+    render(<SendAmountCoin navigation={mockNavigation as never} route={mockRoute as never} />);
+
+    await waitFor(() => {
+      expect(mockCurrencyUnitValue).toHaveBeenCalledWith(
+        expect.objectContaining({ showAllDigits: undefined }),
+        undefined,
+      );
+    });
   });
 });

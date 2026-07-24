@@ -1,5 +1,5 @@
 // TODO solution for families to expose their own webworkers
-import { getSecp256k1Instance } from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/secp256k1";
+import { getSecp256k1Instance } from "@ledgerhq/wallet-btc/crypto/secp256k1";
 
 function hexToUint8Array(hex: string) {
   const arr = new Uint8Array(hex.length / 2);

@@ -1,5 +1,5 @@
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isTokenAsset } from "@ledgerhq/coin-cardano/logic";

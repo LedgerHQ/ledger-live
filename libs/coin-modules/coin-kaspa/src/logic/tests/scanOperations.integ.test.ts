@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { scanOperations } from "../scanOperations";
+import { scanOperations } from "../history/scanOperations";
 
 describe("scan transactions for multiple addresses", () => {
   it("One address", async () => {

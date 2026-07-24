@@ -83,6 +83,11 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
 
       <View style={styles.bottomSection}>
         <Button
+          testID={
+            viewModel.reviewButton.disabled
+              ? "disabled-amount-continue-button"
+              : "enabled-amount-continue-button"
+          }
           appearance="base"
           size="lg"
           onPress={viewModel.reviewButton.onPress}

@@ -9,11 +9,14 @@ jest.mock("../../../hooks/useAssetMarketData");
 
 const mockUseAssetMarketData = jest.mocked(useAssetMarketData);
 
+const usdUnit = { code: "$", name: "US Dollar", magnitude: 2, prefixCode: true };
+
 function mockMarketData(overrides?: Partial<ReturnType<typeof useAssetMarketData>>) {
   mockUseAssetMarketData.mockReturnValue({
     marketCurrency: marketCurrencyData as any,
     marketId: "bitcoin",
     counterCurrency: "usd",
+    counterValueUnit: usdUnit,
     ledgerIds: ["bitcoin"],
     isLoading: false,
     isError: false,
