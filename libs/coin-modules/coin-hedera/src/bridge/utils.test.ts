@@ -20,6 +20,9 @@ import {
 } from "./utils";
 import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
 
+const idsByValue = (ops: { value: BigNumber; id: string }[]) =>
+  new Map(ops.map(op => [op.value.toString(), op.id]));
+
 describe("bridge utils", () => {
   describe("prepareOperations", () => {
     const tokenCurrencyFromCAL = getTokenCurrencyFromCALByType("hts");
@@ -34,9 +37,9 @@ describe("bridge utils", () => {
       });
     });
 
-    it("links token operation to existing coin operation with matching hash", async () => {
+    it("should link the token operation to the existing FEES coin operation when hashes match", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
-      const mockedCoinOperation = getMockedOperation({ hash: "shared" });
+      const mockedCoinOperation = getMockedOperation({ hash: "shared", type: "FEES" });
       const mockedTokenOperation = getMockedOperation({
         hash: "shared",
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
@@ -46,6 +49,43 @@ describe("bridge utils", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].subOperations).toEqual([mockedTokenOperation]);
+    });
+
+    it("should keep the coin operation standalone with no subOperations when a token operation shares its hash", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const mockedCoinOperation = getMockedOperation({ hash: "shared", type: "OUT" });
+      const mockedTokenOperation = getMockedOperation({
+        hash: "shared",
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+      });
+
+      const result = await prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("OUT");
+      expect(result[0].subOperations).toEqual([]);
+    });
+
+    it("should share one NONE parent operation when multiple orphan token operations share a hash", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const tokenAccountId = encodeTokenAccountId(
+        mockedTokenAccount.parentId,
+        tokenCurrencyFromCAL,
+      );
+      const mockedTokenOperationA = getMockedOperation({
+        hash: "orphan-hash",
+        accountId: tokenAccountId,
+      });
+      const mockedTokenOperationB = getMockedOperation({
+        hash: "orphan-hash",
+        accountId: tokenAccountId,
+      });
+
+      const result = await prepareOperations([], [mockedTokenOperationA, mockedTokenOperationB]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("NONE");
+      expect(result[0].subOperations).toEqual([mockedTokenOperationA, mockedTokenOperationB]);
     });
 
     it("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
@@ -348,6 +388,181 @@ describe("bridge utils", () => {
       });
 
       expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+    });
+
+    it("should keep a standalone FEES coin op when the tx has no token operations", () => {
+      const feesOp = getMockedOperation({ hash: "h1", type: "FEES" });
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations: [feesOp],
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+    });
+
+    it("should keep the clean tx hash on token ops and give them a unique id when an HBAR value op shares the hash", () => {
+      const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1001" });
+      const coinOut = getMockedOperation({ hash: "h1", type: "OUT" });
+      const tokenOp = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        contract: htsToken.contractAddress,
+      });
+
+      const { bridgeCoinOperations, bridgeTokenOperations } = resolveBridgeOperations({
+        coinOperations: [coinOut],
+        tokenOperations: [tokenOp],
+        ledgerAccountId,
+        calTokenByAddress: new Map([[htsToken.contractAddress, htsToken]]),
+      });
+
+      const expectedTokenAccountId = encodeTokenAccountId(ledgerAccountId, htsToken);
+      expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "OUT" })]);
+      expect(bridgeTokenOperations).toEqual([
+        expect.objectContaining({
+          hash: "h1",
+          id: encodeOperationId(expectedTokenAccountId, "h1-token-anchor", "OUT"),
+        }),
+      ]);
+      expect(bridgeTokenOperations[0].id).not.toBe(bridgeCoinOperations[0].id);
+    });
+
+    it("should keep the raw hash on token ops when only a FEES op shares it", () => {
+      const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1001" });
+      const feesOp = getMockedOperation({ hash: "h1", type: "FEES" });
+      const tokenOp = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        contract: htsToken.contractAddress,
+      });
+
+      const { bridgeCoinOperations, bridgeTokenOperations } = resolveBridgeOperations({
+        coinOperations: [feesOp],
+        tokenOperations: [tokenOp],
+        ledgerAccountId,
+        calTokenByAddress: new Map([[htsToken.contractAddress, htsToken]]),
+      });
+
+      expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+      expect(bridgeTokenOperations).toEqual([expect.objectContaining({ hash: "h1" })]);
+    });
+
+    it("should keep the HBAR OUT standalone with no NONE anchor when a token op shares its hash, end to end", async () => {
+      const htsToken = getTokenCurrencyFromCALByType("hts");
+      const coinOut = getMockedOperation({ hash: "h1", type: "OUT" });
+      const tokenOp = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        contract: htsToken.contractAddress,
+      });
+
+      const { bridgeCoinOperations, bridgeTokenOperations } = resolveBridgeOperations({
+        coinOperations: [coinOut],
+        tokenOperations: [tokenOp],
+        ledgerAccountId,
+        calTokenByAddress: new Map([[htsToken.contractAddress, htsToken]]),
+      });
+      const result = await prepareOperations(bridgeCoinOperations, bridgeTokenOperations);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe("OUT");
+      expect(result[0].hash).toBe("h1");
+      expect(result[0].subOperations).toEqual([]);
+      expect(bridgeTokenOperations).toEqual([expect.objectContaining({ hash: "h1" })]);
+    });
+
+    it("should keep split fan-out coin ops with distinct ids when hash and type match but recipients differ", () => {
+      const split1 = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        recipients: ["0.0.6855655"],
+      });
+      const split2 = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        recipients: ["0.0.9509310"],
+      });
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations: [split1, split2],
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      expect(bridgeCoinOperations).toHaveLength(2);
+      const ids = bridgeCoinOperations.map(op => op.id);
+      expect(new Set(ids).size).toBe(2);
+      expect(ids).toEqual([
+        `${encodeOperationId(ledgerAccountId, "h1", "OUT")}-0.0.6855655`,
+        `${encodeOperationId(ledgerAccountId, "h1", "OUT")}-0.0.9509310`,
+      ]);
+    });
+
+    it("should keep split fan-out token ops distinct when the same token, hash and type differ only by recipient", () => {
+      const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1001" });
+      const split1 = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        contract: htsToken.contractAddress,
+        recipients: ["0.0.6855655"],
+      });
+      const split2 = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        contract: htsToken.contractAddress,
+        recipients: ["0.0.9509310"],
+      });
+
+      const { bridgeTokenOperations } = resolveBridgeOperations({
+        coinOperations: [],
+        tokenOperations: [split1, split2],
+        ledgerAccountId,
+        calTokenByAddress: new Map([[htsToken.contractAddress, htsToken]]),
+      });
+
+      const expectedTokenAccountId = encodeTokenAccountId(ledgerAccountId, htsToken);
+      expect(bridgeTokenOperations).toHaveLength(2);
+      expect(new Set(bridgeTokenOperations.map(op => op.id)).size).toBe(2);
+      expect(bridgeTokenOperations.map(op => op.id)).toEqual([
+        `${encodeOperationId(expectedTokenAccountId, "h1", "OUT")}-0.0.6855655`,
+        `${encodeOperationId(expectedTokenAccountId, "h1", "OUT")}-0.0.9509310`,
+      ]);
+    });
+
+    it("should derive the same fallback discriminator from the operation's value regardless of array order", () => {
+      const opA = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        recipients: [],
+        value: new BigNumber(100),
+      });
+      const opB = getMockedOperation({
+        hash: "h1",
+        type: "OUT",
+        recipients: [],
+        value: new BigNumber(200),
+      });
+
+      const forward = resolveBridgeOperations({
+        coinOperations: [opA, opB],
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+      const reversed = resolveBridgeOperations({
+        coinOperations: [opB, opA],
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      expect(idsByValue(forward.bridgeCoinOperations)).toEqual(
+        idsByValue(reversed.bridgeCoinOperations),
+      );
     });
   });
 
