@@ -1,10 +1,9 @@
 import { useEffect, useRef } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+type LedgerError = Error & { [key: string]: unknown };
 
 export type UseTrackGenericDAppTransactionSend = {
   location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend | undefined;

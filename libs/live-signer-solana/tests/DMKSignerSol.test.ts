@@ -4,7 +4,7 @@
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 

@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";

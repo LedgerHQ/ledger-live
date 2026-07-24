@@ -1,11 +1,13 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const TransactionBroadcastError = createCustomErrorClass<{ url?: string } & TxData>(
-  "TransactionBroadcastError",
-);
-
-export interface TransactionBroadcastError extends Error, TxData {
+export class TransactionBroadcastError extends Error {
+  override name = "TransactionBroadcastError";
+  coin?: string;
+  network?: string;
   url?: string;
+
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message);
+    if (fields) Object.assign(this, fields);
+  }
 }
 
 export const createTransactionBroadcastError = (

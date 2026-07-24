@@ -1,6 +1,5 @@
 import type { BalanceOptions, Operation } from "@ledgerhq/coin-module-framework/api/types";
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import type { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";

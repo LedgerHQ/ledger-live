@@ -6,7 +6,7 @@ import {
   StellarUserRefusedError,
   StellarDataTooLargeError,
 } from "../src/errors";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 
 test("getAppConfiguration (hash signing disabled)", async () => {
   const transport = await openTransportReplayer(

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import type { Theme } from "@ledgerhq/react-ui";
 import { EConnResetError } from "@ledgerhq/live-common/errors";
-import { UnresponsiveDeviceError } from "@ledgerhq/errors";
+import { UnresponsiveDeviceError } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -56,7 +56,6 @@ import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   FlowName,
@@ -84,7 +83,7 @@ import {
   DeviceDeprecationScreens,
 } from "./Screen/DeviceDeprecationScreen";
 
-export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+export type LedgerError = Error & { [key: string]: unknown };
 
 type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;

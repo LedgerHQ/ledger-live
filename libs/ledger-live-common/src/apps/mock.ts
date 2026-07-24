@@ -1,5 +1,5 @@
 import { of, throwError } from "rxjs";
-import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
+import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "../errors";
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";

@@ -43,7 +43,6 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
     "@ledgerhq/domain-service": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",

@@ -1,5 +1,4 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import type { AptosConfig as AptosConfigApi } from "../config";
 
@@ -15,7 +14,7 @@ describe("index", () => {
       const api = createApi(getMockedConfig());
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toThrow("InvalidParameterError");
     });
   });
 });

@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "../errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";

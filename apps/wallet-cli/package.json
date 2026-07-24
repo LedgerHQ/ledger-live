@@ -63,7 +63,6 @@
     "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-ethereum": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-exchange": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",

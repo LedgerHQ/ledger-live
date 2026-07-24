@@ -1,4 +1,4 @@
-import { SequenceNumberError } from "@ledgerhq/errors";
+import { SequenceNumberError } from "../errors";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";

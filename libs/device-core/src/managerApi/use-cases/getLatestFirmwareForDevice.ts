@@ -1,4 +1,4 @@
-import { UnknownMCU } from "@ledgerhq/errors";
+import { UnknownMCU } from "../../errors";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
 import { ManagerApiRepository } from "../repositories/ManagerApiRepository";

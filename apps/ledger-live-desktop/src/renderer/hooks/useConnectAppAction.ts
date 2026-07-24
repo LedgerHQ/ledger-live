@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { catchError, throwError } from "rxjs";
-import { GenuineCheckFailed } from "@ledgerhq/errors";
+import { GenuineCheckFailed } from "@ledgerhq/live-common/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";

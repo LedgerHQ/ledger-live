@@ -1,4 +1,4 @@
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {

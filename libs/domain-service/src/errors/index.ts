@@ -1,6 +1,12 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const InvalidDomain = createCustomErrorClass("InvalidDomain");
-export const DomainEmpty = createCustomErrorClass("DomainEmpty");
-export const NoResolution = createCustomErrorClass("NoResolution");
-export const UnsupportedDomainOrAddress = createCustomErrorClass("UnsupportedDomainOrAddress");
+export class InvalidDomain extends Error {
+  override name = "InvalidDomain";
+}
+export class DomainEmpty extends Error {
+  override name = "DomainEmpty";
+}
+export class NoResolution extends Error {
+  override name = "NoResolution";
+}
+export class UnsupportedDomainOrAddress extends Error {
+  override name = "UnsupportedDomainOrAddress";
+}

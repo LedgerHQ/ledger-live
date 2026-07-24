@@ -109,13 +109,13 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@vechain/sdk-core": "2.0.0",
+    "@vechain/sdk-network": "2.0.0",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "catalog:",
-    "@vechain/sdk-core": "2.0.0",
-    "@vechain/sdk-network": "2.0.0"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

@@ -59,7 +59,6 @@
   "dependencies": {
     "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

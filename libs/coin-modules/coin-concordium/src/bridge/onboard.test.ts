@@ -1,9 +1,6 @@
-import {
-  ConcordiumSessionExpiredError,
-  LockedDeviceError,
-  TransportStatusError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { LockedDeviceError, TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
 import {

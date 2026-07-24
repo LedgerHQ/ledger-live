@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
-import { UnresponsiveDeviceError } from "@ledgerhq/errors";
+import { UnresponsiveDeviceError } from "../../errors";
 import { isCounterfeitError } from "../isCounterfeitError";
 import type { DeviceId } from "@ledgerhq/types-live";
 import { getGenuineCheckFromDeviceId as defaultGetGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";

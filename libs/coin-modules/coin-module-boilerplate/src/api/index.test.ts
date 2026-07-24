@@ -1,5 +1,4 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import { BoilerplateConfig } from "../config";
 
@@ -32,7 +31,7 @@ describe("createApi", () => {
       const api = createApi({} as BoilerplateConfig);
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toThrow("InvalidParameterError");
     });
   });
 });

@@ -90,7 +90,7 @@ describe("StepOnboard", () => {
   });
 
   it("should display user refused error message", () => {
-    const { UserRefusedOnDevice } = jest.requireActual("@ledgerhq/errors");
+    const { UserRefusedOnDevice } = jest.requireActual("@ledgerhq/ledger-wallet-framework/errors");
     const userRefusedError = new UserRefusedOnDevice();
     const props = {
       ...defaultProps,
@@ -105,7 +105,7 @@ describe("StepOnboard", () => {
   });
 
   it("should display locked device error message", () => {
-    const { LockedDeviceError } = jest.requireActual("@ledgerhq/errors");
+    const { LockedDeviceError } = jest.requireActual("@ledgerhq/ledger-wallet-framework/errors");
     const lockedError = new LockedDeviceError();
     const props = {
       ...defaultProps,

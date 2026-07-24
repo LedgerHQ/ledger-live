@@ -8,7 +8,7 @@ import {
   UserRefusedAllowManager,
   UserRefusedDeviceNameChange,
   UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({

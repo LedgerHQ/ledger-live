@@ -1,7 +1,7 @@
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { CryptoAssetsApi } from "./api";
-import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
+import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "../../errors";
 
 /**
  * Simple adapter that implements CryptoAssetsStore interface using RTK Query API directly.

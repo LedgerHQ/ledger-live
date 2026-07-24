@@ -11,7 +11,7 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   UserRefusedFirmwareUpdate,
   DeviceOnDashboardExpected,
-} from "@ledgerhq/errors";
+} from "../../../errors";
 import { LOG_TYPE, UnresponsiveCmdEvent } from "../core";
 
 export type InstallFirmwareCommandRequest = {

@@ -1,0 +1,18 @@
+import { DeviceHalted, DeviceInOSUExpected, deserializeError, serializeError } from "../errors";
+test("DeviceHalted", () => {
+  const error = new DeviceHalted();
+  expect(error).toBeInstanceOf(DeviceHalted);
+  const blob = serializeError(error);
+  expect(blob).toMatchObject({
+    name: "DeviceHalted",
+  });
+  const des = deserializeError(blob);
+  expect(des).toBeInstanceOf(DeviceHalted);
+});
+test("DeviceInOSUExpected", () => {
+  expect(
+    deserializeError({
+      name: "DeviceInOSUExpected",
+    }),
+  ).toBeInstanceOf(DeviceInOSUExpected);
+});

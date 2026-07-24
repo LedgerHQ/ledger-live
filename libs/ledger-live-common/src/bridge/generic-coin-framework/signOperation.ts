@@ -4,7 +4,7 @@ import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledg
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import { bigNumberToBigIntDeep, buildOptimisticOperation, transactionToIntent } from "./utils";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";

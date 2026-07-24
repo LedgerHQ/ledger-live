@@ -1,4 +1,4 @@
-import { RecipientRequired } from "@ledgerhq/errors";
+import { RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";

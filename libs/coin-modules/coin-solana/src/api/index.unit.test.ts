@@ -7,7 +7,6 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import type { SolanaCoinConfig } from "../config";
 import coinConfig from "../config";
@@ -349,7 +348,7 @@ describe("createApi", () => {
       const api = createApi(mockConfig, "solana");
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toThrow("InvalidParameterError");
     });
   });
 });
