@@ -1,6 +1,6 @@
 const UPSELL_UTM_SOURCE = "ledger_live";
-const UPSELL_UTM_MEDIUM = "llm";
-const UPSELL_UTM_CAMPAIGN = "upsell_large_screen";
+const UPSELL_UTM_MEDIUM = "ledger_wallet_mobile";
+const UPSELL_UTM_CAMPAIGN = "nano_upgrade_program";
 const UPSELL_UTM_CONTENT = "app_start_modal";
 
 export function buildLargeScreenUpsellCtaLink(link: string): string {

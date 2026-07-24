@@ -261,8 +261,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       "https://shop.ledger.com/pages/opted-out-offer",
     );
     expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_live");
-    expect(openedUrl.searchParams.get("utm_medium")).toBe("desktop");
-    expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
     expect(track).toHaveBeenCalledWith("button_clicked", {
@@ -312,8 +312,8 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       "https://shop.ledger.com/pages/opted-in-offer",
     );
     expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_live");
-    expect(openedUrl.searchParams.get("utm_medium")).toBe("desktop");
-    expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "explore large screen devices",
