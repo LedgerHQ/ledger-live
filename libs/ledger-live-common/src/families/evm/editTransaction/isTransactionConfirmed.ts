@@ -1,4 +1,3 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 
@@ -27,7 +26,8 @@ export const isTransactionConfirmed = async ({
     const { blockHeight = null } = await nodeApi.getTransaction(account.currency, hash);
     return blockHeight !== null;
   } catch (e: unknown) {
-    if (e instanceof LedgerAPI4xx && e.status === 404) {
+    const err = e as { name?: string; status?: number } | null | undefined;
+    if (err?.name === "LedgerAPI4xx" && err?.status === 404) {
       return false;
     }
     throw e;

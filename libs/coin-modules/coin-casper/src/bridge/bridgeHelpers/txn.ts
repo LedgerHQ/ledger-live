@@ -101,7 +101,7 @@ export const createNewTransaction = async (
   log("debug", `Creating new Transaction: ${sender}, ${recipient}, ${network}`);
 
   if (recipient && !isAddressValid(recipient)) {
-    throw InvalidAddress(`Invalid recipient Address ${recipient}`);
+    throw new InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 
   const client = getCasperNodeRpcClient();
