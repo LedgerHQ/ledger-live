@@ -1,6 +1,8 @@
 import { type Page, type Validator } from "@ledgerhq/coin-module-framework/api/index";
 import { getValidators as getValidatorsFromNetwork } from "../network";
 
+const orUndefined = (s: string | undefined | null) => s || undefined;
+
 export async function getValidators(
   _cursor?: string,
   currencyId?: string,
@@ -10,9 +12,9 @@ export async function getValidators(
   const items: Validator[] = validators.map(v => ({
     address: v.suiAddress,
     name: v.name,
-    description: v.description,
-    url: v.projectUrl,
-    logo: v.imageUrl,
+    description: orUndefined(v.description),
+    url: orUndefined(v.projectUrl),
+    logo: orUndefined(v.imageUrl),
     balance: BigInt(v.stakingPoolSuiBalance),
     commissionRate: v.commissionRate,
     apy: v.apy,

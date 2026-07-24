@@ -91,9 +91,9 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type SuiValidatorSummary = {
   suiAddress: string;
   name: string;
-  description: string;
-  imageUrl: string;
-  projectUrl: string;
+  description?: string;
+  imageUrl?: string;
+  projectUrl?: string;
   stakingPoolId: string;
   stakingPoolSuiBalance: string;
   commissionRate: string;

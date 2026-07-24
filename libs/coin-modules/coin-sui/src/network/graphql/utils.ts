@@ -39,9 +39,9 @@ export type StakedSuiJson = {
 type ValidatorMetadataJson = {
   sui_address: string;
   name: string;
-  description: string;
-  image_url: string;
-  project_url: string;
+  description: string | null | undefined;
+  image_url: string | null | undefined;
+  project_url: string | null | undefined;
 };
 
 type StakingPoolJson = {
@@ -142,9 +142,9 @@ function validatorJsonToSummary(v: ValidatorJson): SuiValidatorSummary {
   return {
     suiAddress: m.sui_address,
     name: m.name,
-    description: m.description,
-    imageUrl: m.image_url,
-    projectUrl: m.project_url,
+    ...(m.description ? { description: m.description } : {}),
+    ...(m.image_url ? { imageUrl: m.image_url } : {}),
+    ...(m.project_url ? { projectUrl: m.project_url } : {}),
     stakingPoolId: v.staking_pool.id,
     stakingPoolSuiBalance: str(v.staking_pool.sui_balance),
     commissionRate: str(v.commission_rate),
