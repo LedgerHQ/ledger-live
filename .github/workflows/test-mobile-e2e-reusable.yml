@@ -1350,14 +1350,14 @@ jobs:
             fs.writeFileSync(`./payload-slack-content-alt.json`, JSON.stringify({ ...result, channel: "C05FKJ7DFAP" }, null, 2));
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           payload-file-path: "./payload-slack-content.json"
       - name: post to a Slack channel
         if: ${{ inputs.slack_notif || github.event_name == 'schedule' }}
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
