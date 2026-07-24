@@ -227,7 +227,7 @@ jobs:
           repositories: |
             coin-apps
             ledger-live
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -391,7 +391,7 @@ jobs:
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ steps.cache-keys.outputs.ios_native_key }}
@@ -405,7 +405,7 @@ jobs:
 
       - name: Check if Android Native Build exists already
         id: check-android-native
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-x86_64-detox.apk
           key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -419,7 +419,7 @@ jobs:
 
       - name: Check if iOS JS Build exists already
         id: check-ios-js
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.ios_js_key }}
@@ -433,7 +433,7 @@ jobs:
 
       - name: Check if Android JS Build exists already
         id: check-android-js
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: apps/ledger-live-mobile/main.jsbundle
           key: ${{ steps.cache-keys.outputs.android_js_key }}
@@ -543,7 +543,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_ios) }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -649,7 +649,7 @@ jobs:
       - name: Restore pre-generated userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
@@ -735,7 +735,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -888,7 +888,7 @@ jobs:
       - name: Restore pre-generated userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-mobile-${{ steps.userdata-meta.outputs.date }}
@@ -1000,7 +1000,7 @@ jobs:
           status_10: ${{ needs.detox-tests-ios.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -1080,7 +1080,7 @@ jobs:
           status_10: ${{ needs.detox-tests-android.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -1169,7 +1169,7 @@ jobs:
     needs: [detox-tests-android, detox-tests-ios]
     if: ${{ !cancelled() && inputs.export_to_xray }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -1370,7 +1370,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -1399,7 +1399,7 @@ jobs:
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}

@@ -51,7 +51,7 @@ jobs:
             ledger-live-build
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: LedgerHQ/${{ env.REPO }}
           ref: refs/tags/${{ env.RESTORE_TAG }}
@@ -112,7 +112,7 @@ jobs:
           mv apps/ledger-live-desktop/RELEASE_NOTES.md.tmp apps/ledger-live-desktop/RELEASE_NOTES.md
 
       - name: Commit version bump
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(version): :package: patch bump for rollback [skip ci]"
           repo: ${{ github.repository }}

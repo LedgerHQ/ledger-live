@@ -51,7 +51,7 @@ jobs:
       E2E_GENERATED_USERDATA_DIR: ${{ format('{0}/e2e/userdata/generated', github.workspace) }}
     runs-on: [ledger-live-4xlarge]
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
@@ -94,7 +94,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
@@ -157,7 +157,7 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-linux-16CPU-64RAM]
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup caches
@@ -203,7 +203,7 @@ jobs:
       - name: Upload mitmproxy logs
         continue-on-error: true
         if: ${{ !cancelled() && steps.stop-mitmproxy.outputs.mitmproxy_logs_archive != '' }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: mitmproxy-logs
           path: ${{ steps.stop-mitmproxy.outputs.mitmproxy_logs_archive }}
@@ -244,7 +244,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: ${{ !cancelled() }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
 

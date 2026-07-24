@@ -22,7 +22,7 @@ jobs:
         with:
           app-id: ${{ secrets.GH_BOT_APP_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.base_ref || inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
@@ -62,7 +62,7 @@ jobs:
         run: |
           pnpm common test-account-migration --outputFolderPath /home/runner/work/ledger-live
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
 

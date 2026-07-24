@@ -41,7 +41,7 @@ jobs:
           application: ${{ github.event.inputs.application }}
 
       - name: Checkout Repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
@@ -73,7 +73,7 @@ jobs:
           git add .
 
       - name: commit
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
           repo: ${{ github.repository }}
