@@ -954,7 +954,7 @@ jobs:
       missingShards: ${{ steps.aggregate.outputs.missingShards }}
     steps:
       - name: Download Allure Report
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
@@ -1034,7 +1034,7 @@ jobs:
     needs: [determine-builds, detox-tests-android]
     steps:
       - name: Download Allure Report
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: android-test-artifacts
           pattern: android-test-artifacts*
@@ -1111,7 +1111,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Download Allure Results
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: ios-test-artifacts
           pattern: ios-test-artifacts*
@@ -1134,7 +1134,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Download Allure Results
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: android-test-artifacts
           pattern: android-test-artifacts*
@@ -1175,7 +1175,7 @@ jobs:
           repository: LedgerHQ/ledger-live
 
       - name: Download Allure Results
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: "artifacts-${{ matrix.platform }}"
           pattern: ${{ matrix.platform }}-test-artifacts-*
