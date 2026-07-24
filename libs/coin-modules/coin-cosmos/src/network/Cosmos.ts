@@ -520,7 +520,7 @@ export class CosmosAPI {
 
   /**
    * Bounded fetch for the Alpaca `listOperations`: at most `count` most-recent txs per stream
-   * (one query each, no fetch-all loop). Legacy `getTransactions` keeps its full-history behaviour.
+   * (one query each, no fetch-all loop). The existing `getTransactions` keeps its full-history behaviour.
    */
   getTransactionsPage = async (
     address: string,

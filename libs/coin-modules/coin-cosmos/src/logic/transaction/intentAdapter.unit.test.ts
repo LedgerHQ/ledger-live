@@ -1,5 +1,5 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { intentToAccount, intentToTransaction } from "./intentAdapter";
+import { intentToMessageParams } from "./intentAdapter";
 
 const baseSend = {
   intentType: "transaction",
@@ -21,23 +21,18 @@ const stakingIntent = (o: Record<string, unknown>) =>
   }) as unknown as TransactionIntent;
 
 describe("logic/transaction/intentAdapter", () => {
-  describe("intentToAccount", () => {
-    it("carries the sender address and resolved currency", () => {
-      const account = intentToAccount(baseSend, "cosmos");
-      expect(account.freshAddress).toBe("cosmos1sender");
-      expect(account.currency.id).toBe("cosmos");
-    });
-  });
-
-  describe("intentToTransaction (native)", () => {
-    it("maps a native send", () => {
-      const tx = intentToTransaction(baseSend);
-      expect(tx.family).toBe("cosmos");
-      expect(tx.mode).toBe("send");
-      expect(tx.recipient).toBe("cosmos1recipient");
-      expect(tx.amount.toFixed()).toBe("1000000");
-      expect(tx.memo).toBe("");
-      expect(tx.useAllAmount).toBe(false);
+  describe("intentToMessageParams (native send)", () => {
+    it("carries sender, resolved denom, and the send fields", () => {
+      const params = intentToMessageParams(baseSend, "cosmos");
+      expect(params.senderAddress).toBe("cosmos1sender");
+      expect(params.currencyId).toBe("cosmos");
+      expect(params.denom).toBe("uatom");
+      expect(params.mode).toBe("send");
+      expect(params.recipient).toBe("cosmos1recipient");
+      expect(params.amount.toFixed()).toBe("1000000");
+      expect(params.memo).toBe("");
+      expect(params.validators).toHaveLength(0);
+      expect(params.sourceValidator).toBeUndefined();
     });
 
     it("extracts a string memo", () => {
@@ -45,51 +40,53 @@ describe("logic/transaction/intentAdapter", () => {
         ...baseSend,
         memo: { type: "string", value: "hi" },
       } as unknown as TransactionIntent;
-      expect(intentToTransaction(withMemo).memo).toBe("hi");
+      expect(intentToMessageParams(withMemo, "cosmos").memo).toBe("hi");
     });
 
     it("ignores a non-string memo", () => {
       const withMemo = { ...baseSend, memo: { type: "none" } } as unknown as TransactionIntent;
-      expect(intentToTransaction(withMemo).memo).toBe("");
-    });
-
-    it("propagates useAllAmount", () => {
-      const sendAll = { ...baseSend, useAllAmount: true } as unknown as TransactionIntent;
-      expect(intentToTransaction(sendAll).useAllAmount).toBe(true);
+      expect(intentToMessageParams(withMemo, "cosmos").memo).toBe("");
     });
   });
 
-  describe("intentToTransaction (staking)", () => {
+  describe("intentToMessageParams (staking)", () => {
     it.each([
       ["delegate", "delegate"],
       ["undelegate", "undelegate"],
       ["claimReward", "claimReward"],
       ["compoundReward", "claimRewardCompound"],
     ])("maps staking mode %s to internal mode %s", (mode, expected) => {
-      const tx = intentToTransaction(stakingIntent({ mode, valAddress: "cosmosvaloper1v" }));
-      expect(tx.mode).toBe(expected);
-      expect(tx.sourceValidator).toBeUndefined();
-      expect(tx.validators).toHaveLength(1);
-      expect(tx.validators[0].address).toBe("cosmosvaloper1v");
-      expect(tx.validators[0].amount.toFixed()).toBe("1000000");
+      const params = intentToMessageParams(
+        stakingIntent({ mode, valAddress: "cosmosvaloper1v" }),
+        "cosmos",
+      );
+      expect(params.mode).toBe(expected);
+      expect(params.sourceValidator).toBeUndefined();
+      expect(params.validators).toHaveLength(1);
+      expect(params.validators[0].address).toBe("cosmosvaloper1v");
+      expect(params.validators[0].amount.toFixed()).toBe("1000000");
     });
 
     it("maps redelegate to source + destination validators", () => {
-      const tx = intentToTransaction(
+      const params = intentToMessageParams(
         stakingIntent({
           mode: "redelegate",
           valAddress: "cosmosvaloper1src",
           dstValAddress: "cosmosvaloper1dst",
         }),
+        "cosmos",
       );
-      expect(tx.mode).toBe("redelegate");
-      expect(tx.sourceValidator).toBe("cosmosvaloper1src");
-      expect(tx.validators[0].address).toBe("cosmosvaloper1dst");
+      expect(params.mode).toBe("redelegate");
+      expect(params.sourceValidator).toBe("cosmosvaloper1src");
+      expect(params.validators[0].address).toBe("cosmosvaloper1dst");
     });
 
     it("throws on an unsupported staking mode (withdraw)", () => {
       expect(() =>
-        intentToTransaction(stakingIntent({ mode: "withdraw", valAddress: "cosmosvaloper1v" })),
+        intentToMessageParams(
+          stakingIntent({ mode: "withdraw", valAddress: "cosmosvaloper1v" }),
+          "cosmos",
+        ),
       ).toThrow("unsupported staking mode");
     });
   });

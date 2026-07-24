@@ -31,7 +31,7 @@ describe("logic/transaction/estimateFees", () => {
     expect(res.parameters?.gasLimit).toBe("250000");
   });
 
-  it("feeds the adapted account + transaction into getEstimatedFees", async () => {
+  it("feeds the neutral message params into getEstimatedFees", async () => {
     mockedGetEstimatedFees.mockResolvedValue({
       gasWanted: new BigNumber("1"),
       gasWantedFees: new BigNumber("1"),
@@ -39,11 +39,12 @@ describe("logic/transaction/estimateFees", () => {
 
     await estimateFees("cosmos", sendIntent);
 
-    const [account, transaction] = mockedGetEstimatedFees.mock.calls[0];
-    expect(account.freshAddress).toBe("cosmos1sender");
-    expect(account.currency.id).toBe("cosmos");
-    expect(transaction.mode).toBe("send");
-    expect(transaction.recipient).toBe("cosmos1recipient");
-    expect(transaction.amount.toFixed()).toBe("1000000");
+    const [params] = mockedGetEstimatedFees.mock.calls[0];
+    expect(params.senderAddress).toBe("cosmos1sender");
+    expect(params.currencyId).toBe("cosmos");
+    expect(params.denom).toBe("uatom");
+    expect(params.mode).toBe("send");
+    expect(params.recipient).toBe("cosmos1recipient");
+    expect(params.amount.toFixed()).toBe("1000000");
   });
 });

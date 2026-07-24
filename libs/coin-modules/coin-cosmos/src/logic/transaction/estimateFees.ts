@@ -1,7 +1,6 @@
 import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { getEstimatedFees } from "../../prepareTransaction";
-import { CosmosAccount } from "../../types";
-import { intentToAccount, intentToTransaction } from "./intentAdapter";
+import { intentToMessageParams } from "./intentAdapter";
 
 /**
  * Estimate fees by simulating on the node; the simulated gas limit is carried in
@@ -12,10 +11,9 @@ export async function estimateFees(
   intent: TransactionIntent,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
-  const account = intentToAccount(intent, currencyId) as CosmosAccount;
-  const transaction = intentToTransaction(intent);
+  const params = intentToMessageParams(intent, currencyId);
 
-  const { gasWanted, gasWantedFees } = await getEstimatedFees(account, transaction);
+  const { gasWanted, gasWantedFees } = await getEstimatedFees(params);
 
   return {
     value: BigInt(gasWantedFees.toFixed()),

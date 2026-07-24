@@ -8,7 +8,7 @@ import { txToMessages } from "../../buildTransaction";
 import cryptoFactory from "../../chain/chain";
 import { CosmosAPI } from "../../network/Cosmos";
 import { estimateFees } from "./estimateFees";
-import { intentToAccount, intentToTransaction } from "./intentAdapter";
+import { intentToMessageParams } from "./intentAdapter";
 
 /**
  * Serialized crafted-transaction payload exchanged between {@link craftTransaction}
@@ -38,11 +38,10 @@ export async function craftTransaction(
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const account = intentToAccount(intent, currencyId);
-  const transaction = intentToTransaction(intent);
+  const params = intentToMessageParams(intent, currencyId);
   const chainInstance = cryptoFactory(currencyId);
 
-  const { aminoMsgs, protoMsgs } = txToMessages(account, transaction, chainInstance);
+  const { aminoMsgs, protoMsgs } = txToMessages(params, chainInstance);
   const { accountNumber, sequence, pubKeyType } = await api.getAccount(intent.sender);
 
   const fees = customFees ?? (await estimateFees(currencyId, intent));
@@ -54,7 +53,7 @@ export async function craftTransaction(
     );
   }
   const gasLimit = String(gasLimitValue);
-  const denom = account.currency.units[1].code;
+  const denom = params.denom;
   const feeAmount = [{ denom, amount: fees.value.toString() }];
 
   const chainId = (await api.getNodeInfo()).default_node_info.network;
@@ -63,7 +62,7 @@ export async function craftTransaction(
     aminoMsgs,
     { amount: feeAmount, gas: gasLimit },
     chainId,
-    transaction.memo || "",
+    params.memo,
     accountNumber.toString(),
     sequence.toString(),
   );
@@ -73,7 +72,7 @@ export async function craftTransaction(
       typeUrl: m.typeUrl,
       value: Buffer.from(m.value).toString("base64"),
     })),
-    memo: transaction.memo || "",
+    memo: params.memo,
     pubKeyType,
     feeAmount,
     gasLimit,

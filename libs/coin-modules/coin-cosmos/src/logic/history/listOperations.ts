@@ -2,7 +2,7 @@ import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-fr
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";
-import { txToOps } from "../../synchronisation";
+import { txToOps } from "./txToOps";
 import { CosmosOperation, CosmosTx } from "../../types";
 
 // Default page size when the caller gives no limit — bounds the fetch instead of the full history.
@@ -48,9 +48,8 @@ export async function listOperations(
     throw new Error("ascending order is not supported");
   }
 
-  const currency = getCryptoCurrencyById(currencyId);
+  const unitCode = getCryptoCurrencyById(currencyId).units[1].code;
   const accountId = `js:2:${currencyId}:${address}:`;
-  const info = { address, currency } as unknown as Parameters<typeof txToOps>[0];
 
   const offset = options.cursor ? Math.max(0, Number.parseInt(options.cursor, 10) || 0) : 0;
   const limit = options.limit ?? PAGE_SIZE;
@@ -83,7 +82,11 @@ export async function listOperations(
     });
 
   // Slice in tx-space, then parse — a drop shortens a page but never skips.
-  const items = txToOps(info, accountId, sortedTxs.slice(offset, offset + limit)).map(toOperation);
+  const items = txToOps(
+    { address, unitCode },
+    accountId,
+    sortedTxs.slice(offset, offset + limit),
+  ).map(toOperation);
   // Key `next` on the floor, not page fullness, so a short page from parse-drops still advances.
   const next =
     offset + limit < sortedTxs.length || (hasMore && !reachedFloor)
