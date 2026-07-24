@@ -10,13 +10,13 @@ import {
   useContactsFeatureIntroductionState,
   useContactsMeContact,
   type ContactsLedgerSyncStatus,
-  type ContactsPageLabels,
-  type ContactsPageProps,
+  type ContactsListViewLabels,
+  type ContactsListViewProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 
-export type ContactsPageViewModel = Omit<ContactsPageProps, "onAddContact"> &
+export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
     onClearSearch: () => void;
   }>;
@@ -34,7 +34,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     isContactsEntryAvailable: true,
     preference,
   });
-  const labels = useMemo<ContactsPageLabels>(
+  const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
@@ -64,8 +64,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
     setSearchQuery(event.target.value);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
-  const onOpenMe = useCallback<ContactsPageProps["onOpenMe"]>(_contactId => undefined, []);
-  const onOpenContact = useCallback<ContactsPageProps["onOpenContact"]>(
+  const onOpenMe = useCallback<ContactsListViewProps["onOpenMe"]>(_contactId => undefined, []);
+  const onOpenContact = useCallback<ContactsListViewProps["onOpenContact"]>(
     _contactId => undefined,
     [],
   );

@@ -4,7 +4,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   type ContactDetailLabels,
-  type ContactDetailPageProps,
+  type ContactDetailViewProps,
   useContactsFeature,
   useEmptyContactDetail,
 } from "@features/flow-contacts";
@@ -17,7 +17,7 @@ type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
       status: "ready";
-      pageProps: ContactDetailPageProps;
+      pageProps: ContactDetailViewProps;
     }>;
 
 const onAddAddress = () => undefined;
