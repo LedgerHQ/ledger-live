@@ -322,6 +322,30 @@ describe("useBridgeRecipientValidation", () => {
     });
   });
 
+  it("clears settled status when the recipient changes so first-result loading is detectable", async () => {
+    const { result, rerender } = renderHook(
+      ({ recipient }) =>
+        useBridgeRecipientValidation({
+          recipient,
+          account: mockAccount,
+        }),
+      { initialProps: { recipient: "addr1" } },
+    );
+
+    jest.advanceTimersByTime(300);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.status).not.toBeNull();
+    });
+
+    rerender({ recipient: "addr2" });
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.status).toBeNull();
+    expect(result.current.errors).toEqual({});
+  });
+
   it("returns null status when account is null", () => {
     const { result } = renderHook(() =>
       useBridgeRecipientValidation({

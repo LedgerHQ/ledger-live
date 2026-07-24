@@ -312,6 +312,7 @@ export function useAddressValidation({
       matchedAccounts,
       bridgeErrors: filteredBridgeErrors,
       bridgeWarnings: bridgeValidation.warnings,
+      isBridgeLoading: bridgeValidation.isLoading && bridgeValidation.status === null,
     };
   }, [
     validationState,
@@ -328,11 +329,16 @@ export function useAddressValidation({
     addressForBridgeValidation,
     bridgeValidation.errors,
     bridgeValidation.warnings,
+    bridgeValidation.isLoading,
+    bridgeValidation.status,
   ]);
 
   return {
     result,
-    isLoading: validationState.status === "loading" || domainIsLoading,
+    isLoading:
+      validationState.status === "loading" ||
+      domainIsLoading ||
+      (bridgeValidation.isLoading && bridgeValidation.status === null),
     validateAddress,
   };
 }

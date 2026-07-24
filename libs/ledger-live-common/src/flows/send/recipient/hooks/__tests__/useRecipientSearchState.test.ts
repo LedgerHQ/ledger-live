@@ -121,18 +121,32 @@ describe("useRecipientSearchState", () => {
     expect(result.current.isAddressComplete).toBe(false);
   });
 
-  it("should keep a validated address complete while bridge validation is loading", () => {
+  it("should not set isAddressComplete while awaiting the first bridge result", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "v",
+        result: createDefaultResult({ status: "valid", isBridgeLoading: true }),
+      }),
+    );
+
+    expect(result.current.isAddressComplete).toBe(false);
+    expect(result.current.showMatchedAddress).toBe(false);
+  });
+
+  it("should keep a validated address complete while bridge revalidates after a first result", () => {
     const { result } = renderHook(() =>
       useRecipientSearchState({
         ...defaultProps,
         searchValue: "0xvalid",
-        result: createDefaultResult({ status: "valid" }),
+        result: createDefaultResult({ status: "valid", isBridgeLoading: false }),
         isLoading: true,
       }),
     );
 
     expect(result.current.isAddressComplete).toBe(true);
     expect(result.current.showSearchResults).toBe(true);
+    expect(result.current.showMatchedAddress).toBe(true);
   });
 
   it("should not set isAddressComplete for idle or invalid status", () => {
