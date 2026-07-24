@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  TextInput,
-} from "@ledgerhq/lumen-ui-react";
-import { CONTACT_NAME_MAX_LENGTH } from "./model/constants";
+import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
+import { ContactNameInput } from "./components/ContactNameInput/ContactNameInput.web";
 import { ContactsAddContactNamingDisclaimer } from "./ContactsAddContactNamingDisclaimer.web";
 import type { ContactsAddContactDialogProps } from "./types";
 
@@ -18,11 +11,15 @@ export function ContactsAddContactDialog({
   isConfirmEnabled,
   isSaving,
   draftName,
+  invalidNameError,
   labels,
   onClose,
   onDraftNameChange,
   onConfirm,
 }: ContactsAddContactDialogProps): React.ReactNode {
+  const nameValidationError =
+    invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onClose();
@@ -42,25 +39,12 @@ export function ContactsAddContactDialog({
           onClose={onClose}
         />
         <DialogBody className="flex flex-col gap-24 px-24 pb-24 pt-12">
-          <div className="flex flex-col gap-8">
-            <TextInput
-              data-testid="contacts-add-contact-name-input"
-              placeholder={labels.namePlaceholder}
-              value={draftName}
-              onChange={(event) =>
-                onDraftNameChange(
-                  event.target.value.slice(0, CONTACT_NAME_MAX_LENGTH),
-                )
-              }
-              maxLength={CONTACT_NAME_MAX_LENGTH}
-            />
-            <p
-              className="body-3 self-end text-muted"
-              data-testid="contacts-add-contact-name-count"
-            >
-              {`${draftName.length}/${CONTACT_NAME_MAX_LENGTH}`}
-            </p>
-          </div>
+          <ContactNameInput
+            value={draftName}
+            placeholder={labels.namePlaceholder}
+            errorMessage={nameValidationError}
+            onChange={onDraftNameChange}
+          />
           <ContactsAddContactNamingDisclaimer
             disclaimerId={NAMING_DISCLAIMER_ID}
             text={labels.namingDisclaimer}

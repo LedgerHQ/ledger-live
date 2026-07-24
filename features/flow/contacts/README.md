@@ -58,7 +58,7 @@ src/
 │   ├── AddContact/                      # Web dialog + native drawer
 │   │   ├── ContactsAddContactDialog.web.tsx / ContactsAddContactDrawer.native.tsx
 │   │   ├── useAddContactViewModel.ts / useAddContactDrawerViewModel.ts / types.ts
-│   │   ├── components/ContactNameInput/ (native)
+│   │   ├── components/ContactNameInput/ (web + native)
 │   │   ├── model/                       # Contact-name validation and creation contract
 │   │   └── index.ts / web.ts / native.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
