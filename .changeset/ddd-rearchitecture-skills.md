@@ -1,4 +1,4 @@
 ---
 ---
 
-Add local DDD re-architecture skills for Codex and Cursor.
+Add local DDD re-architecture guidance and connect it to architecture agents.

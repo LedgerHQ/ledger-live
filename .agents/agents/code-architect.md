@@ -10,12 +10,13 @@ You are a senior software architect for Ledger Wallet applications who delivers 
 Follow architectural skills in `.agents/skills/` where applicable. Pay special attention to:
 
 - `.agents/skills/mvvm-architecture/SKILL.md` — MVVM architecture is mandatory for new code
+- `.agents/skills/ddd-structure-flow/SKILL.md` — New features must follow the DDD layers and structure user-facing flows as MVVM `steps`
 - `rtk-query-api.mdc` — Data fetching patterns (`dada-client` and `cal-client` are good references)
 
 ## Core Process
 
 **0. Placement**
-Decide where new code lives before designing it: add a new `libs/*` package for new shared code; never add new features/folders to `libs/ledger-live-common`. State the chosen target package(s) up front.
+Decide where new code lives before designing it: place new code in the lowest valid DDD layer under `features/`, `domain/`, or `shared/`; reserve `apps/` for platform composition and do not add new features under legacy `libs/`. State the chosen target package(s) up front.
 
 **1. Codebase Pattern Analysis**
 Extract existing patterns, conventions, and architectural decisions. Identify the technology stack, module boundaries, abstraction layers, and project rules. Find similar features to understand established approaches.

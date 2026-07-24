@@ -1,6 +1,6 @@
 ---
 name: ddd-structure-flow
-description: Apply the Ledger Wallet monorepo DDD re-architecture structure and flow guidelines. Use when creating or reviewing packages under apps, features/platform, features/flow, domain/entity, domain/api, domain/aggregate, or shared, and when checking dependency boundaries, package naming, Nx tags, or legacy libs imports.
+description: Apply the Ledger Wallet monorepo DDD re-architecture structure and flow guidelines. Use when creating or reviewing packages under apps, features/platform, features/flow, domain/entity, domain/api, domain/aggregate, or shared, when structuring flow steps with MVVM, and when checking dependency boundaries, package naming, Nx tags, or legacy libs imports.
 ---
 
 # DDD Structure And Flow
@@ -69,11 +69,38 @@ Contains:
 - business-aware UI components
 - local state and user-facing logic
 - `.web` and `.native` component variants when needed
+- `steps/<StepName>` units for screen-like MVVM flows
 
 Does not contain:
 
 - app-specific screen composition
 - direct app routing ownership
+
+Structure each flow as a private package:
+
+```text
+features/flow/<feature>/
+├── src/
+│   ├── components/
+│   ├── hooks/
+│   ├── router/
+│   ├── steps/
+│   │   └── <StepName>/
+│   │       ├── components/
+│   │       ├── viewModel.ts
+│   │       ├── view.ts
+│   │       ├── view.test.ts
+│   │       └── index.ts
+│   ├── state/
+│   ├── utils/
+│   └── index.ts
+└── package.json
+```
+
+- Treat each `steps/<StepName>` as the flow equivalent of an MVVM screen.
+- Keep connected state and orchestration in `viewModel`; keep `view` focused on rendering and callbacks.
+- Colocate step-only components under the step. Keep components shared across steps at `src/components`.
+- Export only the flow entry points that apps need. Let app screens compose those entry points.
 
 ### `domain`
 
@@ -147,6 +174,8 @@ apps/ledger-live-mobile/screens/WalletScreen.native.tsx
 features/platform/feature-flags/src/hooks/useFeatureFlags.ts
 features/flow/wallet-balance/src/components/WalletBalance/WalletBalance.web.tsx
 features/flow/wallet-balance/src/components/WalletBalance/WalletBalance.native.tsx
+features/flow/wallet-balance/src/steps/Overview/viewModel.ts
+features/flow/wallet-balance/src/steps/Overview/view.ts
 domain/entity/crypto-asset/src/data/schema.ts
 domain/entity/crypto-asset/src/data/slice.ts
 domain/api/crypto-asset/src/cryptoAsset.api.ts
@@ -157,6 +186,7 @@ shared/feature-flags/src/data/schema.ts
 
 - The package is in the lowest layer that can own the behavior.
 - Apps compose screens; flows expose reusable user-facing blocks.
+- Flow steps use MVVM separation and colocate step-specific files.
 - Platform features hold invisible feature infrastructure, not screens.
 - Domain packages own business objects and APIs, not cross-cutting feature glue.
 - Shared packages stay business-agnostic.
