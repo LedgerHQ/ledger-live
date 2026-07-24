@@ -1,7 +1,7 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
+import { fireEvent, render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
@@ -215,8 +215,16 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-contact-dialog")).toBeVisible();
     expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
 
-    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Ada");
+    const input = screen.getByTestId("contacts-add-contact-name-input");
 
+    await user.type(input, "Ada1");
+
+    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    fireEvent.change(input, { target: { value: "Ada" } });
+
+    expect(screen.queryByText("Special characters are not allowed.")).not.toBeInTheDocument();
     expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
 
     await user.click(screen.getByTestId("contacts-add-contact-save"));
