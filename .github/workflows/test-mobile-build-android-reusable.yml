@@ -206,7 +206,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - uses: nick-fields/retry@v4
+      - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies
         with:
