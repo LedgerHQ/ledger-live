@@ -314,7 +314,8 @@
       "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
       "usb@2.17.0": "patches/usb@2.17.0.patch",
-      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch",
+      "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
     },
     "packageExtensions": {
       "detox-allure2-adapter": {
