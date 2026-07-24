@@ -3,7 +3,7 @@ import type { ZcashPrivateInfo } from "./types";
 
 export const ZCASH_LOG_TYPE = "zcash";
 export const ZCASH_GRPC_URL_TESTNET = "https://zaino-zec-testnet.nodes.stg.ledger-test.com";
-export const ZCASH_GRPC_URL_MAINNET = "https://zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com";
+export const ZCASH_GRPC_URL_MAINNET = "https://zec.rocks:443";
 
 // ── Zaino gRPC endpoint resolution ─────────────────────────────────────────
 //
@@ -72,8 +72,8 @@ export const setZcashShieldedEnabled = (enabled: boolean): void => {
 
 /** Whether shielded PCZT/V5 routing is enabled for Zcash sends. */
 export const isZcashShieldedEnabled = (): boolean => zcashShieldedEnabled;
-export const ZCASH_ACTIVATION_DATE = new Date("2016-10-28");
-export const ZCASH_ACTIVATION_DATE_STRING = "2016-10-28";
+export const ZCASH_ACTIVATION_DATE = new Date("2022-05-31");
+export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000; // 5 seconds
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {

@@ -8982,6 +8982,12 @@
     },
     "shielded": {
       "send": {
+        "modalTitle": {
+          "transparent": "Public Send",
+          "transparentToShielded": "Public to Private Send",
+          "shieldedToTransparent": "Private to Public Send",
+          "shielded": "Private Send"
+        },
         "transferFrom": {
           "label": "Transfer from",
           "public": {
@@ -8992,6 +8998,25 @@
             "title": "Private balance",
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
+          }
+        },
+        "memo": {
+          "label": "Memo (optional)",
+          "placeholder": "Enter a memo",
+          "tooltip": "Attach a private message to this shielded transaction. Only the recipient can read it. Up to 512 bytes."
+        },
+        "syncBanner": {
+          "stopped": {
+            "message": "Private balance is not synchronized",
+            "cta": "Resume sync"
+          },
+          "running": {
+            "message": "Private balance is synchronizing ({{progress}}%)",
+            "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+          },
+          "outdated": {
+            "message": "Balance may be slightly out of date",
+            "cta": "Sync balance"
           }
         }
       },
