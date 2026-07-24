@@ -950,6 +950,97 @@ describe("createApi", () => {
       expect(ops.every(op => /^0\.0\.\d+$/.test(op.tx.feesPayer ?? ""))).toBe(true);
     });
 
+    describe("real multi-asset (packed) CryptoTransfer", () => {
+      const packedTxHash = "OoaJ/10qHN/97Zaxj8vxGIJfL9UhrGKaJBwclsL4wUeqbegBAXhdmw+/6/dB6mow";
+      const sender = MAINNET_TEST_ACCOUNTS.withTokens.accountId;
+      const usdc = "0.0.456858";
+      const hbark = "0.0.5022567";
+      const r1 = "0.0.9124531";
+      const r2 = "0.0.9169746";
+      const expectedFee = 1176695n;
+
+      let packedOps: Awaited<ReturnType<typeof api.listOperations>>["items"];
+
+      beforeAll(async () => {
+        const { items: ops } = await api.listOperations(sender, {
+          minHeight: 0,
+          cursor: "1760510880.000000000",
+          limit: 100,
+          order: "desc",
+        });
+
+        packedOps = ops.filter(o => o.tx.hash === packedTxHash);
+      });
+
+      it("should return one operation per fund movement", () => {
+        expect(packedOps).toHaveLength(5);
+      });
+
+      it("should not create a standalone FEES operation when HBAR moved", () => {
+        expect(packedOps.some(o => o.type === "FEES")).toBe(false);
+      });
+
+      it("should report the same tx fee and fees payer on every OUT leg", () => {
+        for (const op of packedOps) {
+          expect(op.type).toBe("OUT");
+          expect(op.tx.fees).toBe(expectedFee);
+          expect(op.tx.feesPayer).toBe(sender);
+          expect(op.senders).toEqual([sender]);
+        }
+      });
+
+      it("should return one native OUT operation per recipient with a fee-exclusive value", () => {
+        const native = packedOps.filter(o => o.asset.type === "native");
+        expect(native).toHaveLength(2);
+        expect(native.map(o => o.recipients).sort()).toEqual([[r1], [r2]].sort());
+        for (const op of native) {
+          expect(op.value).toBe(1000000n);
+        }
+        expect(native.reduce((acc, o) => acc + o.value, 0n)).toBe(2000000n);
+      });
+
+      it("should return one OUT operation per HTS token movement with the raw token value", () => {
+        const tokens = packedOps.filter(o => o.asset.type !== "native");
+        expect(tokens).toHaveLength(3);
+        const tokenSummary = tokens
+          .map(t =>
+            [(t.asset as { assetReference: string }).assetReference, t.recipients[0], t.value].join(
+              ":",
+            ),
+          )
+          .sort();
+        expect(tokenSummary).toEqual(
+          [`${usdc}:${r1}:10000`, `${hbark}:${r2}:1`, `${hbark}:${r1}:1`].sort(),
+        );
+      });
+    });
+
+    it("should return a standalone FEES operation for a fee-only HBAR allowance approve", async () => {
+      const allowanceTxHash = "PjwF86OcFhvrIZlp+Rwg74Vg+yqxCAuTyNcgrXb8dKMbk5f/y//rZB+vokZMXd4W";
+      const payer = MAINNET_TEST_ACCOUNTS.withTokens.accountId;
+
+      const { items: ops } = await api.listOperations(payer, {
+        minHeight: 0,
+        cursor: "1783953434.000000000",
+        limit: 10,
+        order: "desc",
+      });
+
+      const allowanceOps = ops.filter(o => o.tx.hash === allowanceTxHash);
+
+      expect(allowanceOps).toHaveLength(1);
+      expect(allowanceOps[0]).toMatchObject({
+        type: "FEES",
+        value: 0n,
+        asset: { type: "native" },
+        senders: [payer],
+        tx: {
+          fees: 74754802n,
+          feesPayer: payer,
+        },
+      });
+    });
+
     it("returns IN/OUT operations for mint and burn of amUSDC", async () => {
       const ownerAccountId = MAINNET_TEST_ACCOUNTS.withTokens.accountIdWithErc20;
       const { items: ops } = await api.listOperations(ownerAccountId, {
