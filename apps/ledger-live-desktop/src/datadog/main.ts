@@ -1,9 +1,12 @@
 import "@datadog/electron-sdk/instrument";
 import { init } from "@datadog/electron-sdk";
+import makeDebug from "debug";
 import anonymizer from "~/sentry/anonymizer";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { getDatadogBuildConfig, rewriteAsarUrls, type ShouldSendCallback } from "./config";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
+
+const log = makeDebug("ll:datadog:main");
 
 type ContextValue =
   | string
@@ -36,21 +39,31 @@ export async function initDatadogMain(
 ): Promise<boolean> {
   if (initialized) return true;
   if (!shouldSend()) {
-    console.log("[datadog/main] skipped: shouldSend() is false");
+    log("skipped: sentryLogs opt-in is false");
     return false;
   }
 
   const { applicationId, clientToken, site, service, env } = getDatadogBuildConfig();
+  log(
+    "config: applicationId=%s site=%s service=%s env=%s version=%s",
+    applicationId ? "[set]" : "[missing]",
+    site,
+    service,
+    env,
+    __APP_VERSION__,
+  );
+
   if (!applicationId || !clientToken) {
-    console.log("[datadog/main] skipped: missing applicationId or clientToken");
+    log("skipped: missing applicationId or clientToken");
     return false;
   }
   if (!getOperatingSystemSupportStatus().supported) {
-    console.log("[datadog/main] skipped: OS not supported");
+    log("skipped: OS not supported (%s)", process.platform);
     return false;
   }
 
   try {
+    log("calling init()...");
     const ok = await init({
       applicationId,
       clientToken,
@@ -60,7 +73,7 @@ export async function initDatadogMain(
       version: __APP_VERSION__,
     });
     if (!ok) {
-      console.log("[datadog/main] init() returned false");
+      log("init() returned false");
       return false;
     }
 
@@ -71,10 +84,10 @@ export async function initDatadogMain(
       ...context,
     };
     initialized = true;
-    console.log("[datadog/main] initialized ✓");
+    log("initialized ✓ context=%o", globalContext);
     return true;
   } catch (e) {
-    console.warn("[datadog/main] init threw:", e);
+    log("init threw: %o", e);
     return false;
   }
 }
@@ -101,7 +114,9 @@ export function captureExceptionMain(err: unknown): void {
   if (!initialized) return;
   if (!shouldSendCallback()) return;
   if (shouldIgnoreErrorMessage(errorMessage(err))) return;
-  console.error(anonymizeError(err));
+  const anonymized = anonymizeError(err);
+  log("reporting error: %s", anonymized.message);
+  console.error(anonymized);
 }
 
 export function setGlobalContextMain(context: Context): void {

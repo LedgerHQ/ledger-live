@@ -112,7 +112,7 @@ app.on("ready", async () => {
 
   // Measure database initialization and first reads
   console.time("T-db");
-  const settings = (await db.getKey("app", "settings")) as SettingsState;
+  let settings = (await db.getKey("app", "settings")) as SettingsState;
   const identities = (await db.getKey("app", "identities")) as
     | { userId?: string; datadogId?: string }
     | undefined;
@@ -134,17 +134,17 @@ app.on("ready", async () => {
     lldDatadogEnabled = enabled === true;
   });
   const shouldSendDatadog = () => settings?.sentryLogs === true;
+  // captureExceptionMain gates on initialized, so registering unconditionally is safe.
+  // This way the handler is already in place when initDatadogMain succeeds, whether at
+  // boot or after the user enables telemetry mid-session.
+  app.on("render-process-gone", (_event, _webContents, details) => {
+    if (details.reason === "clean-exit") return;
+    captureExceptionMain(
+      new Error(`render-process-gone: ${details.reason} (exit ${details.exitCode})`),
+    );
+  });
   initDatadogMain(shouldSendDatadog, {
     ...(identities?.datadogId ? { usr_id: identities.datadogId } : {}),
-  }).then(ok => {
-    if (!ok) return;
-    // uncaughtException/unhandledRejection are captured automatically by dd-trace
-    app.on("render-process-gone", (_event, _webContents, details) => {
-      if (details.reason === "clean-exit") return;
-      captureExceptionMain(
-        new Error(`render-process-gone: ${details.reason} (exit ${details.exitCode})`),
-      );
-    });
   });
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
@@ -167,6 +167,16 @@ app.on("ready", async () => {
     return db.getKey(ns, keyPath, defaultValue);
   });
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
+    if (ns === "app" && keyPath === "settings") {
+      settings = value as SettingsState;
+      // Re-attempt Datadog init in case the user just enabled telemetry for the first time.
+      // initDatadogMain is idempotent — returns immediately if already initialized.
+      if (settings?.sentryLogs) {
+        initDatadogMain(shouldSendDatadog, {
+          ...(identities?.datadogId ? { usr_id: identities.datadogId } : {}),
+        });
+      }
+    }
     return db.setKey(ns, keyPath, value);
   });
   ipcMain.handle("hasEncryptionKey", () => {

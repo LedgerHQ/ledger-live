@@ -101,9 +101,7 @@ describe("datadog main", () => {
     it("returns false when init throws", async () => {
       getDatadogBuildConfig.mockReturnValue(fullConfig);
       init.mockRejectedValueOnce(new Error("init failed"));
-      const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
       expect(await initDatadogMain(() => true)).toBe(false);
-      consoleSpy.mockRestore();
     });
   });
 
