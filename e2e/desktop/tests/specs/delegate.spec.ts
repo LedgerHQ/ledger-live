@@ -432,7 +432,7 @@ test.describe("Staking flow from different entry point", () => {
         await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
       } else {
         await app.market.openCoinPage(delegateAccount.account.currency.ticker);
-        await app.assetDetail.startEarnFlow();
+        await app.assetDetail(delegateAccount.account.currency.id).startEarnFlow();
       }
 
       const selector = await getModularSelector(app, "ACCOUNT");

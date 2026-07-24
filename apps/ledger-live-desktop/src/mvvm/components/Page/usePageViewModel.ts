@@ -2,13 +2,14 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_TO_TOP_EVENT } from "./constants";
-import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
+import { shouldDisplayRightPanel as isRightPanelPage, getPageTestId } from "./utils";
 import { useRightPanelVisibility } from "LLD/components/RightPanel/useRightPanelVisibility";
 import { useRightPanelSwapAvailability } from "LLD/components/RightPanel/useRightPanelSwapAvailability";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
   readonly shouldRenderRightPanel: boolean;
+  readonly pageTestId: string;
 }
 
 export const usePageViewModel = (): PageViewModelResult => {
@@ -55,5 +56,6 @@ export const usePageViewModel = (): PageViewModelResult => {
   return {
     pageScrollerRef,
     shouldRenderRightPanel,
+    pageTestId: getPageTestId(pathname),
   };
 };
