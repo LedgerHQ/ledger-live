@@ -77,7 +77,8 @@ function buildTitleDropPattern(titled: LoadedEntry[]): string | undefined {
     }
     // Substring pattern (`.test()` semantics). The leading `.*` lets it match
     // anywhere inside jest's `^(?!…)` lookahead; inert for the unanchored grep-invert.
-    return `(?:.*${titlePattern as string})`;
+    // Group the pattern so a top-level alternation stays scoped: `.*(?:a|b)`, not `.*a|b`.
+    return `(?:.*(?:${titlePattern as string}))`;
   });
   return `(?:${alternatives.join("|")})`;
 }

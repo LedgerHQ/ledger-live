@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { loadRegistry, type LoadOptions } from "./load.ts";
+import { loadRegistry, defaultRepoRoot, type LoadOptions } from "./load.ts";
 import { fileMatches } from "./match.ts";
 import type { LoadedEntry } from "./schema.ts";
 
@@ -39,12 +39,13 @@ const defaultTitleGrep: TitleGrep = (title, repoRoot) => {
         "grep",
         "-l",
         "--fixed-strings",
+        "-e",
         title,
         "--",
-        "*.test.ts",
-        "*.test.tsx",
-        "*.spec.ts",
-        "*.spec.tsx",
+        ":(glob)**/*.test.ts",
+        ":(glob)**/*.test.tsx",
+        ":(glob)**/*.spec.ts",
+        ":(glob)**/*.spec.tsx",
       ],
       { cwd: repoRoot, encoding: "utf8" },
     );
@@ -84,7 +85,7 @@ export function validateRegistry(
   // cross-entry checks here.
   const { active, expired } = loadRegistry(options);
   const all = [...active, ...expired];
-  const repoRoot = options.repoRoot ?? process.cwd();
+  const repoRoot = options.repoRoot ?? defaultRepoRoot();
 
   // Unique title-level title check across the entire registry.
   const byTitle = new Map<string, LoadedEntry[]>();

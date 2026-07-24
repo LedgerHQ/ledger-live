@@ -137,7 +137,7 @@ export function collapseAttemptsToFinal(records: TestRecord[]): TestRecord[] {
     { file: string; title: string; passed: boolean; failure?: TestRecord }
   >();
   for (const r of records) {
-    const key = `${r.file}\n${r.title}`;
+    const key = JSON.stringify([r.file, r.title]);
     const cur = byKey.get(key) ?? { file: r.file, title: r.title, passed: false };
     if (r.status === "passed") cur.passed = true;
     else if (r.status === "failed" && !cur.failure) cur.failure = r;

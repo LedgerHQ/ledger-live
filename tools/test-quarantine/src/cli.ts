@@ -87,14 +87,26 @@ function parseArgv(argv: string[]): ParsedArgv {
   return { runner, runnerArgs };
 }
 
+/** Split a command string into tokens, keeping single/double-quoted spans intact. */
+function splitCommand(input: string): string[] {
+  const tokens: string[] = [];
+  const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(input)) !== null) {
+    tokens.push(m[1] ?? m[2] ?? m[3]);
+  }
+  return tokens;
+}
+
 /** Resolve the runner's launch command. We invoke the local binary via the package manager. */
 function runnerCommand(runner: Runner, args: string[]): { cmd: string; argv: string[] } {
   // Optional override so integration tests (and unusual local setups) can point
   // at a custom binary, e.g. QUARANTINE_RUNNER_BIN_JEST=node ... a fake runner.
   const override = process.env[`QUARANTINE_RUNNER_BIN_${runner.toUpperCase()}`];
   if (override) {
-    // Split on spaces to allow "node /path/to/fake.mjs".
-    const parts = override.split(" ").filter(Boolean);
+    // Quoted-token split so a path with spaces survives, e.g.
+    // QUARANTINE_RUNNER_BIN_JEST='node "C:\Program Files\fake.mjs"'.
+    const parts = splitCommand(override);
     return { cmd: parts[0], argv: [...parts.slice(1), ...args] };
   }
   // The wrapper sits inside a package script, so the runner bin is on PATH
