@@ -3,7 +3,7 @@ import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/m
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency";
 import { getSwapProvider } from "@ledgerhq/live-common/exchange/providers/swap";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import type { State } from "~/reducers/types";
@@ -26,7 +26,7 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdtEthereum: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/usd_tether__erc20_",
+  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd_tether__erc20_"),
   parentCurrencyId: ethereum.id,
   tokenType: "erc20",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",

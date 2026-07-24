@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import Wallet from "@ledgerhq/icons-ui/native/Wallet";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency";
 
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";

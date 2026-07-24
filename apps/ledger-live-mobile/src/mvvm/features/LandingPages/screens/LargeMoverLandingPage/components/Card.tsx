@@ -13,7 +13,7 @@ import {
   MarketCoinDataChart,
   PartialMarketItemResponse,
 } from "@ledgerhq/live-common/market/utils/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";

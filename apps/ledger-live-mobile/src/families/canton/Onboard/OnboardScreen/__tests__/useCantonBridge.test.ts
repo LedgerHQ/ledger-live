@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { CantonOnboardProgress } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import { act, renderHook } from "@tests/test-renderer";
 import { of, throwError } from "rxjs";
 import { useCantonBridge } from "../hooks/useCantonBridge";

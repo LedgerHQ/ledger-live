@@ -1584,12 +1584,18 @@ importers:
       '@domain/entity-contact':
         specifier: workspace:*
         version: link:../../domain/entity/contact
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
       '@domain/entity-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/entity/currency-fiat
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-token
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
@@ -1758,9 +1764,6 @@ importers:
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@domain/entity-currency";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import React from "react";

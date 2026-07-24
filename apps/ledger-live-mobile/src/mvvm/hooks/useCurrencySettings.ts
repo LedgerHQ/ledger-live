@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector } from "~/context/hooks";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { currencySettingsSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 

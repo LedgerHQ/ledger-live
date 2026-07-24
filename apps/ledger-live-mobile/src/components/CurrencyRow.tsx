@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { RectButton } from "react-native-gesture-handler";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";

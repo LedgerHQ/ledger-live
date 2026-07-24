@@ -8,7 +8,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import SendSelectRecipient from "./SendSelectRecipient";
 import {

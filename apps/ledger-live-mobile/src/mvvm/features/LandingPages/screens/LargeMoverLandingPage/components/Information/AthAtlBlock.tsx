@@ -6,7 +6,7 @@ import { counterValueFormatter } from "LLM/features/Market/utils";
 import { TFunction } from "i18next";
 import { ValueChange } from "@ledgerhq/types-live";
 import { getTimeAgoCode } from "../../utils";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 
 type AthAtlBlockProps = {
   label: string;

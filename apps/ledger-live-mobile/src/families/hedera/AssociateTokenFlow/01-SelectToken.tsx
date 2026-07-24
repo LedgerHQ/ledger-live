@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useTokensData } from "@features/platform-currencies";

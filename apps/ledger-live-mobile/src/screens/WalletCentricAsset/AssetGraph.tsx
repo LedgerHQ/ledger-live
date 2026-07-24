@@ -1,7 +1,7 @@
 import React from "react";
 import { SharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import AssetCentricGraphCard from "~/components/AssetCentricGraphCard";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";

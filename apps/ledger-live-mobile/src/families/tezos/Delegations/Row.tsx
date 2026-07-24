@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type BigNumber from "bignumber.js";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { Text } from "@ledgerhq/native-ui";

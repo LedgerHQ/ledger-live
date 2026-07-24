@@ -1,34 +1,46 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrencySchema,
+  TokenCurrencySchema,
+  type CryptoCurrency,
+  type TokenCurrency,
+} from "@domain/entity-currency";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
-export const createMockCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
+type CryptoCurrencyOverrides = Omit<Partial<CryptoCurrency>, "id"> & { id?: string };
+type TokenCurrencyOverrides = Omit<Partial<TokenCurrency>, "id" | "parentCurrencyId"> & {
+  id?: string;
+  parentCurrencyId?: string;
+};
+
+export const createMockCurrency = (overrides?: CryptoCurrencyOverrides): CryptoCurrency => {
   const currency = getCryptoCurrencyById("bitcoin");
+  const { id: rawId, ...rest } = overrides ?? {};
+  const id = rawId != null ? CryptoCurrencySchema.shape.id.parse(rawId) : currency.id;
   return {
     ...currency,
-    ...overrides,
+    ...rest,
+    id,
   };
 };
 
-export const createMockTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency =>
-  ({
+export const createMockTokenCurrency = (overrides?: TokenCurrencyOverrides): TokenCurrency => {
+  const { id: rawId, parentCurrencyId: rawParentId, tokenType, ...rest } = overrides ?? {};
+  return {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usdt",
     contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     name: "Tether USD",
     ticker: "USDT",
     disableCountervalue: false,
-    units: [
-      {
-        name: "USDT",
-        code: "USDT",
-        magnitude: 6,
-      },
-    ],
-    ...overrides,
-  }) as TokenCurrency;
+    units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+    ...rest,
+    tokenType: tokenType ?? "erc20",
+    id: TokenCurrencySchema.shape.id.parse(rawId ?? "ethereum/erc20/usdt"),
+    parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse(rawParentId ?? "ethereum"),
+  };
+};
 
 export const createMockAccount = (overrides?: Partial<Account>): Account => {
   const account = genAccount("mock_account");

@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { StyleProp, ViewStyle, TextStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import type { Operation } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import type { BigNumber } from "bignumber.js";
 
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

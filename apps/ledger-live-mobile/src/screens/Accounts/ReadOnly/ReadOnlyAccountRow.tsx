@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import { ScreenName } from "~/const";
 import AccountRowLayout from "~/components/AccountRowLayout";

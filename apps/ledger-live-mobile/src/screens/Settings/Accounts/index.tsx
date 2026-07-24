@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { loadBlacklistedTokenSections as loadBlacklistedTokenSectionsBase } from "@ledgerhq/live-common/account/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import SettingsRow from "~/components/SettingsRow";
 import { showToken } from "~/actions/settings";

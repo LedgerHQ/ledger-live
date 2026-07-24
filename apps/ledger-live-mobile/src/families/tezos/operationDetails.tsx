@@ -2,7 +2,7 @@ import React from "react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@domain/entity-currency";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";

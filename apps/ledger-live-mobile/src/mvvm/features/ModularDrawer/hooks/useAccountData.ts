@@ -2,7 +2,7 @@ import {
   NetworkCountItem,
   useNetworkAccountCounts,
 } from "@ledgerhq/live-common/modularDrawer/hooks/useNetworkAccountCounts";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";

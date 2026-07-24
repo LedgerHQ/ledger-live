@@ -9,7 +9,7 @@ import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useFromTransactionRaw } from "~/hooks/useFromTransactionRaw";

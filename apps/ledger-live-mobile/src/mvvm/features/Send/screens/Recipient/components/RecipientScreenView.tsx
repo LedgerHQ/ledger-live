@@ -1,5 +1,5 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";

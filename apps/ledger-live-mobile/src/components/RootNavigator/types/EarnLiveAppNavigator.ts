@@ -1,4 +1,4 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
 
 export type EarnLiveAppNavigatorParamList = {

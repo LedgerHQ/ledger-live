@@ -7,7 +7,7 @@ import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
 import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency";
 import InfoModal from "~/modals/Info";
 import type { ModalInfo } from "~/modals/Info";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";

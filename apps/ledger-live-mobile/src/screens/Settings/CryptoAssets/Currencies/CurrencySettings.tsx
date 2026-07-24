@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans, useTranslation } from "~/context/Locale";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import Slider from "@react-native-community/slider";

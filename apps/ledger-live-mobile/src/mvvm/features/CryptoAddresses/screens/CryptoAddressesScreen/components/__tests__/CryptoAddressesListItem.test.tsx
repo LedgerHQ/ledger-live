@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@tests/test-renderer";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency";
 import CryptoAddressesListItem from "../CryptoAddressesListItem";
 
 jest.mock("LLM/features/Accounts/components/AccountItem", () => {

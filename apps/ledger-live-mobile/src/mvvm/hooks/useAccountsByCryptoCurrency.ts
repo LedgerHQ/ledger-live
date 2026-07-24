@@ -1,11 +1,7 @@
 import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
 import { shallowEqual } from "react-redux";
-import type {
-  CryptoOrTokenCurrency,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import {
   accountsByCryptoCurrencyScreenSelector,
   flattenAccountsByCryptoCurrencyScreenSelector,

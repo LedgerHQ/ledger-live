@@ -12,7 +12,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen, useAnalytics, track } from "~/analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Currency, TokenCurrency } from "@domain/entity-currency";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getAccountCurrency,

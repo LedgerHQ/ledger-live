@@ -10,11 +10,7 @@ import {
   AccountRaw,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
 import isEqual from "lodash/isEqual";
 import {
   flattenAccounts,

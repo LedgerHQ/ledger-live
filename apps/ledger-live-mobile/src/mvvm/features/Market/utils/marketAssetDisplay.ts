@@ -1,6 +1,6 @@
 import { KeysPriceChange, MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { formatPrice } from "@ledgerhq/live-currency-format";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency";
 import type { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";

@@ -1,7 +1,7 @@
 import { i18n } from "~/context/Locale";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { ActionButtonEvent } from "~/components/FabActions";

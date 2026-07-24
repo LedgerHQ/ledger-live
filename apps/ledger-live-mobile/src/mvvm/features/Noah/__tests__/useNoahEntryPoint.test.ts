@@ -1,7 +1,7 @@
 import { renderHook } from "@tests/test-renderer";
 import { useReceiveNoahEntry } from "../useNoahEntryPoint";
 import { State } from "~/reducers/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 describe("useReceiveNoahEntry", () => {
   beforeEach(() => {
