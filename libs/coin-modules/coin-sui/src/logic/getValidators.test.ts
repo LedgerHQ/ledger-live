@@ -71,9 +71,9 @@ describe("logic/getValidators", () => {
     expect(b).toEqual({
       address: "0xdef",
       name: "Validator B",
-      description: "",
-      url: "",
-      logo: "",
+      description: undefined,
+      url: undefined,
+      logo: undefined,
       balance: 0n,
       commissionRate: "0",
       apy: 0,
