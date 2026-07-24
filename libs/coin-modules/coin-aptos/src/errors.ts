@@ -1,7 +1,23 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class SequenceNumberTooOldError extends Error {
+  override name = "SequenceNumberTooOld";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SequenceNumberTooOld");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const SequenceNumberTooOldError = createCustomErrorClass("SequenceNumberTooOld");
+export class SequenceNumberTooNewError extends Error {
+  override name = "SequenceNumberTooNew";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SequenceNumberTooNew");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const SequenceNumberTooNewError = createCustomErrorClass("SequenceNumberTooNew");
-
-export const TransactionExpiredError = createCustomErrorClass("TransactionExpired");
+export class TransactionExpiredError extends Error {
+  override name = "TransactionExpired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TransactionExpired");
+    if (fields) Object.assign(this, fields);
+  }
+}

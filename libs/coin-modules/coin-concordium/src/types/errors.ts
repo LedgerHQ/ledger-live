@@ -1,5 +1,9 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 export { ConcordiumMemoTooLong, ConcordiumInsufficientFunds } from "@ledgerhq/errors";
 
-export const SimulationError = createCustomErrorClass("SimulationError");
+export class SimulationError extends Error {
+  override name = "SimulationError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SimulationError");
+    if (fields) Object.assign(this, fields);
+  }
+}
