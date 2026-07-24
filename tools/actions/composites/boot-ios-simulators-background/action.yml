@@ -8,10 +8,37 @@ inputs:
   artifacts_root:
     description: "Directory for simulator-boot.log (created if missing)"
     required: true
+  reset_state:
+    description: "Shut down and erase the named simulators before booting, so each run starts from a clean state (recommended on reused self-hosted runners)"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
   steps:
+    - name: Reset iOS simulators to a clean state
+      if: ${{ inputs.reset_state == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        N="${{ inputs.worker_count }}"
+        if ! [[ "$N" =~ ^[1-9][0-9]*$ ]]; then
+          echo "::error::worker_count must be a positive integer, got: $N"
+          exit 1
+        fi
+        # On the reused self-hosted runners the named simulators persist across jobs,
+        # so leftover app/data state (and its memory footprint) can carry over and
+        # wedge a subsequent run. Shut down and erase the devices we are about to use
+        # so each job starts from a known-clean simulator. `|| true` keeps a missing
+        # device (or an already-shutdown one) from failing the whole job.
+        for ((i=1; i<=N; i++)); do
+          if [[ $i -eq 1 ]]; then name='iOS Simulator'; else name="iOS Simulator $i"; fi
+          echo "🧹 Resetting simulator: $name"
+          xcrun simctl shutdown "$name" || true
+          xcrun simctl erase "$name" || true
+        done
+        echo "✅ Simulators reset to clean state."
+
     - name: Boot iOS simulators in background
       shell: bash
       run: |
