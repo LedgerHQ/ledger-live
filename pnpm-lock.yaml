@@ -9006,6 +9006,9 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/entity/currency-fiat
+      '@features/platform-env':
+        specifier: workspace:^
+        version: link:../../features/platform/env
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../features/platform/feature-flags
