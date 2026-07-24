@@ -100,6 +100,11 @@ export const FF_EARN_V2_DESKTOP = {
   ptxEarnUi: { enabled: true, params: { value: "v2" } },
 } satisfies OptionalFeatureMap;
 
+export const FF_EARN_V2_DESKTOP_WITH_SIMULATOR = {
+  ...FF_EARN_V2_DESKTOP,
+  ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+} satisfies OptionalFeatureMap;
+
 export const FF_STAKE_PROGRAMS_MODAL = {
   stakePrograms: {
     enabled: true,
