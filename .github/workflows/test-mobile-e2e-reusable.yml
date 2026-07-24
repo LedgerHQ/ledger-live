@@ -101,6 +101,11 @@ on:
         required: false
         type: boolean
         default: false
+      stress_memory:
+        description: "EXPERIMENT: consume iOS runner memory during the shard to reproduce memory-pressure freezes (temporary; do not merge enabled)"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -730,6 +735,44 @@ jobs:
           echo "PIDs:"; cat "$PIDFILE"
           exit 0
 
+      # EXPERIMENT (temporary): hold a large resident allocation to push the runner
+      # into memory pressure (the signal that never recovered on the failing nightly).
+      # Opt-in via stress_memory. Self-terminates after 40 min; killed in cleanup.
+      - name: Start memory stress (experiment)
+        if: ${{ inputs.stress_memory }}
+        shell: bash
+        run: |
+          set +e
+          export PATH="/usr/sbin:/usr/bin:/bin:$PATH"
+          total=$(sysctl -n hw.memsize 2>/dev/null || echo 0)
+          PCT="${STRESS_MEM_PCT:-40}"
+          target=$(( total * PCT / 100 ))
+          ROOT="${{ env.MOBILE_ARTIFACTS_ROOT }}"
+          mkdir -p "$ROOT"
+          PIDFILE="$ROOT/mem-stress.pids"
+          : > "$PIDFILE"
+          echo "🧠 Allocating ~$(( target / 1024 / 1024 )) MB (${PCT}% of $(( total / 1024 / 1024 )) MB) for up to 2400s"
+          nohup python3 - "$target" 2400 >/dev/null 2>&1 <<'PY' &
+          import sys, time
+          target = int(sys.argv[1]); dur = int(sys.argv[2])
+          chunk = 64 * 1024 * 1024
+          blocks = []; alloc = 0
+          while alloc < target:
+              b = bytearray(chunk)
+              for i in range(0, len(b), 4096):  # touch each page to force residency
+                  b[i] = 1
+              blocks.append(b); alloc += chunk
+          end = time.time() + dur
+          while time.time() < end:            # light re-touch to resist compression
+              for b in blocks:
+                  for i in range(0, len(b), 1048576):
+                      b[i] ^= 1
+              time.sleep(5)
+          PY
+          echo $! >> "$PIDFILE"
+          echo "PID:"; cat "$PIDFILE"
+          exit 0
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -762,6 +805,23 @@ jobs:
           fi
           # belt-and-braces: reap any stray busy-loops left on this runner
           pkill -f 'while \[ \$SECONDS -lt \$end \]' 2>/dev/null || true
+          exit 0
+
+      - name: Stop memory stress (experiment)
+        if: ${{ always() && inputs.stress_memory }}
+        shell: bash
+        run: |
+          set +e
+          export PATH="/usr/sbin:/usr/bin:/bin:$PATH"
+          PIDFILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/mem-stress.pids"
+          if [[ -f "$PIDFILE" ]]; then
+            while read -r pid; do [[ -n "$pid" ]] && kill "$pid" 2>/dev/null; done < "$PIDFILE"
+            echo "Killed memory stress processes from $PIDFILE"
+          fi
+          # belt-and-braces: reap any stray allocator left on this runner
+          # (script is read from stdin; ps shows the resolved python path, so match
+          # on the unique arg tail `<bytes> 2400` instead of the binary name)
+          pkill -f '[0-9][0-9]* 2400$' 2>/dev/null || true
           exit 0
 
       - name: Upload iOS artifacts
