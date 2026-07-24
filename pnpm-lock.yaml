@@ -8955,8 +8955,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^8.0.0
-        version: 8.0.0
+        specifier: ^7.1.2
+        version: 7.1.2
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
@@ -15843,9 +15843,8 @@ packages:
       webpack:
         optional: true
 
-  '@cardano-foundation/ledgerjs-hw-app-cardano@8.0.0':
-    resolution: {integrity: sha512-hyWBk4HQApPdIvidQOExOP+GxD36WDsgzCz1PAFeJ4heL/b5Bmplyyg03/lA95NDNjjpqgDzN2rJyBHYpqgfmQ==}
-    engines: {node: '>=22.0.0'}
+  '@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2':
+    resolution: {integrity: sha512-bSR8MdKzotnf9WGO0BtDpTXsH4ObaQjCDSHA6MhJuAKoJEaLl7ASS4ctzqzGlKWoEvjdsgx+M8hJbWDLJ63TFw==}
 
   '@casperlabs/ts-results@3.3.5':
     resolution: {integrity: sha512-ymSQqqb4mOSet592li02u1Gd28LoOFJUm6R3jkdNQ+nqsnbHvN+izBigtP4aYmNwh6gFyCwDgjYporEJgDT4eA==}
@@ -29988,6 +29987,10 @@ packages:
     resolution: {integrity: sha512-M1WuAmb7pn9zdFRtQYk26ZBoY043Sse0wVDdk4Bppr+JOXyQYybdtvK+l9wUibhtjdjvtoiNy8tk+EgsYIUqKg==}
     engines: {node: '>=12.0.0'}
 
+  int64-buffer@1.0.1:
+    resolution: {integrity: sha512-+3azY4pXrjAupJHU1V9uGERWlhoqNswJNji6aD/02xac7oxol508AsMC5lxKhEqyZeDFy3enq5OGWXF4u75hiw==}
+    engines: {node: '>= 4.5.0'}
+
   internal-slot@1.1.0:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
@@ -42114,11 +42117,12 @@ snapshots:
       - uglify-js
       - utf-8-validate
 
-  '@cardano-foundation/ledgerjs-hw-app-cardano@8.0.0':
+  '@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      base-x: 5.0.1
-      bech32: 2.0.0
+      base-x: 3.0.9
+      bech32: 1.1.4
+      int64-buffer: 1.0.1
 
   '@casperlabs/ts-results@3.3.5':
     dependencies:
@@ -62770,6 +62774,8 @@ snapshots:
       strip-ansi: 6.0.1
       through: 2.3.8
       wrap-ansi: 6.2.0
+
+  int64-buffer@1.0.1: {}
 
   internal-slot@1.1.0:
     dependencies:
