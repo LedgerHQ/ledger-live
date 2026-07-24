@@ -27,12 +27,24 @@ describe("deploySolo memoisation", () => {
     await teardownSolo();
   });
 
-  it("shells out to `solo one-shot single deploy` exactly once for repeated calls", async () => {
+  it("shells out to `solo one-shot falcon deploy` exactly once for repeated calls", async () => {
     await deploySolo();
     await deploySolo();
     await deploySolo();
 
     expect(deployCalls()).toHaveLength(1);
+    expect(deployCalls()[0][1]).toEqual([
+      "one-shot",
+      "falcon",
+      "deploy",
+      "--deployment",
+      "coin-tester-hedera",
+      "--namespace",
+      "coin-tester-hedera",
+      "--no-deploy-relay",
+      "--no-deploy-explorer",
+      "--quiet-mode",
+    ]);
   });
 
   it("deploys again after teardown, so a second suite run is not silently a no-op", async () => {
@@ -52,5 +64,22 @@ describe("deploySolo memoisation", () => {
     await expect(deploySolo()).rejects.toThrow("cluster bring-up failed");
 
     expect(deployCalls()).toHaveLength(1);
+  });
+
+  it("tears down via `solo one-shot falcon destroy`", async () => {
+    await deploySolo();
+    execFileMock.mockClear();
+    await teardownSolo();
+
+    const destroyCalls = execFileMock.mock.calls.filter(([, args]) => args[2] === "destroy");
+    expect(destroyCalls).toHaveLength(1);
+    expect(destroyCalls[0][1]).toEqual([
+      "one-shot",
+      "falcon",
+      "destroy",
+      "--deployment",
+      "coin-tester-hedera",
+      "--quiet-mode",
+    ]);
   });
 });

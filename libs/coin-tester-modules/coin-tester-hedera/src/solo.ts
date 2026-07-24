@@ -12,6 +12,12 @@ const EXEC_OPTS = { env: process.env, maxBuffer: 1024 * 1024 * 64 } as const;
 const SOLO_BIN = "solo"; // resolved from the package's own node_modules/.bin via pnpm
 
 /**
+ * Dedicated deployment + namespace. Keeps our cluster state cleanly separated from Solo's default
+ * `one-shot` name — and from any leftover state on the machine.
+ */
+const DEPLOYMENT_NAME = "coin-tester-hedera";
+
+/**
  * Memoised deployment. The suite's `beforeAll` pays the 7–10 minute bring-up; `getGenesisClient()`
  * reaches `deploySolo()` too and must get it for free. The *promise* is stored rather than the
  * resolved value so two concurrent callers cannot start two deploys.
@@ -23,60 +29,44 @@ const SOLO_BIN = "solo"; // resolved from the package's own node_modules/.bin vi
 let deployment: Promise<void> | undefined;
 
 /**
- * `solo one-shot single deploy` hard-codes both the deployment name and the namespace to
- * "one-shot", and writes account material to `<SOLO_HOME>/<deployment>-<namespace>/accounts.json`.
+ * `solo one-shot falcon deploy` writes account material to
+ * `<SOLO_HOME>/one-shot-<deployment>/accounts.json`.
  */
 const oneShotOutputDir = () =>
-  join(process.env.SOLO_HOME ?? join(homedir(), ".solo"), "one-shot-one-shot");
+  join(process.env.SOLO_HOME ?? join(homedir(), ".solo"), `one-shot-${DEPLOYMENT_NAME}`);
 
 export function deploySolo(): Promise<void> {
   deployment ??= runDeploy();
   return deployment;
 }
 
-/**
- * Deploys a single-node Hiero Solo cluster: consensus node, mirror node
- * (REST/gRPC/Web3/Importer/RestJava/Pinger) and its Postgres/Redis/MinIO backing
- * services run as pods inside one kind-managed Docker container. Requires a
- * Kubernetes >= v1.32.2 capable host (kind + kubectl + helm) with >= 12 GB
- * RAM / 6 CPU — see README "Running locally" for host prerequisites this
- * script does not install.
- */
 async function runDeploy(): Promise<void> {
-  console.log("Deploying Hiero Solo (one-shot, single node)…");
+  console.log("Deploying Hiero Solo (one-shot falcon, single node)…");
 
-  // A previous run that was killed hard (or crashed before teardown) leaves its tunnels behind;
-  // clean up before deploying so we never bind against — or worse, talk to — a stale one.
-  await killPortForwards();
-
-  // Since Solo 0.82 (still true in 0.83), `deploy` refuses to auto-clean pre-existing one-shot
-  // state while `--quiet-mode` is set: it throws `ConfirmationRequiredSoloError` for an interactive
-  // confirmation it cannot show, and tells you to run `destroy` explicitly instead. (Verified in
-  // 0.83's `default-one-shot-deploy-orchestrator.js`: the auto-clean phase is gated on
-  // `quiet !== true`.) "Pre-existing state" includes a leftover accounts.json in
-  // `<SOLO_HOME>/one-shot-one-shot/`, which every previous run writes — so without this, the
-  // second deploy on a machine always fails. `destroy` removes that directory, so this is the
-  // supported way to start from a clean slate.
-  await destroyQuietly();
-
-  // …except `destroy` skips its own "Remove output directory" step whenever Solo's local config
-  // lists no deployment ("No deployments found in local config"), which is exactly the state a
-  // hard-killed or foreign run leaves behind. The stale accounts.json then keeps tripping the
-  // deploy guard forever. The directory is per-deployment scratch state Solo rewrites on every
-  // deploy, so removing it ourselves is safe and breaks the deadlock.
-  await rm(oneShotOutputDir(), { recursive: true, force: true });
-
-  // `--minimal-setup` is a no-op through Solo 0.83, kept only because it states the intent and
-  // should start working again upstream. `minimalSetup` is read in exactly two places — the skip
-  // conditions of the explorer and relay phases, both spelled `!deployExplorer && !minimalSetup`
-  // — and since `deployExplorer`/`deployRelay` default to true, that expression is false either
-  // way. The obvious fix, `--deploy-explorer=false --deploy-relay=false`, is rejected by this
-  // command path: "Unknown arguments: deploy-explorer, deployExplorer, deploy-relay, deployRelay".
-  // So the JSON-RPC relay (~170 MB) and the explorer ride along unused; the tester only ever talks
-  // to the consensus node (35211) and the mirror node REST API (38081).
+  // This `falcon deploy` path registers `--no-deploy-relay` / `--no-deploy-explorer` to skip the
+  // JSON-RPC relay (~170 MB) and the explorer. The tester only ever talks to the consensus node
+  // (35211) and the mirror node REST API (38081), so both would otherwise ride along unused;
+  // dropping them cuts two pods off the RAM peak.
+  //
+  // No pre-deploy cleanup here: like every sibling tester (anvil/agave/flextesa/yaci), bring-up
+  // only starts things. All teardown lives in `teardownSolo` (afterAll + the process-exit handlers
+  // in scenarii.test.ts). Trade-off: a run killed by SIGKILL/OOM/power-loss bypasses those handlers
+  // and leaves registered state that a later `deploy --quiet-mode` rejects — recover once by hand
+  // with `solo one-shot falcon destroy --deployment coin-tester-hedera`.
   await execFileAsync(
     SOLO_BIN,
-    ["one-shot", "single", "deploy", "--quiet-mode", "--minimal-setup"],
+    [
+      "one-shot",
+      "falcon",
+      "deploy",
+      "--deployment",
+      DEPLOYMENT_NAME,
+      "--namespace",
+      DEPLOYMENT_NAME,
+      "--no-deploy-relay",
+      "--no-deploy-explorer",
+      "--quiet-mode",
+    ],
     EXEC_OPTS,
   );
 
@@ -87,19 +77,28 @@ export async function teardownSolo(): Promise<void> {
   deployment = undefined;
   console.log("Tearing down Hiero Solo…");
   await destroyQuietly();
+  // `destroy` skips its own "Remove output directory" step whenever Solo's local config lists no
+  // deployment ("No deployments found in local config") — exactly the state a hard-killed or
+  // foreign run leaves behind. The stale accounts.json then keeps tripping the next
+  // `deploy --quiet-mode` guard forever. The directory is per-deployment scratch Solo rewrites on
+  // every deploy, so removing it ourselves is safe and keeps teardown's slate truly clean.
+  await rm(oneShotOutputDir(), { recursive: true, force: true });
   await killPortForwards();
 }
 
 /**
- * `solo one-shot single destroy`, best-effort: it must never throw, neither when tearing down
- * (that would mask the real test outcome — matches the yaci.ts/flextesa.ts convention in sibling
- * testers) nor when clearing the slate before a deploy (nothing to destroy is the healthy case).
+ * `solo one-shot falcon destroy`, best-effort: it must never throw when tearing down — that would
+ * mask the real test outcome (matches the yaci.ts/flextesa.ts convention in sibling testers).
  */
 async function destroyQuietly(): Promise<void> {
   try {
-    await execFileAsync(SOLO_BIN, ["one-shot", "single", "destroy", "--quiet-mode"], EXEC_OPTS);
+    await execFileAsync(
+      SOLO_BIN,
+      ["one-shot", "falcon", "destroy", "--deployment", DEPLOYMENT_NAME, "--quiet-mode"],
+      EXEC_OPTS,
+    );
   } catch (err) {
-    console.error("solo.ts: `one-shot single destroy` failed (ignored):", err);
+    console.error("solo.ts: `one-shot falcon destroy` failed (ignored):", err);
   }
 }
 
@@ -117,11 +116,14 @@ async function killPortForwards(): Promise<void> {
     return;
   }
 
-  // Both patterns are scoped to the `one-shot` namespace Solo hard-codes, so this cannot reach
+  // Both patterns are scoped to our dedicated `coin-tester-hedera` namespace, so this cannot reach
   // unrelated port-forwards; and `kill` only ever reaches processes owned by the invoking user.
   // Order matters: `persist-port-forward` is designed to respawn a dropped tunnel, so its kubectl
   // child must not be killed first.
-  const patterns = ["persist-port-forward.* one-shot ", "port-forward .*one-shot"];
+  const patterns = [
+    `persist-port-forward.* ${DEPLOYMENT_NAME} `,
+    `port-forward .*${DEPLOYMENT_NAME}`,
+  ];
 
   for (const pattern of patterns) {
     await killMatching(pattern, "SIGTERM");
