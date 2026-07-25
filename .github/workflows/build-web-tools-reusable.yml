@@ -27,6 +27,29 @@ on:
         default: "false"
         type: string
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      VERCEL_LEDGER_WALLET_TEAM_ID:
+        required: false
+      VERCEL_LEDGER_WALLET_TOKEN:
+        required: false
+      VERCEL_PROJECT_NATIVE_STORYBOOK:
+        required: false
+      VERCEL_PROJECT_REACT_STORYBOOK:
+        required: false
+      VERCEL_PROJECT_WEBTOOLS:
+        required: false
   workflow_dispatch:
     inputs:
       ref:

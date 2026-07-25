@@ -33,6 +33,43 @@ on:
         type: string
         default: "true"
 
+    secrets:
+      ALLURE_LEDGER_LIVE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PATH:
+        required: false
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      GH_BOT_APP_ID:
+        required: false
+      GH_BOT_CLIENT_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
+      NX_KEY:
+        required: false
+      R2_ACCESS_KEY_ID:
+        required: false
+      R2_ENDPOINT:
+        required: false
+      R2_SECRET_ACCESS_KEY:
+        required: false
+      S3_DIRECTCONNECT_ENDPOINT:
+        required: false
+      SEED_QAA_B2C:
+        required: false
+      SPECULINHO_URL:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -170,7 +207,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: apps/ledger-live-mobile/e2e
-          test_filter: ${{ inputs.test_filter || '' }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -308,7 +344,7 @@ jobs:
         if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          baseBranch: ${{ 'develop' }}
           prNumber: ${{ github.event.number}}
           mode: mobile
       - name: Upload mobile metafile

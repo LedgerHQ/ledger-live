@@ -35,7 +35,14 @@ on:
         required: false
         default: "false"
         type: string
+      ref:
+        description: Git ref to checkout
+        required: false
+        type: string
 
+    secrets:
+      SONAR_TOKEN:
+        required: false
 permissions:
   id-token: write
   contents: read

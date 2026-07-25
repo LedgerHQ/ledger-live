@@ -5,7 +5,7 @@ on:
     inputs:
       macos-specificity-runner-label:
         description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
-        required: true
+        required: false
         type: string
         default: "general-pool"
       disable-nx-cache:
@@ -19,12 +19,12 @@ on:
         type: string
       build-ios-native:
         description: Whether to build the iOS native app
-        required: true
+        required: false
         type: boolean
         default: true
       build-ios-js:
         description: Whether to build the iOS JS bundle
-        required: true
+        required: false
         type: boolean
         default: true
       ios-native-cache-key:
@@ -47,6 +47,21 @@ on:
         description: The JS bundle size of the built app
         value: ${{ jobs.build-ios-js.outputs.js-bundle-size }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      S3_DIRECTCONNECT_ENDPOINT:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
