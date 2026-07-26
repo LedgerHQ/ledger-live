@@ -25,6 +25,7 @@ export class BorrowPage extends WebViewAppPage {
   private readonly authorizeBorrowingButtonId = BORROW_TEST_IDS.authorizeBorrowingButton;
   private readonly step1AccessApprovedId = BORROW_TEST_IDS.step1AccessApproved;
   private readonly step2DepositDoneId = BORROW_TEST_IDS.step2DepositDone;
+  private readonly step3BorrowDoneId = BORROW_TEST_IDS.step3BorrowDone;
   private readonly executionErrorId = BORROW_TEST_IDS.executionError;
   private readonly onChainFailedMessageId = BORROW_TEST_IDS.onChainFailedMessage;
   private readonly loanCompletionCardId = BORROW_TEST_IDS.loanCompletionCard;
@@ -134,7 +135,9 @@ export class BorrowPage extends WebViewAppPage {
   }
 
   private borrowStepCompleteIndicator(webview: Page) {
-    return this.loanCompletionCard(webview)
+    return webview
+      .getByTestId(this.step3BorrowDoneId)
+      .or(this.loanCompletionCard(webview))
       .or(this.viewMyLoanBtn(webview))
       .or(this.executionError(webview));
   }
@@ -198,7 +201,7 @@ export class BorrowPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const introModal = this.introModal(webview);
     await this.simulateMyLoanBtn(webview).click();
-    await expect(introModal).toHaveCount(0);
+    await expect(introModal).toBeHidden();
     await expect(this.loanAmountInput(webview)).toBeVisible();
   }
 
