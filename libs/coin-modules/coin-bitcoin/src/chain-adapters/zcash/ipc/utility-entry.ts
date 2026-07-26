@@ -21,6 +21,7 @@ import {
   buildTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  transactionDetailsJob,
 } from "../native-engine/engine";
 import type {
   CancelSyncArgs,
@@ -33,6 +34,7 @@ import type {
 import type {
   BuildTransactionArgs,
   FinalizeTransactionArgs,
+  TransactionDetailsArgs,
   BroadcastTransactionArgs,
 } from "../types";
 
@@ -190,6 +192,27 @@ async function handleBroadcastTransaction(
   }
 }
 
+async function handleTransactionDetails(
+  port: ParentPort,
+  args: TransactionDetailsArgs,
+): Promise<void> {
+  try {
+    const results = await transactionDetailsJob(
+      args.grpcUrl,
+      args.requests,
+      args.network,
+      args.ufvk,
+    );
+    send(port, { type: "transaction-details-result", requestId: args.requestId, results });
+  } catch (err) {
+    send(port, {
+      type: "transaction-details-error",
+      requestId: args.requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 /**
  * Wires up a {@link ParentPort} to the ZCash engine. Exported for testing --
  * production code calls this once below with Electron's `process.parentPort`.
@@ -218,6 +241,9 @@ export function bootstrapUtility(port: ParentPort): void {
         break;
       case "broadcast-transaction":
         void handleBroadcastTransaction(port, message.args);
+        break;
+      case "transaction-details":
+        void handleTransactionDetails(port, message.args);
         break;
       default: {
         const exhaustive: never = message;

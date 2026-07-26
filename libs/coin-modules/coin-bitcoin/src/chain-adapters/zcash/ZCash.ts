@@ -34,6 +34,8 @@ import type {
   BuildTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
+  TransactionDetailsRequest,
+  TransactionDetailsResult,
 } from "./types";
 import type { StartSyncJobArgs } from "./native-engine/engine";
 import {
@@ -44,6 +46,7 @@ import {
   buildTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  transactionDetailsJob,
 } from "./native-engine/engine";
 import { rehydrateSyncResult } from "./serialization/rehydrate";
 import { createSyncTimeEstimator } from "./sync-estimator";
@@ -73,6 +76,12 @@ export type ZCashClientDeps = {
     args: Omit<FinalizeTransactionArgs, "requestId">,
   ) => Promise<FinalizeTransactionResult>;
   broadcastTransactionJob?: (grpcUrl: string, txHex: string) => Promise<string>;
+  transactionDetailsJob?: (
+    grpcUrl: string,
+    requests: TransactionDetailsRequest[],
+    network: string,
+    ufvk?: string,
+  ) => Promise<TransactionDetailsResult[]>;
 };
 
 // ── DI factory (for tests) ──────────────────────────────────────────────
@@ -85,7 +94,12 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
   // When a job is absent (e.g. RN stubs) we omit the corresponding client
   // method entirely rather than defining one that throws, so capability checks
   // like `if (!client.buildTransaction)` behave consistently across environments.
-  const { buildTransactionJob, finalizeTransactionJob, broadcastTransactionJob } = deps;
+  const {
+    buildTransactionJob,
+    finalizeTransactionJob,
+    broadcastTransactionJob,
+    transactionDetailsJob,
+  } = deps;
 
   return {
     grpcUrl,
@@ -120,6 +134,14 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
     ...(broadcastTransactionJob && {
       broadcastTransaction: (grpcUrl: string, txHex: string): Promise<string> =>
         broadcastTransactionJob(grpcUrl, txHex),
+    }),
+
+    ...(transactionDetailsJob && {
+      transactionDetails: (
+        requests: TransactionDetailsRequest[],
+        ufvk?: string,
+      ): Promise<TransactionDetailsResult[]> =>
+        transactionDetailsJob(grpcUrl, requests, network, ufvk),
     }),
 
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {
@@ -194,6 +216,7 @@ const defaultDeps: ZCashClientDeps = {
   buildTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  transactionDetailsJob,
 };
 
 // ── Convenience factory (production — deps pre-wired) ───────────────────

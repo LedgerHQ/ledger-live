@@ -48,6 +48,8 @@ export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTrans
     blockHash: raw.blockHash,
     timestamp: raw.timestamp,
     fee: new BigNumber(raw.fee),
+    transparentOut: new BigNumber(raw.transparentOut ?? 0),
+    hasTransparentInputs: raw.hasTransparentInputs ?? false,
     ...(raw.decryptedData && {
       decryptedData: {
         orchard_outputs: raw.decryptedData.orchard_outputs.map(rehydrateOutput),

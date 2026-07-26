@@ -51,6 +51,8 @@ const shieldedTransactionMock: ShieldedTransaction = {
   blockHash: "",
   timestamp: 1,
   fee: new BigNumber("2"),
+  transparentOut: new BigNumber("3"),
+  hasTransparentInputs: false,
   decryptedData: {
     orchard_outputs: [],
     sapling_outputs: [],
@@ -64,6 +66,8 @@ const shieldedTransactionRawMock: ShieldedTransactionRaw = {
   blockHash: "",
   timestamp: 1,
   fee: "2",
+  transparentOut: "3",
+  hasTransparentInputs: false,
   decryptedData: {
     orchard_outputs: [],
     sapling_outputs: [],

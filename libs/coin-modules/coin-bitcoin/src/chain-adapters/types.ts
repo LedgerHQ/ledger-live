@@ -11,8 +11,20 @@ import type {
   SignOperationEvent,
   SyncConfig,
 } from "@ledgerhq/types-live";
+import type { TX } from "@ledgerhq/wallet-btc/index";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../signer";
 import type { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+
+/**
+ * Transactions as a chain corrected them, plus what it could recover that the
+ * explorer could not see. See {@link ChainAdapter.resolveTransactionDetails}.
+ */
+export type ResolvedTransactions = {
+  /** The transactions, carrying any fee the chain could establish. */
+  transactions: TX[];
+  /** Addresses paid by outputs the explorer cannot see, keyed by txid. */
+  payeesByTxId: Map<string, string[]>;
+};
 
 /**
  * Extension point for chain-specific logic within coin-bitcoin.
@@ -44,11 +56,36 @@ export interface ChainAdapter {
    * Combine the freshly-synced transparent balance with any chain-specific
    * off-transparent funds (e.g. Zcash shielded notes) to produce the account
    * balance. Omit to use the transparent balance unchanged.
+   *
+   * The result is also the account's spendable balance: the transparent sync
+   * knows nothing about the off-transparent funds and would otherwise report a
+   * spendable balance of zero on every one of its passes, undoing what the
+   * chain-specific sync had set.
    */
   computeAccountBalance?(
     account: BitcoinAccount | undefined,
     transparentBalance: BigNumber,
   ): BigNumber;
+
+  /**
+   * Recover what the explorer could not see about the synced transactions,
+   * before operations are derived from them.
+   *
+   * On Zcash an explorer sees only a transaction's transparent bundle, which
+   * leaves it wrong about the fee whenever value crosses a shielded boundary,
+   * and unable to name a shielded payee at all.
+   *
+   * Fees come back on the transactions themselves, so that both sides of a
+   * transaction agree on them; a transaction the chain cannot resolve must come
+   * back with its reported fee untouched. Payees come back separately, keyed by
+   * txid, and supersede the recipients derived from transparent outputs.
+   *
+   * Omit the hook to trust the explorer.
+   */
+  resolveTransactionDetails?(
+    transactions: TX[],
+    account: BitcoinAccount | undefined,
+  ): Promise<ResolvedTransactions> | undefined;
 
   /** Serialize chain-specific account fields into their raw form. */
   assignToAccountRaw?(account: Account, accountRaw: AccountRaw): void;

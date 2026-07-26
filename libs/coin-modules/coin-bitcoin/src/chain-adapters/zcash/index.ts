@@ -12,7 +12,7 @@ import {
   patchOperationWithHash,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { ChainAdapter } from "../types";
+import type { ChainAdapter, ResolvedTransactions } from "../types";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../../signer";
 import type {
   Transaction,
@@ -60,7 +60,9 @@ import {
 import { composeXpub } from "./xpub";
 import { computeZcashBalance } from "./balance";
 import { getWalletAccount } from "../../getWalletAccount";
+import type { TX } from "@ledgerhq/wallet-btc/index";
 import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
+import { resolveTransactionDetails } from "./transaction-details";
 
 // ── Lazy module import (renderer-safe) ────────────────────────────────────
 //
@@ -402,6 +404,28 @@ const zcashChainAdapter: ChainAdapter = {
       transparentBalance,
       (account as ZcashAccount | undefined)?.privateInfo,
     );
+  },
+
+  resolveTransactionDetails(
+    transactions: TX[],
+    account: BitcoinAccount | undefined,
+  ): Promise<ResolvedTransactions> {
+    if (!isZcashShieldedEnabled()) {
+      return Promise.resolve({ transactions, payeesByTxId: new Map() });
+    }
+
+    // Without the viewing key the fees are still recoverable; only the shielded
+    // payees are not, since they are encrypted to it.
+    const ufvk = (account as ZcashAccount | undefined)?.privateInfo?.ufvk ?? undefined;
+
+    return resolveTransactionDetails(transactions, async requests => {
+      const { grpcUrl, network } = getZainoEndpoint();
+      const { createZCashClient } = await getZCashModule();
+      const client = createZCashClient({ grpcUrl, network });
+      // Optional on ZCashClient: the React Native stub omits it. Without it the
+      // explorer's view stands, which is the pre-existing behaviour.
+      return client.transactionDetails ? client.transactionDetails(requests, ufvk) : [];
+    });
   },
 
   assignToAccountRaw(account: Account, accountRaw: AccountRaw) {

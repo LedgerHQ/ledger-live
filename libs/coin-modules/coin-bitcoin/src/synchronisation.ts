@@ -58,6 +58,28 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
   };
 };
 
+/**
+ * Replaces the recipients of an operation whose real destination the explorer
+ * could not see.
+ *
+ * A transaction paying only into a shielded pool has no transparent output but
+ * its own change, which `mapTxToOperations` lists as the recipient for want of
+ * anything better. Once the chain has recovered who was actually paid, that
+ * fallback is no longer the best answer available and gives way — while any
+ * genuine transparent recipient of the same transaction is kept.
+ */
+function withRecoveredRecipients(
+  op: BtcOperation,
+  payeesByTxId: Map<string, string[]> | undefined,
+  changeAddresses: Set<string>,
+): BtcOperation {
+  const payees = payeesByTxId?.get(op.hash);
+  if (!payees?.length) return op;
+
+  const transparentRecipients = op.recipients.filter(recipient => !changeAddresses.has(recipient));
+  return { ...op, recipients: [...transparentRecipients, ...payees] };
+}
+
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
@@ -122,9 +144,17 @@ export async function performTransparentSync(
   });
   changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
 
-  const newOperations = transactions
+  const adapter = getChainAdapter(currency.id);
+
+  // The explorer cannot always see enough of a transaction to report its fee or
+  // its destination. Give the chain a chance to recover both before operations
+  // are derived, so that senders and recipients agree on the fee.
+  const resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
+
+  const newOperations = (resolved?.transactions ?? transactions)
     ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
-    .flat();
+    .flat()
+    .map(op => (op ? withRecoveredRecipients(op, resolved?.payeesByTxId, changeAddresses) : op));
 
   const newUniqueOperations = deduplicateOperations(newOperations);
 
@@ -199,7 +229,6 @@ export async function performTransparentSync(
   // Chains with off-transparent funds (e.g. Zcash shielded notes) combine them
   // into `account.balance` via their chain adapter; others use the transparent
   // balance as-is.
-  const adapter = getChainAdapter(currency.id);
   const balance = adapter.computeAccountBalance
     ? adapter.computeAccountBalance(initialAccount, transparentBalance)
     : transparentBalance;
@@ -208,7 +237,10 @@ export async function performTransparentSync(
     id: accountId,
     xpub,
     balance,
-    spendableBalance: transparentBalance,
+    // Every pool counted in `balance` is spendable — Zcash Orchard notes as much
+    // as transparent UTXOs. Reporting only the transparent balance here would
+    // show an account holding nothing but notes as having nothing to spend.
+    spendableBalance: balance,
     operations,
     operationsCount: operations.length,
     freshAddress: walletAccount.xpub.freshAddress,
@@ -236,6 +268,8 @@ export function createTransparentSyncObservable(
           {
             operationsCount: result.operationsCount,
             blockHeight: result.blockHeight,
+            balance: result.balance?.toString(),
+            spendableBalance: result.spendableBalance?.toString(),
           },
         );
         subscriber.next(result);
@@ -365,10 +399,46 @@ async function generateXpubIfNeeded(
   );
 }
 
+/**
+ * Reconcile optimistic operations with their now-confirmed counterparts.
+ *
+ * `shouldRetainPendingOperation` matches on operation id, and an id embeds the
+ * operation type: the optimistic operation created at signing time is an `OUT`,
+ * while the confirmed one a sync produces may carry a chain-specific type (a
+ * Zcash shielded send, for instance). The two never match, so the pending entry
+ * survives next to its own confirmed counterpart until the optimistic retention
+ * window expires. The transaction hash is what actually identifies them.
+ *
+ * Before dropping the optimistic operation, take from it the address the user
+ * actually entered. It is the most faithful answer available — a chain that
+ * recovers a destination from the transaction can only report the receiver it
+ * finds there, which for a unified address bundling several receivers is the
+ * same destination written differently.
+ */
+function reconcileConfirmedPendingOperations(account: BitcoinAccount): BitcoinAccount {
+  if (account.pendingOperations.length === 0) return account;
+
+  const pendingByHash = new Map(account.pendingOperations.map(op => [op.hash, op]));
+  const operations = account.operations.map(op => {
+    const optimistic = pendingByHash.get(op.hash);
+    // An incoming operation shares its hash with the send that produced it, but
+    // it is not the operation that paid the entered address.
+    if (!optimistic?.recipients.length || op.type.endsWith("IN")) return op;
+    return { ...op, recipients: optimistic.recipients };
+  });
+
+  // Only the optimistic operations that now have a confirmed counterpart are
+  // resolved; the rest are still in flight.
+  const confirmedHashes = new Set(account.operations.map(op => op.hash));
+  const pendingOperations = account.pendingOperations.filter(op => !confirmedHashes.has(op.hash));
+
+  return { ...account, operations, pendingOperations };
+}
+
 export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
-  const syncedBtc = synced;
+  let syncedBtc = synced;
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
@@ -387,6 +457,8 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
       }
     }
   }
+
+  syncedBtc = reconcileConfirmedPendingOperations(syncedBtc);
 
   log("bitcoin/postSync", "bitcoinResources DONE");
   return syncedBtc;

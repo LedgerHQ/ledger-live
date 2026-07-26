@@ -37,6 +37,7 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     transactions: info.transactions.map(tx => ({
       ...tx,
       fee: tx.fee.toString(),
+      transparentOut: (tx.transparentOut ?? new BigNumber(0)).toString(),
       decryptedData: {
         orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
         sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
@@ -59,6 +60,8 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     transactions: info.transactions.map(tx => ({
       ...tx,
       fee: new BigNumber(tx.fee),
+      transparentOut: new BigNumber(tx.transparentOut ?? 0),
+      hasTransparentInputs: tx.hasTransparentInputs ?? false,
       decryptedData: {
         orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
         sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
