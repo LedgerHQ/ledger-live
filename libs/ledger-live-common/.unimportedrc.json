@@ -802,6 +802,8 @@
     "src/families/tron/bridge/api.ts",
     "src/families/tron/coinModuleApi.ts",
     "src/families/tron/config.ts",
+    "src/families/vechain/bridge/api.ts",
+    "src/families/vechain/coinModuleApi.ts",
     "src/families/vechain/config.ts",
     "src/families/xrp/bridgeExtensions.ts",
     "src/families/xrp/coinModuleApi.ts",
