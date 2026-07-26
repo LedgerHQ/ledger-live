@@ -105,10 +105,23 @@ export class BorrowPage extends WebViewAppPage {
     return this.giveApprovalBtn(webview).or(this.authorizeDepositingBtn(webview));
   }
 
+  private executionErrorDialog(webview: Page) {
+    return webview.getByTestId(this.executionErrorId);
+  }
+
+  private onChainFailedMessage(webview: Page) {
+    return webview.getByTestId(this.onChainFailedMessageId);
+  }
+
   private executionError(webview: Page) {
-    return webview
-      .getByTestId(this.executionErrorId)
-      .or(webview.getByTestId(this.onChainFailedMessageId));
+    return this.executionErrorDialog(webview).or(this.onChainFailedMessage(webview));
+  }
+
+  private async isExecutionErrorVisible(webview: Page): Promise<boolean> {
+    return (
+      (await this.executionErrorDialog(webview).isVisible()) ||
+      (await this.onChainFailedMessage(webview).isVisible())
+    );
   }
 
   private executionStepDone(webview: Page, doneTestId: string) {
@@ -301,9 +314,9 @@ export class BorrowPage extends WebViewAppPage {
     const done = this.executionStepDone(webview, doneTestId);
     const error = this.executionError(webview);
 
-    await expect(done.or(error).first()).toBeVisible({ timeout: this.executionStepTimeoutMs });
+    await expect(done.or(error)).toBeVisible({ timeout: this.executionStepTimeoutMs });
 
-    if (await error.first().isVisible()) {
+    if (await this.isExecutionErrorVisible(webview)) {
       throw new Error(
         `Borrow execution step failed in webview (${doneTestId}). ${this.mainnetFundingHint}`,
       );
@@ -331,7 +344,7 @@ export class BorrowPage extends WebViewAppPage {
       timeout: this.executionStepTimeoutMs,
     });
 
-    if (await this.executionError(webview).first().isVisible()) {
+    if (await this.isExecutionErrorVisible(webview)) {
       throw new Error(`Borrow Step 3 failed in webview. ${this.mainnetFundingHint}`);
     }
   }
