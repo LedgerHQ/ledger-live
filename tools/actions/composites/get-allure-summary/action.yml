@@ -40,7 +40,7 @@ runs:
       run: allure generate ${{ inputs.allure-results-path }} --single-file --clean
       shell: bash
     - name: Upload Allure single file report
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: allure-report-${{ inputs.platform }}
         path: allure-report/index.html

@@ -53,7 +53,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       with:
         repository: LedgerHQ/ledger-live
         sparse-checkout: |
@@ -80,7 +80,7 @@ runs:
         merge-multiple: true
 
     - name: Restore cached timing file
-      uses: tespkg/actions-cache/restore@v1
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       with:
         path: ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
         key: "${{ inputs.key }}"
@@ -100,7 +100,7 @@ runs:
           --verbose
 
     - name: Upload merged timing file to artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:
         name: "${{ inputs.test_results_prefix }}"
         path: ./${{ inputs.test_results_prefix }}.json
@@ -112,7 +112,7 @@ runs:
         cp ./${{ inputs.test_results_prefix }}.json ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
 
     - name: Save merged timing file to cache
-      uses: tespkg/actions-cache/save@v1
+      uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       with:
         path: ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
         key: "${{ inputs.key }}"

@@ -100,7 +100,7 @@ runs:
       id: ios-timing-cache
       if: ${{ inputs.ios_timing_cache_key != '' && inputs.cache_bucket != '' }}
       continue-on-error: true
-      uses: tespkg/actions-cache/restore@v1
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       with:
         path: ${{ inputs.test_directory }}/artifacts/e2e-test-results-ios.json
         key: "${{ inputs.ios_timing_cache_key }}"
@@ -115,7 +115,7 @@ runs:
       id: android-timing-cache
       if: ${{ inputs.android_timing_cache_key != '' && inputs.cache_bucket != '' }}
       continue-on-error: true
-      uses: tespkg/actions-cache/restore@v1
+      uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       with:
         path: ${{ inputs.test_directory }}/artifacts/e2e-test-results-android.json
         key: "${{ inputs.android_timing_cache_key }}"
