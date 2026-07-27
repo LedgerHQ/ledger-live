@@ -17,6 +17,8 @@ import {
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "@ledgerhq/errors";
+import cryptoFactory from "../../chain/chain";
+import { ClaimRewardsFeesWarning } from "../../errors";
 import { validateAddress } from "../validateAddress";
 
 function clampPositive(value: bigint): bigint {
@@ -24,8 +26,12 @@ function clampPositive(value: bigint): bigint {
 }
 
 /**
- * Validate a native transfer intent — mirrors the bridge `getTransactionStatus`
- * send-mode rules in the Alpaca `TransactionValidation` shape.
+ * Validate a transfer or staking intent in the Alpaca `TransactionValidation` shape. A leaner
+ * reimplementation of the bridge `getTransactionStatus`, not a full mirror: it covers the core
+ * recipient/amount/fee rules (plus `feeTooHigh` and claim-reward-fee warnings) but omits the
+ * bridge's cosmosResources-based checks (delegation/redelegation/unbonding limits,
+ * redelegation-in-progress) — the Alpaca inputs don't carry that data. Staking →
+ * {@link validateStakingIntent}.
  */
 export async function validateIntent(
   currencyId: string,
@@ -35,6 +41,7 @@ export async function validateIntent(
 ): Promise<TransactionValidation> {
   if (intent.intentType === "staking") {
     return validateStakingIntent(
+      currencyId,
       intent as StakingTransactionIntent,
       balances,
       customFees?.value ?? 0n,
@@ -75,10 +82,12 @@ export async function validateIntent(
 }
 
 /**
- * Validate a staking intent: requires a validator address (and a destination for
- * redelegate); `claimReward` carries no amount and must not error on that.
+ * Validate a staking intent: the validator address must be present and carry the chain's valoper
+ * prefix (and a destination validator for redelegate); `claimReward` carries no amount and must not
+ * error on that. A claim/compound whose fee exceeds the reward being claimed raises `claimRewardsFee`.
  */
 function validateStakingIntent(
+  currencyId: string,
   intent: StakingTransactionIntent,
   balances: Balance[],
   estimatedFees: bigint,
@@ -86,11 +95,19 @@ function validateStakingIntent(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
+  const validatorPrefix = cryptoFactory(currencyId).validatorPrefix;
+
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
+  } else if (!intent.valAddress.includes(validatorPrefix)) {
+    errors.valAddress = new InvalidAddress();
   }
-  if (intent.mode === "redelegate" && !intent.dstValAddress) {
-    errors.dstValAddress = new RedelegateDstValAddressRequired();
+  if (intent.mode === "redelegate") {
+    if (!intent.dstValAddress) {
+      errors.dstValAddress = new RedelegateDstValAddressRequired();
+    } else if (!intent.dstValAddress.includes(validatorPrefix)) {
+      errors.dstValAddress = new InvalidAddress();
+    }
   }
 
   const native = balances.find(b => b.asset.type === "native");
@@ -105,6 +122,16 @@ function validateStakingIntent(
     errors.amount = new AmountRequired();
   } else if (totalSpent > available) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  // The fee eats the reward: the bridge compares against pendingRewards, which the Alpaca inputs
+  // don't carry — so, like coin-evm's validateIntent, compare the fee against the intent amount.
+  if (
+    (intent.mode === "claimReward" || intent.mode === "compoundReward") &&
+    intent.amount > 0n &&
+    estimatedFees > intent.amount
+  ) {
+    warnings.claimRewardsFee = new ClaimRewardsFeesWarning();
   }
 
   return { errors, warnings, estimatedFees, amount, totalSpent };

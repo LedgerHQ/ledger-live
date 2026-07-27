@@ -54,7 +54,9 @@ export function intentToMessageParams(
       ...base,
       mode,
       recipient: "",
-      sourceValidator: isRedelegate ? stakingIntent.valAddress : undefined,
+      ...(isRedelegate && stakingIntent.valAddress
+        ? { sourceValidator: stakingIntent.valAddress }
+        : {}),
       validators: [
         {
           address: isRedelegate ? (stakingIntent.dstValAddress ?? "") : stakingIntent.valAddress,
@@ -69,6 +71,5 @@ export function intentToMessageParams(
     mode: "send",
     recipient: intent.recipient,
     validators: [],
-    sourceValidator: undefined,
   };
 }

@@ -28,7 +28,8 @@ import * as CosmosSDKTypes from "./types";
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
 /**
- * Throw on a failed broadcast result. Code 32 is cosmos-sdk ErrWrongSequence;
+ * Throw on a failed broadcast result: a non-zero code, or a code:0 response with an empty tx
+ * hash. Code 32 is cosmos-sdk ErrWrongSequence;
  * Ledger's cosmos LCD proxy sometimes returns a stale account sequence (LIVE-11301),
  * so map it to SequenceNumberError.
  */
@@ -44,6 +45,10 @@ function assertBroadcastOk(txResponse: CosmosTx): void {
         (txResponse.raw_log || "") +
         "')",
     );
+  }
+
+  if (!txResponse.txhash) {
+    throw new Error("invalid broadcast return: empty transaction hash");
   }
 }
 
@@ -630,10 +635,6 @@ export class CosmosAPI {
     });
 
     assertBroadcastOk(txResponse);
-
-    if (!txResponse.txhash) {
-      throw new Error("invalid broadcast return: empty transaction hash");
-    }
 
     return txResponse.txhash;
   };

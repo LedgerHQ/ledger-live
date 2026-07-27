@@ -150,4 +150,71 @@ describe("logic/transaction/validateIntent", () => {
     const res = await validateIntent("cosmos", intent, balances, fees);
     expect(res.errors.dstValAddress).toBeInstanceOf(Error);
   });
+
+  it("flags a staking intent whose validator address lacks the valoper prefix", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmos1notavaloper",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors.valAddress?.name).toBe("InvalidAddress");
+  });
+
+  it("flags a redelegate whose destination validator lacks the valoper prefix", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "redelegate",
+      mode: "redelegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1src",
+      dstValAddress: "cosmos1notavaloper",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors.dstValAddress?.name).toBe("InvalidAddress");
+  });
+
+  it("warns when a compoundReward fee exceeds the reward being claimed", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "compoundReward",
+      mode: "compoundReward",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000n,
+      valAddress: "cosmosvaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors).toEqual({});
+    expect(res.warnings.claimRewardsFee?.name).toBe("ClaimRewardsFeesWarning");
+  });
+
+  it("does not warn on a claimReward whose reward exceeds the fee", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "claimReward",
+      mode: "claimReward",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "cosmosvaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors).toEqual({});
+    expect(res.warnings.claimRewardsFee).toBeUndefined();
+  });
 });

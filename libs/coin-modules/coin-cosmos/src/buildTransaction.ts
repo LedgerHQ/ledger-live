@@ -45,7 +45,7 @@ export type CosmosTransactionParams = {
   amount: BigNumber;
   memo: string;
   validators: CosmosDelegationInfo[];
-  sourceValidator?: string | undefined;
+  sourceValidator?: string;
 };
 
 export const txToMessages = (
@@ -112,7 +112,7 @@ export const txToMessages = (
     case "delegate":
       if (params.validators && params.validators.length > 0) {
         const validator = params.validators[0];
-        if (validator && validator.address && params.amount.gt(0)) {
+        if (validator?.address && params.amount.gt(0)) {
           const amount = {
             denom: params.denom,
             amount: params.amount.toFixed(),
@@ -294,7 +294,7 @@ export function messageParamsFromTransaction(
     amount: transaction.amount,
     memo: transaction.memo || "",
     validators: transaction.validators,
-    sourceValidator: transaction.sourceValidator ?? undefined,
+    ...(transaction.sourceValidator ? { sourceValidator: transaction.sourceValidator } : {}),
   };
 }
 

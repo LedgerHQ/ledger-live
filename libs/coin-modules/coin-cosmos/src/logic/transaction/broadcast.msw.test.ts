@@ -49,8 +49,8 @@ describe("broadcast via MSW", () => {
     await expect(broadcast(api, TX_HEX)).rejects.toThrow("SequenceNumberError");
   });
 
-  // broadcastRawTransaction checks for an empty txhash *after* assertBroadcastOk, so a code:0
-  // response with an empty hash throws its own, separate error.
+  // assertBroadcastOk rejects a code:0 response with an empty tx hash, so both broadcast paths
+  // fail fast instead of stamping an invalid hash onto the operation.
   it("throws when the broadcast returns an empty transaction hash", async () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(http.post(TXS, () => HttpResponse.json({ tx_response: { code: 0, txhash: "" } })));

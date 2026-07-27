@@ -2,16 +2,16 @@ import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-fr
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";
-import { txToOps } from "./txToOps";
-import { CosmosOperation, CosmosTx } from "../../types";
+import { CosmosParsedOperation, parseCosmosOperations } from "./txToOps";
+import { CosmosTx } from "../../types";
 
 // Default page size when the caller gives no limit — bounds the fetch instead of the full history.
 const PAGE_SIZE = 100;
 
-function toOperation(op: CosmosOperation): Operation {
-  const details = toOperationExtraRaw(op.extra ?? {}) as Record<string, unknown>;
+function toOperation(op: CosmosParsedOperation): Operation {
+  const details = toOperationExtraRaw(op.extra) as Record<string, unknown>;
   return {
-    id: op.id,
+    id: op.hash,
     type: op.type,
     senders: op.senders,
     recipients: op.recipients,
@@ -22,13 +22,13 @@ function toOperation(op: CosmosOperation): Operation {
     tx: {
       hash: op.hash,
       block: {
-        height: op.blockHeight ?? 0,
+        height: op.blockHeight,
         hash: "", // block hash is not returned by the tx-list endpoint
         time: op.date,
       },
       fees: BigInt(op.fee.integerValue().toFixed()),
       date: op.date,
-      failed: Boolean((op as CosmosOperation & { hasFailed?: boolean }).hasFailed),
+      failed: op.hasFailed,
     },
   };
 }
@@ -49,7 +49,6 @@ export async function listOperations(
   }
 
   const unitCode = getCryptoCurrencyById(currencyId).units[1].code;
-  const accountId = `js:2:${currencyId}:${address}:`;
 
   const offset = options.cursor ? Math.max(0, Number.parseInt(options.cursor, 10) || 0) : 0;
   const limit = options.limit ?? PAGE_SIZE;
@@ -82,9 +81,8 @@ export async function listOperations(
     });
 
   // Slice in tx-space, then parse — a drop shortens a page but never skips.
-  const items = txToOps(
+  const items = parseCosmosOperations(
     { address, unitCode },
-    accountId,
     sortedTxs.slice(offset, offset + limit),
   ).map(toOperation);
   // Key `next` on the floor, not page fullness, so a short page from parse-drops still advances.

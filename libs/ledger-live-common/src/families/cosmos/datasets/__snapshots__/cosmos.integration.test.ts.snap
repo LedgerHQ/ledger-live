@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "6004075",
+    "balance": "5966005",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,7 +12,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "2219122",
+    "spendableBalance": "2181052",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -2049,6 +2049,30 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
       "blockHash": null,
+      "blockHeight": 32177034,
+      "extra": {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "15450",
+          },
+        ],
+      },
+      "fee": "26647",
+      "hasFailed": false,
+      "hash": "55683492340776DB8CCFBCA1F5DFA1D7C75B2AAF9B95961B51FAA2FC351B39CC",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-55683492340776DB8CCFBCA1F5DFA1D7C75B2AAF9B95961B51FAA2FC351B39CC-REDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": "276",
+      "type": "REDELEGATE",
+      "value": "26647",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
       "blockHeight": 9610331,
       "extra": {
         "memo": "Ledger Live",
@@ -3940,6 +3964,30 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "80",
       "type": "OUT",
       "value": "103791",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 32177052,
+      "extra": {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "827539",
+          },
+        ],
+      },
+      "fee": "25149",
+      "hasFailed": false,
+      "hash": "B58678F8E6FDAF9E96C76F653DCA0F2967221832F98FBCA22ED8BE81C46B1098",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-B58678F8E6FDAF9E96C76F653DCA0F2967221832F98FBCA22ED8BE81C46B1098-REDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": "277",
+      "type": "REDELEGATE",
+      "value": "25149",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
