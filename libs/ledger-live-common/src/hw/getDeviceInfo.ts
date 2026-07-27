@@ -1,5 +1,6 @@
 /* eslint-disable no-bitwise */
-import { DeviceOnDashboardExpected, StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceOnDashboardExpected, DeviceNotOnboarded } from "../errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
@@ -7,7 +8,6 @@ import isDevFirmware from "./isDevFirmware";
 import getAppAndVersion from "./getAppAndVersion";
 import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
-import { DeviceNotOnboarded } from "../errors";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 
 const ManagerAllowedFlag = 0x08;
