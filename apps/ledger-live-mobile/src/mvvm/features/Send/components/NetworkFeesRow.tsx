@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Text,
   Button,
@@ -25,6 +26,7 @@ const isStrategyKind = (kind: FeeSelectorOptionKind) => kind === "preset" || kin
 
 export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
   const { t } = useTranslation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const infoBottomSheetRef = useBottomSheetRef();
   const selectorBottomSheetRef = useBottomSheetRef();
 
@@ -65,7 +67,6 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         alignItems: "center",
         justifyContent: "space-between",
         paddingVertical: theme.spacings.s10,
-        paddingHorizontal: theme.spacings.s24,
       },
       presetLeft: {
         flex: 1,
@@ -77,7 +78,6 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         marginLeft: theme.spacings.s16,
       },
       separator: {
-        marginHorizontal: theme.spacings.s24,
         marginVertical: theme.spacings.s8,
       },
     }),
@@ -186,8 +186,8 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         </BottomSheetView>
       </BottomSheet>
 
-      <BottomSheet ref={selectorBottomSheetRef} snapPoints="medium">
-        <BottomSheetView>
+      <BottomSheet ref={selectorBottomSheetRef} enableDynamicSizing snapPoints={null}>
+        <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
           <BottomSheetHeader title={viewModel.label} density="compact" />
 
           {viewModel.displayOptions.map((option, index) => {
