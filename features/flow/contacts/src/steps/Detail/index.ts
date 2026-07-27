@@ -2,6 +2,7 @@ export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
+export { useContactAddressDetail } from "./useContactAddressDetail";
 export {
   createContactDetailAddressRowIntent,
   createPopulatedContactDetailViewModel,
@@ -19,15 +20,20 @@ export {
   createContactDetailActionsController,
   type ContactDetailActionsController,
 } from "./model/contactActionsController";
+export { createContactAddressDetailViewModel } from "./model/addressDetailViewModel";
 export { sortContactAddressesByNetwork } from "./model/sortContactAddressesByNetwork";
 export type {
   ContactAddressCurrencyPort,
+  ContactAddressDetailPort,
   ContactDeletionPort,
   ContactDetailActionsPorts,
   ContactEditPort,
   ContactRenameInput,
 } from "./model/ports";
 export type {
+  ContactAddressDetailAsset,
+  ContactAddressDetailNetwork,
+  ContactAddressDetailViewModel,
   ContactDeleteLifecycle,
   ContactDetailActionsViewModel,
   ContactDetailAddressRow,
