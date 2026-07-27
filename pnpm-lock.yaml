@@ -3660,9 +3660,6 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../currency-token
-      '@domain/entity-currency-unit':
-        specifier: workspace:*
-        version: link:../currency-unit
       zod:
         specifier: 'catalog:'
         version: 4.3.6
