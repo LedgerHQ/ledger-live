@@ -4,7 +4,6 @@ import { isIos } from "../../helpers/commonHelpers";
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
   acceptAnalyticsButtonId = "enabled-accept-analytics-button";
-  exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   recoveryPhrase = "onboarding-useCase-recoveryPhrase";
   setupLedger = "onboarding-setupLedger";
   accessWallet = "onboarding-accessWallet";
@@ -19,10 +18,8 @@ export default class OnboardingStepsPage {
   deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
   deviceCardTitleId = (title: string) => `${this.deviceCardId(title)}-title`;
 
-  discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
-  noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   setupLedgerButton = () => getElementById(this.setupLedger);
   accessWalletButton = () => getElementById(this.accessWallet);
   deviceCardHeader = (title: string) => getElementById(`${this.deviceCardId(title)}-header`);
@@ -65,18 +62,13 @@ export default class OnboardingStepsPage {
   }
 
   @Step("Select starting option")
-  async selectStartingOption(
-    option: "setupLedger" | "accessWallet" | "noLedgerYet",
-  ): Promise<void> {
+  async selectStartingOption(option: "setupLedger" | "accessWallet"): Promise<void> {
     switch (option) {
       case "setupLedger":
         await tapByElement(this.setupLedgerButton());
         break;
       case "accessWallet":
         await tapByElement(this.accessWalletButton());
-        break;
-      case "noLedgerYet":
-        await tapByElement(this.noLedgerYetButton());
         break;
     }
   }
@@ -131,19 +123,5 @@ export default class OnboardingStepsPage {
   async acceptAnalytics(): Promise<void> {
     const analyticsBtn = this.acceptAnalyticsButton();
     await tapByElement(analyticsBtn);
-  }
-
-  @Step("Choose no ledger yet")
-  async chooseNoLedgerYet(): Promise<void> {
-    const btn = this.noLedgerYetButton();
-    await tapByElement(btn);
-  }
-
-  @Step("Choose to explore app")
-  async chooseToExploreApp(): Promise<void> {
-    // DETOX: chooseNoLedgerYet navigates straight to discover live (no upsell modal).
-    await waitForElementById(this.discoverLiveTitle(3));
-    await waitForElementById(this.exploreWithoutDeviceButtonId);
-    await tapById(this.exploreWithoutDeviceButtonId);
   }
 }

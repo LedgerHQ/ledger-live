@@ -14,7 +14,6 @@ import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { DETOX_ENABLED } from "~/utils/constants";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -45,13 +44,8 @@ function PostWelcomeSelection() {
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
-    // Detox: keep the discover-live read-only e2e path; production opens the Reborn URL
-    if (DETOX_ENABLED) {
-      navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-      return;
-    }
     Linking.openURL(localizedRebornUrl);
-  }, [identifyUser, localizedRebornUrl, navigation]);
+  }, [identifyUser, localizedRebornUrl]);
 
   useFocusEffect(
     useCallback(() => {
