@@ -1,9 +1,9 @@
 import network from "@ledgerhq/live-network";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { convertCertificateToDeviceData, getCertificate } from "./certificate";
 
 jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
-jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
+jest.mock("@shared/env", () => ({ getEnv: jest.fn() }));
 
 const mockNetwork = jest.mocked(network);
 const mockGetEnv = jest.mocked(getEnv);

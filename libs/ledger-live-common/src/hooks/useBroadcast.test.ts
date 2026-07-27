@@ -3,7 +3,7 @@
  */
 // oxlint-disable typescript/consistent-type-assertions
 import { act, renderHook } from "@testing-library/react";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { getAccountBridge } from "../bridge/index";
 import { useBroadcast } from "./useBroadcast";
 

@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { RecordStore, TransportReplayer } from "@ledgerhq/hw-transport-mocker";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { ScenarioOptions } from "../../../tests/test-helpers/types";
 import { getSdk } from "../..";
 import { WithDevice } from "../../types";

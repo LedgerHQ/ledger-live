@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
 import {
   AccessDeniedError,

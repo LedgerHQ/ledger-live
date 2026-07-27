@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { CurrenciesPerProvider, RampCatalog } from "../types";
 import mockData from "./mock.json";
 

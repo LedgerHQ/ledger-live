@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Operation } from "@ledgerhq/types-live";
 import { postSwapAccepted, postSwapCancelled } from "./index";
 import { DeviceModelId } from "@ledgerhq/devices";

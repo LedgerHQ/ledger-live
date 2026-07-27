@@ -7,7 +7,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { getCurrentCosmosPreloadData } from "@ledgerhq/coin-cosmos/preloadedData";
 import preloadedMockData from "@ledgerhq/coin-cosmos/preloadedData.mock";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { CurrencyBridge } from "@ledgerhq/types-live";
 import { act, renderHook } from "@testing-library/react";
 import "../../__tests__/test-helpers/dom-polyfill";
