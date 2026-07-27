@@ -53,13 +53,15 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     const contactId = contact.id;
     startAddAddress(contactId);
-    void selectCurrency().then(result => {
-      if (result.status === "selected") {
-        completeCurrencySelection(contactId, result.currencyId);
-      } else if (result.status === "cancelled" || result.status === "unavailable") {
-        closeAddAddress();
-      }
-    });
+    void selectCurrency()
+      .then(result => {
+        if (result.status === "selected") {
+          completeCurrencySelection(contactId, result.currencyId);
+        } else if (result.status === "cancelled" || result.status === "unavailable") {
+          closeAddAddress();
+        }
+      })
+      .catch(closeAddAddress);
   }, [closeAddAddress, completeCurrencySelection, contact, selectCurrency, startAddAddress]);
   const onOpenLedgerWalletAddresses = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {

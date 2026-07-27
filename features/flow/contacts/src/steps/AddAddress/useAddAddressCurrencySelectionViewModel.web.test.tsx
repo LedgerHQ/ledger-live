@@ -10,7 +10,10 @@ import {
   type Features,
 } from "@shared/feature-flags";
 import type { ContactsCurrencySelectionPort } from "./model/ports";
-import { useAddAddressCurrencySelectionViewModel } from "./useAddAddressCurrencySelectionViewModel";
+import {
+  type AddAddressCurrencySelectionResult,
+  useAddAddressCurrencySelectionViewModel,
+} from "./useAddAddressCurrencySelectionViewModel";
 
 const ETHEREUM_CURRENCY_ID = getCryptoCurrencyById("ethereum").id;
 
@@ -57,7 +60,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
       .filter(network => network.family === "evm")
       .map(network => network.id);
 
-    let selectionResult;
+    let selectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {
       selectionResult = await result.current.selectCurrency();
     });
@@ -82,7 +85,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
       .filter(network => network.family === "evm" || network.family === "bitcoin")
       .map(network => network.id);
 
-    let selectionResult;
+    let selectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {
       selectionResult = await result.current.selectCurrency();
     });
@@ -120,7 +123,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
       },
     );
 
-    let selectionResult;
+    let selectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {
       selectionResult = await result.current.selectCurrency();
     });
@@ -140,7 +143,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     const { result } = renderViewModel({ selectCurrency });
 
     let firstSelection: ReturnType<typeof result.current.selectCurrency>;
-    let concurrentSelectionResult;
+    let concurrentSelectionResult: AddAddressCurrencySelectionResult | undefined;
     await act(async () => {
       firstSelection = result.current.selectCurrency();
       concurrentSelectionResult = await result.current.selectCurrency();
@@ -151,5 +154,24 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     expect(selectCurrency).toHaveBeenCalledTimes(1);
     expect(concurrentSelectionResult).toEqual({ status: "busy" });
     expect(result.current.selectedCurrencyId).toBe("ethereum");
+  });
+
+  it("returns a cancelled result and allows retrying when the selection port rejects", async () => {
+    const selectCurrency = jest
+      .fn()
+      .mockRejectedValueOnce(new Error("MAD unavailable"))
+      .mockResolvedValueOnce(ETHEREUM_CURRENCY_ID);
+    const { result } = renderViewModel({ selectCurrency });
+
+    await act(async () => {
+      expect(await result.current.selectCurrency()).toEqual({ status: "cancelled" });
+      expect(await result.current.selectCurrency()).toEqual({
+        status: "selected",
+        currencyId: ETHEREUM_CURRENCY_ID,
+      });
+    });
+
+    expect(selectCurrency).toHaveBeenCalledTimes(2);
+    expect(result.current.selectedCurrencyId).toBe(ETHEREUM_CURRENCY_ID);
   });
 });

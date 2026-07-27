@@ -12,6 +12,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "~/context/hooks";
 import {
+  modularDrawerCompletionModeSelector,
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerSearchValueSelector,
 } from "~/reducers/modularDrawer";
@@ -80,9 +81,11 @@ export function ModularDrawer({
 
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
     {
-      currencyIds: currencies,
+      currencyIds: completionMode === "currency" ? undefined : currencies,
+      networkIds: completionMode === "currency" ? currencies : undefined,
       searchedValue: searchValue,
       useCase,
       areCurrenciesFiltered,

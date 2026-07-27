@@ -55,6 +55,8 @@ export function useAddAddressCurrencySelectionViewModel({
 
       setSelectedCurrencyId(currencyId);
       return { status: "selected", currencyId } as const;
+    } catch {
+      return { status: "cancelled" } as const;
     } finally {
       isSelectingRef.current = false;
     }

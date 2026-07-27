@@ -63,7 +63,7 @@ export const useModularDrawerController = () => {
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
-      const { onAccountSelected, onCurrencySelected, ...otherParams } = params || {};
+      const { onAccountSelected, onCurrencySelected, ...otherParams } = params ?? {};
 
       if (completionMode === "currency" && callbackId) {
         executeCurrencyCallback(callbackId, null);

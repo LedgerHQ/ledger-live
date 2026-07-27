@@ -22,7 +22,7 @@ type ModularDrawerStateProps = {
   isDrawerOpen?: boolean;
   onClose?: () => void;
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
-  onCurrencySelected?: ModularDrawerProps["onCurrencySelected"];
+  onCurrencySelected?: NonNullable<ModularDrawerProps["onCurrencySelected"]>;
   hasSearchedValue?: boolean;
 };
 

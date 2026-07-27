@@ -27,7 +27,7 @@ export type DrawerBaseParams = {
   uiUseCase?: string;
 };
 
-type LegacyDrawerCompletion = {
+type AccountOrDeviceDrawerCompletion = {
   completionMode?: never;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   onCurrencySelected?: never;
@@ -40,7 +40,7 @@ type CurrencyDrawerCompletion = {
 };
 
 export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
-  (LegacyDrawerCompletion | CurrencyDrawerCompletion) &
+  (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) &
   TExtras;
 
 export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {

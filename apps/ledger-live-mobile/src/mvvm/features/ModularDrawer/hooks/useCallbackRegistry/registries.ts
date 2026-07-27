@@ -42,9 +42,9 @@ export const registryActions: RegistryManager = {
     }
   },
 
-  clearCallbacks: () => callbackRegistry.clear(),
+  clearCallbacks: () => resetAllRegistries(),
 
-  getCallbackKeys: (): string[] => callbackRegistry.keys(),
+  getCallbackKeys: (): string[] => [...callbackRegistry.keys(), ...currencyCallbackRegistry.keys()],
 
   resetAll: () => resetAllRegistries(),
 };
