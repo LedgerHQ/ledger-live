@@ -10,7 +10,7 @@ import {
   MappedStake,
 } from "./types";
 import { getAccountCurrency } from "../../account";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getStakingExtraByDigest } from "@ledgerhq/coin-sui/getStakingExtraByDigest";

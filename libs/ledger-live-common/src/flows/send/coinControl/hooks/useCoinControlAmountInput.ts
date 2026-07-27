@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { formatAmountForInput, processRawInput } from "../../amount/utils/amountInput";
 import type { Transaction, TransactionStatus } from "../../../../coin-modules/transaction-types";
 import { BigNumber } from "bignumber.js";

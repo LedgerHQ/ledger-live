@@ -6,8 +6,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import {
   createAccountNotFound,

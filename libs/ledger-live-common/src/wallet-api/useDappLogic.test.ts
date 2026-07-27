@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
 import { AppBranch, AppPlatform, Visibility } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 jest.mock("./converters", () => ({

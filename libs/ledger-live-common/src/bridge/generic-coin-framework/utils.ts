@@ -15,8 +15,9 @@ import type {
   TransactionIntent,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
   FeeData,
   FeeDataRaw,

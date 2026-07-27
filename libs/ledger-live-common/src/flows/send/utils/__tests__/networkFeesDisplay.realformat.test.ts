@@ -7,7 +7,7 @@
  * the accepted format for the combined row.
  */
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { formatCombinedFeesValue, formatDisplayFeesValue } from "../networkFeesDisplay";
 
 const trxUnit: Unit = { name: "TRX", code: "TRX", magnitude: 6 };

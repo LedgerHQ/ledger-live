@@ -1,6 +1,6 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { getAssetFromToken, getTokenFromAsset } from "./api";
 
 beforeAll(() => {

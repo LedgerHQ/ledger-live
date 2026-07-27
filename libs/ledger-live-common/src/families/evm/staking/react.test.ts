@@ -3,7 +3,7 @@
  */
 import { act, renderHook, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { StakingValidatorItem, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
 import * as stakingIndex from "@ledgerhq/coin-evm/staking/index";

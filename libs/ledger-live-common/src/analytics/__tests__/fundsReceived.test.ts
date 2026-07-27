@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencyIdSchema } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { getCryptoCurrencyById } from "../../currencies/index";
 import {

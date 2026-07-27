@@ -17,7 +17,7 @@ import type {
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { bridge as ACREBridge } from "../../families/bitcoin/ACRESetup";
 
 type State = {

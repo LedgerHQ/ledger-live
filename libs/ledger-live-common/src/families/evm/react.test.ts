@@ -6,7 +6,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/network/gasTracker/types";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { useGasOptions } from "./react";
 
 jest.useFakeTimers();

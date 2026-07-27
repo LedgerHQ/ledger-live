@@ -1,12 +1,12 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 describe("evm bridge", () => {

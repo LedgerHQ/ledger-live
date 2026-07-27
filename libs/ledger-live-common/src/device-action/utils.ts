@@ -1,4 +1,4 @@
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { Account } from "@ledgerhq/types-live";
 
 export enum FlowName {

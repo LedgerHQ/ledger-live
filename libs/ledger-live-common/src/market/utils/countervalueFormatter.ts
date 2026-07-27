@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 
 const MAXIMUM_FRACTION_DIGITS = 8;
 

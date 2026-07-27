@@ -1,7 +1,8 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { genAccount } from "../../mock/account";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";

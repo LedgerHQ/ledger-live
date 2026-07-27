@@ -1,5 +1,7 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { CryptoOrTokenCurrency, Currency, FiatCurrency, Unit } from "@domain/entity-currency";
+import { FiatCurrency } from "@domain/entity-currency-fiat";
+import { Unit } from "@domain/entity-currency-unit";
+import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 
 // Accepts both domain FiatCurrency (id required) and legacy types-cryptoassets FiatCurrency (no id)
 type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });

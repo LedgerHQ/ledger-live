@@ -3,7 +3,7 @@
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";

@@ -6,9 +6,8 @@ import {
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
 import type { ApiAsset } from "../entities";
+import { CryptoCurrencyIdSchema, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
 import { getEnv } from "@shared/env";

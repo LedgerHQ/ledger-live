@@ -3,7 +3,9 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "../account";
 import { formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
-import type { CryptoOrTokenCurrency, FiatCurrency, Unit } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
+import type { Unit } from "@domain/entity-currency-unit";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import type { AccountLike, Operation } from "@ledgerhq/types-live";

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency, FiatCurrency } from "@domain/entity-currency";
+import { FiatCurrency } from "@domain/entity-currency-fiat";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";

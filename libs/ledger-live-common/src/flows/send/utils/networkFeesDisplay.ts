@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency, Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { sendFeatures } from "../../../bridge/descriptor/send/features";
 import type { Transaction } from "../../../coin-modules/transaction-types";

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency, FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";

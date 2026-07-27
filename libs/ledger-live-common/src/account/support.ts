@@ -4,7 +4,7 @@ import { checkAccountSupported as checkAccountDerivationSupported } from "@ledge
 import { isCoinModuleRegistered } from "../coin-modules/registry";
 import { getAccountBridge } from "../bridge";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 export { getReceiveFlowError } from "@ledgerhq/ledger-wallet-framework/account/support";
 

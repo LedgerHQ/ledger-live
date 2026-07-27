@@ -1,4 +1,4 @@
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

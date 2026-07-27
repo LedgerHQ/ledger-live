@@ -1,10 +1,10 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   genAccount,
   genOperation,
   genTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import Prando from "prando";

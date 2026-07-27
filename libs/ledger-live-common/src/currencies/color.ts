@@ -1,5 +1,5 @@
-import type { Currency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Currency } from "@domain/entity-currency";
 
 const defaultColor = "#999";
 

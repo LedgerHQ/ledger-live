@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@domain/entity-currency";
+import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import type {
   WalletAPICurrency,
   WalletAPISupportedCurrency,

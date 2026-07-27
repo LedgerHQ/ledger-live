@@ -1,8 +1,5 @@
-import {
-  TokenCurrencySchema,
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 const mockInjectiveCurrency = {
   type: "CryptoCurrency" as const,
   id: CryptoCurrencyIdSchema.parse("injective"),

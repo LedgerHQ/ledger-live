@@ -1,12 +1,9 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
-import {
-  TokenCurrencySchema,
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {

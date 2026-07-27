@@ -10,8 +10,9 @@ import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

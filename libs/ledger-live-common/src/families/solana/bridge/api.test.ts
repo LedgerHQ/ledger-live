@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
-import type { TokenCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 

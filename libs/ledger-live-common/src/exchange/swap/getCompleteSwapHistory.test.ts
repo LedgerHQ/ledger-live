@@ -4,8 +4,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { genAccount } from "../../mock/account";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 
 setCryptoAssetsStore({

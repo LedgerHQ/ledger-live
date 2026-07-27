@@ -1,4 +1,5 @@
-import type { CryptoOrTokenCurrency, FiatCurrency } from "@domain/entity-currency";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import {

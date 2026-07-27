@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
 
 export const useSelectableCurrencies = ({
   allCurrencies,

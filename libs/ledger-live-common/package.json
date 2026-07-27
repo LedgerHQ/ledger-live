@@ -264,6 +264,8 @@
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
+    "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-currency-unit": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
