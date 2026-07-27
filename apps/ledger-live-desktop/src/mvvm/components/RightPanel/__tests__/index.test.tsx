@@ -76,6 +76,6 @@ describe("RightPanel", () => {
     render(<RightPanel />);
 
     expect(DEFAULT_RIGHT_PANEL_VIEW_MODEL.initialSwapState).toBeUndefined();
-    expect(DEFAULT_RIGHT_PANEL_VIEW_MODEL.webviewKey).toBe("none::none");
+    expect(DEFAULT_RIGHT_PANEL_VIEW_MODEL.webviewKey).toBe("none::none::none");
   });
 });
