@@ -233,7 +233,7 @@ describe("useModularDrawerState", () => {
     const { result } = renderHook(
       () =>
         useModularDrawerState({
-          currencyIds: [mockBtcCryptoCurrency.id],
+          currencyIds: [],
           assetsSorted,
           onAccountSelected: mockOnAccountSelected,
           onCurrencySelected,
@@ -253,6 +253,7 @@ describe("useModularDrawerState", () => {
 
     expect(onCurrencySelected).toHaveBeenCalledWith(mockBtcCryptoCurrency);
     expect(mockNavigate).not.toHaveBeenCalled();
+    expect(result.current.hasOneCurrency).toBe(false);
   });
 
   it("should return the resolved network currency after network selection", () => {

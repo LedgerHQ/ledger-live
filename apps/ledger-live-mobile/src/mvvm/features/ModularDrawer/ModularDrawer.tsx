@@ -104,7 +104,7 @@ export function ModularDrawer({
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
-    currencyIds: currencies ?? [],
+    currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
     hasSearchedValue: searchValue.length > 0,
