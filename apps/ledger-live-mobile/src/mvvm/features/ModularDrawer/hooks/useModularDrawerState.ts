@@ -7,7 +7,11 @@ import { useDrawerLifecycle } from "./useDrawerLifecycle";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
+import {
+  modularDrawerCompletionModeSelector,
+  modularDrawerEnableAccountSelectionSelector,
+  setStep,
+} from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import type { ModularDrawerProps } from "../ModularDrawer";
 
@@ -18,6 +22,7 @@ type ModularDrawerStateProps = {
   isDrawerOpen?: boolean;
   onClose?: () => void;
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
+  onCurrencySelected?: ModularDrawerProps["onCurrencySelected"];
   hasSearchedValue?: boolean;
 };
 
@@ -28,9 +33,11 @@ export function useModularDrawerState({
   onClose,
   hasSearchedValue,
   onAccountSelected,
+  onCurrencySelected,
 }: ModularDrawerStateProps) {
   const isAcceptedCurrency = useAcceptedCurrency();
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const dispatch = useDispatch();
 
   const [asset, setAsset] = useState<CryptoOrTokenCurrency>();
@@ -73,6 +80,7 @@ export function useModularDrawerState({
     clearNetwork,
     selectNetwork: setNetwork,
     navigateToDeviceWithCurrency,
+    onCurrencySelected,
   });
 
   // Handle asset selection and determine next step
@@ -98,6 +106,8 @@ export function useModularDrawerState({
         );
         const currencyToUse = resolvedCurrency ?? selected;
         proceedToNextStep(currencyToUse, singleNetwork);
+      } else if (completionMode === "currency") {
+        onCurrencySelected?.(selected);
       } else if (enableAccountSelection) {
         dispatch(setStep(ModularDrawerStep.Account));
       } else {
@@ -106,9 +116,11 @@ export function useModularDrawerState({
     },
     [
       assetsSorted,
+      completionMode,
       enableAccountSelection,
       dispatch,
       navigateToDeviceWithCurrency,
+      onCurrencySelected,
       proceedToNextStep,
       isAcceptedCurrency,
     ],

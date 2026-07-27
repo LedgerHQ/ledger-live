@@ -228,6 +228,61 @@ describe("useModularDrawerState", () => {
     expect(store.getState().modularDrawer.step).not.toBe(ModularDrawerStep.Account);
   });
 
+  it("should return a native currency without navigating to device in currency mode", () => {
+    const onCurrencySelected = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [mockBtcCryptoCurrency.id],
+          assetsSorted,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            completionMode: "currency",
+          },
+        }),
+      },
+    );
+
+    act(() => result.current.handleAsset(mockBtcCryptoCurrency));
+
+    expect(onCurrencySelected).toHaveBeenCalledWith(mockBtcCryptoCurrency);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should return the resolved network currency after network selection", () => {
+    const onCurrencySelected = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [mockEthCryptoCurrency.id],
+          assetsSorted,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            completionMode: "currency",
+          },
+        }),
+      },
+    );
+
+    act(() => result.current.handleAsset(mockEthCryptoCurrency));
+    act(() => result.current.handleNetwork(mockArbitrumCryptoCurrency));
+
+    expect(onCurrencySelected).toHaveBeenCalledWith(mockArbitrumCryptoCurrency);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it("should handle multiple currencies", () => {
     const { result } = renderHook(() =>
       useModularDrawerState({
