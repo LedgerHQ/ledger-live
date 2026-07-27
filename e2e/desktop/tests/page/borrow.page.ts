@@ -309,7 +309,7 @@ export class BorrowPage extends WebViewAppPage {
     await expect(this.modalBackdrop).toBeHidden({ timeout: 120_000 });
   }
 
-  private async expectExecutionStepOutcome(webview: Page, doneTestId: string) {
+  private async expectExecutionStepOutcome(webview: Page, doneTestId: string, stepLabel: string) {
     const done = this.executionStepDone(webview, doneTestId);
     const error = this.executionError(webview);
 
@@ -317,7 +317,7 @@ export class BorrowPage extends WebViewAppPage {
 
     if (await this.isExecutionErrorVisible(webview)) {
       throw new Error(
-        `Borrow execution step failed in webview (${doneTestId}). ${this.mainnetFundingHint}`,
+        `Borrow execution step failed in webview (${stepLabel}, ${doneTestId}). ${this.mainnetFundingHint}`,
       );
     }
   }
@@ -325,14 +325,14 @@ export class BorrowPage extends WebViewAppPage {
   @step("Wait for Step 1 approval to complete")
   async expectApprovalStepCompleted() {
     const webview = await this.getWebView();
-    await this.expectExecutionStepOutcome(webview, this.step1AccessApprovedId);
+    await this.expectExecutionStepOutcome(webview, this.step1AccessApprovedId, "Step 1 approval");
     await expect(this.authorizeDepositingBtn(webview)).toBeEnabled();
   }
 
   @step("Wait for Step 2 deposit to complete")
   async expectDepositStepCompleted() {
     const webview = await this.getWebView();
-    await this.expectExecutionStepOutcome(webview, this.step2DepositDoneId);
+    await this.expectExecutionStepOutcome(webview, this.step2DepositDoneId, "Step 2 deposit");
     await expect(this.authorizeBorrowingBtn(webview)).toBeEnabled();
   }
 
