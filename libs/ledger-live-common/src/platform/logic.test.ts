@@ -727,9 +727,9 @@ function createTokenAccount(id = "32"): TokenAccount {
 function createTokenCurrency(): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "3",
+    id: "3" as TokenCurrency["id"],
     contractAddress: "",
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
     tokenType: "",
     //-- CurrencyCommon
     name: "",

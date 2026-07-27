@@ -18,7 +18,7 @@ const mockedGetGasTracker = jest.mocked(getGasTracker);
 const mockedGetGasOptions = jest.fn();
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "my_new_chain",
+  id: "my_new_chain" as CryptoCurrency["id"],
   ethereumLikeInfo: {
     chainId: 1,
   },

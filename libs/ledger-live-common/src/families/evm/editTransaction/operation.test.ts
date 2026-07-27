@@ -102,7 +102,7 @@ describe("EVM Family", () => {
 
           const tokenCurrencyWithoutGasTracker: TokenCurrency = {
             ...usdc,
-            parentCurrencyId: "ethereum",
+            parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
           };
 
           const account = genAccount("myAccount", { currency: evmWithoutGasTracker });

@@ -12,20 +12,20 @@ export const ETH_FIAT_CONVERSION = 4589;
 export const BTC_FIAT_CONVERSION = 45000;
 
 export const ethereumCurrency = createFixtureCryptoCurrency("ethereum");
-ethereumCurrency.id = "ethereum";
+ethereumCurrency.id = "ethereum" as CryptoCurrency["id"];
 ethereumCurrency.name = "Ethereum";
 ethereumCurrency.ticker = "ETH";
 ethereumCurrency.units[0].magnitude = 18;
 
 export const bitcoinCurrency = createFixtureCryptoCurrency("bitcoin");
-bitcoinCurrency.id = "bitcoin";
+bitcoinCurrency.id = "bitcoin" as CryptoCurrency["id"];
 bitcoinCurrency.name = "Bitcoin";
 bitcoinCurrency.ticker = "BTC";
 bitcoinCurrency.units[0].magnitude = 8;
 
 export const mockFiatCurrency: FiatCurrency = {
   type: "FiatCurrency",
-  id: "usd",
+  id: "usd" as FiatCurrency["id"],
   ticker: "USD",
   name: "US Dollar",
   symbol: "$",
@@ -52,7 +52,7 @@ export const makeUsdcToken = (
     type: "TokenCurrency" as const,
     parentCurrencyId: parentCurrency.id,
     tokenType,
-    id,
+    id: id as TokenCurrency["id"],
     contractAddress,
     ticker: "USDC",
     name,

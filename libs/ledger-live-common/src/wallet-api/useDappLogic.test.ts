@@ -72,7 +72,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 
 const mockCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: "ethereum" as CryptoCurrency["id"],
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",

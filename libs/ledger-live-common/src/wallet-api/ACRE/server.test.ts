@@ -73,7 +73,7 @@ const mockManifest = {
 
 const mockEthereumCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: "ethereum" as CryptoCurrency["id"],
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",
@@ -97,9 +97,9 @@ const mockEthereumCurrency: CryptoCurrency = {
 
 const mockTokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/acre_btc",
+  id: "ethereum/erc20/acre_btc" as TokenCurrency["id"],
   contractAddress: "0x1234567890123456789012345678901234567890",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
   tokenType: "erc20",
   name: "ACRE Bitcoin",
   ticker: "acreBTC",
