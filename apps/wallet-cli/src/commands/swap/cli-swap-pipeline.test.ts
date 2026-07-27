@@ -1,7 +1,8 @@
-import { afterEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CommandOutput } from "../../output";
@@ -16,6 +17,12 @@ import type { CommandOutput } from "../../output";
  * once per `runFullSwapPipeline`, and both device APDUs (`startExchange` and
  * `completeExchange`) happen inside that single session.
  */
+
+const mockEthUnit: Unit = {
+  name: "Ether",
+  code: "ETH",
+  magnitude: 18,
+};
 
 const events: string[] = [];
 let updatedTransactionAmount = new BigNumber("1000000000000000000");
@@ -76,10 +83,12 @@ mock.module("@ledgerhq/live-common/exchange/swap/transactionStrategies", () => (
   },
 }));
 
-mock.module("@ledgerhq/hw-app-exchange", () => ({
-  decodeSwapPayload: async () => ({ amountToWallet: "1000000000000000000" }),
-  getExchangeErrorMessage: () => ({ errorName: undefined, errorMessage: undefined }),
-}));
+function mockHwAppExchange(amountToWallet = "1000000000000000000") {
+  mock.module("@ledgerhq/hw-app-exchange", () => ({
+    decodeSwapPayload: async () => ({ amountToWallet }),
+    getExchangeErrorMessage: () => ({ errorName: undefined, errorMessage: undefined }),
+  }));
+}
 
 const setBroadcastTransactionMock = mock(async () => {});
 const postSwapAcceptedMock = mock(async () => null);
@@ -94,14 +103,26 @@ mock.module("@ledgerhq/live-common/exchange/swap/postSwapState", () => ({
   postSwapCancelled: postSwapCancelledMock,
 }));
 
+// mock.module is global and persists across test files, so this keeps every real export and
+// makes the spy a pass-through: any suite that ends up with this module still gets real
+// behaviour, whatever order Bun happens to load the files in.
+const swapAnalytics = await import("../../analytics/swap-analytics");
+const trackSwapCompletedMock = mock(swapAnalytics.trackSwapCompleted);
+mock.module("../../analytics/swap-analytics", () => ({
+  ...swapAnalytics,
+  trackSwapCompleted: trackSwapCompletedMock,
+}));
+
+mockHwAppExchange();
+
 const { runFullSwapPipeline } = await import("./cli-swap-pipeline");
 
-function makeAccount(id: string): Account {
+function makeAccount(id: string, units: Unit[] = [mockEthUnit]): Account {
   return {
     type: "Account",
     id,
     freshAddress: `0x${id}`,
-    currency: { id: "ethereum", family: "ethereum" },
+    currency: { id: "ethereum", family: "ethereum", units },
     seedIdentifier: "",
     derivationMode: "",
     index: 0,
@@ -156,12 +177,17 @@ async function getDeviceModelId() {
 }
 
 describe("runFullSwapPipeline session lifecycle", () => {
+  beforeEach(() => {
+    mockHwAppExchange();
+  });
+
   afterEach(() => {
     events.length = 0;
     updatedTransactionAmount = new BigNumber("1000000000000000000");
     retrieveSwapPayloadMock.mockClear();
     setBroadcastTransactionMock.mockClear();
     postSwapCancelledMock.mockClear();
+    trackSwapCompletedMock.mockClear();
   });
 
   it("opens a single Exchange app session for the entire start→complete flow", async () => {
@@ -180,6 +206,9 @@ describe("runFullSwapPipeline session lifecycle", () => {
     expect(events).toEqual(["session:open", "startExchange", "completeExchange", "session:close"]);
     expect(result.transactionId).toBe("tx-id-123");
     expect(result.operationHash).toBe("tx-hash-123");
+    expect(result.amountExpectedTo).toBe("1");
+    expect(result.amountExpectedToAtomic).toBe("1000000000000000000");
+    expect(result.magnitudeAwareRate).toBe("1");
     expect(retrieveSwapPayloadMock).toHaveBeenCalledTimes(1);
     expect(setBroadcastTransactionMock).toHaveBeenCalledTimes(1);
     expect(setBroadcastTransactionMock).toHaveBeenCalledWith(
@@ -286,5 +315,111 @@ describe("runFullSwapPipeline session lifecycle", () => {
         fromAmount: "1",
       }),
     );
+  });
+
+  it("converts amountExpectedTo to display units (magnitude=18)", async () => {
+    mockHwAppExchange("1234500000000000000");
+
+    const result = await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000000000000000"),
+      feeStrategy: "medium",
+      fromAccount: makeAccount("from"),
+      toAccount: makeAccount("to"),
+      getAccountBridge,
+      getDeviceModelId,
+    });
+
+    expect(result.amountExpectedTo).toBe("1.2345");
+    expect(result.amountExpectedToAtomic).toBe("1234500000000000000");
+  });
+
+  it("converts amountExpectedTo to display units (magnitude=6)", async () => {
+    mockHwAppExchange("1234500");
+
+    const usdtUnit: Unit = { name: "USDT", code: "USDT", magnitude: 6 };
+
+    const result = await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000"),
+      feeStrategy: "medium",
+      fromAccount: makeAccount("from", [usdtUnit]),
+      toAccount: makeAccount("to", [usdtUnit]),
+      getAccountBridge,
+      getDeviceModelId,
+    });
+
+    expect(result.amountExpectedTo).toBe("1.2345");
+    expect(result.amountExpectedToAtomic).toBe("1234500");
+  });
+
+  it("renders sub-unit amounts in full decimal notation rather than exponential", async () => {
+    mockHwAppExchange("1");
+
+    const result = await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000000000000000"),
+      feeStrategy: "medium",
+      fromAccount: makeAccount("from"),
+      toAccount: makeAccount("to"),
+      getAccountBridge,
+      getDeviceModelId,
+    });
+
+    expect(result.amountExpectedTo).toBe("0.000000000000000001");
+    expect(result.amountExpectedToAtomic).toBe("1");
+  });
+
+  it("keeps full precision for magnitudes above BigNumber's DECIMAL_PLACES", async () => {
+    mockHwAppExchange("1234500000000000000000123");
+
+    const nearUnit: Unit = { name: "NEAR", code: "NEAR", magnitude: 24 };
+
+    const result = await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000000000000000000000"),
+      feeStrategy: "medium",
+      fromAccount: makeAccount("from", [nearUnit]),
+      toAccount: makeAccount("to", [nearUnit]),
+      getAccountBridge,
+      getDeviceModelId,
+    });
+
+    expect(result.amountExpectedTo).toBe("1.234500000000000000000123");
+  });
+
+  it("reports the analytics toAmount in display units", async () => {
+    mockHwAppExchange("1234500000000000000");
+
+    await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000000000000000"),
+      feeStrategy: "medium",
+      fromAccount: makeAccount("from"),
+      toAccount: makeAccount("to"),
+      getAccountBridge,
+      getDeviceModelId,
+      flowId: "flow-id-123",
+    });
+
+    expect(trackSwapCompletedMock).toHaveBeenCalledTimes(1);
+    expect(trackSwapCompletedMock).toHaveBeenCalledWith({
+      flowId: "flow-id-123",
+      fromCurrency: "ethereum",
+      toCurrency: "ethereum",
+      provider: "changelly",
+      fromAmount: "1",
+      toAmount: "1.2345",
+    });
   });
 });
