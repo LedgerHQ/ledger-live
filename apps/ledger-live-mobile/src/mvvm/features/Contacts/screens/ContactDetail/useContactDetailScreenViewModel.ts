@@ -1,10 +1,12 @@
-import { useLayoutEffect, useMemo } from "react";
+import { useCallback, useLayoutEffect, useMemo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
+  type AddAddressFlowState,
   type ContactDetailLabels,
   type ContactDetailViewProps,
+  useAddAddressFlowViewModel,
   useContactsFeature,
   useEmptyContactDetail,
 } from "@features/flow-contacts";
@@ -17,10 +19,9 @@ type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
       status: "ready";
+      addAddressFlowState: AddAddressFlowState;
       pageProps: ContactDetailViewProps;
     }>;
-
-const onAddAddress = () => undefined;
 
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
   const navigation = useNavigation<NativeStackNavigationProp<MyWalletNavigatorStackParamList>>();
@@ -29,6 +30,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { isEnabled } = useContactsFeature("mobile");
   const { t } = useTranslation();
   const contact = useEmptyContactDetail(route.params.contactId);
+  const { state: addAddressFlowState, start: startAddAddress } = useAddAddressFlowViewModel();
+  const onAddAddress = useCallback(() => {
+    if (contact) {
+      startAddAddress(contact.id);
+    }
+  }, [contact, startAddAddress]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -58,6 +65,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
   return {
     status: "ready",
+    addAddressFlowState,
     pageProps: {
       contact,
       labels,
