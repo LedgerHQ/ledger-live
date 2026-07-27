@@ -3,22 +3,24 @@ import { useTranslation } from "react-i18next";
 import type { Contact, ContactId } from "@domain/entity-contact";
 import {
   useEmptyContactDetail,
+  type AddAddressFlowViewModel,
   type ContactDetailLabels,
   type ContactDetailViewProps,
   type ContactsListViewProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 
-const onAddAddress = () => undefined;
-
-export function useContactDetailPaneAdapter(contacts: readonly Contact[]): Readonly<{
+export function useContactDetailPaneAdapter(
+  contacts: readonly Contact[],
+  startAddAddress: AddAddressFlowViewModel["start"],
+): Readonly<{
   detail: ContactDetailViewProps | undefined;
   onOpenMe: ContactsListViewProps["onOpenMe"];
   onOpenContact: ContactsListViewProps["onOpenContact"];
 }> {
   const { t } = useTranslation();
-  const [selectedContactId, setSelectedContactId] = useState<ContactId | undefined>();
-  const selectedContact = useEmptyContactDetail(selectedContactId);
+  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>();
+  const selectedContact = useEmptyContactDetail(detailContactId);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -31,7 +33,7 @@ export function useContactDetailPaneAdapter(contacts: readonly Contact[]): Reado
     [t],
   );
   const onOpenMe = useCallback<ContactsListViewProps["onOpenMe"]>(contactId => {
-    setSelectedContactId(contactId);
+    setDetailContactId(contactId);
   }, []);
   const onOpenContact = useCallback<ContactsListViewProps["onOpenContact"]>(
     contactId => {
@@ -40,11 +42,11 @@ export function useContactDetailPaneAdapter(contacts: readonly Contact[]): Reado
       );
 
       if (!isEmptyContact) {
-        setSelectedContactId(undefined);
+        setDetailContactId(undefined);
         return;
       }
 
-      setSelectedContactId(contactId);
+      setDetailContactId(contactId);
     },
     [contacts],
   );
@@ -57,9 +59,9 @@ export function useContactDetailPaneAdapter(contacts: readonly Contact[]): Reado
       contact: selectedContact,
       labels,
       meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
-      onAddAddress,
+      onAddAddress: () => startAddAddress(selectedContact.id),
     };
-  }, [labels, selectedContact]);
+  }, [labels, selectedContact, startAddAddress]);
 
   return {
     detail,
