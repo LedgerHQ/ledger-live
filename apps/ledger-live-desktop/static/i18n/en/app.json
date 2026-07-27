@@ -143,7 +143,9 @@
       "refresh": "Refresh",
       "devTools": "Dev tools",
       "failingSync_one": "Account failing to sync:",
-      "failingSync_other": "Accounts failing to sync:"
+      "failingSync_other": "Accounts failing to sync:",
+      "failingSync_few": "Accounts failing to sync:",
+      "failingSync_many": "Accounts failing to sync:"
     },
     "exchange": "Exchange",
     "info": "Info",
@@ -275,12 +277,18 @@
   "time": {
     "minute": "Minute",
     "minute_other": "Minutes",
+    "minute_few": "Minutes",
+    "minute_many": "Minutes",
     "minute_short": "min",
     "second": "Second",
     "second_other": "Seconds",
+    "second_few": "Seconds",
+    "second_many": "Seconds",
     "second_short": "sec",
     "hour": "Hour",
     "hour_other": "Hours",
+    "hour_few": "Hours",
+    "hour_many": "Hours",
     "range": {
       "day": "1D",
       "week": "1W",
@@ -651,6 +659,8 @@
       "from": "From",
       "fromAddress": "Origin address",
       "fromAddress_other": "Origin addresses",
+      "fromAddress_few": "Origin addresses",
+      "fromAddress_many": "Origin addresses",
       "to": "To",
       "toProvider": "Provider address",
       "initialAmount": "Initial amount",
@@ -1767,6 +1777,8 @@
     "hideTokens": "Hide tokens ({{tokenCount}})",
     "countTooltip": "1 token",
     "countTooltip_other": "{{nbCount}} tokens",
+    "countTooltip_few": "{{nbCount}} tokens",
+    "countTooltip_many": "{{nbCount}} tokens",
     "algorand": {
       "title": "ASA (Assets)",
       "cta": "Add ASA",
@@ -1789,7 +1801,9 @@
     "seeSubAccounts": "Show subaccounts ({{tokenCount}})",
     "hideSubAccounts": "Hide subaccounts ({{tokenCount}})",
     "countTooltip": "1 subaccount",
-    "countTooltip_other": "{{nbCount}} subaccounts"
+    "countTooltip_other": "{{nbCount}} subaccounts",
+    "countTooltip_few": "{{nbCount}} subaccounts",
+    "countTooltip_many": "{{nbCount}} subaccounts"
   },
   "addAccounts": {
     "title": "Add accounts",
@@ -1801,13 +1815,19 @@
     },
     "tokensTip": "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_other": "Add existing accounts",
+    "accountToImportSubtitle_few": "Add existing accounts",
+    "accountToImportSubtitle_many": "Add existing accounts",
     "selectAll": "Select all ({{count}})",
     "unselectAll": "Deselect all ({{count}})",
     "noAccountToImport": "No existing {{currencyName}} accounts to add",
     "success": "Account added successfully",
     "success_other": "Accounts added successfully",
+    "success_few": "Accounts added successfully",
+    "success_many": "Accounts added successfully",
     "successDescription": "Add other accounts or return to Portfolio",
     "successDescription_other": "Add other accounts or return to Portfolio",
+    "successDescription_few": "Add other accounts or return to Portfolio",
+    "successDescription_many": "Add other accounts or return to Portfolio",
     "createNewAccount": {
       "noOperationOnLastAccount": "Can't add a new account before you've received assets on your <1><0>{{accountName}}</0></1> account",
       "noAccountToCreate": "No <1><0>{{currencyName}}</0></1> account was found to be created",
@@ -1821,6 +1841,8 @@
       "addMore": "Add more",
       "add": "Add account",
       "add_other": "Add accounts",
+      "add_few": "Add accounts",
+      "add_many": "Add accounts",
       "addAccountName": "Add {{currencyName}} account",
       "receive": "Receive"
     },
@@ -1922,8 +1944,12 @@
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_other": "Missing required apps",
+    "appNotInstalledTitle_few": "Missing required apps",
+    "appNotInstalledTitle_many": "Missing required apps",
     "appNotInstalled": "The {{appName}} app is required to complete this action. Please go to My Ledger and install it on your device",
     "appNotInstalled_other": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "appNotInstalled_few": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
+    "appNotInstalled_many": "The {{appName}} apps are required to complete this action. Please go to My Ledger and install them on your device",
     "openManager": "Open My Ledger",
     "openOnboarding": "Setup device",
     "outdated": "App version outdated",
@@ -2020,13 +2046,19 @@
       "installSuccess": {
         "title": "App installed successfully. You can now add your {{app}} accounts",
         "title_other": "Apps installed successfully. You can now add your accounts",
+        "title_few": "Apps installed successfully. You can now add your accounts",
+        "title_many": "Apps installed successfully. You can now add your accounts",
         "manageAccount": "Manage my accounts"
       },
       "updatable": {
         "title": "Update available",
         "title_other": "Updates available",
+        "title_few": "Updates available",
+        "title_many": "Updates available",
         "progressTitle": "{{number}} App update",
         "progressTitle_other": "{{number}} App updates",
+        "progressTitle_few": "{{number}} App updates",
+        "progressTitle_many": "{{number}} App updates",
         "progressWarning": "Do not quit My Ledger during update.",
         "progress": "Updating all..."
       },
@@ -2563,10 +2595,16 @@
       "justNow": "Just now",
       "minutesAgo_one": "1 min ago",
       "minutesAgo_other": "{{count}} min ago",
+      "minutesAgo_few": "{{count}} min ago",
+      "minutesAgo_many": "{{count}} min ago",
       "hoursAgo_one": "1 hour ago",
       "hoursAgo_other": "{{count}} hours ago",
+      "hoursAgo_few": "{{count}} hours ago",
+      "hoursAgo_many": "{{count}} hours ago",
       "daysAgo_one": "1 day ago",
-      "daysAgo_other": "{{count}} days ago"
+      "daysAgo_other": "{{count}} days ago",
+      "daysAgo_few": "{{count}} days ago",
+      "daysAgo_many": "{{count}} days ago"
     },
     "remove": "Remove",
     "enterTag": "Enter {{tag}}",
@@ -4942,6 +4980,8 @@
     "durationJustStarted": "Just started",
     "durationDays": "{{count}} day",
     "durationDays_other": "{{count}} days",
+    "durationDays_few": "{{count}} days",
+    "durationDays_many": "{{count}} days",
     "howItWorks": "How delegation works",
     "delegationEarn": "You can now earn {{name}} staking rewards by delegating your account.",
     "earnRewards": "Earn rewards",
@@ -5146,6 +5186,8 @@
         "importing": "Importing...",
         "success": "Imported {{count}} account successfully.",
         "success_other": "Imported {{count}} accounts successfully.",
+        "success_few": "Imported {{count}} accounts successfully.",
+        "success_many": "Imported {{count}} accounts successfully.",
         "lastDeviceSeen": "Last device seen: {{device}}",
         "invalidFileType": "Invalid file type. Expected a .json file.",
         "missingDataField": "Invalid app.json: missing top-level data field.",
@@ -5157,7 +5199,9 @@
         "importFailed": "Import failed: {{message}}",
         "unknownError": "Unknown error during import.",
         "failedCount": "{{count}} account could not be loaded.",
-        "failedCount_other": "{{count}} accounts could not be loaded."
+        "failedCount_other": "{{count}} accounts could not be loaded.",
+        "failedCount_few": "{{count}} accounts could not be loaded.",
+        "failedCount_many": "{{count}} accounts could not be loaded."
       },
       "mockAccounts": {
         "title": "Generate mock accounts",
@@ -5188,7 +5232,9 @@
           "noCurrenciesFound": "No currencies found",
           "noCurrenciesAvailable": "No currencies available",
           "selectedCount": "{{count}} currency selected",
-          "selectedCount_other": "{{count}} currencies selected"
+          "selectedCount_other": "{{count}} currencies selected",
+          "selectedCount_few": "{{count}} currencies selected",
+          "selectedCount_many": "{{count}} currencies selected"
         },
         "tokenIds": {
           "label": "Token IDs (optional)",
@@ -5197,12 +5243,18 @@
         "buttons": {
           "generateAccounts": "Generate {{count}} account",
           "generateAccounts_other": "Generate {{count}} accounts",
+          "generateAccounts_few": "Generate {{count}} accounts",
+          "generateAccounts_many": "Generate {{count}} accounts",
           "generateAccountsQuick": "Generate {{count}} accounts",
           "generateEmptyAccount": "Generate empty account",
           "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
           "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts",
+          "generateStablecoinAccounts_few": "Generate {{count}} stablecoin accounts",
+          "generateStablecoinAccounts_many": "Generate {{count}} stablecoin accounts",
           "generateStockAccounts": "Generate {{count}} stock account",
           "generateStockAccounts_other": "Generate {{count}} stock accounts",
+          "generateStockAccounts_few": "Generate {{count}} stock accounts",
+          "generateStockAccounts_many": "Generate {{count}} stock accounts",
           "loadingStocks": "Loading stock data…"
         },
         "alerts": {
@@ -5585,7 +5637,9 @@
         "title": "Hidden tokens",
         "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count": "1 token",
-        "count_other": "{{count}} tokens"
+        "count_other": "{{count}} tokens",
+        "count_few": "{{count}} tokens",
+        "count_many": "{{count}} tokens"
       },
       "filterTokenOperationsZeroAmount": {
         "title": "Hide token transactions when value is 0",
@@ -5662,6 +5716,8 @@
     "noAccounts": "No accounts to export",
     "selectedAccounts": "Accounts to be included",
     "selectedAccounts_other": "Accounts to be included ({{count}})",
+    "selectedAccounts_few": "Accounts to be included ({{count}})",
+    "selectedAccounts_many": "Accounts to be included ({{count}})",
     "disclaimer": "The countervalues in the export is provided for information purposes only. Do not rely on such data for accounting, tax, regulation or legal purposes, as they only represent an estimation of the price of the assets at the time of transactions and export, under the valuation methods provided by our service provider, Kaiko"
   },
   "language": {
@@ -5700,6 +5756,8 @@
     "tooltip": "Information center",
     "ongoingIncidentsTooltip": "There is {{count}} ongoing incident",
     "ongoingIncidentsTooltip_other": "There are {{count}} ongoing incidents",
+    "ongoingIncidentsTooltip_few": "There are {{count}} ongoing incidents",
+    "ongoingIncidentsTooltip_many": "There are {{count}} ongoing incidents",
     "tabs": {
       "announcements": "News",
       "announcementsUnseen": "News ({{unseenCount}})",
@@ -8537,6 +8595,8 @@
       "instance": {
         "label": "1 Ledger Wallet app synched",
         "label_other": "{{count}} Ledger Wallet apps synched",
+        "label_few": "{{count}} Ledger Wallet apps synched",
+        "label_many": "{{count}} Ledger Wallet apps synched",
         "cta": "Manage"
       }
     },
@@ -8754,6 +8814,8 @@
         "foundAccounts_zero": "No account was found",
         "foundAccounts": "We found {{count}} account",
         "foundAccounts_other": "We found {{count}} accounts",
+        "foundAccounts_few": "We found {{count}} accounts",
+        "foundAccounts_many": "We found {{count}} accounts",
         "scanning": "Scanning accounts..."
       },
       "title": "Checking the blockchain..."
@@ -8768,9 +8830,13 @@
     "selectAccount": "Select account",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "accountCount_few": "{{count}} accounts",
+    "accountCount_many": "{{count}} accounts",
     "accountsAdded": {
       "title": "Account added to your portfolio",
       "title_other": "{{count}} Accounts added to your portfolio",
+      "title_few": "{{count}} Accounts added to your portfolio",
+      "title_many": "{{count}} Accounts added to your portfolio",
       "cta": {
         "addFunds": "Add funds to my account",
         "selectAccount": "Continue",
@@ -8875,6 +8941,8 @@
     "cryptoAccounts": "Crypto accounts",
     "accountsCount_one": "{{count}} account",
     "accountsCount_other": "{{count}} accounts",
+    "accountsCount_few": "{{count}} accounts",
+    "accountsCount_many": "{{count}} accounts",
     "noCryptoAccounts": "No accounts yet",
     "add": "Add",
     "columns": {
@@ -9101,12 +9169,16 @@
         "description": "Confirm sharing the view key on your device",
         "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
         "cancelAllBtn_one": "Cancel",
-        "cancelAllBtn_other": "Cancel all"
+        "cancelAllBtn_other": "Cancel all",
+        "cancelAllBtn_few": "Cancel all",
+        "cancelAllBtn_many": "Cancel all"
       },
       "stepScanAccounts": {
         "cta": {
           "shareKey_one": "Share view key",
-          "shareKey_other": "Share view keys"
+          "shareKey_other": "Share view keys",
+          "shareKey_few": "Share view keys",
+          "shareKey_many": "Share view keys"
         }
       },
       "warnings": {
@@ -9134,6 +9206,8 @@
         },
         "recordCount_one": "{{count}} record",
         "recordCount_other": "{{count}} records",
+        "recordCount_few": "{{count}} records",
+        "recordCount_many": "{{count}} records",
         "unavailable": "Unavailable",
         "spendableBalance": "Max Spendable Balance:"
       },
@@ -9286,6 +9360,8 @@
     "title": "Transaction history",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
+    "pending_few": "Pending transactions",
+    "pending_many": "Pending transactions",
     "columns": {
       "type": "Type",
       "address": "Address",
@@ -9328,7 +9404,9 @@
     "avatar": {
       "label": "Avatar",
       "labelWithNotifications_one": "Avatar, {{count}} unseen notification",
-      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications"
+      "labelWithNotifications_other": "Avatar, {{count}} unseen notifications",
+      "labelWithNotifications_few": "Avatar, {{count}} unseen notifications",
+      "labelWithNotifications_many": "Avatar, {{count}} unseen notifications"
     },
     "actionsList": {
       "help": "Help",
@@ -9384,6 +9462,8 @@
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
+    "addressCount_few": "{{count}} addresses",
+    "addressCount_many": "{{count}} addresses",
     "me": {
       "name": "Me"
     },
