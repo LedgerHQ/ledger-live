@@ -5,6 +5,7 @@ export {
 } from "./model/resolveEligibleAddressCurrencyIds";
 export {
   useAddAddressCurrencySelectionViewModel,
+  type AddAddressCurrencySelectionResult,
   type AddAddressCurrencySelectionViewModel,
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";

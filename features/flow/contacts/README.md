@@ -11,7 +11,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - Empty contact detail selection and presentation
 - Populated contact detail view model (address rows, count, and open-detail intents)
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
-- Add Address session state
+- Add Address session state from currency selection to address entry
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
@@ -24,6 +24,10 @@ For Add Address, the Flow resolves ordered production network IDs from
 by native network ID or token parent network ID. The Flow stores only the final crypto-or-token
 `currencyId` returned after asset and optional network selection. MAD is not opened when no
 production network matches the feature-flag families.
+
+After a successful selection, the session retains only the selected contact and final currency
+identifiers and moves to `enteringAddress`. Platform adapters can distinguish a selected currency,
+MAD cancellation, unavailable eligible networks, and an ignored concurrent request.
 
 ## Public API
 
