@@ -259,7 +259,7 @@
   },
   "dependencies": {
     "@blooo/hw-app-acre": "^1.1.1",
-    "@cardano-foundation/ledgerjs-hw-app-cardano": "^8.0.0",
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
