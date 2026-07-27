@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
+import { waitForIdentitiesRegenerated } from "tests/utils/userdata";
 
 export class SettingsModal extends Modal {
   readonly warningMessage = this.page.getByTestId("warning-message");
@@ -17,5 +18,10 @@ export class SettingsModal extends Modal {
   @step("Click on Confirm Button")
   async clickOnConfirmButton() {
     await this.confirmButton.click();
+  }
+
+  @step("Verify identities are regenerated after Reset app")
+  async expectIdentitiesRegenerated(userdataFile: string, previousUserId: string) {
+    await waitForIdentitiesRegenerated(userdataFile, previousUserId);
   }
 }

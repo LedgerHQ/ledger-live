@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { FileUtils } from "tests/utils/fileUtils";
+import { waitForIdentitiesInAppJson } from "tests/utils/userdata";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
@@ -163,14 +163,12 @@ test.describe("Reset app", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openSettings();
-      const appJsonBefore = await FileUtils.getAppJsonSize(userdataFile);
+      const { userId: userIdBefore } = await waitForIdentitiesInAppJson(userdataFile);
       await app.settings.goToHelpTab();
       await app.settings.resetApp();
       await app.settingsModal.checkResetModal();
       await app.settingsModal.clickOnConfirmButton();
-      await app.onboarding.clickGetStartedButton();
-      const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
-      await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
+      await app.settingsModal.expectIdentitiesRegenerated(userdataFile, userIdBefore);
     },
   );
 });

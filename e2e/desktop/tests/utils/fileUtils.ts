@@ -1,4 +1,4 @@
-import { access, appendFile, mkdir, rename, stat } from "fs/promises";
+import { access, appendFile, mkdir, rename } from "fs/promises";
 import * as path from "path";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
@@ -14,17 +14,6 @@ export async function safeAppendFile(filePath: string, data: string) {
 }
 
 export class FileUtils {
-  @step("get app.json size")
-  static async getAppJsonSize(userdataFile: string) {
-    const fileStats = await stat(userdataFile);
-    return fileStats.size;
-  }
-
-  @step("Compare 2 app.json files")
-  static async compareAppJsonSize(appJson1: number, appJson2: number) {
-    expect(appJson1).not.toEqual(appJson2);
-  }
-
   @step("Wait for file to exist after clicking download")
   static async waitForFileToExist(filePath: string, timeout: number): Promise<boolean> {
     const startTime = Date.now();
