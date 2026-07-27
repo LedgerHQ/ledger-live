@@ -42,6 +42,8 @@ import type {
   BuildTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
+  TransactionDetailsRequest,
+  TransactionDetailsResult,
 } from "./types";
 import {
   ZCASH_IPC,
@@ -157,6 +159,20 @@ export function createZCashIPCClient(
         txHex,
         requestId,
       })) as string;
+    },
+
+    async transactionDetails(
+      requests: TransactionDetailsRequest[],
+      ufvk?: string,
+    ): Promise<TransactionDetailsResult[]> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.transactionDetails, {
+        grpcUrl,
+        network,
+        requests,
+        ufvk,
+        requestId,
+      })) as TransactionDetailsResult[];
     },
 
     syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {

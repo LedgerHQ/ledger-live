@@ -1,9 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { ZcashTransferType } from "../../types/bridge";
-import {
-  computeShieldedSpendFee,
-  computeTransparentSelectionFee,
-} from "../coin-selection";
+import { computeShieldedSpendFee, computeTransparentSelectionFee } from "../coin-selection";
 
 /**
  * ZIP-317 fee estimation for a given (transferType, input/output count) shape.
@@ -19,11 +16,7 @@ export function estimateFees(args: {
   const { transferType, transparentInputCount, orchardSpendCount, hasChange } = args;
 
   if (transparentInputCount > 0) {
-    return computeTransparentSelectionFee(
-      transparentInputCount,
-      hasChange ? 2 : 1,
-      transferType,
-    );
+    return computeTransparentSelectionFee(transparentInputCount, hasChange ? 2 : 1, transferType);
   }
 
   return computeShieldedSpendFee(orchardSpendCount, hasChange, transferType);

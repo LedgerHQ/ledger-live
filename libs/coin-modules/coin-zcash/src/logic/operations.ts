@@ -4,6 +4,14 @@ import type { ShieldedTransaction, SpendableNote } from "../network/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { BtcOperation } from "../types/bridge";
 
+/**
+ * Value the transaction moved out of the shielded pools through its transparent
+ * outputs. Transparent inputs make that attribution impossible — the outputs may
+ * be paid by those inputs instead — so the value is only counted without them.
+ */
+const deshieldedValue = (tx: ShieldedTransaction): BigNumber =>
+  tx.hasTransparentInputs || !tx.transparentOut ? new BigNumber(0) : tx.transparentOut;
+
 export const getTxType = (tx: ShieldedTransaction): OperationType => {
   if (!tx.decryptedData) return "UNKNOWN";
 
@@ -26,6 +34,17 @@ export const getTxType = (tx: ShieldedTransaction): OperationType => {
       ? "SHIELDED_TX_ORCHARD_OUT"
       : "SHIELDED_TX_SAPLING_OUT";
   }
+
+  // No note crossed the wallet boundary, yet a shielded→transparent send looks
+  // exactly like this: its value went to a transparent output and only the change
+  // came back, as an `internal` note (or no note at all, when the spent note was
+  // consumed whole). The transparent bundle is the only place that value appears.
+  if (deshieldedValue(tx).isGreaterThan(0)) {
+    return saplingOutputs.length > 0 && orchardOutputs.length === 0
+      ? "SHIELDED_TX_SAPLING_OUT"
+      : "SHIELDED_TX_ORCHARD_OUT";
+  }
+
   return "SHIELDED_TX_INTERNAL";
 };
 
@@ -126,15 +145,21 @@ export function convertShieldedTransactionsToOperations(
       ...(tx.decryptedData?.orchard_outputs ?? []),
       ...(tx.decryptedData?.sapling_outputs ?? []),
     ];
-    let relevantTransferType: string | null = null;
+    const sumNotes = (transferType: string) =>
+      allNotes
+        .filter(n => n.transfer_type === transferType)
+        .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
+
+    const fee = new BigNumber(tx.fee);
+    let value = new BigNumber(0);
     if (txType.endsWith("_IN")) {
-      relevantTransferType = "incoming";
+      value = sumNotes("incoming");
     } else if (txType.endsWith("_OUT")) {
-      relevantTransferType = "outgoing";
+      // Outgoing value spans both destinations the funds can reach — other shielded
+      // addresses and transparent ones — and includes the fee, the convention the
+      // transparent operations and the optimistic operation both follow.
+      value = sumNotes("outgoing").plus(deshieldedValue(tx)).plus(fee);
     }
-    const value = allNotes
-      .filter(n => n.transfer_type === relevantTransferType)
-      .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
 
     const operation: BtcOperation = {
       id: encodeOperationId(accountId, tx.id, txType),
@@ -147,7 +172,7 @@ export function convertShieldedTransactionsToOperations(
       recipients: [],
       date: new Date(tx.timestamp * 1000), // zcash shielded transaction timestamps are Unix seconds.
       value,
-      fee: new BigNumber(tx.fee),
+      fee,
       extra: {},
       transactionSequenceNumber: new BigNumber(tx.blockHeight),
       subOperations: [],

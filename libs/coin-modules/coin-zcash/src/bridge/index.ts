@@ -69,7 +69,8 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
     assignToAccountRaw,
     formatAccountSpecifics: () => "",
     getSerializedAddressParameters,
-    validateAddress: (address: string) => validateAddress(address, { currencyId: "zcash", networkId: 0 }),
+    validateAddress: (address: string) =>
+      validateAddress(address, { currencyId: "zcash", networkId: 0 }),
   };
 
   return {

@@ -2,8 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type { ZcashPrivateInfo } from "./network/types";
 
 export const ZCASH_LOG_TYPE = "zcash";
-export const ZCASH_GRPC_URL_TESTNET = "https://zaino-zec-testnet.nodes.stg.ledger-test.com";
-export const ZCASH_GRPC_URL_MAINNET = "https://zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com";
+export const ZCASH_GRPC_URL_TESTNET = "https://testnet.zec.rocks";
+export const ZCASH_GRPC_URL_MAINNET = "https://zec-indexer.coin.ledger-test.com";
 
 // ── Zaino gRPC endpoint resolution ─────────────────────────────────────────
 //

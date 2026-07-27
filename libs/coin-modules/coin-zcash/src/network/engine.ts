@@ -19,6 +19,8 @@ import type {
   BuildTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
+  TransactionDetailsRequest,
+  TransactionDetailsResult,
 } from "./types";
 import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 
@@ -206,6 +208,29 @@ export async function broadcastTransactionJob(grpcUrl: string, txHex: string): P
 }
 
 /**
+ * What each transaction actually did, fetched from the gRPC endpoint and read
+ * from the raw transaction bytes.
+ *
+ * An explorer derives a Zcash fee from the transparent bundle alone, so value
+ * entering or leaving a shielded pool lands in the fee it reports. Recomputing
+ * from the raw transaction takes the pools' value balances into account, and the
+ * same pass recovers the shielded payees the viewing key can decrypt.
+ *
+ * Transactions that cannot be priced come back with a `null` fee rather than
+ * failing the batch — a fee we cannot establish must not masquerade as zero.
+ */
+export async function transactionDetailsJob(
+  grpcUrl: string,
+  requests: TransactionDetailsRequest[],
+  network: string,
+  ufvk?: string,
+): Promise<TransactionDetailsResult[]> {
+  const native = await getNativeModule();
+  const results = await native.transactionDetails(grpcUrl, requests, network, ufvk);
+  return results.map(({ txid, fee, payees }) => ({ txid, fee: fee ?? null, payees }));
+}
+
+/**
  * Runs the shielded sync loop.
  *
  * Drives the native tonic gRPC stream in `maxBatchSize`-block chunks, emitting
@@ -249,7 +274,14 @@ export async function startSyncJob(
 
   if (startBlockHeight > endHeight) {
     log(ZCASH_LOG_TYPE, "already at tip, nothing to scan");
-    onChunk({ processedBlocks: 0, remainingBlocks: 0, transactions: [] });
+    // Report the cursor even though nothing was scanned: a chunk without one
+    // reads as "no progress known" downstream and would clear the stored cursor.
+    onChunk({
+      processedBlocks: 0,
+      remainingBlocks: 0,
+      lastProcessedBlock: startBlockHeight - 1,
+      transactions: [],
+    });
     return;
   }
 
@@ -429,6 +461,8 @@ function mapNativeTx(tx: NativeTx): ShieldedTransactionRaw {
     blockHash: tx.blockHash,
     timestamp: tx.blockTime,
     fee: String(tx.fee),
+    transparentOut: String(tx.transparentOut),
+    hasTransparentInputs: tx.hasTransparentInputs,
     decryptedData: {
       orchard_outputs: tx.orchardNotes.map(n => ({
         amount: String(n.amount),

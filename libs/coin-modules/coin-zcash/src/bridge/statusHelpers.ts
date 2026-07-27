@@ -29,7 +29,10 @@ export function resolveTransparentUtxos(account: ZcashAccount, tx: Transaction):
   return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
 }
 
-export const computeRecipientError = (recipient: string, currencyName: string): Error | undefined => {
+export const computeRecipientError = (
+  recipient: string,
+  currencyName: string,
+): Error | undefined => {
   if (!recipient) return new RecipientRequired("");
   const cls = classifyZcashRecipient(recipient);
   if (!("error" in cls)) return undefined;

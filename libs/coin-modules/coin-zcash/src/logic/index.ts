@@ -11,7 +11,13 @@ export { listOperations } from "./history/listOperations";
 export { isRecipientValid } from "./utils";
 export { isValidZcashAddress, validateAddress } from "./validateAddress";
 export { classifyZcashRecipient, deriveZcashTransferType } from "./address";
-export { selectNotes, selectTransparentInputs, estimateMaxSpendableAmount, estimateMaxSpendableTransparent, ZIP317_MINIMUM_FEE } from "./coin-selection";
+export {
+  selectNotes,
+  selectTransparentInputs,
+  estimateMaxSpendableAmount,
+  estimateMaxSpendableTransparent,
+  ZIP317_MINIMUM_FEE,
+} from "./coin-selection";
 export { computeZcashBalance, getTransparentBalance, getPrivateBalance } from "./balance";
 export {
   collectSpendableNotes,
@@ -20,5 +26,10 @@ export {
   getTxType,
 } from "./operations";
 export { getWalletAccount } from "./getWalletAccount";
-export { makeGetAccountShape, postSync, performTransparentSync, buildExtraSyncObservable } from "./sync";
+export {
+  makeGetAccountShape,
+  postSync,
+  performTransparentSync,
+  buildExtraSyncObservable,
+} from "./sync";
 export { parseAPIValue } from "./common";

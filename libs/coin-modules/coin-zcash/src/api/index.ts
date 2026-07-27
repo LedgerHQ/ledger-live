@@ -105,7 +105,9 @@ async function craft(transactionIntent: TransactionIntent): Promise<CraftedTrans
     feeZat: "0",
     spends: [],
     transparentInputs: [],
-    outputs: [{ address: transactionIntent.recipient, valueZat: transactionIntent.amount.toString() }],
+    outputs: [
+      { address: transactionIntent.recipient, valueZat: transactionIntent.amount.toString() },
+    ],
   });
   return { transaction: result.pcztHex, details: { feeZat: result.feeZat } };
 }
@@ -117,5 +119,8 @@ async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstima
     orchardSpendCount: 0,
     hasChange: false,
   });
-  return { value: BigInt((fee as BigNumber).toFixed(0)), parameters: { recipient: transactionIntent.recipient } };
+  return {
+    value: BigInt((fee as BigNumber).toFixed(0)),
+    parameters: { recipient: transactionIntent.recipient },
+  };
 }

@@ -1,5 +1,8 @@
 import type { SignerContext } from "../types/signer";
-import { makeGetAccountShape as makeGetAccountShapeLogic, postSync as postSyncLogic } from "../logic/sync";
+import {
+  makeGetAccountShape as makeGetAccountShapeLogic,
+  postSync as postSyncLogic,
+} from "../logic/sync";
 
 /**
  * Thin re-export of the merged transparent+shielded `getAccountShape` --

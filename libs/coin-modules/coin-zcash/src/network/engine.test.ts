@@ -158,7 +158,10 @@ describe("startSyncJob", () => {
     maxBatchSize: 500,
   };
 
-  it("short-circuits with zero results when already at tip (startBlockHeight > endHeight)", async () => {
+  // The chunk still has to carry the cursor: consumers persist it, and an absent
+  // cursor reads as "nothing known" and sends the next sync back to the account
+  // birthday — a full rescan on every poll of an already-synced account.
+  it("reports the unchanged cursor when already at tip (startBlockHeight > endHeight)", async () => {
     mockGetChainTip.mockResolvedValue(50); // endHeight < startBlockHeight
     const onChunk = jest.fn();
     await startSyncJob(baseArgs, onChunk, { isCancelled: () => false });
@@ -167,6 +170,7 @@ describe("startSyncJob", () => {
     expect(onChunk).toHaveBeenCalledWith({
       processedBlocks: 0,
       remainingBlocks: 0,
+      lastProcessedBlock: baseArgs.startBlockHeight - 1,
       transactions: [],
     });
     expect(mockStartSync).not.toHaveBeenCalled();

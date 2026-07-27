@@ -20,7 +20,10 @@ export function getZCashModule(): Promise<ZCashModule> {
   return zcashClientModuleCache;
 }
 
-export async function getZCashClient(args: { grpcUrl: string; network?: string }): Promise<ZCashClient> {
+export async function getZCashClient(args: {
+  grpcUrl: string;
+  network?: string;
+}): Promise<ZCashClient> {
   const { createZCashClient } = await getZCashModule();
   return createZCashClient(args);
 }

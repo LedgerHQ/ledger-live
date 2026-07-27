@@ -1,0 +1,199 @@
+import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
+import { reduceShieldedSyncResult, postSync } from "./sync";
+import type { ZcashAccount } from "../types/bridge";
+import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
+import type { BtcOperation } from "../types/bridge";
+
+jest.mock("./engineClient", () => ({
+  getZCashModule: jest.fn(),
+  getZCashClient: jest.fn(),
+}));
+
+const currency = getCryptoCurrencyById("zcash");
+
+/** The transparent balance is derived from the UTXOs, so back it with one. */
+const infoWith = (privateInfo: Partial<ZcashAccount["privateInfo"]>, transparent = 0): any => ({
+  currency,
+  address: "zs1test",
+  index: 0,
+  derivationPath: "44'/133'/0'/0'",
+  derivationMode: 0,
+  initialAccount: {
+    bitcoinResources: { utxos: transparent > 0 ? [{ value: new BigNumber(transparent) }] : [] },
+    privateInfo: {
+      orchardBalance: new BigNumber(0),
+      saplingBalance: new BigNumber(0),
+      syncState: "running" as const,
+      progress: 100,
+      estimatedTimeRemaining: { hours: 0, minutes: 0 },
+      ufvk: "uview1key",
+      birthday: null,
+      lastSyncTimestamp: null,
+      lastProcessedBlock: null,
+      transactions: [],
+      ...privateInfo,
+    },
+  },
+});
+
+const incomingTx = (blockHeight: number, amount: number): ShieldedTransaction => ({
+  id: `tx-${blockHeight}`,
+  hex: "00",
+  blockHeight,
+  blockHash: "hash",
+  timestamp: 1_700_000_000,
+  fee: new BigNumber(0),
+  decryptedData: {
+    orchard_outputs: [
+      { amount: new BigNumber(amount), memo: "", transfer_type: "incoming", isSpent: false },
+    ],
+    sapling_outputs: [],
+  },
+});
+
+describe("reduceShieldedSyncResult", () => {
+  const emptyChunk: ShieldedSyncResult = {
+    transactions: [],
+    processedBlocks: 0,
+    remainingBlocks: 0,
+  };
+
+  // Notes are as spendable as UTXOs. Reporting only the transparent balance here
+  // shows an account holding nothing but notes as having nothing to spend.
+  it("counts the shielded pools as spendable, not just as balance", () => {
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: {} },
+      { ...emptyChunk, transactions: [incomingTx(3_425_869, 50_000)] },
+      infoWith({}, 100_000),
+      "acc-1",
+    );
+
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(150_000));
+    expect(output.accountUpdate.spendableBalance).toEqual(new BigNumber(150_000));
+  });
+
+  // A synced account polls a chain it is already at the tip of, and the engine then
+  // reports a chunk that scanned nothing and carries no cursor. Persisting that as
+  // `null` sends the next sync back to the account birthday, re-processing the whole
+  // shielded history poll after poll.
+  describe("scan cursor", () => {
+    it("keeps the stored cursor when a chunk reports no progress", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        emptyChunk,
+        infoWith({ lastProcessedBlock: 3_425_868 }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("keeps the stored cursor when a chunk with new transactions reports no progress", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, transactions: [incomingTx(3_425_869, 1000)] },
+        infoWith({ lastProcessedBlock: 3_425_868 }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("advances the cursor when a chunk reports a further block", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, lastProcessedBlock: 3_425_900 },
+        infoWith({ lastProcessedBlock: 3_425_868 }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_900);
+    });
+
+    it("never moves the cursor backwards", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, lastProcessedBlock: 1000 },
+        infoWith({ lastProcessedBlock: 3_425_868 }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("adopts the reported block when no cursor was stored yet", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, lastProcessedBlock: 3_425_900 },
+        infoWith({ lastProcessedBlock: null }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_900);
+    });
+  });
+});
+
+describe("postSync", () => {
+  const operation = (overrides: Partial<BtcOperation>): BtcOperation =>
+    ({
+      id: "op-1",
+      hash: "76ec3b38",
+      accountId: "acc-1",
+      type: "OUT",
+      value: new BigNumber(1000),
+      fee: new BigNumber(55),
+      senders: [],
+      recipients: [],
+      blockHeight: 90,
+      blockHash: "hash",
+      date: new Date(),
+      extra: {},
+      ...overrides,
+    }) as BtcOperation;
+
+  const account = (operations: BtcOperation[], pendingOperations: BtcOperation[]): ZcashAccount =>
+    ({ id: "acc-1", operations, pendingOperations }) as unknown as ZcashAccount;
+
+  // The optimistic operation is an `OUT`, the confirmed one carries the shielded
+  // type the scan derived, so the ids never match and the pending entry outlives
+  // its own confirmation. The hash is what identifies them.
+  it("drops an optimistic operation once its transaction is confirmed", () => {
+    const confirmed = operation({ id: "js:2:zcash:x:-76ec3b38-SHIELDED_TX_ORCHARD_OUT" });
+    const optimistic = operation({ id: "js:2:zcash:x:-76ec3b38-OUT", recipients: ["u1payee"] });
+
+    const synced = postSync(account([], []), account([confirmed], [optimistic]));
+
+    expect(synced.pendingOperations).toEqual([]);
+  });
+
+  // The recovered destination is the receiver found in the transaction, which for
+  // a unified address bundling several receivers is the same destination written
+  // differently. What the user typed is the more faithful answer.
+  it("keeps the address the user entered over the recovered one", () => {
+    const confirmed = operation({ recipients: ["u1recovered"] });
+    const optimistic = operation({ id: "op-pending", recipients: ["u1astyped"] });
+
+    const synced = postSync(account([], []), account([confirmed], [optimistic]));
+
+    expect(synced.operations[0].recipients).toEqual(["u1astyped"]);
+  });
+
+  it("leaves the incoming leg of the same transaction alone", () => {
+    const incoming = operation({ type: "SHIELDED_TX_ORCHARD_IN", recipients: ["zs1ourown"] });
+    const optimistic = operation({ id: "op-pending", recipients: ["u1astyped"] });
+
+    const synced = postSync(account([], []), account([incoming], [optimistic]));
+
+    expect(synced.operations[0].recipients).toEqual(["zs1ourown"]);
+  });
+
+  it("leaves an optimistic operation still in flight alone", () => {
+    const optimistic = operation({ id: "op-pending", hash: "unconfirmed" });
+
+    const synced = postSync(account([], []), account([], [optimistic]));
+
+    expect(synced.pendingOperations).toEqual([optimistic]);
+  });
+});

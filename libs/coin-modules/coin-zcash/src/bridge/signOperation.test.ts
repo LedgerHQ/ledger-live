@@ -163,43 +163,46 @@ describe("bridge/signOperation", () => {
     ["shielded-to-transparent", "z→t"],
     ["transparent-to-shielded", "t→z"],
     ["transparent", "t→t"],
-  ] as const)("crafts, signs, finalizes and emits a signed operation (%s / %s)", async (transferType, _label) => {
-    const account = makeAccount();
-    const tx = makeTx(transferType);
-    const signerContext = makeSignerContext();
-    const signOp = buildSignOperation(signerContext);
+  ] as const)(
+    "crafts, signs, finalizes and emits a signed operation (%s / %s)",
+    async (transferType, _label) => {
+      const account = makeAccount();
+      const tx = makeTx(transferType);
+      const signerContext = makeSignerContext();
+      const signOp = buildSignOperation(signerContext);
 
-    const events = await collectEvents(signOp, {
-      account,
-      deviceId: "device-1",
-      transaction: tx,
-    } as never);
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
 
-    expect(events.map(e => e.type)).toEqual([
-      "device-signature-requested",
-      "device-signature-granted",
-      "signed",
-    ]);
-    expect(mockCraftTransaction).toHaveBeenCalledWith(
-      expect.objectContaining({ ufvk: MOCK_UFVK, feeZat: "5000" }),
-    );
-    expect(mockCombine).toHaveBeenCalledWith({
-      pczt: MOCK_PCZT_HEX,
-      orchardSignatures: [
-        Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
-        Buffer.from(defaultSigResult.orchard[1].spendAuthSig).toString("hex"),
-      ],
-      transparentSignatures: [],
-    });
+      expect(events.map(e => e.type)).toEqual([
+        "device-signature-requested",
+        "device-signature-granted",
+        "signed",
+      ]);
+      expect(mockCraftTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({ ufvk: MOCK_UFVK, feeZat: "5000" }),
+      );
+      expect(mockCombine).toHaveBeenCalledWith({
+        pczt: MOCK_PCZT_HEX,
+        orchardSignatures: [
+          Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
+          Buffer.from(defaultSigResult.orchard[1].spendAuthSig).toString("hex"),
+        ],
+        transparentSignatures: [],
+      });
 
-    const signedEvent = events.find((e): e is Extract<SignOperationEvent, { type: "signed" }> =>
-      e.type === "signed",
-    );
-    expect(signedEvent).not.toBeUndefined();
-    expect(signedEvent!.signedOperation.signature).toBe(MOCK_TX_HEX);
-    expect(signedEvent!.signedOperation.operation.hash).toBe(MOCK_TXID);
-    expect(signedEvent!.signedOperation.operation.extra).toMatchObject({ zcashShielded: true });
-  });
+      const signedEvent = events.find(
+        (e): e is Extract<SignOperationEvent, { type: "signed" }> => e.type === "signed",
+      );
+      expect(signedEvent).not.toBeUndefined();
+      expect(signedEvent!.signedOperation.signature).toBe(MOCK_TX_HEX);
+      expect(signedEvent!.signedOperation.operation.hash).toBe(MOCK_TXID);
+      expect(signedEvent!.signedOperation.operation.extra).toMatchObject({ zcashShielded: true });
+    },
+  );
 
   it("errors when the account has no UFVK yet (not synced)", async () => {
     const account = makeAccount();

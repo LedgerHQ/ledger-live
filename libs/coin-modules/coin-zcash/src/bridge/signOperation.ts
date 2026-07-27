@@ -1,6 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import type { AccountBridge, Operation, SignOperationEvent, SignedOperation } from "@ledgerhq/types-live";
+import type {
+  AccountBridge,
+  Operation,
+  SignOperationEvent,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
@@ -20,9 +25,7 @@ import { resolveTransparentUtxos } from "./statusHelpers";
  * no legacy PSBT fallback in coin-zcash.
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext,
-  ): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
+  (signerContext: SignerContext): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable<SignOperationEvent>(subscriber => {
       let cancelled = false;
@@ -72,7 +75,9 @@ export const buildSignOperation =
         subscriber.next({ type: "device-signature-granted" });
         if (bailIfCancelled()) return;
 
-        const orchardSignatures = sigResult.orchard.map(a => Buffer.from(a.spendAuthSig).toString("hex"));
+        const orchardSignatures = sigResult.orchard.map(a =>
+          Buffer.from(a.spendAuthSig).toString("hex"),
+        );
         const transparentSignatures = sigResult.transparentInputSigs.map(sig =>
           Buffer.from(sig).toString("hex"),
         );

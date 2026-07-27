@@ -8,7 +8,10 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { Account as WalletAccount, SerializedAccount as WalletAccountRaw } from "@ledgerhq/wallet-btc/index";
+import type {
+  Account as WalletAccount,
+  SerializedAccount as WalletAccountRaw,
+} from "@ledgerhq/wallet-btc/index";
 import type { SpendableNote, ZcashPrivateInfo, ZcashPrivateInfoRaw } from "../network/types";
 
 // ── Transparent (UTXO) account resources ───────────────────────────────────
