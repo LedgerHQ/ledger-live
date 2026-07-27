@@ -1,9 +1,6 @@
 import React from "react";
-import { ipcRenderer } from "electron";
 import { render, withFlagOverrides } from "tests/testSetup";
 import { ConnectEnvsToDatadog } from "./ConnectEnvsToDatadog";
-
-const ipcSend = jest.mocked(ipcRenderer.send);
 
 jest.mock("~/datadog/renderer", () => ({
   initDatadog: jest.fn().mockResolvedValue(true),
@@ -90,25 +87,5 @@ describe("ConnectEnvsToDatadog", () => {
     expect(shouldSend()).toBe(true);
     store.dispatch({ type: "SAVE_SETTINGS", payload: { sentryLogs: false } });
     expect(shouldSend()).toBe(false);
-  });
-
-  it("mirrors lldDatadog.enabled to the main process over IPC, regardless of sentryLogs", () => {
-    render(<ConnectEnvsToDatadog />, {
-      initialState: {
-        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
-        settings: { sentryLogs: false },
-      },
-    });
-    expect(ipcSend).toHaveBeenCalledWith("lldDatadogChanged", true);
-  });
-
-  it("reports the flag as disabled when lldDatadog is off", () => {
-    render(<ConnectEnvsToDatadog />, {
-      initialState: {
-        ...withFlagOverrides({ lldDatadog: { enabled: false, params: {} } }),
-        settings: { sentryLogs: true },
-      },
-    });
-    expect(ipcSend).toHaveBeenCalledWith("lldDatadogChanged", false);
   });
 });

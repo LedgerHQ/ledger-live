@@ -90,7 +90,7 @@ export type SettingsState = {
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
   analyticsConsentInfo: AnalyticsConsentInfo;
-  sentryLogs: boolean; // also used for Datadog RUM opt-in
+  sentryLogs: boolean; // will be addressed by LIVE-34932
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";

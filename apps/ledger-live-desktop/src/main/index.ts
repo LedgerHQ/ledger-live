@@ -15,7 +15,6 @@ import {
 import db from "./db";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
-import sentry, { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import {
   installExtension,
@@ -112,24 +111,7 @@ app.on("ready", async () => {
   // Measure database initialization and first reads
   console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
-  const identities = (await db.getKey("app", "identities")) as { userId?: string } | undefined;
-  const user = (await db.getKey("app", "user")) as { id?: string } | undefined;
   console.timeEnd("T-db");
-  const userId = identities?.userId ?? user?.id;
-  // lldDatadog is resolved only in the renderer (Firebase) and acts as an XOR switch between the two
-  // crash-monitoring backends for A/B testing: when the flag is on, telemetry goes to Datadog (renderer
-  // only) and Sentry is muted; when off, Sentry stays active. Both stay gated by the sentryLogs opt-in.
-  // The renderer reports the flag over the lldDatadogChanged IPC; until then it is false, so Sentry is
-  // the active backend during startup.
-  let lldDatadogEnabled = false;
-  if (userId) {
-    sentry(() => settings?.sentryLogs === true && !lldDatadogEnabled, userId);
-  }
-  // The main process can't resolve the flag itself, so the renderer mirrors it over IPC; this mutes the
-  // main-process Sentry once the flag resolves. Datadog has no main-process integration (renderer only).
-  ipcMain.on("lldDatadogChanged", (_event, enabled: boolean) => {
-    lldDatadogEnabled = enabled === true;
-  });
 
   // Set up transport handlers for Speculos and HTTP proxy in main process
   setupTransportHandlers();
@@ -180,9 +162,6 @@ app.on("ready", async () => {
   ipcMain.handle("reloadRenderer", () => {
     console.log("reloading renderer ...");
     loadWindow();
-  });
-  ipcMain.handle("set-sentry-tags", (event, tags) => {
-    setTags(tags);
   });
   setupWebviewHandlers(SUPPORTED_SCHEMES);
   Menu.setApplicationMenu(menu);

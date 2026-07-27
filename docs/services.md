@@ -161,7 +161,6 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | **Platform** | | | |
 | Status page | `ledger.statuspage.io`<br>_Atlassian-hosted_ | [env](/libs/env/src/env.ts) | prod |
 | Datadog RUM / Logs | `browser-intake-datadoghq.eu`<br>_[@datadog/browser-rum](https://www.npmjs.com/package/@datadog/browser-rum) / [mobile-react-native](https://www.npmjs.com/package/@datadog/mobile-react-native)_ | [build](/apps/ledger-live-desktop/src/datadog/config.ts) | prod |
-| Sentry | `*.ingest.sentry.io`<br>_[@sentry/electron](https://www.npmjs.com/package/@sentry/electron); LLD only_ | [build](/apps/ledger-live-desktop/src/sentry/install.ts) | prod |
 | LLD prerelease update feed | `lw-prerelease-sigs.s3.eu-west-1.amazonaws.com`<br>_Electron auto-updater; only when `UPDATE_CHECK_FEED` env is set (prerelease / dev builds)_ | [code](/apps/ledger-live-desktop/src/main/updater/init.ts) | dev |
 | **Wallet XP** | | | |
 | WalletConnect | `relay.walletconnect.org`<br>_[@walletconnect/sign-client](https://www.npmjs.com/package/@walletconnect/sign-client); also verify/echo/pulse_ | [SDK](https://www.npmjs.com/package/@walletconnect/sign-client) | prod |

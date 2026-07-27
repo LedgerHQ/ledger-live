@@ -61,7 +61,6 @@ export function isDatadogAvailable(): boolean {
 /**
  * Initialize Datadog RUM in the renderer process.
  * Call only when lldDatadog.enabled and sentryLogs (user opt-in) are true.
- * Uses datadogId from the identities store (same segment as Sentry).
  */
 export async function initDatadog(
   shouldSend: () => boolean,

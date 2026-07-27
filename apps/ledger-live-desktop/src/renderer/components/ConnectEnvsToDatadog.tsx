@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { ipcRenderer } from "electron";
 import { useSelector, useStore } from "LLD/hooks/redux";
 import { EnvName, getEnv } from "@shared/env";
 import {
@@ -42,12 +41,6 @@ export const ConnectEnvsToDatadog = () => {
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
-
-  // The main process can't resolve the lldDatadog flag itself, so mirror it over IPC; the main
-  // process uses this signal to mute its own Sentry when Datadog is the active backend.
-  useEffect(() => {
-    ipcRenderer.send("lldDatadogChanged", lldDatadog?.enabled === true);
-  }, [lldDatadog?.enabled]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !sentryLogs || !isDatadogAvailable() || datadogInitialized) return;
