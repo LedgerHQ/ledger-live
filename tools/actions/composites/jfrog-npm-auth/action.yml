@@ -9,10 +9,10 @@ runs:
   steps:
     - id: jfrog-login
       if: ${{ inputs.registry != '' }}
-      uses: ledgerhq/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
+      uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1.4.0
     - id: jfrog-npm
       if: ${{ inputs.registry != '' }}
-      uses: ledgerhq/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
+      uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3.0
       with:
         token: ${{ steps.jfrog-login.outputs.oidc-token }}
         registry: ${{ inputs.registry }}

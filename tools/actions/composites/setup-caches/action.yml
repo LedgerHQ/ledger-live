@@ -106,7 +106,7 @@ runs:
       run: echo "NX_KEY=${{ inputs.nx-key }}" >> "$GITHUB_ENV"
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v6
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
       if: steps.nx-remote-cache.conclusion == 'success'
       id: aws
       with:
@@ -114,7 +114,7 @@ runs:
         aws-region: ${{ inputs.region }}
 
     - name: Cache pnpm store
-      uses: tespkg/actions-cache@v1
+      uses: tespkg/actions-cache@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}

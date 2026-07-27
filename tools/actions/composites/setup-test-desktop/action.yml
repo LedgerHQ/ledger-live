@@ -27,7 +27,7 @@ runs:
         sudo apt-get update
         sudo apt-get install -y libudev-dev build-essential
       shell: bash
-    - uses: ruby/setup-ruby@v1
+    - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
       if: ${{ !inputs.skip_ruby }}
       with:
         ruby-version: 3.3.0
