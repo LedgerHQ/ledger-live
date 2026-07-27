@@ -34,13 +34,15 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
   pull-requests: write
 
 jobs:
   build-mobile-app-android:
     name: "Android Build"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -62,6 +64,10 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
