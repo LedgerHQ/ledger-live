@@ -80,6 +80,34 @@ describe("logic/getValidators", () => {
     });
   });
 
+  it("preserves non-empty description, url, and logo values without modification", async () => {
+    const networkValidators: NetworkValidator[] = [
+      {
+        suiAddress: "0xaaa",
+        name: "Validator With Metadata",
+        description: "A well-described validator",
+        projectUrl: "https://validator.example.com",
+        imageUrl: "https://validator.example.com/logo.svg",
+        stakingPoolSuiBalance: "9999999",
+        commissionRate: "5",
+        apy: 0.12,
+      },
+    ];
+
+    mockedGetValidators.mockResolvedValueOnce(
+      networkValidators as unknown as ReturnType<typeof network.getValidators>,
+    );
+
+    const page = await getValidators();
+
+    expect(page.items).toHaveLength(1);
+    const [v] = page.items;
+
+    expect(v.description).toBe("A well-described validator");
+    expect(v.url).toBe("https://validator.example.com");
+    expect(v.logo).toBe("https://validator.example.com/logo.svg");
+  });
+
   it("handles empty network response", async () => {
     mockedGetValidators.mockResolvedValueOnce(
       [] as unknown as ReturnType<typeof network.getValidators>,
