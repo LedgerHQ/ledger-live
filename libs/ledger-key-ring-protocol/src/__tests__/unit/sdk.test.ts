@@ -9,7 +9,7 @@ import {
   SoftwareDevice,
   StreamTree,
 } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { SDK } from "../../sdk";

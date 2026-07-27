@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import {
   MarketListRequestParams,
   MarketItemResponse,

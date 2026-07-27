@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "@ledgerhq/coin-evm/types/transaction";
 

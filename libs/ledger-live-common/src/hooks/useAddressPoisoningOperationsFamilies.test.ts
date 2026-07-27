@@ -3,7 +3,7 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import * as featureFlags from "@features/platform-feature-flags";
 import { useAddressPoisoningOperationsFamilies } from "./useAddressPoisoningOperationsFamilies";
 
@@ -11,7 +11,7 @@ jest.mock("@features/platform-feature-flags", () => ({
   ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn(),
 }));
 

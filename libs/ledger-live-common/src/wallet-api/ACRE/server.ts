@@ -31,7 +31,7 @@ import {
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 

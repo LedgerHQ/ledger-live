@@ -8,7 +8,7 @@ import {
   DeviceHalted,
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { open, close, OpenOptions } from ".";
 
 const LOG_TYPE = "hw";

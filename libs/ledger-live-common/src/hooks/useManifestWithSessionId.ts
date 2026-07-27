@@ -1,7 +1,7 @@
 import React from "react";
 import { appendQueryParamsToManifestURL } from "../wallet-api/utils/appendQueryParamsToManifestURL";
 import { LiveAppManifest } from "../platform/types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 type Options = {
   manifest: LiveAppManifest | null | undefined;

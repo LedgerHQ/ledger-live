@@ -5,7 +5,7 @@ import { RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { createSpeculosDevice, releaseSpeculosDevice } from "@ledgerhq/speculos-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { crypto, TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
 import { RecorderConfig, ScenarioOptions, genSeed, recorderConfigDefaults } from "./types";
 import { getSdk } from "../../src";

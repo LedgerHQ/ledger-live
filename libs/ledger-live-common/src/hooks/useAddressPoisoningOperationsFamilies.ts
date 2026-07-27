@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useFeature } from "@features/platform-feature-flags";
 import { useMemo } from "react";
 

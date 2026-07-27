@@ -31,7 +31,7 @@ import { catchError, map } from "rxjs/operators";
 import semver from "semver";
 import URL from "url";
 import { version as livecommonversion } from "../../package.json";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { createDeviceSocket } from "../socket";
 import {
   bulkSocketMock,

@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import network from "@ledgerhq/live-network";
 import { AdditionalProviderConfig, SWAP_DATA_CDN } from "./default";
 

@@ -1,5 +1,5 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { EnvName, setEnv, setEnvUnsafe } from "@shared/env";
 import { listen } from "@ledgerhq/logs";
 import winston from "winston";
 import { liveConfig } from "../../config/sharedConfig";

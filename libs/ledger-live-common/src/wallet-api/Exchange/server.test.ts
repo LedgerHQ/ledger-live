@@ -103,7 +103,7 @@ jest.mock("@ledgerhq/live-network", () => ({
   default: jest.fn().mockResolvedValue({}),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn((key: string) => {
     if (key === "SWAP_API_BASE") return "https://swap.ledger.com/v5";
     if (key === "DISABLE_TRANSACTION_BROADCAST") return false;

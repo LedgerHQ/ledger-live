@@ -21,7 +21,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { ConnectManagerTimeout } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import { LOG_TYPE } from "..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export enum ImplementationType {
   event = "enum",

@@ -1,11 +1,11 @@
-import { getEnv, changes } from "@ledgerhq/live-env";
+import { getEnv, changes } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
 import { bridgeEnvToNetworkState } from "./setup";
 
 const mockUnsubscribe = jest.fn();
 const mockSubscribe = jest.fn().mockReturnValue({ unsubscribe: mockUnsubscribe });
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockImplementation((name: string) => {
     const envValues: Record<string, unknown> = {
       ENABLE_NETWORK_LOGS: false,
