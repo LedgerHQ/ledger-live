@@ -1,6 +1,6 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";

@@ -16,7 +16,8 @@
     "@ledgerhq/devices",
     "@ledgerhq/types-cryptoassets",
     "invariant",
-    "got"
+    "got",
+    "@ledgerhq/errors"
   ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",

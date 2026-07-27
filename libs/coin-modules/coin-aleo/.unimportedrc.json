@@ -27,6 +27,7 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "@ledgerhq/live-env"
+    "@ledgerhq/live-env",
+    "@ledgerhq/errors"
   ]
 }

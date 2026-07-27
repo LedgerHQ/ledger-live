@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { DerivationMode } from "@ledgerhq/types-live";

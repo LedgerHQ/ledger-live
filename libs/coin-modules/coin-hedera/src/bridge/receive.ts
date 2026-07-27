@@ -1,4 +1,4 @@
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";

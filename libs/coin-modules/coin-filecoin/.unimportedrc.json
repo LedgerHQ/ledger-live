@@ -9,7 +9,8 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/cryptoassets",
-    "@ledgerhq/devices"
+    "@ledgerhq/devices",
+    "@ledgerhq/errors"
   ],
   "ignoreUnimported": [
     "src/bridge/deviceTransactionConfig.ts",

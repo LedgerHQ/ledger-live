@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
