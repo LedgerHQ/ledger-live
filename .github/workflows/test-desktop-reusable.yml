@@ -51,7 +51,6 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -61,6 +60,9 @@ env:
 jobs:
   speculos-e2e-tests-linux:
     name: "UI e2e smoke tests NanoSP"
+    permissions:
+      id-token: write
+      contents: read
     outputs:
       allure_url: ${{ steps.publish-allure.outputs.report-url }}
     timeout-minutes: 60
@@ -168,6 +170,9 @@ jobs:
 
   e2e-tests-linux:
     name: "Ubuntu Mock"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 20
     outputs:
       status: ${{ steps.tests.outcome }}

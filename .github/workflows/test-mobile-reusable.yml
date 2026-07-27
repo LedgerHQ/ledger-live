@@ -38,13 +38,14 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   codecheck:
     name: "Mobile Code Check"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -94,6 +95,9 @@ jobs:
 
   unit-tests:
     name: "Mobile Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3

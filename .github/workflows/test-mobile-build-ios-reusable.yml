@@ -103,7 +103,6 @@ on:
         default: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -114,6 +113,9 @@ env:
 jobs:
   build-ios-native:
     name: "iOS Build Native"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-ios-native == true }}
     timeout-minutes: 120
     env:
@@ -188,6 +190,9 @@ jobs:
 
   build-ios-js:
     name: "iOS Build JS"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-ios-js == true }}
     timeout-minutes: 20
     env:

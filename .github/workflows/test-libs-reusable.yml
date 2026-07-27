@@ -32,13 +32,14 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   test-libraries:
     name: "Libraries Test"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 40
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -156,6 +157,9 @@ jobs:
 
   codecheck-libraries:
     name: "Libraries Codecheck"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -212,6 +216,9 @@ jobs:
 
   test-docs:
     name: "Libraries Documentation Check"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-22.04
     outputs:
       fail: ${{ steps.diff.outputs.diff }}

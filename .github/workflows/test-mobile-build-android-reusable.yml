@@ -91,7 +91,6 @@ on:
         default: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -104,6 +103,9 @@ env:
 jobs:
   build-android-native:
     name: "Android Build Native"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ledger-live-linux-8CPU-32RAM]
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
@@ -180,6 +182,9 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}

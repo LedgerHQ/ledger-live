@@ -44,7 +44,6 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -54,6 +53,9 @@ env:
 jobs:
   codechecks:
     name: "Desktop Code Check"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -100,6 +102,9 @@ jobs:
 
   unit-tests:
     name: "Desktop Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 10
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"

@@ -105,7 +105,6 @@ on:
         default: "true"
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -133,6 +132,9 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ubuntu-22.04]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
@@ -356,6 +358,9 @@ jobs:
 
   detox-ui-e2e-android:
     name: "Android UI E2E Smoke Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-android, determine-builds]
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
@@ -642,6 +647,9 @@ jobs:
 
   detox-ui-e2e-ios:
     name: "iOS UI E2E Smoke Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-ios, determine-builds]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 80
@@ -838,6 +846,9 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [macOS, ARM64]
     needs: [determine-builds]
     if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true'

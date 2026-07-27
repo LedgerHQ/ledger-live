@@ -77,13 +77,15 @@ on:
         type: string
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
 
   build-web-tools:
     name: "Web Tools Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
@@ -132,6 +134,9 @@ jobs:
 
   build-native-storybook:
     name: "Native Storybook Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-native-storybook != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
@@ -165,6 +170,9 @@ jobs:
 
   build-react-storybook:
     name: "React Storybook Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-react-storybook != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
