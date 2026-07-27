@@ -4505,6 +4505,28 @@
       "hideFullMessage": "Hide full message"
     }
   },
+  "walletApiSignMessage": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
+  "walletApiSignTransaction": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"

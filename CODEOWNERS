@@ -303,6 +303,7 @@ libs/ledger-live-common/src/customImage/                            @ledgerhq/li
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/     @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceActionContent/   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/WalletApiSignature/ @ledgerhq/live-devices @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/ @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/DeviceActionContent/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
