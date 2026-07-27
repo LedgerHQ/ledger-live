@@ -773,6 +773,25 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
     expect(outgoing?.recipients).toEqual(["bc1addr", "u1theactualpayee"]);
   });
 
+  // Recovering fees and payees goes over the network. It refines what the
+  // explorer said; it cannot be what decides whether the sync happened at all.
+  it("still syncs on the explorer's terms when the chain cannot be reached", async () => {
+    registerChainAdapter({
+      id: "bitcoin_testnet",
+      resolveTransactionDetails: async () => {
+        throw new Error("grpc unavailable");
+      },
+    });
+
+    wallet.getAccountTransactions.mockResolvedValueOnce({
+      txs: [shieldingTransaction({ outputs: [changeOutput] })],
+    });
+
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+
+    expect(result.operations?.[0].recipients).toEqual(["bc1change"]);
+  });
+
   it("falls back to the transparent balance when the chain has no balance hook", async () => {
     const info: any = {
       currency: getCryptoCurrencyById("bitcoin"),

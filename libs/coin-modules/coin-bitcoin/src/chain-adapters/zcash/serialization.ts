@@ -61,14 +61,16 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
+    transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
-      fee: new BigNumber(tx.fee),
-      transparentOut: new BigNumber(tx.transparentOut ?? 0),
-      hasTransparentInputs: tx.hasTransparentInputs ?? false,
+      fee: new BigNumber(fee),
+      // Read back only what was written: an account persisted before the
+      // scanner reported the transparent bundle states nothing about it, and
+      // zero would state something.
+      ...(transparentOut !== undefined && { transparentOut: new BigNumber(transparentOut) }),
       decryptedData: {
-        orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
-        sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
+        orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
+        sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
       },
     })),
   };

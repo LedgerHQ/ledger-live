@@ -348,6 +348,24 @@ describe("assignFromAccountRaw", () => {
       });
     });
 
+    // An account persisted before the scanner reported the transparent bundle
+    // says nothing about it, and must keep saying nothing: read back as zero it
+    // would claim a transaction moved no transparent value.
+    it("should leave the transparent bundle out when it was never persisted", () => {
+      const {
+        transparentOut: _out,
+        hasTransparentInputs: _in,
+        ...withoutBundle
+      } = shieldedTransactionRawMock;
+      accountZcashRawMock.privateInfo = { ...privateInfoRawMock, transactions: [withoutBundle] };
+
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+
+      const [tx] = accountZcashMock.privateInfo?.transactions ?? [];
+      expect(tx).not.toHaveProperty("transparentOut");
+      expect(tx).not.toHaveProperty("hasTransparentInputs");
+    });
+
     it("should include decrypted actions, when present", () => {
       accountZcashRawMock.privateInfo = {
         ...privateInfoRawMock,

@@ -25,6 +25,7 @@ import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
 import { merge, Observable } from "rxjs";
 import { getChainAdapter } from "./chain-adapters/registry";
+import type { ResolvedTransactions } from "./chain-adapters/types";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -155,7 +156,17 @@ export async function performTransparentSync(
   // The explorer cannot always see enough of a transaction to report its fee or
   // its destination. Give the chain a chance to recover both before operations
   // are derived, so that senders and recipients agree on the fee.
-  const resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
+  //
+  // This reaches the network, and it is an enrichment: a sync that already holds
+  // the explorer's answer must not be lost because that reach failed.
+  let resolved: ResolvedTransactions | undefined;
+  try {
+    resolved = await adapter.resolveTransactionDetails?.(transactions, initialAccount);
+  } catch (error) {
+    log("bitcoin/performTransparentSync", `Keeping the explorer's view of ${currency.id}`, {
+      error,
+    });
+  }
 
   const newOperations = (resolved?.transactions ?? transactions)
     ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
