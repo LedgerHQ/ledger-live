@@ -38,11 +38,22 @@ function propagateField(estimation: FeeEstimation, field: string, dest: GenericT
         return;
       dest[field] = Number(value.toString());
       return;
-    case "storageLimit":
-    case "gasLimit":
     case "gasPrice":
     case "maxFeePerGas":
     case "maxPriorityFeePerGas":
+      // Explicit null clears orphaned placeholders (e.g. maxFeePerGas: 0 from
+      // createTransaction after a switch to legacy). Omitted (undefined) keeps
+      // the existing value — parameters may simply not include the field.
+      if (value === null) {
+        dest[field] = null;
+        return;
+      }
+      if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
+        return;
+      dest[field] = new BigNumber(value.toString());
+      return;
+    case "storageLimit":
+    case "gasLimit":
     case "additionalFees":
       if (typeof value !== "bigint" && typeof value !== "number" && typeof value !== "string")
         return;

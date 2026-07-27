@@ -51,6 +51,8 @@ export function useRecipientSearchState({
     !!bridgeRecipientError && !isBridgeInvalidAddress && !showSanctionedBanner;
   const hasBridgeRecipientWarning = !!bridgeRecipientWarning;
 
+  // Keep a complete match visible while search revalidates
+  // first bridge wait is via isAddressComplete.
   const showMatchedAddress =
     showSearchResults &&
     (hasAnyMatches ||
@@ -65,6 +67,7 @@ export function useRecipientSearchState({
 
   const showAddressValidationError =
     showSearchResults &&
+    !isLoading &&
     !showSanctionedBanner &&
     !hasAnyMatches &&
     (!!result.error || isBridgeInvalidAddress);
@@ -93,6 +96,7 @@ export function useRecipientSearchState({
 
   const showEmptyState =
     showSearchResults &&
+    !isLoading &&
     (!isAddressComplete || !hasAnyMatches) &&
     !showMatchedAddress &&
     !showSanctionedBanner &&
