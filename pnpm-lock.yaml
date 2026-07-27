@@ -859,9 +859,6 @@ importers:
       '@domain/entity-currency-fiat':
         specifier: workspace:^
         version: link:../../domain/entity/currency-fiat
-      '@domain/entity-currency-token':
-        specifier: workspace:^
-        version: link:../../domain/entity/currency-token
       '@domain/entity-large-screen-upsell-modal':
         specifier: workspace:*
         version: link:../../domain/entity/large-screen-upsell-modal
