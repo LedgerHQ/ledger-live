@@ -10,6 +10,7 @@ import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { BroadcastFlow, shouldRunBroadcastFlow } from "../../../helpers/broadcastRotation";
 
 export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,
@@ -18,13 +19,17 @@ export function runSwapTokenReapprovalFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
-  const isBroadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-  if (!isBroadcastEnabled) {
+  const runHere = shouldRunBroadcastFlow(BroadcastFlow.REAPPROVAL);
+  if (!runHere) {
+    const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+    const bothPlatforms = process.env.E2E_BOTH_PLATFORMS === "true";
     console.warn(
-      "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
+      broadcastEnabled && bothPlatforms
+        ? "[reapproval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
+        : "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
   }
-  (isBroadcastEnabled ? describe : describe.skip)("Token reapproval - flow", () => {
+  (runHere ? describe : describe.skip)("Token reapproval - flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
