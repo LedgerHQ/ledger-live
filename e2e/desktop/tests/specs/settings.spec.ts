@@ -1,9 +1,13 @@
+import { writeFile } from "fs/promises";
+import * as path from "path";
+import { expect } from "@playwright/test";
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { waitForIdentitiesInAppJson } from "tests/utils/userdata";
+import { FileUtils } from "tests/utils/fileUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 
@@ -159,16 +163,25 @@ test.describe("Reset app", () => {
         description: "B2CQA-821",
       },
     },
-    async ({ app, userdataFile }) => {
+    async ({ app, userdataFile, userdataDestinationPath }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.mainNavigation.openSettings();
       const { userId: userIdBefore } = await waitForIdentitiesInAppJson(userdataFile);
+
+      const staleAppJsonBackup = path.join(userdataDestinationPath, "app.json.123");
+      await writeFile(staleAppJsonBackup, "stale");
+
       await app.settings.goToHelpTab();
       await app.settings.resetApp();
       await app.settingsModal.checkResetModal();
       await app.settingsModal.clickOnConfirmButton();
       await app.settingsModal.expectIdentitiesRegenerated(userdataFile, userIdBefore);
+
+      expect(
+        await FileUtils.waitForFileToBeRemoved(staleAppJsonBackup, 15000),
+        "stale app.json.* backup should be cleaned up on the Reset-app reboot",
+      ).toBeTruthy();
     },
   );
 });
