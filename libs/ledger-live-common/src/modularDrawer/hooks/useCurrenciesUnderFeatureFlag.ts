@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Feature } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
-import useEnv from "../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 
 export function useCurrenciesUnderFeatureFlag() {
   const mock = useEnv("MOCK");

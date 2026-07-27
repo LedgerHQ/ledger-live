@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@shared/env";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 
 const EnableCountervaluesStagingToggle = () => {

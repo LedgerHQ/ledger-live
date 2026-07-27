@@ -38,8 +38,8 @@ jest.mock("@ledgerhq/live-common/transaction/index", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-env", () => {
-  const actual = jest.requireActual("@ledgerhq/live-env");
+jest.mock("@shared/env", () => {
+  const actual = jest.requireActual("@shared/env");
   return {
     ...actual,
     getEnv: jest.fn((key: string) => {

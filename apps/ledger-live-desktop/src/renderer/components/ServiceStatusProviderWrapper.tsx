@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { ServiceStatusProvider } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import networkApi from "../../../tests/mocks/serviceStatusHelpers";
 

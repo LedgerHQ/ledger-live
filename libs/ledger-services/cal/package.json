@@ -64,6 +64,7 @@
     "@ledgerhq/live-network": "workspace:*"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import LedgerLogo from "@ledgerhq/icons-ui/native/LedgerLogo";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import Circle from "~/components/Circle";

@@ -1,5 +1,5 @@
 import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
 import { sanitizeError } from "./index";

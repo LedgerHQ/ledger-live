@@ -1,3 +1,4 @@
+import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
@@ -7,7 +8,6 @@ import fs from "fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
  * Sets env variables for the main process.
