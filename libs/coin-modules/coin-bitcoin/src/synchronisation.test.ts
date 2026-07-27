@@ -735,6 +735,44 @@ describe("createTransparentSyncObservable and performTransparentSync", () => {
     expect(result.operations?.[0].recipients).toEqual(["tb1someoneelse", "u1theactualpayee"]);
   });
 
+  // The same transaction can debit the account and credit it back on one of its
+  // own addresses. Who we paid in the shielded pool belongs to the leg that
+  // spent, not to the one that received.
+  it("leaves the incoming leg of the same transaction pointing at our own address", async () => {
+    registerChainAdapter({
+      id: "bitcoin_testnet",
+      resolveTransactionDetails: async (transactions: TX[]) => ({
+        transactions,
+        payeesByTxId: new Map([["76ec3b38", ["u1theactualpayee"]]]),
+      }),
+    });
+
+    wallet.getAccountTransactions.mockResolvedValueOnce({
+      txs: [
+        shieldingTransaction({
+          outputs: [
+            {
+              value: "45000",
+              address: "bc1addr",
+              output_index: 0,
+              output_hash: "76ec3b38",
+              block_height: 90,
+              rbf: false,
+            },
+            changeOutput,
+          ] as unknown as TX["outputs"],
+        }),
+      ],
+    });
+
+    const result = await performTransparentSync(shieldingInfo, mockSignerContext);
+
+    const incoming = result.operations?.find(op => op.type === "IN");
+    const outgoing = result.operations?.find(op => op.type === "OUT");
+    expect(incoming?.recipients).toEqual(["bc1addr"]);
+    expect(outgoing?.recipients).toEqual(["bc1addr", "u1theactualpayee"]);
+  });
+
   it("falls back to the transparent balance when the chain has no balance hook", async () => {
     const info: any = {
       currency: getCryptoCurrencyById("bitcoin"),

@@ -30,6 +30,7 @@ const resolvesTo = (...results: TransactionDetailsResult[]) =>
 
 const priced = "55000";
 const payee = "u1recipient";
+const ufvk = "uview1account";
 
 beforeEach(() => clearTransactionDetailsCache());
 
@@ -45,7 +46,7 @@ describe("resolveTransactionDetails", () => {
   it("reports the shielded payee, which no transparent output names", async () => {
     const resolve = resolvesTo({ txid: "76ec3b38", fee: priced, payees: [payee] });
 
-    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve);
+    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve, ufvk);
 
     expect(payeesByTxId.get("76ec3b38")).toEqual([payee]);
   });
@@ -53,7 +54,7 @@ describe("resolveTransactionDetails", () => {
   it("reports no payee for a transaction that pays no shielded address", async () => {
     const resolve = resolvesTo({ txid: "76ec3b38", fee: priced, payees: [] });
 
-    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve);
+    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve, ufvk);
 
     expect(payeesByTxId.size).toBe(0);
   });
@@ -100,9 +101,19 @@ describe("resolveTransactionDetails", () => {
   it("still reports the payee of a transaction whose fee is unknown", async () => {
     const resolve = resolvesTo({ txid: "76ec3b38", fee: null, payees: [payee] });
 
-    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve);
+    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve, ufvk);
 
     expect(payeesByTxId.get("76ec3b38")).toEqual([payee]);
+  });
+
+  // Writing a fee we cannot read as a number would carry NaN into the operation
+  // value and the balance, where it is far harder to trace than a stale fee.
+  it("keeps the reported fee when the chain answers with something unreadable", async () => {
+    const resolve = resolvesTo({ txid: "76ec3b38", fee: "not-a-number", payees: [] });
+
+    const { transactions } = await resolveTransactionDetails([shieldingSend], resolve);
+
+    expect(transactions[0].fees).toBe(10_055_000);
   });
 
   it("keeps everything the explorer reported when the lookup itself fails", async () => {
@@ -142,15 +153,50 @@ describe("resolveTransactionDetails", () => {
   it("resolves a transaction once and reuses the answer on later passes", async () => {
     const resolve = resolvesTo({ txid: "76ec3b38", fee: priced, payees: [payee] });
 
-    await resolveTransactionDetails([shieldingSend], resolve);
+    await resolveTransactionDetails([shieldingSend], resolve, ufvk);
     const { transactions, payeesByTxId } = await resolveTransactionDetails(
       [shieldingSend],
       resolve,
+      ufvk,
     );
 
     expect(resolve).toHaveBeenCalledTimes(1);
     expect(transactions[0].fees).toBe(55_000);
     expect(payeesByTxId.get("76ec3b38")).toEqual([payee]);
+  });
+
+  // An account has no viewing key on its very first sync: the key is what the
+  // shielded sync establishes. Remembering that first, payee-less answer as
+  // final would leave the destination showing a change address for good.
+  it("asks again for the payees of a transaction it resolved before knowing the viewing key", async () => {
+    const resolve = jest
+      .fn<Promise<TransactionDetailsResult[]>, [TransactionDetailsRequest[]]>()
+      .mockResolvedValueOnce([{ txid: "76ec3b38", fee: priced, payees: [] }])
+      .mockResolvedValueOnce([{ txid: "76ec3b38", fee: priced, payees: [payee] }]);
+
+    await resolveTransactionDetails([shieldingSend], resolve);
+    const { payeesByTxId } = await resolveTransactionDetails([shieldingSend], resolve, ufvk);
+
+    expect(resolve).toHaveBeenCalledTimes(2);
+    expect(payeesByTxId.get("76ec3b38")).toEqual([payee]);
+  });
+
+  // Payees only exist relative to the key they were recovered with: the account
+  // that sent a transaction sees who it paid, another account sees nothing.
+  it("does not answer one account with the payees recovered for another", async () => {
+    const resolve = jest
+      .fn<Promise<TransactionDetailsResult[]>, [TransactionDetailsRequest[]]>()
+      .mockResolvedValueOnce([{ txid: "76ec3b38", fee: priced, payees: [payee] }])
+      .mockResolvedValueOnce([{ txid: "76ec3b38", fee: priced, payees: [] }]);
+
+    await resolveTransactionDetails([shieldingSend], resolve, ufvk);
+    const { payeesByTxId } = await resolveTransactionDetails(
+      [shieldingSend],
+      resolve,
+      "uview1other",
+    );
+
+    expect(payeesByTxId.size).toBe(0);
   });
 
   // Distinguishes a transient failure from a settled answer: a transaction that

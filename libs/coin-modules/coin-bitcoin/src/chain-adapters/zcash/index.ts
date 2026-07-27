@@ -418,14 +418,18 @@ const zcashChainAdapter: ChainAdapter = {
     // payees are not, since they are encrypted to it.
     const ufvk = (account as ZcashAccount | undefined)?.privateInfo?.ufvk ?? undefined;
 
-    return resolveTransactionDetails(transactions, async requests => {
-      const { grpcUrl, network } = getZainoEndpoint();
-      const { createZCashClient } = await getZCashModule();
-      const client = createZCashClient({ grpcUrl, network });
-      // Optional on ZCashClient: the React Native stub omits it. Without it the
-      // explorer's view stands, which is the pre-existing behaviour.
-      return client.transactionDetails ? client.transactionDetails(requests, ufvk) : [];
-    });
+    return resolveTransactionDetails(
+      transactions,
+      async requests => {
+        const { grpcUrl, network } = getZainoEndpoint();
+        const { createZCashClient } = await getZCashModule();
+        const client = createZCashClient({ grpcUrl, network });
+        // Optional on ZCashClient: the React Native stub omits it. Without it the
+        // explorer's view stands, which is the pre-existing behaviour.
+        return client.transactionDetails ? client.transactionDetails(requests, ufvk) : [];
+      },
+      ufvk,
+    );
   },
 
   assignToAccountRaw(account: Account, accountRaw: AccountRaw) {

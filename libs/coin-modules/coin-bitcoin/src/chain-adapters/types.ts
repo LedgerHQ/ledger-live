@@ -85,7 +85,7 @@ export interface ChainAdapter {
   resolveTransactionDetails?(
     transactions: TX[],
     account: BitcoinAccount | undefined,
-  ): Promise<ResolvedTransactions> | undefined;
+  ): Promise<ResolvedTransactions>;
 
   /** Serialize chain-specific account fields into their raw form. */
   assignToAccountRaw?(account: Account, accountRaw: AccountRaw): void;

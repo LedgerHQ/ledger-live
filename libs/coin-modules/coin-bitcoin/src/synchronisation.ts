@@ -67,12 +67,18 @@ export const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>)
  * anything better. Once the chain has recovered who was actually paid, that
  * fallback is no longer the best answer available and gives way — while any
  * genuine transparent recipient of the same transaction is kept.
+ *
+ * Only the outgoing leg is concerned. A transaction can also credit the account
+ * it debits, and the recipient of that incoming leg is an address of ours, not
+ * whoever we paid in the same breath.
  */
 function withRecoveredRecipients(
   op: BtcOperation,
   payeesByTxId: Map<string, string[]> | undefined,
   changeAddresses: Set<string>,
 ): BtcOperation {
+  if (op.type !== "OUT") return op;
+
   const payees = payeesByTxId?.get(op.hash);
   if (!payees?.length) return op;
 
