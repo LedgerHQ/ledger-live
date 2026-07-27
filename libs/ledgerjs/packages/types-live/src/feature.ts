@@ -216,7 +216,6 @@ export type Features = CurrencyFeatures & {
   evmNativeStaking: Feature_EvmNativeStaking;
   editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
-  newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
@@ -532,12 +531,6 @@ export type Feature_Storyly = Feature<{
   stories: {
     [key in StorylyInstanceID]: StorylyInstanceType;
   };
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["newsfeedPage"]` from `@shared/feature-flags` instead. */
-export type Feature_NewsfeedPage = Feature<{
-  cryptopanicApiKey: string;
-  whitelistedLocales: string[];
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["protectServicesMobile"]` from `@shared/feature-flags` instead. */
