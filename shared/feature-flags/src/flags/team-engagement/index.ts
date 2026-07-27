@@ -19,7 +19,6 @@ export * from "./llmNanoSUpsellBanners";
 export * from "./llmOnboardingEnableSync";
 export * from "./lwmNotificationsOptIn";
 export * from "./lwmProductTour";
-export * from "./npsRatingsPrompt";
 export * from "./onboardingWidget";
 export * from "./ratingsPrompt";
 export * from "./referralProgramDesktopSidebar";

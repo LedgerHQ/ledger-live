@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
-import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import Config from "react-native-config";
 import { ScreenName } from "~/const";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
@@ -13,7 +13,6 @@ import { TrackScreen } from "~/analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "~/logic/ratings";
-import useNpsRatings from "~/logic/npsRatings";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { openDebugMenu } from "~/actions/appstate";
@@ -27,9 +26,7 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
-  const npsRatingsPrompt = useFeature("npsRatingsPrompt");
   const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
-  const { handleSettingsRateApp: handleNpsRatingsRateApp } = useNpsRatings();
 
   const debugVisible = useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
@@ -106,23 +103,14 @@ export default function Settings({
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      {npsRatingsPrompt?.enabled ? (
+      <FeatureToggle featureId="ratingsPrompt">
         <SettingsCard
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={IconsLegacy.StarMedium}
-          onClick={handleNpsRatingsRateApp}
+          onClick={handleLegacyRatingsRateApp}
         />
-      ) : (
-        <FeatureToggle featureId="ratingsPrompt">
-          <SettingsCard
-            title={t("settings.about.liveReview.title")}
-            desc={t("settings.about.liveReview.desc")}
-            Icon={IconsLegacy.StarMedium}
-            onClick={handleLegacyRatingsRateApp}
-          />
-        </FeatureToggle>
-      )}
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

@@ -48,7 +48,6 @@ import {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
@@ -246,8 +245,6 @@ export const setHasBeenRedirectedToPostOnboarding =
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
 );
-
-export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
 
 export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
   SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
