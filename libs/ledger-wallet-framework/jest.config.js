@@ -19,8 +19,8 @@ module.exports = {
   // Loaded by relative path (not as a package dep) so the public framework carries no
   // package.json edge back to it — that edge is what nx flags as a cyclic dependency.
   setupFilesAfterEnv: [
-    "<rootDir>/src/setup.ts",
     "<rootDir>/../wallet-framework-test-setup/src/index.js",
+    "<rootDir>/src/setup.ts",
   ],
   testEnvironment: "node",
   moduleNameMapper: {
