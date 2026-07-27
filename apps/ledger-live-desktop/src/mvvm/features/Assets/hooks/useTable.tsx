@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
 import {
+  TableCellItem,
   TableCellContent,
+  TableCellContentTitle,
+  TableCellContentDescription,
   TableInfoIcon,
   useLumenDataTable,
   Tooltip,
@@ -52,22 +55,25 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
             `${row.original.currency.name}-${row.original.currency.id}`,
           );
           return (
-            <TableCellContent
-              data-testid={`w40-asset-row-${assetTestId}`}
-              leadingContent={
-                row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
-                  <CryptoIcon
-                    ledgerId={row.original.currency.id}
-                    ticker={row.original.currency.ticker}
-                    size={getValidCryptoIconSize(32)}
-                  />
-                ) : (
-                  <CryptoCurrencyIcon currency={row.original.currency} size={32} />
-                )
-              }
-              title={<TruncatedText text={row.original.currency.name} />}
-              description={row.original.currency.ticker}
-            />
+            <TableCellItem data-testid={`w40-asset-row-${assetTestId}`}>
+              {row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
+                <CryptoIcon
+                  ledgerId={row.original.currency.id}
+                  ticker={row.original.currency.ticker}
+                  size={getValidCryptoIconSize(32)}
+                />
+              ) : (
+                <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+              )}
+              <TableCellContent>
+                <TableCellContentTitle>
+                  <TruncatedText text={row.original.currency.name} />
+                </TableCellContentTitle>
+                <TableCellContentDescription>
+                  {row.original.currency.ticker}
+                </TableCellContentDescription>
+              </TableCellContent>
+            </TableCellItem>
           );
         },
       },
@@ -99,7 +105,11 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
           );
           return row.original.isPlaceholder ? (
             <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
-              <TableCellContent align="end" title={emptyFiatValue} />
+              <TableCellItem align="end">
+                <TableCellContent>
+                  <TableCellContentTitle>{emptyFiatValue}</TableCellContentTitle>
+                </TableCellContent>
+              </TableCellItem>
             </div>
           ) : (
             <div data-testid={`w40-asset-row-value-${assetValueTestId}`}>
@@ -115,7 +125,13 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
         enableSorting: false,
         cell: ({ row }) =>
           row.original.isPlaceholder ? (
-            <TableCellContent align="end" title={<span className="text-muted">0.00%</span>} />
+            <TableCellItem align="end">
+              <TableCellContent>
+                <TableCellContentTitle>
+                  <span className="text-muted">0.00%</span>
+                </TableCellContentTitle>
+              </TableCellContent>
+            </TableCellItem>
           ) : (
             <TrendCell trend={row.original.trend} />
           ),
