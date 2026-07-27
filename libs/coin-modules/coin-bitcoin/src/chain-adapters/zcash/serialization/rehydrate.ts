@@ -48,8 +48,15 @@ export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTrans
     blockHash: raw.blockHash,
     timestamp: raw.timestamp,
     fee: new BigNumber(raw.fee),
-    transparentOut: new BigNumber(raw.transparentOut ?? 0),
-    hasTransparentInputs: raw.hasTransparentInputs ?? false,
+    // Absent on accounts persisted before the scanner reported the transparent
+    // bundle. Kept absent rather than read as zero, which would be a claim
+    // about the transaction rather than about what we know of it.
+    ...(raw.transparentOut !== undefined && {
+      transparentOut: new BigNumber(raw.transparentOut),
+    }),
+    ...(raw.hasTransparentInputs !== undefined && {
+      hasTransparentInputs: raw.hasTransparentInputs,
+    }),
     ...(raw.decryptedData && {
       decryptedData: {
         orchard_outputs: raw.decryptedData.orchard_outputs.map(rehydrateOutput),

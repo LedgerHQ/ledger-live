@@ -34,13 +34,17 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
+    transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
-      fee: tx.fee.toString(),
-      transparentOut: (tx.transparentOut ?? new BigNumber(0)).toString(),
+      fee: fee.toString(),
+      // Written out only when known: a transaction scanned before the scanner
+      // reported the transparent bundle has no value to state, and "0" would
+      // read as one. `hasTransparentInputs` needs no conversion and rides the
+      // spread, absent or not.
+      ...(transparentOut !== undefined && { transparentOut: transparentOut.toString() }),
       decryptedData: {
-        orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
-        sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
+        orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
+        sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
       },
     })),
   };

@@ -196,6 +196,24 @@ describe("assignToAccountRaw", () => {
       });
     });
 
+    // A transaction scanned before the scanner reported the transparent bundle
+    // has no value to state; writing "0" would read as one.
+    it("should leave the transparent bundle out when the transaction has none", () => {
+      const {
+        transparentOut: _out,
+        hasTransparentInputs: _in,
+        ...withoutBundle
+      } = shieldedTransactionMock;
+      accountZcashMock.privateInfo = { ...privateInfoMock, transactions: [withoutBundle] };
+
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+
+      const [raw] = (accountZcashRawMock.privateInfo?.transactions ??
+        []) as ShieldedTransactionRaw[];
+      expect(raw).not.toHaveProperty("transparentOut");
+      expect(raw).not.toHaveProperty("hasTransparentInputs");
+    });
+
     it("should include decrypted actions, when present", () => {
       accountZcashMock.privateInfo = {
         ...privateInfoMock,

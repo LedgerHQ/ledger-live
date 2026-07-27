@@ -406,13 +406,23 @@ const zcashChainAdapter: ChainAdapter = {
     );
   },
 
-  resolveTransactionDetails(
+  async resolveTransactionDetails(
     transactions: TX[],
     account: BitcoinAccount | undefined,
   ): Promise<ResolvedTransactions> {
-    if (!isZcashShieldedEnabled()) {
-      return Promise.resolve({ transactions, payeesByTxId: new Map() });
-    }
+    const asReported = { transactions, payeesByTxId: new Map<string, string[]>() };
+    if (!isZcashShieldedEnabled()) return asReported;
+
+    const { grpcUrl, network } = getZainoEndpoint();
+    const { createZCashClient } = await getZCashModule();
+    const client = createZCashClient({ grpcUrl, network });
+
+    // Optional on ZCashClient: the React Native stub omits it. The capability is
+    // settled for the whole platform, so it is asked about here rather than per
+    // batch — nothing is left half-asked, and no sync builds a request nobody
+    // can answer. The explorer's view stands, as it did before this hook.
+    const transactionDetails = client.transactionDetails;
+    if (!transactionDetails) return asReported;
 
     // Without the viewing key the fees are still recoverable; only the shielded
     // payees are not, since they are encrypted to it.
@@ -420,14 +430,7 @@ const zcashChainAdapter: ChainAdapter = {
 
     return resolveTransactionDetails(
       transactions,
-      async requests => {
-        const { grpcUrl, network } = getZainoEndpoint();
-        const { createZCashClient } = await getZCashModule();
-        const client = createZCashClient({ grpcUrl, network });
-        // Optional on ZCashClient: the React Native stub omits it. Without it the
-        // explorer's view stands, which is the pre-existing behaviour.
-        return client.transactionDetails ? client.transactionDetails(requests, ufvk) : [];
-      },
+      requests => transactionDetails(requests, ufvk),
       ufvk,
     );
   },
