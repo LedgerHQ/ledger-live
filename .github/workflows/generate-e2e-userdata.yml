@@ -41,11 +41,11 @@ env:
 jobs:
   generate-desktop:
     name: "Generate desktop userdata (app.json)"
-    if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'desktop' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     permissions:
       id-token: write
       contents: read
+    if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'desktop' }}
     timeout-minutes: 60
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

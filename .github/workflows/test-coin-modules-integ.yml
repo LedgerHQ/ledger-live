@@ -17,7 +17,6 @@ on:
         default: develop
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -59,6 +58,9 @@ jobs:
 
   integ-tests:
     name: "Coin modules integration tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     runs-on: ubuntu-22.04
