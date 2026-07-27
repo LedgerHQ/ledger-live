@@ -1,653 +1,617 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">Ledger Live Desktop DeepLinks</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-          sans-serif;
-        line-height: 1.6;
-        color: #ffffff;
-        background: #000000;
-        min-height: 100vh;
-        padding: 20px;
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: #000000;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background: #000000;
-        border-radius: 12px;
-        box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
-        overflow: hidden;
-        border: 1px solid #333333;
-      }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #000000;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border: 1px solid #333333;
+        }
 
-      .header {
-        background: #000000;
-        color: white;
-        padding: 40px;
-        text-align: center;
-        border-bottom: 1px solid #333333;
-      }
-
-      .header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        font-weight: 700;
-      }
-
-      .header p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-      }
-
-      .content {
-        padding: 40px;
-        background: #000000;
-      }
-
-      .section {
-        margin-bottom: 40px;
-        background: #111111;
-        border-radius: 12px;
-        padding: 30px;
-        border-left: 4px solid #ff6b35;
-        border: 1px solid #333333;
-      }
-
-      .section h2 {
-        color: #ffffff;
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .section h2::before {
-        content: "🔗";
-        font-size: 1.2rem;
-      }
-
-      .deeplink-item {
-        background: #1a1a1a;
-        border: 1px solid #333333;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-      }
-
-      .deeplink-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
-        border-color: #ff6b35;
-      }
-
-      .deeplink-title {
-        font-weight: 700;
-        color: #ffffff;
-        margin-bottom: 12px;
-        font-size: 1.2rem;
-      }
-
-      .deeplink-url {
-        background: #222222;
-        padding: 12px;
-        border-radius: 8px;
-        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
-        font-size: 0.95rem;
-        color: #ff6b35;
-        margin-bottom: 12px;
-        word-break: break-all;
-        border: 1px solid #444444;
-      }
-
-      .deeplink-description {
-        color: #cccccc;
-        font-size: 0.95rem;
-        margin-bottom: 15px;
-        background: #1a1a1a;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #333333;
-        line-height: 1.5;
-      }
-
-      .deeplink-input {
-        background: #222222;
-        border: 1px solid #444444;
-        border-radius: 4px;
-        padding: 8px 12px;
-        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
-        font-size: 0.9rem;
-        color: #ffffff;
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      .deeplink-input:focus {
-        outline: none;
-        border-color: #ff6b35;
-        box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
-      }
-
-      .deeplink-input::placeholder {
-        color: #666666;
-      }
-
-      .deeplink-examples {
-        margin-top: 10px;
-      }
-
-      .deeplink-examples h4 {
-        color: #ffffff;
-        font-size: 0.9rem;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-
-      .example-list {
-        list-style: none;
-        padding-left: 0;
-      }
-
-      .example-list li {
-        background: #333333;
-        padding: 8px 12px;
-        border-radius: 4px;
-        margin-bottom: 5px;
-        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
-        font-size: 0.85rem;
-        color: #ff6b35;
-        border: 1px solid #444444;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .example-list li:hover {
-        background: #444444;
-        border-color: #ff6b35;
-        transform: translateY(-1px);
-      }
-
-      .clickable-link {
-        display: inline-block;
-        background: #ff6b35;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        margin-top: 15px;
-      }
-
-      .clickable-link:hover {
-        background: #e55a2b;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
-      }
-
-      .parameters {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 4px;
-        padding: 10px;
-        margin-top: 10px;
-      }
-
-      .parameters h4 {
-        color: #856404;
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-        font-weight: 600;
-      }
-
-      .parameter-list {
-        list-style: none;
-        padding-left: 0;
-      }
-
-      .parameter-list li {
-        color: #856404;
-        font-size: 0.85rem;
-        margin-bottom: 3px;
-      }
-
-      .warning {
-        background: #8b5cf6;
-        border: 1px solid #a78bfa;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 20px 0;
-        color: #ffffff;
-      }
-
-      .warning strong {
-        display: block;
-        margin-bottom: 5px;
-      }
-
-      .platform-note {
-        background: #8b5cf6;
-        border: 1px solid #a78bfa;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 20px 0;
-        color: #ffffff;
-      }
-
-      .platform-note strong {
-        display: block;
-        margin-bottom: 5px;
-      }
-
-      .platform-note a {
-        color: #ff6b35;
-        text-decoration: none;
-      }
-
-      .platform-note a:hover {
-        text-decoration: underline;
-      }
-
-      .footer {
-        background: #111111;
-        padding: 20px 40px;
-        text-align: center;
-        color: #cccccc;
-        border-top: 1px solid #333333;
-      }
-
-      .footer a {
-        color: #ff6b35;
-        text-decoration: none;
-      }
-
-      .footer a:hover {
-        text-decoration: underline;
-        color: #e55a2b;
-      }
-
-      .footer code {
-        background: #222222;
-        color: #ff6b35;
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
-        border: 1px solid #444444;
-      }
-
-      @media (max-width: 768px) {
         .header {
-          padding: 20px;
+            background: #000000;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #333333;
         }
 
         .header h1 {
-          font-size: 2rem;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
 
         .content {
-          padding: 20px;
+            padding: 40px;
+            background: #000000;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: #111111;
+            border-radius: 12px;
+            padding: 30px;
+            border-left: 4px solid #ff6b35;
+            border: 1px solid #333333;
+        }
+
+        .section h2 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: "🔗";
+            font-size: 1.2rem;
+        }
+
+        .deeplink-item {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .deeplink-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+
+        .deeplink-title {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
         }
 
         .deeplink-url {
-          font-size: 0.8rem;
+            background: #222222;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.95rem;
+            color: #ff6b35;
+            margin-bottom: 12px;
+            word-break: break-all;
+            border: 1px solid #444444;
         }
-      }
+
+        .deeplink-description {
+            color: #cccccc;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+            line-height: 1.5;
+        }
+
+        .deeplink-input {
+            background: #222222;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            color: #ffffff;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .deeplink-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .deeplink-input::placeholder {
+            color: #666666;
+        }
+
+        .deeplink-examples {
+            margin-top: 10px;
+        }
+
+        .deeplink-examples h4 {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .example-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .example-list li {
+            background: #333333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            color: #ff6b35;
+            border: 1px solid #444444;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .example-list li:hover {
+            background: #444444;
+            border-color: #ff6b35;
+            transform: translateY(-1px);
+        }
+
+        .clickable-link {
+            display: inline-block;
+            background: #ff6b35;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .clickable-link:hover {
+            background: #e55a2b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
+        .parameters {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .parameters h4 {
+            color: #856404;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .parameter-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .parameter-list li {
+            color: #856404;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .warning {
+            background: #8b5cf6;
+            border: 1px solid #a78bfa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .platform-note {
+            background: #8b5cf6;
+            border: 1px solid #a78bfa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+
+        .platform-note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .platform-note a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        .platform-note a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background: #111111;
+            padding: 20px 40px;
+            text-align: center;
+            color: #cccccc;
+            border-top: 1px solid #333333;
+        }
+
+        .footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+            color: #e55a2b;
+        }
+
+        .footer code {
+            background: #222222;
+            color: #ff6b35;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            border: 1px solid #444444;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .deeplink-url {
+                font-size: 0.8rem;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <div class="header">
-        <h1 id="mainTitle">Ledger Live Desktop DeepLinks</h1>
-        <p id="mainDescription">
-          Complete reference of all available deeplinks for Ledger Live Desktop
-        </p>
-      </div>
+        <div class="header">
+            <h1 id="mainTitle">Ledger Live Desktop DeepLinks</h1>
+            <p id="mainDescription">Complete reference of all available deeplinks for Ledger Live Desktop</p>
+        </div>
 
-      <div class="content" id="content">
-        <!-- Content will be dynamically generated -->
-      </div>
+        <div class="content" id="content">
+            <!-- Content will be dynamically generated -->
+        </div>
 
-      <div class="footer">
-        <p id="footerText">
-          Based on the
-          <a href="https://github.com/LedgerHQ/ledger-live/wiki/LLD:DeepLinking" target="_blank"
-            >Ledger Live Desktop DeepLinking Documentation</a
-          >
-        </p>
-        <p>
-          For macOS users: Dev builds override default deeplinks. Use
-          <a href="https://github.com/Lord-Kamina/SwiftDefaultApps" target="_blank"
-            >SwiftDefaultApps</a
-          >
-          to manage deeplink targets.
-        </p>
-      </div>
+        <div class="footer">
+            <p id="footerText">Based on the <a href="https://github.com/LedgerHQ/ledger-live/wiki/LLD:DeepLinking" target="_blank">Ledger Live Desktop DeepLinking Documentation</a></p>
+            <p>For macOS users: Dev builds override default deeplinks. Use <a href="https://github.com/Lord-Kamina/SwiftDefaultApps" target="_blank">SwiftDefaultApps</a> to manage deeplink targets.</p>
+        </div>
     </div>
 
     <script>
-      // Configuration for Desktop application
-      const appConfig = {
-        title: "Ledger Live Desktop DeepLinks",
-        description: "Complete reference of all available deeplinks for Ledger Live Desktop",
-        scheme: "ledgerwallet://",
-        footerText:
-          "Based on the <a href='https://github.com/LedgerHQ/ledger-live/wiki/LLD:DeepLinking' target='_blank'>Ledger Live Desktop DeepLinking Documentation</a>",
-        platformNote: {
-          title: "🍎 macOS Note:",
-          content:
-            "On macOS, Dev builds will override the default deeplink for LLD prod. If you need to reset the deeplink, you can use the <a href='https://github.com/Lord-Kamina/SwiftDefaultApps' target='_blank'>SwiftDefaultApps tool</a> to change the target for the ledgerlive deeplink.",
-        },
-        deeplinks: [
-          {
-            section: "Portfolio",
-            title: "Portfolio Page (default landing)",
-            url: "ledgerwallet://",
-            description: "Opens the portfolio page, which is the default landing page.",
-            examples: [
-              "ledgerwallet://",
-              "ledgerwallet://portfolio",
-              "ledgerlive://",
-              "ledgerlive://portfolio",
-            ],
-          },
-          {
-            section: "Accounts",
-            title: "Accounts Page",
-            url: "ledgerwallet://accounts",
-            description: "Opens the accounts page.",
-            examples: ["ledgerwallet://accounts", "ledgerlive://accounts"],
-          },
-          {
-            section: "Account",
-            title: "Account Page",
-            url: "ledgerwallet://account",
-            description: "Opens a specific account page based on currency and address parameters.",
-            parameters: [
-              {
-                name: "currency",
-                required: true,
-                description: "The ticker or name of the currency",
-              },
-              { name: "address", required: false, description: "Specific account address" },
-            ],
-            examples: [
-              "ledgerwallet://account?currency=btc",
-              "ledgerwallet://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
-              "ledgerwallet://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
-              "ledgerlive://account?currency=btc",
-              "ledgerlive://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
-              "ledgerlive://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
-            ],
-          },
-          {
-            section: "Asset",
-            title: "Asset Page",
-            url: "ledgerlive://asset/:currencyId",
-            description:
-              "Opens the asset page for a specific currency. When the Wallet 4.0 aggregated assets flag is enabled, navigates to Asset Detail with the raw path (resolution happens on the page). Otherwise validates the currency id and opens the legacy asset screen; an unrecognized currencyId falls back to the portfolio.",
-            parameters: [
-              {
-                name: "currencyId",
-                required: true,
-                description: "The currency ID (e.g., bitcoin, ethereum)",
-              },
-            ],
-            examples: ["ledgerlive://asset/bitcoin", "ledgerlive://asset/ethereum"],
-          },
-          {
-            section: "Add Account",
-            title: "Add Account Modal",
-            url: "ledgerwallet://add-account",
-            description: "Opens the Add Account Modal with optional currency pre-selection.",
-            parameters: [
-              {
-                name: "currency",
-                required: false,
-                description: "The ticker or name of the currency to pre-fill",
-              },
-            ],
-            examples: [
-              "ledgerwallet://add-account",
-              "ledgerwallet://add-account?currency=bitcoin",
-              "ledgerlive://add-account",
-              "ledgerlive://add-account?currency=bitcoin",
-            ],
-          },
-          {
-            section: "Send",
-            title: "Send Flow",
-            url: "ledgerwallet://send",
-            description: "Opens the send page (modal) with optional pre-filled parameters.",
-            parameters: [
-              { name: "currency", required: false, description: "The ticker of the currency" },
-              { name: "amount", required: false, description: "The amount to send" },
-              { name: "recipient", required: false, description: "The address to send to" },
-            ],
-            examples: [
-              "ledgerwallet://send",
-              "ledgerwallet://send?currency=ethereum",
-              "ledgerwallet://send?currency=ethereum&recipient=0xex...xxx&amount=3",
-              "ledgerlive://send",
-              "ledgerlive://send?currency=ethereum",
-              "ledgerlive://send?currency=ethereum&recipient=0xex...xxx&amount=3",
-            ],
-          },
-          {
-            section: "Receive",
-            title: "Receive Flow",
-            url: "ledgerwallet://receive",
-            description: "Opens the receive page (modal) with optional currency pre-selection.",
-            parameters: [
-              {
-                name: "currency",
-                required: false,
-                description: "The ticker or name of the currency",
-              },
-            ],
-            examples: [
-              "ledgerwallet://receive",
-              "ledgerwallet://receive?currency=ethereum",
-              "ledgerlive://receive",
-              "ledgerlive://receive?currency=ethereum",
-            ],
-          },
-          {
-            section: "Delegate",
-            title: "Delegate Flow",
-            url: "ledgerwallet://delegate",
-            description: "Opens the delegate flow for supported currencies (currently only Tezos).",
-            parameters: [
-              {
-                name: "currency",
-                required: true,
-                description: "The ticker or name of the currency",
-              },
-            ],
-            examples: [
-              "ledgerwallet://delegate?currency=tezos",
-              "ledgerlive://delegate?currency=tezos",
-            ],
-          },
-          {
-            section: "Buy Crypto",
-            title: "Buy Crypto Flow",
-            url: "ledgerwallet://buy",
-            description:
-              "Opens the buy crypto page. Query parameters depend on liveApp documentation.",
-            examples: ["ledgerwallet://buy", "ledgerlive://buy"],
-          },
-          {
-            section: "Swap",
-            title: "Swap Crypto Flow",
-            url: "ledgerwallet://swap",
-            description: "Opens the swap crypto page.",
-            examples: ["ledgerwallet://swap", "ledgerlive://swap"],
-          },
-          {
-            section: "Perps",
-            title: "Perpetuals Trading",
-            url: "ledgerwallet://perps",
-            description: "Opens the perpetuals trading page.",
-            examples: ["ledgerwallet://perps", "ledgerlive://perps"],
-          },
-          {
-            section: "MyLedger",
-            title: "Device Management Flow",
-            url: "ledgerwallet://myledger",
-            description: "Opens the MyLedger page for device management with optional app search.",
-            parameters: [
-              {
-                name: "installApp",
-                required: false,
-                description: "Search query to pre-fill when MyLedger opens",
-              },
-            ],
-            examples: [
-              "ledgerwallet://myledger",
-              "ledgerwallet://myledger?installApp=bitcoin",
-              "ledgerlive://myledger",
-              "ledgerlive://myledger?installApp=bitcoin",
-            ],
-          },
-          {
-            section: "Discover",
-            title: "Live Discover Catalog",
-            url: "ledgerwallet://discover/:liveAppId/",
-            description:
-              "Opens the discover catalog or specific live app with optional parameters.",
-            parameters: [
-              { name: "liveAppId", required: false, description: "The liveApp id", type: "url" },
-              {
-                name: "&{params}",
-                required: false,
-                description: "URL query params transmitted to the liveApp",
-                type: "query",
-              },
-            ],
-            examples: [
-              "ledgerwallet://discover",
-              "ledgerwallet://discover/paraswap",
-              "ledgerwallet://discover/paraswap?accountId=1",
-              "ledgerlive://discover",
-              "ledgerlive://discover/paraswap",
-              "ledgerlive://discover/paraswap?accountId=1",
-            ],
-          },
-          {
-            section: "Earn",
-            title: "Earn Dashboard",
-            url: "ledgerwallet://earn",
-            description: "Opens the earn dashboard page with optional action parameters.",
-            parameters: [
-              { name: "action", required: false, description: 'Specific action like "stake"' },
-              { name: "accountId", required: false, description: "Account ID for pre-selection" },
-            ],
-            examples: [
-              "ledgerwallet://earn",
-              "ledgerwallet://earn?action=stake",
-              "ledgerwallet://earn?action=stake-account&accountId=1",
-              "ledgerwallet://earn",
-              "ledgerlive://earn?action=stake",
-              "ledgerlive://earn?action=stake-account&accountId=1",
-            ],
-          },
-          {
-            section: "Market",
-            title: "Live Market Page",
-            url: "ledgerwallet://market",
-            description: "Opens the live market page.",
-            examples: ["ledgerwallet://market", "ledgerlive://market"],
-          },
-          {
-            section: "Market",
-            title: "Market Detail Page",
-            url: "ledgerlive://market/:currencyId",
-            description:
-              "Opens the market detail page for a specific cryptocurrency. When the Wallet 4.0 aggregated assets flag is enabled, opens Asset Detail instead of Market Detail. An unrecognized currencyId falls back to the market list when the flag is off.",
-            parameters: [
-              {
-                name: "currencyId",
-                required: true,
-                description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)",
-              },
-            ],
-            examples: [
-              "ledgerlive://market/bitcoin",
-              "ledgerlive://market/ethereum",
-              "ledgerlive://market/solana",
-            ],
-          },
-          {
-            section: "Settings",
-            title: "Settings Pages",
-            url: "ledgerwallet://settings/",
-            description: "Opens various settings pages.",
-            examples: [
-              "ledgerwallet://settings/",
-              "ledgerwallet://settings/general",
-              "ledgerwallet://settings/accounts",
-              "ledgerwallet://settings/about",
-              "ledgerwallet://settings/help",
-              "ledgerwallet://settings/developer",
-              "ledgerwallet://settings/notifications",
-              "ledgerwallet://settings/experimental",
-              "ledgerlive://settings/",
-              "ledgerlive://settings/general",
-              "ledgerlive://settings/accounts",
-              "ledgerlive://settings/about",
-              "ledgerlive://settings/help",
-              "ledgerlive://settings/developer",
-              "ledgerlive://settings/notifications",
-              "ledgerlive://settings/experimental",
-            ],
-          },
-          {
-            section: "Miscellaneous",
-            title: "Other DeepLinks",
-            url: "ledgerwallet://landing-page?useCase=LP_Generic",
-            description: "Various other deeplinks for specific functionality.",
-            examples: [
-              "ledgerwallet://landing-page?useCase=LP_Generic",
-              "ledgerwallet://hw-purchase-success",
-              "ledgerwallet://custom-image",
-              "ledgerwallet://scan-accounts",
-              "ledgerlive://landing-page?useCase=LP_Generic",
-              "ledgerlive://hw-purchase-success",
-              "ledgerlive://custom-image",
-              "ledgerlive://scan-accounts",
-            ],
-          },
-        ],
-      };
+                // Configuration for Desktop application
+        const appConfig = {
+            title: "Ledger Live Desktop DeepLinks",
+            description: "Complete reference of all available deeplinks for Ledger Live Desktop",
+            scheme: "ledgerwallet://",
+            footerText: "Based on the <a href='https://github.com/LedgerHQ/ledger-live/wiki/LLD:DeepLinking' target='_blank'>Ledger Live Desktop DeepLinking Documentation</a>",
+            platformNote: {
+                title: "🍎 macOS Note:",
+                content: "On macOS, Dev builds will override the default deeplink for LLD prod. If you need to reset the deeplink, you can use the <a href='https://github.com/Lord-Kamina/SwiftDefaultApps' target='_blank'>SwiftDefaultApps tool</a> to change the target for the ledgerlive deeplink."
+            },
+            deeplinks: [
+                {
+                    section: "Portfolio",
+                    title: "Portfolio Page (default landing)",
+                    url: "ledgerwallet://",
+                    description: "Opens the portfolio page, which is the default landing page.",
+                    examples: [
+                        "ledgerwallet://",
+                        "ledgerwallet://portfolio",
+                        "ledgerlive://",
+                        "ledgerlive://portfolio"
+                    ]
+                },
+                {
+                    section: "Accounts",
+                    title: "Accounts Page",
+                    url: "ledgerwallet://accounts",
+                    description: "Opens the accounts page.",
+                    examples: [
+                        "ledgerwallet://accounts",
+                        "ledgerlive://accounts"
+                    ]
+                },
+                {
+                    section: "Account",
+                    title: "Account Page",
+                    url: "ledgerwallet://account",
+                    description: "Opens a specific account page based on currency and address parameters.",
+                    parameters: [
+                        { name: "currency", required: true, description: "The ticker or name of the currency" },
+                        { name: "address", required: false, description: "Specific account address" }
+                    ],
+                    examples: [
+                        "ledgerwallet://account?currency=btc",
+                        "ledgerwallet://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
+                        "ledgerwallet://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
+                        "ledgerlive://account?currency=btc",
+                        "ledgerlive://account?currency=ethereum&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB",
+                        "ledgerlive://account?currency=polygon&address=0x1fd2c4d9e5Fd4f9B4B..Ec9C40F88324fB"
+                    ]
+                },
+                {
+                    section: "Asset",
+                    title: "Asset Page",
+                    url: "ledgerlive://asset/:currencyId",
+                    description: "Opens the asset page for a specific currency. When the Wallet 4.0 aggregated assets flag is enabled, navigates to Asset Detail with the raw path (resolution happens on the page). Otherwise validates the currency id and opens the legacy asset screen; an unrecognized currencyId falls back to the portfolio.",
+                    parameters: [
+                        { name: "currencyId", required: true, description: "The currency ID (e.g., bitcoin, ethereum)" }
+                    ],
+                    examples: [
+                        "ledgerlive://asset/bitcoin",
+                        "ledgerlive://asset/ethereum"
+                    ]
+                },
+                {
+                    section: "Add Account",
+                    title: "Add Account Modal",
+                    url: "ledgerwallet://add-account",
+                    description: "Opens the Add Account Modal with optional currency pre-selection.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The ticker or name of the currency to pre-fill" }
+                    ],
+                    examples: [
+                        "ledgerwallet://add-account",
+                        "ledgerwallet://add-account?currency=bitcoin",
+                        "ledgerlive://add-account",
+                        "ledgerlive://add-account?currency=bitcoin"
+                    ]
+                },
+                {
+                    section: "Send",
+                    title: "Send Flow",
+                    url: "ledgerwallet://send",
+                    description: "Opens the send page (modal) with optional pre-filled parameters.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The ticker of the currency" },
+                        { name: "amount", required: false, description: "The amount to send" },
+                        { name: "recipient", required: false, description: "The address to send to" }
+                    ],
+                    examples: [
+                        "ledgerwallet://send",
+                        "ledgerwallet://send?currency=ethereum",
+                        "ledgerwallet://send?currency=ethereum&recipient=0xex...xxx&amount=3",
+                        "ledgerlive://send",
+                        "ledgerlive://send?currency=ethereum",
+                        "ledgerlive://send?currency=ethereum&recipient=0xex...xxx&amount=3"
+                    ]
+                },
+                {
+                    section: "Receive",
+                    title: "Receive Flow",
+                    url: "ledgerwallet://receive",
+                    description: "Opens the receive page (modal) with optional currency pre-selection.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The ticker or name of the currency" }
+                    ],
+                    examples: [
+                        "ledgerwallet://receive",
+                        "ledgerwallet://receive?currency=ethereum",
+                        "ledgerlive://receive",
+                        "ledgerlive://receive?currency=ethereum"
+                    ]
+                },
+                {
+                    section: "Delegate",
+                    title: "Delegate Flow",
+                    url: "ledgerwallet://delegate",
+                    description: "Opens the delegate flow for supported currencies (currently only Tezos).",
+                    parameters: [
+                        { name: "currency", required: true, description: "The ticker or name of the currency" }
+                    ],
+                    examples: [
+                        "ledgerwallet://delegate?currency=tezos",
+                        "ledgerlive://delegate?currency=tezos"
+                    ]
+                },
+                {
+                    section: "Buy Crypto",
+                    title: "Buy Crypto Flow",
+                    url: "ledgerwallet://buy",
+                    description: "Opens the buy crypto page. Query parameters depend on liveApp documentation.",
+                    examples: [
+                        "ledgerwallet://buy",
+                        "ledgerlive://buy"
+                    ]
+                },
+                {
+                    section: "Swap",
+                    title: "Swap Crypto Flow",
+                    url: "ledgerwallet://swap",
+                    description: "Opens the swap crypto page.",
+                    examples: [
+                        "ledgerwallet://swap",
+                        "ledgerlive://swap"
+                    ]
+                },
+                {
+                    section: "Perps",
+                    title: "Perpetuals Trading",
+                    url: "ledgerwallet://perps",
+                    description: "Opens the perpetuals trading page.",
+                    examples: [
+                        "ledgerwallet://perps",
+                        "ledgerlive://perps"
+                    ]
+                },
+                {
+                    section: "MyLedger",
+                    title: "Device Management Flow",
+                    url: "ledgerwallet://myledger",
+                    description: "Opens the MyLedger page for device management with optional app search.",
+                    parameters: [
+                        { name: "installApp", required: false, description: "Search query to pre-fill when MyLedger opens" }
+                    ],
+                    examples: [
+                        "ledgerwallet://myledger",
+                        "ledgerwallet://myledger?installApp=bitcoin",
+                        "ledgerlive://myledger",
+                        "ledgerlive://myledger?installApp=bitcoin"
+                    ]
+                },
+                {
+                    section: "Discover",
+                    title: "Live Discover Catalog",
+                    url: "ledgerwallet://discover/:liveAppId/",
+                    description: "Opens the discover catalog or specific live app with optional parameters.",
+                    parameters: [
+                        { name: "liveAppId", required: false, description: "The liveApp id", type: "url" },
+                        { name: "&{params}", required: false, description: "URL query params transmitted to the liveApp", type: "query" }
+                    ],
+                    examples: [
+                        "ledgerwallet://discover",
+                        "ledgerwallet://discover/paraswap",
+                        "ledgerwallet://discover/paraswap?accountId=1",
+                        "ledgerlive://discover",
+                        "ledgerlive://discover/paraswap",
+                        "ledgerlive://discover/paraswap?accountId=1"
+                    ]
+                },
+                {
+                    section: "Earn",
+                    title: "Earn Dashboard",
+                    url: "ledgerwallet://earn",
+                    description: "Opens the earn dashboard page with optional action parameters.",
+                    parameters: [
+                        { name: "action", required: false, description: "Specific action like \"stake\"" },
+                        { name: "accountId", required: false, description: "Account ID for pre-selection" }
+                    ],
+                    examples: [
+                        "ledgerwallet://earn",
+                        "ledgerwallet://earn?action=stake",
+                        "ledgerwallet://earn?action=stake-account&accountId=1",
+                        "ledgerwallet://earn",
+                        "ledgerlive://earn?action=stake",
+                        "ledgerlive://earn?action=stake-account&accountId=1"
+                    ]
+                },
+                {
+                    section: "Market",
+                    title: "Live Market Page",
+                    url: "ledgerwallet://market",
+                    description: "Opens the live market page.",
+                    examples: [
+                        "ledgerwallet://market",
+                        "ledgerlive://market"
+                    ]
+                },
+                {
+                    section: "Market",
+                    title: "Market Detail Page",
+                    url: "ledgerlive://market/:currencyId",
+                    description: "Opens the market detail page for a specific cryptocurrency. When the Wallet 4.0 aggregated assets flag is enabled, opens Asset Detail instead of Market Detail. An unrecognized currencyId falls back to the market list when the flag is off.",
+                    parameters: [
+                        { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
+                    ],
+                    examples: [
+                        "ledgerlive://market/bitcoin",
+                        "ledgerlive://market/ethereum",
+                        "ledgerlive://market/solana"
+                    ]
+                },
+                {
+                    section: "Settings",
+                    title: "Settings Pages",
+                    url: "ledgerwallet://settings/",
+                    description: "Opens various settings pages.",
+                    examples: [
+                        "ledgerwallet://settings/",
+                        "ledgerwallet://settings/general",
+                        "ledgerwallet://settings/accounts",
+                        "ledgerwallet://settings/about",
+                        "ledgerwallet://settings/help",
+                        "ledgerwallet://settings/developer",
+                        "ledgerwallet://settings/notifications",
+                        "ledgerwallet://settings/experimental",
+                        "ledgerlive://settings/",
+                        "ledgerlive://settings/general",
+                        "ledgerlive://settings/accounts",
+                        "ledgerlive://settings/about",
+                        "ledgerlive://settings/help",
+                        "ledgerlive://settings/developer",
+                        "ledgerlive://settings/notifications",
+                        "ledgerlive://settings/experimental"
+                    ]
+                },
+                {
+                    section: "Miscellaneous",
+                    title: "Other DeepLinks",
+                    url: "ledgerwallet://landing-page?useCase=LP_Generic",
+                    description: "Various other deeplinks for specific functionality.",
+                    examples: [
+                        "ledgerwallet://landing-page?useCase=LP_Generic",
+                        "ledgerwallet://hw-purchase-success",
+                        "ledgerwallet://custom-image",
+                        "ledgerwallet://scan-accounts",
+                        "ledgerlive://landing-page?useCase=LP_Generic",
+                        "ledgerlive://hw-purchase-success",
+                        "ledgerlive://custom-image",
+                        "ledgerlive://scan-accounts"
+                    ]
+                }
+            ]
+        };
 
-      // Initialize the page
-      document.addEventListener("DOMContentLoaded", function () {
-        generateContent(appConfig);
-        initializeEventListeners();
-      });
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            generateContent(appConfig);
+            initializeEventListeners();
+        });
 
-      // Function to generate the content
-      function generateContent(config) {
-        const content = document.getElementById("content");
-        let html = "";
+        // Function to generate the content
+        function generateContent(config) {
+            const content = document.getElementById('content');
+            let html = '';
 
-        // Add usage instructions
-        html += `
+            // Add usage instructions
+            html += `
                 <div class="warning">
                     <strong>💡 How to use this page:</strong>
                     <ul style="margin: 10px 0 0 20px; list-style-type: disc;">
@@ -658,27 +622,27 @@
                 </div>
             `;
 
-        // Add warning note
-        html += `
+            // Add warning note
+            html += `
                 <div class="warning">
                     <strong>⚠️ Important Note:</strong>
                     You should not use anchor tags inside your deeplinks. This is especially true for discover related deeplinks. Everything after an anchor tag is client side and will not be forwarded to the liveApp.
                 </div>
             `;
 
-        // Add platform-specific note
-        if (config.platformNote) {
-          html += `
+            // Add platform-specific note
+            if (config.platformNote) {
+                html += `
                     <div class="platform-note">
                         <strong>${config.platformNote.title}</strong>
                         ${config.platformNote.content}
                     </div>
                 `;
-        }
+            }
 
-        // Generate sections
-        config.deeplinks.forEach(deeplink => {
-          html += `
+            // Generate sections
+            config.deeplinks.forEach(deeplink => {
+                html += `
                     <div class="section">
                         <h2>${deeplink.section}</h2>
                         <div class="deeplink-item">
@@ -690,98 +654,98 @@
                             </div>
                 `;
 
-          if (deeplink.parameters) {
-            html += `
+                if (deeplink.parameters) {
+                    html += `
                         <div class="parameters">
                             <h4>Query Parameters:</h4>
                             <ul class="parameter-list">
                     `;
-            deeplink.parameters.forEach(param => {
-              const required = param.required ? "(required)" : "(optional)";
-              html += `<li><strong>${param.name}</strong> ${required}: ${param.description}</li>`;
-            });
-            html += `
+                    deeplink.parameters.forEach(param => {
+                        const required = param.required ? "(required)" : "(optional)";
+                        html += `<li><strong>${param.name}</strong> ${required}: ${param.description}</li>`;
+                    });
+                    html += `
                             </ul>
                         </div>
                     `;
-          }
+                }
 
-          if (deeplink.examples) {
-            html += `
+                if (deeplink.examples) {
+                    html += `
                         <div class="deeplink-examples">
                             <h4>Examples:</h4>
                             <ul class="example-list">
                     `;
-            deeplink.examples.forEach(example => {
-              html += `<li>${example}</li>`;
-            });
-            html += `
+                    deeplink.examples.forEach(example => {
+                        html += `<li>${example}</li>`;
+                    });
+                    html += `
                             </ul>
                         </div>
                     `;
-          }
+                }
 
-          html += `
+                html += `
                             <a href="${deeplink.url}" class="clickable-link" onclick="testDeeplink(this)">Test ${deeplink.section} Link</a>
                         </div>
                     </div>
                 `;
-        });
+            });
 
-        content.innerHTML = html;
-      }
+            content.innerHTML = html;
+        }
 
-      // Function to initialize event listeners
-      function initializeEventListeners() {
-        // Handle deeplink input changes
-        const inputs = document.querySelectorAll(".deeplink-input");
-        inputs.forEach(input => {
-          input.addEventListener("input", function () {
-            const link = this.parentElement.querySelector(".clickable-link");
-            if (link) {
-              link.href = this.value;
+        // Function to initialize event listeners
+        function initializeEventListeners() {
+            // Handle deeplink input changes
+            const inputs = document.querySelectorAll('.deeplink-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const link = this.parentElement.querySelector('.clickable-link');
+                    if (link) {
+                        link.href = this.value;
+                    }
+                });
+            });
+
+            // Handle example clicks
+            const examples = document.querySelectorAll('.example-list li');
+            examples.forEach(example => {
+                example.addEventListener('click', function() {
+                    setExample(this);
+                });
+            });
+        }
+
+        // Function to test deeplinks
+        function testDeeplink(linkElement) {
+            const input = linkElement.parentElement.querySelector('.deeplink-input');
+            if (input) {
+                linkElement.href = input.value;
             }
-          });
-        });
-
-        // Handle example clicks
-        const examples = document.querySelectorAll(".example-list li");
-        examples.forEach(example => {
-          example.addEventListener("click", function () {
-            setExample(this);
-          });
-        });
-      }
-
-      // Function to test deeplinks
-      function testDeeplink(linkElement) {
-        const input = linkElement.parentElement.querySelector(".deeplink-input");
-        if (input) {
-          linkElement.href = input.value;
+            console.log('Testing deeplink:', linkElement.href);
         }
-        console.log("Testing deeplink:", linkElement.href);
-      }
 
-      // Function to set example in input
-      function setExample(exampleElement) {
-        const deeplinkItem = exampleElement.closest(".deeplink-item");
-        const input = deeplinkItem.querySelector(".deeplink-input");
-        const link = deeplinkItem.querySelector(".clickable-link");
+        // Function to set example in input
+        function setExample(exampleElement) {
+            const deeplinkItem = exampleElement.closest('.deeplink-item');
+            const input = deeplinkItem.querySelector('.deeplink-input');
+            const link = deeplinkItem.querySelector('.clickable-link');
 
-        if (input && link) {
-          input.value = exampleElement.textContent;
-          link.href = exampleElement.textContent;
+            if (input && link) {
+                input.value = exampleElement.textContent;
+                link.href = exampleElement.textContent;
 
-          // Add visual feedback
-          input.style.borderColor = "#ff6b35";
-          input.style.boxShadow = "0 0 0 2px rgba(255, 107, 53, 0.3)";
+                // Add visual feedback
+                input.style.borderColor = '#ff6b35';
+                input.style.boxShadow = '0 0 0 2px rgba(255, 107, 53, 0.3)';
 
-          setTimeout(() => {
-            input.style.borderColor = "#444444";
-            input.style.boxShadow = "none";
-          }, 1000);
+                setTimeout(() => {
+                    input.style.borderColor = '#444444';
+                    input.style.boxShadow = 'none';
+                }, 1000);
+            }
         }
-      }
     </script>
-  </body>
+</body>
 </html>
