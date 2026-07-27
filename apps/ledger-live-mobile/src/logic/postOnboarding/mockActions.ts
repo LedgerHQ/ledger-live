@@ -45,25 +45,6 @@ export const buyCryptoMock: PostOnboardingAction = {
   },
 };
 
-export const customImageMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.customImageMock,
-  Icon: Icons.PictureImage,
-  title: "postOnboarding.drawer.actions.customImage.title",
-  titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
-  description: "postOnboarding.drawer.actions.customImage.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
-  getNavigationParams: () => [
-    NavigatorName.PostOnboarding,
-    {
-      screen: ScreenName.PostOnboardingMockActionScreen,
-      params: {
-        id: PostOnboardingActionId.customImageMock,
-        title: PostOnboardingActionId.customImageMock,
-      },
-    },
-  ],
-};
-
 export const syncAccountsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.syncAccountsMock,
   Icon: Icons.Refresh,

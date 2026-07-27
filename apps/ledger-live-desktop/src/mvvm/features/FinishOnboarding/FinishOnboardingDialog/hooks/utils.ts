@@ -1,7 +1,6 @@
 import {
   LedgerDevices,
   Lightbulb,
-  PictureImage,
   Plus,
   Refresh,
   ShieldLock,
@@ -23,8 +22,6 @@ export function getLumenSymbolForActionId(id: PostOnboardingActionId): FinishFlo
   switch (id) {
     case PostOnboardingActionId.assetsTransfer:
       return Plus as FinishFlowLumenSymbol;
-    case PostOnboardingActionId.customImage:
-      return PictureImage as FinishFlowLumenSymbol;
     case PostOnboardingActionId.discoverWallet:
       return Lightbulb as FinishFlowLumenSymbol;
     case PostOnboardingActionId.deviceOnboarded:
@@ -46,7 +43,6 @@ const ACTION_ID_TO_DIALOG_GROUP: Readonly<Partial<Record<PostOnboardingActionId,
   [PostOnboardingActionId.deviceOnboarded]: "deviceOnboarded",
   [PostOnboardingActionId.assetsTransfer]: "assetsTransfer",
   [PostOnboardingActionId.syncAccounts]: "syncAccounts",
-  [PostOnboardingActionId.customImage]: "customImage",
   [PostOnboardingActionId.discoverWallet]: "discoverWallet",
   [PostOnboardingActionId.recover]: "recover",
 };
@@ -55,11 +51,9 @@ const ACTION_ID_TO_DIALOG_GROUP: Readonly<Partial<Record<PostOnboardingActionId,
 const DIALOG_GROUPS_WITH_DESCRIPTION: ReadonlySet<string> = new Set([
   "assetsTransfer",
   "syncAccounts",
-  "customImage",
   "discoverWallet",
   "recover",
 ]);
-
 type ActionWithI18nKeys = PostOnboardingAction & PostOnboardingActionState;
 
 /**
