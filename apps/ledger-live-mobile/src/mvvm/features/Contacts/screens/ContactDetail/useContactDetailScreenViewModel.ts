@@ -10,7 +10,8 @@ import {
   useContactsFeature,
   useEmptyContactDetail,
 } from "@features/flow-contacts";
-import { ScreenName } from "~/const";
+import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
@@ -23,8 +24,12 @@ type ContactDetailScreenViewModel =
       pageProps: ContactDetailViewProps;
     }>;
 
+type NavigationProp = BaseNavigationComposite<
+  NativeStackNavigationProp<MyWalletNavigatorStackParamList>
+>;
+
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
-  const navigation = useNavigation<NativeStackNavigationProp<MyWalletNavigatorStackParamList>>();
+  const navigation = useNavigation<NavigationProp>();
   const route =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
   const { isEnabled } = useContactsFeature("mobile");
@@ -36,13 +41,24 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       startAddAddress(contact.id);
     }
   }, [contact, startAddAddress]);
+  const onOpenLedgerWalletAddresses = useCallback(() => {
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.CryptoAddresses,
+      params: {
+        sourceScreenName: ScreenName.MyWalletContactDetail,
+      },
+    });
+  }, [navigation]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
-      emptyMeTitle: t("contacts.detail.emptyState.title"),
+      addYourAddress: t("contacts.addYourAddress"),
+      emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
       emptyContactTitle: () => t("contacts.detail.emptyState.title"),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
+      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
+      myAddresses: t("contacts.detail.myAddresses"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
@@ -71,6 +87,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       labels,
       meAvatarSrc: USER_AVATAR_URL,
       onAddAddress,
+      onOpenLedgerWalletAddresses,
     },
   };
 }

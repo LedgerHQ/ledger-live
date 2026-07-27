@@ -10250,6 +10250,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
+    "addYourAddress": "Add your address",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
@@ -10268,9 +10269,12 @@
       "addressCount_other": "{{count}} addresses"
     },
     "detail": {
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
+      "myAddresses": "My addresses",
       "emptyState": {
         "title": "No address yet",
-        "meDescription": "Save a wallet address to receive crypto.",
+        "meTitle": "Save your own addresses",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save a wallet address to send to {{name}}"
       }
     },
