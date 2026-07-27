@@ -3,6 +3,7 @@ import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { useAddAddressFlowViewModel } from "@features/flow-contacts";
 import { ScreenName } from "~/const";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
 import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
@@ -10,8 +11,13 @@ import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
+jest.mock("@features/flow-contacts", () => ({
+  ...jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts"),
+  useAddAddressFlowViewModel: jest.fn(),
+}));
 
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
+const mockStartAddAddress = jest.fn();
 
 const Stack = createNativeStackNavigator();
 const noop = () => undefined;
@@ -97,6 +103,11 @@ function withContactsPageReadyState(
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(useAddAddressFlowViewModel).mockReturnValue({
+      state: { status: "closed" },
+      start: mockStartAddAddress,
+      close: jest.fn(),
+    });
     mockedViewModel.mockReturnValue({
       onBackPress: noop,
       onNotificationsPress: noop,
@@ -328,5 +339,44 @@ describe("Contacts integration", () => {
       expect(screen.getByText("Save a wallet address to send to Benoit")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
     });
+  });
+
+  it("should start Add Address for Me without leaving the detail", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-me-item"));
+
+    expect(mockStartAddAddress).not.toHaveBeenCalled();
+
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    expect(mockStartAddAddress).toHaveBeenCalledTimes(1);
+    expect(mockStartAddAddress).toHaveBeenCalledWith("contact-me");
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+  });
+
+  it("should start Add Address with the selected saved contact", async () => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({
+          ...state,
+          contacts: { contacts: [mockMeContact(), contact] },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-benoit"));
+    await user.press(screen.getByTestId("contacts-detail-add-address"));
+
+    expect(mockStartAddAddress).toHaveBeenCalledTimes(1);
+    expect(mockStartAddAddress).toHaveBeenCalledWith(contact.id);
   });
 });
