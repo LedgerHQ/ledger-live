@@ -19,6 +19,11 @@ import type { AccountLike } from "@ledgerhq/types-live";
 const SOFT_DEADLINE_MS = 5_000;
 const ACCOUNT_SYNC_INTERVAL_MS = 10_000;
 const STATUS_POLL_INTERVAL_MS = 60_000;
+// While the swap operation is not yet resolved from local history (e.g. right
+// after opening the status UI for a just-broadcast swap), the status section is
+// stuck on skeletons. Retry quickly so it fills in within seconds of the
+// operation being synced, instead of waiting a full STATUS_POLL_INTERVAL_MS.
+const UNRESOLVED_STATUS_POLL_INTERVAL_MS = 3_000;
 const STATUS_QUERY_KEY = "swap-transaction-status";
 
 export type SwapTransactionStatusControllerViewModel = {
@@ -91,8 +96,10 @@ export function useSwapTransactionStatusController({
     };
 
     const scheduleNextPoll = (response: GetTransactionStatusResponse | undefined) => {
-      if (!cancelled && shouldRetryTransactionStatus(response)) {
-        timeout = setTimeout(pollTransactionStatus, STATUS_POLL_INTERVAL_MS);
+      if (cancelled) return;
+      const delay = getNextStatusPollDelay(response);
+      if (delay !== null) {
+        timeout = setTimeout(pollTransactionStatus, delay);
       }
     };
 
@@ -158,6 +165,28 @@ function shouldRetryTransactionStatus(response: GetTransactionStatusResponse | u
     !response.status ||
     shouldPollSwapTransactionStatus(response.status)
   );
+}
+
+/**
+ * A swap is considered resolved once its operation has been found in local
+ * history, which is what surfaces the send/receive accounts and unblocks the
+ * status section from its skeleton state.
+ */
+function isSwapOperationResolved(response: GetTransactionStatusResponse | undefined): boolean {
+  return Boolean(response?.status && response.fromAccountId && response.toAccountId);
+}
+
+/**
+ * How long to wait before the next status poll, or `null` to stop polling.
+ * Unresolved swaps are retried on a short interval so the UI stops showing
+ * skeletons quickly; resolved (still pending) swaps fall back to the slower
+ * steady-state interval.
+ */
+function getNextStatusPollDelay(response: GetTransactionStatusResponse | undefined): number | null {
+  if (!shouldRetryTransactionStatus(response)) return null;
+  return isSwapOperationResolved(response)
+    ? STATUS_POLL_INTERVAL_MS
+    : UNRESOLVED_STATUS_POLL_INTERVAL_MS;
 }
 
 function useOnChainConfirmationSignal({

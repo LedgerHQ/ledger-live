@@ -21,6 +21,8 @@ jest.mock("../../../wallet-api/Exchange/transactionStatus/index", () => ({
 
 const mockedGetTransactionStatus = jest.mocked(getTransactionStatus);
 const STATUS_POLL_INTERVAL_MS = 60_000;
+const UNRESOLVED_STATUS_POLL_INTERVAL_MS = 3_000;
+const POLL_INTERVALS = new Set([STATUS_POLL_INTERVAL_MS, UNRESOLVED_STATUS_POLL_INTERVAL_MS]);
 let setTimeoutSpy: jest.SpiedFunction<typeof global.setTimeout> | undefined;
 
 function makeTransactionStatusResponse(
@@ -42,7 +44,7 @@ function captureStatusPollTimeout() {
     callback: () => unknown,
     delay?: number,
   ) => {
-    if (delay === STATUS_POLL_INTERVAL_MS) {
+    if (delay !== undefined && POLL_INTERVALS.has(delay)) {
       runStatusPoll = async () => {
         await callback();
       };
@@ -107,6 +109,46 @@ describe("useSwapTransactionStatusController", () => {
     });
 
     expect(mockedGetTransactionStatus).toHaveBeenCalledTimes(2);
+    unmount();
+  });
+
+  it("retries quickly while the swap operation is not yet resolved", async () => {
+    captureStatusPollTimeout();
+    // Pending status but no send/receive accounts: the operation has not been
+    // found in local history yet, so the status section is still on skeletons.
+    mockedGetTransactionStatus.mockResolvedValue(makeTransactionStatusResponse());
+
+    const { unmount } = renderController();
+
+    await flushAsyncEffects();
+
+    expect(setTimeoutSpy).toHaveBeenCalledWith(
+      expect.any(Function),
+      UNRESOLVED_STATUS_POLL_INTERVAL_MS,
+    );
+    expect(setTimeoutSpy).not.toHaveBeenCalledWith(expect.any(Function), STATUS_POLL_INTERVAL_MS);
+    unmount();
+  });
+
+  it("polls at the steady interval once the swap operation is resolved", async () => {
+    captureStatusPollTimeout();
+    mockedGetTransactionStatus.mockResolvedValue(
+      makeTransactionStatusResponse({
+        status: "pending",
+        fromAccountId: "from-account",
+        toAccountId: "to-account",
+      }),
+    );
+
+    const { unmount } = renderController();
+
+    await flushAsyncEffects();
+
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), STATUS_POLL_INTERVAL_MS);
+    expect(setTimeoutSpy).not.toHaveBeenCalledWith(
+      expect.any(Function),
+      UNRESOLVED_STATUS_POLL_INTERVAL_MS,
+    );
     unmount();
   });
 
