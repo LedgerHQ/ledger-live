@@ -9,6 +9,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - Feature-flag configuration (`useContactsFeature`, resolvers)
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Empty contact detail selection and presentation
+- Populated contact detail view model (address rows, count, and open-detail intents)
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
@@ -79,8 +80,8 @@ src/
 │   │   ├── internals/useSingleFireDismiss.ts
 │   │   └── index.ts / web.ts / native.ts
 │   └── Detail/                          # Contact detail empty state (web + native)
-│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / types.ts
-│       ├── model/                       # resolveContactDetailEmptyStateCopy
+│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / types.ts
+│       ├── model/                       # resolveContactDetailEmptyStateCopy / address ordering + populated detail view-model builders
 │       ├── components/                  # Header, EmptyState, Avatar (web + native)
 │       └── index.ts / web.ts / native.ts
 ├── components/                          # Cross-step shared UI
