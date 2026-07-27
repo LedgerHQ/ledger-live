@@ -3,11 +3,6 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { CryptoCurrency, FiatCurrency, TokenCurrency } from "@domain/entity-currency";
-import {
-  CryptoCurrencySchema,
-  FiatCurrencySchema,
-  TokenCurrencySchema,
-} from "@domain/entity-currency";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { counterValuesApi } from "../../../counterValues/state-manager/api";
@@ -17,20 +12,20 @@ export const ETH_FIAT_CONVERSION = 4589;
 export const BTC_FIAT_CONVERSION = 45000;
 
 export const ethereumCurrency = createFixtureCryptoCurrency("ethereum");
-ethereumCurrency.id = CryptoCurrencySchema.shape.id.parse("ethereum");
+ethereumCurrency.id = "ethereum";
 ethereumCurrency.name = "Ethereum";
 ethereumCurrency.ticker = "ETH";
 ethereumCurrency.units[0].magnitude = 18;
 
 export const bitcoinCurrency = createFixtureCryptoCurrency("bitcoin");
-bitcoinCurrency.id = CryptoCurrencySchema.shape.id.parse("bitcoin");
+bitcoinCurrency.id = "bitcoin";
 bitcoinCurrency.name = "Bitcoin";
 bitcoinCurrency.ticker = "BTC";
 bitcoinCurrency.units[0].magnitude = 8;
 
 export const mockFiatCurrency: FiatCurrency = {
   type: "FiatCurrency",
-  id: FiatCurrencySchema.shape.id.parse("usd"),
+  id: "usd",
   ticker: "USD",
   name: "US Dollar",
   symbol: "$",
@@ -57,7 +52,7 @@ export const makeUsdcToken = (
     type: "TokenCurrency" as const,
     parentCurrencyId: parentCurrency.id,
     tokenType,
-    id: TokenCurrencySchema.shape.id.parse(id),
+    id,
     contractAddress,
     ticker: "USDC",
     name,

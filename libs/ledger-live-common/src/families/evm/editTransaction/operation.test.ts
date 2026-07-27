@@ -5,7 +5,6 @@ import {
   genTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import Prando from "prando";
@@ -103,7 +102,7 @@ describe("EVM Family", () => {
 
           const tokenCurrencyWithoutGasTracker: TokenCurrency = {
             ...usdc,
-            parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+            parentCurrencyId: "ethereum",
           };
 
           const account = genAccount("myAccount", { currency: evmWithoutGasTracker });
