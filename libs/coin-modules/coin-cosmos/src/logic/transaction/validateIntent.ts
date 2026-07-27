@@ -99,13 +99,13 @@ function validateStakingIntent(
 
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
-  } else if (!intent.valAddress.includes(validatorPrefix)) {
+  } else if (!intent.valAddress.startsWith(validatorPrefix)) {
     errors.valAddress = new InvalidAddress();
   }
   if (intent.mode === "redelegate") {
     if (!intent.dstValAddress) {
       errors.dstValAddress = new RedelegateDstValAddressRequired();
-    } else if (!intent.dstValAddress.includes(validatorPrefix)) {
+    } else if (!intent.dstValAddress.startsWith(validatorPrefix)) {
       errors.dstValAddress = new InvalidAddress();
     }
   }

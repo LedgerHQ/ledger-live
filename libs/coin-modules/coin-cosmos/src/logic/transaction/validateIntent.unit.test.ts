@@ -167,6 +167,22 @@ describe("logic/transaction/validateIntent", () => {
     expect(res.errors.valAddress?.name).toBe("InvalidAddress");
   });
 
+  it("flags a validator address that merely contains the valoper prefix but doesn't start with it", async () => {
+    const intent = {
+      intentType: "staking",
+      type: "delegate",
+      mode: "delegate",
+      sender: "cosmos1sender",
+      recipient: "",
+      amount: 1_000_000n,
+      valAddress: "xcosmosvaloper1v",
+      asset: { type: "native" },
+    } as unknown as TransactionIntent;
+
+    const res = await validateIntent("cosmos", intent, balances, fees);
+    expect(res.errors.valAddress?.name).toBe("InvalidAddress");
+  });
+
   it("flags a redelegate whose destination validator lacks the valoper prefix", async () => {
     const intent = {
       intentType: "staking",
