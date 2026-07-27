@@ -1,12 +1,11 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 
 export const aleoCurrency = getCryptoCurrencyById("aleo");
 
 export const aleoTokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
-  id: TokenCurrencySchema.shape.id.parse("aleo_test_token"),
+  id: TokenCurrencyIdSchema.parse("aleo_test_token"),
   contractAddress: "token.aleo",
   parentCurrencyId: aleoCurrency.id,
   tokenType: "arc22",

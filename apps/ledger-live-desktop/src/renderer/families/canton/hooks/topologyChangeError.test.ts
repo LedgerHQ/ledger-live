@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { CryptoCurrency, CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import CantonReonboardDrawer from "../AddAccountDrawer/CantonReonboardDrawer";
@@ -30,7 +30,7 @@ const mockDispatch = jest.fn();
 
 const createNonCantonCurrency = (): CryptoCurrency => ({
   ...createMockCantonCurrency(),
-  id: CryptoCurrencySchema.shape.id.parse("bitcoin"),
+  id: CryptoCurrencyIdSchema.parse("bitcoin"),
   name: "Bitcoin",
   family: "bitcoin",
   ticker: "BTC",

@@ -7,8 +7,8 @@ import {
   PRIVATE_BALANCE_PLACEHOLDER,
 } from "@ledgerhq/live-common/families/aleo/constants";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { ALEO_ACCOUNT_1, ALEO_TOKEN_ACCOUNT } from "../__mocks__/account.mock";
 import { mockAleoCoinConfig } from "../__mocks__/config.mock";
 import { aleoCurrency } from "../__mocks__/currency.mock";
@@ -48,7 +48,7 @@ describe("getAleoCurrencyConfig", () => {
     // @ts-expect-error - not all fields are needed for this test
     const tokenCurrency: TokenCurrency = {
       type: "TokenCurrency",
-      parentCurrencyId: CryptoCurrencySchema.shape.id.parse("aleo"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("aleo"),
     };
 
     const result = getAleoCurrencyConfig(tokenCurrency);

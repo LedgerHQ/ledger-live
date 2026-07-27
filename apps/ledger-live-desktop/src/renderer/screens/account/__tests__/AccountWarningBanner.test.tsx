@@ -4,7 +4,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import { AccountWarningBanner, AccountWarningCustomBanner } from "../AccountWarningBanner";
-import { CryptoCurrency, CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 jest.mock("@ledgerhq/live-common/config/index", () => ({
@@ -23,7 +23,7 @@ const mockedGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
 
 describe("AccountWarningBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: CryptoCurrencySchema.shape.id.parse("fantom"),
+    id: CryptoCurrencyIdSchema.parse("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",
@@ -98,7 +98,7 @@ describe("AccountWarningBanner", () => {
 
 describe("AccountWarningCustomBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: CryptoCurrencySchema.shape.id.parse("fantom"),
+    id: CryptoCurrencyIdSchema.parse("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",

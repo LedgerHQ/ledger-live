@@ -5,8 +5,8 @@ import { renderHook, act } from "tests/testSetup";
 import { ipcRenderer } from "electron";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema, CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useExportOperationsCsv } from "./useExportOperationsCsv";
 import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";
@@ -38,12 +38,12 @@ jest.mock("~/renderer/logger", () => ({
 const mockedIpcInvoke = jest.mocked(ipcRenderer.invoke);
 
 const mockToken: TokenCurrency = {
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdt"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: CryptoCurrencySchema.shape.id.parse("ethereum"),
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
 };
