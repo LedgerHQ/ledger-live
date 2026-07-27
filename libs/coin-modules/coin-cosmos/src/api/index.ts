@@ -41,9 +41,14 @@ type CosmosCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported>;
  * the chain; endpoint and chain parameters resolve per currency via {@link CosmosAPI},
  * so a single factory serves every Cosmos-family currency.
  */
+const configs: Record<string, CosmosCoinConfig> = {};
+
 export function createApi(config: CosmosCoinConfig, currencyId: string): CosmosCoinModuleApi {
-  // CosmosCoinConfig's index signature means an inline literal needs an explicit assertion.
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }) as CosmosCoinConfig);
+  configs[currencyId] = config;
+  coinConfig.setCoinConfig(
+    (id?: string) =>
+      ({ ...((id && configs[id]) || config), status: { type: "active" } }) as CosmosCoinConfig,
+  );
 
   const api = new CosmosAPI(currencyId);
 
@@ -52,7 +57,7 @@ export function createApi(config: CosmosCoinConfig, currencyId: string): CosmosC
       throw new Error("call is not supported");
     },
     getBalance: (address: string, options?: BalanceOptions) =>
-      rejectBalanceOptions(() => getBalance(api, address, currencyId), options),
+      rejectBalanceOptions(() => getBalance(api, address), options),
     getNextSequence: (address: string) => getNextSequence(api, address),
     lastBlock: () => lastBlock(api),
     validateAddress: (address: string, parameters: Partial<AddressValidationCurrencyParameters>) =>
@@ -66,19 +71,19 @@ export function createApi(config: CosmosCoinConfig, currencyId: string): CosmosC
     estimateFees: (
       intent: TransactionIntent<StringMemo | MemoNotSupported>,
       customFeesParameters?: FeeEstimation["parameters"],
-    ) => estimateFees(currencyId, intent, customFeesParameters),
+    ) => estimateFees(api, intent, customFeesParameters),
     combine: (tx: string, signature: string, pubkey?: string) => combine(tx, signature, pubkey),
     broadcast: (tx: string, _broadcastConfig?: BroadcastConfig) => broadcast(api, tx),
 
     listOperations: (address: string, options: ListOperationsOptions) =>
-      listOperations(api, address, currencyId, options),
+      listOperations(api, address, options),
     validateIntent: (
       intent: TransactionIntent<StringMemo | MemoNotSupported>,
       balances: Balance[],
       customFees?: FeeEstimation,
     ) => validateIntent(currencyId, intent, balances, customFees),
 
-    getStakes: (address: string, cursor?: Cursor) => getStakes(api, address, currencyId, cursor),
+    getStakes: (address: string, cursor?: Cursor) => getStakes(api, address, cursor),
     getValidators: (cursor?: Cursor) => getValidators(api, cursor),
 
     // --- not supported by the Cosmos coin module ---

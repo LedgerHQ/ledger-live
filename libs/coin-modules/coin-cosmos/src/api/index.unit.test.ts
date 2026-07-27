@@ -1,8 +1,9 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { CosmosCoinConfig } from "../config";
+import coinConfig, { CosmosCoinConfig } from "../config";
 
 jest.mock("../network/Cosmos", () => ({
   CosmosAPI: jest.fn().mockImplementation(() => ({
+    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getAllBalances: jest.fn().mockResolvedValue({ toFixed: () => "0" }),
     getAccount: jest
       .fn()
@@ -79,5 +80,20 @@ describe("api/createApi", () => {
     await expect(api.validateIntent(sendIntent, [])).resolves.toHaveProperty("errors");
     await expect(api.validateAddress("cosmos1sender", {})).resolves.toBe(false);
     expect(() => api.combine("{}", "00")).toThrow("public key");
+  });
+
+  it("registers each currency's config independently (keyed, not last-writer-wins)", () => {
+    createApi(
+      { lcd: "https://cosmos-a", status: { type: "active" } } as unknown as CosmosCoinConfig,
+      "cosmos",
+    );
+    createApi(
+      { lcd: "https://osmosis-b", status: { type: "active" } } as unknown as CosmosCoinConfig,
+      "osmosis",
+    );
+
+    // A single unkeyed closure would return the last config ("https://osmosis-b") for both.
+    expect(coinConfig.getCoinConfig("cosmos").lcd).toBe("https://cosmos-a");
+    expect(coinConfig.getCoinConfig("osmosis").lcd).toBe("https://osmosis-b");
   });
 });

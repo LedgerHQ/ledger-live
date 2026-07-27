@@ -52,7 +52,7 @@ describe("getStakes via MSW", () => {
       ),
     );
 
-    const page = await getStakes(api, ADDR, "cosmos");
+    const page = await getStakes(api, ADDR);
 
     expect(page.items).toHaveLength(2);
 
@@ -87,7 +87,7 @@ describe("getStakes via MSW", () => {
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 
-    const page = await getStakes(api, ADDR, "cosmos");
+    const page = await getStakes(api, ADDR);
 
     expect(page.items).toEqual([]);
   });
@@ -103,6 +103,6 @@ describe("getStakes via MSW", () => {
       http.get(UNBONDINGS, () => HttpResponse.json({ unbonding_responses: [] })),
     );
 
-    await expect(getStakes(api, ADDR, "cosmos")).rejects.toThrow();
+    await expect(getStakes(api, ADDR)).rejects.toThrow();
   });
 });

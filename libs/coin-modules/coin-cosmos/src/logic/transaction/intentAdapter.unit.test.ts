@@ -23,7 +23,7 @@ const stakingIntent = (o: Record<string, unknown>) =>
 describe("logic/transaction/intentAdapter", () => {
   describe("intentToMessageParams (native send)", () => {
     it("carries sender, resolved denom, and the send fields", () => {
-      const params = intentToMessageParams(baseSend, "cosmos");
+      const params = intentToMessageParams(baseSend, "cosmos", "uatom");
       expect(params.senderAddress).toBe("cosmos1sender");
       expect(params.currencyId).toBe("cosmos");
       expect(params.denom).toBe("uatom");
@@ -40,12 +40,12 @@ describe("logic/transaction/intentAdapter", () => {
         ...baseSend,
         memo: { type: "string", value: "hi" },
       } as unknown as TransactionIntent;
-      expect(intentToMessageParams(withMemo, "cosmos").memo).toBe("hi");
+      expect(intentToMessageParams(withMemo, "cosmos", "uatom").memo).toBe("hi");
     });
 
     it("ignores a non-string memo", () => {
       const withMemo = { ...baseSend, memo: { type: "none" } } as unknown as TransactionIntent;
-      expect(intentToMessageParams(withMemo, "cosmos").memo).toBe("");
+      expect(intentToMessageParams(withMemo, "cosmos", "uatom").memo).toBe("");
     });
   });
 
@@ -59,6 +59,7 @@ describe("logic/transaction/intentAdapter", () => {
       const params = intentToMessageParams(
         stakingIntent({ mode, valAddress: "cosmosvaloper1v" }),
         "cosmos",
+        "uatom",
       );
       expect(params.mode).toBe(expected);
       expect(params.sourceValidator).toBeUndefined();
@@ -75,6 +76,7 @@ describe("logic/transaction/intentAdapter", () => {
           dstValAddress: "cosmosvaloper1dst",
         }),
         "cosmos",
+        "uatom",
       );
       expect(params.mode).toBe("redelegate");
       expect(params.sourceValidator).toBe("cosmosvaloper1src");
@@ -86,6 +88,7 @@ describe("logic/transaction/intentAdapter", () => {
         intentToMessageParams(
           stakingIntent({ mode: "withdraw", valAddress: "cosmosvaloper1v" }),
           "cosmos",
+          "uatom",
         ),
       ).toThrow("unsupported staking mode");
     });

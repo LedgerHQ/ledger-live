@@ -3,7 +3,6 @@ import {
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import BigNumber from "bignumber.js";
 import { CosmosTransactionParams } from "../../buildTransaction";
 import { CosmosOperationMode } from "../../types";
@@ -32,12 +31,13 @@ const STAKING_MODE: Record<StakingOperation, CosmosOperationMode | undefined> = 
 export function intentToMessageParams(
   intent: TransactionIntent,
   currencyId: string,
+  denom: string,
 ): CosmosTransactionParams {
   const amount = new BigNumber(intent.amount.toString());
   const base = {
     currencyId,
     senderAddress: intent.sender,
-    denom: getCryptoCurrencyById(currencyId).units[1].code,
+    denom,
     memo: extractMemo(intent),
     amount,
   };

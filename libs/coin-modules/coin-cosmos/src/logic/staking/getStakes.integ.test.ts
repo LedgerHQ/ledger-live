@@ -11,7 +11,7 @@ describe("getStakes (integ, Babylon)", () => {
   it("returns stakes with a well-formed delegate address and a positive amount", async () => {
     const api = makeTestApi("babylon", TEST_BABYLON_ENDPOINT);
 
-    const page = await getStakes(api, ADDR, "babylon");
+    const page = await getStakes(api, ADDR);
 
     expect(page.items.length).toBeGreaterThan(0);
     for (const stake of page.items) {

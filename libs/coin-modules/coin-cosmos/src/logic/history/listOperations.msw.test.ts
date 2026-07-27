@@ -51,7 +51,7 @@ describe("listOperations via MSW", () => {
       http.get(TXS, () => HttpResponse.json({ tx_responses: [sendTx()], total: 1 })),
     );
 
-    const page = await listOperations(api, ADDR, "cosmos", { minHeight: 0 });
+    const page = await listOperations(api, ADDR, { minHeight: 0 });
 
     expect(page.items).toHaveLength(1);
     const op = page.items[0];
@@ -75,7 +75,7 @@ describe("listOperations via MSW", () => {
       http.get(TXS, () => HttpResponse.json({ tx_responses: [], total: 0 })),
     );
 
-    const page = await listOperations(api, ADDR, "cosmos", { minHeight: 0 });
+    const page = await listOperations(api, ADDR, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
@@ -92,7 +92,7 @@ describe("listOperations via MSW", () => {
       http.get(TXS, () => new HttpResponse(null, { status: 500 })),
     );
 
-    await expect(listOperations(api, ADDR, "cosmos", { minHeight: 0 })).resolves.toEqual({
+    await expect(listOperations(api, ADDR, { minHeight: 0 })).resolves.toEqual({
       items: [],
       next: undefined,
     });

@@ -7,6 +7,7 @@ import {
 import { txToMessages } from "../../buildTransaction";
 import cryptoFactory from "../../chain/chain";
 import { CosmosAPI } from "../../network/Cosmos";
+import { validateAddress } from "../validateAddress";
 import { estimateFees } from "./estimateFees";
 import { intentToMessageParams } from "./intentAdapter";
 
@@ -38,13 +39,16 @@ export async function craftTransaction(
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const params = intentToMessageParams(intent, currencyId);
+  if (!(await validateAddress(intent.sender, { currencyId }))) {
+    throw new Error(`cosmos: invalid sender address: ${intent.sender}`);
+  }
+  const params = intentToMessageParams(intent, currencyId, api.getCurrency().units[1].code);
   const chainInstance = cryptoFactory(currencyId);
 
   const { aminoMsgs, protoMsgs } = txToMessages(params, chainInstance);
   const { accountNumber, sequence, pubKeyType } = await api.getAccount(intent.sender);
 
-  const fees = customFees ?? (await estimateFees(currencyId, intent));
+  const fees = customFees ?? (await estimateFees(api, intent));
   const gasLimitValue = fees.parameters?.gasLimit;
   // customFees.parameters is optional; an empty gas crafts a chain-rejected tx, so fail loudly.
   if (gasLimitValue === undefined || gasLimitValue === null || String(gasLimitValue) === "") {

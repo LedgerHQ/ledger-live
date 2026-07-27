@@ -4,6 +4,7 @@ import { getStakes } from "./getStakes";
 
 function mkStakes(delegations: unknown[], unbondings: unknown[]): CosmosAPI {
   return {
+    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getDelegations: jest.fn().mockResolvedValue(delegations),
     getUnbondings: jest.fn().mockResolvedValue(unbondings),
   } as unknown as CosmosAPI;
@@ -23,7 +24,7 @@ describe("logic/staking/getStakes", () => {
       [],
     );
 
-    const page = await getStakes(api, "cosmos1a", "cosmos");
+    const page = await getStakes(api, "cosmos1a");
 
     expect(page.items).toHaveLength(1);
     const s = page.items[0];
@@ -49,7 +50,7 @@ describe("logic/staking/getStakes", () => {
       ],
     );
 
-    const page = await getStakes(api, "cosmos1a", "cosmos");
+    const page = await getStakes(api, "cosmos1a");
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0].state).toBe("deactivating");
@@ -69,13 +70,13 @@ describe("logic/staking/getStakes", () => {
       ],
     );
 
-    const page = await getStakes(api, "cosmos1a", "cosmos");
+    const page = await getStakes(api, "cosmos1a");
 
     expect(page.items[0].state).toBe("withdrawable");
   });
 
   it("returns empty items for a non-delegated account", async () => {
-    const page = await getStakes(mkStakes([], []), "cosmos1a", "cosmos");
+    const page = await getStakes(mkStakes([], []), "cosmos1a");
     expect(page.items).toEqual([]);
   });
 });

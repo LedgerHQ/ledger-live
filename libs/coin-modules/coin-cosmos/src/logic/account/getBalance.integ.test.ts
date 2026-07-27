@@ -7,7 +7,7 @@ describe("getBalance (integ, Cosmos Hub)", () => {
   it("returns a native balance with the expected shape for a known funded address", async () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
 
-    const balances = await getBalance(api, ADDR, "cosmos");
+    const balances = await getBalance(api, ADDR);
 
     const native = balances.find(b => b.asset.type === "native");
     expect(native).not.toBeUndefined();

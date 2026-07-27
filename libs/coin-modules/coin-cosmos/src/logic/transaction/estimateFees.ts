@@ -1,4 +1,5 @@
 import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { CosmosAPI } from "../../network/Cosmos";
 import { getEstimatedFees } from "../../prepareTransaction";
 import { intentToMessageParams } from "./intentAdapter";
 
@@ -7,11 +8,12 @@ import { intentToMessageParams } from "./intentAdapter";
  * `parameters.gasLimit` so `craftTransaction` reuses it without re-simulating.
  */
 export async function estimateFees(
-  currencyId: string,
+  api: CosmosAPI,
   intent: TransactionIntent,
   _customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
-  const params = intentToMessageParams(intent, currencyId);
+  const currency = api.getCurrency();
+  const params = intentToMessageParams(intent, currency.id, currency.units[1].code);
 
   const { gasWanted, gasWantedFees } = await getEstimatedFees(params);
 

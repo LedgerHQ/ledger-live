@@ -1,5 +1,4 @@
 import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";
 import { CosmosParsedOperation, parseCosmosOperations } from "./txToOps";
@@ -40,7 +39,6 @@ function toOperation(op: CosmosParsedOperation): Operation {
 export async function listOperations(
   api: CosmosAPI,
   address: string,
-  currencyId: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
   // Backend pages newest-first with a forward-only cursor, so asc can't be honored across pages.
@@ -48,7 +46,7 @@ export async function listOperations(
     throw new Error("ascending order is not supported");
   }
 
-  const unitCode = getCryptoCurrencyById(currencyId).units[1].code;
+  const unitCode = api.getCurrency().units[1].code;
 
   const offset = options.cursor ? Math.max(0, Number.parseInt(options.cursor, 10) || 0) : 0;
   const limit = options.limit ?? PAGE_SIZE;

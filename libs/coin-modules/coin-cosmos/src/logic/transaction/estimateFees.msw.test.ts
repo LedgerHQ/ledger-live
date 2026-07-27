@@ -32,15 +32,15 @@ afterAll(() => server.close());
 
 describe("estimateFees via MSW", () => {
   it("maps the simulated gas to value + parameters.gasLimit", async () => {
-    // estimateFees takes no `api` arg — it builds its own CosmosAPI internally from the runtime
-    // coinConfig, so makeTestApi's `setCoinConfig` call is what points that instance at the test host.
-    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    // estimateFees reads the denom off the passed api (offline getCurrency); the network simulate
+    // still resolves its host from the runtime coinConfig, which makeTestApi's setCoinConfig sets.
+    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),
       http.post(SIMULATE, () => HttpResponse.json({ gas_info: { gas_used: "80000" } })),
     );
 
-    const fees = await estimateFees("cosmos", sendIntent);
+    const fees = await estimateFees(api, sendIntent);
 
     // gasWanted = ceil(gasUsed(80000) * COSMOS_GAS_AMPLIFIER(1.3)) = 104000
     // value = ceil(gasWanted(104000) * minGasPrice(0.025)) = 2600
@@ -52,13 +52,13 @@ describe("estimateFees via MSW", () => {
   // chainInstance.defaultGas (100000), so a simulate failure never rejects — estimateFees returns the
   // default-gas estimate instead.
   it("does not throw when simulate fails — falls back to the chain default gas", async () => {
-    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(ACCOUNTS, () => HttpResponse.json(ACCOUNT_RESPONSE)),
       http.post(SIMULATE, () => new HttpResponse(null, { status: 500 })),
     );
 
-    const fees = await estimateFees("cosmos", sendIntent);
+    const fees = await estimateFees(api, sendIntent);
 
     // gasWanted = ceil(defaultGas(100000) * 1.3) = 130000; value = ceil(130000 * 0.025) = 3250
     expect(fees.parameters?.gasLimit).toBe("130000");
@@ -68,13 +68,13 @@ describe("estimateFees via MSW", () => {
   // CosmosAPI.getAccount wraps its request in its own try/catch and returns default account data on
   // any failure, so an account-lookup failure degrades the same way — never rejecting estimateFees.
   it("does not throw when the account lookup fails — falls back to default account data", async () => {
-    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(
       http.get(ACCOUNTS, () => new HttpResponse(null, { status: 500 })),
       http.post(SIMULATE, () => HttpResponse.json({ gas_info: { gas_used: "80000" } })),
     );
 
-    const fees = await estimateFees("cosmos", sendIntent);
+    const fees = await estimateFees(api, sendIntent);
 
     expect(fees.parameters?.gasLimit).toBe("104000");
     expect(fees.value).toBe(2600n);

@@ -23,7 +23,7 @@ describe("getBalance via MSW", () => {
       ),
     );
 
-    const [native] = await getBalance(api, ADDR, "cosmos");
+    const [native] = await getBalance(api, ADDR);
 
     expect(native.asset).toMatchObject({ type: "native" });
     expect(native.value).toBe(5_000_000n);
@@ -33,7 +33,7 @@ describe("getBalance via MSW", () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(http.get(BAL, () => HttpResponse.json({ balances: [] })));
 
-    const [native] = await getBalance(api, ADDR, "cosmos");
+    const [native] = await getBalance(api, ADDR);
 
     expect(native.value).toBe(0n);
   });
@@ -42,6 +42,6 @@ describe("getBalance via MSW", () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
     server.use(http.get(BAL, () => new HttpResponse(null, { status: 500 })));
 
-    await expect(getBalance(api, ADDR, "cosmos")).rejects.toThrow();
+    await expect(getBalance(api, ADDR)).rejects.toThrow();
   });
 });

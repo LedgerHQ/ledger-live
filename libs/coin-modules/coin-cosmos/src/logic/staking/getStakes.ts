@@ -1,5 +1,4 @@
 import { Cursor, Page, Stake, StakeAction } from "@ledgerhq/coin-module-framework/api/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CosmosAPI } from "../../network/Cosmos";
 
 /**
@@ -11,10 +10,9 @@ import { CosmosAPI } from "../../network/Cosmos";
 export async function getStakes(
   api: CosmosAPI,
   address: string,
-  currencyId: string,
   _cursor?: Cursor,
 ): Promise<Page<Stake>> {
-  const currency = getCryptoCurrencyById(currencyId);
+  const currency = api.getCurrency();
   const [delegations, unbondings] = await Promise.all([
     api.getDelegations(address, currency),
     api.getUnbondings(address),

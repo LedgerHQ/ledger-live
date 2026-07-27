@@ -1,4 +1,5 @@
 import { SequenceNumberError } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
@@ -56,6 +57,8 @@ export class CosmosAPI {
   protected readonly defaultEndpoint: string;
   private readonly version: string;
   private readonly chainInstance: cosmosBase;
+  private readonly currencyId: string;
+  private _currency?: CryptoCurrency;
   private _cosmosSDKVersion: Promise<string> | null = null;
   private get cosmosSDKVersion(): Promise<string> {
     if (!this._cosmosSDKVersion) {
@@ -69,10 +72,18 @@ export class CosmosAPI {
     options?: { endpoint: EnvValue<EnvName> | undefined; version: string },
   ) {
     const crypto = cryptoFactory(currencyId);
+    this.currencyId = currencyId;
     this.chainInstance = crypto;
     this.defaultEndpoint = options?.endpoint?.toString() ?? crypto.lcd;
     this.version = options?.version ?? crypto.version;
   }
+
+  /**
+   * Resolve the `CryptoCurrency` once, behind the API boundary, so the logic layer stays free of the
+   * `@ledgerhq/ledger-wallet-framework` currency registry (which the coin-module import allowlist forbids
+   * under src/logic, src/api and src/network). Memoized — the registry lookup runs at most once per API.
+   */
+  getCurrency = (): CryptoCurrency => (this._currency ??= getCryptoCurrencyById(this.currencyId));
 
   getAccountInfo = async (
     address: string,

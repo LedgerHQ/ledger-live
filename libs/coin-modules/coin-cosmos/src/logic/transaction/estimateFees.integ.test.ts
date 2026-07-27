@@ -15,9 +15,9 @@ const sendIntent = {
 
 describe("estimateFees (integ, Cosmos Hub)", () => {
   it("simulates a send and returns a positive fee estimate (simulation only — never signs or broadcasts)", async () => {
-    makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
+    const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
 
-    const fees = await estimateFees("cosmos", sendIntent);
+    const fees = await estimateFees(api, sendIntent);
 
     expect(typeof fees.value).toBe("bigint");
     expect(fees.value > 0n).toBe(true);

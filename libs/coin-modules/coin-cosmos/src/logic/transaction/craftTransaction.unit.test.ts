@@ -5,7 +5,7 @@ import { craftTransaction, CosmosCraftedTransaction } from "./craftTransaction";
 const sendIntent = {
   intentType: "transaction",
   type: "send",
-  sender: "cosmos1sender",
+  sender: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
   recipient: "cosmos1recipient",
   amount: 1000000n,
   asset: { type: "native" },
@@ -13,6 +13,7 @@ const sendIntent = {
 
 const makeApi = () =>
   ({
+    getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
     getAccount: jest.fn().mockResolvedValue({
       accountNumber: 7,
       sequence: 3,
@@ -51,7 +52,7 @@ describe("logic/transaction/craftTransaction", () => {
       intentType: "staking",
       type: "delegate",
       mode: "delegate",
-      sender: "cosmos1sender",
+      sender: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
       recipient: "",
       amount: 1_000_000n,
       valAddress: "cosmosvaloper1validator",
@@ -82,7 +83,7 @@ describe("logic/transaction/craftTransaction", () => {
     const withdrawIntent = {
       intentType: "staking",
       mode: "withdraw",
-      sender: "cosmos1sender",
+      sender: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq",
       recipient: "",
       amount: 0n,
       valAddress: "cosmosvaloper1validator",
@@ -92,5 +93,18 @@ describe("logic/transaction/craftTransaction", () => {
     await expect(craftTransaction(api, "cosmos", withdrawIntent)).rejects.toThrow(
       "unsupported staking mode",
     );
+  });
+
+  it("throws on an invalid sender address before hitting the network", async () => {
+    const api = makeApi();
+    const badSender = { ...sendIntent, sender: "cosmos1invalid" } as unknown as TransactionIntent;
+
+    await expect(
+      craftTransaction(api, "cosmos", badSender, {
+        value: 500n,
+        parameters: { gasLimit: "200000" },
+      }),
+    ).rejects.toThrow("invalid sender address");
+    expect(api.getAccount).not.toHaveBeenCalled();
   });
 });

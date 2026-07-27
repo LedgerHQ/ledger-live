@@ -7,7 +7,7 @@ describe("listOperations (integ, Cosmos Hub)", () => {
   it("returns at most the requested limit, with each op having a hash and a type", async () => {
     const api = makeTestApi("cosmos", TEST_COSMOS_ENDPOINT);
 
-    const page = await listOperations(api, ADDR, "cosmos", { minHeight: 0, limit: 5 });
+    const page = await listOperations(api, ADDR, { minHeight: 0, limit: 5 });
 
     expect(page.items.length).toBeLessThanOrEqual(5);
     for (const op of page.items) {
