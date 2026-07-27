@@ -14,12 +14,12 @@ on:
         type: string
       build-android-native:
         description: Whether to build the iOS native app
-        required: true
+        required: false
         type: boolean
         default: true
       build-android-js:
         description: Whether to build the iOS JS bundle
-        required: true
+        required: false
         type: boolean
         default: true
       android-native-cache-key:
@@ -42,6 +42,19 @@ on:
         description: The JS bundle size of the built app
         value: ${{ jobs.build-android-js.outputs.js-bundle-size }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -78,7 +91,6 @@ on:
         default: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -91,6 +103,9 @@ env:
 jobs:
   build-android-native:
     name: "Android Build Native"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ledger-live-linux-8CPU-32RAM]
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
@@ -167,6 +182,9 @@ jobs:
 
   build-android-js:
     name: "Android Build JS"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 20
     if: ${{ inputs.build-android-js == true }}

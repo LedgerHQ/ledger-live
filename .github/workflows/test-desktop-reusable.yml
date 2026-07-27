@@ -3,6 +3,31 @@ name: "[Desktop] - E2E & Mock Tests - Called"
 on:
   workflow_call:
 
+    secrets:
+      ALLURE_LEDGER_LIVE_PASSWORD:
+        required: false
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      GH_BOT_CLIENT_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
+      MITMPROXY_LOGS_KEY:
+        required: false
+      NX_KEY:
+        required: false
+      SEED_QAA_B2C:
+        required: false
+      SLACK_LIVE_CI_BOT_TOKEN:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -26,7 +51,6 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -36,6 +60,9 @@ env:
 jobs:
   speculos-e2e-tests-linux:
     name: "UI e2e smoke tests NanoSP"
+    permissions:
+      id-token: write
+      contents: read
     outputs:
       allure_url: ${{ steps.publish-allure.outputs.report-url }}
     timeout-minutes: 60
@@ -143,6 +170,9 @@ jobs:
 
   e2e-tests-linux:
     name: "Ubuntu Mock"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 20
     outputs:
       status: ${{ steps.tests.outcome }}

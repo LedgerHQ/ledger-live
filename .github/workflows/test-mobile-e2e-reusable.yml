@@ -113,7 +113,7 @@ on:
         type: string
       tests_type:
         description: "Which tests to run"
-        required: true
+        required: false
         type: string
         default: "iOS & Android"
       speculos_device:
@@ -159,9 +159,48 @@ on:
       SPECULINHO_URL:
         description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
         required: false
+      ALLURE_LEDGER_LIVE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PATH:
+        required: false
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      GH_BOT_CLIENT_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
+      NX_KEY:
+        required: false
+      QAA_ALLURE_API_KEY:
+        required: false
+      R2_ACCESS_KEY_ID:
+        required: false
+      R2_ENDPOINT:
+        required: false
+      R2_SECRET_ACCESS_KEY:
+        required: false
+      S3_DIRECTCONNECT_ENDPOINT:
+        required: false
+      SEED_QAA_B2C:
+        required: false
+      SLACK_BOT_USER_OAUTH_ACCESS_TOKEN:
+        required: false
+      XRAY_CLIENT_ID:
+        required: false
+      XRAY_CLIENT_SECRET:
+        required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -203,6 +242,9 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds & Generate Shards"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ubuntu-24.04
     outputs:
       ios_device: ${{ steps.devices.outputs.ios_device }}
@@ -480,6 +522,9 @@ jobs:
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: "general-pool"
@@ -496,6 +541,9 @@ jobs:
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: false
@@ -532,6 +580,9 @@ jobs:
 
   detox-tests-ios:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-ios, determine-builds]
     if: ${{ always() && !cancelled() && needs.build-ios.result == 'success' && needs.determine-builds.result == 'success' && inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
@@ -724,6 +775,9 @@ jobs:
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-android, determine-builds, setup-android-avd]
     if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
@@ -1251,6 +1305,16 @@ jobs:
       - name: format message
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: message
+        env:
+          REF_NAME: ${{ inputs.ref || github.ref_name }}
+          IOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
+          ANDROID_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
+          SMOKE_TESTS_SUFFIX: ${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}
+          IOS_SUMMARY: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}
+          ANDROID_SUMMARY: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}
+          SERVER_URL: ${{ github.server_url }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         with:
           script: |
             const fs = require("fs");
@@ -1260,7 +1324,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
+                  "text": `:ledger-logo: Ledger Live Mobile E2E tests results on ${process.env.REF_NAME} - iOS:${process.env.IOS_DEVICE} / Android:${process.env.ANDROID_DEVICE}${process.env.SMOKE_TESTS_SUFFIX}`,
                   "emoji": true
                 }
               },
@@ -1274,7 +1338,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `🍏 iOS · FF '${{ env.IOS_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.ios_device }} : ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}`
+                  "text": `🍏 iOS · FF '${process.env.IOS_FEATURE_FLAGS}' · ${process.env.IOS_DEVICE} : ${process.env.IOS_SUMMARY}`
                 }
               }
             ];
@@ -1284,7 +1348,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `🤖 Android · FF '${{ env.ANDROID_FEATURE_FLAGS }}' · ${{ needs.determine-builds.outputs.android_device }} : ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}`
+                  "text": `🤖 Android · FF '${process.env.ANDROID_FEATURE_FLAGS}' · ${process.env.ANDROID_DEVICE} : ${process.env.ANDROID_SUMMARY}`
                 }
               }
             ];
@@ -1304,12 +1368,12 @@ jobs:
             ];
 
             const infoFields = []
-              .concat(${{ env.TESTS_TYPE == 'Android Only' }} ? [] : iOSInfo)
-              .concat(${{ env.TESTS_TYPE == 'iOS Only' }} ? [] : androidInfo)
+              .concat(process.env.TESTS_TYPE === 'Android Only' ? [] : iOSInfo)
+              .concat(process.env.TESTS_TYPE === 'iOS Only' ? [] : androidInfo)
               .concat([
               {
                 "type": "mrkdwn",
-                "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
+                "text": `*Workflow*\n<${process.env.SERVER_URL}/${process.env.REPOSITORY}/actions/runs/${process.env.RUN_ID}|Workflow run>`
               }
             ]);
 
@@ -1346,8 +1410,8 @@ jobs:
 
             const blocks = []
               .concat(header)
-              .concat(${{ env.TESTS_TYPE == 'Android Only' }} ? [] : iOSResult)
-              .concat(${{ env.TESTS_TYPE == 'iOS Only' }} ? [] : androidResult)
+              .concat(process.env.TESTS_TYPE === 'Android Only' ? [] : iOSResult)
+              .concat(process.env.TESTS_TYPE === 'iOS Only' ? [] : androidResult)
               .concat(warningBlocks.length > 0 ? warningBlocks : [])
               .concat(infoBlock);
 
@@ -1383,6 +1447,9 @@ jobs:
 
   merge-ios-timings:
     name: Merge iOS Timing Files
+    permissions:
+      id-token: write
+      contents: read
     needs: [determine-builds, detox-tests-ios]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
@@ -1412,6 +1479,9 @@ jobs:
 
   merge-android-timings:
     name: Merge Android Timing Files
+    permissions:
+      id-token: write
+      contents: read
     needs: [determine-builds, detox-tests-android]
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
