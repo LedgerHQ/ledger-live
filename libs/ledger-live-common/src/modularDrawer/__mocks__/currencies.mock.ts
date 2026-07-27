@@ -1,4 +1,4 @@
-import { TokenCurrency, TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrency, TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "../../currencies";
 
 export const mockBtcCryptoCurrency = getCryptoCurrencyById("bitcoin");
@@ -11,7 +11,7 @@ export const mockBscCryptoCurrency = getCryptoCurrencyById("bsc");
 
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: TokenCurrencySchema.shape.id.parse("arbitrum/erc20/arbitrum"),
+  id: TokenCurrencyIdSchema.parse("arbitrum/erc20/arbitrum"),
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
   parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("arbitrum"),
   tokenType: "erc20",
@@ -27,7 +27,7 @@ export const arbitrumToken: TokenCurrency = {
 };
 export const usdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd__coin"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
@@ -44,7 +44,7 @@ export const usdcToken: TokenCurrency = {
 
 export const maticEth: TokenCurrency = {
   type: "TokenCurrency" as const,
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/matic"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/matic"),
   ledgerSignature: "",
   contractAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
   parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
@@ -64,7 +64,7 @@ export const maticEth: TokenCurrency = {
 
 export const maticBsc: TokenCurrency = {
   type: "TokenCurrency" as const,
-  id: TokenCurrencySchema.shape.id.parse("bsc/bep20/matic_token"),
+  id: TokenCurrencyIdSchema.parse("bsc/bep20/matic_token"),
   ledgerSignature: "",
   contractAddress: "0xCC42724C6683B7E57334c4E856f4c9965ED682bD",
   parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("bsc"),

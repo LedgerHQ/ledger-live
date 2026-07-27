@@ -4,7 +4,7 @@
 import "../../../__tests__/test-helpers/dom-polyfill";
 import { renderHook, act } from "@testing-library/react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import { selectorStateDefaultValues, useToState } from ".";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { genAccount } from "../../../mock/account";
@@ -20,7 +20,7 @@ const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = {
   type: "TokenCurrency" as const,
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd_tether__erc20_"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
   name: "Tether USD (ERC-20)",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],

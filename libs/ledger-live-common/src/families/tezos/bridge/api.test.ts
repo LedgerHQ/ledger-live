@@ -1,6 +1,6 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 beforeAll(() => {
@@ -20,7 +20,7 @@ beforeAll(() => {
       ) {
         const usdt: TokenCurrency = {
           type: "TokenCurrency",
-          id: TokenCurrencySchema.shape.id.parse(
+          id: TokenCurrencyIdSchema.parse(
             "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
           ),
           contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
@@ -41,7 +41,7 @@ beforeAll(() => {
       ) {
         const wusdc: TokenCurrency = {
           type: "TokenCurrency",
-          id: TokenCurrencySchema.shape.id.parse(
+          id: TokenCurrencyIdSchema.parse(
             "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
           ),
           contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
@@ -74,7 +74,7 @@ describe("generic-coin-framework Tezos token", () => {
         }),
       ).resolves.toMatchObject({
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
         ),
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
@@ -93,7 +93,7 @@ describe("generic-coin-framework Tezos token", () => {
           assetOwner: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
         }),
       ).resolves.toMatchObject({
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
         ),
         name: "Wrapped USDC",
@@ -139,7 +139,7 @@ describe("generic-coin-framework Tezos token", () => {
     it("produces assetReference with :0 for single-asset tokens", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
         ),
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
@@ -164,7 +164,7 @@ describe("generic-coin-framework Tezos token", () => {
     it("produces assetReference with :tokenId for multi-asset tokens", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
         ),
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
@@ -189,7 +189,7 @@ describe("generic-coin-framework Tezos token", () => {
     it("round-trips: getAssetFromToken → getTokenFromAsset", async () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
         ),
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",

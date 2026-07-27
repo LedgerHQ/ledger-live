@@ -1,13 +1,17 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
-import { CryptoCurrencySchema, TokenCurrencySchema } from "@domain/entity-currency";
+import {
+  TokenCurrencySchema,
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@domain/entity-currency";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: CryptoCurrencySchema.shape.id.parse("testCoinId"),
+    id: CryptoCurrencyIdSchema.parse("testCoinId"),
     coinType: 8008,
     name: "MyCoin",
     managerAppName: "MyCoin",
@@ -40,7 +44,7 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
 const defaultEthCryptoFamily = CRYPTO_CURRENCIES_REGISTRY["ethereum"];
 const defaultERC20USDTToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd_tether__erc20_"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
   name: "Tether USD (ERC-20)",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],

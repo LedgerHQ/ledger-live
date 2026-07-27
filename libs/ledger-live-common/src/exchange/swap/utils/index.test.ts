@@ -1,5 +1,5 @@
 import type { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";
@@ -89,7 +89,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
   describe("TokenCurrency", () => {
     const aaveToken = Object.freeze({
       type: "TokenCurrency" as const,
-      id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/aave"),
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/aave"),
       name: "Aave Token",
       ticker: "AAVE",
       units: [{ name: "Aave Token", code: "AAVE", magnitude: 18 }],

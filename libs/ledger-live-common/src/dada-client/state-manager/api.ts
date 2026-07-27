@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import type { ApiAsset } from "../entities";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { CryptoCurrencySchema } from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
@@ -39,7 +39,7 @@ function convertApiAssets(
       } else {
         result[key] = {
           type: "CryptoCurrency" as const,
-          id: CryptoCurrencySchema.shape.id.parse(asset.id),
+          id: CryptoCurrencyIdSchema.parse(asset.id),
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,

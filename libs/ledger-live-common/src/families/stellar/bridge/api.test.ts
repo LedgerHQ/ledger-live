@@ -1,6 +1,6 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@domain/entity-currency";
-import { TokenCurrencySchema } from "@domain/entity-currency";
+import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import { getAssetFromToken, getTokenFromAsset } from "./api";
 
 beforeAll(() => {
@@ -20,7 +20,7 @@ beforeAll(() => {
       ) {
         const usdc: TokenCurrency = {
           type: "TokenCurrency",
-          id: TokenCurrencySchema.shape.id.parse(
+          id: TokenCurrencyIdSchema.parse(
             "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
           ),
           contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
@@ -52,7 +52,7 @@ describe("generic-coin-framework stellar token", () => {
           assetOwner: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         }),
       ).resolves.toMatchObject({
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         ),
         contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
@@ -73,7 +73,7 @@ describe("generic-coin-framework stellar token", () => {
     it("computes the asset of a stellar token", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         ),
         parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("stellar"),
@@ -102,7 +102,7 @@ describe("generic-coin-framework stellar token", () => {
     it("does not use an owner argument when computing stellar assets", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: TokenCurrencySchema.shape.id.parse(
+        id: TokenCurrencyIdSchema.parse(
           "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         ),
         parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("stellar"),

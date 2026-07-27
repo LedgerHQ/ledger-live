@@ -1,5 +1,5 @@
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import {
   OperationType,
   SignedOperation,
@@ -727,7 +727,7 @@ function createTokenAccount(id = "32"): TokenAccount {
 function createTokenCurrency(): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "3" as TokenCurrency["id"],
+    id: TokenCurrencyIdSchema.parse("3"),
     contractAddress: "",
     parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
     tokenType: "",

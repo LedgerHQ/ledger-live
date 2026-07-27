@@ -1,6 +1,11 @@
 import { handlers } from "./server";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -73,7 +78,7 @@ const mockManifest = {
 
 const mockEthereumCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum" as CryptoCurrency["id"],
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",
@@ -97,7 +102,7 @@ const mockEthereumCurrency: CryptoCurrency = {
 
 const mockTokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/acre_btc" as TokenCurrency["id"],
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/acre_btc"),
   contractAddress: "0x1234567890123456789012345678901234567890",
   parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
   tokenType: "erc20",

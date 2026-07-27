@@ -35,7 +35,7 @@ jest.mock("../hw/signMessage/index", () => ({
   ...jest.requireActual("../hw/signMessage/index"),
   prepareMessageToSign: jest.fn(),
 }));
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency, TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency";
 import { TrackingAPI } from "./tracking";
 import { CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
@@ -1694,7 +1694,7 @@ function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
 function createTokenCurrency(): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id: "3" as TokenCurrency["id"],
+    id: TokenCurrencyIdSchema.parse("3"),
     contractAddress: "",
     parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
     tokenType: "",
