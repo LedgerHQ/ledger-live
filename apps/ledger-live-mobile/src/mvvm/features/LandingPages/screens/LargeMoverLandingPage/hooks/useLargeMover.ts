@@ -1,23 +1,15 @@
 import { useMemo } from "react";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import VersionNumber from "react-native-version-number";
-import { getCurrencyIdsFromTickers } from "../utils";
+import { parseLargeMoverLedgerIds } from "~/navigation/deeplinks/validation";
 import { useMapLedgerIdsToCoinGeckoIds } from "./useLedgerMapping";
 
 type UseLargeMoverProps = {
-  currencyIds?: string;
-  ledgerIds?: string;
+  ledgerIds: string;
 };
 
-export const useLargeMover = ({ currencyIds, ledgerIds }: UseLargeMoverProps) => {
-  const currenciesIds = useMemo(() => {
-    if (ledgerIds) {
-      return ledgerIds.split(",");
-    } else {
-      const currencyIdsArray = currencyIds?.split(",") || [];
-      return getCurrencyIdsFromTickers(currencyIdsArray);
-    }
-  }, [currencyIds, ledgerIds]);
+export const useLargeMover = ({ ledgerIds }: UseLargeMoverProps) => {
+  const currenciesIds = useMemo(() => parseLargeMoverLedgerIds(ledgerIds), [ledgerIds]);
 
   const {
     coinGeckoIds: chartIds,

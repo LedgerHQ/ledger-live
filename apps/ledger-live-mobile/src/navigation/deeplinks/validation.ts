@@ -231,23 +231,19 @@ export function validateEarnDepositScreen(
   };
 }
 
-export function validateLargeMoverCurrencyIds(currencyIds: string | null): string | null {
-  if (!currencyIds || currencyIds?.trim() === "") {
-    return null;
-  }
-
-  return currencyIds.trim().toUpperCase();
+export function parseLargeMoverLedgerIds(ledgerIds: string): string[] {
+  const ids = ledgerIds
+    .split(",")
+    .map(id => id.trim().toLowerCase())
+    .filter(Boolean);
+  return [...new Set(ids)];
 }
 
 export function validateLargeMoverLedgerIds(ledgerIds: string | null): string | null {
   if (!ledgerIds || ledgerIds.trim() === "") {
     return null;
   }
-  const ids = ledgerIds
-    .split(",")
-    .map(id => id.trim().toLowerCase())
-    .filter(Boolean);
-  const unique = [...new Set(ids)];
+  const unique = parseLargeMoverLedgerIds(ledgerIds);
   return unique.length ? unique.join(",") : null;
 }
 
