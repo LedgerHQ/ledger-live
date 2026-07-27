@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "5966005",
+    "balance": "5966006",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,7 +12,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "2181052",
+    "spendableBalance": "2181053",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -448,6 +448,27 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "161",
       "type": "OUT",
       "value": "1001200",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 32182060,
+      "extra": {
+        "memo": "🔔 https://atomsdex.com: Congrats🎉 You are eligible to claim up to 10,000 $ATOM Rewards, check and claim your allocation now on https://atomsdex.com ✅",
+      },
+      "fee": "626",
+      "hasFailed": false,
+      "hash": "1141DE03EB2722E096184DCE9F8B1E7DCDB7589C2A052C7EC01EDE6CDF79BDE4",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-1141DE03EB2722E096184DCE9F8B1E7DCDB7589C2A052C7EC01EDE6CDF79BDE4-IN",
+      "recipients": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": [
+        "cosmos16te3v5hp96hz24f8ct5hfal29udpu0h7w8dfap",
+      ],
+      "transactionSequenceNumber": "275943",
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
