@@ -1,7 +1,7 @@
 export type { ContactsCurrencySelectionPort } from "./model/ports";
 export {
   resolveEligibleAddressCurrencyIds,
-  type ContactsAddressCurrencyDescriptor,
+  type EligibleAddressNetwork,
 } from "./model/resolveEligibleAddressCurrencyIds";
 export {
   useAddAddressCurrencySelectionViewModel,

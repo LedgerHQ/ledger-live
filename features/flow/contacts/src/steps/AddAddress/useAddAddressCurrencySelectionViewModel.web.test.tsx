@@ -2,7 +2,7 @@ import React, { type FC, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import {
   FEATURE_FLAGS_DEFAULTS,
   FEATURE_FLAGS_INITIAL_STATE,
@@ -10,18 +10,9 @@ import {
   type Features,
 } from "@shared/feature-flags";
 import type { ContactsCurrencySelectionPort } from "./model/ports";
-import type { ContactsAddressCurrencyDescriptor } from "./model/resolveEligibleAddressCurrencyIds";
 import { useAddAddressCurrencySelectionViewModel } from "./useAddAddressCurrencySelectionViewModel";
 
-const currencyId = (value: string) => ContactCurrencyIdSchema.parse(value);
-const ETHEREUM_CURRENCY_ID = currencyId("ethereum");
-
-const CURRENCY_CATALOG: readonly ContactsAddressCurrencyDescriptor[] = [
-  { id: ETHEREUM_CURRENCY_ID, networkFamily: "evm" },
-  { id: currencyId("ethereum/erc20/usd-tether"), networkFamily: "evm" },
-  { id: currencyId("bitcoin"), networkFamily: "bitcoin" },
-  { id: currencyId("tron/trc20/usd-tether"), networkFamily: "tron" },
-];
+const ETHEREUM_CURRENCY_ID = getCryptoCurrencyById("ethereum").id;
 
 function makeWrapper(contactsFeature?: Features["lwdContacts"]) {
   const resolved: Features = {
@@ -52,7 +43,6 @@ function renderViewModel(
     () =>
       useAddAddressCurrencySelectionViewModel({
         platform: "desktop",
-        currencyCatalog: CURRENCY_CATALOG,
         currencySelection,
       }),
     { wrapper: makeWrapper(contactsFeature) },
@@ -60,16 +50,19 @@ function renderViewModel(
 }
 
 describe("useAddAddressCurrencySelectionViewModel", () => {
-  it("passes native and token EVM currency ids when feature params are missing", async () => {
+  it("passes production EVM network ids when feature params are missing", async () => {
     const selectCurrency = jest.fn().mockResolvedValue(null);
     const { result } = renderViewModel({ selectCurrency }, { enabled: true });
+    const expectedNetworkIds = listCryptoCurrencies()
+      .filter(network => network.family === "evm")
+      .map(network => network.id);
 
     await act(() => result.current.selectCurrency());
 
-    expect(selectCurrency).toHaveBeenCalledWith(["ethereum", "ethereum/erc20/usd-tether"]);
+    expect(selectCurrency).toHaveBeenCalledWith(expectedNetworkIds);
   });
 
-  it("stores only the final network-specific currency id selected by MAD", async () => {
+  it("stores the final eligible crypto-or-token currency id selected by MAD", async () => {
     const selectCurrency = jest.fn().mockResolvedValue("ethereum/erc20/usd-tether");
     const { result } = renderViewModel(
       { selectCurrency },
@@ -81,14 +74,13 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
         },
       },
     );
+    const expectedNetworkIds = listCryptoCurrencies()
+      .filter(network => network.family === "evm" || network.family === "bitcoin")
+      .map(network => network.id);
 
     await act(() => result.current.selectCurrency());
 
-    expect(selectCurrency).toHaveBeenCalledWith([
-      "ethereum",
-      "ethereum/erc20/usd-tether",
-      "bitcoin",
-    ]);
+    expect(selectCurrency).toHaveBeenCalledWith(expectedNetworkIds);
     expect(result.current.selectedCurrencyId).toBe("ethereum/erc20/usd-tether");
   });
 
@@ -102,7 +94,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     expect(result.current.selectedCurrencyId).toBe("ethereum");
   });
 
-  it("does not open MAD when no catalog currency matches the eligible families", async () => {
+  it("does not open MAD when no production network matches the eligible families", async () => {
     const selectCurrency = jest.fn().mockResolvedValue(null);
     const { result } = renderViewModel(
       { selectCurrency },
@@ -110,7 +102,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
         enabled: true,
         params: {
           newBadge: false,
-          eligibleAddressFamilies: ["solana"],
+          eligibleAddressFamilies: ["unknown"],
         },
       },
     );
@@ -118,15 +110,6 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     await act(() => result.current.selectCurrency());
 
     expect(selectCurrency).not.toHaveBeenCalled();
-  });
-
-  it("ignores a currency id returned outside the eligible MAD filter", async () => {
-    const selectCurrency = jest.fn().mockResolvedValue("tron/trc20/usd-tether");
-    const { result } = renderViewModel({ selectCurrency });
-
-    await act(() => result.current.selectCurrency());
-
-    expect(result.current.selectedCurrencyId).toBeNull();
   });
 
   it("ignores concurrent selection requests while MAD is open", async () => {

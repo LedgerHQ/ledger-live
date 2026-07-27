@@ -10,18 +10,18 @@ Shared Contacts flow package for Desktop and Mobile.
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Empty contact detail selection and native presentation
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
-- Add Address currency eligibility and selection state (MAD integration injects its normalized
-  crypto-and-token catalog and selection port)
+- Add Address network eligibility and final currency selection state (MAD integration uses an
+  injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
 - Empty, populated, and search Contacts list view models and their Desktop and Mobile page shells
 
 App layers own routing, screen composition, i18n, and analytics.
 
-For Add Address, the consuming MAD adapter supplies ordered `{ id, networkFamily }` descriptors for
-every selectable native or token currency. Token descriptors use the family of their parent
-network. The Flow filters this catalog from `eligibleAddressFamilies`, sends only the resulting IDs
-to MAD, and stores only an eligible final crypto-or-token `currencyId` returned after asset and
-optional network selection. MAD is not opened when the filter resolves to no currency.
+For Add Address, the Flow resolves ordered production network IDs from
+`eligibleAddressFamilies` and sends only those IDs to MAD. The consuming adapter filters MAD content
+by native network ID or token parent network ID. The Flow stores only the final crypto-or-token
+`currencyId` returned after asset and optional network selection. MAD is not opened when no
+production network matches the feature-flag families.
 
 ## Public API
 
@@ -69,8 +69,8 @@ src/
 │   │   ├── components/ContactNameInput/ (web + native)
 │   │   ├── model/                       # Contact-name validation and creation contract
 │   │   └── index.ts / web.ts / native.ts
-│   ├── AddAddress/                      # Shared eligible-currency resolution and selection state
-│   │   ├── model/                       # Injected catalog resolver and MAD selection port
+│   ├── AddAddress/                      # Shared eligible-network resolution and selection state
+│   │   ├── model/                       # Production network resolver and MAD selection port
 │   │   └── useAddAddressCurrencySelectionViewModel.ts / index.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
 │   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)

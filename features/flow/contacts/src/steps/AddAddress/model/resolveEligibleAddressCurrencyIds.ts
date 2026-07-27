@@ -1,22 +1,19 @@
-import type { ContactAddress } from "@domain/entity-contact";
+import { listCryptoCurrencies, type CryptoCurrency } from "@domain/entity-currency-crypto";
 
-export type ContactsAddressCurrencyDescriptor = Readonly<{
-  id: ContactAddress["currencyId"];
-  networkFamily: string;
-}>;
+export type EligibleAddressNetwork = Readonly<Pick<CryptoCurrency, "id" | "family">>;
 
 export function resolveEligibleAddressCurrencyIds(
   eligibleFamilies: readonly string[],
-  currencyCatalog: readonly ContactsAddressCurrencyDescriptor[],
-): string[] {
+  networks: readonly EligibleAddressNetwork[] = listCryptoCurrencies(),
+): CryptoCurrency["id"][] {
   const families = new Set(eligibleFamilies);
-  const currencyIds = new Set<string>();
+  const networkIds = new Set<CryptoCurrency["id"]>();
 
-  for (const currency of currencyCatalog) {
-    if (families.has(currency.networkFamily)) {
-      currencyIds.add(currency.id);
+  for (const network of networks) {
+    if (families.has(network.family)) {
+      networkIds.add(network.id);
     }
   }
 
-  return [...currencyIds];
+  return [...networkIds];
 }

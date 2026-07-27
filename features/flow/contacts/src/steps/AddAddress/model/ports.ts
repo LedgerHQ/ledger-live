@@ -1,5 +1,8 @@
 import type { ContactAddress } from "@domain/entity-contact";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 export type ContactsCurrencySelectionPort = Readonly<{
-  selectCurrency(currencyIds: readonly string[]): Promise<ContactAddress["currencyId"] | null>;
+  selectCurrency(
+    networkIds: readonly CryptoCurrency["id"][],
+  ): Promise<ContactAddress["currencyId"] | null>;
 }>;

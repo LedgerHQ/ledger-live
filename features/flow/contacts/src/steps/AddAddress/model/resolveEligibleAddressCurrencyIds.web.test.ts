@@ -1,51 +1,52 @@
-import { ContactCurrencyIdSchema } from "@domain/entity-contact";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import {
   resolveEligibleAddressCurrencyIds,
-  type ContactsAddressCurrencyDescriptor,
+  type EligibleAddressNetwork,
 } from "./resolveEligibleAddressCurrencyIds";
 
-const currencyId = (value: string) => ContactCurrencyIdSchema.parse(value);
-
-const CURRENCY_CATALOG: readonly ContactsAddressCurrencyDescriptor[] = [
-  { id: currencyId("ethereum"), networkFamily: "evm" },
-  { id: currencyId("ethereum/erc20/usd-tether"), networkFamily: "evm" },
-  { id: currencyId("bitcoin"), networkFamily: "bitcoin" },
-  { id: currencyId("base"), networkFamily: "evm" },
-  { id: currencyId("base/erc20/usd-coin"), networkFamily: "evm" },
-  { id: currencyId("tron/trc20/usd-tether"), networkFamily: "tron" },
-  { id: currencyId("solana"), networkFamily: "solana" },
+const NETWORKS: readonly EligibleAddressNetwork[] = [
+  { id: getCryptoCurrencyById("ethereum").id, family: "evm" },
+  { id: getCryptoCurrencyById("bitcoin").id, family: "bitcoin" },
+  { id: getCryptoCurrencyById("base").id, family: "evm" },
+  { id: getCryptoCurrencyById("solana").id, family: "solana" },
 ];
 
 describe("resolveEligibleAddressCurrencyIds", () => {
-  it("resolves native and token currency ids from eligible networks", () => {
-    expect(resolveEligibleAddressCurrencyIds(["evm"], CURRENCY_CATALOG)).toEqual([
-      "ethereum",
-      "ethereum/erc20/usd-tether",
-      "base",
-      "base/erc20/usd-coin",
-    ]);
+  it("resolves the default EVM family from production networks", () => {
+    const expectedNetworkIds = listCryptoCurrencies()
+      .filter(network => network.family === "evm")
+      .map(network => network.id);
+    const excludedNetworkIds = listCryptoCurrencies(true)
+      .filter(
+        network => network.family === "evm" && Boolean(network.isTestnetFor || network.delisted),
+      )
+      .map(network => network.id);
+    const networkIds = resolveEligibleAddressCurrencyIds(["evm"]);
+
+    expect(networkIds).toEqual(expectedNetworkIds);
+    expect(expectedNetworkIds).not.toHaveLength(0);
+    expect(excludedNetworkIds).not.toHaveLength(0);
+    expect(networkIds).toEqual(expect.not.arrayContaining(excludedNetworkIds));
   });
 
-  it("resolves future multi-family values in currency order", () => {
-    expect(resolveEligibleAddressCurrencyIds(["evm", "bitcoin"], CURRENCY_CATALOG)).toEqual([
+  it("resolves future multi-family values in network order", () => {
+    expect(resolveEligibleAddressCurrencyIds(["evm", "bitcoin"], NETWORKS)).toEqual([
       "ethereum",
-      "ethereum/erc20/usd-tether",
       "bitcoin",
       "base",
-      "base/erc20/usd-coin",
     ]);
   });
 
-  it("returns no currencies for unknown families", () => {
-    expect(resolveEligibleAddressCurrencyIds(["unknown"], CURRENCY_CATALOG)).toEqual([]);
+  it("returns no networks for unknown families", () => {
+    expect(resolveEligibleAddressCurrencyIds(["unknown"], NETWORKS)).toEqual([]);
   });
 
-  it("deduplicates currency ids while preserving their first occurrence", () => {
+  it("deduplicates network ids while preserving their first occurrence", () => {
     expect(
       resolveEligibleAddressCurrencyIds(
         ["evm"],
-        [...CURRENCY_CATALOG, { id: currencyId("ethereum"), networkFamily: "evm" }],
+        [...NETWORKS, { id: getCryptoCurrencyById("ethereum").id, family: "evm" }],
       ),
-    ).toEqual(["ethereum", "ethereum/erc20/usd-tether", "base", "base/erc20/usd-coin"]);
+    ).toEqual(["ethereum", "base"]);
   });
 });
