@@ -100,7 +100,6 @@
     "@domain/api-altcoins-sentiment": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/device-intent": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",

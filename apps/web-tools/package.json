@@ -38,7 +38,6 @@
     "@codemirror/view": "^6.39.5",
     "@domain/entity-currency-fiat": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",

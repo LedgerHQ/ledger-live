@@ -5,10 +5,7 @@ import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-co
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import BigNumber from "bignumber.js";
-import { setCryptoCurrenciesStore } from "@ledgerhq/cryptoassets";
 import {
-  CRYPTO_CURRENCIES_REGISTRY,
-  CRYPTO_CURRENCY_ALIASES,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
@@ -18,7 +15,6 @@ import {
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 
 // The domain registry is the runtime source of truth for currency data.
-setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,

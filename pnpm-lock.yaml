@@ -703,9 +703,6 @@ importers:
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
@@ -928,9 +925,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.21)(@ledgerhq/lumen-ui-react@0.1.47(@ledgerhq/lumen-design-core@0.1.21)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-intent':
         specifier: workspace:^
         version: link:../../libs/device-intent
@@ -1665,9 +1659,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.21)(@ledgerhq/lumen-ui-rnative@0.1.50(06d7b9f801a4015982648e5aa5515f70))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-intent':
         specifier: workspace:^
         version: link:../../libs/device-intent
@@ -2599,9 +2590,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.21)(@ledgerhq/lumen-ui-react@0.1.47(@ledgerhq/lumen-design-core@0.1.21)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.7.1(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
