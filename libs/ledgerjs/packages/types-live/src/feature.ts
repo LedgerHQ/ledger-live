@@ -5,7 +5,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
-import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
@@ -202,7 +201,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
-  storyly: Feature_Storyly;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
@@ -523,13 +521,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
     enabled: boolean;
     supportLink: string;
     direct: boolean;
-  };
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["storyly"]` from `@shared/feature-flags` instead. */
-export type Feature_Storyly = Feature<{
-  stories: {
-    [key in StorylyInstanceID]: StorylyInstanceType;
   };
 }>;
 
