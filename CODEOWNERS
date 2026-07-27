@@ -145,8 +145,6 @@ apps/ledger-live-mobile/src/screens/SignRawTransaction/             @ledgerhq/co
 apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/coin-integration
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
-libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp
-libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement

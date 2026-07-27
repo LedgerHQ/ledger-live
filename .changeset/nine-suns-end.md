@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/cryptoassets": minor
 "@ledgerhq/types-live": minor
 "@domain/entity-currency-crypto": minor
 "@ledgerhq/coin-cosmos": minor

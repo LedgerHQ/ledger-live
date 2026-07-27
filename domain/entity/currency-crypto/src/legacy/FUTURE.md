@@ -1,8 +1,8 @@
 # Future direction
 
 The functions here — `getCryptoCurrencyById`, `findCryptoCurrencyById`, `hasCryptoCurrencyId` —
-are **static accessors**: they read from `CRYPTO_CURRENCIES_REGISTRY`, a compile-time constant
-seeded from (and dual-maintained with) the legacy `@ledgerhq/cryptoassets` currency data.
+are **static accessors**: they read from `CRYPTO_CURRENCIES_REGISTRY`, the canonical compile-time
+crypto-currency registry.
 
 They live under `legacy/` because the static registry is a transitional shape, not the end state.
 Today the crypto-currency list is embedded in code, so a coin rename needs an app release. The

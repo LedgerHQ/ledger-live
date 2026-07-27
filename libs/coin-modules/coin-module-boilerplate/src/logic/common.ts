@@ -3,6 +3,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { BigNumber } from "bignumber.js";
 
 // NOTE: replace ripple by your currency id, it should be found in
-// libs/ledgerjs/packages/cryptoassets/src/currencies.ts
+// @domain/entity-currency-crypto
 export const parseAPIValue = (value: string): BigNumber =>
   parseCurrencyUnit(getCryptoCurrencyById("ripple").units[0], value);

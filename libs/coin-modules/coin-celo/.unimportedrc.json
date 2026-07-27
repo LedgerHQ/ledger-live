@@ -34,7 +34,6 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/coin-evm",
-    "@ledgerhq/cryptoassets",
     "@ledgerhq/devices",
     "@ledgerhq/errors",
     "@ledgerhq/hw-app-eth",
