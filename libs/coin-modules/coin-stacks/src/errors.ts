@@ -5,3 +5,11 @@ export class StacksMemoTooLong extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class InvalidNonce extends Error {
+  override name = "InvalidNonce";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidNonce");
+    if (fields) Object.assign(this, fields);
+  }
+}
