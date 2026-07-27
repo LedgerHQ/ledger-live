@@ -1,9 +1,11 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
+import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ContactsButton, ContactsScreen } from "LLM/features/Contacts";
 import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
 import { useContactDetailScreenViewModel } from "LLM/features/Contacts/screens/ContactDetail/useContactDetailScreenViewModel";
@@ -15,6 +17,7 @@ jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 const mockedViewModel = jest.mocked(useMyWalletHeaderViewModel);
 
 const Stack = createNativeStackNavigator();
+const AccountsStack = createNativeStackNavigator<AccountsNavigatorParamList>();
 const noop = () => undefined;
 
 const contactsNavigationState = {
@@ -49,6 +52,16 @@ const savedContactDetailNavigationState = {
   ],
 };
 
+const ledgerWalletAddressesNavigationState = {
+  index: 0,
+  routes: [
+    {
+      name: NavigatorName.MyWallet,
+      state: contactDetailNavigationState,
+    },
+  ],
+};
+
 const missingContactDetailNavigationState = {
   index: 1,
   routes: [
@@ -74,6 +87,42 @@ const initialMissingContactDetailNavigationState = {
 
 function MyWalletHomeTestScreen() {
   return <Text testID="my-wallet-home">My Wallet</Text>;
+}
+
+function AccountsListTestScreen() {
+  return <Text testID="accounts-list-screen">Accounts list</Text>;
+}
+
+function CryptoAddressesTestScreen({
+  route,
+}: Readonly<{
+  route: RouteProp<AccountsNavigatorParamList, typeof ScreenName.CryptoAddresses>;
+}>) {
+  return <Text testID="crypto-addresses-screen">{route.params.sourceScreenName}</Text>;
+}
+
+function AccountsNavigationTestApp() {
+  return (
+    <AccountsStack.Navigator
+      initialRouteName={ScreenName.AccountsList}
+      screenOptions={{ headerShown: false }}
+    >
+      <AccountsStack.Screen name={ScreenName.AccountsList} component={AccountsListTestScreen} />
+      <AccountsStack.Screen
+        name={ScreenName.CryptoAddresses}
+        component={CryptoAddressesTestScreen}
+      />
+    </AccountsStack.Navigator>
+  );
+}
+
+function LedgerWalletAddressesNavigationTestApp() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={NavigatorName.MyWallet} component={MyWalletNavigator} />
+      <Stack.Screen name={NavigatorName.Accounts} component={AccountsNavigationTestApp} />
+    </Stack.Navigator>
+  );
 }
 
 function ContactsGatingTestApp() {
@@ -353,8 +402,19 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
-      expect(screen.getByText("No address yet")).toBeVisible();
-      expect(screen.getByText("Save a wallet address to receive crypto.")).toBeVisible();
+      expect(screen.getByText("My addresses")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent(
+        "Add your address",
+      );
+      expect(screen.getByTestId("contacts-detail-ledger-wallet-addresses")).toHaveTextContent(
+        "Ledger Wallet addresses",
+      );
+      expect(screen.getByText("Save your own addresses")).toBeVisible();
+      expect(
+        screen.getByText(
+          "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
+        ),
+      ).toBeVisible();
       expect(screen.getByTestId("contacts-detail-add-address")).toBeEnabled();
     });
   });
@@ -376,11 +436,12 @@ describe("Contacts integration", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-add-address")).toHaveTextContent("Add address");
       expect(screen.getByText("Save a wallet address to send to Benoit")).toBeVisible();
       expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
+      expect(screen.queryByTestId("contacts-detail-ledger-wallet-addresses")).toBeNull();
     });
   });
-
   it("should expose the Add Address session started for Me", async () => {
     const { user } = render(<ContactDetailViewModelTestApp />, {
       navigationInitialState: contactDetailNavigationState,
@@ -416,5 +477,21 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       `selectingCurrency:${contact.id}`,
     );
+  });
+
+  it("should open Ledger Wallet addresses from the Me contact detail", async () => {
+    const { user } = render(<LedgerWalletAddressesNavigationTestApp />, {
+      navigationInitialState: ledgerWalletAddressesNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-ledger-wallet-addresses"));
+
+    expect(await screen.findByTestId("crypto-addresses-screen")).toHaveTextContent(
+      ScreenName.MyWalletContactDetail,
+    );
+    expect(screen.queryByTestId("accounts-list-screen")).toBeNull();
   });
 });

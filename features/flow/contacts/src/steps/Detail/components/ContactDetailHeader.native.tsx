@@ -21,7 +21,7 @@ export function ContactDetailHeader({
         <ContactDetailAvatar contact={contact} meAvatarSrc={meAvatarSrc} />
         <Box lx={{ alignItems: "center", gap: "s4" }}>
           <Text typography="heading3SemiBold" lx={{ color: "base" }}>
-            {contact.name}
+            {contact.isMe ? (labels.myAddresses ?? contact.name) : contact.name}
           </Text>
           <Text typography="body2" lx={{ color: "muted" }}>
             {labels.formatAddressCount(contact.addresses.length)}
@@ -35,7 +35,7 @@ export function ContactDetailHeader({
         onPress={onAddAddress}
         testID="contacts-detail-add-address"
       >
-        {labels.addAddress}
+        {contact.isMe ? (labels.addYourAddress ?? labels.addAddress) : labels.addAddress}
       </Button>
     </Box>
   );
