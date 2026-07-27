@@ -1,0 +1,49 @@
+name: "Start Resource Usage Sampler"
+description: "Starts a background process sampling CPU/memory/disk/network every 5s into a CSV file"
+outputs:
+  sampler_pid:
+    description: "PID of the background sampler process"
+    value: ${{ steps.start.outputs.sampler_pid }}
+  csv_path:
+    description: "Path to the generated usage-metrics CSV"
+    value: ${{ steps.start.outputs.csv_path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Start sampler
+      id: start
+      shell: bash
+      run: |
+        mkdir -p "${{ runner.temp }}/usage-metrics"
+        CSV="${{ runner.temp }}/usage-metrics/usage-metrics.csv"
+        echo "csv_path=$CSV" >> "$GITHUB_OUTPUT"
+        echo "timestamp,cpu_percent,mem_used_mb,mem_total_mb,disk_free_gb,net_rx_kbps,net_tx_kbps" > "$CSV"
+
+        iface=$(awk -F: '$1 !~ /lo/ && NR>2 {gsub(/ /,"",$1); print $1; exit}' /proc/net/dev)
+
+        (
+          prev_idle=0; prev_total=0; prev_rx=0; prev_tx=0; first=1
+          while true; do
+            read -r u n s i w x y z < <(awk '/^cpu /{print $2, $3, $4, $5, $6, $7, $8, $9}' /proc/stat)
+            idle=$((i + w)); total=$((u + n + s + i + w + x + y + z))
+
+            read -r rx tx < <(awk -v ifc="${iface}:" '{for (k=1;k<=NF;k++) if ($k==ifc) {print $(k+1), $(k+9); exit}}' /proc/net/dev)
+            rx=${rx:-0}; tx=${tx:-0}
+
+            if [ "$first" = "0" ]; then
+              totald=$((total - prev_total)); idled=$((idle - prev_idle))
+              cpu_pct=0
+              [ "$totald" -gt 0 ] && cpu_pct=$(( (1000 * (totald - idled) / totald + 5) / 10 ))
+              rx_kbps=$(( (rx - prev_rx) / 1024 / 5 ))
+              tx_kbps=$(( (tx - prev_tx) / 1024 / 5 ))
+              read -r mem_total mem_avail < <(awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} END{print t, a}' /proc/meminfo)
+              mem_used_mb=$(( (mem_total - mem_avail) / 1024 )); mem_total_mb=$(( mem_total / 1024 ))
+              disk_free_gb=$(df -BG --output=avail / | tail -1 | tr -dc '0-9')
+              echo "$(date -u +%FT%TZ),$cpu_pct,$mem_used_mb,$mem_total_mb,$disk_free_gb,$rx_kbps,$tx_kbps" >> "$CSV"
+            fi
+            prev_idle=$idle; prev_total=$total; prev_rx=$rx; prev_tx=$tx; first=0
+            sleep 5
+          done
+        ) &
+        echo "sampler_pid=$!" >> "$GITHUB_OUTPUT"

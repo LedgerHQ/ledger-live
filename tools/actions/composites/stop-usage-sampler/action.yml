@@ -1,0 +1,25 @@
+name: "Stop Resource Usage Sampler"
+description: "Stops the background usage sampler and uploads the collected CSV as a build artifact"
+inputs:
+  sampler_pid:
+    description: "PID returned by start-usage-sampler"
+    required: true
+  csv_path:
+    description: "Path to the CSV written by start-usage-sampler"
+    required: true
+  artifact_name:
+    description: "Name for the uploaded usage-metrics artifact"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Stop sampler
+      shell: bash
+      run: kill "${{ inputs.sampler_pid }}" 2>/dev/null || true
+
+    - name: Upload usage metrics artifact
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ inputs.csv_path }}
