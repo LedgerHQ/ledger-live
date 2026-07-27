@@ -53,6 +53,7 @@ import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalSt
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
+import { scrubAccountId } from "../helpers/scrubAccountId";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -445,7 +446,7 @@ function sendTrack(event: string, properties: object | undefined | null) {
 }
 
 const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
-  const { account, parentAccount } = properties || {};
+  const { account, parentAccount, page, source } = properties || {};
   const filterAccount = account
     ? {
         account:
@@ -460,10 +461,25 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
             : parentAccount,
       }
     : {};
+
+  const filterPage = page
+    ? {
+        page: typeof page === "string" ? scrubAccountId(page) : page,
+      }
+    : {};
+
+  const filterSource = source
+    ? {
+        source: typeof source === "string" ? scrubAccountId(source) : source,
+      }
+    : {};
+
   return {
     ...properties,
     ...filterAccount,
     ...filterParentAccount,
+    ...filterPage,
+    ...filterSource,
   };
 };
 
@@ -577,7 +593,7 @@ export const trackPage = (
   /**
    * Event properties
    */
-  properties?: object | null,
+  properties?: Record<string, unknown> | null,
   /**
    * Should this function call update the previous & current route names.
    * Previous and current route names are used to track:
@@ -613,7 +629,7 @@ export const trackPage = (
 
   const eventPropertiesWithoutExtra = {
     source: previousRouteNameRef.current ?? undefined,
-    ...properties,
+    ...confidentialityFilter(properties),
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,
