@@ -1,11 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
-  CryptoCurrencySchema,
+  TokenCurrencyIdSchema,
   TokenCurrencySchema,
-  type CryptoCurrency,
   type TokenCurrency,
-} from "@domain/entity-currency";
+} from "@domain/entity-currency-token";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
@@ -18,7 +18,7 @@ type TokenCurrencyOverrides = Omit<Partial<TokenCurrency>, "id" | "parentCurrenc
 export const createMockCurrency = (overrides?: CryptoCurrencyOverrides): CryptoCurrency => {
   const currency = getCryptoCurrencyById("bitcoin");
   const { id: rawId, ...rest } = overrides ?? {};
-  const id = rawId != null ? CryptoCurrencySchema.shape.id.parse(rawId) : currency.id;
+  const id = rawId != null ? CryptoCurrencyIdSchema.parse(rawId) : currency.id;
   return {
     ...currency,
     ...rest,
@@ -37,7 +37,7 @@ export const createMockTokenCurrency = (overrides?: TokenCurrencyOverrides): Tok
     units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
     ...rest,
     tokenType: tokenType ?? "erc20",
-    id: TokenCurrencySchema.shape.id.parse(rawId ?? "ethereum/erc20/usdt"),
+    id: TokenCurrencyIdSchema.parse(rawId ?? "ethereum/erc20/usdt"),
     parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse(rawParentId ?? "ethereum"),
   };
 };

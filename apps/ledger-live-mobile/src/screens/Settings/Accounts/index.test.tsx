@@ -2,7 +2,11 @@ import React from "react";
 import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import AccountsSettings from "./index";
-import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency";
+import {
+  TokenCurrencyIdSchema,
+  TokenCurrencySchema,
+  type TokenCurrency,
+} from "@domain/entity-currency-token";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -18,7 +22,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 }));
 
 const mockUsdtToken: TokenCurrency = {
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdt"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
@@ -35,7 +39,7 @@ const mockUsdtToken: TokenCurrency = {
 };
 
 const mockUsdcToken: TokenCurrency = {
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usdc"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin",
   ticker: "USDC",
@@ -52,7 +56,7 @@ const mockUsdcToken: TokenCurrency = {
 };
 
 const mockPolygonUsdcToken: TokenCurrency = {
-  id: TokenCurrencySchema.shape.id.parse("polygon/erc20/usdc"),
+  id: TokenCurrencyIdSchema.parse("polygon/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin (Polygon)",
   ticker: "USDC",

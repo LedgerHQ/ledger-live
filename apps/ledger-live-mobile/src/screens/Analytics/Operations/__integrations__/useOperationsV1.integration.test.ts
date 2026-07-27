@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrencySchema, type TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
@@ -18,7 +18,7 @@ const mockCalculate = calculate as jest.MockedFunction<typeof calculate>;
 
 const EVM_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: TokenCurrencySchema.shape.id.parse("ethereum/erc20/usd__coin"),
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   parentCurrencyId: ETH.id,
   tokenType: "erc20",

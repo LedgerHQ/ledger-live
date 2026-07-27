@@ -3,7 +3,7 @@ import { render } from "@tests/test-renderer";
 import { Card } from "../Card";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { mockCurrencyData, mockChartData } from "../../fixtures/currency";
-import { CryptoCurrencySchema, type CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("~/logic/getWindowDimensions", () => () => ({
   width: 400,
@@ -25,7 +25,7 @@ const mockSetRange = jest.fn();
 
 const mockEthereumCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: CryptoCurrencySchema.shape.id.parse("ethereum"),
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   name: "Ethereum",
   ticker: "ETH",
   managerAppName: "Ethereum",

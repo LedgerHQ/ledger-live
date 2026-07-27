@@ -2,11 +2,8 @@ import React from "react";
 import { render as rntlRender, screen } from "@testing-library/react-native";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-import {
-  TokenCurrencySchema,
-  type CryptoCurrency,
-  type TokenCurrency,
-} from "@domain/entity-currency";
+import { type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { FeeAssetUiOption } from "@ledgerhq/live-common/flows/send/customFees/hooks/useCustomFeesViewModelCore";
 import { FeeAssetSelector } from "../FeeAssetSelector";
 
@@ -38,7 +35,7 @@ const celoCurrency = {
 } as CryptoCurrency;
 
 const usdtCurrency: TokenCurrency = {
-  id: TokenCurrencySchema.shape.id.parse("celo/erc20/usdt"),
+  id: TokenCurrencyIdSchema.parse("celo/erc20/usdt"),
   type: "TokenCurrency",
   parentCurrencyId: celoCurrency.id,
   tokenType: "erc20",

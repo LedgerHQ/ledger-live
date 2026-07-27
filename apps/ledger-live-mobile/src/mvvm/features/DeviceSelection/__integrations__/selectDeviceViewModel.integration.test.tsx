@@ -6,7 +6,7 @@ import useSelectDeviceViewModel from "../screens/SelectDevice/useSelectDeviceVie
 import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { CryptoCurrencySchema, type CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
 
 const mockNavigate = jest.fn();
 
@@ -50,7 +50,7 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
     type: "CryptoCurrency",
     coinType: 683,
     scheme: "aleo",
-    id: CryptoCurrencySchema.shape.id.parse("aleo"),
+    id: CryptoCurrencyIdSchema.parse("aleo"),
     ticker: "ALEO",
     name: "Aleo",
     family: "aleo",
@@ -64,7 +64,7 @@ describe("useSelectDeviceViewModel — onResult navigation", () => {
     type: "CryptoCurrency",
     coinType: 0,
     scheme: "bitcoin",
-    id: CryptoCurrencySchema.shape.id.parse("bitcoin"),
+    id: CryptoCurrencyIdSchema.parse("bitcoin"),
     ticker: "BTC",
     name: "Bitcoin",
     family: "bitcoin",
