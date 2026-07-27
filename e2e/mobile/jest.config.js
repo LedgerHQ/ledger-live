@@ -74,7 +74,7 @@ const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq", "@shared", "@features", "@
 const config = {
   rootDir: ".",
   modulePaths: [compilerOptions.baseUrl ?? "."],
-  maxWorkers: process.env.CI ? 3 : 1,
+  maxWorkers: process.env.CI ? 2 : 1,
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",
