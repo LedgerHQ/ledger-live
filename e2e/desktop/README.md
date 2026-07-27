@@ -124,3 +124,9 @@ export E2E_DESKTOP_FEATURE_FLAGS="some-preset"
 ```
 
 Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+
+### 8. Soft assertions
+
+Soft assertions can be useful for gathering more feedback in a single test run.
+
+Read the [soft-expect docs](./docs/soft-expect.md) for examples and more.
