@@ -13,6 +13,7 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 }));
 
 jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getCryptoCurrencyById: jest.fn(),
 }));
 
