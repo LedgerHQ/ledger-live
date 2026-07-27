@@ -38,7 +38,7 @@ describe("buildLargeScreenUpsellContent", () => {
     expect(content.title).toBe("See more. Tap less. Save 20%");
     expect(content.subtitle).toBe("Enjoy clearer signers and an exclusive offer.");
     expect(content.primaryButtonLabel).toBe("Explore touchscreen signers");
-    expect(content.primaryButtonLink).toContain("utm_campaign=upsell_large_screen");
+    expect(content.primaryButtonLink).toContain("utm_campaign=nano_upgrade_program");
     expect(content.imageUrlLight).toContain("large_screen_upsell_light");
     expect(content.imageUrlDark).toContain("large_screen_upsell_dark");
     expect(content.secondaryButtonLabel).toBe("");
