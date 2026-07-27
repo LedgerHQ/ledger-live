@@ -25,7 +25,7 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:*",
     "@shared/env": "workspace:*",
     "base64-js": "1",

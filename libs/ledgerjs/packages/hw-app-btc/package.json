@@ -64,7 +64,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/psbtv2": "workspace:^",
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0",

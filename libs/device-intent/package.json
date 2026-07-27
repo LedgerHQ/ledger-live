@@ -33,7 +33,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

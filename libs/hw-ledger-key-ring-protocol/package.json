@@ -20,7 +20,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "bip32": "^4.0.0",
     "@noble/curves": "^1.9.7",

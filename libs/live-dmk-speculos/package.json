@@ -53,7 +53,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@shared/env": "workspace:*"
   },
