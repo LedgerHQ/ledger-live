@@ -9,6 +9,5 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
-  "ignoreUnimported": []
+    "jest-util"]
 }

@@ -108,7 +108,7 @@ export const BluetoothNotSupportedError = createCustomErrorClass("FwUpdateBlueto
 
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
-export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
+export { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/live-network/errors";
 export * from "@ledgerhq/coin-module-framework/errors";
 export * from "@ledgerhq/coin-algorand/errors";
 export * from "@ledgerhq/coin-aptos/errors";
@@ -126,3 +126,177 @@ export * from "@ledgerhq/coin-stacks/errors";
 export * from "@ledgerhq/coin-stellar/errors";
 export * from "@ledgerhq/coin-tezos/errors";
 export * from "@ledgerhq/coin-vechain/errors";
+
+export class PasswordsDontMatchError extends Error {
+  override name = "PasswordsDontMatch";
+  constructor(message?: string) {
+    super(message || "PasswordsDontMatch");
+  }
+}
+
+export class PasswordIncorrectError extends Error {
+  override name = "PasswordIncorrect";
+  constructor(message?: string) {
+    super(message || "PasswordIncorrect");
+  }
+}
+
+export class UnresponsiveDeviceError extends Error {
+  override name = "UnresponsiveDeviceError";
+  constructor(message?: string) {
+    super(message || "UnresponsiveDeviceError");
+  }
+}
+
+export class UserRefusedDeviceNameChange extends Error {
+  override name = "UserRefusedDeviceNameChange";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "UserRefusedDeviceNameChange");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class UserRefusedAddress extends Error {
+  override name = "UserRefusedAddress";
+  constructor(message?: string) {
+    super(message || "UserRefusedAddress");
+  }
+}
+
+export class UserRefusedAllowManager extends Error {
+  override name = "UserRefusedAllowManager";
+  [key: string]: unknown;
+  constructor(message?: string) {
+    super(message || "UserRefusedAllowManager");
+  }
+}
+
+export class GenuineCheckFailed extends Error {
+  override name = "GenuineCheckFailed";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GenuineCheckFailed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class PendingOperation extends Error {
+  override name = "PendingOperation";
+  constructor(message?: string) {
+    super(message || "PendingOperation");
+  }
+}
+
+export class DisabledTransactionBroadcastError extends Error {
+  override name = "DisabledTransactionBroadcastError";
+  constructor(message?: string) {
+    super(message || "DisabledTransactionBroadcastError");
+  }
+}
+
+export class MissingSwapPayloadParamaters extends Error {
+  override name = "MissingSwapPayloadParamaters";
+  constructor(message?: string) {
+    super(message || "MissingSwapPayloadParamaters");
+  }
+}
+
+export class ManagerDeviceLockedError extends Error {
+  override name = "ManagerDeviceLocked";
+  constructor(message?: string) {
+    super(message || "ManagerDeviceLocked");
+  }
+}
+
+export class DeviceNameInvalid extends Error {
+  override name = "DeviceNameInvalid";
+  invalidCharacters?: string;
+
+  constructor(message?: string, options?: ErrorOptions & { invalidCharacters?: string }) {
+    const { invalidCharacters, ...rest } = options ?? {};
+    super(message || "DeviceNameInvalid", rest);
+    this.invalidCharacters = invalidCharacters;
+  }
+}
+
+export class NanoSNotSupported extends Error {
+  override name = "NanoSNotSupported";
+  constructor(message?: string) {
+    super(message || "NanoSNotSupported");
+  }
+}
+
+export class NoAccessToCamera extends Error {
+  override name = "NoAccessToCamera";
+  constructor(message?: string) {
+    super(message || "NoAccessToCamera");
+  }
+}
+
+export class TransactionHasBeenValidatedError extends Error {
+  override name = "TransactionHasBeenValidatedError";
+  constructor(message?: string) {
+    super(message || "TransactionHasBeenValidatedError");
+  }
+}
+
+export class DeviceSocketFail extends Error {
+  override name = "DeviceSocketFail";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "DeviceSocketFail");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class WebsocketConnectionError extends Error {
+  override name = "WebsocketConnectionError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "WebsocketConnectionError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class UnexpectedBootloader extends Error {
+  override name = "UnexpectedBootloader";
+  constructor(message?: string) {
+    super(message || "UnexpectedBootloader");
+  }
+}
+
+export class NotEnoughBalanceSwap extends Error {
+  override name = "NotEnoughBalanceSwap";
+  constructor(message?: string) {
+    super(message || "NotEnoughBalanceSwap");
+  }
+}
+
+export class NotEnoughGasSwap extends Error {
+  override name = "NotEnoughGasSwap";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGasSwap");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class UserRefusedFirmwareUpdate extends Error {
+  override name = "UserRefusedFirmwareUpdate";
+  constructor(message?: string) {
+    super(message || "UserRefusedFirmwareUpdate");
+  }
+}
+
+export class WrongDeviceForAccountPayout extends Error {
+  override name = "WrongDeviceForAccountPayout";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "WrongDeviceForAccountPayout");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class WrongDeviceForAccountRefund extends Error {
+  override name = "WrongDeviceForAccountRefund";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "WrongDeviceForAccountRefund");
+    if (fields) Object.assign(this, fields);
+  }
+}

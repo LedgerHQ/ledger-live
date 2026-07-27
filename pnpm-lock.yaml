@@ -10322,9 +10322,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../../domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../../../evm-tools
@@ -10827,9 +10824,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11002,9 +10996,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport

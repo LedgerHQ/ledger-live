@@ -87,6 +87,11 @@
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
+    "./types/*": {
+      "@ledgerhq/source": "./src/types/*.ts",
+      "require": "./lib/types/*.js",
+      "default": "./lib-es/types/*.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
