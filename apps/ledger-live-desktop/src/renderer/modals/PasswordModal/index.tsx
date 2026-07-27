@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { closeModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -10,7 +10,7 @@ import PasswordForm from "./PasswordForm";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { setHasPassword } from "~/renderer/actions/application";
-type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
+type MaybePasswordIncorrectError = PasswordIncorrectError | undefined | null;
 const PasswordModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

@@ -10,7 +10,7 @@ import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";

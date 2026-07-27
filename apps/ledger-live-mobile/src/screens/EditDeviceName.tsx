@@ -21,7 +21,7 @@ import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useToastsActions } from "~/actions/toast";
-import { DeviceNameInvalid } from "@ledgerhq/errors";
+import { DeviceNameInvalid } from "@ledgerhq/live-common/errors";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
