@@ -223,6 +223,82 @@ describe("getTxType", () => {
   });
 });
 
+// A shielded→transparent send leaves no `incoming` or `outgoing` note behind: the
+// value goes to a transparent output and only the change note comes back, marked
+// `internal`. Deriving the type from the notes alone therefore reads it as a
+// self-transfer. These cases mirror transactions observed on mainnet accounts.
+describe("getTxType for shielded→transparent sends", () => {
+  const deshieldingTx = (
+    notes: DecryptedOutput[],
+    transparentOut: number,
+    fee = 15_000,
+  ): ShieldedTransaction => ({
+    id: "932c99c7837d7be18ed347213ae9a89a848ea9303f55e07ae5392f858f9258fc",
+    hex: "00",
+    blockHeight: 3_425_862,
+    blockHash: "hash",
+    timestamp: 1_700_000_000,
+    fee: new BigNumber(fee),
+    transparentOut: new BigNumber(transparentOut),
+    hasTransparentInputs: false,
+    decryptedData: { orchard_outputs: notes, sapling_outputs: [] },
+  });
+
+  it("classifies a z→t send with an internal change note as outgoing, not internal", () => {
+    const tx = deshieldingTx(
+      [{ amount: new BigNumber(943_170), memo: "", transfer_type: "internal" }],
+      500_000,
+    );
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("classifies a z→t send that consumed the whole note, leaving no change", () => {
+    const tx = deshieldingTx([], 500_000, 45_000);
+    expect(getTxType(tx)).toBe("SHIELDED_TX_ORCHARD_OUT");
+  });
+
+  it("still reports a genuine self-transfer as internal when nothing left the pool", () => {
+    const tx = deshieldingTx(
+      [{ amount: new BigNumber(3000), memo: "", transfer_type: "internal" }],
+      0,
+    );
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  // A t→z shielding sends its transparent change back to a transparent address,
+  // so it too has a transparent output — but that value comes from the
+  // transparent inputs, not from the shielded pool.
+  it("does not treat the transparent change of a t→z shielding tx as an outgoing send", () => {
+    const tx: ShieldedTransaction = {
+      ...deshieldingTx(
+        [{ amount: new BigNumber(1000), memo: "", transfer_type: "internal" }],
+        250_000,
+        10_000,
+      ),
+      hasTransparentInputs: true,
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+
+  // Accounts synced before the scanner reported the transparent bundle keep the
+  // pre-existing classification until they are re-synced.
+  it("falls back to internal when the transparent bundle was not reported", () => {
+    const tx: ShieldedTransaction = {
+      id: "scanned-before-the-field-existed",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(15_000),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(3000), memo: "", transfer_type: "internal" }],
+        sapling_outputs: [],
+      },
+    };
+    expect(getTxType(tx)).toBe("SHIELDED_TX_INTERNAL");
+  });
+});
+
 describe("convertShieldedTransactionsToOperations", () => {
   it("should convert shielded transactions to BtcOperation format", () => {
     const shieldedTxs: ShieldedTransaction[] = [
@@ -327,7 +403,11 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.value).toEqual(new BigNumber(3000));
   });
 
-  it("op.value for outgoing tx includes only outgoing notes", () => {
+  // Outgoing `value` carries amount + fee, matching both the transparent operations
+  // built in logic.ts and the optimistic operation emitted at signing time. A
+  // confirmed operation valued without the fee makes the amount shown in history
+  // change the moment the pending operation is replaced.
+  it("op.value for outgoing tx covers the outgoing notes plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "tx-out",
       hex: "00",
@@ -345,7 +425,7 @@ describe("convertShieldedTransactionsToOperations", () => {
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
-    expect(op.value).toEqual(new BigNumber(2000));
+    expect(op.value).toEqual(new BigNumber(2100));
   });
 
   it("op.value for internal tx is 0", () => {
@@ -364,6 +444,65 @@ describe("convertShieldedTransactionsToOperations", () => {
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_INTERNAL");
     expect(op.value).toEqual(new BigNumber(0));
+  });
+
+  // Mainnet transaction 932c99c7…: 1458170 zat spent, 500000 sent to a transparent
+  // address, 15000 fee, 943170 zat returned as an internal change note. The history
+  // used to show it as an internal transfer worth 0.
+  it("op.value for a z→t send is the transparent amount plus the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "932c99c7837d7be18ed347213ae9a89a848ea9303f55e07ae5392f858f9258fc",
+      hex: "00",
+      transparentOut: new BigNumber(500_000),
+      blockHeight: 3_425_862,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(15_000),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(943_170), memo: "", transfer_type: "internal" }],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
+    expect(op.value).toEqual(new BigNumber(515_000));
+    expect(op.fee).toEqual(new BigNumber(15_000));
+  });
+
+  it("op.value for a z→t send that left no change is still the transparent amount plus the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "d452101fabff",
+      hex: "00",
+      transparentOut: new BigNumber(955_000),
+      blockHeight: 3_425_863,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(45_000),
+      decryptedData: { orchard_outputs: [], sapling_outputs: [] },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
+    expect(op.value).toEqual(new BigNumber(1_000_000));
+  });
+
+  it("op.value for an incoming tx stays exclusive of the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-in-fee",
+      hex: "00",
+      blockHeight: 103,
+      blockHash: "hash",
+      timestamp: 1_700_000_003,
+      fee: new BigNumber(10_000),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(1_000_000), memo: "", transfer_type: "incoming" },
+        ],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_IN");
+    expect(op.value).toEqual(new BigNumber(1_000_000));
   });
 });
 

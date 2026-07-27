@@ -87,7 +87,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Casper | `casper.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/casper/config.ts) | prod |
 | Concordium | `ccd-node-mainnet.coin.ledger.com`, `ccd-wallet-proxy-mainnet.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/concordium/config.ts) | prod |
 | XRP node | `xrp.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/xrp/config.ts) | prod |
-| Zcash (Zaino) | `zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com`<br>_⚠️ only staging found; prod status unknown_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | staging |
+| Zcash (Zaino) | `zec-indexer.coin.ledger-test.com`<br>_⚠️ only staging found; prod status unknown_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | staging |
 | Cosmos LCDs (Ledger-hosted) | `axelar`, `cosmoshub4`, `dydx`, `osmo`, `coreum`, `injective`, `babylon` `.coin.ledger.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | **PTX** | | | |
 | Buy API | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -148,6 +148,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | Sui testnet | `fullnode.testnet.sui.io`, `graphql.testnet.sui.io` | [env](/libs/env/src/env.ts) | testnet |
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
+| Zcash testnet (lightwalletd) | `testnet.zec.rocks`<br>_public community endpoint; no Ledger-hosted Zcash testnet_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | testnet |
 | Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |

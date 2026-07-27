@@ -35,6 +35,16 @@ export interface ZCashClient {
     args: Omit<FinalizeTransactionArgs, "requestId">,
   ): Promise<FinalizeTransactionResult>;
   broadcastTransaction?(grpcUrl: string, txHex: string): Promise<string>;
+  /**
+   * What each transaction actually did, read from its raw bytes rather than
+   * from what an explorer can see of it. Results come back in request order.
+   *
+   * `ufvk` unlocks the shielded payees; without it only fees are recovered.
+   */
+  transactionDetails?(
+    requests: TransactionDetailsRequest[],
+    ufvk?: string,
+  ): Promise<TransactionDetailsResult[]>;
 }
 
 /** Common constructor args shared by both ZCash client factories. */
@@ -88,6 +98,17 @@ export type ShieldedTransaction = {
   blockHash: string;
   timestamp: number;
   fee: BigNumber; // zatoshis
+  /**
+   * Sum of the transparent outputs, in zatoshis. Carries the value of a
+   * shielded→transparent send, which leaves no decrypted note behind to account
+   * for it. Absent for transactions scanned before the scanner reported it.
+   */
+  transparentOut?: BigNumber;
+  /**
+   * Whether the transaction spends transparent inputs, in which case those
+   * inputs — rather than the shielded pools — may be paying `transparentOut`.
+   */
+  hasTransparentInputs?: boolean;
   decryptedData?: DecryptedTransaction;
 };
 
@@ -124,6 +145,9 @@ export type ShieldedTransactionRaw = {
   blockHash: string;
   timestamp: number;
   fee: string; // zatoshis
+  /** Absent on accounts persisted before the scanner reported the transparent bundle. */
+  transparentOut?: string; // zatoshis
+  hasTransparentInputs?: boolean;
   decryptedData?: {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
@@ -292,4 +316,37 @@ export type BroadcastTransactionArgs = {
   requestId: string;
   grpcUrl: string;
   txHex: string;
+};
+
+/** Value of a transparent output being spent, needed to price its transaction. */
+export type TransparentPrevout = {
+  /** Txid of the transaction that created the output, big-endian display order. */
+  txid: string;
+  index: number;
+  /** Zatoshis, as a decimal string. */
+  value: string;
+};
+
+export type TransactionDetailsRequest = {
+  txid: string;
+  /** Block containing the transaction — selects the consensus branch to parse against. */
+  height: number;
+  /** Every transparent input of the transaction. An incomplete set yields a `null` fee. */
+  prevouts: TransparentPrevout[];
+};
+
+export type TransactionDetailsResult = {
+  txid: string;
+  /** Zatoshis as a decimal string, or `null` when the fee could not be established. */
+  fee: string | null;
+  /** Addresses paid by shielded outputs of ours. Empty without a viewing key. */
+  payees: string[];
+};
+
+export type TransactionDetailsArgs = {
+  requestId: string;
+  grpcUrl: string;
+  network: string;
+  requests: TransactionDetailsRequest[];
+  ufvk?: string;
 };
