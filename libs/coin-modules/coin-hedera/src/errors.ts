@@ -77,3 +77,11 @@ export class HederaMemoExceededSizeError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class ClaimRewardsFeesWarning extends Error {
+  override name = "ClaimRewardsFeesWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ClaimRewardsFeesWarning");
+    if (fields) Object.assign(this, fields);
+  }
+}
