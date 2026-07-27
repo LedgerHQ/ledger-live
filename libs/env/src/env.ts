@@ -10,24 +10,25 @@ type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | undefined => {
+export const intParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: any): number | undefined => {
+export const floatParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: unknown): boolean | undefined => {
+export const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+export const stringParser = (v: unknown): string | undefined =>
+  typeof v === "string" ? v : undefined;
 
 type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
-const jsonParser = (v: unknown): JSONValue | undefined => {
+export const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
     if (typeof v !== "string") throw new Error();
     return JSON.parse(v);
@@ -36,7 +37,7 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: unknown): string[] | undefined => {
+export const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
