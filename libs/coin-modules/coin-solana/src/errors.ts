@@ -229,3 +229,11 @@ export class NetworkError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}

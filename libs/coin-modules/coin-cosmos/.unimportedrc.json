@@ -23,7 +23,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnimported": [
     "src/broadcast.ts",
     "src/buildOptimisticOperation.ts",
@@ -37,5 +38,8 @@
     "src/synchronisation.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": ["rxjs"]
+  "ignoreUnused": [
+    "rxjs",
+    "@ledgerhq/errors"
+  ]
 }

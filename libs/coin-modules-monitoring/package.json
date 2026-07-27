@@ -28,6 +28,7 @@
   "devDependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@rslib/core": "catalog:",

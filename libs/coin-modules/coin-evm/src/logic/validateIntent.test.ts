@@ -6,23 +6,25 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
-  ClaimRewardsFeesWarning,
-  ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
-  GasLessThanEstimate,
   InvalidAddress,
-  MaxFeeTooLow,
   NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import {
+  ClaimRewardsFeesWarning,
+  ETHAddressNonEIP,
+  GasLessThanEstimate,
+  GasPriceTooLow,
+  MaxFeeTooLow,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
-  RecipientRequired,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
-} from "@ledgerhq/errors";
-import { GasPriceTooLow } from "../errors";
+} from "../errors";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";

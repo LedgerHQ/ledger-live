@@ -12,7 +12,7 @@ import {
   patchOperationWithHash,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { ChainAdapter } from "../types";
+import type { ChainAdapter, ResolvedTransactions } from "../types";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../../signer";
 import type {
   Transaction,
@@ -46,7 +46,11 @@ import {
   ZcashSigningCancelled,
   ZcashUtxoNotInAccount,
 } from "../../errors";
-import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes } from "./operations";
@@ -60,7 +64,9 @@ import {
 import { composeXpub } from "./xpub";
 import { computeZcashBalance } from "./balance";
 import { getWalletAccount } from "../../getWalletAccount";
+import type { TX } from "@ledgerhq/wallet-btc/index";
 import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
+import { resolveTransactionDetails } from "./transaction-details";
 
 // ── Lazy module import (renderer-safe) ────────────────────────────────────
 //
@@ -401,6 +407,35 @@ const zcashChainAdapter: ChainAdapter = {
     return computeZcashBalance(
       transparentBalance,
       (account as ZcashAccount | undefined)?.privateInfo,
+    );
+  },
+
+  async resolveTransactionDetails(
+    transactions: TX[],
+    account: BitcoinAccount | undefined,
+  ): Promise<ResolvedTransactions> {
+    const asReported = { transactions, payeesByTxId: new Map<string, string[]>() };
+    if (!isZcashShieldedEnabled()) return asReported;
+
+    const { grpcUrl, network } = getZainoEndpoint();
+    const { createZCashClient } = await getZCashModule();
+    const client = createZCashClient({ grpcUrl, network });
+
+    // Optional on ZCashClient: the React Native stub omits it. The capability is
+    // settled for the whole platform, so it is asked about here rather than per
+    // batch — nothing is left half-asked, and no sync builds a request nobody
+    // can answer. The explorer's view stands, as it did before this hook.
+    const transactionDetails = client.transactionDetails;
+    if (!transactionDetails) return asReported;
+
+    // Without the viewing key the fees are still recoverable; only the shielded
+    // payees are not, since they are encrypted to it.
+    const ufvk = (account as ZcashAccount | undefined)?.privateInfo?.ufvk ?? undefined;
+
+    return resolveTransactionDetails(
+      transactions,
+      requests => transactionDetails(requests, ufvk),
+      ufvk,
     );
   },
 

@@ -1,4 +1,4 @@
-import { FeeEstimationFailed } from "@ledgerhq/errors";
+import { FeeEstimationFailed } from "../../../errors";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

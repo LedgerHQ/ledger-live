@@ -5,8 +5,8 @@ import {
   InvalidAddress,
   FeeTooHigh,
   AmountRequired,
-  DustLimit,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit } from "../../../errors";
 import type { FeeItems, Transaction } from "@ledgerhq/coin-bitcoin/types";
 import {
   makeAccountBridgeReceive,
