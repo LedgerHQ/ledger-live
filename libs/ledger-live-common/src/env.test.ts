@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 // @ts-expect-error – @ledgerhq/live-env is typed in PR1; becomes type-lossy in PR2
 getEnv("yolo");

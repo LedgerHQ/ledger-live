@@ -48,11 +48,12 @@
   "dependencies": {
     "@ethersproject/constants": "^5.7.0",
     "@ethersproject/hash": "^5.7.0",
-    "@ledgerhq/live-env": "workspace:^",
     "axios": "catalog:",
-    "crypto-js": "4.2.0"
+    "crypto-js": "4.2.0",
+    "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "catalog:",

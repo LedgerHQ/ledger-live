@@ -92,7 +92,6 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -105,7 +104,8 @@
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

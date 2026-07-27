@@ -21,13 +21,13 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/live-env": "workspace:*"
+    "@ledgerhq/logs": "workspace:*",
+    "@ledgerhq/types-cryptoassets": "workspace:*",
+    "@ledgerhq/types-live": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

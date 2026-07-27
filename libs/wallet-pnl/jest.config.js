@@ -15,6 +15,7 @@ module.exports = {
     ],
   },
   testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
   testPathIgnorePatterns: ["lib/", "lib-es/", "helpers/"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [

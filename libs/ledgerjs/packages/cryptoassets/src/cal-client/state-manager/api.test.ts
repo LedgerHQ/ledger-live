@@ -16,7 +16,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 
-// Mock live-env
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn(),
 }));
@@ -28,7 +27,8 @@ jest.mock("../../api-token-converter", () => ({
 
 import { convertApiToken } from "../../api-token-converter";
 
-const mockGetEnv = getEnv as jest.MockedFunction<typeof getEnv>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockGetEnv = getEnv as jest.MockedFunction<(key: string) => any>;
 
 describe("api.ts", () => {
   beforeEach(() => {
