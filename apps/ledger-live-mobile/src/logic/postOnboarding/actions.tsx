@@ -46,27 +46,6 @@ export const buyCryptoAction: PostOnboardingAction = {
   ],
 };
 
-export const customImageAction: PostOnboardingAction = {
-  id: PostOnboardingActionId.customImage,
-  Icon: Icons.PictureImage,
-  title: "postOnboarding.drawer.actions.customImage.title",
-  titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
-  description: "postOnboarding.drawer.actions.customImage.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.customImage.titleCompleted",
-  buttonLabelForAnalyticsEvent: "Set lock screen picture",
-  getNavigationParams: ({ deviceModelId, referral }) => [
-    NavigatorName.CustomImage,
-    {
-      screen: ScreenName.CustomImageStep0Welcome,
-      params: {
-        device: null,
-        deviceModelId,
-        ...(referral ? { referral } : {}),
-      },
-    },
-  ],
-};
-
 export const syncAccountsAction: PostOnboardingAction = {
   id: PostOnboardingActionId.syncAccounts,
   featureFlagId: "llmLedgerSyncEntryPoints",
