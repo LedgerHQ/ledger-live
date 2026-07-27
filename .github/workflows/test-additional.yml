@@ -35,3 +35,50 @@ jobs:
 
       - name: Validate Changesets
         uses: LedgerHQ/ledger-live/tools/actions/composites/validate-changesets@develop
+
+  # TEMPORARY check (LIVE-33399): the English source locales must expose the
+  # `_few` / `_many` plural forms so Smartling can translate them for Russian /
+  # French / Spanish / Portuguese. Runs only when an English locale file is
+  # modified and blocks the PR (through the "OK" gate) when a plural group is
+  # missing those forms. Fix with:
+  #   node scripts/i18n-plurals.mjs --fix
+  i18n-plurals-validation:
+    name: i18n Plural Validation
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      # Gate on the English source files changing. On a PR we inspect the diff;
+      # on merge_group / manual runs we always run (the check is cheap and safe).
+      - name: Detect English locale changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          EN_FILES="apps/ledger-live-desktop/static/i18n/en/app.json apps/ledger-live-mobile/src/locales/en/common.json"
+          if [ "$EVENT_NAME" = "pull_request" ] && [ -n "$PR_NUMBER" ]; then
+            CHANGED=$(gh api "repos/$REPO/pulls/$PR_NUMBER/files" --paginate -q '.[].filename')
+            SHOULD_RUN=false
+            for f in $EN_FILES; do
+              if grep -qxF "$f" <<< "$CHANGED"; then SHOULD_RUN=true; fi
+            done
+          else
+            SHOULD_RUN=true
+          fi
+          echo "should_run=$SHOULD_RUN" >> "$GITHUB_OUTPUT"
+          if [ "$SHOULD_RUN" != "true" ]; then
+            echo "No English locale file changed — skipping plural check."
+          fi
+
+      # No dependency install: the check is pure Node (no deps) and the runner
+      # ships Node preinstalled.
+      - name: Check plural coverage
+        if: steps.changes.outputs.should_run == 'true'
+        run: node scripts/i18n-plurals.mjs
