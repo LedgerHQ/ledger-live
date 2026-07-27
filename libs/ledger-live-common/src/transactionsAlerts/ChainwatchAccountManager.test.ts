@@ -1,8 +1,8 @@
 import { LedgerAPI5xx } from "@ledgerhq/errors";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import network from "@ledgerhq/live-network/network";
 import type { ChainwatchNetwork } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "../currencies";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
 jest.mock("@ledgerhq/live-network/network");
