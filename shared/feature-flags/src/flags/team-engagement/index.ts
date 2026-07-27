@@ -23,5 +23,4 @@ export * from "./npsRatingsPrompt";
 export * from "./onboardingWidget";
 export * from "./ratingsPrompt";
 export * from "./referralProgramDesktopSidebar";
-export * from "./storyly";
 export * from "./transactionsAlerts";
