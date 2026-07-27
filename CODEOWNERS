@@ -347,6 +347,11 @@ libs/live-dmk-desktop/                                             @ledgerhq/liv
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
 libs/live-signer-solana/                                           @ledgerhq/live-devices
+libs/live-signer-aleo/                                             @ledgerhq/live-devices
+libs/live-signer-canton/                                           @ledgerhq/live-devices
+libs/live-signer-concordium/                                       @ledgerhq/live-devices
+libs/live-signer-zcash/                                            @ledgerhq/live-devices
+libs/ledgerjs/packages/hw-transport/                               @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 
