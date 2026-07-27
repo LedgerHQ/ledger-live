@@ -45,10 +45,9 @@ const baseViewModel: NetworkFeesViewModel = {
   value: "0 TRX",
   strategyLabel: "",
   showFeeCurrencyAmount: false,
-  showFeePresets: false,
   selectedFeeStrategy: null,
-  feePresetLabelsOptions: [],
-  onSelectFeeStrategy: jest.fn(),
+  displayOptions: [],
+  canOpenSelector: false,
   networkFeesInfo: null,
 };
 

@@ -292,6 +292,7 @@
   "fees": {
     "advanced": "Advanced",
     "custom": "Custom",
+    "defaultNetworkFee": "Default network fee",
     "fast": "Fast",
     "networkFees": "Network fees",
     "high": "High",

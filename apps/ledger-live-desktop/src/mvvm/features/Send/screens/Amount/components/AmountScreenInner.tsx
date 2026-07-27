@@ -71,6 +71,7 @@ export function AmountScreenInner({
     bridgeError,
     uiConfig,
     transactionActions,
+    onSelectCoinControl,
   });
 
   const handleReview = useCallback(() => {
@@ -97,7 +98,6 @@ export function AmountScreenInner({
       {...viewModel}
       onReview={handleReview}
       onGetFunds={onGetFunds}
-      onSelectCoinControl={onSelectCoinControl}
       onMessageLinkPress={onMessageLinkPress}
     />
   );
