@@ -50,7 +50,8 @@
         ".storybook/electronStub.js",
         ".storybook/fsStub.js",
         ".storybook/settingsMock.ts",
-        "src/renderer/mockServiceWorker.js"
+        "src/renderer/mockServiceWorker.js",
+        "src/errors.ts"
       ],
       "ignoreDependencies": [
         "prop-types",
