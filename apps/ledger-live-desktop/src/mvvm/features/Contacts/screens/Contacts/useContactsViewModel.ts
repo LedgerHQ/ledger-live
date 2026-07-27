@@ -15,6 +15,7 @@ import {
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
+import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
@@ -27,6 +28,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const { detail, onOpenMe, onOpenContact } = useContactDetailPaneAdapter(contacts);
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -40,7 +42,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.me.addressCount", { count }),
+      formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
@@ -64,11 +66,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     setSearchQuery(event.target.value);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
-  const onOpenMe = useCallback<ContactsListViewProps["onOpenMe"]>(_contactId => undefined, []);
-  const onOpenContact = useCallback<ContactsListViewProps["onOpenContact"]>(
-    _contactId => undefined,
-    [],
-  );
   const onDismissLedgerSyncIntroduction = useCallback(
     () => setIsLedgerSyncIntroductionDismissed(true),
     [],
@@ -101,6 +98,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onClearSearch,
     onOpenMe,
     onOpenContact,
+    detail,
     ledgerSyncStatus,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,

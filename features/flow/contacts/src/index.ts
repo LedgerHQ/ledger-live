@@ -6,6 +6,7 @@ export * from "./steps/AddAddress";
 export * from "./steps/Introduction";
 export * from "./steps/Introduction/web";
 export * from "./steps/Detail";
+export * from "./steps/Detail/web";
 export * from "./components";
 export * from "./hooks";
 export * from "./featureFlags";

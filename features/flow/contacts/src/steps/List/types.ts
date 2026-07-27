@@ -1,5 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
+import type { ContactDetailViewProps } from "../Detail/types";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
@@ -76,6 +77,7 @@ export type ContactsListViewProps = ContactsPageSharedProps &
   Readonly<{
     onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onOpenMe: (contactId: ContactId) => void;
+    detail?: ContactDetailViewProps;
   }>;
 
 export type ContactsListViewNativeProps = ContactsPageSharedProps &

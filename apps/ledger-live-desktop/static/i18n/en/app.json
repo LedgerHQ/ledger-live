@@ -9373,6 +9373,7 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
@@ -9380,11 +9381,19 @@
     },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addressCount_zero": "0 address",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "name": "Me"
+    },
+    "detail": {
+      "emptyState": {
+        "meTitle": "No saved addresses for you",
+        "contactTitle": "No saved addresses for {{name}}",
+        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "contactDescription": "Save their wallet addresses to send to them by name next time."
+      }
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",

@@ -8,10 +8,10 @@ import { useSelector } from "react-redux";
 type ContactsStateRoot = Parameters<typeof selectContactById>[0];
 
 export function useEmptyContactDetail(
-  contactId: ContactId
+  contactId: ContactId | undefined,
 ): Contact | undefined {
   const contact = useSelector((state: ContactsStateRoot) =>
-    selectContactById(state, contactId)
+    contactId ? selectContactById(state, contactId) : undefined,
   );
 
   return contact?.addresses.length === 0 ? contact : undefined;

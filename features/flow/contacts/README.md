@@ -8,7 +8,7 @@ Shared Contacts flow package for Desktop and Mobile.
 
 - Feature-flag configuration (`useContactsFeature`, resolvers)
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
-- Empty contact detail selection and native presentation
+- Empty contact detail selection and presentation
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
@@ -32,8 +32,8 @@ and are not exported as package subpaths.
 
 Each user-facing screen lives under `src/steps/` and follows the MVVM split used by the app
 features (View + ViewModel + types + colocated components). Web and React Native export their
-respective `ContactsListView` implementations through the root entry point. The native entry also
-exports `ContactsAddContactHeaderButton` and `ContactDetailView` via the step `native.ts` barrels.
+respective `ContactsListView` and `ContactDetailView` implementations through the root entry point. The native entry also
+exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
 
 ## Testing
 
@@ -78,10 +78,11 @@ src/
 │   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts
 │   │   ├── internals/useSingleFireDismiss.ts
 │   │   └── index.ts / web.ts / native.ts
-│   └── Detail/                          # Native detail screen (consumed by Mobile)
-│       ├── ContactDetailView.native.tsx / useEmptyContactDetail.ts / types.ts
-│       ├── components/                  # Header, EmptyState, Avatar (native)
-│       └── index.ts / native.ts
+│   └── Detail/                          # Contact detail empty state (web + native)
+│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / types.ts
+│       ├── model/                       # resolveContactDetailEmptyStateCopy
+│       ├── components/                  # Header, EmptyState, Avatar (web + native)
+│       └── index.ts / web.ts / native.ts
 ├── components/                          # Cross-step shared UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 │   └── ContactAvatar/                   # Shared native list and detail avatar

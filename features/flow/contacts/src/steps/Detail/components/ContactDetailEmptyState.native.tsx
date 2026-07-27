@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactDetailViewProps } from "../types";
+import { resolveContactDetailEmptyStateCopy } from "../model/resolveContactDetailEmptyStateCopy";
 
 type ContactDetailEmptyStateProps = Pick<ContactDetailViewProps, "contact" | "labels">;
 
@@ -8,9 +9,7 @@ export function ContactDetailEmptyState({
   contact,
   labels,
 }: ContactDetailEmptyStateProps): React.JSX.Element {
-  const description = contact.isMe
-    ? labels.emptyMeDescription
-    : labels.formatEmptyContactDescription(contact.name);
+  const { title, description } = resolveContactDetailEmptyStateCopy(contact, labels);
 
   return (
     <Box
@@ -24,7 +23,7 @@ export function ContactDetailEmptyState({
       }}
     >
       <Text typography="body1SemiBold" lx={{ color: "base", textAlign: "center" }}>
-        {labels.emptyStateTitle}
+        {title}
       </Text>
       <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
         {description}
