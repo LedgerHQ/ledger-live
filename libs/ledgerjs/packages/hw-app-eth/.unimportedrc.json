@@ -10,5 +10,5 @@
     "@jest/expect-utils",
     "@jest/get-type",
     "jest-util"],
-  "ignoreUnimported": []
+  "ignoreUnimported": ["src/errors.ts"]
 }

@@ -1,4 +1,5 @@
 {
   "entry": ["src/Str.ts"],
-  "ignoreUnused": ["jest-sonar"]
+  "ignoreUnused": ["jest-sonar"],
+  "ignoreUnimported": ["src/errors.ts"]
 }

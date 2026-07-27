@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Sui.ts"]
+  "entry": ["src/Sui.ts"],
+  "ignoreUnimported": ["src/errors.ts"]
 }
