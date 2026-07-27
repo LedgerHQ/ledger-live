@@ -2,6 +2,7 @@ import { WebViewAppPage } from "./webViewApp.page";
 import { step } from "tests/misc/reporters/step";
 import { expect, Page } from "@playwright/test";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { sendDeepLink } from "tests/utils/deeplink";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Device } from "@ledgerhq/live-e2e-shared/enum/Device";
@@ -34,6 +35,7 @@ export class SwapPage extends WebViewAppPage {
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
+  private readonly fromAccountAccountNameTag = "from-account-account-name-tag";
   private fromAccountAmountInput = "from-account-amount-input";
   private readonly fromAccountError = "from-account-error";
   private readonly noQuotesPlaceholder = "quotes-error-state";
@@ -373,6 +375,12 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
   }
 
+  @step("Check currency to swap from account name contains $0")
+  async checkAssetFromAccountNameContains(expected: string) {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.fromAccountAccountNameTag)).toContainText(expected);
+  }
+
   @step("Expect asset or account selected $0 to be displayed")
   async expectSelectedAssetDisplayed(asset: string | RegExp) {
     const webview = await this.getWebView();
@@ -533,6 +541,20 @@ export class SwapPage extends WebViewAppPage {
       surface === "embedded" ? this.embeddedSwapContainer : this.fullSwapContainer;
     await swapContainer.waitFor();
     await this.getWebView();
+  }
+
+  @step("Open swap via deeplink: $0")
+  async openViaDeeplink(url: string) {
+    await this.goAndWaitForSwapToBeReady(() => sendDeepLink(this.page, url));
+  }
+
+  @step("Clear swap account selection from localStorage")
+  async clearSwapState() {
+    const webview = await this.getWebView();
+    await webview.evaluate(() => {
+      localStorage.removeItem("from-account");
+      localStorage.removeItem("to-account");
+    });
   }
 
   @step("Go to swap history")

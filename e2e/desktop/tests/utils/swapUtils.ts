@@ -85,6 +85,17 @@ export async function selectAccountMAD(selector: ModularDialog, account: Account
   await selector.selectAccountByName(account);
 }
 
+// Resolves the native account picker after a token-only deeplink: the modular
+// dialog (Wallet 4.0+) or the legacy drawer. 30s covers back-to-back dialogs.
+export async function selectAccountFromDeeplinkDrawer(app: Application, account: Account) {
+  const isModularDialogVisible = await app.modularDialog.waitForAccountSelectionVisible(30_000);
+  if (isModularDialogVisible) {
+    await app.modularDialog.selectAccountByName(account);
+  } else {
+    await app.swapDrawer.selectAccountByName(account);
+  }
+}
+
 export async function handleSwapErrorOrSuccess(
   app: Application,
   swap: Swap,
