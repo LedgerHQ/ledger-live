@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™ 不支持互换 Monad",
       "monad_description" : "要互换 Monad，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "zcash_title" : "Ledger Nano S™ 不支持互换 Zcash",
-      "zcash_description" : "要互换 Zcash，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+      "zcash_description" : "要互换 Zcash，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "aleo_title" : "Ledger Nano S™ 不支持互换 Aleo",
+      "aleo_description" : "要互换 Aleo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "费用数额 ({{unit}})",
     "gasLimit" : "Gas 限值 ({{unit}})",
     "feesPaid" : "支付给网络用于处理交易的费用",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "您将使用 {{energy}} 能量和 {{bandwidth}} 带宽来支付网络费用。"
+      },
+      "insufficient" : {
+        "description" : "您的能量和带宽不足，无法完成此转账。差额将通过销毁波场币 (TRX) 来补足。"
+      }
+    },
     "insufficientBalanceFees" : "余额不足以支付网络费用",
     "amountToSend" : "发送数额为 ({{currency}})",
     "coinToSend" : "发送币种",
@@ -4339,7 +4349,10 @@
         "redelegate" : "重新委托",
         "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
-        "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+          "zero_gravity" : "您至少需要 1 Gwei 的已委托份额才能解除委托"
+        },
         "undelegateActivatingTooltip" : "您无法解除委托仍在激活中的质押",
         "reward" : "申领奖励",
         "activeTooltip" : "已委托的数额会生成奖励",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "数额"
+              "title" : "数额",
+              "visibilityDelay" : "最多可能需要 {{numberOfMinutes}} 分钟，此委托才会显示在您的委托面板上。"
             },
             "validator" : {
               "title" : "验证者",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "存入",
+      "OUT" : "提取"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "用于自定义多系列测试的以逗号分隔的系列。",
         "customFamiliesPlaceholder" : "以太坊虚拟机 (EVM)、恒星币、阿普托斯币",
         "applyFamilies" : "应用",
-        "resetOverride" : "重置覆盖"
+        "contactsData" : "联系人数据",
+        "loadPopulatedContacts" : "加载现有联系人",
+        "resetContacts" : "重置联系人",
+        "resetOverride" : "重置覆盖",
+        "featureIntroduction" : {
+          "title" : "功能介绍",
+          "label" : "显示联系人功能介绍",
+          "dismissed" : "已忽略 — 开启后将在联系人页面再次显示介绍。",
+          "willShow" : "将在联系人页面持续显示，直到您关闭为止。"
+        }
       },
       "cryptoAssetsList" : {
         "title" : "加密资产列表",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "收币人账户没有选择加入所选的 ASA。"
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo 备注太长。",
+      "description" : "Algorand Memo 备注不能超过 1024 字节。请缩短您的 Memo 备注。"
     },
     "AmountRequired" : {
       "title" : "所需数额"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "查看更多。减少点击。节省 {{discount}}%",
-      "subtitle" : "尽享更大的屏幕、更智能的交易审核、更强的保护，以及专属的 {{discount}}% 优惠。"
+      "subtitle" : "尽享更大的屏幕、更智能的交易审核、更强的保护，以及专属的 {{discount}}% 优惠。",
+      "cta" : "探索触摸屏签署设备"
     },
     "optedOut" : {
-      "title" : "识别骗局。查看所有详情",
-      "subtitle" : "在触摸屏签署设备上清晰审核，并通过高级安全检查发现骗局。"
-    },
-    "cta" : "探索触摸屏签署设备"
+      "title" : "签署之前，识破骗局",
+      "subtitle" : "详细了解支持实时威胁检测的高级安全功能。",
+      "cta" : "了解更多"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "联系人",
     "addContact" : "添加联系人",
     "searchPlaceholder" : "搜索联系人",
+    "searchNoResults" : "未找到联系人",
     "me" : {
       "name" : "我",
       "addressCount_zero" : "0 个地址",
       "addressCount_one" : "{{count}} 个地址",
       "addressCount_other" : "{{count}} 个地址"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
+      "dismiss" : "知道了"
+    },
+    "featureIntroduction" : {
+      "title" : "认识「联系人」功能",
+      "description" : "您的加密货币地址簿——将常用的转账钱包地址集中保存在一处。",
+      "primaryAction" : "试用联系人",
+      "secondaryAction" : "以后再说",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "地址只需保存一次",
+          "description" : "将常用转账地址集中保存在一处。"
+        },
+        "sendToRightAddress" : {
+          "title" : "转账至正确地址",
+          "description" : "资金每次都能到达正确的钱包。"
+        },
+        "privateAcrossDevices" : {
+          "title" : "跨设备私密同步",
+          "description" : "通过 Ledger Sync 账户同步功能进行端到端加密。"
+        }
+      }
     }
   },
   "assetDetails" : {
