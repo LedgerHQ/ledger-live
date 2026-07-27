@@ -1,6 +1,5 @@
 import { SequenceNumberError } from "@ledgerhq/errors";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -39,10 +38,7 @@ export class CosmosAPI {
     return this._cosmosSDKVersion;
   }
 
-  constructor(
-    currencyId: string,
-    options?: { endpoint: EnvValue<EnvName> | undefined; version: string },
-  ) {
+  constructor(currencyId: string, options?: { endpoint: string | undefined; version: string }) {
     const crypto = cryptoFactory(currencyId);
     this.chainInstance = crypto;
     this.defaultEndpoint = options?.endpoint?.toString() ?? crypto.lcd;

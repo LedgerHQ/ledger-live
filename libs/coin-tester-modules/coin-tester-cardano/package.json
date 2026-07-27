@@ -59,11 +59,11 @@
   "dependencies": {
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@shared/env": "workspace:*",
     "@stricahq/bip32ed25519": "^1.0.4",
     "@stricahq/cbors": "^1.0.2",
     "@stricahq/typhonjs": "^3.0.0",

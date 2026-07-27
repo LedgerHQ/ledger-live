@@ -20,10 +20,7 @@
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
-  "dependencies": {
-    "rxjs": "catalog:",
-    "utility-types": "^3.10.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "catalog:",
     "jest": "catalog:",
@@ -42,6 +39,8 @@
     "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/env"
   },

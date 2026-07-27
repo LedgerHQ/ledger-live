@@ -7593,12 +7593,12 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       '@stricahq/bip32ed25519':
         specifier: ^1.0.4
         version: 1.0.4
@@ -7958,12 +7958,12 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       '@solana/spl-token':
         specifier: 'catalog:'
         version: 0.4.14(@solana/web3.js@1.98.4(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
@@ -8116,9 +8116,6 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../live-config
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -8128,6 +8125,9 @@ importers:
       '@noble/hashes':
         specifier: ^1.8.0
         version: 1.8.0
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -8658,13 +8658,6 @@ importers:
         version: 19.1.4(react@19.1.4)
 
   libs/env:
-    dependencies:
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -11810,15 +11803,15 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
         specifier: 'catalog:'
         version: 0.3.0(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../shared/env
     devDependencies:
       '@swc/core':
         specifier: 'catalog:'
@@ -13581,6 +13574,9 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
     devDependencies:
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../shared/env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -13679,15 +13675,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-      utility-types:
-        specifier: ^3.10.0
-        version: 3.11.0
 
   shared/feature-flags:
     dependencies:
