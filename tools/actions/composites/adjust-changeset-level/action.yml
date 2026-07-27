@@ -15,23 +15,29 @@ runs:
       shell: bash
       run: |
         valid_levels=("patch" "minor" "major")
-        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.from_level }} " ]]; then
-          echo "Invalid from_level: ${inputs.from_level}. Must be one of ${valid_levels[@]}"
+        if [[ ! " ${valid_levels[@]} " =~ " ${INPUTS_FROM_LEVEL} " ]]; then
+          echo "Invalid from_level: ${INPUTS_FROM_LEVEL}. Must be one of ${valid_levels[@]}"
           exit 1
         fi
-        if [[ ! " ${valid_levels[@]} " =~ " ${{ inputs.to_level }} " ]]; then
-          echo "Invalid to_level: ${inputs.to_level}. Must be one of ${valid_levels[@]}"
+        if [[ ! " ${valid_levels[@]} " =~ " ${INPUTS_TO_LEVEL} " ]]; then
+          echo "Invalid to_level: ${INPUTS_TO_LEVEL}. Must be one of ${valid_levels[@]}"
           exit 1
         fi
+      env:
+        INPUTS_FROM_LEVEL: ${{ inputs.from_level }}
+        INPUTS_TO_LEVEL: ${{ inputs.to_level }}
 
     - name: Adjust changeset level
       shell: bash
       run: |
-        echo "Adjusting changeset level from ${{ inputs.from_level }} to ${{ inputs.to_level }}"
+        echo "Adjusting changeset level from ${INPUTS_FROM_LEVEL} to ${INPUTS_TO_LEVEL}"
         for file in .changeset/*.md; do
-          if grep -q ": ${{ inputs.from_level }}" "$file"; then
+          if grep -q ": ${INPUTS_FROM_LEVEL}" "$file"; then
             # target the lines between the "---" yaml delimiters, replace e.g. ": patch" with ": minor"
-            sed -i '/---/,/---/s/: ${{ inputs.from_level }}/: ${{ inputs.to_level }}/' "$file"
-            echo "Updated $file to ${{ inputs.to_level }}"
+            sed -i '/---/,/---/s/: ${INPUTS_FROM_LEVEL}/: ${INPUTS_TO_LEVEL}/' "$file"
+            echo "Updated $file to ${INPUTS_TO_LEVEL}"
           fi
         done
+      env:
+        INPUTS_FROM_LEVEL: ${{ inputs.from_level }}
+        INPUTS_TO_LEVEL: ${{ inputs.to_level }}

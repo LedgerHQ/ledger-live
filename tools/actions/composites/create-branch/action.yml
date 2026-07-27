@@ -32,19 +32,21 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
+          const baseBranch = core.getInput('base-branch');
+          const branchName = core.getInput('branch-name');
           try {
             // First get the SHA of the base branch
             const baseRef = await github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `${{ inputs.base-branch }}`
+              ref: `${baseBranch}`
             });
 
             // Create the new branch using the base branch's SHA
             const output = await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `refs/heads/${{ inputs.branch-name }}`,
+              ref: `refs/heads/${branchName}`,
               sha: baseRef.data.object.sha
             });
 
