@@ -1,5 +1,5 @@
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 const mockInjectiveCurrency = {
   type: "CryptoCurrency" as const,
   id: CryptoCurrencyIdSchema.parse("injective"),
@@ -45,7 +45,7 @@ export const mockAssetsData = {
       name: "Injective Protocol",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("bsc"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("bsc"),
       tokenType: "bep20",
       units: [
         {
@@ -61,7 +61,7 @@ export const mockAssetsData = {
       name: "Injective Token",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -134,7 +134,7 @@ export const mockBitcoinAssetsData = {
       name: "Wrapped Bitcoin",
       ticker: "WBTC",
       contractAddress: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -178,7 +178,7 @@ export const mockUsdcAssetsData = {
       name: "USD Coin",
       ticker: "USDC",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -194,7 +194,7 @@ export const mockUsdcAssetsData = {
       name: "USD Coin (Polygon)",
       ticker: "USDC",
       contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("polygon"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("polygon"),
       tokenType: "erc20",
       units: [
         {
@@ -237,7 +237,7 @@ export const mockArbitrumTokenAssetsData = {
       name: "Arbitrum",
       ticker: "ARB",
       contractAddress: "0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1",
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [{ name: "ARB", code: "ARB", magnitude: 18 }],
     },

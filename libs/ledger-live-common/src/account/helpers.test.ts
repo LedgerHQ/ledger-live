@@ -6,7 +6,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
 
 const mockGetCryptoAssetsStore = getCryptoAssetsStore as jest.MockedFunction<
@@ -39,7 +39,7 @@ const mockUsdtToken: TokenCurrency = {
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -56,7 +56,7 @@ const mockUsdcToken: TokenCurrency = {
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -73,7 +73,7 @@ const mockMaticUsdtToken: TokenCurrency = {
   name: "Tether USD (Polygon)",
   ticker: "USDT",
   contractAddress: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("polygon"),
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("polygon"),
   tokenType: "erc20",
   units: [
     {

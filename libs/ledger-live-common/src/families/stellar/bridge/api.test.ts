@@ -1,6 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { getAssetFromToken, getTokenFromAsset } from "./api";
 
 beforeAll(() => {
@@ -24,7 +25,7 @@ beforeAll(() => {
             "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
           ),
           contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-          parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("stellar"),
+          parentCurrencyId: CryptoCurrencyIdSchema.parse("stellar"),
           tokenType: "stellar",
           name: "USDC",
           ticker: "USDC",
@@ -76,7 +77,7 @@ describe("generic-coin-framework stellar token", () => {
         id: TokenCurrencyIdSchema.parse(
           "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         ),
-        parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("stellar"),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("stellar"),
         tokenType: "stellar",
         contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         name: "USDC",
@@ -105,7 +106,7 @@ describe("generic-coin-framework stellar token", () => {
         id: TokenCurrencyIdSchema.parse(
           "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         ),
-        parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("stellar"),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("stellar"),
         tokenType: "stellar",
         contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         name: "USDC",

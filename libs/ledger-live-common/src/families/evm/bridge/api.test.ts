@@ -1,6 +1,6 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { TokenCurrencySchema, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
@@ -116,7 +116,7 @@ describe("evm bridge", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
       id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       name: "USD Coin",
@@ -143,7 +143,7 @@ describe("evm bridge", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
       id: TokenCurrencyIdSchema.parse("flare/erc20/fxrp"),
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("flare"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("flare"),
       tokenType: "erc20",
       contractAddress: "0xad552a648c74d49e10027ab8a618a3ad4901c5be",
       name: "FXRP",
@@ -170,7 +170,7 @@ describe("evm bridge", () => {
     const token: TokenCurrency = {
       type: "TokenCurrency",
       id: TokenCurrencyIdSchema.parse("usdc_on_ethereum"),
-      parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       name: "USD Coin",
