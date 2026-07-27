@@ -301,6 +301,9 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -315,6 +318,9 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: ${{ inputs.disable-nx-cache || false }}
