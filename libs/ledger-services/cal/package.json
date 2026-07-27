@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-cal-service",
-  "version": "1.18.3",
+  "version": "1.18.4",
   "private": true,
   "description": "Ledger CAL service client",
   "keywords": [
@@ -64,6 +64,7 @@
     "@ledgerhq/live-network": "workspace:*"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",

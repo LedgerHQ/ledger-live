@@ -1,4 +1,4 @@
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { Account } from "../enum/Account";
 import { specs, startSpeculos, stopSpeculos, type SpeculosDevice } from "../speculos";

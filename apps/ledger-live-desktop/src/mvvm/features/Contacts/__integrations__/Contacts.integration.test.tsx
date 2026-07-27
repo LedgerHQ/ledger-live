@@ -1,7 +1,7 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
-import { render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
+import { fireEvent, render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
@@ -36,6 +36,18 @@ function renderContactsButton(initialState: ReturnType<typeof withFlagOverrides>
     </ContextMenuContext.Provider>,
     { initialState },
   );
+}
+
+function contactsPageInitialState(extra: Record<string, unknown> = {}) {
+  return {
+    ...withFlagOverrides({
+      lwdContacts: { enabled: true, params: { newBadge: false } },
+    }),
+    settings: {
+      hasDismissedContactsFeatureIntroduction: true,
+    },
+    ...extra,
+  };
 }
 
 describe("Contacts integration", () => {
@@ -118,9 +130,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: withFlagOverrides({
-          lwdContacts: { enabled: true, params: { newBadge: false } },
-        }),
+        initialState: contactsPageInitialState(),
       },
     );
 
@@ -151,12 +161,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: {
-          ...withFlagOverrides({
-            lwdContacts: { enabled: true, params: { newBadge: false } },
-          }),
-          contacts: { contacts: [] },
-        },
+        initialState: contactsPageInitialState({ contacts: { contacts: [] } }),
       },
     );
 
@@ -173,12 +178,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: {
-          ...withFlagOverrides({
-            lwdContacts: { enabled: true, params: { newBadge: false } },
-          }),
-          contacts: { contacts: mockPopulatedContacts() },
-        },
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
       },
     );
 
@@ -195,6 +195,46 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
   });
 
+  it("should save a contact from the add-contact CTA", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: withFlagOverrides({
+          lwdContacts: { enabled: true, params: { newBadge: false } },
+        }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+
+    expect(screen.getByTestId("contacts-add-contact-dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    const input = screen.getByTestId("contacts-add-contact-name-input");
+
+    await user.type(input, "Ada1");
+
+    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    fireEvent.change(input, { target: { value: "Ada" } });
+
+    expect(screen.queryByText("Special characters are not allowed.")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
+
+    await user.click(screen.getByTestId("contacts-add-contact-save"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-contact-dialog")).not.toBeInTheDocument();
+      expect(screen.getByText("Ada")).toBeVisible();
+    });
+  });
+
   it("should filter saved contacts when searching", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
@@ -204,12 +244,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: {
-          ...withFlagOverrides({
-            lwdContacts: { enabled: true, params: { newBadge: false } },
-          }),
-          contacts: { contacts: mockPopulatedContacts() },
-        },
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
       },
     );
 
@@ -229,12 +264,7 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: {
-          ...withFlagOverrides({
-            lwdContacts: { enabled: true, params: { newBadge: false } },
-          }),
-          contacts: { contacts: mockPopulatedContacts() },
-        },
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
       },
     );
 
@@ -243,5 +273,143 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-search-no-results")).toBeVisible();
     expect(screen.getByText("No contact found")).toBeVisible();
     expect(screen.queryByTestId("contacts-saved-row-contact-ben")).not.toBeInTheDocument();
+  });
+
+  it("should show the one-time feature introduction on first visit and complete it from Try contacts", async () => {
+    const { user, store } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          settings: { hasDismissedContactsFeatureIntroduction: false },
+        }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-feature-introduction-primary"));
+
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(true);
+    expect(screen.queryByTestId("contacts-feature-introduction-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-list")).toBeVisible();
+  });
+
+  it("should defer the feature introduction on Maybe later without persisting dismissal", async () => {
+    mockNavigate.mockClear();
+
+    const { user, store } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          settings: { hasDismissedContactsFeatureIntroduction: false },
+        }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-feature-introduction-dialog")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-feature-introduction-secondary"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
+    expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
+  });
+
+  it("should render the Me empty detail state when Me is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
+    expect(screen.getByText("No saved addresses for you")).toBeVisible();
+    expect(
+      screen.getByText("Save your wallet addresses to receive crypto by name next time."),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
+  });
+
+  it("should render a saved contact empty detail state when an empty contact is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-avatar")).toBeVisible();
+    expect(screen.getByText("No saved addresses for Ada")).toBeVisible();
+    expect(
+      screen.getByText("Save their wallet addresses to send to them by name next time."),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
+  });
+
+  it("should not render the detail state when a contact with addresses is selected", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+
+    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+  });
+
+  it("should clear the detail state when selecting a contact with addresses after an empty contact", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+
+    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
   });
 });

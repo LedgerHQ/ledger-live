@@ -1,6 +1,5 @@
 import { fromTransactionRaw } from "@ledgerhq/live-common/families/evm/transaction";
 import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -8,7 +7,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
@@ -172,7 +171,7 @@ const Body = ({
   }, []);
 
   const handleTransactionError = useCallback((error: Error) => {
-    if (!(error instanceof UserRefusedOnDevice)) {
+    if (error?.name !== "UserRefusedOnDevice") {
       logger.critical(error);
     }
     setTransactionError(error);

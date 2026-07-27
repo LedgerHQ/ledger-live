@@ -380,6 +380,7 @@ export type EvmStakingIntent = StakingTransactionIntent & {
   valId?: string;
   withdrawId?: string;
   txValue?: bigint;
+  shares?: bigint;
 };
 
 export function isStakingIntent(intent: TransactionIntent): intent is EvmStakingIntent {

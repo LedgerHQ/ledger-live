@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
@@ -171,7 +170,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   }, [setError]);
   const handleTransactionError = useCallback(
     (error: Error) => {
-      if (!(error instanceof UserRefusedOnDevice)) {
+      if (error?.name !== "UserRefusedOnDevice") {
         logger.critical(error);
       }
       setTransactionError(error);

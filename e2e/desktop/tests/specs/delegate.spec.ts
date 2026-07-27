@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -432,7 +432,7 @@ test.describe("Staking flow from different entry point", () => {
         await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
       } else {
         await app.market.openCoinPage(delegateAccount.account.currency.ticker);
-        await app.assetDetail.startEarnFlow();
+        await app.assetDetail(delegateAccount.account.currency.id).startEarnFlow();
       }
 
       const selector = await getModularSelector(app, "ACCOUNT");

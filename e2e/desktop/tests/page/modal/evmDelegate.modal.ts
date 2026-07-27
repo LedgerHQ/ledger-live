@@ -6,6 +6,7 @@ export class EvmDelegateModal extends Modal {
   private earnRewardsEmptyStateButton = this.page.getByTestId("evm-earn-rewards-button");
   private rewardsInfoContinueButton = this.page.getByTestId("modal-continue-button");
   private validatorList = this.page.getByTestId("validator-list");
+  private validatorRow = this.validatorList.getByTestId("modal-provider-row");
   private delegateContinueButton = this.page.locator("#delegate-continue-button");
   private amountField = this.page.getByTestId("modal-amount-field");
   private amountContinueButton = this.page.locator("#send-amount-continue-button");
@@ -38,7 +39,12 @@ export class EvmDelegateModal extends Modal {
     await expect(this.validatorList).toBeVisible();
   }
 
-  @step("Continue from the validator step (first validator is auto-selected)")
+  @step("Select the first validator displayed in the list")
+  async selectFirstValidator() {
+    await this.validatorRow.first().click();
+  }
+
+  @step("Continue from the validator step")
   async continueValidatorStep() {
     await this.delegateContinueButton.click();
   }

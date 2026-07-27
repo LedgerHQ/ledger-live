@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-cli
 
+## 2.1.0
+
+### Minor Changes
+
+- [#19598](https://github.com/LedgerHQ/ledger-live/pull/19598) [`9dc6491`](https://github.com/LedgerHQ/ledger-live/commit/9dc6491192f071285315c4b48340e1a02688dae9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix: add missing provider field to swap_completed analytics event
+
+- [#19159](https://github.com/LedgerHQ/ledger-live/pull/19159) [`7096cea`](https://github.com/LedgerHQ/ledger-live/commit/7096cea26156431db96ff5ab977cfb04885211e7) Thanks [@Justkant](https://github.com/Justkant)! - Add a `skill` command group (`list`, `retrieve`, `install`) that ships the Ledger wallet-cli agent skill embedded inside the compiled binary, so `wallet-cli skill install` works with zero prior setup. Installs into the right location for most agents via `--agent` (`claude`, `cursor`, `codex`, or the generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides.
+
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#19598](https://github.com/LedgerHQ/ledger-live/pull/19598) [`9dc6491`](https://github.com/LedgerHQ/ledger-live/commit/9dc6491192f071285315c4b48340e1a02688dae9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix: add missing provider field to swap_completed analytics event
+
+- [#19159](https://github.com/LedgerHQ/ledger-live/pull/19159) [`7096cea`](https://github.com/LedgerHQ/ledger-live/commit/7096cea26156431db96ff5ab977cfb04885211e7) Thanks [@Justkant](https://github.com/Justkant)! - Add a `skill` command group (`list`, `retrieve`, `install`) that ships the Ledger wallet-cli agent skill embedded inside the compiled binary, so `wallet-cli skill install` works with zero prior setup. Installs into the right location for most agents via `--agent` (`claude`, `cursor`, `codex`, or the generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides.
+
 ## 2.0.1
 
 ### Patch Changes

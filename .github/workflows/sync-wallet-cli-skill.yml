@@ -56,14 +56,14 @@ jobs:
       # It is checked out first so the ledger-live checkout below can nest under
       # it without being wiped by git clean.
       - name: Checkout agent-skills
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: ${{ env.TARGET_REPOSITORY }}
           ref: ${{ env.TARGET_BASE }}
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout ledger-live
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.source_ref || github.sha }}
           token: ${{ steps.generate-token.outputs.token }}

@@ -21,7 +21,7 @@ import Info from "~/icons/Info";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useTokensData } from "@features/platform-currencies";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 

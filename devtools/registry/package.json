@@ -1,6 +1,6 @@
 {
   "name": "@devtools/registry",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "description": "Static registry of lazy-loaded DevTools modules",
   "main": "src/index.ts",

@@ -12,6 +12,7 @@ import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
 import BigNumber from "bignumber.js";
 import { genAccount } from "../../mock/account";
 import { AppBranch, AppPlatform, Visibility } from "../types";
+import { CompleteExchangeError } from "../../exchange/error";
 import { handlers } from "./server";
 
 const mockTracking = {
@@ -353,6 +354,88 @@ describe("handlers", () => {
       );
       expect(networkCall).toBeDefined();
       expect((networkCall![0] as { url: string }).url).toContain("/swap/accepted");
+    });
+
+    it("reports the enriched reason to /swap/cancelled when the swap is cancelled", async () => {
+      const accounts = [genAccount("accountId1"), genAccount("accountId2")];
+      const fromAccount = accounts[0];
+      const toAccount = accounts[1];
+
+      const { getMainAccount } = jest.requireMock(
+        "@ledgerhq/ledger-wallet-framework/account/index",
+      );
+      getMainAccount.mockReturnValue(fromAccount);
+
+      const { getAccountBridge } = jest.requireMock("../../bridge");
+      getAccountBridge.mockResolvedValue({
+        createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
+        updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({
+          ...tx,
+          ...upd,
+          amount: new BigNumber("1000000"),
+        })),
+      });
+
+      mockUiStartExchange.mockImplementation(({ onSuccess }) => {
+        onSuccess("NONCE", { modelId: "nanoX", deviceId: "device-1" });
+      });
+
+      // Simulates completeExchange enriching a device DESERIALIZATION_FAILED: the title stays
+      // the device status (translation key), only the message names the offending field.
+      const enrichedError = new CompleteExchangeError(
+        "PROCESS_TRANSACTION",
+        "deserializationFailed",
+        'Swap payload field "payin_extra_id" exceeds device limit: 40 > 19 bytes',
+      );
+      mockUiSwap.mockImplementation(({ onCancel }) => {
+        onCancel(enrichedError);
+      });
+
+      const handler = handlers({
+        accounts,
+        locale: "en",
+        counterValueCurrency: "USD",
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        uiHooks: mockUiHooks,
+      });
+
+      const params: ExchangeSwapParams = {
+        exchangeType: "SWAP",
+        provider: "TestProvider",
+        fromAccountId: fromAccount.id,
+        toAccountId: toAccount.id,
+        tokenCurrency: undefined,
+        fromAmount: "1000000",
+        fromAmountAtomic: new BigNumber("1000000"),
+        feeStrategy: "medium",
+      };
+
+      const request = {
+        jsonrpc: "2.0",
+        method: "custom.exchange.swap",
+        params,
+        id: "test",
+      } as unknown as RpcRequest<string, ExchangeSwapParams>;
+      const context = {
+        config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+      };
+
+      await expect(handler["custom.exchange.swap"](request, context, {})).rejects.toBeDefined();
+
+      const cancelledCall = mockedNetwork.mock.calls.find(([req]) =>
+        (req as { url?: string }).url?.includes("/swap/cancelled"),
+      );
+      expect(cancelledCall).toBeDefined();
+
+      const { data } = cancelledCall![0] as {
+        data: { statusCode: string; errorMessage: string; swapId: string };
+      };
+      // The device status is preserved as the reported statusCode (unchanged grouping in Datadog)...
+      expect(data.statusCode).toBe("deserializationFailed");
+      // ...while the precise field is carried through in errorMessage.
+      expect(data.errorMessage).toContain("payin_extra_id");
+      expect(data.swapId).toBe("swap-123");
     });
   });
 

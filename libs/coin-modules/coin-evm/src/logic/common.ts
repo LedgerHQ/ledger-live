@@ -102,70 +102,95 @@ export function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTx
     : getErc20Data(intent.recipient, intent.amount);
 }
 
+function buildSendTxParams(intent: TransactionIntent<MemoNotSupported, BufferTxData>): {
+  to: string;
+  data: Buffer;
+  value: bigint;
+} {
+  const { amount, asset, recipient } = intent;
+  return {
+    to: isNative(asset) ? recipient : (asset.assetReference as string),
+    data: getCallData(intent),
+    value: isNative(asset) ? amount : 0n,
+  };
+}
+
+async function estimateGas(
+  currency: CryptoCurrency,
+  node: ReturnType<typeof getNodeApi>,
+  sender: string,
+  params: { to: string; data: Buffer; value: bigint },
+  transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
+  preparedStakingIntent: TransactionIntent<MemoNotSupported, BufferTxData> | undefined,
+): Promise<BigNumber> {
+  // Implementations of `getGasEstimation` throw an error when
+  // trying to send more token asset than available.
+  // Fallback to an estimation of 0 to not break the UI.
+  return node
+    .getGasEstimation(
+      { currency, freshAddress: sender },
+      { amount: BigNumber(params.value.toString()), recipient: params.to, data: params.data },
+    )
+    .catch(async () => {
+      if (!isStakingTransactionIntent(transactionIntent)) return new BigNumber(0);
+      // Retry staking gas estimation with the chain min calldata unit (LIVE-32750).
+      // Rebuild calldata + value to keep `msg.value` consistent with calldata-encoded amounts (e.g. Somnia).
+      const minUnit = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
+      // Reuse the already-prepared staking intent (enrichment done above) and only
+      // override the amount, so we don't repeat the async on-chain lookups.
+      const retry = buildStakingTransactionParams(currency, {
+        ...(preparedStakingIntent ?? transactionIntent),
+        amount: minUnit,
+      });
+      return node
+        .getGasEstimation(
+          { currency, freshAddress: sender },
+          { amount: new BigNumber(retry.value.toString()), recipient: retry.to, data: retry.data },
+        )
+        .catch(() => new BigNumber(0));
+    });
+}
+
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
-
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
-
   const isSend = isSendTransactionIntent(transactionIntent);
 
   // Prepare staking intents once (can require async on-chain lookups). See: LIVE-32750
   const preparedStakingIntent = isSend
     ? undefined
     : await prepareStakingIntent(currency, transactionIntent);
-  // Build transaction parameters based on type
+
   const { to, data, value } = isSend
-    ? ((): { to: string; data: Buffer; value: bigint } => {
-        const { amount, asset, recipient } = transactionIntent;
-        return {
-          to: isNative(asset) ? recipient : (asset.assetReference as string),
-          data: getCallData(transactionIntent),
-          value: isNative(asset) ? amount : 0n,
-        };
-      })()
+    ? buildSendTxParams(transactionIntent)
     : buildStakingTransactionParams(currency, preparedStakingIntent ?? transactionIntent);
+
+  const stakingGasMultiplier = isStakingTransactionIntent(transactionIntent)
+    ? (STAKING_CONTRACTS[currency.id]?.gasMultiplier?.({ mode: transactionIntent.mode }) ??
+      new BigNumber(1))
+    : new BigNumber(1);
+
   const gasLimit =
     typeof customFeesParameters?.gasLimit === "bigint"
       ? BigNumber(customFeesParameters.gasLimit.toString())
-      : // Implementations of `getGasEstimation` throw an error when
-        // trying to send more token asset than available.
-        // Fallback to an estimation of 0 to not break the UI.
-        await node
-          .getGasEstimation(
-            { currency, freshAddress: sender },
-            { amount: BigNumber(value.toString()), recipient: to, data },
+      : (
+          await estimateGas(
+            currency,
+            node,
+            sender,
+            { to, data, value },
+            transactionIntent,
+            preparedStakingIntent,
           )
-          .catch(async () => {
-            if (isStakingTransactionIntent(transactionIntent)) {
-              // Retry staking gas estimation with the chain min calldata unit (LIVE-32750).
-              // Rebuild calldata + value to keep `msg.value` consistent with calldata-encoded amounts (e.g. Somnia).
-              const minUnit = STAKING_CONTRACTS[currency.id]?.calldataAmountScale ?? 1n;
-              // Reuse the already-prepared staking intent (enrichment done above) and only
-              // override the amount, so we don't repeat the async on-chain lookups.
-              const retry = buildStakingTransactionParams(currency, {
-                ...(preparedStakingIntent ?? transactionIntent),
-                amount: minUnit,
-              });
-              return node
-                .getGasEstimation(
-                  { currency, freshAddress: sender },
-                  {
-                    amount: new BigNumber(retry.value.toString()),
-                    recipient: retry.to,
-                    data: retry.data,
-                  },
-                )
-                .catch(() => {
-                  return new BigNumber(0);
-                });
-            }
-            return new BigNumber(0);
-          });
+        )
+          .multipliedBy(stakingGasMultiplier)
+          .integerValue(BigNumber.ROUND_CEIL);
+
   return {
     type: transactionType,
     to,

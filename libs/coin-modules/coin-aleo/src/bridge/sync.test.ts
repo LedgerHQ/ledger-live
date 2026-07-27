@@ -249,7 +249,7 @@ describe("sync.ts", () => {
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
         mode: "bridge",
@@ -290,7 +290,7 @@ describe("sync.ts", () => {
       expect(mockListOperations).toHaveBeenCalledTimes(1);
       expect(mockListOperations).toHaveBeenCalledWith({
         config: mockConfig,
-        currency: mockCurrency,
+        currencyId: mockCurrency.id,
         address: mockAccount.freshAddress,
         ledgerAccountId: mockInitialAccount.id,
         mode: "bridge",
@@ -799,7 +799,7 @@ describe("sync.ts", () => {
 
       expect(mockAccessProvableApi).toHaveBeenCalledTimes(1);
       expect(mockAccessProvableApi).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         provableApi: accountWithProvableApi.aleoResources?.provableApi,
       });
@@ -994,18 +994,18 @@ describe("sync.ts", () => {
 
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         uuid: configuredProvableApi.uuid,
         start: 0,
       });
       expect(mockFetchAllOwnedRecords).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         uuid: configuredProvableApi.uuid,
         unspent: true,
       });
       expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
       expect(mockListPrivateOperations).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
@@ -1013,7 +1013,7 @@ describe("sync.ts", () => {
       });
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         privateRecords: mockUnspentRecords,
         oldUnspentRecords: [],
@@ -1347,7 +1347,7 @@ describe("sync.ts", () => {
 
       expect(mockPatchPublicOperations).toHaveBeenCalledTimes(1);
       expect(mockPatchPublicOperations).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         publicOperations: expect.any(Array),
         privateRecords: [privateRecord],
         address: mockAccount.freshAddress,
@@ -1408,7 +1408,7 @@ describe("sync.ts", () => {
 
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: "AViewKey123",
         privateRecords: [unspentRecord],
         oldUnspentRecords: [],

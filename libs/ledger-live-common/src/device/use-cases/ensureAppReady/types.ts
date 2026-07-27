@@ -40,7 +40,6 @@ export type EnsureAppReadyInput = {
   appName: string;
   dependencies: string[];
   requireLatestFirmware: boolean;
-  allowPartialDependencies: boolean;
   requiresDerivation?: RequiresDerivation;
   expectedAccount?: ExpectedAccountIdentity;
   deprecation?: DeprecationPresentationInput;

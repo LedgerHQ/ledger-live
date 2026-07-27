@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { TrackScreen, track } from "~/analytics";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { NoKnownDeviceState } from "./NoKnownDeviceState";
 
@@ -21,12 +21,12 @@ function renderState() {
   const onConnectLedgerDevice = jest.fn();
   const onBuyLedgerDevice = jest.fn();
   const view = render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <NoKnownDeviceState
         onConnectLedgerDevice={onConnectLedgerDevice}
         onBuyLedgerDevice={onBuyLedgerDevice}
       />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 
   return { ...view, onConnectLedgerDevice, onBuyLedgerDevice };

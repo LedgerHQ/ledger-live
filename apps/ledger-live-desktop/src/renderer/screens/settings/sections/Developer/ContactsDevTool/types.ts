@@ -9,8 +9,10 @@ export interface ContactsDevToolViewModel {
   readonly isEnabled: boolean;
   readonly params: ContactsFeatureParams;
   readonly customFamiliesInput: string;
+  readonly hasDismissedFeatureIntroduction: boolean;
   readonly handleToggleEnabled: () => void;
   readonly handleToggleNewBadge: () => void;
+  readonly handleToggleFeatureIntroductionDismissed: () => void;
   readonly handleSetEligibleAddressFamilies: (families: readonly string[]) => void;
   readonly setCustomFamiliesInput: (value: string) => void;
   readonly handleApplyCustomFamilies: () => void;

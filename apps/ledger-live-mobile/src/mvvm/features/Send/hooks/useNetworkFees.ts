@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation, useLocale } from "~/context/Locale";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -14,10 +14,11 @@ import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
-import { asFeesStrategy } from "@ledgerhq/live-common/flows/send/utils/feesStrategy";
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import type { NetworkFeesViewModel } from "../types";
+import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
+import { buildFeeSelectorOptions } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import type { FeeSelectorOption, NetworkFeesViewModel } from "../types";
 
 type UseNetworkFeesParams = Readonly<{
   account: AccountLike;
@@ -51,7 +52,9 @@ export function useNetworkFees({
   );
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
-  const calculateCountervalue = useCalculateCountervalueCallback({ to: counterValueCurrency });
+  const calculateCountervalue = useCalculateCountervalueCallback({
+    to: counterValueCurrency,
+  });
 
   const core = useNetworkFeesCore({
     account,
@@ -66,62 +69,62 @@ export function useNetworkFees({
     calculateCountervalue,
   });
 
-  const getFeeStrategyLabel = useCallback(
-    (strategy: string | null): string => {
-      const resolved = asFeesStrategy(strategy ?? "medium");
-      return t(`send.fees.${resolved ?? "medium"}`);
-    },
-    [t],
-  );
-
   const networkFeesInfo = useMemo(
     () => sendFeatures.getNetworkFeesInfo(accountCurrency, { transaction, status }),
     [accountCurrency, transaction, status],
   );
 
-  const feePresetOptionsMapped = useMemo(
+  const displayOptions = useMemo<readonly FeeSelectorOption[]>(
     () =>
-      core.feePresetOptions.map(opt => ({
-        id: opt.id,
-        label: t(`send.fees.${opt.id}`),
-        fiatValue: core.fiatByPreset[opt.id] ?? null,
-        legendValue: null,
-      })),
-    [core.feePresetOptions, core.fiatByPreset, t],
+      buildFeeSelectorOptions({
+        strategyOptions: core.feeStrategyOptions,
+        selectedFeeStrategyId: core.selectedFeeStrategyId,
+        onSelectFeeStrategyId: core.onSelectFeeStrategyId,
+        labelFor: option =>
+          t(option.kind === "default" ? "send.fees.defaultNetworkFee" : `send.fees.${option.id}`),
+        sublabelFor: option => option.sublabelFiat,
+        custom: {
+          enabled: core.hasCustomFees,
+          label: t("send.fees.customFees"),
+          onSelect: onSelectCustomFees,
+        },
+        coinControl: {
+          enabled: core.hasCoinControl,
+          label: t("send.fees.coinControl"),
+          onSelect: onSelectCoinControl,
+        },
+      }),
+    [
+      core.feeStrategyOptions,
+      core.hasCoinControl,
+      core.hasCustomFees,
+      core.onSelectFeeStrategyId,
+      core.selectedFeeStrategyId,
+      onSelectCoinControl,
+      onSelectCustomFees,
+      t,
+    ],
   );
 
   return useMemo(
     () => ({
       label: t("send.fees.title"),
       value: core.displayFeesValue,
-      strategyLabel: getFeeStrategyLabel(core.selectedFeeStrategy),
+      strategyLabel: t(`send.fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`),
       showFeeCurrencyAmount: core.showFeeCurrencyAmount,
-      showFeePresets: core.showFeePresets,
       selectedFeeStrategy: core.selectedFeeStrategy,
-      feePresetLabelsOptions: feePresetOptionsMapped,
-      onSelectFeeStrategy: core.onSelectFeeStrategy,
-      onSelectCoinControl,
-      onSelectCustomFees,
-      uiConfig: {
-        hasCustomFees: uiConfig.hasCustomFees,
-        hasCoinControl: uiConfig.hasCoinControl,
-      },
+      displayOptions,
+      canOpenSelector: displayOptions.length > 0,
       networkFeesInfo,
     }),
     [
       core.displayFeesValue,
       core.selectedFeeStrategy,
+      core.selectedFeeStrategyId,
       core.showFeeCurrencyAmount,
-      core.showFeePresets,
-      core.onSelectFeeStrategy,
-      feePresetOptionsMapped,
-      getFeeStrategyLabel,
-      onSelectCoinControl,
-      onSelectCustomFees,
-      t,
-      uiConfig.hasCoinControl,
-      uiConfig.hasCustomFees,
+      displayOptions,
       networkFeesInfo,
+      t,
     ],
   );
 }

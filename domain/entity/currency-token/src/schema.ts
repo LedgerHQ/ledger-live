@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TokenIdSchema, CurrencyIdSchema } from "@shared/schema-primitives";
+import { TokenCurrencyIdSchema, CryptoCurrencyIdSchema } from "@shared/schema-primitives";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
 /**
@@ -11,12 +11,12 @@ export const TokenCurrencySchema = z.object({
   /** Discriminant for the currency union — always `"TokenCurrency"`. */
   type: z.literal("TokenCurrency"),
   /** Unique opaque token id (e.g. `"ethereum/erc20/usd-tether"`). */
-  id: TokenIdSchema,
+  id: TokenCurrencyIdSchema,
   /**
    * Id of the parent crypto currency (e.g. `"ethereum"` for ERC-20 tokens).
    * FK reference — resolved at display time via the crypto-currency registry.
    */
-  parentCurrencyId: CurrencyIdSchema,
+  parentCurrencyId: CryptoCurrencyIdSchema,
   /** On-chain contract address (e.g. `"0xdAC17F958D2ee523a2206206994597C13D831ec7"`). */
   contractAddress: z.string(),
   /** Token standard (e.g. `"erc20"`, `"bep20"`, `"trc10"`). */

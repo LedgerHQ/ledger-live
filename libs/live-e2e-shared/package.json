@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-e2e-shared",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Shared E2E test-support code (enums, models, families, speculos/device helpers) for Ledger Live Desktop & Mobile E2E suites",
   "repository": {
@@ -22,7 +22,6 @@
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
@@ -31,6 +30,7 @@
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/feature-flags": "workspace:*",
+    "@shared/env": "workspace:*",
     "axios": "catalog:",
     "ethers": "catalog:",
     "expect": "catalog:",

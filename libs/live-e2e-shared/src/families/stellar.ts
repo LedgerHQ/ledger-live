@@ -1,6 +1,6 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import { containsSubstringInEvent, getSendEvents } from "../speculos";
+import { containsSubstringInEvent, expectMemoTagInEvents, getSendEvents } from "../speculos";
 import { isTouchDevice } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
@@ -20,6 +20,7 @@ export const sendStellar = withDeviceController(
       }
       const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
       expect(isAddressCorrect).toBeTruthy();
+      expectMemoTagInEvents(tx, events);
 
       if (isTouchDevice()) {
         await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);

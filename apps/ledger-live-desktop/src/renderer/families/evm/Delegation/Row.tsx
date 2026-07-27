@@ -104,6 +104,7 @@ export const ManageDropDownItem = ({
 type RowProps = Readonly<{
   account: StakingAccount;
   delegation: StakingMappedDelegation;
+  canClaimRewards: boolean;
   onManageAction: (address: string, action: DelegationActionsModalName) => void;
   onClaimRewards: (address: string) => void;
   onExternalLink: (address: string) => void;
@@ -121,6 +122,7 @@ export function Row({
     status,
   },
   delegation,
+  canClaimRewards,
   onManageAction,
   onClaimRewards,
   onExternalLink,
@@ -194,7 +196,7 @@ export function Row({
           </Trans>
         ),
       },
-      ...(pendingRewards.gt(0)
+      ...(canClaimRewards && pendingRewards.gt(0)
         ? ([
             {
               key: "MODAL_EVM_CLAIM_REWARDS" as const,
@@ -208,6 +210,7 @@ export function Row({
       _supportsRedelegation,
       _canRedelegate,
       _canUndelegate,
+      canClaimRewards,
       redelegateDisabledTooltip,
       status,
       account.currency.id,

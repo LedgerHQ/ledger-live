@@ -27,6 +27,7 @@ type AddressListItemProps = Readonly<{
   disabled?: boolean;
   hideDescription?: boolean;
   rightIcon?: React.ReactNode;
+  testID?: string;
 }>;
 
 export function AddressListItem({
@@ -42,6 +43,7 @@ export function AddressListItem({
   disabled = false,
   hideDescription = false,
   rightIcon = <ChevronRight size={24} />,
+  testID,
 }: AddressListItemProps) {
   const { t } = useTranslation();
   const displayName = name ?? formatAddress(address, { prefixLength: 5, suffixLength: 5 });
@@ -65,7 +67,7 @@ export function AddressListItem({
   const title = showSendTo ? t("send.newSendFlow.sendTo", { address: displayName }) : displayName;
 
   return (
-    <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled}>
+    <ListItem onPress={disabled ? undefined : onSelect} disabled={disabled} testID={testID}>
       <ListItemLeading>
         <Spot appearance="icon" icon={icon} lx={{ marginRight: "s4" }} />
         <ListItemContent>

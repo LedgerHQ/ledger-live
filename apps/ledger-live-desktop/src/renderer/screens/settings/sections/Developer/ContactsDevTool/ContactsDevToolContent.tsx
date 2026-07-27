@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Divider } from "@ledgerhq/lumen-ui-react";
+import { Button, Divider, Switch } from "@ledgerhq/lumen-ui-react";
 import {
   FeatureFlagPreview,
   FeatureParamRow,
@@ -26,6 +26,8 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
     handleLoadPopulatedContacts,
     handleResetContacts,
     handleResetOverride,
+    hasDismissedFeatureIntroduction,
+    handleToggleFeatureIntroductionDismissed,
   } = useContactsDevToolViewModel();
 
   return (
@@ -71,6 +73,32 @@ export const ContactsDevToolContent = ({ expanded }: ContactsDevToolContentProps
                 onCustomFamiliesInputChange={setCustomFamiliesInput}
                 onApplyCustomFamilies={handleApplyCustomFamilies}
               />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <span className="body-2-semi-bold text-muted">
+              {t("settings.developer.contactsDevTool.featureIntroduction.title")}
+            </span>
+            <Divider />
+            <div className="flex flex-col rounded-md bg-surface px-4 py-1">
+              <div className="flex items-center justify-between p-10">
+                <div className="flex flex-col gap-1">
+                  <span className="body-3">
+                    {t("settings.developer.contactsDevTool.featureIntroduction.label")}
+                  </span>
+                  <span className="body-3 text-muted">
+                    {hasDismissedFeatureIntroduction
+                      ? t("settings.developer.contactsDevTool.featureIntroduction.dismissed")
+                      : t("settings.developer.contactsDevTool.featureIntroduction.willShow")}
+                  </span>
+                </div>
+                <Switch
+                  name="contacts-feature-introduction-dismissed"
+                  selected={!hasDismissedFeatureIntroduction}
+                  onChange={handleToggleFeatureIntroductionDismissed}
+                />
+              </div>
             </div>
           </div>
 

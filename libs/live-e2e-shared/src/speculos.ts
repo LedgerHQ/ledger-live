@@ -12,7 +12,7 @@ import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
@@ -697,6 +697,14 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   }
 
   return result;
+}
+
+/** Asserts memo/tag appears on Speculos screens when the tx includes one. */
+export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
+  if (!tx.memoTag || tx.memoTag === "noTag") {
+    return;
+  }
+  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
 }
 
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {

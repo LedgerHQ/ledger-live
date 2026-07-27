@@ -47,6 +47,11 @@ export class SendDrawer extends Drawer {
     expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
   }
 
+  @step("Verify memo is visible in transaction details: $0")
+  async expectMemoVisible(memo: string) {
+    await expect(this.sendDrawer.getByText(memo, { exact: true })).toBeVisible();
+  }
+
   @step("Verify transaction status")
   async expectTransactionStatus(transactionStatus: string) {
     const displayedTransactionStatus = await this.transactionStatus.innerText();

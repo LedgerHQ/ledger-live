@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { createMarketAssetDisplayData } from "LLM/features/Market/__tests__/helpers";
 import { MARKET_SCREEN_TEST_IDS } from "../../../testIds";
@@ -51,6 +51,7 @@ describe("MarketAssetsList", () => {
   it("should render the header, subheader, and asset rows when ready", () => {
     render(<MarketAssetsList {...defaultProps} />);
 
+    expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.style).toEqual({ flex: 1 });
     expect(screen.getByTestId("market-assets-list-header")).toBeVisible();
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsSubHeader)).toBeVisible();
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
@@ -75,6 +76,22 @@ describe("MarketAssetsList", () => {
     expect(screen.getAllByTestId(MARKET_SCREEN_TEST_IDS.assetsSkeleton)).toHaveLength(3);
   });
 
+  it("should preserve the loading footer minimum height", () => {
+    render(<MarketAssetsList {...defaultProps} assets={[]} loading />);
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onLayout({
+        nativeEvent: { layout: { height: 500 } },
+      });
+    });
+
+    expect(
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListFooterComponent.props.style,
+    ).toEqual({
+      minHeight: 500,
+    });
+  });
+
   it("should render the search empty state when search returns no assets", () => {
     render(
       <MarketAssetsList {...defaultProps} assets={[]} header={undefined} showSubheader={false} />,
@@ -84,11 +101,51 @@ describe("MarketAssetsList", () => {
     expect(screen.getByText("No assets found")).toBeVisible();
   });
 
+  it("should size the search empty state to the measured list height", () => {
+    render(
+      <MarketAssetsList {...defaultProps} assets={[]} header={undefined} showSubheader={false} />,
+    );
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onLayout({
+        nativeEvent: { layout: { height: 500 } },
+      });
+    });
+
+    expect(
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListFooterComponent.props.style,
+    ).toEqual({
+      height: 500,
+    });
+  });
+
   it("should render the favorites empty state", () => {
     render(<MarketAssetsList {...defaultProps} assets={[]} emptyState="favorites" />);
 
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsFavoritesEmptyIcon)).toBeVisible();
     expect(screen.getByText("No favorites yet")).toBeVisible();
+  });
+
+  it("should size the favorites empty state to the measured list height", () => {
+    render(<MarketAssetsList {...defaultProps} assets={[]} emptyState="favorites" />);
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onLayout({
+        nativeEvent: { layout: { height: 500 } },
+      });
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListHeaderComponent.props.onLayout({
+        nativeEvent: { layout: { height: 100 } },
+      });
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcherContainer).props.onLayout({
+        nativeEvent: { layout: { height: 50 } },
+      });
+    });
+
+    expect(
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListFooterComponent.props.style,
+    ).toEqual({
+      height: 350,
+    });
   });
 
   it("should render the stocks empty state", () => {
@@ -98,10 +155,49 @@ describe("MarketAssetsList", () => {
     expect(screen.getByText("No stocks found")).toBeVisible();
   });
 
+  it("should size the stocks empty state to the measured list height", () => {
+    render(<MarketAssetsList {...defaultProps} assets={[]} emptyState="stocks" />);
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onLayout({
+        nativeEvent: { layout: { height: 500 } },
+      });
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListHeaderComponent.props.onLayout({
+        nativeEvent: { layout: { height: 100 } },
+      });
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcherContainer).props.onLayout({
+        nativeEvent: { layout: { height: 50 } },
+      });
+    });
+
+    expect(
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListFooterComponent.props.style,
+    ).toEqual({
+      height: 350,
+    });
+    expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsCategorySwitcher)).toBeVisible();
+  });
+
   it("should render the error banner", () => {
     render(<MarketAssetsList {...defaultProps} assets={[]} error />);
 
     expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.assetsError)).toBeVisible();
+  });
+
+  it("should preserve the error footer minimum height", () => {
+    render(<MarketAssetsList {...defaultProps} assets={[]} error />);
+
+    act(() => {
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.onLayout({
+        nativeEvent: { layout: { height: 500 } },
+      });
+    });
+
+    expect(
+      screen.getByTestId(MARKET_SCREEN_TEST_IDS.list).props.ListFooterComponent.props.style,
+    ).toEqual({
+      minHeight: 500,
+    });
   });
 
   it("should render the footer spinner while fetching the next page", () => {

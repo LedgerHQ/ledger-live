@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-env";
+import useEnv from "@features/platform-env";
+import { setEnv } from "@shared/env";
 import SettingsRow from "~/components/SettingsRow";
 import Track from "~/analytics/Track";
 import Switch from "~/components/Switch";

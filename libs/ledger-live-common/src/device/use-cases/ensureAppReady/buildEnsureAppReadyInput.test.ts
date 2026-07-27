@@ -56,7 +56,6 @@ describe("ensureAppReady buildEnsureAppReadyInput", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: {
         currencyId: "ethereum",
         derivationMode: "ethM",
@@ -87,7 +86,6 @@ describe("ensureAppReady buildEnsureAppReadyInput", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: {
         currencyId: "ethereum",
         derivationMode: "ethM",

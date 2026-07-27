@@ -1,4 +1,4 @@
-import { MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
+import { FeeEstimation, MemoNotSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
@@ -297,6 +297,87 @@ describe("common", () => {
       // The returned params keep the ORIGINAL intent (amount=0) — only the estimate is retried.
       expect(result.data).toEqual("0x" + Buffer.from("delegate:0").toString("hex"));
       expect(result.gasLimit).toEqual(new BigNumber(1_412_179));
+    });
+
+    it("applies gasMultiplier (1.2) and ceil-rounds the result for zero_gravity delegate", async () => {
+      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: "0xVaultAddress",
+        data: stakingData,
+        value: 0n,
+      });
+      nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
+
+      const result = await prepareUnsignedTxParams(zgCurrency, {
+        intentType: "staking",
+        type: "staking-eip1559",
+        mode: "delegate",
+        amount: 1_000_000_000n,
+        asset: { type: "native" },
+        recipient: "0xVaultAddress",
+        sender: "0xSender",
+        valAddress: "0xVaultAddress",
+        feesStrategy: "medium",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>);
+
+      // 237279 × 1.2 = 284734.8 → ceil → 284735
+      expect(result.gasLimit).toEqual(new BigNumber(284_735));
+    });
+
+    it("applies gasMultiplier (1.2) and ceil-rounds the result for zero_gravity undelegate", async () => {
+      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: "0xVaultAddress",
+        data: stakingData,
+        value: 1_000_000_000n,
+      });
+      nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
+
+      const result = await prepareUnsignedTxParams(zgCurrency, {
+        intentType: "staking",
+        type: "staking-eip1559",
+        mode: "undelegate",
+        amount: 1_000_000_000n,
+        shares: 1_000_000_000_000n,
+        asset: { type: "native" },
+        recipient: "0xVaultAddress",
+        sender: "0xSender",
+        valAddress: "0xVaultAddress",
+        feesStrategy: "medium",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>);
+
+      expect(result.gasLimit).toEqual(new BigNumber(284_735));
+    });
+
+    it("does not apply gasMultiplier when customFeesParameters.gasLimit is provided", async () => {
+      const zgCurrency = { id: "zero_gravity", family: "evm" } as CryptoCurrency;
+      mockBuildStakingTransactionParams.mockReturnValue({
+        to: "0xVaultAddress",
+        data: stakingData,
+        value: 0n,
+      });
+
+      const result = await prepareUnsignedTxParams(
+        zgCurrency,
+        {
+          intentType: "staking",
+          type: "staking-eip1559",
+          mode: "delegate",
+          amount: 1_000_000_000n,
+          asset: { type: "native" },
+          recipient: "0xVaultAddress",
+          sender: "0xSender",
+          valAddress: "0xVaultAddress",
+          feesStrategy: "medium",
+          data: { type: "buffer", value: Buffer.from([]) },
+        } as unknown as TransactionIntent<MemoNotSupported, BufferTxData>,
+        { gasLimit: 300_000n } as FeeEstimation["parameters"],
+      );
+
+      expect(nodeApiMock.getGasEstimation).not.toHaveBeenCalled();
+      expect(result.gasLimit).toEqual(new BigNumber("300000"));
     });
 
     it("does not retry for send transactions — falls back to gasLimit=0 on first failure without a second call", async () => {

@@ -1,0 +1,24 @@
+diff --git a/lib/index.js b/lib/index.js
+index eaaea6c359631b56d31b1de8e701847bdee3c87d..313b10c08e65f313cd49512b3a78466ec7c1d2f4 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -13,7 +13,6 @@ function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e;
+ (() => {
+   var $util = $protobuf.util;
+   if ($util.Long == null) {
+-    console.log(`Patching Protobuf Long.js instance...`);
+     $util.Long = _long.default;
+     if ($protobuf.Reader._configure != null) {
+       $protobuf.Reader._configure($protobuf.BufferReader);
+diff --git a/src/index.js b/src/index.js
+index aab22c7c39e6a40a022f25bd8e545e3ba0705905..f0072bef2ee3a9aaac482a818be2f46b10f29699 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -10,7 +10,6 @@ import * as $proto from "./proto.js";
+     var $util = $protobuf.util;
+ 
+     if ($util.Long == null) {
+-        console.log(`Patching Protobuf Long.js instance...`);
+         $util.Long = Long;
+ 
+         if ($protobuf.Reader._configure != null) {

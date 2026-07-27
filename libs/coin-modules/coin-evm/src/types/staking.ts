@@ -134,6 +134,13 @@ export type StakingContractConfig = {
   };
   unbondingPeriodDays?: number;
   /**
+   * Delay (in minutes) between broadcasting a delegation and it becoming visible
+   * on the chain's delegation board / staking dashboard. Surfaced to the user on
+   * the delegate amount step so they don't expect the delegation to appear
+   * instantly. When omitted, no such notice is shown.
+   */
+  delegationVisibilityDelayMinutes?: number;
+  /**
    * Maximum number of concurrent active redelegation entries allowed per
    * account, as enforced by the chain's staking module.  When omitted, no cap
    * is applied.
@@ -167,6 +174,14 @@ export type StakingContractConfig = {
   ) => Promise<BigNumber | null>;
   /** Chain-specific guard called after cross-cutting checks. Returns true when the delegation can be undelegated. */
   canUndelegate?: (delegation: StakingDelegation) => boolean;
+  /**
+   * Multiplier applied to the raw `eth_estimateGas` result before it becomes the
+   * transaction `gasLimit`.  Use when the chain's staking contract has a gas cost
+   * that can exceed the estimate due to on-chain state changes between estimation
+   * and inclusion (e.g. cold-vs-warm SSTORE variance in a ring-buffer).
+   * Defaults to `new BigNumber(1)` (no change) when omitted.
+   */
+  gasMultiplier?: (params: { mode: StakingOperation }) => BigNumber;
 };
 
 export type StakeCreate = {

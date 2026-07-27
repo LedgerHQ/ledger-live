@@ -8,7 +8,8 @@ import {
   DeviceDeprecationScreen,
   DeviceDeprecationScreens,
 } from "~/components/DeviceAction/Screen/DeviceDeprecationScreen";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_APP_BUTTON,
   PAGE_CONNECT_APP,
@@ -26,8 +27,8 @@ type DeviceDeprecatedNonBlockingStateProps = BaseInitializerStateProps<
 export function DeviceDeprecatedNonBlockingState({
   state,
   device,
-  sourceFlow,
 }: DeviceDeprecatedNonBlockingStateProps) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { decision, onContinue } = state;
   const modelId = device.modelId;
   const displayClearSigningWarning = decision.screenSequence.includes("clearSigning");
@@ -37,6 +38,7 @@ export function DeviceDeprecatedNonBlockingState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Continue,
+      extraProperties: analyticsProperties,
     });
     onContinue();
   };
@@ -46,6 +48,7 @@ export function DeviceDeprecatedNonBlockingState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.DiscoverUpgradeProgram,
+      extraProperties: analyticsProperties,
     });
   };
 
@@ -54,17 +57,16 @@ export function DeviceDeprecatedNonBlockingState({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.LearnMore,
+      extraProperties: analyticsProperties,
     });
   };
 
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_CONNECT_APP.DeviceDeprecatedWarning}
-        sourceFlow={sourceFlow}
         modelId={modelId}
         refreshSource
-        deviceUxV2
       />
       <DeviceDeprecationScreen
         coinName={decision.currencyName}

@@ -2,7 +2,7 @@ import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";

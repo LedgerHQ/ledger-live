@@ -3,6 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { ScreenName } from "~/const";
+import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
@@ -13,6 +15,7 @@ import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
 } from "@ledgerhq/live-common/flows/send/utils";
+import type { SendFlowNavigationProp } from "../types";
 
 export type SendHeaderViewModel = {
   title: string;
@@ -39,7 +42,7 @@ export type SendHeaderViewModel = {
 };
 
 export function useSendHeaderViewModel(): SendHeaderViewModel {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BaseNavigationComposite<SendFlowNavigationProp>>();
   const { t } = useTranslation();
   const { uiConfig, recipientSearch, state } = useSendFlowData();
   const { close, transaction, setRecipientSearchValue, clearRecipientSearch } =
@@ -129,8 +132,24 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
   const handleQrCodeClick = useCallback(() => {
-    // Implementation of QR code scanning on Recipient screen
-  }, []);
+    const account = state.account.account;
+    if (!account) return;
+
+    clearRecipientSearch();
+    navigation.navigate(ScreenName.ScanRecipient, {
+      accountId: account.id,
+      parentId: state.account.parentAccount?.id,
+      transaction: state.transaction.transaction ?? undefined,
+      onScanned: setRecipientSearchValue,
+    });
+  }, [
+    clearRecipientSearch,
+    navigation,
+    setRecipientSearchValue,
+    state.account.account,
+    state.account.parentAccount?.id,
+    state.transaction.transaction,
+  ]);
 
   const recipientPlaceholder = uiConfig.recipientSupportsDomain
     ? t("send.newSendFlow.placeholder")

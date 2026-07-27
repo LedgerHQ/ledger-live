@@ -1,3 +1,4 @@
+import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -36,9 +37,12 @@ const Fields: Props = ({
   const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const [isAdvanceMode, setAdvanceMode] = useState(
+  const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
+  const hideAdvancedFees = account.currency.id === "zcash" && shieldedEnabled;
+  const [advanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
+  const isAdvanceMode = !hideAdvancedFees && advanceMode;
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
@@ -85,7 +89,9 @@ const Fields: Props = ({
   );
   return (
     <>
-      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
+      {!hideAdvancedFees && (
+        <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
+      )}
       {isAdvanceMode ? (
         <Box>
           <FeesField

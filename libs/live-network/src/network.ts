@@ -5,8 +5,9 @@ import axios, {
   type AxiosError,
   type AxiosRequestConfig,
 } from "axios";
-import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
-import { changes, getEnv } from "@ledgerhq/live-env";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "./errors";
+import { getNetworkState } from "./state";
+import type { NetworkState } from "./state";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 
@@ -16,7 +17,7 @@ type ExtendedAxiosRequestConfig = InternalAxiosRequestConfig & { metadata?: Meta
 export const requestInterceptor = (
   request: ExtendedAxiosRequestConfig,
 ): ExtendedAxiosRequestConfig => {
-  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+  if (!getNetworkState().enableNetworkLogs) {
     return request;
   }
 
@@ -33,7 +34,7 @@ export const requestInterceptor = (
 type ExtendedAxiosResponse = AxiosResponse & { config: { metadata?: Metadata } };
 
 export const responseInterceptor = (response: ExtendedAxiosResponse): ExtendedAxiosResponse => {
-  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+  if (!getNetworkState().enableNetworkLogs) {
     return response;
   }
 
@@ -91,7 +92,7 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
     log(
       "network-error",
       `${status} ${method} ${baseURL || ""}${url} (${duration}): ${errorToThrow.message}`,
-      getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {},
+      getNetworkState().debugHttpResponse ? { data: data } : {},
     );
     throw errorToThrow;
   } else if (error.request) {
@@ -105,10 +106,13 @@ axios.interceptors.request.use(requestInterceptor);
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 /**
- * We only allow HTTPS agent on platforms other than LLM because
- * https library is not compatible with react native
+ * Only enable HTTPS keepAlive on Node.js (excludes React Native / browser) and
+ * for non-LLM builds (llm- prefix = Ledger Live Mobile client version).
  */
-const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv("LEDGER_CLIENT_VERSION")?.startsWith("llm-");
+const NETWORK_USE_HTTPS_KEEP_ALIVE =
+  typeof process !== "undefined" &&
+  process.release?.name === "node" &&
+  !getNetworkState().ledgerClientVersion?.startsWith("llm-");
 if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
   // this should only be needed in Windows as UNIX systems reuse TCP packets by default
@@ -197,11 +201,11 @@ export const newImplementation = async <T = unknown, U = unknown>(
 
   if (request.method === "GET") {
     if (!("timeout" in request)) {
-      request.timeout = getEnv("GET_CALLS_TIMEOUT");
+      request.timeout = getNetworkState().getCallsTimeout;
     }
 
     response = await retry(() => axios(request), {
-      maxRetry: getEnv("GET_CALLS_RETRY"),
+      maxRetry: getNetworkState().getCallsRetry,
       retryCondition: error => {
         if (error && error.status) {
           // not all status codes are retryable
@@ -230,11 +234,11 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
 
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
-      arg.timeout = getEnv("GET_CALLS_TIMEOUT");
+      arg.timeout = getNetworkState().getCallsTimeout;
     }
 
     promise = retry(() => axios(arg), {
-      maxRetry: getEnv("GET_CALLS_RETRY"),
+      maxRetry: getNetworkState().getCallsRetry,
       retryCondition: error => {
         if (error && error.status) {
           // A 422 shouldn't be retried without change as explained in this documentation
@@ -270,11 +274,20 @@ function setAxiosLedgerClientVersionHeader(value: string) {
     }
   }
 }
-setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
-changes.subscribe(e => {
-  if (e.name === "LEDGER_CLIENT_VERSION") {
-    setAxiosLedgerClientVersionHeader(e.value);
+setAxiosLedgerClientVersionHeader(getNetworkState().ledgerClientVersion);
+
+export function setNetworkState(partial: Partial<NetworkState>): void {
+  const state = getNetworkState() as NetworkState;
+  if (partial.enableNetworkLogs !== undefined) state.enableNetworkLogs = partial.enableNetworkLogs;
+  if (partial.debugHttpResponse !== undefined) state.debugHttpResponse = partial.debugHttpResponse;
+  if (partial.ledgerClientVersion !== undefined) {
+    state.ledgerClientVersion = partial.ledgerClientVersion;
+    setAxiosLedgerClientVersionHeader(partial.ledgerClientVersion);
   }
-});
+  if (partial.getCallsTimeout !== undefined) state.getCallsTimeout = partial.getCallsTimeout;
+  if (partial.getCallsRetry !== undefined) state.getCallsRetry = partial.getCallsRetry;
+}
+
+export type { NetworkState };
 
 export default implementation;

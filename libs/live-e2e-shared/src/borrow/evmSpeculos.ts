@@ -1,7 +1,7 @@
 import axios from "axios";
 import { JsonRpcProvider, Signature, Transaction } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { EvmSignature } from "@ledgerhq/live-signer-evm";

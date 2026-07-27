@@ -155,6 +155,9 @@ jobs:
     steps:
       - name: Parse speculos device input
         id: parse
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SPECULOS_DEVICE_INPUT: ${{ inputs.speculos_device || 'nanoSP' }}
         run: |
           declare -A WEEKDAY_DEVICE=(
             [1]=nanoSP    # Monday     - LNSP
@@ -163,20 +166,20 @@ jobs:
             [4]=flex      # Thursday   - Flex
             [5]=nanoGen5  # Friday     - NG5
           )
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
             echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
             echo "device_2=skipped" >> $GITHUB_OUTPUT
             echo "is_dual=false"   >> $GITHUB_OUTPUT
             printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
+          elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             echo "device_1=nanoSP" >> $GITHUB_OUTPUT
             echo "device_2=stax" >> $GITHUB_OUTPUT
             echo "is_dual=true" >> $GITHUB_OUTPUT
             echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}' >> $GITHUB_OUTPUT
           else
-            DEVICE="${{ inputs.speculos_device || 'nanoSP' }}"
+            DEVICE="$SPECULOS_DEVICE_INPUT"
             echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
             echo "device_2=skipped" >> $GITHUB_OUTPUT
             echo "is_dual=false" >> $GITHUB_OUTPUT
@@ -223,7 +226,7 @@ jobs:
             coin-apps
 
       - name: Checkout ledger-live monorepo (shallow clone)
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -231,7 +234,7 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout coin-apps (device firmware binaries)
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: LedgerHQ/coin-apps
           ref: master
@@ -292,14 +295,19 @@ jobs:
           SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write workflow context to GitHub Summary
+        env:
+          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
+          BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
+          TEST_EXECUTION: ${{ inputs.test_execution || '(not provided)' }}
+          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          REPEAT_EACH: ${{ inputs.repeat_each }}
+          WORKFLOW_REF: ${{ github.workflow_ref }}
+          TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
         run: |
-          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
           DEVICE="$SPECULOS_DEVICE"
-          BUILD_TYPE="${{ inputs.build_type || 'testing' }}"
-          TEST_EXECUTION="${{ inputs.test_execution || '(not provided)' }}"
-          BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
-          REPEAT_EACH="${{ inputs.repeat_each }}"
 
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
             EXTRA_FEATURE_FLAGS="(none)"
@@ -312,15 +320,15 @@ jobs:
           {
             echo "## Workflow Context"
             echo ""
-            echo "- **Workflow source branch:** ${{ github.workflow_ref }}"
-            echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
-            echo "- **Commit SHA:** ${{ github.sha }}"
+            echo "- **Workflow source branch:** $WORKFLOW_REF"
+            echo "- **Triggered branch:** $TRIGGERED_BRANCH"
+            echo "- **Commit SHA:** $COMMIT_SHA"
             echo "- **Device selected:** $DEVICE"
             echo "$FILTER_SUMMARY"
             echo "- **Test Execution ticket ID:** $TEST_EXECUTION"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Feature Flags:** ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}"
+            echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
           } >> $GITHUB_STEP_SUMMARY
@@ -351,7 +359,7 @@ jobs:
       - name: Restore pre-generated E2E userdata (app.json) from S3 cache
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}
         continue-on-error: true
-        uses: tespkg/actions-cache/restore@v1.10.0
+        uses: tespkg/actions-cache/restore@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: develop/e2e-userdata-desktop-${{ steps.userdata-meta.outputs.date }}
@@ -407,7 +415,7 @@ jobs:
       ALLURE_RESULTS: "allure-results"
     steps:
       - name: Download Allure results from test job
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: allure-results
           path: ${{ env.ALLURE_RESULTS }}
@@ -451,7 +459,7 @@ jobs:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
       - name: Download Allure results from device2 test job
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
           path: ${{ env.ALLURE_RESULTS }}
@@ -493,7 +501,7 @@ jobs:
       ALLURE_RESULTS: "allure-results"
     steps:
       - name: Download Allure results from test job
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: allure-results
           path: ${{ env.ALLURE_RESULTS }}
@@ -518,7 +526,7 @@ jobs:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
       - name: Download Allure results from device2 test job
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
           path: ${{ env.ALLURE_RESULTS }}
@@ -543,10 +551,10 @@ jobs:
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && inputs.export_to_xray && needs.prepare-devices.outputs.is_dual == 'false' }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Download Xray Results
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: xray-reports
           path: "e2e/desktop/artifacts/xray"
@@ -580,7 +588,7 @@ jobs:
     needs: [prepare-devices, report-to-allure, report-to-allure-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: Prepare Slack payload
         id: status
         env:
@@ -704,7 +712,7 @@ jobs:
 
       - name: Post to Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

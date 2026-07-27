@@ -88,3 +88,11 @@ export const shouldDisplayRightPanel = (
   }
   return false;
 };
+
+// =============================================================================
+// Page testid
+// =============================================================================
+
+// Testid kept verbatim from the pathname so it mirrors the route exactly; `/` falls back to dashboard.
+export const getPageTestId = (pathname: string): string =>
+  `page-view-${pathname.replace(/^\/+/, "") || "dashboard"}`;

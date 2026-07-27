@@ -5,6 +5,8 @@ import { EarnProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   FF_EARN_V2_DESKTOP,
+  FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
+  FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
   FF_STAKE_PROGRAMS_MODAL,
   useLocalEarnManifest,
 } from "tests/utils/featureFlagUtils";
@@ -49,7 +51,7 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: account.currency.speculosApp,
-      featureFlags: FF_EARN_V2_DESKTOP,
+      featureFlags: FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
     });
 
     const xrayTicket = "B2CQA-4639";
@@ -62,8 +64,8 @@ test.describe("Earn [v2]", () => {
       async ({ app }) => {
         await navigateToEarn(app);
         await app.earnV2Dashboard.verifyIceColdStartPage();
-        await app.earnV2Dashboard.clickIceColdStartEarnCTA();
-        await app.earnV2Dashboard.expectModularSelectorToBeVisible(app, "ASSET");
+        await app.earnV2Dashboard.clickSimulateInvestmentCta();
+        await app.earnV2Dashboard.verifyEarnSimulatorVisible();
       },
     );
   });
@@ -80,6 +82,7 @@ test.describe("Earn [v2]", () => {
         speculosApp: account.currency.speculosApp,
         featureFlags: {
           ...FF_EARN_V2_DESKTOP,
+          ...FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
           ...FF_STAKE_PROGRAMS_MODAL,
         },
         cliCommands: [liveDataCommand(account)],
@@ -164,8 +167,11 @@ test.describe("Earn [v2]", () => {
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
       featureFlags: {
-        ...FF_EARN_V2_DESKTOP,
+        ...FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
         ...FF_STAKE_PROGRAMS_MODAL,
+        // Routes earn-simulator-cta to the v2 deposit screen (AssetFlow.EarnV2Deposit)
+        // rather than the swap action dialog. The earn-live-app reads this via the Wallet API.
+        swapToEarn: { enabled: true },
       },
     });
 
@@ -177,7 +183,10 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app }) => {
         await navigateToEarn(app);
-        await app.earnV2Dashboard.clickIceColdStartEarnCTA();
+        await app.earnV2Dashboard.clickSimulateInvestmentCta();
+        await app.earnV2Dashboard.verifyEarnSimulatorVisible();
+        await app.earnV2Dashboard.clickEarnSimulatorCta();
+        await app.earnV2Dashboard.clickAccountSelectorInput();
         await app.earnV2Dashboard.selectAssetInModularSelector(app, account.currency);
         await app.earnV2Dashboard.addExistingAccountViaModularSelector(app);
         await app.scanAccountsDrawer.selectFirstAccount();
@@ -187,6 +196,43 @@ test.describe("Earn [v2]", () => {
         // deposit webview (no native add-account modal to close).
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.expectAtLeastOneAccountVisible();
+      },
+    );
+  });
+
+  // swapToEarn disabled → resolveAssetFlow routes to EarnV1Deposit → text-button-cta
+
+  test.describe("Earn v2 simulator CTA → v1 deposit", () => {
+    const account = Account.ETH_1;
+    const xrayTicket = "B2CQA-6136";
+
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: account.currency.speculosApp,
+      featureFlags: {
+        ...FF_EARN_V2_DESKTOP_WITH_SIMULATOR,
+        ...FF_STAKE_PROGRAMS_MODAL,
+        // Explicitly disabled to override any Remote Config default and force EarnV1Deposit
+        swapToEarn: { enabled: false },
+      },
+      cliCommands: [liveDataWithAddressCommand(account)],
+      speculosForSetupOnly: true,
+    });
+
+    test(
+      "Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled",
+      {
+        tag: buildTags({ currencyId: account.currency.id }),
+        annotation: { type: "TMS", description: xrayTicket },
+      },
+      async ({ app }) => {
+        await navigateToEarn(app);
+        await app.earnV2Dashboard.clickSimulateInvestmentCta();
+        await app.earnV2Dashboard.verifyEarnSimulatorVisible();
+        await app.earnV2Dashboard.clickEarnSimulatorCta();
+        // v1 ETH deposit: provider must be selected before the CTA becomes visible
+        await app.earnV2Dashboard.selectEthProvider(EarnProvider.LIDO.name);
+        await app.earnV2Dashboard.verifyV1TextButtonCtaVisible();
       },
     );
   });

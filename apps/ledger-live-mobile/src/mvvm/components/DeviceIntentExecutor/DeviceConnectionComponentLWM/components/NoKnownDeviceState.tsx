@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerDevices } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
-import { useSourceFlow } from "../../utils/SourceFlowContext";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_DEVICE_BUTTON,
   PAGE_CONNECT_DEVICE,
@@ -20,11 +20,12 @@ export function NoKnownDeviceState({
   onBuyLedgerDevice,
 }: Readonly<NoKnownDeviceStateProps>): React.ReactNode {
   const { t } = useTranslation();
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const handleConnectLedgerDevice = () => {
     trackConnectDeviceButtonClicked({
       sourceFlow,
       button: CONNECT_DEVICE_BUTTON.ConnectDevice,
+      extraProperties: analyticsProperties,
     });
     onConnectLedgerDevice();
   };
@@ -32,18 +33,14 @@ export function NoKnownDeviceState({
     trackConnectDeviceButtonClicked({
       sourceFlow,
       button: CONNECT_DEVICE_BUTTON.BuyDevice,
+      extraProperties: analyticsProperties,
     });
     onBuyLedgerDevice();
   };
 
   return (
     <Box lx={{ width: "full", alignItems: "center", gap: "s32" }}>
-      <TrackScreen
-        category={PAGE_CONNECT_DEVICE.NoKnownDevice}
-        sourceFlow={sourceFlow}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_CONNECT_DEVICE.NoKnownDevice} refreshSource />
       <Box lx={{ width: "full", alignItems: "center", gap: "s24" }}>
         <Spot appearance="icon" icon={LedgerDevices} size={72} />
         <Box lx={{ width: "full", alignItems: "center", gap: "s8" }}>

@@ -32,7 +32,6 @@ type CoinControlScreenViewProps = Readonly<{
   onGetFunds: () => void;
   isCustomPickingStrategy: boolean;
   onToggleUtxoExclusion?: (rowKey: string) => void;
-  onSelectCustomFees: () => void;
 }>;
 
 export function CoinControlScreenView({
@@ -57,7 +56,6 @@ export function CoinControlScreenView({
   onGetFunds,
   isCustomPickingStrategy,
   onToggleUtxoExclusion,
-  onSelectCustomFees,
 }: CoinControlScreenViewProps) {
   return (
     <>
@@ -96,7 +94,6 @@ export function CoinControlScreenView({
         reviewLoading={reviewLoading}
         onReview={onReview}
         onGetFunds={onGetFunds}
-        onSelectCustomFees={onSelectCustomFees}
       />
     </>
   );

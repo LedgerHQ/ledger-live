@@ -182,7 +182,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Hyperliquid unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -586,7 +586,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format HyperEVM unit (HYPE) 1`] = `"0.012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Hyperliquid unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
@@ -990,7 +990,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Hyperliquid unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -1394,7 +1394,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12 345 678 900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Hyperliquid unit (USD Coin) 1`] = `"12 345 678 900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -1798,7 +1798,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format HyperEVM unit (HYPE) 1`] = `"0.012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Hyperliquid unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
@@ -2202,7 +2202,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format HyperEVM unit (HYPE) 1`] = `"0.012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Hyperliquid unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
@@ -2606,7 +2606,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Hyperliquid unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -3010,7 +3010,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12 345 678 900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Hyperliquid unit (USD Coin) 1`] = `"12 345 678 900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -3414,7 +3414,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format HyperEVM unit (HYPE) 1`] = `"0,012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Hyperliquid unit (USD Coin) 1`] = `"12.345.678.900,000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0,012345678900000000- -ICX"`;
 
@@ -3818,7 +3818,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format HyperEVM unit (HYPE) 1`] = `"0.012345678900000000- -HYPE"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Hyperliquid unit (USD Coin) 1`] = `"12,345,678,900.000000- -USDC"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.012345678900000000- -ICX"`;
 
@@ -4222,7 +4222,7 @@ exports[`formatCurrencyUnit with default options should correctly format Hycon u
 
 exports[`formatCurrencyUnit with default options should correctly format HyperEVM unit (HYPE) 1`] = `"0.0123456"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Hyperliquid (HyperCore) unit (USD Coin) 1`] = `"12,345,678,900"`;
+exports[`formatCurrencyUnit with default options should correctly format Hyperliquid unit (USD Coin) 1`] = `"12,345,678,900"`;
 
 exports[`formatCurrencyUnit with default options should correctly format ICON Berlin Testnet unit (ICX) 1`] = `"0.0123456"`;
 

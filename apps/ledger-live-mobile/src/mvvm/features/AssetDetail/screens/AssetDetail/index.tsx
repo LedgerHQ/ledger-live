@@ -18,7 +18,7 @@ type NavigationProps = NativeStackNavigationProp<
 
 export default function AssetDetail() {
   const viewModel = useAssetDetailViewModel();
-  const { currency, coinOptions } = viewModel;
+  const { currency, coinOptions, shouldRedirectToMarket } = viewModel;
   const navigation = useNavigation<NavigationProps>();
 
   useLayoutEffect(() => {
@@ -56,6 +56,8 @@ export default function AssetDetail() {
     };
     navigation.setOptions(opts);
   }, [navigation, currency, coinOptions.openCoinOptions, coinOptions.trailingAccessibilityLabel]);
+
+  if (shouldRedirectToMarket) return null;
 
   return <AssetDetailView {...viewModel} />;
 }

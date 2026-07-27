@@ -3,7 +3,7 @@ import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { TransactionStatus } from "@ledgerhq/live-e2e-shared/enum/TransactionStatus";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import invariant from "invariant";

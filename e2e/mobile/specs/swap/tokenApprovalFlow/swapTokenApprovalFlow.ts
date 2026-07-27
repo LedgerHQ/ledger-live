@@ -6,6 +6,7 @@ import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { BroadcastFlow, shouldRunBroadcastFlow } from "../../../helpers/broadcastRotation";
 
 export function runSwapTokenApprovalFlow(
   fromAccount: TokenAccount,
@@ -14,13 +15,17 @@ export function runSwapTokenApprovalFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
-  const isBroadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-  if (!isBroadcastEnabled) {
+  const runHere = shouldRunBroadcastFlow(BroadcastFlow.APPROVAL);
+  if (!runHere) {
+    const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+    const bothPlatforms = process.env.E2E_BOTH_PLATFORMS === "true";
     console.warn(
-      "[approval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
+      broadcastEnabled && bothPlatforms
+        ? "[approval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
+        : "[approval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
   }
-  (isBroadcastEnabled ? describe : describe.skip)("Token approval - flow", () => {
+  (runHere ? describe : describe.skip)("Token approval - flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({

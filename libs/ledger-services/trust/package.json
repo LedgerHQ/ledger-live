@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-trust-service",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "private": true,
   "description": "Ledger Trust service client",
   "keywords": [
@@ -63,6 +63,7 @@
     "@ledgerhq/live-network": "workspace:*"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "dotenv": "^16.4.5",

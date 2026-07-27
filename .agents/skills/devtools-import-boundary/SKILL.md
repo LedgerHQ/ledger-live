@@ -7,15 +7,19 @@ description: |
 
 # DevTools import boundaries
 
-Every `@devtools/*` package is **self-contained**. The only permitted cross-package import within the devtools scope is from `@devtools/registry`, and only from the two packages explicitly designed for it.
+Every `@devtools/*` package is **self-contained**. The only permitted cross-package imports within the devtools scope are listed in the table below; all others are forbidden.
 
 ## Rules
 
 | Package | May import from `@devtools/*` |
 |---|---|
-| `@devtools/shell` | `@devtools/registry` only |
+| `@devtools/registry` | any `@devtools/<tool>` |
+| `@devtools/shell` | `@devtools/transport`, `@devtools/registry` |
 | `@devtools/bindings` | `@devtools/registry` only |
-| `@devtools/<tool>` | **nothing** from `@devtools/*` |
+| `@devtools/wire` | `@devtools/transport`, `@devtools/protocols` |
+| `@devtools/protocols` | `@devtools/transport` only |
+| `@devtools/relay` | `@devtools/transport` only |
+| `@devtools/<tool>` | *none* |
 
 All other `@devtools/*` → `@devtools/*` imports are forbidden.
 
@@ -47,5 +51,5 @@ App state and wiring for a tool arrive as **props**, built in `@devtools/binding
 ## Documentation
 
 When adding a new package under `devtools/`, its `README.md` must state:
-- Whether it may import from `@devtools/registry` (yes for shell and bindings, no for tool packages).
-- That it must not import any other `@devtools/*` package, with a pointer to this rule.
+- Which `@devtools/*` packages it may import, per the table above.
+- That all other `@devtools/*` imports are forbidden, with a pointer to this rule.

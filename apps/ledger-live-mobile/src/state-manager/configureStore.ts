@@ -13,7 +13,7 @@ import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";

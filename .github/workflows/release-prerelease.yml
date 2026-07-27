@@ -30,11 +30,11 @@ jobs:
           repositories: |
             ledger-live
             ledger-live-build
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           ref: ${{ inputs.ref }}
@@ -99,7 +99,7 @@ jobs:
           git add .
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') }}
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
           repo: ${{ github.repository }}
@@ -110,7 +110,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}] [skip ci]"
           repo: ${{ github.repository }}
@@ -121,7 +121,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})] [skip ci]"
           repo: ${{ github.repository }}
@@ -130,7 +130,7 @@ jobs:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
@@ -145,7 +145,7 @@ jobs:
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }
             });
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
@@ -169,7 +169,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

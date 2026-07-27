@@ -148,7 +148,16 @@ describe("AuthSDK", () => {
       tokenType: "Bearer" as const,
     };
     const deferredToken = createDeferred<typeof token>();
-    identityProvider.authenticate.mockReturnValue(deferredToken.promise);
+    const challengeRequested = createDeferred<void>();
+    const authenticationRequested = createDeferred<void>();
+    keycloakService.getChallenge.mockImplementationOnce(() => {
+      challengeRequested.resolve();
+      return Promise.resolve("challenge");
+    });
+    identityProvider.authenticate.mockImplementationOnce(() => {
+      authenticationRequested.resolve();
+      return deferredToken.promise;
+    });
 
     const sdk = new AuthSDK(config, {
       provider: identityProvider,
@@ -157,8 +166,9 @@ describe("AuthSDK", () => {
 
     const first = sdk.withToken({ queryFn });
     const second = sdk.withToken({ queryFn });
+    await challengeRequested.promise;
+    await authenticationRequested.promise;
 
-    await waitForMicrotasks();
     expect(keycloakService.getChallenge).toHaveBeenCalledTimes(1);
     expect(identityProvider.authenticate).toHaveBeenCalledTimes(1);
 
@@ -287,10 +297,4 @@ function createDeferred<T>() {
   });
 
   return { promise, resolve };
-}
-
-function waitForMicrotasks(): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(resolve, 0);
-  });
 }

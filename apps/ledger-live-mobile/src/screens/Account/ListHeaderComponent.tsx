@@ -57,6 +57,7 @@ type Props = {
   onSwitchAccountCurrency: () => void;
   onAccountCardLayout: (event: LayoutChangeEvent) => void;
   colors: ColorPalette;
+  mainActions: ActionButtonEvent[];
   secondaryActions: ActionButtonEvent[];
   t: TFunction;
 };
@@ -89,6 +90,7 @@ export function useListHeaderComponents({
   onSwitchAccountCurrency,
   onAccountCardLayout,
   colors,
+  mainActions,
   secondaryActions,
   t,
 }: Props): {
@@ -214,10 +216,12 @@ export function useListHeaderComponents({
           key="EditOperationCard"
         />
       ) : null,
-      <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions" isFirst>
-        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
-        <FabAccountMainActions account={account} parentAccount={parentAccount} />
-      </SectionContainer>,
+      mainActions.length > 0 ? (
+        <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions" isFirst>
+          <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
+          <FabAccountMainActions account={account} parentAccount={parentAccount} />
+        </SectionContainer>
+      ) : null,
       !!AccountBalanceHeader && (
         <AccountBalanceHeader
           key="AccountBalanceHeader"

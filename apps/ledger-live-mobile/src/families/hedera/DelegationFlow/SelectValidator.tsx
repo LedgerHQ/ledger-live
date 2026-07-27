@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "~/context/Locale";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { FlatList, StyleSheet, View } from "react-native";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";

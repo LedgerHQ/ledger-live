@@ -1,6 +1,6 @@
 import React from "react";
 import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../../utils/trackDeviceIntent";
 import type { BaseInitializerStateProps } from "../../types";
 import { UnsupportedFeatureView } from "./UnsupportedFeatureView";
@@ -10,16 +10,14 @@ type UnsupportedFeatureProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: BlockingStateType.UnsupportedFeature }>
 >;
 
-export function UnsupportedFeature({ device, sourceFlow }: UnsupportedFeatureProps) {
-  const viewModel = useUnsupportedFeatureViewModel({ device, sourceFlow });
+export function UnsupportedFeature({ device }: UnsupportedFeatureProps) {
+  const viewModel = useUnsupportedFeatureViewModel({ device });
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_CONNECT_APP.UnsupportedFeature}
-        sourceFlow={sourceFlow}
         modelId={device.modelId}
         refreshSource
-        deviceUxV2
       />
       <UnsupportedFeatureView {...viewModel} />
     </>

@@ -19,7 +19,7 @@ import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetc
 import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import {
@@ -35,15 +35,23 @@ import {
 } from "~/e2e/bridge/types";
 import { useFeature } from "@features/platform-feature-flags";
 
-export function useAppDeviceAction() {
+export function useAppDeviceAction({
+  allowNonOnboardedDevice = false,
+}: {
+  allowNonOnboardedDevice?: boolean;
+} = {}) {
   const envMock = useEnv("MOCK");
   const deviceProxy = useEnv("DEVICE_PROXY_URL");
   const mock = envMock && !deviceProxy;
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   return useMemo(
     () =>
-      appCreateAction(mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled })),
-    [isLdmkConnectAppEnabled, mock],
+      appCreateAction(
+        mock
+          ? connectAppExecMock
+          : connectAppFactory({ isLdmkConnectAppEnabled, allowNonOnboardedDevice }),
+      ),
+    [allowNonOnboardedDevice, isLdmkConnectAppEnabled, mock],
   );
 }
 

@@ -4781,6 +4781,7 @@
       "slow": "Slow",
       "custom": "Custom",
       "customFees": "Custom fees",
+      "defaultNetworkFee": "Default network fee",
       "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
@@ -6975,6 +6976,7 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "visibilityDelay": "It can take up to {{numberOfMinutes}} minutes before seeing this delegation on your delegation board.",
             "cta": "Continue"
           },
           "verification": {
@@ -10225,8 +10227,15 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addContactDrawer": {
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "confirmName": "Confirm name",
+      "invalidNameError": "Special characters are not allowed."
+    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
@@ -10236,12 +10245,39 @@
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
     },
+    "detail": {
+      "emptyState": {
+        "title": "No address yet",
+        "meDescription": "Save a wallet address to receive crypto.",
+        "contactDescription": "Save a wallet address to send to {{name}}"
+      }
+    },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "activate": "Turn on Ledger Sync",
       "dismiss": "Got it",
       "checkingAccessibilityLabel": "Checking Ledger Sync status"
+    },
+    "featureIntroduction": {
+      "title": "Introducing Contacts",
+      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
+      "primaryAction": "Try contacts",
+      "secondaryAction": "Maybe later",
+      "highlights": {
+        "saveAddresses": {
+          "title": "Save addresses once",
+          "description": "Keep the addresses you send to in one place."
+        },
+        "sendToRightAddress": {
+          "title": "Send to the right address",
+          "description": "Funds reach the right wallet every time."
+        },
+        "privateAcrossDevices": {
+          "title": "Private across your devices",
+          "description": "End-to-end encrypted with Ledger Sync."
+        }
+      }
     }
   }
 }

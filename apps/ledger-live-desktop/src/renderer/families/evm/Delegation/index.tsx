@@ -11,6 +11,7 @@ import {
   getValidatorExplorerUrl,
   hasUnbondingPeriod,
   getUnbondingPeriodDays,
+  hasChainRewards,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
@@ -89,6 +90,7 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
 
   const mappedDelegations = mapDelegations(delegations, validators, unit);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
+
   const onRowClaimRewards = useCallback(
     (validatorAddress: string) => {
       dispatch(openModal("MODAL_EVM_CLAIM_REWARDS", { account, validatorAddress }));
@@ -111,6 +113,7 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
   );
 
   const hasDelegations = delegations.length > 0;
+  const canClaimRewards = hasChainRewards(currencyId);
   // Only surface the "Pending undelegation" section when the chain enforces an unbonding
   // period (Acceptance Criteria: Tracking). Instant-withdrawal chains never have pending
   // unbondings so showing the header would be misleading.
@@ -158,7 +161,7 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
               >
                 <Button
                   id="account-rewards-button"
-                  disabled={!hasRewards}
+                  disabled={!hasRewards || !canClaimRewards}
                   color="primary.c80"
                   small
                   onClick={onClaimRewards}
@@ -182,6 +185,7 @@ const DelegationBody = ({ account }: { account: StakingAccount }) => {
                 key={`${delegation.validatorAddress}-${delegation.status}`}
                 account={account}
                 delegation={delegation}
+                canClaimRewards={canClaimRewards}
                 onManageAction={onRedirect}
                 onClaimRewards={onRowClaimRewards}
                 onExternalLink={onExternalLink}

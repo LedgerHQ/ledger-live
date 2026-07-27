@@ -1,6 +1,6 @@
 {
   "name": "ledger-live-desktop-e2e-tests",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "private": true,
   "scripts": {
     "lint": "oxlint .",
@@ -24,12 +24,12 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-e2e-shared": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@playwright/test": "catalog:",
     "@shared/feature-flags": "workspace:*",
+    "@shared/env": "workspace:*",
     "@types/node": "catalog:",
     "allure-js-commons": "catalog:",
     "allure-playwright": "catalog:",

@@ -1,5 +1,6 @@
 import {
   GetDeviceStatusDeviceAction,
+  type GetDeviceStatusDAInput,
   GetDeviceStatusDAOutput,
   GetDeviceMetadataDeviceAction,
   GetDeviceMetadataDAOutput,
@@ -45,11 +46,23 @@ export const setupGoToDashboardMock = (error: boolean = false) => {
   }));
 };
 
-export const setupGetDeviceStatusMock = (deviceStatus: GetDeviceStatusDAOutput, error = false) => {
+export const setupGetDeviceStatusMock = (
+  deviceStatus: GetDeviceStatusDAOutput,
+  error = false,
+  onInput?: (input: GetDeviceStatusDAInput) => void,
+) => {
   (GetDeviceStatusDeviceAction as jest.Mock).mockImplementation(() => ({
     makeStateMachine: jest.fn().mockImplementation(() =>
       createMachine({
         id: "MockGetDeviceStatusDeviceAction",
+        context: ({ input }) => {
+          onInput?.(input as GetDeviceStatusDAInput);
+          return {
+            intermediateValue: {
+              requiredUserInteraction: UserInteractionRequired.None,
+            },
+          };
+        },
         initial: "ready",
         states: {
           ready: {

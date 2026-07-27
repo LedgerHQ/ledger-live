@@ -1,10 +1,13 @@
 import network from "@ledgerhq/live-network";
 import {
   clearValidatorsCache,
+  getDelegationVisibilityDelayMinutes,
   getUnbondingPeriodDays,
   getValidatorExplorerUrl,
   getValidators,
   getValidatorsPage,
+  hasDelegationVisibilityDelay,
+  hasChainRewards,
   hasUnbondingPeriod,
   prefetchValidators,
 } from "./validators";
@@ -260,6 +263,28 @@ describe("staking/validators", () => {
         expect(hasUnbondingPeriod(currencyId)).toBe(false);
       },
     );
+
+    it("getDelegationVisibilityDelayMinutes returns Somnia config", () => {
+      expect(getDelegationVisibilityDelayMinutes("somnia")).toBe(5);
+    });
+
+    it.each(["sei_evm", "__unknown__"])(
+      "getDelegationVisibilityDelayMinutes returns undefined without config (%s)",
+      currencyId => {
+        expect(getDelegationVisibilityDelayMinutes(currencyId)).toBeUndefined();
+      },
+    );
+
+    it("hasDelegationVisibilityDelay is true for Somnia", () => {
+      expect(hasDelegationVisibilityDelay("somnia")).toBe(true);
+    });
+
+    it.each(["sei_evm", "__unknown__"])(
+      "hasDelegationVisibilityDelay is false without configured delay (%s)",
+      currencyId => {
+        expect(hasDelegationVisibilityDelay(currencyId)).toBe(false);
+      },
+    );
   });
 
   describe("getValidatorsPage", () => {
@@ -292,6 +317,18 @@ describe("staking/validators", () => {
           apy: 0,
         },
       ]);
+    });
+  });
+
+  describe("hasChainRewards", () => {
+    it.each([
+      ["sei_evm", true],
+      ["monad", true],
+      ["somnia", true],
+      ["zero_gravity", false],
+      ["unknown_chain", false],
+    ])("%s returns %s", (currencyId, expected) => {
+      expect(hasChainRewards(currencyId)).toEqual(expected);
     });
   });
 });

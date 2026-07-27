@@ -111,6 +111,7 @@
     "stop" : "Detener",
     "updateNow" : "Actualizar ahora",
     "close" : "Cerrar",
+    "ok" : "Entendido",
     "eastern" : "Oriental",
     "western" : "Occidental",
     "reverify" : "Volver a verificar",
@@ -303,6 +304,7 @@
   },
   "sidebar" : {
     "card" : "Tarjeta",
+    "paytab" : "Pagar",
     "menu" : "Menú",
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
@@ -3307,7 +3309,7 @@
         "validatorGroup" : {
           "title" : "Grupo de validadores",
           "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
-          "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+          "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
           "totalVotes" : "Total de votos",
           "commission" : "Comisión"
         }
@@ -3900,7 +3902,7 @@
       "withdrawableTitle" : "Puede retirarse",
       "statusUpdateNotice" : "El estado de la delegación se actualizará cuando se confirme la transacción.",
       "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment",
-      "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+      "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
       "emptyState" : {
         "description" : "Puedes recibir recompensas SOL delegando tu activos.",
         "info" : "Cómo funciona la delegación",
@@ -4120,7 +4122,7 @@
           },
           "validator" : {
             "title" : "Validadores",
-            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
             "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
           },
           "connectDevice" : {
@@ -4555,7 +4557,7 @@
           },
           "validator" : {
             "title" : "Validadores",
-            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
             "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
           },
           "connectDevice" : {
@@ -4684,7 +4686,7 @@
           },
           "validator" : {
             "title" : "Validadores",
-            "ledgerByChorusOneTC" : "Términos y condiciones de Ledger by Chorus One",
+            "ledgerByBitwiseTC" : "Términos y condiciones de Ledger by Bitwise",
             "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
           },
           "connectDevice" : {
@@ -4853,7 +4855,8 @@
     "delegation" : {
       "contextMenu" : {
         "stake" : "Pon en participación tus XTZ"
-      }
+      },
+      "pendingUnstakeWarning" : "Puedes cambiar de validador ahora, pero no podrás poner en participación con el nuevo validador hasta que termine la finalización de tu solicitud de quitar de participación pendiente de tu validador actual , en unos 4 días."
     },
     "staking" : {
       "header" : "Puesta en participación",
@@ -5050,6 +5053,10 @@
         "rowTitle" : "Consentimiento voluntario de análisis (QA)",
         "rowDesc" : "Inspeccionar la versión del consentimiento de privacidad almacenado y la fecha del consentimiento; simular estados obsoletos para el modal de consentimiento de portfolio de análisis."
       },
+      "devTools" : {
+        "rowTitle" : "Herramientas para desarrolladores",
+        "rowDesc" : "Abre el shell de DevTools (indicacores de opciones y panel de herramientas de desarrollo)."
+      },
       "brazeTools" : {
         "title" : "Herramientas de Braze",
         "description" : "Generar tarjetas de Braze locales",
@@ -5215,6 +5222,17 @@
         "openDrawer" : "Abrir drawer",
         "showJson" : "Mostrar JSON",
         "hideJson" : "Ocultar JSON"
+      },
+      "contactsDevTool" : {
+        "title" : "Herramienta de desarrollo de contactos",
+        "description" : "Alternar los ajustes de despliegue de contactos para escritorio (marcador de función lwdContacts).",
+        "mainFeatureToggle" : "Alternar característica principal",
+        "featureParameters" : "Parámetros de la función",
+        "eligibleAddressFamilies" : "Familias de direcciones elegibles",
+        "customFamiliesHint" : "Familias separadas por comas para pruebas multifamilia personalizadas.",
+        "customFamiliesPlaceholder" : "evm, stellar, aptos",
+        "applyFamilies" : "Aplicar",
+        "resetOverride" : "Restablecer forzado"
       },
       "cryptoAssetsList" : {
         "title" : "Lista de activos cripto",
@@ -6690,6 +6708,10 @@
       "title" : "La cuenta no es compatible.",
       "description" : "Vuelve a intentarlo o contacta al Soporte ({{reason}})"
     },
+    "AccountPublicKeyUnavailable" : {
+      "title" : "Es necesario volver a agregar la cuenta",
+      "description" : "Ledger Wallet no pudo recuperar la clave pública de esta cuenta. Por favor, elimina la cuenta y vuelve a agregarla para continuar"
+    },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "La cuenta de recepción no ha adherido al ASA seleccionado."
     },
@@ -7288,6 +7310,9 @@
     },
     "TezosNotEnoughStaked" : {
       "title" : "Saldo de puesta en participación insuficiente"
+    },
+    "TezosStakeBlockedByPendingUnstake" : {
+      "title" : "El proceso de quitar de participación de tu validador anterior debe finalizar primero"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Primero vacía las subcuentas"
@@ -8594,6 +8619,17 @@
       "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a los cambios en la blockchain y a las mejoras de seguridad."
     }
   },
+  "largeScreenUpsellModal" : {
+    "optedIn" : {
+      "title" : "Más datos. Menos toques. Ahorra un {{discount}}%",
+      "subtitle" : "Disfruta de una pantalla más grande, una revisión de transacciones más inteligente, protección mejorada y un descuento exclusivo del {{discount}}%."
+    },
+    "optedOut" : {
+      "title" : "Detecta estafas. Visualiza cada detalle",
+      "subtitle" : "Revisa con claridad en un signer con pantalla táctil y detecta estafas con controles de seguridad avanzados."
+    },
+    "cta" : "Explora los signers táctiles"
+  },
   "modularAssetDrawer" : {
     "addAccounts" : {
       "title" : "Selecciona las cuentas que quieres agregar",
@@ -9167,7 +9203,8 @@
       "more" : "Opciones del historial de transacciones",
       "hideDustTransactions" : "Ocultar transacciones de remanente",
       "showDustTransactions" : "Mostrar transacciones de remanente",
-      "dustTransactionsDescription" : "Se ocultarán las transacciones menores a {{threshold}}."
+      "dustTransactionsDescription" : "Se ocultarán las transacciones menores a {{threshold}}.",
+      "dustTransactionsDisplayedDescription" : "Se mostrarán las transacciones menores a {{threshold}}."
     },
     "exportDialog" : {
       "title" : "Exportar historial de transacciones",
@@ -9225,7 +9262,22 @@
       "title" : "Mi Ledger",
       "description" : "Gestiona tu dispositivo Ledger"
     },
+    "contacts" : {
+      "title" : "Contactos",
+      "description" : "Gestiona tus contactos"
+    },
     "explore" : "Explora todos los dispositivos Ledger"
+  },
+  "contacts" : {
+    "title" : "Contactos",
+    "addContact" : "Agregar contacto",
+    "searchPlaceholder" : "Buscar contacto",
+    "me" : {
+      "name" : "Yo",
+      "addressCount_zero" : "0 direcciones",
+      "addressCount_one" : "{{count}} dirección",
+      "addressCount_other" : "{{count}} direcciones"
+    }
   },
   "assetDetails" : {
     "header" : {

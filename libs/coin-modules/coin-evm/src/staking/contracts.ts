@@ -139,6 +139,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // There is no bytecode at this address; it is a precompile, not a smart contract.
     contractAddress: () => "0x0000000000000000000000000000000000001000",
     value: ({ amount }) => amount,
+    delegationMaxAmountReserve: 10n ** 17n,
     functions: {
       // delegate(uint64 validatorId) payable — amount is msg.value (18-decimal MON wei).
       delegate: "delegate",
@@ -217,6 +218,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     },
     // https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions#delegateaddress-delegatoraddress
     calldataAmountScale: 10n ** 9n,
+    delegationMaxAmountReserve: 10n ** 16n,
     apiConfig: {
       baseUrl: "https://api.0g.exploreme.pro",
       validatorsEndpoint: "/api/v2/validators?limit=100",
@@ -261,7 +263,12 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       }
     },
     canUndelegate: delegation => {
-      return delegation.shares?.gt(0) ?? true;
+      return delegation.shares?.gte(1e9) ?? true;
+    },
+    gasMultiplier: ({ mode }) => {
+      return (["delegate", "undelegate"] as const).includes(mode as "delegate" | "undelegate")
+        ? new BigNumber(1.2)
+        : new BigNumber(1);
     },
   },
   somnia: {
@@ -279,6 +286,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       baseUrl: "https://staking.somnia.network/api/validator-names",
     },
     value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
+    delegationMaxAmountReserve: 10n ** 17n,
+    // Somnia dashboard indexes delegations off-chain; new delegations can take up to 5 minutes to appear on the delegation board.
+    delegationVisibilityDelayMinutes: 5,
     resolveValidatorAddress: async parameters => {
       return typeof parameters[0] === "string" ? parameters[0] : null;
     },

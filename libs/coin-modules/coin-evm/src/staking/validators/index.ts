@@ -117,6 +117,14 @@ export const getUnbondingPeriodDays = (currencyId: string): number | undefined =
 export const getMaxRedelegations = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.maxRedelegations;
 
+export const getDelegationVisibilityDelayMinutes = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.delegationVisibilityDelayMinutes;
+
+export const hasDelegationVisibilityDelay = (currencyId: string): boolean => {
+  const minutes = getDelegationVisibilityDelayMinutes(currencyId);
+  return typeof minutes === "number" && minutes > 0;
+};
+
 export const hasUnbondingPeriod = (currencyId: string): boolean => {
   const days = getUnbondingPeriodDays(currencyId);
   return typeof days === "number" && days > 0;
@@ -127,6 +135,11 @@ export const hasRedelegation = (currencyId: string): boolean =>
 
 export const hasCompound = (currencyId: string): boolean =>
   typeof STAKING_CONTRACTS[currencyId]?.functions.compoundReward === "string";
+
+export const hasChainRewards = (currencyId: string): boolean => {
+  const config = STAKING_CONTRACTS[currencyId];
+  return typeof config?.functions.claimReward === "string";
+};
 
 const toValidatorBalance = (tokens: string): bigint => {
   try {

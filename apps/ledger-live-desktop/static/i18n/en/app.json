@@ -292,6 +292,7 @@
   "fees": {
     "advanced": "Advanced",
     "custom": "Custom",
+    "defaultNetworkFee": "Default network fee",
     "fast": "Fast",
     "networkFees": "Network fees",
     "high": "High",
@@ -4405,7 +4406,8 @@
               }
             },
             "amount": {
-              "title": "Amount"
+              "title": "Amount",
+              "visibilityDelay": "It can take up to {{numberOfMinutes}} minutes before seeing this delegation on your delegation board."
             },
             "validator": {
               "title": "Validators",
@@ -5287,7 +5289,13 @@
         "contactsData": "Contacts data",
         "loadPopulatedContacts": "Load populated contacts",
         "resetContacts": "Reset contacts",
-        "resetOverride": "Reset override"
+        "resetOverride": "Reset override",
+        "featureIntroduction": {
+          "title": "Feature introduction",
+          "label": "Show Contacts feature introduction",
+          "dismissed": "Dismissed — turn on to show the intro again on Contacts.",
+          "willShow": "Will show on Contacts until dismissed."
+        }
       },
       "cryptoAssetsList": {
         "title": "Crypto Assets List",
@@ -8684,13 +8692,14 @@
   "largeScreenUpsellModal": {
     "optedIn": {
       "title": "See more. Tap less. Save {{discount}}%",
-      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off."
+      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off.",
+      "cta": "Explore touchscreen signers"
     },
     "optedOut": {
-      "title": "Spot scams. See every detail",
-      "subtitle": "Review clearly on a touchscreen signer and spot scams with advanced security checks."
-    },
-    "cta": "Explore touchscreen signers"
+      "title": "Spot scams before signing",
+      "subtitle": "Learn more about advanced security features that enable real-time threat detection.",
+      "cta": "Learn more"
+    }
   },
   "modularAssetDrawer": {
     "addAccounts": {
@@ -8974,6 +8983,12 @@
     },
     "shielded": {
       "send": {
+        "modalTitle": {
+          "transparent": "Public Send",
+          "transparentToShielded": "Public to Private Send",
+          "shieldedToTransparent": "Private to Public Send",
+          "shielded": "Private Send"
+        },
         "transferFrom": {
           "label": "Transfer from",
           "public": {
@@ -8984,6 +8999,25 @@
             "title": "Private balance",
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
+          }
+        },
+        "memo": {
+          "label": "Memo (optional)",
+          "placeholder": "Enter a memo",
+          "tooltip": "Attach a private message to this shielded transaction. Only the recipient can read it. Up to 512 bytes."
+        },
+        "syncBanner": {
+          "stopped": {
+            "message": "Private balance is not synchronized",
+            "cta": "Resume sync"
+          },
+          "running": {
+            "message": "Private balance is synchronizing ({{progress}}%)",
+            "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+          },
+          "outdated": {
+            "message": "Balance may be slightly out of date",
+            "cta": "Sync balance"
           }
         }
       },
@@ -9339,17 +9373,51 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
+    "addContactDrawer": {
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "invalidNameError": "Special characters are not allowed."
+    },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addressCount_zero": "0 address",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "name": "Me"
+    },
+    "detail": {
+      "emptyState": {
+        "meTitle": "No saved addresses for you",
+        "contactTitle": "No saved addresses for {{name}}",
+        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "contactDescription": "Save their wallet addresses to send to them by name next time."
+      }
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "dismiss": "Got it"
+    },
+    "featureIntroduction": {
+      "title": "Introducing Contacts",
+      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
+      "primaryAction": "Try contacts",
+      "secondaryAction": "Maybe later",
+      "highlights": {
+        "saveAddresses": {
+          "title": "Save addresses once",
+          "description": "Keep the addresses you send to in one place."
+        },
+        "sendToRightAddress": {
+          "title": "Send to the right address",
+          "description": "Funds reach the right wallet every time."
+        },
+        "privateAcrossDevices": {
+          "title": "Private across your devices",
+          "description": "End-to-end encrypted with Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails": {

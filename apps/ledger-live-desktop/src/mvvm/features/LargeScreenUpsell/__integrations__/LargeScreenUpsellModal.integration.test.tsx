@@ -172,13 +172,13 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
       expect(screen.getByTestId("large-screen-upsell-modal")).toBeVisible();
     });
 
-    expect(screen.getByText("Spot scams. See every detail")).toBeVisible();
+    expect(screen.getByText("Spot scams before signing")).toBeVisible();
     expect(
       screen.getByText(
-        "Review clearly on a touchscreen signer and spot scams with advanced security checks.",
+        "Learn more about advanced security features that enable real-time threat detection.",
       ),
     ).toBeVisible();
-    expect(screen.getByRole("button", { name: "Explore touchscreen signers" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
     expect(trackPage).toHaveBeenCalledWith(
       "Modal - Upgrade",
       undefined,
@@ -246,10 +246,10 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Explore touchscreen signers" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
     });
 
-    await user.click(screen.getByRole("button", { name: "Explore touchscreen signers" }));
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
 
     await waitFor(() => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();
@@ -260,9 +260,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openedUrl.origin + openedUrl.pathname).toBe(
       "https://shop.ledger.com/pages/opted-out-offer",
     );
-    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_live");
-    expect(openedUrl.searchParams.get("utm_medium")).toBe("desktop");
-    expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
+    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
     expect(store.getState().largeScreenUpsellModal.retries).toBe(0);
     expect(track).toHaveBeenCalledWith("button_clicked", {
@@ -311,9 +311,9 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     expect(openedUrl.origin + openedUrl.pathname).toBe(
       "https://shop.ledger.com/pages/opted-in-offer",
     );
-    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_live");
-    expect(openedUrl.searchParams.get("utm_medium")).toBe("desktop");
-    expect(openedUrl.searchParams.get("utm_campaign")).toBe("upsell_large_screen");
+    expect(openedUrl.searchParams.get("utm_source")).toBe("ledger_wallet_desktop");
+    expect(openedUrl.searchParams.get("utm_medium")).toBe("ledger_live");
+    expect(openedUrl.searchParams.get("utm_campaign")).toBe("nano_upgrade_program");
     expect(openedUrl.searchParams.get("utm_content")).toBe("app_start_modal");
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "explore large screen devices",
@@ -384,14 +384,14 @@ describe("LargeScreenUpsellModalMount (integration)", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Explore touchscreen signers" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
     });
 
     await waitFor(() => {
       expect(store.getState().largeScreenUpsellModal.retries).toBe(1);
     });
 
-    await user.click(screen.getByRole("button", { name: "Explore touchscreen signers" }));
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
 
     await waitFor(() => {
       expect(screen.queryByTestId("large-screen-upsell-modal")).not.toBeInTheDocument();

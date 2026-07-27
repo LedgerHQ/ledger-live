@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen } from "~/analytics";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { InstallingAppState } from "./InstallingAppState";
 import type { InitializerDevice } from "../types";
@@ -25,7 +26,11 @@ const device: InitializerDevice = {
 };
 
 function renderState() {
-  return render(<InstallingAppState device={device} sourceFlow="my_ledger" />);
+  return render(
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+      <InstallingAppState device={device} />
+    </DeviceIntentTrackingProvider>,
+  );
 }
 
 describe("InstallingAppState", () => {

@@ -43,6 +43,12 @@ export const buildTransactionParams = (
     throw new Error(`${currencyId} staking requires delegator`);
   }
 
+  if (currencyId === "zero_gravity" && transactionType === "undelegate") {
+    if (params.shares === undefined || params.shares < 1_000_000_000n) {
+      throw new Error(`${currencyId} undelegate requires shares`);
+    }
+  }
+
   if (
     params.withdrawId === undefined &&
     currencyId === "monad" &&

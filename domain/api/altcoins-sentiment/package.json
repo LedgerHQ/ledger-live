@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-altcoins-sentiment",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Domain API client for altcoins sentiment (CMC Altcoin Season Index): RTK Query endpoint typed on @domain/entity-altcoins-sentiment",
   "main": "src/index.ts",

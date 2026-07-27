@@ -7,7 +7,7 @@ import {
   findCryptoCurrencyById,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import {
@@ -33,6 +33,7 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
   SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
@@ -136,6 +137,7 @@ export type SettingsState = {
   hasSeenWalletV4Tour: boolean;
   hasSeenQ2Tour: boolean;
   productTourCompleted: boolean;
+  hasDismissedContactsFeatureIntroduction: boolean;
   hasClickedRecover: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
@@ -242,6 +244,7 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenWalletV4Tour: false,
   hasSeenQ2Tour: false,
   productTourCompleted: false,
+  hasDismissedContactsFeatureIntroduction: false,
   hasClickedRecover: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
@@ -310,6 +313,7 @@ type HandlersPayloads = {
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
   SET_HAS_SEEN_Q2_TOUR: boolean;
   [SET_PRODUCT_TOUR_COMPLETED]: boolean;
+  [SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: boolean;
   SET_HAS_CLICKED_RECOVER: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -551,6 +555,10 @@ const handlers: SettingsHandlers = {
   [SET_PRODUCT_TOUR_COMPLETED]: (state: SettingsState, { payload }) => ({
     ...state,
     productTourCompleted: payload,
+  }),
+  [SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION]: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasDismissedContactsFeatureIntroduction: payload,
   }),
   SET_HAS_CLICKED_RECOVER: (state: SettingsState, { payload }) => ({
     ...state,
@@ -879,6 +887,9 @@ export const anonymousUserNotificationsSelector = (state: State) =>
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
 export const hasSeenQ2TourSelector = (state: State) => state.settings.hasSeenQ2Tour;
 export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
+
+export const hasDismissedContactsFeatureIntroductionSelector = (state: State) =>
+  state.settings.hasDismissedContactsFeatureIntroduction;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;
 
 // Last onboarded device is the device set when a user goes through the onboarding flow.

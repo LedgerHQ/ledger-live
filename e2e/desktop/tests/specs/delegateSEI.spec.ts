@@ -40,6 +40,7 @@ test.describe("SEI EVM Native Staking - Delegate flow", () => {
       await app.account.startStakingFlowFromMainStakeButton();
       await app.evmDelegate.continueFromRewardsInfoIfPresent();
       await app.evmDelegate.expectValidatorListVisible();
+      await app.evmDelegate.selectFirstValidator();
       await app.evmDelegate.continueValidatorStep();
       await app.evmDelegate.setAmountAndContinue(DELEGATION_AMOUNT);
 

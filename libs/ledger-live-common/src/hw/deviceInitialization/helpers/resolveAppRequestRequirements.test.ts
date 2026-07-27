@@ -150,16 +150,17 @@ describe("deviceInitialization requirements", () => {
     });
   });
 
-  it("keeps legacy request optionality while normalizing the DIE input", async () => {
+  it("GIVEN partial dependencies WHEN translating requirements THEN only legacy connect-app keeps them", async () => {
     const resolved = await resolveAppRequestRequirements({
       appName: "Ethereum",
+      allowPartialDependencies: true,
     });
 
     expect(toConnectAppRequest(resolved)).toEqual({
       appName: "Ethereum",
       dependencies: undefined,
       requireLatestFirmware: undefined,
-      allowPartialDependencies: false,
+      allowPartialDependencies: true,
       requiresDerivation: undefined,
     });
 
@@ -167,7 +168,6 @@ describe("deviceInitialization requirements", () => {
       appName: "Ethereum",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
       requiresDerivation: undefined,
     });
   });

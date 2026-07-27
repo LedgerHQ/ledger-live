@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { BuySell } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { ApplicationOptions } from "page";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";

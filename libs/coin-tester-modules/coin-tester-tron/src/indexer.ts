@@ -332,10 +332,10 @@ export function initMswHandlers(): () => void {
   );
 
   server.listen({
-    onUnhandledRequest: req => {
-      const hostname = new URL(req.url).hostname;
+    onUnhandledRequest: request => {
+      const hostname = new URL(request.url).hostname;
       if (["127.0.0.1", "localhost"].includes(hostname)) return;
-      throw new Error(`Unhandled MSW request: ${req.method} ${req.url}`);
+      throw new Error(`Unhandled request: ${request.method} ${request.url}`);
     },
   });
 

@@ -366,7 +366,6 @@ function MyFlowScreen({ enabled, onDone }: Props) {
         appName: "Ethereum",
         dependencies: [],
         requireLatestFirmware: false,
-        allowPartialDependencies: false,
       }}
       intent={intent}
       intentComponentExtraProps={{ title: "Sign transaction" }}
@@ -901,7 +900,6 @@ const EXCHANGE_INITIALIZATION_INPUT: InitializationInput = {
   appName: "Exchange",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 };
 
 function useSwapFlowOrchestration({ enabled, quote, platformDefs, deps }) {
@@ -1031,7 +1029,6 @@ setState({
       appName: "Bitcoin",
       dependencies: [],
       requireLatestFirmware: false,
-      allowPartialDependencies: false,
     },
   },
 });
@@ -1043,7 +1040,6 @@ setDeviceInitializationInput({
   appName: "Bitcoin",
   dependencies: [],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 });
 ```
 
