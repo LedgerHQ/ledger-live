@@ -1388,10 +1388,6 @@
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
         },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
-        },
         "discoverWallet": {
           "title": "Discover what your wallet can do",
           "description": "Dive into your wallet’s features"
@@ -8318,11 +8314,6 @@
         "confirmRestorePicture": "Tap on “Keep“ to\nconfirm your lock screen picture",
         "doThisLater": "Maybe later"
       }
-    },
-    "postOnboarding": {
-      "title": "Customize the lock screen",
-      "description": "Display your favorite digital art or photo as your device’s lock screen.",
-      "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",
     "finishCTA": "Close"

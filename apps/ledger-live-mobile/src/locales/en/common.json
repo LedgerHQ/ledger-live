@@ -8826,10 +8826,6 @@
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
         },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
-        },
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
@@ -8857,10 +8853,6 @@
         "titleCompleted": "Crypto bought",
         "description": "Choose from 500+ coins and tokens.",
         "popupLabel": "Crypto bought"
-      },
-      "customImage": {
-        "titleCompleted": "Lock screen customized",
-        "popupLabel": "Lock screen customized successfully"
       },
       "recover": {
         "titleCompleted": "Backup secured",
