@@ -29,7 +29,7 @@ runs:
 
   steps:
     - id: branch-name
-      uses: tj-actions/branch-names@v6
+      uses: tj-actions/branch-names@6c999acf206f5561e19f46301bb310e9e70d8815 # v6
     - name: Set report path
       id: report-path
       shell: bash

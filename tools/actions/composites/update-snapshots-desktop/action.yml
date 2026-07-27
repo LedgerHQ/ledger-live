@@ -71,7 +71,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Upload playwright results [On Failure]
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       if: failure() && !cancelled()
       with:
         name: ${{ format('playwright-results-{0}', inputs.os) }}
