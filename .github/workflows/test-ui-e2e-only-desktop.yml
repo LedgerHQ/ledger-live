@@ -215,6 +215,10 @@ jobs:
       test_total: ${{ steps.run-playwright.outputs.total }}
       test_exit_code: ${{ steps.run-playwright.outputs.exit_code }}
     steps:
+      - name: Start resource usage sampler
+        id: start-sampler
+        uses: LedgerHQ/ledger-live/tools/actions/composites/start-usage-sampler@ci/e2e-add-workflow-telemetry
+
       - name: Generate GitHub App token
         id: generate-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -388,6 +392,14 @@ jobs:
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
 
+      - name: Stop resource usage sampler
+        if: always()
+        uses: LedgerHQ/ledger-live/tools/actions/composites/stop-usage-sampler@ci/e2e-add-workflow-telemetry
+        with:
+          sampler_pid: ${{ steps.start-sampler.outputs.sampler_pid }}
+          csv_path: ${{ steps.start-sampler.outputs.csv_path }}
+          artifact_name: usage-metrics${{ matrix.artifact_suffix }}
+
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -506,14 +518,22 @@ jobs:
           name: allure-results
           path: ${{ env.ALLURE_RESULTS }}
 
+      - name: Download usage metrics CSV
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: usage-metrics
+          path: report-attachments
+
       - name: Upload to qaa-allure (sandbox)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-add-workflow-telemetry
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          report_attachments: report-attachments
 
   qaa-allure-upload-device2:
     name: "QAA Allure Upload - device 2 (Experimental)"
@@ -531,14 +551,22 @@ jobs:
           name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
           path: ${{ env.ALLURE_RESULTS }}
 
+      - name: Download usage metrics CSV
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: usage-metrics-${{ needs.prepare-devices.outputs.device_2 }}
+          path: report-attachments
+
       - name: Upload to qaa-allure (sandbox)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-add-workflow-telemetry
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}
           name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          report_attachments: report-attachments
 
   upload-to-xray:
     name: "Upload to Xray"

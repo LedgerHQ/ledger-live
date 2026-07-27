@@ -807,6 +807,10 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs.determine-builds.outputs.matrix_android) }}
     steps:
+      - name: Start resource usage sampler
+        id: start-sampler
+        uses: LedgerHQ/ledger-live/tools/actions/composites/start-usage-sampler@ci/e2e-add-workflow-telemetry
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -990,6 +994,14 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+
+      - name: Stop resource usage sampler
+        if: always()
+        uses: LedgerHQ/ledger-live/tools/actions/composites/stop-usage-sampler@ci/e2e-add-workflow-telemetry
+        with:
+          sampler_pid: ${{ steps.start-sampler.outputs.sampler_pid }}
+          csv_path: ${{ steps.start-sampler.outputs.csv_path }}
+          artifact_name: usage-metrics-android-${{ matrix.shard }}
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -1211,14 +1223,21 @@ jobs:
           path: android-test-artifacts
           pattern: android-test-artifacts*
           merge-multiple: true
+      - name: Download usage metrics CSVs (per shard)
+        continue-on-error: true
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: report-attachments
+          pattern: usage-metrics-android-*
       - name: Upload to qaa-allure (sandbox)
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-add-workflow-telemetry
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: android-test-artifacts
           name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
           tags: ${{ format('["mobile","android",{0}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
           branch: ${{ inputs.ref || github.ref_name }}
+          report_attachments: report-attachments
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
