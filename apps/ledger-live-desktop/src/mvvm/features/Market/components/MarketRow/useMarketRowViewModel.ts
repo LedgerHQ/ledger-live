@@ -31,7 +31,6 @@ export function useMarketRowViewModel({
   size,
   start,
   currency,
-  counterCurrency,
   locale,
   range,
   isStarred,
