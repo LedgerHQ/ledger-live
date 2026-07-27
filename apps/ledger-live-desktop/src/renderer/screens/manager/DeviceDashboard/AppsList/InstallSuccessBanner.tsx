@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, memo, useMemo } from "react";
 import styled, { keyframes } from "styled-components";
 import { Trans } from "react-i18next";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/index";
 import { State } from "@ledgerhq/live-common/apps/types";
 import Text from "~/renderer/components/Text";
@@ -10,7 +10,6 @@ import FadeInOutBox from "~/renderer/components/FadeInOutBox";
 import IconCross from "~/renderer/icons/Cross";
 import Button from "~/renderer/components/Button";
 import AccountsIllustration from "~/renderer/icons/AccountsIllustration";
-import { CryptoCurrency } from "@domain/entity-currency";
 
 const IconContainer = styled(Box).attrs(() => ({
   horizontal: true,

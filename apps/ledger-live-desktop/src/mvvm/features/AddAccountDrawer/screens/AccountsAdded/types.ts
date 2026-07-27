@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 
 export interface FormattedAccount {

@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import noop from "lodash/noop";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { radii } from "~/renderer/styles/theme";
 import QRCodeCameraPickerCanvas from "~/renderer/components/QRCodeCameraPickerCanvas";
 import Box from "~/renderer/components/Box";

@@ -1,4 +1,5 @@
-import { CryptoCurrency, TokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 export const supportedBuyCurrenciesIds = [
   "bitcoin",
   "ethereum",

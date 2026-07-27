@@ -1,6 +1,6 @@
 import type { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
-import { FiatCurrencySchema } from "@domain/entity-currency";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 // --- Sync source mock functions ---
 

@@ -9,7 +9,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,
@@ -19,7 +19,6 @@ import {
 } from "@ledgerhq/live-common/operation";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@shared/env";
-import { CryptoCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import uniq from "lodash/uniq";

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { getSwapTransactionStatusDetailsViewModel } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { openURL } from "~/renderer/linking";

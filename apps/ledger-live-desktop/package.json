@@ -70,6 +70,7 @@
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
+    "@domain/entity-currency-unit": "workspace:*",
     "@domain/entity-large-screen-upsell-modal": "workspace:*",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:*",

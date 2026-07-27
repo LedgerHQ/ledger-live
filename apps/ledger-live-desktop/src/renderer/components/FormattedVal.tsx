@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";

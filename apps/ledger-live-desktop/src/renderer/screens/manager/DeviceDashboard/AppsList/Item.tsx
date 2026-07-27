@@ -1,6 +1,6 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { isAppAssociatedCurrencySupported } from "./isAppAssociatedCurrencySupported";
@@ -15,7 +15,6 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
-import { CryptoCurrency } from "@domain/entity-currency";
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import ToolTip from "~/renderer/components/Tooltip";
 

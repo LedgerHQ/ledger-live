@@ -4,7 +4,7 @@ import Text from "~/renderer/components/Text";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import React from "react";
 import Footer from "~/renderer/modals/BlacklistToken/Footer";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 const Body = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }) => {
   const { t } = useTranslation();
   return (

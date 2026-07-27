@@ -1,6 +1,6 @@
 import { Icons } from "@ledgerhq/react-ui";
 import { FormattedAccountItem } from "../../components/FormattedAccountItem";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";

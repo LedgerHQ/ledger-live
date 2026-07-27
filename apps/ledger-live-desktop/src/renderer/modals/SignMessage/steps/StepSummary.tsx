@@ -17,7 +17,7 @@ import AngleDown from "~/renderer/icons/AngleDown";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
 import { Account } from "@ledgerhq/types-live";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import CopyButton from "../Components/CopyButton";
 
 const Circle = styled.div`

@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
 import { View } from "../index";

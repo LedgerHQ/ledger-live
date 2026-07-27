@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { formatPercentage } from "../../utils";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;

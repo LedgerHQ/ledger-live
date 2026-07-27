@@ -2,7 +2,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useFeature } from "@features/platform-feature-flags";
 import { Text } from "@ledgerhq/react-ui";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";

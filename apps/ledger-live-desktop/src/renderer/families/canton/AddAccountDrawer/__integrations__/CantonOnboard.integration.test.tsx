@@ -8,11 +8,10 @@ import cantonHandlers, {
   CANTON_DEVNET_ONBOARDING_PREPARE_RE,
   MOCK_CANTON_PUBLIC_KEY_HEX,
 } from "./cantonHandlers";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getEnv, setEnv } from "@shared/env";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CryptoCurrency } from "@domain/entity-currency";
 import type { CantonAccount } from "@ledgerhq/coin-canton/types";
 import type { Account } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";

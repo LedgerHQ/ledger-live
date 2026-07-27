@@ -2,7 +2,8 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 
-import { CryptoCurrency, Unit } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { Unit } from "@domain/entity-currency-unit";
 import Track from "~/renderer/analytics/Track";
 import { setCurrencySettings } from "~/renderer/actions/settings";
 import {
