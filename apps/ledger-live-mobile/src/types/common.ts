@@ -1,6 +1,6 @@
 // TODO should drop this file!,
 
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 
 export type ConfirmationDefaults = {
   confirmationsNb:

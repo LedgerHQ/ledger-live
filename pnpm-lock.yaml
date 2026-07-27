@@ -1596,6 +1596,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:^
         version: link:../../domain/entity/currency-token
+      '@domain/entity-currency-unit':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-unit
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment

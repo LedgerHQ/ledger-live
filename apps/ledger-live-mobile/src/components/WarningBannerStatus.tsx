@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Trans } from "~/context/Locale";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";

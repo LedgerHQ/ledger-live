@@ -1,6 +1,6 @@
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { applyUsdRateToMarket } from "@ledgerhq/live-common/market/utils/applyUsdRateToMarket";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { mapMarketCurrencyToDisplayData } from "../../utils/marketAssetDisplay";
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { TFunction } from "i18next";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { PartialMarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
 import { formatPrice } from "@ledgerhq/live-currency-format";

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "~/context/selectors";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { cryptoCurrenciesSelector } from "~/reducers/accounts";

@@ -7,7 +7,7 @@ import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@features/platform-feature-flags";
-import { CryptoCurrency } from "@domain/entity-currency";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";
 import LText from "~/components/LText";

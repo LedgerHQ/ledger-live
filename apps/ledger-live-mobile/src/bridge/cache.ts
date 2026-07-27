@@ -1,7 +1,7 @@
 import storage from "LLM/storage";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 export async function clearBridgeCache() {
   const keys = await storage.keys();

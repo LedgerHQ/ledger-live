@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Currency, Unit } from "@domain/entity-currency";
+import { Currency } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { ValueChange } from "@ledgerhq/types-live";
 import { Flex, Text, Tag, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";

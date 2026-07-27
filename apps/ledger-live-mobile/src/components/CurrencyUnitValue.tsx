@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { formatCurrencyUnitOptions } from "@ledgerhq/live-common/currencies/index";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
 import { useLocale } from "~/context/Locale";

@@ -7,7 +7,7 @@ import type {
   CosmosMappedDelegation,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import LText from "~/components/LText";

@@ -12,7 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 import { Unpacked } from "~/types/helpers";
-import { Unit } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 type NominationDrawerDatum = Unpacked<NominationDrawerData>;

@@ -2,7 +2,7 @@ import * as React from "react";
 import { screen, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 import { State, supportedCountervaluesData } from "~/reducers/types";
-import { FiatCurrencySchema } from "@domain/entity-currency";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 const SUPPORTED_CURRENCIES = [
   {

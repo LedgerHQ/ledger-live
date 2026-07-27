@@ -1,12 +1,13 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Currency } from "@domain/entity-currency";
+import { type CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
 import { getFiatCurrencyByTicker, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency, Unit } from "@domain/entity-currency";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";

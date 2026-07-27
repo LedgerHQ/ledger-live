@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions, StyleProp, ViewStyle, TextInputProps } from "react-native";

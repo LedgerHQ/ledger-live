@@ -1,4 +1,5 @@
-import type { CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";

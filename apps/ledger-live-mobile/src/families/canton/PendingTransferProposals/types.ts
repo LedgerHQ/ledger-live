@@ -1,4 +1,4 @@
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { BigNumber } from "bignumber.js";
 
 export type TransferProposalAction = "accept" | "reject" | "withdraw";

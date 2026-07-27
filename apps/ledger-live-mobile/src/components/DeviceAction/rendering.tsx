@@ -23,7 +23,7 @@ import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledg
 import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 

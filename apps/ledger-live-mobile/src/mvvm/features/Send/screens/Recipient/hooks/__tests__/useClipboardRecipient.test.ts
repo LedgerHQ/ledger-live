@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
-import type { CryptoCurrency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { AppState } from "react-native";
 import { useAddressValidation } from "../useAddressValidation";

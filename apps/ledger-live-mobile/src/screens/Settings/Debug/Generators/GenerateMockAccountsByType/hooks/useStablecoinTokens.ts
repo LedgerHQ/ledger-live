@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTokenById } from "@features/platform-currencies";
-import { TokenCurrency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { ALL_STABLECOIN_IDS } from "../constants";
 
 export interface StablecoinTokensResult {

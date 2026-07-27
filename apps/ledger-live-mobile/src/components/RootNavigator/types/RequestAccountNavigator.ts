@@ -1,4 +1,5 @@
-import type { CryptoOrTokenCurrency, TokenCurrency } from "@domain/entity-currency";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";

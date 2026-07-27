@@ -1,5 +1,5 @@
 import { useTimeRemaining } from "@ledgerhq/live-common/families/canton/react";
-import type { Unit } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { Account } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";

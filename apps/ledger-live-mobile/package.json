@@ -100,6 +100,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
+    "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-market-sentiment": "workspace:^",
     "@domain/entity-pay-card": "workspace:^",
     "@features/flow-card": "workspace:^",
