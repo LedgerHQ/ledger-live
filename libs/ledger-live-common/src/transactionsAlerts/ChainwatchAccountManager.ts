@@ -4,11 +4,17 @@ import type {
   ChainwatchAccount,
   ChainwatchTargetType,
   ChainwatchMonitorType,
-  Account,
 } from "@ledgerhq/types-live";
+
+const hexAddressPattern = /^0x[0-9a-f]+$/i;
 
 const isNotFoundError = (error: unknown) =>
   typeof error === "object" && error !== null && "status" in error && error.status === 404;
+
+const addressMatchesSuffix = (address: string, suffix: string) =>
+  hexAddressPattern.test(address)
+    ? address.toLowerCase().endsWith(suffix.toLowerCase())
+    : address.endsWith(suffix);
 
 class ChainwatchAccountManager {
   chainwatchBaseUrl: string;
@@ -56,22 +62,15 @@ class ChainwatchAccountManager {
     return data;
   }
 
-  getAccountAddress(account: Account) {
-    return account.freshAddress;
+  accountAlreadySubscribed(address: string) {
+    if (!address) return false;
+    return this.suffixes.some(suffix => addressMatchesSuffix(address, suffix));
   }
 
-  accountAlreadySubscribed(account: Account) {
-    const address = this.getAccountAddress(account);
-    return (
-      address &&
-      this.suffixes.some(suffix => address?.toLowerCase()?.endsWith(suffix.toLowerCase()))
+  async registerNewAddresses(addressesToRegister: string[]) {
+    const addresses = addressesToRegister.filter(
+      address => address && !this.accountAlreadySubscribed(address),
     );
-  }
-
-  async registerNewAccountsAddresses(accountsToRegister: Account[]) {
-    const addresses = accountsToRegister
-      .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
-      .map(account => this.getAccountAddress(account));
     if (addresses.length > 0) {
       await network({
         method: "PUT",
@@ -81,16 +80,19 @@ class ChainwatchAccountManager {
     }
   }
 
-  async removeAccountsAddresses(accountsToRemove: Account[]) {
-    const addresses = accountsToRemove
-      .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
-      .map(account => this.getAccountAddress(account));
+  async removeAddresses(addressesToRemove: string[]) {
+    const addresses = addressesToRemove.filter(
+      address => address && this.accountAlreadySubscribed(address),
+    );
     if (addresses.length > 0) {
       await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
         data: addresses,
       });
+      this.suffixes = this.suffixes.filter(
+        suffix => !addresses.some(address => addressMatchesSuffix(address, suffix)),
+      );
     }
   }
 
@@ -116,18 +118,33 @@ class ChainwatchAccountManager {
     });
   }
 
+  async loadChainwatchAccount() {
+    const chainwatchAccount = await this.getChainwatchAccount();
+    this.suffixes = chainwatchAccount?.suffixes || [];
+    return chainwatchAccount;
+  }
+
   async setupChainwatchAccount() {
-    // Get or set Chainwatch Account
     const chainwatchAccount =
-      (await this.getChainwatchAccount()) || (await this.registerNewChainwatchAccount());
+      (await this.loadChainwatchAccount()) || (await this.registerNewChainwatchAccount());
     if (chainwatchAccount) {
       this.suffixes = chainwatchAccount?.suffixes || [];
 
-      // Set Chainwatch account's monitors (receive and send) if they don't exist yet
-      if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "send")) {
+      // Ensure both monitors use the configured confirmation count.
+      if (
+        !chainwatchAccount?.monitors?.find(
+          monitor =>
+            monitor.type === "send" && monitor.confirmations === this.network.nbConfirmations,
+        )
+      ) {
         await this.registerNewMonitor("send");
       }
-      if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "receive")) {
+      if (
+        !chainwatchAccount?.monitors?.find(
+          monitor =>
+            monitor.type === "receive" && monitor.confirmations === this.network.nbConfirmations,
+        )
+      ) {
         await this.registerNewMonitor("receive");
       }
 

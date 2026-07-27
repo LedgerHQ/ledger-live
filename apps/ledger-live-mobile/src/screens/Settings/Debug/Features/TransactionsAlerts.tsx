@@ -38,6 +38,8 @@ export default function DebugTransactionsAlerts() {
   const [hasChainwatchError, setHasChainwatchError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (chainwatchBaseUrl) {
       setHasChainwatchError(false);
       getSupportedChainsAccounts(
@@ -46,6 +48,7 @@ export default function DebugTransactionsAlerts() {
         supportedChains,
       )
         .then((results: (ChainwatchAccount | undefined)[]) => {
+          if (cancelled) return;
           const data: Record<string, ChainwatchAccount | undefined> = {};
           for (let i = 0; i < results.length; i++) {
             const chainId = supportedChains[i].ledgerLiveId;
@@ -54,10 +57,15 @@ export default function DebugTransactionsAlerts() {
           setChainsData(data);
         })
         .catch(() => {
+          if (cancelled) return;
           setChainsData({});
           setHasChainwatchError(true);
         });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [chainwatchBaseUrl, supportedChains, userId]);
 
   return (
