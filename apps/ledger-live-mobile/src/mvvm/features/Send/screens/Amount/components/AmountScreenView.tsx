@@ -28,9 +28,6 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
         flex: 1,
         justifyContent: "center",
       },
-      bottomSection: {
-        paddingBottom: theme.spacings.s16,
-      },
     }),
     [],
   );
@@ -81,7 +78,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
         />
       </View>
 
-      <View style={styles.bottomSection}>
+      <View>
         <Button
           testID={
             viewModel.reviewButton.disabled

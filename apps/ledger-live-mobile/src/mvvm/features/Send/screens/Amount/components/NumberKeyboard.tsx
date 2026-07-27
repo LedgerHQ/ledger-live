@@ -20,7 +20,7 @@ export function NumberKeyboard({ onKeyPress, allowDecimal = true }: NumberKeyboa
   const styles = useStyleSheet(
     theme => ({
       container: {
-        paddingVertical: theme.spacings.s8,
+        paddingTop: theme.spacings.s8,
       },
       row: {
         flexDirection: "row",
