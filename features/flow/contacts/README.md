@@ -10,6 +10,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Empty contact detail selection and native presentation
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
+- Add Address session state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
