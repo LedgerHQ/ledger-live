@@ -3,7 +3,9 @@
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
 import { renderHook } from "@testing-library/react";
-import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
+import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughGasSwap } from "../../../errors";
+import { NotEnoughGas } from "@ledgerhq/coin-evm/errors";
 
 import { useFromAmountStatusMessage } from "./useSwapTransaction";
 import type { Result } from "../../../bridge/useBridgeTransaction";
