@@ -1,6 +1,5 @@
 import { expect, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { BORROW_TEST_IDS } from "tests/utils/borrowTestIds";
 import { WebViewAppPage } from "./webViewApp.page";
 
 export class BorrowPage extends WebViewAppPage {
@@ -11,26 +10,26 @@ export class BorrowPage extends WebViewAppPage {
   private readonly simulateLoanRoutePattern = /\/loan\/simulate-loan/;
   private readonly loanExecutionRoutePattern = /\/loan\/loan-execution/;
 
-  // --- Borrow webview test ids (mirror borrow-live-app BORROW_TEST_IDS) ---
-  private readonly introModalId = BORROW_TEST_IDS.introModal;
-  private readonly introModalTitleId = BORROW_TEST_IDS.introModalTitle;
-  private readonly simulateMyLoanButtonId = BORROW_TEST_IDS.simulateMyLoanButton;
-  private readonly simulateLoanScreenId = BORROW_TEST_IDS.simulateLoanScreen;
-  private readonly loanAmountInputId = BORROW_TEST_IDS.loanAmountInput;
-  private readonly simulateContinueButtonId = BORROW_TEST_IDS.simulateContinueButton;
-  private readonly getNewLoanButtonId = BORROW_TEST_IDS.getNewLoanButton;
-  private readonly loanExecutionScreenId = BORROW_TEST_IDS.loanExecutionScreen;
-  private readonly giveApprovalButtonId = BORROW_TEST_IDS.giveApprovalButton;
-  private readonly authorizeDepositingButtonId = BORROW_TEST_IDS.authorizeDepositingButton;
-  private readonly authorizeBorrowingButtonId = BORROW_TEST_IDS.authorizeBorrowingButton;
-  private readonly step1AccessApprovedId = BORROW_TEST_IDS.step1AccessApproved;
-  private readonly step2DepositDoneId = BORROW_TEST_IDS.step2DepositDone;
-  private readonly step3BorrowDoneId = BORROW_TEST_IDS.step3BorrowDone;
-  private readonly executionErrorId = BORROW_TEST_IDS.executionError;
-  private readonly onChainFailedMessageId = BORROW_TEST_IDS.onChainFailedMessage;
-  private readonly loanCompletionCardId = BORROW_TEST_IDS.loanCompletionCard;
-  private readonly viewMyLoanButtonId = BORROW_TEST_IDS.viewMyLoanButton;
-  private readonly yourLoansTitleId = BORROW_TEST_IDS.yourLoansTitle;
+  // --- Borrow webview test ids (mirror borrow-live-app/packages/features/src/testIds.ts) ---
+  private readonly introModalId = "borrow-intro-modal";
+  private readonly introModalTitleId = "borrow-intro-modal-title";
+  private readonly simulateMyLoanButtonId = "borrow-simulate-my-loan-button";
+  private readonly simulateLoanScreenId = "borrow-simulate-loan-screen";
+  private readonly loanAmountInputId = "borrow-loan-amount-input";
+  private readonly simulateContinueButtonId = "borrow-simulate-continue-button";
+  private readonly getNewLoanButtonId = "borrow-get-new-loan-button";
+  private readonly loanExecutionScreenId = "borrow-loan-execution-screen";
+  private readonly giveApprovalButtonId = "give-approval-button";
+  private readonly authorizeDepositingButtonId = "borrow-authorize-depositing-button";
+  private readonly authorizeBorrowingButtonId = "borrow-authorize-borrowing-button";
+  private readonly step1AccessApprovedId = "borrow-step-1-access-approved";
+  private readonly step2DepositDoneId = "borrow-step-2-deposit-done";
+  private readonly step3BorrowDoneId = "borrow-step-3-borrow-done";
+  private readonly executionErrorId = "borrow-execution-error";
+  private readonly onChainFailedMessageId = "borrow-on-chain-failed-message";
+  private readonly loanCompletionCardId = "borrow-loan-completion-card";
+  private readonly viewMyLoanButtonId = "borrow-view-my-loan-button";
+  private readonly yourLoansTitleId = "borrow-your-loans-title";
 
   private readonly hostContinueLabel = "Continue";
   private readonly hostSignModalTextPattern = /Approve token|Sign transaction/i;
