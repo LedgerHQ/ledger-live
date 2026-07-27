@@ -88,7 +88,6 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await app.swap.checkElementsPresenceOnSwapApprovalStep();
         await app.swap.clickExecuteSwapButton();
         await app.swap.clickContinueButton();
-        await app.speculos.acceptEnableTransactionCheck();
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swap.expectTransactionSentToasterToBeVisible();
       },

@@ -203,13 +203,13 @@ export class AccountPage extends AppPage {
   }
 
   @step("Expect token to be present")
-  async expectTokenToBePresent(tokenAccount: AccountType, timeout?: number) {
+  async expectTokenToBePresent(tokenAccount: AccountType) {
     const row = this.tokenRow(tokenAccount.currency.ticker);
-    await expect(this.showAllTokensButton.or(row).first()).toBeVisible({ timeout });
+    await expect(this.showAllTokensButton.or(row).first()).toBeVisible();
     if (await this.showAllTokensButton.isVisible()) {
       await this.showAllTokensButton.click();
     }
-    await expect(row).toBeVisible({ timeout });
+    await expect(row).toBeVisible();
   }
 
   @step("Navigate to token in account")

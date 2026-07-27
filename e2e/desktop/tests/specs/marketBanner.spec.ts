@@ -6,13 +6,11 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { coinDetailUrlPattern } from "tests/utils/urlUtils";
-import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 
 test.describe("Market banner", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-tests-app",
-    featureFlags: FF_LWD_WALLET_40_Q2,
   });
 
   test(
