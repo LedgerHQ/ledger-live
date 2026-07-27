@@ -180,6 +180,10 @@ env:
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
+  # True only when a single run covers BOTH platforms (tests_type = "iOS & Android").
+  # broadcastRotation.ts uses it to pin each broadcast swap flow to one platform per run,
+  # avoiding the shared-EOA nonce race; single-platform runs keep full coverage. (QAA-1411)
+  E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -527,8 +531,6 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
-      # Used by broadcastRotation.ts to avoid shared-account broadcast races (QAA-1411)
-      E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -721,9 +723,6 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
-      # True when both platform jobs run this workflow. Broadcast swap flows use it to pin each flow to one platform per run and avoid the shared-EOA race
-      # Single-platform runs keep full coverage.
-      E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
