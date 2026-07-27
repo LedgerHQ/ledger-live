@@ -8,3 +8,5 @@ export {
   type AddAddressCurrencySelectionViewModel,
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";
+export type { AddAddressFlowState, AddAddressFlowViewModel } from "./types";
+export { useAddAddressFlowViewModel } from "./useAddAddressFlowViewModel";
