@@ -16,7 +16,7 @@ export const mockCrypto = {
 } as unknown as jest.Mocked<ICrypto>;
 
 // Test helper: build a wallet-btc currency descriptor (replaces getCryptoCurrencyById
-// wallet-btc is dependency-inverted (no @ledgerhq/cryptoassets), so tests inject the
+// wallet-btc is dependency-inverted (no currency-registry dependency), so tests inject the
 // explorer id explicitly. Map the currencies exercised here to their Ledger explorer code.
 const EXPLORER_IDS: Record<string, string> = {
   bitcoin: "btc",
