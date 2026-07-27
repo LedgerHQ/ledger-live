@@ -17,7 +17,7 @@ hooks {
     ["commit-msg"] {
         steps {
             ["commitlint"] {
-                check = "pnpm commitlint --edit {{commit_msg_file}}"
+                check = "pnpm commitlint --edit {{ commit_msg_file }}"
             }
         }
     }
