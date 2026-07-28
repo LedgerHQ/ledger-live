@@ -151,8 +151,6 @@ export default getEnv("PLAYWRIGHT_RUN") || getEnv("DETOX")
       },
       currencyBridge: {
         ...bridges.currencyBridge,
-        preload: () => Promise.resolve({}),
-        hydrate: () => {},
         scanAccounts,
       },
     }
