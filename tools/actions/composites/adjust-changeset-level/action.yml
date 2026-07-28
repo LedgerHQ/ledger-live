@@ -34,7 +34,7 @@ runs:
         for file in .changeset/*.md; do
           if grep -q ": ${INPUTS_FROM_LEVEL}" "$file"; then
             # target the lines between the "---" yaml delimiters, replace e.g. ": patch" with ": minor"
-            sed -i '/---/,/---/s/: ${INPUTS_FROM_LEVEL}/: ${INPUTS_TO_LEVEL}/' "$file"
+            sed -i "/---/,/---/s/: ${INPUTS_FROM_LEVEL}/: ${INPUTS_TO_LEVEL}/" "$file"
             echo "Updated $file to ${INPUTS_TO_LEVEL}"
           fi
         done
