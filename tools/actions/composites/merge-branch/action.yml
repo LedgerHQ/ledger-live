@@ -37,9 +37,9 @@ runs:
             const output = await github.rest.repos.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              base: "${{ inputs.base-branch }}",
-              head: "${{ inputs.head-branch }}",
-              commit_message: "${{ inputs.commit-message }}"
+              base: core.getInput('base-branch'),
+              head: core.getInput('head-branch'),
+              commit_message: core.getInput('commit-message')
             });
           
             return {
