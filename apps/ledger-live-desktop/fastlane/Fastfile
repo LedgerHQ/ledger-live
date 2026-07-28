@@ -109,7 +109,6 @@ platform :mac do
     version = trim_version_number(package["version"])
     latest = latest_testflight_build_number(
       app_identifier: ENV["APP_IDENTIFIER"],
-      version: version,
       platform: "osx",
       initial_build_number: 0
     )
