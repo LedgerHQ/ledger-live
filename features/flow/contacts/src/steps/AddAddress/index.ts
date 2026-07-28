@@ -1,4 +1,8 @@
-export type { ContactsCurrencySelectionPort } from "./model/ports";
+export type {
+  ContactsAddressValidationPort,
+  ContactsAddressValidationResult,
+  ContactsCurrencySelectionPort,
+} from "./model/ports";
 export {
   resolveEligibleAddressCurrencyIds,
   type EligibleAddressNetwork,
@@ -9,5 +13,14 @@ export {
   type AddAddressCurrencySelectionViewModel,
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";
-export type { AddAddressFlowState, AddAddressFlowViewModel } from "./types";
-export { useAddAddressFlowViewModel } from "./useAddAddressFlowViewModel";
+export type {
+  AddAddressEntryState,
+  AddAddressFlowState,
+  AddAddressFlowViewModel,
+  AddAddressInputMethod,
+  AddAddressInputSource,
+} from "./types";
+export {
+  useAddAddressFlowViewModel,
+  type UseAddAddressFlowViewModelOptions,
+} from "./useAddAddressFlowViewModel";
