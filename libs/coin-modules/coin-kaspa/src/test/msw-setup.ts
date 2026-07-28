@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { TEST_KASPA_ENDPOINT } from "./msw.mock";
 
 // Runs as a jest `setupFiles` entry (before the test modules load), so `network/config.ts` — which

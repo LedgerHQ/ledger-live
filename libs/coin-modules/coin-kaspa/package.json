@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.20.0",
+  "version": "1.19.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -113,6 +113,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

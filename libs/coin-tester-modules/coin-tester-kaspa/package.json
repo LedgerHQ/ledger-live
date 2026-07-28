@@ -57,10 +57,10 @@
     "unimported": "unimported"
   },
   "dependencies": {
+    "@shared/env": "workspace:*",
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-kaspa": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
