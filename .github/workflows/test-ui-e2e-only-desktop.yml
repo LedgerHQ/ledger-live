@@ -70,7 +70,6 @@ on:
         type: choice
         options:
           - defaults
-          - wallet40-q2
         default: defaults
       feature_flags_json:
         description: "JSON to override feature flags (takes precedence if set)"
@@ -140,7 +139,7 @@ permissions:
   contents: read
 
 env:
-  E2E_DESKTOP_FEATURE_FLAGS: ${{ (github.event_name == 'schedule' && github.event.schedule == '0 4 * * 2,4' && 'wallet40-q2') || inputs.feature_flags || 'defaults' }}
+  E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
 
 jobs:

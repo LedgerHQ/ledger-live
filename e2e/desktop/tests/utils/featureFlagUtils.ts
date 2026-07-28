@@ -35,27 +35,6 @@ export const isAssetDiscoverabilityEnabled = async (page: Page): Promise<boolean
 
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
-export const FF_LWD_WALLET_40_Q1 = {
-  lwdWallet40: {
-    enabled: true,
-    params: {
-      newReceiveDialog: true,
-      lazyOnboarding: true,
-      assetSection: false,
-      brazePlacement: true,
-      operationsList: false,
-      aggregatedAssets: false,
-      myWallet: false,
-      pnl: false,
-      earnUpselling: false,
-      earnSimulator: false,
-      finishOnboardingWidget: false,
-      assetDiscoverability: false,
-      q2Tour: false,
-    },
-  },
-} satisfies OptionalFeatureMap;
-
 export const FF_LWD_WALLET_40_Q2 = {
   lwdWallet40: {
     enabled: true,
@@ -147,7 +126,7 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
-  const ffEnvMapping: Record<string, OptionalFeatureMap> = {
+  const ffPresetMap: Record<string, OptionalFeatureMap> = {
     /*
      * The keys here are the values of the `E2E_DESKTOP_FEATURE_FLAGS` environment variable.
      * We can add more mappings here in the future to test different feature flag combinations.
@@ -155,7 +134,7 @@ export const getMergedFeatureFlags = ({
      * This will reduce friction and provide CI stability for any callers of the workflow.
      * PLEASE NOTE: non-existing keys will return 'undefined' which spreads to an empty object.
      */
-    "wallet40-q2": FF_LWD_WALLET_40_Q2,
+    defaults: {},
   };
 
   const defaultFlags: OptionalFeatureMap = {
@@ -177,9 +156,9 @@ export const getMergedFeatureFlags = ({
       },
     },
     // default flags for wallet 4.0
-    ...FF_LWD_WALLET_40_Q1,
+    ...FF_LWD_WALLET_40_Q2,
     // any flags from env variable (if set)
-    ...ffEnvMapping[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
+    ...ffPresetMap[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
   };
 
   // parse JSON override flags for any overrides
