@@ -1,12 +1,14 @@
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { resolveEligibleAddressCurrencyIds } from "@features/flow-contacts";
 import {
   mockContact,
   mockMeContact,
   mockPopulatedContacts,
 } from "@domain/entity-contact/schema.mock";
-import { fireEvent, render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
+import { act, fireEvent, render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/useContactsViewModel";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
@@ -69,7 +71,15 @@ function ContactsViewModelProbe({
   const stateLabel =
     viewModel.addAddressFlowState.status === "closed"
       ? "closed"
-      : `${viewModel.addAddressFlowState.status}:${viewModel.addAddressFlowState.selectedContactId}`;
+      : [
+          viewModel.addAddressFlowState.status,
+          viewModel.addAddressFlowState.selectedContactId,
+          "selectedCurrencyId" in viewModel.addAddressFlowState
+            ? viewModel.addAddressFlowState.selectedCurrencyId
+            : undefined,
+        ]
+          .filter(Boolean)
+          .join(":");
 
   return (
     <>
@@ -411,6 +421,29 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
   });
 
+  it("should open MAD from the real Add Address CTA with the eligible network ids", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+
+    expect(store.getState().modularDialog.isOpen).toBe(true);
+    expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual(
+      resolveEligibleAddressCurrencyIds(["evm"]),
+    );
+    expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();
+  });
+
   it("should expose the Add Address session started for Me", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
@@ -455,6 +488,86 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       "selectingCurrency:contact-ada",
     );
+  });
+
+  it("should enter the address step with the exact selected contact and currency", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={savedContactId} contactType="saved" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
+        "enteringAddress:contact-ada:ethereum",
+      );
+    });
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+
+  it("should close the Add Address session when MAD is cancelled", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+
+    act(() => {
+      store.getState().modularDialog.dialogParams?.onClose?.();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+    });
+    expect(store.getState().modularDialog.isOpen).toBe(false);
+  });
+
+  it("should keep the Add Address session closed when no network is eligible", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: {
+          ...contactsPageInitialState(),
+          ...withFlagOverrides({
+            lwdContacts: {
+              enabled: true,
+              params: { newBadge: false, eligibleAddressFamilies: ["unknown"] },
+            },
+          }),
+        },
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open contact" }));
+    await user.click(screen.getByRole("button", { name: "Start Add Address" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+    });
+    expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 
   it("should not render the detail state when a contact with addresses is selected", async () => {

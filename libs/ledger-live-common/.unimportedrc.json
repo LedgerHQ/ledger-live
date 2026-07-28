@@ -349,6 +349,7 @@
     "src/wallet-api/ModularDrawer/utils.ts",
     "src/modularDrawer/hooks/useDetailedAccountsCore.ts",
     "src/modularDrawer/types/detailedAccount.ts",
+    "src/modularDrawer/utils/buildAssetsSorted.ts",
     "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
     "src/modularDrawer/index.ts",
     "src/test-helpers/cryptoAssetsStore.ts",
