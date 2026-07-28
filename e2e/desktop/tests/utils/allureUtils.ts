@@ -229,6 +229,16 @@ export async function captureArtifacts(
       body: Buffer.from(webviewCollector.getFormattedNetworkLogs()),
       contentType: "application/json",
     });
+
+    // Surface the swap-init root cause (QAA-1326) front-and-center: the failing
+    // custom.exchange.swap error is otherwise buried in the full console dump above.
+    const swapInitError = webviewCollector.getSwapInitError();
+    if (swapInitError) {
+      await testInfo.attach("⚠️ Swap-init error", {
+        body: Buffer.from(swapInitError),
+        contentType: "text/plain",
+      });
+    }
   }
 
   if (appCollector) {

@@ -23,6 +23,18 @@ export class PageLogCollector {
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
   private targetPage: Page | null = null;
+  private readonly attachedPages: Set<Page> = new Set();
+
+  // Signatures of a swap-init failure the swap live-app surfaces over wallet-api
+  // (custom.exchange.swap). This is the QAA-1326 root cause behind a device stranded on
+  // "Exchange app is ready": it appears ONLY in the webview console, never in the network log
+  // (the swap backend calls return 200). Kept in sync with the hint in speculos.ts.
+  private static readonly SWAP_INIT_ERROR_SIGNATURES = [
+    "CompleteExchangeError",
+    "PayloadStepError",
+    "FeeNotLoaded",
+    "SWAP_NOT_CREATED_ERROR",
+  ];
 
   private readonly onConsole = (msg: ConsoleMessage) => {
     this.consoleLogs.push({
@@ -107,15 +119,14 @@ export class PageLogCollector {
   }
 
   attachWebview(electronApp: ElectronApplication): void {
-    electronApp.on("window", (page: Page) => {
-      if (this.targetPage) return;
-
-      // The webview is the second window the app opens; revisit this if that assumption changes.
-      const windows = electronApp.windows();
-      if (windows.length <= 1) return;
-
+    const [mainWindow] = electronApp.windows();
+    const attachIfWebview = (page: Page) => {
+      if (page === mainWindow || this.attachedPages.has(page)) return;
+      this.attachedPages.add(page);
       this.attach(page);
-    });
+    };
+    electronApp.windows().forEach(attachIfWebview);
+    electronApp.on("window", attachIfWebview);
   }
 
   getFormattedConsoleLogs(): string {
@@ -124,6 +135,22 @@ export class PageLogCollector {
     return this.consoleLogs
       .map(entry => `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.text}`)
       .join("\n");
+  }
+
+  /**
+   * Extract the swap-init failure (custom.exchange.swap error) from the captured webview
+   * console, if present, so the QAA-1326 root cause can be surfaced as its own attachment
+   * instead of being buried in the full console dump. Returns null when no such error was seen.
+   */
+  getSwapInitError(): string | null {
+    const matches = this.consoleLogs.filter(entry =>
+      PageLogCollector.SWAP_INIT_ERROR_SIGNATURES.some(sig => entry.text.includes(sig)),
+    );
+    if (matches.length === 0) return null;
+
+    return matches
+      .map(entry => `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.text}`)
+      .join("\n\n");
   }
 
   getFormattedNetworkLogs(): string {
