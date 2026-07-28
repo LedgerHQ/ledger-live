@@ -27,7 +27,6 @@ bitcoinCurrency.units[0].magnitude = 8;
 
 export const mockFiatCurrency: FiatCurrency = {
   type: "FiatCurrency",
-  id: "usd" as FiatCurrency["id"],
   ticker: "USD",
   name: "US Dollar",
   symbol: "$",
