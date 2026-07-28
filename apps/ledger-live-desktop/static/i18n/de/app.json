@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™ unterstützt das Swappen von Monad nicht",
       "monad_description" : "Zum Swappen von Monad musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "zcash_title" : "Ledger Nano S™ unterstützt das Swappen von Zcash nicht",
-      "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™."
+      "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™.",
+      "aleo_title" : "Ledger Nano S™ unterstützt das Swappen von Aleo nicht",
+      "aleo_description" : "Zum Swappen von Aleo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "Gebührenbetrag ({{unit}})",
     "gasLimit" : "Gaslimit ({{unit}})",
     "feesPaid" : "Gebühren, die an das Netzwerk entrichtet werden, um deine Transaktion durchzuführen",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Du verwendest {{energy}} Energie und {{bandwidth}} Bandbreite, um die Netzwerkgebühr zu bezahlen."
+      },
+      "insufficient" : {
+        "description" : "Du hast nicht genügend Energie und Bandbreite, um diesen Transfer zu decken. Der Fehlbetrag wird durch das Verbrennen von TRX gedeckt."
+      }
+    },
     "insufficientBalanceFees" : "Unzureichender Saldo zur Deckung der Netzwerkgebühren",
     "amountToSend" : "Zu sendender Betrag in ({{currency}})",
     "coinToSend" : "Zu sendender Coin",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Erneut delegieren",
         "redelegateDisabledTooltip" : "Du kannst für <0>{{days}}</0> wieder redelegieren.",
         "redelegateMaxDisabledTooltip" : "Du kannst nicht mehr als <0>7</0> Validatoren auf einmal redelegieren",
-        "undelegateDisabledTooltip" : "Du kannst die Delegierung nicht für mehr als <0>7</0> Validatoren gleichzeitig aufheben",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "Du kannst die Delegierung nicht für mehr als <0>7</0> Validatoren gleichzeitig aufheben",
+          "zero_gravity" : "Du benötigst mindestens 1 Gwei an delegierten Anteilen, um zu undelegieren."
+        },
         "undelegateActivatingTooltip" : "Du kannst ein Staking, das noch aktiviert wird, nicht undelegieren.",
         "reward" : "Prämien beanspruchen",
         "activeTooltip" : "Delegierte Beträge generieren Prämien",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "Betrag"
+              "title" : "Betrag",
+              "visibilityDelay" : "Es kann bis zu {{numberOfMinutes}} Minuten dauern, bis diese Delegierung in deiner Delegierungsübersicht angezeigt wird."
             },
             "validator" : {
               "title" : "Validatoren",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Einzahlen",
+      "OUT" : "Abheben"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "Kommagetrennte Familien für benutzerdefinierte Multi-Familien-Tests.",
         "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
         "applyFamilies" : "Anwenden",
-        "resetOverride" : "Überschreiben zurücksetzen"
+        "contactsData" : "Kontaktdaten",
+        "loadPopulatedContacts" : "Befüllte Kontakte laden",
+        "resetContacts" : "Kontakte zurücksetzen",
+        "resetOverride" : "Überschreiben zurücksetzen",
+        "featureIntroduction" : {
+          "title" : "Funktioneneinführung",
+          "label" : "Einführung in die „Kontakte anzeigen“-Funktion",
+          "dismissed" : "Ausgeblendet – aktivieren, um die Einführung unter „Kontakte“ erneut anzuzeigen.",
+          "willShow" : "Wird unter „Kontakte“ angezeigt, bis die Meldung verworfen wird."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Crypto Assets List (CAL)",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo ist zu lang.",
+      "description" : "Algorand-Memos dürfen 1.024 Byte nicht überschreiten. Bitte kürze dein Memo."
     },
     "AmountRequired" : {
       "title" : "Erforderlicher Betrag"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Mehr anzeigen. Weniger tippen. Spare {{discount}}%",
-      "subtitle" : "Genieße einen größeren Bildschirm, eine smartere Transaktionsprüfung, erweiterten Schutz und exklusive {{discount}}% Rabatt."
+      "subtitle" : "Genieße einen größeren Bildschirm, eine smartere Transaktionsprüfung, erweiterten Schutz und exklusive {{discount}}% Rabatt.",
+      "cta" : "Touchscreen Signer entdecken"
     },
     "optedOut" : {
-      "title" : "Betrug erkennen. Jedes Detail ansehen",
-      "subtitle" : "Alles übersichtlich auf einem Touchscreen-Signer prüfen und Betrug dank fortschrittlicher Sicherheitsprüfungen erkennen."
-    },
-    "cta" : "Touchscreen Signer entdecken"
+      "title" : "Betrug vor dem Signieren erkennen",
+      "subtitle" : "Erfahre mehr über fortschrittliche Sicherheitsfunktionen, die eine Bedrohungserkennung in Echtzeit ermöglichen.",
+      "cta" : "Weitere Informationen"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "Kontakte",
     "addContact" : "Kontakt hinzufügen",
     "searchPlaceholder" : "Kontakt suchen",
+    "searchNoResults" : "Kein Kontakt gefunden",
     "me" : {
       "name" : "Ich",
       "addressCount_zero" : "0 Adresse",
       "addressCount_one" : "{{count}} Adresse",
       "addressCount_other" : "{{count}} Adressen"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Deine Kontakte sind mit deinem Ledger Ende-zu-Ende verschlüsselt und werden mit deinen Geräten synchronisiert – nur du kannst sie entsperren.",
+      "dismiss" : "Verstanden"
+    },
+    "featureIntroduction" : {
+      "title" : "Wir stellen vor: Kontakte",
+      "description" : "Dein Adressbuch für Krypto – speichere an einem Ort die Wallets, an die du sendest.",
+      "primaryAction" : "Kontakte ausprobieren",
+      "secondaryAction" : "Vielleicht später",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Adressen einmalig speichern",
+          "description" : "Speichere an einem Ort die Wallets, an die du sendest."
+        },
+        "sendToRightAddress" : {
+          "title" : "An die richtige Adresse senden",
+          "description" : "Guthaben erreicht immer die richtige Wallet."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Privat auf all deinen Geräten",
+          "description" : "Ende-zu-Ende-verschlüsselt mit Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails" : {

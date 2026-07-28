@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetData } from "./type";
 
 export const groupCurrenciesByAsset = (assetsSorted: AssetData[]) => {

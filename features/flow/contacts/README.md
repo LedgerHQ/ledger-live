@@ -28,10 +28,11 @@ by native network ID or token parent network ID. The Flow stores only the final 
 production network matches the feature-flag families.
 
 After a successful selection, the session retains the selected contact and final currency
-identifiers and moves to `enteringAddress`. Address entry uses an injected validation port. The
-Flow owns input methods, asynchronous validation state, resolved-address storage, and stale-result
-protection; consuming apps own coin bridges, domain resolution, clipboard access, and other
-platform integrations.
+identifiers and moves to `enteringAddress`. The `AddAddress` step owns its injected validation
+port, currency and token resolution, domain orchestration, input methods, asynchronous validation
+state, resolved-address storage, and stale-result protection. Consuming apps adapt coin bridges,
+domain services, token stores, clipboard access, and other app-owned or platform-specific
+integrations.
 
 ## Public API
 
@@ -79,9 +80,9 @@ src/
 │   │   ├── components/ContactNameInput/ (web + native)
 │   │   ├── model/                       # Contact-name validation and creation contract
 │   │   └── index.ts / web.ts / native.ts
-│   ├── AddAddress/                      # Shared eligible-network resolution and selection state
-│   │   ├── model/                       # Production network resolver and MAD selection port
-│   │   └── useAddAddressCurrencySelectionViewModel.ts / index.ts
+│   ├── AddAddress/                      # Shared currency selection and address-entry session
+│   │   ├── model/                       # Network resolver, MAD port and address validation
+│   │   └── useAddAddressCurrencySelectionViewModel.ts / useAddAddressFlowViewModel.ts / types.ts / index.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
 │   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)
 │   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts

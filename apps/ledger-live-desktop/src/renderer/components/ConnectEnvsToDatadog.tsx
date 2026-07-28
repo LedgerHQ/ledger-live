@@ -60,6 +60,8 @@ export const ConnectEnvsToDatadog = () => {
         traceSampleRate: lldDatadog.params?.traceSampleRate,
         allowedTracingUrls: lldDatadog.params?.allowedTracingUrls,
         profilingSampleRate: lldDatadog.params?.profilingSampleRate,
+        trackUserInteractions: lldDatadog.params?.trackUserInteractions,
+        trackResources: lldDatadog.params?.trackResources,
       },
       store,
     ).then(done => {

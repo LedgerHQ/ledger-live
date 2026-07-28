@@ -54,10 +54,13 @@ runs:
       id: test-files
       shell: bash
       run: |
-        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "${{ inputs.test_filter }}" "${{ inputs.test_directory }}")
+        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "${INPUTS_TEST_FILTER}" "${INPUTS_TEST_DIRECTORY}")
         echo "test_files_for_sharding<<EOF" >> $GITHUB_OUTPUT
         echo "$TEST_FILES"                 >> $GITHUB_OUTPUT
         echo "EOF"                         >> $GITHUB_OUTPUT
+      env:
+        INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+        INPUTS_TEST_DIRECTORY: ${{ inputs.test_directory }}
 
     - name: Calculate shard counts
       id: shard-counts
@@ -70,10 +73,10 @@ runs:
         EMULATORS_PER_RUNNER=3
         BASE_SHARD=$(( TEST_COUNT > 0 ? (TEST_COUNT + EMULATORS_PER_RUNNER - 1) / EMULATORS_PER_RUNNER : 1 ))
 
-        if [ "${{ inputs.event_name }}" = "schedule" ]; then
+        if [ "${INPUTS_EVENT_NAME}" = "schedule" ]; then
           SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
           SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
-        elif [[ "${{ inputs.ref }}" == *"release"* || "${{ inputs.ref }}" == *"hotfix"* ]]; then
+        elif [[ "${INPUTS_REF}" == *"release"* || "${INPUTS_REF}" == *"hotfix"* ]]; then
           SHARD_COUNT_IOS=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
           SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         else
@@ -81,20 +84,24 @@ runs:
           SHARD_COUNT_ANDROID=$(( BASE_SHARD < 12 ? BASE_SHARD : 12 ))
         fi
         
-        if [ "${{ inputs.max_shards }}" -gt 0 ]; then
-          if [ "$SHARD_COUNT_IOS" -gt "${{ inputs.max_shards }}" ]; then
-            SHARD_COUNT_IOS=${{ inputs.max_shards }}
+        if [ "${INPUTS_MAX_SHARDS}" -gt 0 ]; then
+          if [ "$SHARD_COUNT_IOS" -gt "${INPUTS_MAX_SHARDS}" ]; then
+            SHARD_COUNT_IOS=${INPUTS_MAX_SHARDS}
           fi
-          if [ "$SHARD_COUNT_ANDROID" -gt "${{ inputs.max_shards }}" ]; then
-            SHARD_COUNT_ANDROID=${{ inputs.max_shards }}
+          if [ "$SHARD_COUNT_ANDROID" -gt "${INPUTS_MAX_SHARDS}" ]; then
+            SHARD_COUNT_ANDROID=${INPUTS_MAX_SHARDS}
           fi
         fi
 
-        echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
-        echo "SHARD_COUNT_IOS=$SHARD_COUNT_IOS" >> "$GITHUB_ENV"
-        echo "SHARD_COUNT_ANDROID=$SHARD_COUNT_ANDROID" >> "$GITHUB_ENV"
-        echo "Calculated SHARD_COUNT for event ${{ inputs.event_name }} on ref ${{ inputs.ref }} with $TEST_COUNT tests"
+        echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_OUTPUT"
+        echo "SHARD_COUNT_IOS=$SHARD_COUNT_IOS" >> "$GITHUB_OUTPUT"
+        echo "SHARD_COUNT_ANDROID=$SHARD_COUNT_ANDROID" >> "$GITHUB_OUTPUT"
+        echo "Calculated SHARD_COUNT for event ${INPUTS_EVENT_NAME} on ref ${INPUTS_REF} with $TEST_COUNT tests"
         echo "iOS shards: $SHARD_COUNT_IOS, Android shards: $SHARD_COUNT_ANDROID"
+      env:
+        INPUTS_EVENT_NAME: ${{ inputs.event_name }}
+        INPUTS_REF: ${{ inputs.ref }}
+        INPUTS_MAX_SHARDS: ${{ inputs.max_shards }}
 
     - name: Setup iOS timing cache
       id: ios-timing-cache
@@ -130,9 +137,9 @@ runs:
       id: calc-timeouts
       shell: bash
       run: |
-        TEST_COUNT=${{ env.TEST_COUNT }}
-        SHARD_COUNT_IOS=${{ env.SHARD_COUNT_IOS }}
-        SHARD_COUNT_ANDROID=${{ env.SHARD_COUNT_ANDROID }}
+        TEST_COUNT=${{ steps.shard-counts.outputs.TEST_COUNT }}
+        SHARD_COUNT_IOS=${{ steps.shard-counts.outputs.SHARD_COUNT_IOS }}
+        SHARD_COUNT_ANDROID=${{ steps.shard-counts.outputs.SHARD_COUNT_ANDROID }}
         TESTS_PER_SHARD_IOS=$(( (TEST_COUNT + SHARD_COUNT_IOS - 1) / SHARD_COUNT_IOS ))
         TESTS_PER_SHARD_ANDROID=$(( (TEST_COUNT + SHARD_COUNT_ANDROID - 1) / SHARD_COUNT_ANDROID ))
 
@@ -153,9 +160,9 @@ runs:
       shell: bash
       run: |
         TEST_FILES="${{ steps.test-files.outputs.test_files_for_sharding }}"
-        SHARD_COUNT_IOS=${{ env.SHARD_COUNT_IOS }}
-        SHARD_COUNT_ANDROID=${{ env.SHARD_COUNT_ANDROID }}
-        TEST_DIR="${{ inputs.test_directory }}"
+        SHARD_COUNT_IOS=${{ steps.shard-counts.outputs.SHARD_COUNT_IOS }}
+        SHARD_COUNT_ANDROID=${{ steps.shard-counts.outputs.SHARD_COUNT_ANDROID }}
+        TEST_DIR="${INPUTS_TEST_DIRECTORY}"
 
         echo "Pre-computing shard assignments for iOS ($SHARD_COUNT_IOS shards) and Android ($SHARD_COUNT_ANDROID shards)"
 
@@ -211,6 +218,8 @@ runs:
           echo "Shard $SHARD_NUM/$SHARD_COUNT_ANDROID ($FILE_COUNT files): $FILES"
         done
         echo ""
+      env:
+        INPUTS_TEST_DIRECTORY: ${{ inputs.test_directory }}
 
 outputs:
   matrix_ios:
