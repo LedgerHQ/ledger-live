@@ -92,7 +92,7 @@ export type SettingsState = {
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
   analyticsConsentInfo: AnalyticsConsentInfo;
-  sentryLogs: boolean; // will be addressed by LIVE-34932
+  crashReporting: boolean;
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
@@ -191,7 +191,7 @@ export const INITIAL_STATE: SettingsState = {
     privacyPolicyVersion: null,
   },
   hasSeenAnalyticsOptInPrompt: false,
-  sentryLogs: true,
+  crashReporting: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
   accountsViewMode: "list",
@@ -792,7 +792,7 @@ export const accountUnitSelector = (state: State, account: AccountLike): Unit =>
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
-export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
+export const crashReportingSelector = (state: State) => state.settings.crashReporting;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>

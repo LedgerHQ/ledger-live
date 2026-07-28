@@ -24,17 +24,17 @@ describe("ConnectEnvsToDatadog", () => {
 
   it("should render nothing (null)", () => {
     const { container } = render(<ConnectEnvsToDatadog />, {
-      initialState: { settings: { sentryLogs: false } },
+      initialState: { settings: { crashReporting: false } },
     });
     expect(container.firstChild).toBeNull();
   });
 
-  it("should not call initDatadog when sentryLogs is false", async () => {
+  it("should not call initDatadog when crashReporting is false", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
         ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
-          sentryLogs: false,
+          crashReporting: false,
         },
       },
     });
@@ -42,12 +42,12 @@ describe("ConnectEnvsToDatadog", () => {
     expect(initDatadog).not.toHaveBeenCalled();
   });
 
-  it("should call initDatadog when lldDatadog.enabled, sentryLogs and isDatadogAvailable are true", async () => {
+  it("should call initDatadog when lldDatadog.enabled, crashReporting, and isDatadogAvailable are true", async () => {
     render(<ConnectEnvsToDatadog />, {
       initialState: {
         ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
-          sentryLogs: true,
+          crashReporting: true,
         },
       },
     });
@@ -64,7 +64,7 @@ describe("ConnectEnvsToDatadog", () => {
       initialState: {
         ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
-          sentryLogs: true,
+          crashReporting: true,
         },
       },
     });
@@ -77,7 +77,7 @@ describe("ConnectEnvsToDatadog", () => {
       initialState: {
         ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
         settings: {
-          sentryLogs: true,
+          crashReporting: true,
         },
       },
     });
@@ -85,7 +85,7 @@ describe("ConnectEnvsToDatadog", () => {
     expect(initDatadog).toHaveBeenCalled();
     const shouldSend = initDatadog.mock.calls[0]![0] as () => boolean;
     expect(shouldSend()).toBe(true);
-    store.dispatch({ type: "SAVE_SETTINGS", payload: { sentryLogs: false } });
+    store.dispatch({ type: "SAVE_SETTINGS", payload: { crashReporting: false } });
     expect(shouldSend()).toBe(false);
   });
 });

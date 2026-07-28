@@ -60,7 +60,7 @@ export function isDatadogAvailable(): boolean {
 
 /**
  * Initialize Datadog RUM in the renderer process.
- * Call only when lldDatadog.enabled and sentryLogs (user opt-in) are true.
+ * Call only when lldDatadog.enabled and crashReporting (user opt-in) are true.
  */
 export async function initDatadog(
   shouldSend: () => boolean,

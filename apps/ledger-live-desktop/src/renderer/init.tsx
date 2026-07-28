@@ -191,6 +191,13 @@ async function init() {
   // supportedCounterValues is now derived at runtime from @domain/entity-currency-fiat — strip stale persisted copy.
   delete (settingsToLoad as Record<string, unknown>).supportedCounterValues;
 
+  // sentryLogs was renamed to crashReporting (LIVE-34932); migrate persisted value to avoid silent opt-in reset.
+  const legacySettings = settingsToLoad as Record<string, unknown>;
+  if (legacySettings.sentryLogs !== undefined && legacySettings.crashReporting === undefined) {
+    settingsToLoad.crashReporting = Boolean(legacySettings.sentryLogs);
+    delete legacySettings.sentryLogs;
+  }
+
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;
   }
