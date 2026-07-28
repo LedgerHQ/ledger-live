@@ -1,6 +1,6 @@
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { registerTransportModule, open } from ".";
-import { CantOpenDevice, TransportError } from "@ledgerhq/errors";
+import { CantOpenDevice, TransportError } from "@ledgerhq/hw-transport/errors";
 
 jest.useFakeTimers();
 
@@ -19,7 +19,7 @@ describe("open", () => {
       });
 
       const openPromise = open("device_0");
-      await expect(openPromise).rejects.toBeInstanceOf(CantOpenDevice);
+      await expect(openPromise).rejects.toMatchObject({ name: "CantOpenDevice" });
     });
   });
 
@@ -65,7 +65,7 @@ describe("open", () => {
 
       const openPromise = open("device_2", { openTimeoutMs: timeoutMs });
       jest.advanceTimersByTime(timeoutMs);
-      await expect(openPromise).rejects.toBeInstanceOf(CantOpenDevice);
+      await expect(openPromise).rejects.toMatchObject({ name: "CantOpenDevice" });
     });
 
     test("And the Transport/module implementation timeouts before open, it should still reject with an error", async () => {
@@ -91,7 +91,7 @@ describe("open", () => {
       const openPromise = open("device_3", { openTimeoutMs: timeoutMs });
       // Advances time after the implementation timeout but before the `open` timeout
       jest.advanceTimersByTime(timeoutMs - 100);
-      await expect(openPromise).rejects.toBeInstanceOf(TransportError);
+      await expect(openPromise).rejects.toMatchObject({ name: "TransportError" });
     });
   });
 

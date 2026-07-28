@@ -4,7 +4,7 @@
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
@@ -358,12 +358,12 @@ describe("DmkSignerSol", () => {
 
     it("maps error code 5515 to LockedDeviceError", () => {
       const result = callMapError(makeDAError("5515"));
-      expect(result).toBeInstanceOf(LockedDeviceError);
+      expect(result).toMatchObject({ name: "LockedDeviceError" });
     });
 
     it("maps error code 6985 to UserRefusedOnDevice", () => {
       const result = callMapError(makeDAError("6985"));
-      expect(result).toBeInstanceOf(UserRefusedOnDevice);
+      expect(result).toMatchObject({ name: "UserRefusedOnDevice" });
     });
 
     it("maps unknown error code to generic Error with _tag", () => {

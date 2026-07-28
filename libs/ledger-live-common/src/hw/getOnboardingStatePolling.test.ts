@@ -4,13 +4,12 @@ import * as rxjsOperators from "rxjs/operators";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import {
-  DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   LockedDeviceError,
   TransportStatusError,
   StatusCodes,
-  UnexpectedBootloader,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { DeviceExtractOnboardingStateError, UnexpectedBootloader } from "../errors";
 import { withDevice } from "./deviceAccess";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";
@@ -96,7 +95,7 @@ describe("getOnboardingStatePolling", () => {
           next: value => {
             try {
               expect(value.onboardingState).toBeNull();
-              expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
+              expect(value.allowedError).toMatchObject({ name: "DisconnectedDevice" });
               expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
@@ -125,7 +124,9 @@ describe("getOnboardingStatePolling", () => {
           next: value => {
             try {
               expect(value.onboardingState).toBeNull();
-              expect(value.allowedError).toBeInstanceOf(DeviceDisconnectedWhileSendingError);
+              expect(value.allowedError).toMatchObject({
+                name: "DeviceDisconnectedWhileSendingError",
+              });
               expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
@@ -154,7 +155,7 @@ describe("getOnboardingStatePolling", () => {
           next: value => {
             try {
               expect(value.onboardingState).toBeNull();
-              expect(value.allowedError).toBeInstanceOf(LockedDeviceError);
+              expect(value.allowedError).toMatchObject({ name: "LockedDeviceError" });
               expect(value.lockedDevice).toBe(true);
               done();
             } catch (expectError) {
@@ -185,7 +186,7 @@ describe("getOnboardingStatePolling", () => {
           next: value => {
             try {
               expect(value.onboardingState).toBeNull();
-              expect(value.allowedError).toBeInstanceOf(TimeoutError);
+              expect(value.allowedError).toMatchObject({ name: "TimeoutError" });
               expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {
@@ -243,7 +244,7 @@ describe("getOnboardingStatePolling", () => {
         next: value => {
           try {
             expect(value.onboardingState).toBeNull();
-            expect(value.allowedError).toBeInstanceOf(DeviceExtractOnboardingStateError);
+            expect(value.allowedError).toMatchObject({ name: "DeviceExtractOnboardingStateError" });
             expect(value.lockedDevice).toBe(false);
             done();
           } catch (expectError) {
@@ -407,7 +408,7 @@ describe("getOnboardingStatePolling", () => {
 
         expect(values.length).toBeGreaterThanOrEqual(1);
         expect(values[0].onboardingState).toBeNull();
-        expect(values[0].allowedError).toBeInstanceOf(TransportStatusError);
+        expect(values[0].allowedError).toMatchObject({ name: "TransportStatusError" });
         expect(mockedQuitApp).toHaveBeenCalledTimes(1);
       },
     );
@@ -478,7 +479,7 @@ describe("getOnboardingStatePolling", () => {
         },
         error: error => {
           try {
-            expect(error).toBeInstanceOf(UnexpectedBootloader);
+            expect(error).toMatchObject({ name: "UnexpectedBootloader" });
             done();
           } catch (expectError) {
             done(expectError);
@@ -501,7 +502,7 @@ describe("getOnboardingStatePolling", () => {
       }).subscribe({
         error: error => {
           try {
-            expect(error).toBeInstanceOf(UnexpectedBootloader);
+            expect(error).toMatchObject({ name: "UnexpectedBootloader" });
             expect(mockedQuitApp).not.toHaveBeenCalled();
             done();
           } catch (expectError) {

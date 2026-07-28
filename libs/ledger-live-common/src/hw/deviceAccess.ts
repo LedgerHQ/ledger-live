@@ -1,12 +1,8 @@
 import { firstValueFrom, from, Observable, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
-import {
-  CantOpenDevice,
-  FirmwareOrAppUpdateRequired,
-  TransportStatusError,
-  DeviceHalted,
-} from "@ledgerhq/errors";
+import { CantOpenDevice, TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { FirmwareOrAppUpdateRequired, DeviceHalted } from "../errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@shared/env";
 import { open, close, OpenOptions } from ".";

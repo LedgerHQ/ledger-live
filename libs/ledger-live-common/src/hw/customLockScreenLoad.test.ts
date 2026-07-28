@@ -2,8 +2,8 @@ import customLockScreenLoad from "./customLockScreenLoad";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/device-core";
 import { lastValueFrom, of } from "rxjs";
-import { ManagerNotEnoughSpaceError, StatusCodes, TransportError } from "@ledgerhq/errors";
-import { ImageLoadRefusedOnDevice } from "../errors";
+import { StatusCodes, TransportError } from "@ledgerhq/hw-transport/errors";
+import { ImageLoadRefusedOnDevice, ManagerNotEnoughSpaceError } from "../errors";
 
 const mockTransport = {
   send: jest.fn(),

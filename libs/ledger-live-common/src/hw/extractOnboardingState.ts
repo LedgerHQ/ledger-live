@@ -1,4 +1,4 @@
-import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
+import { DeviceExtractOnboardingStateError } from "../errors";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 
 const CHARON_STEP_BIT_MASK = 0x1000;

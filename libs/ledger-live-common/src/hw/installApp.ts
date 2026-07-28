@@ -1,6 +1,6 @@
 import { Observable, throwError, timer } from "rxjs";
 import { throttleTime, filter, map, catchError, retry, switchMap } from "rxjs/operators";
-import { ManagerAppDepInstallRequired } from "@ledgerhq/errors";
+import { ManagerAppDepInstallRequired } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import type { ApplicationVersion, App } from "@ledgerhq/types-live";
 import ManagerAPI from "../manager/api";

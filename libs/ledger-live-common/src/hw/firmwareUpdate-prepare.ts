@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Observable, from, of, concat, throwError } from "rxjs";
 import { mergeMap, delay, filter, map } from "rxjs/operators";
-import { DeviceOnDashboardExpected } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected } from "../errors";
 import getDeviceInfo from "./getDeviceInfo";
 import installOsuFirmware from "./installOsuFirmware";
 import { withDevice } from "./deviceAccess";
