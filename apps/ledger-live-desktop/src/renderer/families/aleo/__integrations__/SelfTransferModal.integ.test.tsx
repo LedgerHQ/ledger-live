@@ -89,7 +89,7 @@ describe("SelfTransferModal", () => {
   it("renders the self transfer modal with a CONVERT_PUBLIC_TO_PRIVATE transaction by default", async () => {
     render(<SelfTransferModal stepId="recipient" />, { initialState: openedModalState() });
 
-    expect(screen.getByText("Convert")).toBeInTheDocument();
+    expect(screen.getByText("Convert")).toBeVisible();
 
     await waitFor(() => expect(prepareTransactionSpy).toHaveBeenCalled());
     const [, transaction] = prepareTransactionSpy.mock.calls[0];
