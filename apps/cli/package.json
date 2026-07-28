@@ -31,6 +31,7 @@
   "dependencies": {
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
+    "@domain/entity-currency-token": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
@@ -42,7 +43,6 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@shared/env": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "bigint-buffer": "*",

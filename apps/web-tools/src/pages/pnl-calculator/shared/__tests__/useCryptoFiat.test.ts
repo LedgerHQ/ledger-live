@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import type { FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import type { FiatCurrency } from "@domain/entity-currency-fiat";
 
 jest.mock("@domain/entity-currency-fiat", () => ({
   getFiatCurrencyByTicker: jest.fn(),
