@@ -186,7 +186,6 @@ export type Features = CurrencyFeatures & {
   mixpanelAnalytics: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
-  npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
@@ -621,34 +620,6 @@ export type Feature_FirebaseEnvironmentReadOnly = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
 export type Feature_LdmkTransport = Feature<{
   warningVisible: boolean;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["npsRatingsPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_NpsRatingsPrompt = Feature<{
-  conditions: {
-    disappointed_delay: {
-      seconds: number;
-    };
-    minimum_accounts_number: number;
-    minimum_app_starts_number: number;
-    minimum_duration_since_app_first_start: {
-      seconds: number;
-    };
-    minimum_number_of_app_starts_since_last_crash: number;
-    not_now_delay: {
-      seconds: number;
-    };
-    satisfied_then_not_now_delay: {
-      seconds: number;
-    };
-  };
-  happy_moments: {
-    route_name: string;
-    timer: number;
-    type: string;
-  }[];
-  support_email: string;
-  typeform_url: string;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ratingsPrompt"]` from `@shared/feature-flags` instead. */

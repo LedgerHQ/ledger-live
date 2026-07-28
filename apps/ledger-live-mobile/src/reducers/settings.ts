@@ -57,7 +57,6 @@ import type {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
@@ -162,7 +161,6 @@ export const INITIAL_STATE: SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: false,
   },
-  userNps: null,
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
@@ -585,10 +583,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
   }),
-  [SettingsActionTypes.SET_USER_NPS]: (state, action) => ({
-    ...state,
-    userNps: (action as Action<SettingsSetUserNps>).payload,
-  }),
   [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
     ...state,
     supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
@@ -954,7 +948,6 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
-export const userNpsSelector = (state: State) => state.settings.userNps;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
