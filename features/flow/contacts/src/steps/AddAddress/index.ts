@@ -19,6 +19,7 @@ export {
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";
 export type {
+  AddAddressEntryLabels,
   AddAddressEntryState,
   AddAddressFlowState,
   AddAddressFlowViewModel,

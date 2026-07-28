@@ -10246,6 +10246,17 @@
       "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed."
     },
+    "addAddressEntry": {
+      "title": "Enter address",
+      "addressPlaceholder": "Address or ENS",
+      "confirmAddress": "Confirm address",
+      "validatingAddress": "Validating address",
+      "validAddress": "Valid address",
+      "invalidAddress": "Invalid address",
+      "domainNotFound": "No address found for this domain",
+      "validationUnavailable": "Address validation is temporarily unavailable",
+      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
+    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",

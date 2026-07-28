@@ -4,6 +4,9 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   type AddAddressFlowState,
+  type AddAddressEntryLabels,
+  type AddAddressInputSource,
+  type ContactsAddAddressEntryViewProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
   useAddAddressCurrencySelectionViewModel,
@@ -19,11 +22,15 @@ import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/type
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 
+const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
+
 type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
       status: "ready";
       addAddressFlowState: AddAddressFlowState;
+      addAddressEntryProps: ContactsAddAddressEntryViewProps | null;
+      onCloseAddAddress: () => void;
       pageProps: ContactDetailViewProps;
     }>;
 
@@ -48,8 +55,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     state: addAddressFlowState,
     start: startAddAddress,
     completeCurrencySelection,
+    updateAddress,
     close: closeAddAddress,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
+  });
   const onAddAddress = useCallback(() => {
     if (!contact) return;
 
@@ -73,6 +84,19 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       },
     });
   }, [navigation]);
+  const onAddressChange = useCallback(
+    (value: string, inputMethod: AddAddressInputSource) => {
+      void updateAddress(value, inputMethod);
+    },
+    [updateAddress],
+  );
+  const onQrCodeClick = useCallback(() => {
+    navigation.navigate(ScreenName.ScanRecipient, {
+      onScanned: value => {
+        void updateAddress(value, "qr_code");
+      },
+    });
+  }, [navigation, updateAddress]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -86,6 +110,32 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
+  );
+  const addAddressEntryLabels = useMemo<AddAddressEntryLabels>(
+    () => ({
+      title: t("contacts.addAddressEntry.title"),
+      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
+      validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
+      validAddress: t("contacts.addAddressEntry.validAddress"),
+      invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
+      domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+      validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+      ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+    }),
+    [t],
+  );
+  const addAddressEntryProps = useMemo<ContactsAddAddressEntryViewProps | null>(
+    () =>
+      addAddressFlowState.status === "enteringAddress"
+        ? {
+            addressEntry: addAddressFlowState.addressEntry,
+            labels: addAddressEntryLabels,
+            onChangeText: onAddressChange,
+            onQrCodeClick,
+          }
+        : null,
+    [addAddressEntryLabels, addAddressFlowState, onAddressChange, onQrCodeClick],
   );
   const shouldRedirect = !isEnabled || !contact;
 
@@ -106,6 +156,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   return {
     status: "ready",
     addAddressFlowState,
+    addAddressEntryProps,
+    onCloseAddAddress: closeAddAddress,
     pageProps: {
       contact,
       labels,

@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -306,6 +306,66 @@ describe("useAddAddressFlowViewModel", () => {
       });
       await update;
     });
+  });
+
+  it("should debounce manual validation and only validate the latest value", async () => {
+    jest.useFakeTimers();
+    try {
+      const contactId = mockContact().id;
+      const addressValidation = createValidationPort();
+      const { result } = renderHook(() =>
+        useAddAddressFlowViewModel({
+          addressValidation,
+          manualValidationDebounceMs: 200,
+        }),
+      );
+
+      act(() => result.current.start(contactId));
+      act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_CURRENCY_ID));
+
+      let firstUpdate = Promise.resolve();
+      let secondUpdate = Promise.resolve();
+      act(() => {
+        firstUpdate = result.current.updateAddress("first", "manual");
+        secondUpdate = result.current.updateAddress("second", "manual");
+      });
+
+      expect(addressValidation.validateAddress).not.toHaveBeenCalled();
+      expect(result.current.state).toMatchObject({
+        status: "enteringAddress",
+        addressEntry: { status: "validating", value: "second" },
+      });
+
+      await act(async () => {
+        await jest.advanceTimersByTimeAsync(200);
+        await Promise.all([firstUpdate, secondUpdate]);
+      });
+
+      expect(addressValidation.validateAddress).toHaveBeenCalledTimes(1);
+      expect(addressValidation.validateAddress).toHaveBeenCalledWith({
+        currencyId: ETHEREUM_CURRENCY_ID,
+        address: "second",
+      });
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("should validate pasted input without the manual debounce", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() =>
+      useAddAddressFlowViewModel({
+        addressValidation,
+        manualValidationDebounceMs: 200,
+      }),
+    );
+
+    act(() => result.current.start(contactId));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_CURRENCY_ID));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "paste"));
+
+    expect(addressValidation.validateAddress).toHaveBeenCalledTimes(1);
   });
 
   it("should reset to empty without validating blank input", async () => {

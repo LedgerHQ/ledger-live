@@ -59,3 +59,15 @@ export type AddAddressFlowViewModel = Readonly<{
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
   close: () => void;
 }>;
+
+export type AddAddressEntryLabels = Readonly<{
+  title: string;
+  addressPlaceholder: string;
+  confirmAddress: string;
+  validatingAddress: string;
+  validAddress: string;
+  invalidAddress: string;
+  domainNotFound: string;
+  validationUnavailable: string;
+  ensDisclaimer: string;
+}>;

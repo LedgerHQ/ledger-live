@@ -30,8 +30,14 @@ After a successful selection, the session retains the selected contact and final
 identifiers and moves to `enteringAddress`. The `AddAddress` step owns its injected validation
 port, currency and token resolution, domain orchestration, input methods, asynchronous validation
 state, resolved-address storage, and stale-result protection. Consuming apps adapt coin bridges,
-domain services, token stores, clipboard access, and other app-owned or platform-specific
-integrations.
+domain services, token stores, and other app-owned or platform-specific integrations.
+
+The native Add Address view renders the shared address-entry states as Lumen bottom-sheet content
+with `BottomSheetHeader` and `AddressInput`, including QR access, validation feedback, the ENS
+disclaimer, and a valid-only confirmation button. Mobile owns the queued bottom-sheet container,
+navigation, translations, keyboard behavior, scanner routing, and safe-area inset. Native paste
+events are classified without reading the clipboard proactively, while manual validation can be
+debounced without delaying paste or QR validation.
 
 ## Public API
 
@@ -79,9 +85,9 @@ src/
 │   │   ├── components/ContactNameInput/ (web + native)
 │   │   ├── model/                       # Contact-name validation and creation contract
 │   │   └── index.ts / web.ts / native.ts
-│   ├── AddAddress/                      # Shared currency selection and address-entry session
+│   ├── AddAddress/                      # Shared currency selection, address-entry session and native view
 │   │   ├── model/                       # Network resolver, MAD port and address validation
-│   │   └── useAddAddressCurrencySelectionViewModel.ts / useAddAddressFlowViewModel.ts / types.ts / index.ts
+│   │   └── ContactsAddAddressEntryView.native.tsx / useAddAddressCurrencySelectionViewModel.ts / useAddAddressFlowViewModel.ts / types.ts / index.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
 │   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)
 │   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts

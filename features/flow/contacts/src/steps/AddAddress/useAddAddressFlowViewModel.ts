@@ -25,7 +25,12 @@ const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
 
 export type UseAddAddressFlowViewModelOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
+  manualValidationDebounceMs?: number;
 }>;
+
+function wait(delayMs: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, delayMs));
+}
 
 function resolveAddressEntryState(
   value: string,
@@ -106,6 +111,7 @@ function applyAddressEntryState(
 
 export function useAddAddressFlowViewModel({
   addressValidation = UNAVAILABLE_ADDRESS_VALIDATION,
+  manualValidationDebounceMs = 0,
 }: UseAddAddressFlowViewModelOptions = {}): AddAddressFlowViewModel {
   const [state, setState] = useState<AddAddressFlowState>(CLOSED_ADD_ADDRESS_FLOW_STATE);
   const validationRequestId = useRef(0);
@@ -168,6 +174,13 @@ export function useAddAddressFlowViewModel({
         ),
       );
 
+      if (inputMethod === "manual" && manualValidationDebounceMs > 0) {
+        await wait(manualValidationDebounceMs);
+        if (validationRequestId.current !== requestId) {
+          return;
+        }
+      }
+
       const validationResult = await requestAddressValidation(
         addressValidation,
         selectedCurrencyId,
@@ -187,7 +200,7 @@ export function useAddAddressFlowViewModel({
         ),
       );
     },
-    [addressValidation, state],
+    [addressValidation, manualValidationDebounceMs, state],
   );
   const close = useCallback(() => {
     cancelAddressValidation();
