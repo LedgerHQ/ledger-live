@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™ ไม่รองรับการสวอป Monad",
       "monad_description" : "หากต้องการสวอป Monad ให้ใช้อุปกรณ์ Ledger ที่รองรับรุ่นอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "zcash_title" : "Ledger Nano S™ ไม่รองรับการสวอป Zcash",
-      "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+      "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "aleo_title" : "Ledger Nano S™ ไม่รองรับการสวอป Aleo",
+      "aleo_description" : "ในการสวอป Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
     "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
     "feesPaid" : "ค่าธรรมเนียมที่ต้องชำระให้กับเครือข่ายเพื่อทำธุรกรรมของคุณ",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "คุณจะใช้ {{energy}} Energy และ {{bandwidth}} Bandwidth ในการจ่ายค่าธรรมเนียมเครือข่าย"
+      },
+      "insufficient" : {
+        "description" : "คุณมี Energy และ Bandwidth ไม่เพียงพอสำหรับการทำธุรกรรมโอนนี้ ส่วนที่ขาดจะถูกชดเชยโดยการจ่ายด้วย TRX"
+      }
+    },
     "insufficientBalanceFees" : "ยอดคงเหลือไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
     "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
     "coinToSend" : "เหรียญที่จะส่ง",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Redelegate",
         "redelegateDisabledTooltip" : "คุณสามารถมอบหมายใหม่ได้ในอีก <0>{{days}}</0> วัน",
         "redelegateMaxDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
-        "undelegateDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
+          "zero_gravity" : "คุณต้องมีอย่างน้อย 1 Gwei เพื่อยกเลิกการมอบหมาย"
+        },
         "undelegateActivatingTooltip" : "คุณไม่สามารถยกเลิกการมอบหมายสเตคที่ยังอยู่ในระหว่างการเปิดใช้งานได้",
         "reward" : "เคลม Reward",
         "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "จำนวน"
+              "title" : "จำนวน",
+              "visibilityDelay" : "อาจใช้เวลาสูงสุดถึง {{numberOfMinutes}} นาทีก่อนที่จะเห็นการ Delegate นี้บนบอร์ดการ Delegate ของคุณ"
             },
             "validator" : {
               "title" : "ผู้ตรวจสอบ",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "ฝาก",
+      "OUT" : "ถอน"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "ใส่เครื่องหมายจุลภาค (,) คั่นเพื่อทดสอบที่อยู่คริปโตหลายเครือข่ายแบบกำหนดเอง",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "ใช้งาน",
-        "resetOverride" : "รีเซ็ตการเขียนทับ"
+        "contactsData" : "ข้อมูลรายชื่อ",
+        "loadPopulatedContacts" : "โหลดรายชื่อที่มีอยู่",
+        "resetContacts" : "รีเซ็ตรายชื่อ",
+        "resetOverride" : "รีเซ็ตการเขียนทับ",
+        "featureIntroduction" : {
+          "title" : "แนะนำฟีเจอร์",
+          "label" : "แสดงบทแนะนำฟีเจอร์รายชื่อ",
+          "dismissed" : "ยกเลิกแล้ว เปิดใช้งานเพื่อแสดงบทแนะนำในหน้ารายชื่ออีกครั้ง",
+          "willShow" : "จะแสดงในรายชื่อจนกว่าจะกดปิด"
+        }
       },
       "cryptoAssetsList" : {
         "title" : "รายการสินทรัพย์คริปโต",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "บัญชีผู้รับยังไม่ได้เลือกเข้าร่วม ASA ที่เลือก"
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo ยาวเกินไป",
+      "description" : "Memo ของ Algorand ต้องไม่เกิน 1024 ไบต์ โปรดย่อ Memo ให้สั้นลง"
     },
     "AmountRequired" : {
       "title" : "ต้องระบุจำนวน"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
-      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%"
+      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%",
+      "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
     },
     "optedOut" : {
-      "title" : "ตรวจจับสแกมได้ทันที ดูได้ทุกรายละเอียด",
-      "subtitle" : "ตรวจสอบได้ชัดเจนบนอุปกรณ์ลงนามหน้าจอสัมผัส และตรวจจับสแกมด้วยการตรวจสอบความปลอดภัยขั้นสูง"
-    },
-    "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
+      "title" : "ตรวจพบสแกมก่อนลงนาม",
+      "subtitle" : "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัยขั้นสูงที่ช่วยตรวจจับภัยคุกคามแบบเรียลไทม์",
+      "cta" : "เรียนรู้เพิ่มเติม"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "รายชื่อ",
     "addContact" : "เพิ่มรายชื่อ",
     "searchPlaceholder" : "ค้นหารายชื่อ",
+    "searchNoResults" : "ไม่พบรายชื่อ",
     "me" : {
       "name" : "ที่อยู่ของฉัน",
       "addressCount_zero" : "0 ที่อยู่คริปโต",
       "addressCount_one" : "{{count}} ที่อยู่",
       "addressCount_other" : "{{count}} ที่อยู่"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
+      "dismiss" : "เข้าใจแล้ว"
+    },
+    "featureIntroduction" : {
+      "title" : "ขอแนะนำรายชื่อ",
+      "description" : "สมุดที่อยู่คริปโตของคุณ บันทึกวอลเล็ตที่คุณส่งไปหาทั้งหมดไว้ในที่เดียว",
+      "primaryAction" : "ลองใช้รายชื่อ",
+      "secondaryAction" : "ไว้ทีหลัง",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "บันทึกที่อยู่คริปโตเพียงครั้งเดียว",
+          "description" : "เก็บที่อยู่คริปโตที่คุณส่งไปหาไว้ในที่เดียว"
+        },
+        "sendToRightAddress" : {
+          "title" : "ส่งไปยังที่อยู่คริปโตที่ถูกต้อง",
+          "description" : "เงินทุนส่งถึงวอลเล็ตที่ถูกต้องทุกครั้ง"
+        },
+        "privateAcrossDevices" : {
+          "title" : "เป็นส่วนตัวในทุกอุปกรณ์ของคุณ",
+          "description" : "ได้รับการเข้ารหัสแบบครบวงจรด้วยฟีเจอร์ Ledger Sync"
+        }
+      }
     }
   },
   "assetDetails" : {

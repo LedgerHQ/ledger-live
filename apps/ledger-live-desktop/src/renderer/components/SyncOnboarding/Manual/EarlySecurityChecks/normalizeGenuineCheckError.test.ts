@@ -1,4 +1,4 @@
-import { GenuineCheckFailed, NetworkDown } from "@ledgerhq/errors";
+import { GenuineCheckFailed, NetworkDown } from "@ledgerhq/live-common/errors";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
 
 describe("normalizeGenuineCheckError", () => {
@@ -7,7 +7,7 @@ describe("normalizeGenuineCheckError", () => {
 
     const normalizedError = normalizeGenuineCheckError(originalError);
 
-    expect(normalizedError).toBeInstanceOf(GenuineCheckFailed);
+    expect(normalizedError).toMatchObject({ name: "GenuineCheckFailed" });
     expect(normalizedError.cause).toBe(originalError);
   });
 
@@ -16,7 +16,7 @@ describe("normalizeGenuineCheckError", () => {
 
     const normalizedError = normalizeGenuineCheckError(originalError);
 
-    expect(normalizedError).toBeInstanceOf(GenuineCheckFailed);
+    expect(normalizedError).toMatchObject({ name: "GenuineCheckFailed" });
     expect(normalizedError.cause).toBe(originalError);
   });
 });

@@ -1,5 +1,6 @@
 import { valid, gte } from "semver";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getEnv } from "@shared/env";
 import calService from "@ledgerhq/ledger-cal-service";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used

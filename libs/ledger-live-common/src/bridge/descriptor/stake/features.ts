@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getStakeDescriptor } from "../registry";
 import type { StakeDescriptor, StakeMode } from "../types";
 

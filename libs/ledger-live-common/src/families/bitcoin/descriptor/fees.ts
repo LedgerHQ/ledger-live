@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { FeeDescriptor } from "../../../bridge/descriptor/types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {

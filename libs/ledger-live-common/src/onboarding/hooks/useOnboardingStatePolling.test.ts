@@ -5,7 +5,8 @@ import { timer, of } from "rxjs";
 import { map, delayWhen } from "rxjs/operators";
 import { renderHook, act } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DisconnectedDevice, LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
+import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UnexpectedBootloader } from "../../errors";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
 import { OnboardingState, OnboardingStep } from "../../hw/extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
@@ -229,7 +230,7 @@ describe("useOnboardingStatePolling", () => {
         jest.advanceTimersByTime(pollingPeriodMs);
       });
 
-      expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
+      expect(result.current.allowedError).toMatchObject({ name: "DisconnectedDevice" });
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
       expect(result.current.lockedDevice).toBe(false);
@@ -259,7 +260,7 @@ describe("useOnboardingStatePolling", () => {
       });
 
       // Allowed error occured
-      expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
+      expect(result.current.allowedError).toMatchObject({ name: "DisconnectedDevice" });
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
       expect(result.current.lockedDevice).toBe(false);
@@ -329,7 +330,7 @@ describe("useOnboardingStatePolling", () => {
       });
 
       expect(result.current.lockedDevice).toBe(true);
-      expect(result.current.allowedError).toBeInstanceOf(LockedDeviceError);
+      expect(result.current.allowedError).toMatchObject({ name: "LockedDeviceError" });
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
       // To compare with the result of the third polling
@@ -359,7 +360,7 @@ describe("useOnboardingStatePolling", () => {
       });
 
       // Allowed error occured
-      expect(result.current.allowedError).toBeInstanceOf(LockedDeviceError);
+      expect(result.current.allowedError).toMatchObject({ name: "LockedDeviceError" });
       expect(result.current.lockedDevice).toBe(true);
       expect(result.current.fatalError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);

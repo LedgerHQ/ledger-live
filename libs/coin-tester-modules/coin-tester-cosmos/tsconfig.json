@@ -1,7 +1,7 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
-    "lib": ["es2020", "dom"],
+    "lib": ["es2022", "dom"],
     "outDir": "lib",
     "rootDir": "src",
     "types": ["node", "jest"],
