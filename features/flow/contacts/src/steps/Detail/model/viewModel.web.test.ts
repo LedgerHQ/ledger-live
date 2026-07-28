@@ -123,12 +123,28 @@ describe("createPopulatedContactDetailViewModel", () => {
 
   it("orders address rows by network", () => {
     const contact = mockContactWithMultipleAddresses();
+    const viewModel = createPopulatedContactDetailViewModel(
+      contact,
+      currencyPort,
+      TEST_NETWORK_ORDER,
+    );
 
     expect(
-      createPopulatedContactDetailViewModel(contact, currencyPort, TEST_NETWORK_ORDER).addressRows.map(
-        row => row.addressId,
-      ),
+      viewModel.addressGroups.flatMap(group => group.rows.map(row => row.addressId)),
     ).toEqual(["address-ethereum", "address-polygon"]);
+  });
+
+  it("groups address rows by network", () => {
+    const contact = mockContactWithMultipleAddresses();
+    const viewModel = createPopulatedContactDetailViewModel(
+      contact,
+      currencyPort,
+      TEST_NETWORK_ORDER,
+    );
+
+    expect(viewModel.addressGroups.map(group => group.networkId)).toEqual(["ethereum", "polygon"]);
+    expect(viewModel.addressGroups[0]?.rows.map(row => row.addressId)).toEqual(["address-ethereum"]);
+    expect(viewModel.addressGroups[1]?.rows.map(row => row.addressId)).toEqual(["address-polygon"]);
   });
 
   it("exposes an open-address-detail intent on each row", () => {
@@ -145,7 +161,9 @@ describe("createPopulatedContactDetailViewModel", () => {
     const address = contact.addresses[0];
 
     expect(address).toBeDefined();
-    expect(createPopulatedContactDetailViewModel(contact, currencyPort).addressRows).toEqual([
+    expect(
+      createPopulatedContactDetailViewModel(contact, currencyPort).addressGroups[0]?.rows,
+    ).toEqual([
       {
         addressId: "address-ethereum",
         label: "Ethereum",

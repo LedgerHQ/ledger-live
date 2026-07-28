@@ -9383,6 +9383,14 @@
         "contactDescription": "Save their wallet addresses to send to them by name next time."
       }
     },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copied": "Copied",
+      "edit": "Edit",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
+    },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "dismiss": "Got it"

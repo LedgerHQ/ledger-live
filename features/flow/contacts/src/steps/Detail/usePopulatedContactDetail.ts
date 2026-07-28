@@ -11,11 +11,11 @@ import type { PopulatedContactDetailViewModel } from "./types";
 type ContactsStateRoot = Parameters<typeof selectContactById>[0];
 
 export function usePopulatedContactDetail(
-  contactId: ContactId,
+  contactId: ContactId | undefined,
   currencyPort: ContactAddressCurrencyPort,
 ): PopulatedContactDetailViewModel | undefined {
   const contact = useSelector((state: ContactsStateRoot) =>
-    selectContactById(state, contactId),
+    contactId ? selectContactById(state, contactId) : undefined,
   );
 
   return useMemo(() => {

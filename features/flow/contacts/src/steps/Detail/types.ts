@@ -40,11 +40,18 @@ export type ContactDetailAddressRow = Readonly<{
   intent: ContactDetailAddressRowIntent;
 }>;
 
+export type ContactDetailAddressNetworkGroup = Readonly<{
+  networkId: CryptoCurrency["id"];
+  networkName: string;
+  networkTicker: string;
+  rows: readonly ContactDetailAddressRow[];
+}>;
+
 export type PopulatedContactDetailViewModel = Readonly<{
   displayMode: "populated";
   contact: Contact;
   addressCount: number;
-  addressRows: readonly ContactDetailAddressRow[];
+  addressGroups: readonly ContactDetailAddressNetworkGroup[];
 }>;
 
 export type ContactDetailLabels = Readonly<{
@@ -65,6 +72,8 @@ export type ContactDetailViewProps = Readonly<{
   meAvatarSrc: string;
   onAddAddress: () => void;
   onOpenLedgerWalletAddresses?: () => void;
+  addressGroups?: readonly ContactDetailAddressNetworkGroup[];
+  onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
 }>;
 
 export type ContactAddressDetailAsset = Readonly<{

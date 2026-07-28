@@ -1,6 +1,7 @@
 import type { Contact, ContactAddressId, ContactId } from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ContactAddressCurrencyPort } from "./ports";
+import { groupContactAddressRowsByNetwork } from "./groupContactAddressRowsByNetwork";
 import { sortContactAddressesByNetwork } from "./sortContactAddressesByNetwork";
 import type { ContactDetailAddressRow, PopulatedContactDetailViewModel } from "../types";
 
@@ -39,10 +40,14 @@ export function createPopulatedContactDetailViewModel(
     networkIds,
   );
 
+  const addressRows = orderedAddresses.map(address =>
+    createContactDetailAddressRow(contact, address),
+  );
+
   return {
     displayMode: "populated",
     contact,
     addressCount: contact.addresses.length,
-    addressRows: orderedAddresses.map(address => createContactDetailAddressRow(contact, address)),
+    addressGroups: groupContactAddressRowsByNetwork(addressRows, currencyPort),
   };
 }
