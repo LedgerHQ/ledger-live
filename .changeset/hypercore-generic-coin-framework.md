@@ -1,6 +1,5 @@
 ---
 "@ledgerhq/live-common": minor
-"@ledgerhq/cryptoassets": minor
 "@ledgerhq/types-live": minor
 "@domain/entity-currency-crypto": minor
 "ledger-live-desktop": patch

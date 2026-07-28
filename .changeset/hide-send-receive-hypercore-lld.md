@@ -1,7 +1,6 @@
 ---
 "@ledgerhq/live-common": patch
 "ledger-live-desktop": patch
-"@ledgerhq/cryptoassets": patch
 "@domain/entity-currency-crypto": patch
 ---
 
