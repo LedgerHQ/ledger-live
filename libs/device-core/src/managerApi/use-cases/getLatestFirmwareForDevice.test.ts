@@ -1,7 +1,7 @@
 import { getLatestFirmwareForDevice } from "./getLatestFirmwareForDevice";
 import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 import { DeviceVersion, FinalFirmware, McuVersion, OsuFirmware } from "@ledgerhq/types-live";
-import { UnknownMCU } from "@ledgerhq/errors";
+import { UnknownMCU } from "../../errors";
 import { StubManagerApiRepository } from "../repositories/StubManagerApiRepository";
 import { aDeviceInfoBuilder } from "../entities/mocks/aDeviceInfo";
 
@@ -37,7 +37,7 @@ describe("getLatestFirmwareForDevice", () => {
     // when
     const response = getLatestFirmwareForDevice(params);
     // then
-    expect(response).rejects.toBeInstanceOf(UnknownMCU);
+    expect(response).rejects.toMatchObject({ name: "UnknownMCU" });
   });
 
   it("should return an update without flashing mcu", async () => {

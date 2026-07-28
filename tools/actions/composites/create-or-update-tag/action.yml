@@ -32,9 +32,9 @@ runs:
       with:
         github-token: ${{ inputs.token }}
         script: |
-          const ref = '${{ inputs.ref }}';
-          const tagName = '${{ inputs.tagName }}';
-          const overwrite = '${{ inputs.overwrite }}' === 'true';
+          const ref = core.getInput('ref');
+          const tagName = core.getInput('tagName');
+          const overwrite = core.getInput('overwrite') === 'true';
           
           try {
             // Try to get the existing tag

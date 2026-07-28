@@ -1,5 +1,5 @@
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../coin-modules/transaction-types";
 

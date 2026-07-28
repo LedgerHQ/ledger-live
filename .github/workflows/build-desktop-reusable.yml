@@ -86,6 +86,12 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        if: ${{ matrix.config.name == 'Linux' }}
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
       - name: Build desktop
         id: build-desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop

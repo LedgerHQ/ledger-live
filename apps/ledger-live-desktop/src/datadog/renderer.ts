@@ -72,6 +72,8 @@ export async function initDatadog(
         traceSampleRate?: number;
         allowedTracingUrls?: string[];
         profilingSampleRate?: number;
+        trackUserInteractions?: boolean;
+        trackResources?: boolean;
       }
     | undefined,
   store: Store<State>,
@@ -104,8 +106,8 @@ export async function initDatadog(
       allowedTracingUrls,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
-      trackUserInteractions: true,
-      trackResources: true,
+      trackUserInteractions: params?.trackUserInteractions ?? true,
+      trackResources: params?.trackResources ?? true,
       beforeSend: buildBeforeSend(shouldSend),
       sessionPersistence: "local-storage",
     });

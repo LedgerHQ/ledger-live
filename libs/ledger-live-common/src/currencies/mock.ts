@@ -1,5 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 export const IDS = [
   "bitcoin",
   "ethereum",
@@ -48,7 +47,7 @@ export const IDS = [
 export const CURRENCIES_LIST: CryptoCurrency[] = [
   {
     type: "CryptoCurrency",
-    id: "axelar",
+    id: CryptoCurrencyIdSchema.parse("axelar"),
     coinType: 118,
     name: "Axelar",
     managerAppName: "Cosmos",
@@ -77,7 +76,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "quicksilver",
+    id: CryptoCurrencyIdSchema.parse("quicksilver"),
     coinType: 118,
     name: "Quicksilver",
     managerAppName: "Cosmos",
@@ -106,7 +105,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "persistence",
+    id: CryptoCurrencyIdSchema.parse("persistence"),
     coinType: 118,
     name: "Persistence",
     managerAppName: "Cosmos",
@@ -135,7 +134,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: CryptoCurrencyIdSchema.parse("ethereum"),
     coinType: 60,
     name: "Ethereum",
     managerAppName: "Ethereum",
@@ -187,7 +186,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "polkadot",
+    id: CryptoCurrencyIdSchema.parse("polkadot"),
     coinType: 354,
     name: "Polkadot",
     managerAppName: "Polkadot",
@@ -221,7 +220,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "solana",
+    id: CryptoCurrencyIdSchema.parse("solana"),
     coinType: 501,
     name: "Solana",
     managerAppName: "Solana",
@@ -255,7 +254,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "cosmos",
+    id: CryptoCurrencyIdSchema.parse("cosmos"),
     coinType: 118,
     name: "Cosmos",
     managerAppName: "Cosmos",
@@ -285,7 +284,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "celo",
+    id: CryptoCurrencyIdSchema.parse("celo"),
     coinType: 52752,
     name: "Celo",
     managerAppName: "Celo",
@@ -310,7 +309,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "tezos",
+    id: CryptoCurrencyIdSchema.parse("tezos"),
     coinType: 1729,
     name: "Tezos",
     managerAppName: "Tezos Wallet",
@@ -336,7 +335,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   {
     type: "CryptoCurrency",
     // id: "multiversx",
-    id: "elrond",
+    id: CryptoCurrencyIdSchema.parse("elrond"),
     coinType: 508,
     name: "MultiversX",
     managerAppName: "MultiversX",
@@ -363,7 +362,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "cardano",
+    id: CryptoCurrencyIdSchema.parse("cardano"),
     coinType: 1815,
     name: "Cardano",
     managerAppName: "Cardano ADA",
@@ -395,7 +394,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "osmo",
+    id: CryptoCurrencyIdSchema.parse("osmo"),
     coinType: 118,
     name: "Osmosis",
     managerAppName: "Cosmos",
@@ -424,7 +423,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "near",
+    id: CryptoCurrencyIdSchema.parse("near"),
     coinType: 397,
     name: "NEAR",
     managerAppName: "NEAR",
@@ -454,7 +453,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "injective",
+    id: CryptoCurrencyIdSchema.parse("injective"),
     coinType: 60,
     name: "Injective",
     managerAppName: "Cosmos",
@@ -483,7 +482,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "mantra",
+    id: CryptoCurrencyIdSchema.parse("mantra"),
     coinType: 118,
     name: "Mantra",
     managerAppName: "Cosmos",
@@ -512,7 +511,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "crypto_org",
+    id: CryptoCurrencyIdSchema.parse("crypto_org"),
     coinType: 394,
     name: "Cronos POS Chain",
     managerAppName: "Cronos POS Chain",
@@ -541,7 +540,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "xion",
+    id: CryptoCurrencyIdSchema.parse("xion"),
     coinType: 118,
     name: "Verona",
     managerAppName: "Cosmos",
@@ -570,7 +569,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "zenrock",
+    id: CryptoCurrencyIdSchema.parse("zenrock"),
     coinType: 118,
     name: "Zenrock",
     managerAppName: "Cosmos",
@@ -599,7 +598,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "babylon",
+    id: CryptoCurrencyIdSchema.parse("babylon"),
     coinType: 118,
     name: "Babylon",
     managerAppName: "Cosmos",

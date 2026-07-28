@@ -5,7 +5,7 @@ import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../api", () => ({

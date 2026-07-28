@@ -538,7 +538,9 @@
       "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
       "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
-      "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "aleo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aleo",
+      "aleo_description" : "Pour échanger des Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -2402,7 +2404,7 @@
       "options" : {
         "fromBank" : {
           "title" : "Via un virement bancaire",
-          "description" : "Recevez des stablecoins en réalisant un virement depuis votre banque."
+          "description" : "Recevez des stablecoins par virement bancaire."
         },
         "fromCrypto" : {
           "title" : "Via une adresse crypto"
@@ -2596,6 +2598,14 @@
     "feesAmount" : "Montant des frais ({{unit}})",
     "gasLimit" : "Limite de gaz ({{unit}})",
     "feesPaid" : "Frais payés au réseau pour le traitement de votre transaction",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Vous utiliserez {{energy}} en énergie et {{bandwidth}} en bande passante pour payer les frais de réseau."
+      },
+      "insufficient" : {
+        "description" : "Vous n’avez pas assez d’énergie et de bande passante pour couvrir ce transfert. Le montant manquant sera couvert en utilisant (brûlant) des TRX."
+      }
+    },
     "insufficientBalanceFees" : "Solde insuffisant pour couvrir les frais de réseau",
     "amountToSend" : "Montant à envoyer ({{currency}})",
     "coinToSend" : "Crypto à envoyer",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Modifier",
         "redelegateDisabledTooltip" : "Vous pouvez redéléguer dans <0>{{days}}</0>.",
         "redelegateMaxDisabledTooltip" : "Vous ne pouvez pas redéléguer à plus de <0>7</0> validateurs à la fois.",
-        "undelegateDisabledTooltip" : "Vous ne pouvez pas arrêter la délégation de plus de <0>7</0> validateurs à la fois.",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "Vous ne pouvez pas arrêter la délégation de plus de <0>7</0> validateurs à la fois.",
+          "zero_gravity" : "Vous devez avoir au moins 1 gwei de parts déléguées pour arrêter la délégation"
+        },
         "undelegateActivatingTooltip" : "Impossible d’arrêter la délégation lorsque le staking est en cours d’activation.",
         "reward" : "Demander les récompenses",
         "activeTooltip" : "Les montants délégués génèrent des récompenses.",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "Montant"
+              "title" : "Montant",
+              "visibilityDelay" : "Retrouvez cette délégation sur votre tableau de bord d’ici {{numberOfMinutes}} minutes."
             },
             "validator" : {
               "title" : "Validateurs",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Dépôt",
+      "OUT" : "Retrait"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "Familles séparées par des virgules pour des tests multifamilles personnalisés.",
         "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
         "applyFamilies" : "Appliquer",
-        "resetOverride" : "Réinitialiser"
+        "contactsData" : "Données des contacts",
+        "loadPopulatedContacts" : "Charger des contacts complets",
+        "resetContacts" : "Réinitialiser les contacts",
+        "resetOverride" : "Réinitialiser",
+        "featureIntroduction" : {
+          "title" : "Présentation",
+          "label" : "Afficher la présentation des Contacts.",
+          "dismissed" : "Désactivé : réactivez pour réafficher la présentation des Contacts.",
+          "willShow" : "S’affichera dans Contacts jusqu’à sa fermeture."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Liste de crypto-actifs (CAL)",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Le compte bénéficiaire n’a pas activé l’ASA sélectionné."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Mémo trop long",
+      "description" : "Les mémos Algorand ne peuvent pas dépasser 1 024 bytes. Veuillez raccourcir votre mémo."
     },
     "AmountRequired" : {
       "title" : "Montant requis"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Voyez plus grand. Économisez {{discount}}%.",
-      "subtitle" : "Profitez d’un écran plus grand, d’une vérification des transactions automatisée, d’une protection renforcée et d’une réduction exclusive de {{discount}}%."
+      "subtitle" : "Profitez d’un écran plus grand, d’une vérification des transactions automatisée, d’une protection renforcée et d’une réduction exclusive de {{discount}}%.",
+      "cta" : "Explorer les signers tactiles"
     },
     "optedOut" : {
-      "title" : "Repérez les pièges d’un coup d’œil",
-      "subtitle" : "Vérifiez les détails de vos transactions sur un écran tactile et repérez les escroqueries grâce à des contrôles de sécurité avancés."
-    },
-    "cta" : "Explorer les signers tactiles"
+      "title" : "Détection des escroqueries",
+      "subtitle" : "Ces fonctionnalités de sécurité avancées permettent de détecter les menaces en temps réel.",
+      "cta" : "En savoir plus"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "Contacts",
     "addContact" : "Ajouter un contact",
     "searchPlaceholder" : "Rechercher un contact",
+    "searchNoResults" : "Aucun contact trouvé",
     "me" : {
       "name" : "Moi",
       "addressCount_zero" : "0 adresse",
       "addressCount_one" : "{{count}} adresse",
       "addressCount_other" : "{{count}} adresses"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Vos contacts sont chiffrés de bout en bout avec votre appareil Ledger et synchronisés sur vos appareils. Vous seul(e) pouvez y accéder.",
+      "dismiss" : "Compris"
+    },
+    "featureIntroduction" : {
+      "title" : "Découvrez les contacts",
+      "description" : "Votre répertoire crypto : enregistrez les wallets vers lesquels vous transférez des actifs, en un seul endroit.",
+      "primaryAction" : "Explorer",
+      "secondaryAction" : "Plus tard",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Enregistrez vos adresses",
+          "description" : "Conservez un répertoire de vos adresses."
+        },
+        "sendToRightAddress" : {
+          "title" : "Envoyez à la bonne adresse",
+          "description" : "Transférez vos actifs vers le bon wallet."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Confidentialité multi-appareils",
+          "description" : "Chiffré de bout en bout avec Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails" : {

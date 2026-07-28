@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 
 export type RecentAddress = Readonly<{

@@ -46,7 +46,11 @@ function resolveAddressEntryState(
         status: "invalid",
         value,
         resolvedAddress: null,
-        inputMethod: result.status === "domain_not_found" ? "ens" : inputMethod,
+        inputMethod:
+          result.status === "domain_not_found" ||
+          (result.status === "invalid_format" && result.isDomain)
+            ? "ens"
+            : inputMethod,
         error: result.status,
       };
     case "unavailable":

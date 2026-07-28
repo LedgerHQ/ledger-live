@@ -3,12 +3,8 @@
  */
 import { renderHook, act } from "@testing-library/react";
 import { of, throwError } from "rxjs";
-import {
-  UserRefusedAllowManager,
-  DisconnectedDeviceDuringOperation,
-  UnresponsiveDeviceError,
-  DeviceSocketFail,
-} from "@ledgerhq/errors";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedAllowManager, UnresponsiveDeviceError, DeviceSocketFail } from "../../errors";
 import { useGenuineCheck } from "./useGenuineCheck";
 import {
   getGenuineCheckFromDeviceId,
@@ -115,7 +111,7 @@ describe("useGenuineCheck", () => {
       });
 
       expect(result.current.genuineState).toEqual("unchecked");
-      expect(result.current.error).toBeInstanceOf(DisconnectedDeviceDuringOperation);
+      expect(result.current.error?.name).toBe("DisconnectedDeviceDuringOperation");
     });
 
     it("should set genuineState to non-genuine when HSM returns a counterfeit error", async () => {
@@ -297,7 +293,7 @@ describe("useGenuineCheck", () => {
       });
 
       // Then the hook consumer should be notified of the error
-      expect(result.current.error).toBeInstanceOf(UnresponsiveDeviceError);
+      expect(result.current.error?.name).toBe("UnresponsiveDeviceError");
       expect(result.current.devicePermissionState).toEqual("requested");
     });
   });

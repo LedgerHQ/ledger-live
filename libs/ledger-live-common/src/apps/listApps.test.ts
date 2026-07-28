@@ -1,5 +1,5 @@
 import { from, lastValueFrom } from "rxjs";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "../errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./listApps";
 import ManagerAPI, { ListInstalledAppsEvent } from "../manager/api";
@@ -142,7 +142,7 @@ describe("listApps", () => {
       forceProvider: 1,
     }).subscribe({
       error: err => {
-        expect(err).toBeInstanceOf(UnexpectedBootloader);
+        expect(err).toMatchObject({ name: "UnexpectedBootloader" });
         done();
       },
       complete: () => {
@@ -165,7 +165,7 @@ describe("listApps", () => {
       forceProvider: 1,
     }).subscribe({
       error: err => {
-        expect(err).toBeInstanceOf(UnexpectedBootloader);
+        expect(err).toMatchObject({ name: "UnexpectedBootloader" });
         done();
       },
       complete: () => {

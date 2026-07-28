@@ -35,7 +35,6 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

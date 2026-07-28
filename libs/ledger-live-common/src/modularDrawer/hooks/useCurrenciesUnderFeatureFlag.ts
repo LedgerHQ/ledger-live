@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Feature } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
 import useEnv from "@features/platform-env";
@@ -102,7 +101,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const robinhoodTestnet = useFeature("currencyRobinhoodTestnet");
 
   const featureFlaggedCurrencies = useMemo(
-    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+    (): Partial<Record<string, Feature<unknown> | null>> => ({
+      // TO BE REPLACED soon by branded id
       adi,
       aleo,
       aleo_testnet: aleoTestnet,

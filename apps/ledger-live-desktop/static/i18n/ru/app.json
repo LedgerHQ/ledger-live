@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™ не поддерживает обмен Monad",
       "monad_description" : "Для обмена Monad используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
-      "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "aleo_title" : "Ledger Nano S™ не поддерживает обмен Aleo",
+      "aleo_description" : "Используйте другие совместимые устройства Ledger для обмена Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "Сумма комиссии ({{unit}})",
     "gasLimit" : "Лимит Газа ({{unit}})",
     "feesPaid" : "Комиссия сети за обработку вашей транзакции",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Для оплаты комиссии сети потребуется {{energy}} Energy и {{bandwidth}} Bandwidth."
+      },
+      "insufficient" : {
+        "description" : "У вас недостаточно Energy и Bandwidth для этого перевода. Недостаток будет покрыт за счёт сжигания TRX."
+      }
+    },
     "insufficientBalanceFees" : "Недостаточный баланс для покрытия комиссии сети",
     "amountToSend" : "Сумма к отправке в ({{currency}})",
     "coinToSend" : "Монета для отправки",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Переделегировать",
         "redelegateDisabledTooltip" : "Вы можете переделегировать через <0>{{days}}</0> дн",
         "redelegateMaxDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
-        "undelegateDisabledTooltip" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "Вы не можете перевыбрать более <0>7</0> валидаторов за раз",
+          "zero_gravity" : "Чтобы отозвать, вам нужно как минимум 1 Gwei делегированных долей"
+        },
         "undelegateActivatingTooltip" : "Вы не можете отозвать стейк, который ещё активируется.",
         "reward" : "Запросить вознаграждение",
         "activeTooltip" : "Делегирование приносит вознаграждения",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "Количество"
+              "title" : "Количество",
+              "visibilityDelay" : "Может пройти до {{numberOfMinutes}} мин., прежде чем это делегирование появится на вашей панели делегирования."
             },
             "validator" : {
               "title" : "Валидаторы",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Пополнение",
+      "OUT" : "Вывод"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "Семейства, разделённые запятыми, для пользовательского тестирования нескольких семейств.",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "Применить",
-        "resetOverride" : "Сбросить переопределения"
+        "contactsData" : "Данные контактов",
+        "loadPopulatedContacts" : "Загрузить заполненные контакты",
+        "resetContacts" : "Сбросить контакты",
+        "resetOverride" : "Сбросить переопределения",
+        "featureIntroduction" : {
+          "title" : "Презентация функции",
+          "label" : "Показывать презентацию функции «Контакты»",
+          "dismissed" : "Отключено — включите, чтобы ещё раз показать презентацию о функции «Контакты».",
+          "willShow" : "Будет отображаться в разделе «Контакты», пока вы его не скроете её."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Список криптоактивов",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "В указанном ASA не выбран счёт получателя."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Слишком длинное Memo",
+      "description" : "Memo в Algorand не могут превышать 1024 байта. Пожалуйста, сократите примечание Memo."
     },
     "AmountRequired" : {
       "title" : "Укажите сумму"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Обзора больше. Действий меньше. Скидка {{discount}}%",
-      "subtitle" : "Оцените увеличенный экран, удобную Проверку транзакций, усиленную защиту и эксклюзивную скидку {{discount}}%."
+      "subtitle" : "Оцените увеличенный экран, удобную Проверку транзакций, усиленную защиту и эксклюзивную скидку {{discount}}%.",
+      "cta" : "Изучить сенсорные устройства"
     },
     "optedOut" : {
-      "title" : "Распознавайте скам. Исследуйте каждую деталь",
-      "subtitle" : "Проверяйте всë на сенсорном устройстве подписи и выявляйте скам благодаря передовым функциям проверки безопасности."
-    },
-    "cta" : "Изучить сенсорные устройства подписи"
+      "title" : "Распознайте скам до подписания",
+      "subtitle" : "Узнайте больше о продвинутых функциях безопасности, которые позволяют обнаруживать угрозы в реальном времени.",
+      "cta" : "Подробнее"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "Контакты",
     "addContact" : "Добавить контакт",
     "searchPlaceholder" : "Поиск контакта...",
+    "searchNoResults" : "Контакт не найден",
     "me" : {
       "name" : "Я",
       "addressCount_zero" : "0 адресов",
       "addressCount_one" : "{{count}} адрес",
       "addressCount_other" : "Адресов: {{count}}"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Ваши контакты защищены сквозным шифрованием устройством Ledger и синхронизируются между вашими устройствами — только вы можете разблокировать их.",
+      "dismiss" : "Понятно"
+    },
+    "featureIntroduction" : {
+      "title" : "Представляем «Контакты»",
+      "description" : "Ваша адресная книга для криптовалюты — сохраняйте криптокошельки для отправки средств. Удобно и универсально.",
+      "primaryAction" : "Попробовать",
+      "secondaryAction" : "Не сейчас",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Сохраняйте адреса",
+          "description" : "Удобно храните все адреса для отправки средств."
+        },
+        "sendToRightAddress" : {
+          "title" : "Отправляйте на правильные адреса",
+          "description" : "Средства всегда поступят на нужный криптокошелёк."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Конфиденциальность на всех устройствах",
+          "description" : "Сквозное шифрование благодаря Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails" : {
