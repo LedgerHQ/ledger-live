@@ -50,6 +50,11 @@ const teamPtx = {
     parser: stringParser,
     desc: "Request provider session id",
   },
+  PAY_CARD_API_BASE_URL: {
+    def: "https://global.api.stg.ledger-test.com",
+    parser: stringParser,
+    desc: "Pay Card API base URL (staging)",
+  },
 };
 
 export default teamPtx;

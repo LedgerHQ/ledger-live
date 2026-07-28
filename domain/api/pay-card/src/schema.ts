@@ -1,20 +1,18 @@
 import { z } from "zod";
 
 export const PayCardPreAuthResponseSchema = z.object({
-  login_url: z.string().url(),
+  loginUrl: z.string().url(),
 });
 
 export const PayCardAuthResponseSchema = z.object({
-  app_session_token: z.string().min(1),
-  expires_at: z.string().datetime(),
+  appSessionToken: z.string().min(1),
+  expiresAt: z.string().datetime(),
 });
 
 export const PayCardUserResponseSchema = z.object({
-  provider_user_id: z.string().min(1),
-  verification_state: z.string().min(1).nullable(),
-  phase: z.string().min(1).nullable(),
-});
-
-export const PayCardLogoutResponseSchema = z.object({
-  success: z.boolean(),
+  verificationState: z.string().min(1),
+  cardStatus: z.string().min(1),
+  cardFunded: z.boolean(),
+  addedToDigitalWallet: z.boolean(),
+  hasFirstTransaction: z.boolean(),
 });

@@ -11,18 +11,16 @@ export const PayCardSessionSchema = z.object({
   expiresAt: z.string().datetime(),
 });
 
-export const PayCardVerificationStateSchema = z.string().min(1).nullable();
+export const PayCardVerificationStateSchema = z.string().min(1);
 
-export const PayCardPhaseSchema = z.string().min(1).nullable();
+export const PayCardCardStatusSchema = z.string().min(1);
 
 export const PayCardUserSchema = z.object({
-  providerUserId: z.string().min(1),
   verificationState: PayCardVerificationStateSchema,
-  phase: PayCardPhaseSchema,
-});
-
-export const PayCardLogoutResultSchema = z.object({
-  success: z.boolean(),
+  cardStatus: PayCardCardStatusSchema,
+  cardFunded: z.boolean(),
+  addedToDigitalWallet: z.boolean(),
+  hasFirstTransaction: z.boolean(),
 });
 
 export const PayCardParamsSchema = z.object({

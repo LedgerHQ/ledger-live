@@ -65,8 +65,7 @@ export const store = configureStore({
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
             ...payCardApiExtra({
-              // LIVE-33829: force mocks until Pay Card API base URL is wired.
-              payCardApiMocksEnabled: true,
+              payCardApiBaseUrl: getEnv("PAY_CARD_API_BASE_URL"),
             }),
             ...authApiExtra({
               authFeatureId: "lwmAuth",

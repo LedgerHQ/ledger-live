@@ -1,4 +1,4 @@
-import type { PayCardLogoutResult, PayCardPreAuth, PayCardSession, PayCardUser } from "./types";
+import type { PayCardPreAuth, PayCardSession, PayCardUser } from "./types";
 
 export function makePayCardPreAuth(overrides: Partial<PayCardPreAuth> = {}): PayCardPreAuth {
   return {
@@ -17,18 +17,11 @@ export function makePayCardSession(overrides: Partial<PayCardSession> = {}): Pay
 
 export function makePayCardUser(overrides: Partial<PayCardUser> = {}): PayCardUser {
   return {
-    providerUserId: "mock_provider_user",
     verificationState: "VERIFIED",
-    phase: null,
-    ...overrides,
-  };
-}
-
-export function makePayCardLogoutResult(
-  overrides: Partial<PayCardLogoutResult> = {},
-): PayCardLogoutResult {
-  return {
-    success: true,
+    cardStatus: "ACTIVE",
+    cardFunded: true,
+    addedToDigitalWallet: false,
+    hasFirstTransaction: false,
     ...overrides,
   };
 }
