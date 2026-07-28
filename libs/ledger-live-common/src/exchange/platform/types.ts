@@ -1,5 +1,5 @@
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike, AccountRaw, AccountRawLike } from "@ledgerhq/types-live";
 import type { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import type { Transaction } from "../../coin-modules/transaction-types";

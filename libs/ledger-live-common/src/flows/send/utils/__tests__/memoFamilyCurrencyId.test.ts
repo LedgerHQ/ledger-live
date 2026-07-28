@@ -1,5 +1,6 @@
 import { getMemoFamilyCurrencyId } from "../memoFamilyCurrencyId";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 describe("getMemoFamilyCurrencyId", () => {
   it("returns undefined when currency is missing", () => {

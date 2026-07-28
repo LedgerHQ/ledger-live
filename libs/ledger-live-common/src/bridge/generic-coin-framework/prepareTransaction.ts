@@ -12,7 +12,7 @@ import {
 import BigNumber from "bignumber.js";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { GenericTransaction } from "./types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {

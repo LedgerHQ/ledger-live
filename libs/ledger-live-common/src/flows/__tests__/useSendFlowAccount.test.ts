@@ -4,7 +4,8 @@
 import { renderHook, act } from "@testing-library/react";
 import { useSendFlowAccount } from "../send/hooks/useSendFlowAccount";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 // Mock getAccountCurrency
 jest.mock("../../account/helpers", () => ({

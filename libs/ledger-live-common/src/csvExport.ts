@@ -5,7 +5,7 @@ import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 

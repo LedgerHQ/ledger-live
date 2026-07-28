@@ -47,7 +47,7 @@ const ApyIndicator = ({ value, type }: { value: number; type: string }) =>
   React.createElement("span", null, `APY: ${value}% ${type}`);
 
 const useAccountData = jest.fn(
-  (params: { networks: import("@ledgerhq/types-cryptoassets").CryptoOrTokenCurrency[] }) =>
+  (params: { networks: import("@domain/entity-currency").CryptoOrTokenCurrency[] }) =>
     params.networks.map(n => ({
       asset: n,
       label: `${n.name} (${n.ticker})`,
