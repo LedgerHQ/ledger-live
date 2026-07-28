@@ -23,13 +23,11 @@ export class PageLogCollector {
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
   private targetPage: Page | null = null;
-  private readonly attachedPages: Set<Page> = new Set();
+  private readonly attachedPages: WeakSet<Page> = new WeakSet<Page>();
 
-  // Signatures of a swap-init failure the swap live-app surfaces over wallet-api
-  // (custom.exchange.swap). This is the QAA-1326 root cause behind a device stranded on
-  // "Exchange app is ready": it appears ONLY in the webview console, never in the network log
-  // (the swap backend calls return 200). Kept in sync with the hint in speculos.ts.
+  // Swap-init failure signatures (QAA-1326): used to surface the root cause when swap-init stalls.
   private static readonly SWAP_INIT_ERROR_SIGNATURES = [
+    "custom.exchange.swap",
     "CompleteExchangeError",
     "PayloadStepError",
     "FeeNotLoaded",
@@ -138,9 +136,9 @@ export class PageLogCollector {
   }
 
   /**
-   * Extract the swap-init failure (custom.exchange.swap error) from the captured webview
-   * console, if present, so the QAA-1326 root cause can be surfaced as its own attachment
-   * instead of being buried in the full console dump. Returns null when no such error was seen.
+   * Extract the swap-init failure (custom.exchange.swap request/response) from the captured
+   * webview console, formatted for readability: `%c` console styling stripped, the embedded
+   * JSON payload pretty-printed, and the noisy minified renderer stacks dropped. Null when none.
    */
   getSwapInitError(): string | null {
     const matches = this.consoleLogs.filter(entry =>
@@ -148,9 +146,51 @@ export class PageLogCollector {
     );
     if (matches.length === 0) return null;
 
-    return matches
-      .map(entry => `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.text}`)
-      .join("\n\n");
+    return matches.map(entry => PageLogCollector.formatSwapInitEntry(entry)).join("\n\n");
+  }
+
+  private static formatSwapInitEntry(entry: ConsoleLog): string {
+    const header = `[${entry.timestamp}] [${entry.level.toUpperCase()}]`;
+    const jsonStart = entry.text.indexOf("{");
+    if (jsonStart === -1) {
+      return `${header} ${PageLogCollector.stripConsoleStyling(entry.text)}`;
+    }
+
+    const label = PageLogCollector.stripConsoleStyling(entry.text.slice(0, jsonStart));
+    const rawJson = entry.text.slice(jsonStart);
+    try {
+      const pretty = JSON.stringify(PageLogCollector.dropStacks(JSON.parse(rawJson)), null, 2);
+      return `${header} ${label}\n${pretty}`;
+    } catch {
+      // Not valid JSON (e.g. a plain log line) — keep the cleaned text as-is.
+      return `${header} ${label} ${rawJson}`;
+    }
+  }
+
+  /** Remove `%c` console format tokens and their CSS style arguments, keeping the label text. */
+  private static stripConsoleStyling(text: string): string {
+    return text
+      .replace(/%c/g, "")
+      .replace(/background:[^;]*;?/gi, "")
+      .replace(/color:\s*#[0-9a-f]{3,8};?/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  /** Recursively drop `stack` properties — the minified renderer stacks are noise for triage. */
+  private static dropStacks(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      return value.map(item => PageLogCollector.dropStacks(item));
+    }
+    if (value !== null && typeof value === "object") {
+      const result: Record<string, unknown> = {};
+      for (const [key, val] of Object.entries(value)) {
+        if (key === "stack") continue;
+        result[key] = PageLogCollector.dropStacks(val);
+      }
+      return result;
+    }
+    return value;
   }
 
   getFormattedNetworkLogs(): string {

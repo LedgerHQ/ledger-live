@@ -585,12 +585,9 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
 }
 
 const SWAP_INIT_STALL_HINT =
-  `\n↳ Swap-init stall (QAA-1326): the device Exchange app is ready but Ledger Live never ` +
-  `delivered the swap payload, so "Review transaction" was never reached — a known transient ` +
-  `swap-init failure, not a slow render. Root cause: the "custom.exchange.swap" wallet-api call ` +
-  `failed after the Exchange app opened (e.g. FeeNotLoaded / SWAP_NOT_CREATED_ERROR). See the ` +
-  `"⚠️ Swap-init error" attachment (or the "Webview Console Logs" attachment) — NOT the network ` +
-  `log; the swap backend calls themselves return 200.`;
+  `\n The device Exchange app is ready but Ledger Live never ` +
+  `delivered the swap payload, so "Review transaction" was never reached. See the ` +
+  `"⚠️ Swap-init error" attachment (or the "Webview Console Logs" attachment).`;
 
 function isExchangeAppReadyStall(screenText: string): boolean {
   return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
@@ -601,8 +598,10 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
     try {
       await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw isExchangeAppReadyStall(message) ? new Error(message + SWAP_INIT_STALL_HINT) : error;
+      if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
+        error.message += SWAP_INIT_STALL_HINT;
+      }
+      throw error;
     }
     return;
   }
