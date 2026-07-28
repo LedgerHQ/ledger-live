@@ -59,7 +59,6 @@ import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreference
 import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
 import NotificationsSettings from "~/screens/Settings/Notifications";
 import HelpSettings from "~/screens/Settings/Help";
-import RegionSettings from "~/screens/Settings/General/Region";
 import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "~/screens/Settings/Experimental";
@@ -122,13 +121,6 @@ export default function SettingsNavigator() {
         component={CountervalueSettings}
         options={{
           title: t("settings.display.counterValue"),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.RegionSettings}
-        component={RegionSettings}
-        options={{
-          title: t("settings.display.region"),
         }}
       />
       <Stack.Screen

@@ -21,7 +21,6 @@ import {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
@@ -172,10 +171,6 @@ export const setDiscreetMode = createAction<SettingsSetDiscreetModePayload>(
 export const setLanguage = createAction<SettingsSetLanguagePayload>(
   SettingsActionTypes.SETTINGS_SET_LANGUAGE,
 );
-export const setLocale = createAction<SettingsSetLocalePayload>(
-  SettingsActionTypes.SETTINGS_SET_LOCALE,
-);
-
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );
