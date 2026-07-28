@@ -152,8 +152,13 @@ export default class SwapPage extends CommonPage {
     await waitForElementById(this.swapSuccessTitleId, 120000, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
+    let tapped = false;
     await retryUntilTimeout(async () => {
+      if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, 500))) {
+        return; // already dismissed by a previous tap — nothing left to do
+      }
       await app.common.closePage();
+      tapped = true;
       if (await IsIdVisible(this.swapSuccessTitleId, 1000)) {
         throw new Error("swap-success-title still visible after close tap");
       }
