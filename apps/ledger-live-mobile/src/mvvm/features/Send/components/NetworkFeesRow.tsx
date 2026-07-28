@@ -3,7 +3,6 @@ import { View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Text,
-  Button,
   BottomSheet,
   BottomSheetView,
   BottomSheetHeader,
@@ -13,6 +12,8 @@ import {
 import { Information, ChevronDown, Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
+import { BottomSheetInfoGradient } from "LLM/components/BottomSheetGradient";
+import { InfoState } from "LLM/components/InfoState";
 import type { FeeSelectorOptionKind, NetworkFeesViewModel } from "../types";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { useAnalytics } from "~/analytics";
@@ -53,14 +54,6 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         flexDirection: "row",
         alignItems: "center",
         gap: theme.spacings.s4,
-      },
-      infoContent: {
-        paddingHorizontal: theme.spacings.s24,
-        paddingBottom: theme.spacings.s24,
-      },
-      infoDescription: {
-        marginBottom: theme.spacings.s24,
-        textAlign: "center",
       },
       presetOption: {
         flexDirection: "row",
@@ -127,6 +120,17 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
     infoBottomSheetRef.current?.dismiss();
   }, [infoBottomSheetRef]);
 
+  const infoTitle = viewModel.networkFeesInfo
+    ? t(`send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.title`)
+    : viewModel.label;
+
+  const infoDescription = viewModel.networkFeesInfo
+    ? t(
+        `send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.description`,
+        viewModel.networkFeesInfo.values,
+      )
+    : t("send.newSendFlow.feesPaid");
+
   return (
     <>
       <View style={styles.row}>
@@ -160,29 +164,24 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
         </Pressable>
       </View>
 
-      <BottomSheet ref={infoBottomSheetRef} snapPoints="small">
+      <BottomSheet
+        ref={infoBottomSheetRef}
+        enableDynamicSizing
+        snapPoints={null}
+        backgroundComponent={BottomSheetInfoGradient}
+      >
         <BottomSheetView>
-          <BottomSheetHeader
-            title={
-              viewModel.networkFeesInfo
-                ? t(`send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.title`)
-                : viewModel.label
-            }
-            density="compact"
+          <BottomSheetHeader density="compact" />
+          <InfoState
+            preset="info"
+            size="hug"
+            title={infoTitle}
+            description={infoDescription}
+            primaryCta={{
+              label: t("common.gotit"),
+              onPress: handleCloseInfo,
+            }}
           />
-          <View style={styles.infoContent}>
-            <Text typography="body2" lx={{ color: "muted" }} style={styles.infoDescription}>
-              {viewModel.networkFeesInfo
-                ? t(
-                    `send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.description`,
-                    viewModel.networkFeesInfo.values,
-                  )
-                : t("send.newSendFlow.feesPaid")}
-            </Text>
-            <Button appearance="base" size="lg" onPress={handleCloseInfo}>
-              {t("common.gotit")}
-            </Button>
-          </View>
         </BottomSheetView>
       </BottomSheet>
 

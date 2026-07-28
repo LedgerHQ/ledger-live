@@ -55,4 +55,5 @@ export type AddressSearchResult = Readonly<{
   matchedAccounts: MatchedAccount[];
   bridgeErrors: BridgeValidationErrors | undefined;
   bridgeWarnings: BridgeValidationWarnings | undefined;
+  isBridgeLoading?: boolean;
 }>;

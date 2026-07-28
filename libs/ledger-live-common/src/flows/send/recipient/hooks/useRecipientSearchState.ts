@@ -31,9 +31,12 @@ export function useRecipientSearchState({
 
   const showSearchResults = hasSearchValue && (!isLoading || hasValidatedAddress);
 
+  // Local validation sets status "valid" before the bridge confirms the format.
+  // Wait for the first bridge result for this recipient to avoid briefly treating
+  // incomplete input as a selectable matching address.
   const isAddressComplete = useMemo(() => {
-    return hasValidatedAddress && !isBridgeInvalidAddress;
-  }, [hasValidatedAddress, isBridgeInvalidAddress]);
+    return hasValidatedAddress && !isBridgeInvalidAddress && !result.isBridgeLoading;
+  }, [hasValidatedAddress, isBridgeInvalidAddress, result.isBridgeLoading]);
 
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
@@ -51,7 +54,7 @@ export function useRecipientSearchState({
   const showMatchedAddress =
     showSearchResults &&
     (hasAnyMatches ||
-      (result.status === "valid" && !result.error && !isBridgeInvalidAddress) ||
+      (isAddressComplete && result.status === "valid" && !result.error) ||
       (isAddressComplete && (hasBridgeRecipientError || hasBridgeRecipientWarning))) &&
     (result.status === "valid" ||
       (recipientSupportsDomain && result.status === "ens_resolved") ||
