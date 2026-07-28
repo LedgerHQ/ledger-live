@@ -63,7 +63,7 @@ export type ConcordiumEventAddress =
  * tags are modelled explicitly; every other event is kept as an opaque tagged
  * object so the tag-based mapper can ignore it (PLT/staking tags added later).
  */
-export interface BlockTransactionEvent {
+export interface TransactionEvent {
   tag: string;
   [key: string]: unknown;
 }
@@ -71,7 +71,7 @@ export interface BlockTransactionEvent {
 /**
  * A native CCD transfer event.
  */
-export interface TransferredEvent extends BlockTransactionEvent {
+export interface TransferredEvent extends TransactionEvent {
   tag: "Transferred";
   amount: string; // microCCD as a string
   from: ConcordiumEventAddress;
@@ -82,7 +82,7 @@ export interface TransferredEvent extends BlockTransactionEvent {
  * A memo event. A `transferWithMemo` transaction emits both a `Transferred` and a
  * separate `TransferMemo` event within the same summary; the memo is hex-encoded CBOR.
  */
-export interface TransferMemoEvent extends BlockTransactionEvent {
+export interface TransferMemoEvent extends TransactionEvent {
   tag: "TransferMemo";
   memo: string; // hex-encoded CBOR
 }
@@ -92,7 +92,7 @@ export interface TransferMemoEvent extends BlockTransactionEvent {
  * produced no effective balance changes.
  */
 export type BlockTransactionResult =
-  | { outcome: "success"; events: BlockTransactionEvent[] }
+  | { outcome: "success"; events: TransactionEvent[] }
   | { outcome: "reject"; rejectReason?: { tag: string; contents?: unknown } };
 
 /**

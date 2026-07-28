@@ -5,8 +5,8 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { getBlockTransactionEvents } from "../../network/proxyClient";
 import type {
-  BlockTransactionEvent,
   BlockTransactionSummary,
+  TransactionEvent,
   ConcordiumEventAddress,
   TransferMemoEvent,
   TransferredEvent,
@@ -48,7 +48,7 @@ function toBlockTransaction(summary: BlockTransactionSummary): BlockTransaction 
 }
 
 function mapEventsToOperations(
-  events: BlockTransactionEvent[],
+  events: TransactionEvent[],
   txHash: string,
 ): { operations: BlockOperation[]; memo: string | undefined } {
   const operations: BlockOperation[] = [];
@@ -97,8 +97,8 @@ function accountAddress(address: ConcordiumEventAddress): string | undefined {
   return address.type === "AddressAccount" ? address.address : undefined;
 }
 
-const isTransferredEvent = (event: BlockTransactionEvent): event is TransferredEvent =>
+const isTransferredEvent = (event: TransactionEvent): event is TransferredEvent =>
   event.tag === "Transferred";
 
-const isTransferMemoEvent = (event: BlockTransactionEvent): event is TransferMemoEvent =>
+const isTransferMemoEvent = (event: TransactionEvent): event is TransferMemoEvent =>
   event.tag === "TransferMemo";
