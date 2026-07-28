@@ -1,4 +1,4 @@
-import { isRevertLike } from "../../network/rpcErrors";
+import { isEpochBlockRevert, isRevertLike } from "../../network/rpcErrors";
 
 describe("isRevertLike", () => {
   it.each([
@@ -30,5 +30,29 @@ describe("isRevertLike", () => {
   it("handles non-Error values", () => {
     expect(isRevertLike("plain reverted string")).toBe(true);
     expect(isRevertLike(undefined)).toBe(false);
+  });
+});
+
+describe("isEpochBlockRevert", () => {
+  it.each([
+    "Contract is blocked from performing this action",
+    "execution reverted: Contract is blocked from performing this action",
+    "CONTRACT IS BLOCKED FROM PERFORMING THIS ACTION",
+  ])("classifies the epoch-processing block %p as an epoch block", message => {
+    expect(isEpochBlockRevert(new Error(message))).toBe(true);
+  });
+
+  it.each([
+    "execution reverted",
+    "vote cap exceeded",
+    "Group not eligible",
+    "request timed out",
+  ])("does not classify unrelated failure %p as an epoch block", message => {
+    expect(isEpochBlockRevert(new Error(message))).toBe(false);
+  });
+
+  it("handles non-Error values", () => {
+    expect(isEpochBlockRevert("contract is blocked from performing this action")).toBe(true);
+    expect(isEpochBlockRevert(undefined)).toBe(false);
   });
 });
