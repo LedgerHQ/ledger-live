@@ -1,4 +1,5 @@
 import type { Contact, ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ContactEditRequirement } from "./model/editRequirement";
 
 export type ContactDetailAddressRowIntent = Readonly<{
@@ -65,3 +66,25 @@ export type ContactDetailViewProps = Readonly<{
   onAddAddress: () => void;
   onOpenLedgerWalletAddresses?: () => void;
 }>;
+
+export type ContactAddressDetailAsset = Readonly<{
+  currencyId: ContactAddress["currencyId"];
+  name: string;
+  ticker: string;
+}>;
+
+export type ContactAddressDetailNetwork = Readonly<{
+  id: CryptoCurrency["id"];
+  name: string;
+}>;
+
+export type ContactAddressDetailViewModel =
+  | Readonly<{ displayMode: "not-found" }>
+  | Readonly<{
+      displayMode: "found";
+      address: ContactAddress["address"];
+      label: ContactAddress["label"];
+      network: ContactAddressDetailNetwork;
+      asset: ContactAddressDetailAsset;
+      qrPayload: string;
+    }>;
