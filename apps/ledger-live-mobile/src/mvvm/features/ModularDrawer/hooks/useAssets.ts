@@ -6,17 +6,53 @@ import VersionNumber from "react-native-version-number";
 import { useFeature } from "@features/platform-feature-flags";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
+
+type DadaAssetsData = NonNullable<ReturnType<typeof useAssetsData>["data"]>;
 
 interface AssetsProps {
   currencyIds?: string[];
+  networkIds?: readonly string[];
   searchedValue?: string;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
 }
 
+function buildAssetsSorted(data: DadaAssetsData, networkIds?: readonly string[]): AssetData[] {
+  const allowedNetworkIds = networkIds === undefined ? undefined : new Set(networkIds);
+
+  return data.currenciesOrder.metaCurrencyIds.flatMap(metaCurrencyId => {
+    const asset = data.cryptoAssets[metaCurrencyId];
+    if (!asset) return [];
+
+    const assetIdEntries = Object.entries(asset.assetsIds).filter(
+      ([networkId]) => allowedNetworkIds?.has(networkId) ?? true,
+    );
+    const networks = assetIdEntries.flatMap(([, assetId]) => {
+      const currency = data.cryptoOrTokenCurrencies[assetId];
+      return currency ? [currency] : [];
+    });
+    const firstCurrency = networks[0];
+    if (!firstCurrency) return [];
+
+    return [
+      {
+        asset: {
+          ...asset,
+          id: firstCurrency.id,
+          assetsIds: Object.fromEntries(assetIdEntries),
+        },
+        networks,
+        interestRates: data.interestRates?.[firstCurrency.id],
+        market: data.markets?.[firstCurrency.id],
+      },
+    ];
+  });
+}
+
 export function useAssets({
   currencyIds,
+  networkIds,
   searchedValue,
   useCase,
   areCurrenciesFiltered,
@@ -32,35 +68,19 @@ export function useAssets({
 
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
-    currencyIds,
+    currencyIds: networkIds === undefined ? currencyIds : undefined,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,
-    areCurrenciesFiltered,
+    areCurrenciesFiltered: networkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
     includeTestNetworks: devMode,
   });
 
-  const assetsSorted: AssetData[] | undefined = useMemo(() => {
-    if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
-
-    return data.currenciesOrder.metaCurrencyIds
-      .filter(currencyId => data.cryptoAssets[currencyId])
-      .map(currencyId => {
-        const firstNetworkId = Object.values(data.cryptoAssets[currencyId].assetsIds)[0];
-        return {
-          asset: {
-            ...data.cryptoAssets[currencyId],
-            id: firstNetworkId,
-          },
-          networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
-            .map(assetId => data.cryptoOrTokenCurrencies[assetId])
-            .filter(network => network !== undefined),
-          interestRates: data.interestRates?.[firstNetworkId],
-          market: data.markets?.[firstNetworkId],
-        };
-      });
-  }, [data]);
+  const assetsSorted = useMemo(
+    () => (data ? buildAssetsSorted(data, networkIds) : undefined),
+    [data, networkIds],
+  );
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 

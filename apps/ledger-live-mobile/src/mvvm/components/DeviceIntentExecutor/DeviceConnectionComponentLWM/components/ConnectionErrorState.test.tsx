@@ -12,7 +12,7 @@ import {
 import { TrackScreen, track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { urls } from "~/utils/urls";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import {
   PAGE_CONNECT_DEVICE,
   setIsInTerminalConnectDeviceError,
@@ -82,9 +82,9 @@ function renderState(errorType: ConnectionErrorType) {
   };
 
   const view = render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <ConnectionErrorState state={state} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 
   return { ...view, retry, ignore };
@@ -177,7 +177,7 @@ describe("ConnectionErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
@@ -193,7 +193,7 @@ describe("ConnectionErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {

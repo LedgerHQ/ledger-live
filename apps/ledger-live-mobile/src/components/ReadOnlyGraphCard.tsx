@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { withDiscreetMode } from "~/context/DiscreetModeContext";

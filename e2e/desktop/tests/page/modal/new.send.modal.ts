@@ -13,9 +13,9 @@ export class NewSendModal extends Modal {
   readonly matchedAddressButtons = this.dialog
     .locator('[data-testid="send-matched-address-button"]')
     .filter({ visible: true });
+  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoLink = this.dialog.getByTestId("send-skip-memo-link");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm-button");
-  readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
@@ -34,6 +34,7 @@ export class NewSendModal extends Modal {
     .or(this.confirmationErrorContent)
     .or(this.confirmationInfoContent);
   readonly successConfirmationTitle = this.dialog.getByTestId("send-confirmation-success-title");
+  readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
 
@@ -73,6 +74,13 @@ export class NewSendModal extends Modal {
     await button.click();
   }
 
+  @step("Type memo: $0")
+  async typeMemo(memo: string) {
+    await this.memoInput.waitFor({ state: "visible" });
+    await this.memoInput.fill(memo);
+    await expect(this.memoInput).toHaveValue(memo);
+  }
+
   @step("Skip memo")
   async skipMemo({ confirm = true }: { confirm?: boolean } = {}) {
     await this.skipMemoLink.click();
@@ -81,9 +89,9 @@ export class NewSendModal extends Modal {
     }
   }
 
-  @step("Fill memo/tag: $0")
-  async fillMemo(memo: string) {
-    await this.memoInput.fill(memo);
+  @step("Click View details")
+  async clickViewDetails() {
+    await this.viewDetailsButton.click();
   }
 
   @step("Fill crypto amount: $0 (switches to crypto mode first)")

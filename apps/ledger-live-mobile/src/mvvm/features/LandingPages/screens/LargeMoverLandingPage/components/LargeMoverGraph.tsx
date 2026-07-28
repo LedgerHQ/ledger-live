@@ -3,7 +3,7 @@ import { ensureContrast } from "@ledgerhq/native-ui";
 import { Item } from "~/components/Graph/types";
 import Graph from "~/components/Graph";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useTheme } from "styled-components/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { LoadingIndicator } from "./Loading";

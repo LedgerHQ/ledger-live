@@ -28,7 +28,7 @@ jest.mock("../../bridge", () => ({
   getAccountBridge: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn(),
   changes: { subscribe: jest.fn() },
 }));

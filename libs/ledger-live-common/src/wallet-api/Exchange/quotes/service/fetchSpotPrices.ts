@@ -1,6 +1,6 @@
 import URL from "url";
 
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import network from "@ledgerhq/live-network";
 
 export type FetchSpotPricesArgs = {

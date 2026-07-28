@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^"
   },

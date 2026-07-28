@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { getAssetByCurrency } from "../utils/getAssetByCurrency";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ModularDialogStep } from "../types";
 import { useModularDialogAnalytics } from "../analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "../analytics/modularDialog.types";

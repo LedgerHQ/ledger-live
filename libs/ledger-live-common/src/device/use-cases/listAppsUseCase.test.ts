@@ -9,8 +9,8 @@ jest.mock("../../apps/listApps", () => ({
   listApps: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-env", () => {
-  const actual = jest.requireActual("@ledgerhq/live-env");
+jest.mock("@shared/env", () => {
+  const actual = jest.requireActual("@shared/env");
   const { getEnv } = actual;
   return {
     ...actual,

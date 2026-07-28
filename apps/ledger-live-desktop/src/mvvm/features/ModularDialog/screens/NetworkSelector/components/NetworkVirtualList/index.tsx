@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { VirtualList } from "LLD/components/VirtualList";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { NetworkListItem } from "../NetworkListItem";
 import type { ReactElement, ReactNode } from "react";
 

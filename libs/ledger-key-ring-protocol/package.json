@@ -62,7 +62,6 @@
     "@ledgerhq/hw-transport-mocker": "workspace:*",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/ledger-auth": "workspace:*",
-    "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/speculos-transport": "workspace:*",
@@ -74,6 +73,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip39": "^3.0.4",

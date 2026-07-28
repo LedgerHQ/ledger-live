@@ -40,9 +40,12 @@ export default class SwapPage extends CommonPage {
   specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
 
   @Step("Open swap via deeplink")
-  async openViaDeeplink() {
-    await openDeeplink(this.baseLink);
-    await waitForElementById(app.common.walletApiWebview);
+  async openViaDeeplink(params?: string) {
+    const deeplinkPath = params ? `${this.baseLink}?${params}` : this.baseLink;
+    await openDeeplink(deeplinkPath);
+    // checkVisibility: false — an ambiguous token can open an account-picker drawer
+    // that covers the webview first; callers already check visibility themselves.
+    await waitForElementById(app.common.walletApiWebview, undefined, { checkVisibility: false });
   }
 
   @Step("Expect swap page")

@@ -12,12 +12,15 @@ import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen, useAnalytics, track } from "~/analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getAccountCurrency,
+  getMainAccount,
   isTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { isReceiveDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { navigateToSwapTab } from "~/screens/Swap/navigation/navigateToSwapTab";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 
@@ -70,7 +73,8 @@ export default function NoFunds({ route }: Readonly<Props>) {
 
   const swapAvailableIds = currenciesAll;
 
-  const availableOnReceive = true;
+  const receiveFamily = getMainAccount(account, parentAccount).currency.family;
+  const availableOnReceive = !isReceiveDisabledForFamily(receiveFamily);
 
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);

@@ -35,7 +35,7 @@ jobs:
           tag_version: ${{ github.event.inputs.tag_version }}
           application: ${{ github.event.inputs.application }}
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
           ref: ${{ steps.format-app-tag.outputs.main_ref }}
@@ -78,7 +78,7 @@ jobs:
         run: |
           git add .
       - name: commit changes
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(hotfix) :rocket: entering hotfix mode"
           repo: ${{ github.repository }}
@@ -90,14 +90,17 @@ jobs:
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: create PR to main
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          HOTFIX_DATE: ${{ steps.date.outputs.date }}
+          APPLICATION: ${{ github.event.inputs.application }}
+          TAG_VERSION: ${{ github.event.inputs.tag_version }}
         run: |
           gh pr create \
-            --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
+            --title ":fire: Hotfix $HOTFIX_DATE (targeting $APPLICATION $TAG_VERSION)"\
             -F ./.github/templates/hotfix.md \
             --base main \
             --head hotfix
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
   create-hotfix-fail:
     name: Create Hotfix > Failure Reporting
@@ -107,7 +110,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

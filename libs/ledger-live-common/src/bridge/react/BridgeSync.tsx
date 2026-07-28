@@ -6,7 +6,7 @@ import { ignoreElements } from "rxjs/operators";
 import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { isUpToDateAccount, getAccountCurrency } from "../../account";
 import { getAccountBridge } from "..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

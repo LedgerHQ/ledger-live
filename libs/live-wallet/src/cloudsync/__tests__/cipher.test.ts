@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { makeCipher } from "../cipher";
 import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
 

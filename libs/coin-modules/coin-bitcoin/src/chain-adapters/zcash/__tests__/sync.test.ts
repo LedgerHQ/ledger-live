@@ -144,7 +144,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(0));
   });
 
-  it("should set balance to transparent + private and leave spendableBalance unset when processing shielded transactions", () => {
+  it("should set balance and spendableBalance to transparent + private when processing shielded transactions", () => {
     const incomingTx: ShieldedTransaction = {
       id: "tx1",
       hex: "00",
@@ -173,9 +173,9 @@ describe("reduceShieldedSyncResult", () => {
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    // balance = transparent(100000) + orchard(50000) = 150000; spendableBalance left to jsHelpers
+    // balance = transparent(100000) + orchard(50000) = 150000
     expect(output.accountUpdate.balance).toEqual(new BigNumber(150000));
-    expect(output.accountUpdate).not.toHaveProperty("spendableBalance");
+    expect(output.accountUpdate.spendableBalance).toEqual(new BigNumber(150000));
   });
 
   it("should merge new shielded operations and credit orchard balance for an incoming tx", () => {
@@ -327,7 +327,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(incomingAmount);
     // balance = transparent(100000) + orchard(5000)
     expect(output.accountUpdate.balance).toEqual(initialBalance.plus(incomingAmount));
-    expect(output.accountUpdate).not.toHaveProperty("spendableBalance");
+    expect(output.accountUpdate.spendableBalance).toEqual(initialBalance.plus(incomingAmount));
   });
 
   it("should accumulate orchard delta across chunks without touching the transparent balance", () => {
@@ -1201,6 +1201,127 @@ describe("reduceShieldedSyncResult", () => {
 
     // Balance = 200k + 50k
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(250_000));
+  });
+
+  // A synced account polls a chain it is already at the tip of, and the engine then
+  // reports a chunk that scanned nothing and carries no cursor. Persisting that as
+  // `null` sends the next sync back to the account birthday, which is why the same
+  // shielded history kept being re-processed poll after poll.
+  describe("scan cursor", () => {
+    const chunkWithoutCursor: ShieldedSyncResult = {
+      transactions: [],
+      processedBlocks: 0,
+      remainingBlocks: 0,
+    };
+
+    const accountAtBlock = (lastProcessedBlock: number | null) =>
+      createMockInfo({
+        balance: new BigNumber(0),
+        privateInfo: {
+          orchardBalance: new BigNumber(0),
+          saplingBalance: new BigNumber(0),
+          syncState: "running" as const,
+          progress: 100,
+          estimatedTimeRemaining: { hours: 0, minutes: 0 },
+          ufvk: "uview1key",
+          birthday: null,
+          lastSyncTimestamp: null,
+          lastProcessedBlock,
+          transactions: [],
+        },
+      } as Partial<ZcashAccount>);
+
+    it("keeps the stored cursor when a chunk reports no progress", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        chunkWithoutCursor,
+        accountAtBlock(3_425_868),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("keeps the stored cursor when a chunk with new transactions reports no progress", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+      const tx: ShieldedTransaction = {
+        id: "tx-new",
+        hex: "00",
+        blockHeight: 3_425_869,
+        blockHash: "hash",
+        timestamp: 1_700_000_000,
+        fee: new BigNumber(0),
+        decryptedData: {
+          orchard_outputs: [
+            { amount: new BigNumber(1000), memo: "", transfer_type: "incoming", isSpent: false },
+          ],
+          sapling_outputs: [],
+        },
+      };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        { ...chunkWithoutCursor, transactions: [tx] },
+        accountAtBlock(3_425_868),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("advances the cursor when a chunk reports a further block", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        { ...chunkWithoutCursor, lastProcessedBlock: 3_425_900 },
+        accountAtBlock(3_425_868),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_900);
+    });
+
+    it("never moves the cursor backwards", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        { ...chunkWithoutCursor, lastProcessedBlock: 1000 },
+        accountAtBlock(3_425_868),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_868);
+    });
+
+    it("adopts the reported block when no cursor was stored yet", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        { ...chunkWithoutCursor, lastProcessedBlock: 3_425_900 },
+        accountAtBlock(null),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_900);
+    });
+
+    it("leaves the cursor unset when neither side knows a block", () => {
+      const accumulated = { processedOperations: [], accountUpdate: {} };
+
+      const output = reduceShieldedSyncResult(
+        accumulated,
+        chunkWithoutCursor,
+        accountAtBlock(null),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBeNull();
+    });
   });
 });
 

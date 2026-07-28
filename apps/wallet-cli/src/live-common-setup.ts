@@ -5,7 +5,7 @@ import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types"
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import {

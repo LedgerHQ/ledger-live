@@ -1,26 +1,64 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 // AccountNeedResync and RbfBuildError now live in @ledgerhq/wallet-btc; re-exported
 // here for backward compatibility with existing @ledgerhq/coin-bitcoin consumers.
 export { AccountNeedResync, RbfBuildError } from "@ledgerhq/wallet-btc/errors";
 
-export const TaprootNotActivated = createCustomErrorClass("TaprootNotActivated");
+export class TaprootNotActivated extends Error {
+  override name = "TaprootNotActivated";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TaprootNotActivated");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const BitcoinInfrastructureError = createCustomErrorClass("InfrastructureError");
+export class BitcoinInfrastructureError extends Error {
+  override name = "InfrastructureError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InfrastructureError");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const FeeTooLow = createCustomErrorClass("FeeTooLow");
+export class FeeTooLow extends Error {
+  override name = "FeeTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "FeeTooLow");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const ZcashSaplingRecipientNotSupported = createCustomErrorClass(
-  "ZcashSaplingRecipientNotSupported",
-);
+export class ZcashSaplingRecipientNotSupported extends Error {
+  override name = "ZcashSaplingRecipientNotSupported";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ZcashSaplingRecipientNotSupported");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const ZcashSignerNotSupported = createCustomErrorClass("ZcashSignerNotSupported");
+export class ZcashSignerNotSupported extends Error {
+  override name = "ZcashSignerNotSupported";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ZcashSignerNotSupported");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
 // Typed cancellation marker for the shielded (PCZT) signOperation flow.
-export const ZcashSigningCancelled = createCustomErrorClass("ZcashSigningCancelled");
+export class ZcashSigningCancelled extends Error {
+  override name = "ZcashSigningCancelled";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ZcashSigningCancelled");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
 // Raised when a transparent UTXO about to be spent by a Public→* PCZT flow
 // cannot be mapped to a known account key (missing address, or an address
 // outside the synced receive/change gap limit). Fail-closed: we refuse to sign
 // rather than risk producing an unsignable or wrong input.
-export const ZcashUtxoNotInAccount = createCustomErrorClass("ZcashUtxoNotInAccount");
+export class ZcashUtxoNotInAccount extends Error {
+  override name = "ZcashUtxoNotInAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ZcashUtxoNotInAccount");
+    if (fields) Object.assign(this, fields);
+  }
+}

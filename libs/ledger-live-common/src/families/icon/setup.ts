@@ -9,7 +9,7 @@ import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import { IconCoinConfig } from "@ledgerhq/coin-icon/config";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 const createSigner: CreateSigner<Icon> = (transport: Transport) => {
   return new Icon(transport);

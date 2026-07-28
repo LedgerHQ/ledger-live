@@ -2,10 +2,18 @@ import * as React from "react";
 import { screen, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 import { State, supportedCountervaluesData } from "~/reducers/types";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 const SUPPORTED_CURRENCIES = [
   {
-    currency: { name: "Euro", symbol: "€", ticker: "EUR", type: "FiatCurrency", units: [] },
+    currency: {
+      name: "Euro",
+      symbol: "€",
+      ticker: "EUR",
+      type: "FiatCurrency",
+      units: [],
+      id: FiatCurrencySchema.shape.id.parse("eur"),
+    },
     label: "Euro - EUR",
     ticker: "EUR",
     value: "EUR",
@@ -17,6 +25,7 @@ const SUPPORTED_CURRENCIES = [
       ticker: "USD",
       type: "FiatCurrency",
       units: [],
+      id: FiatCurrencySchema.shape.id.parse("usd"),
     },
     label: "US Dollar - USD",
     ticker: "USD",

@@ -12,7 +12,7 @@ import {
   StatusCodes,
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { sha3_256 } from "@noble/hashes/sha3";
 import { DeviceId } from "@domain/entity-client-identity";

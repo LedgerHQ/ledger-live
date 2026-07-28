@@ -1,7 +1,7 @@
 import { ScenarioOptions } from "../test-helpers/types";
 import { HWDeviceProvider } from "../../src/HWDeviceProvider";
 import { SDK } from "../../src/sdk";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export async function scenario(deviceId: string, { withDevice, pauseRecorder }: ScenarioOptions) {
   const apiBaseUrl = getEnv("TRUSTCHAIN_API_STAGING");

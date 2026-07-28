@@ -27,9 +27,26 @@ const ctaSchema = z.object({
   link: z.string(),
 });
 
+const DEFAULT_BANNERS = {
+  "my-ledger": true,
+  "notification-center": true,
+  accounts: true,
+  homepage: true,
+} as const;
+
+const bannersSchema = z
+  .object({
+    "my-ledger": z.boolean().default(true),
+    "notification-center": z.boolean().default(true),
+    accounts: z.boolean().default(true),
+    homepage: z.boolean().default(true),
+  })
+  .default(DEFAULT_BANNERS);
+
 export const largeScreenUpsell = flagWith(
   {
     audience: z.object({ models: audienceModelsSchema }),
+    banners: bannersSchema,
     cooldownDays: cooldownDaysSchema,
     discount: z.number().min(0).max(1),
     modal: modalSchema,
@@ -40,6 +57,7 @@ export const largeScreenUpsell = flagWith(
     enabled: false,
     params: {
       audience: { models: { nanoS: true, nanoSP: true, nanoX: true } },
+      banners: DEFAULT_BANNERS,
       cooldownDays: { default: 30, nanoS: 0 },
       discount: 0.2,
       modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },

@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "6004075",
+    "balance": "5966006",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,7 +12,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "2219122",
+    "spendableBalance": "2181053",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -448,6 +448,27 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "161",
       "type": "OUT",
       "value": "1001200",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 32182060,
+      "extra": {
+        "memo": "🔔 https://atomsdex.com: Congrats🎉 You are eligible to claim up to 10,000 $ATOM Rewards, check and claim your allocation now on https://atomsdex.com ✅",
+      },
+      "fee": "626",
+      "hasFailed": false,
+      "hash": "1141DE03EB2722E096184DCE9F8B1E7DCDB7589C2A052C7EC01EDE6CDF79BDE4",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-1141DE03EB2722E096184DCE9F8B1E7DCDB7589C2A052C7EC01EDE6CDF79BDE4-IN",
+      "recipients": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": [
+        "cosmos16te3v5hp96hz24f8ct5hfal29udpu0h7w8dfap",
+      ],
+      "transactionSequenceNumber": "275943",
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -2045,6 +2066,30 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "221",
       "type": "OUT",
       "value": "2752",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 32177034,
+      "extra": {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1tflk30mq5vgqjdly92kkhhq3raev2hnz6eete3",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "15450",
+          },
+        ],
+      },
+      "fee": "26647",
+      "hasFailed": false,
+      "hash": "55683492340776DB8CCFBCA1F5DFA1D7C75B2AAF9B95961B51FAA2FC351B39CC",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-55683492340776DB8CCFBCA1F5DFA1D7C75B2AAF9B95961B51FAA2FC351B39CC-REDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": "276",
+      "type": "REDELEGATE",
+      "value": "26647",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -3940,6 +3985,30 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": "80",
       "type": "OUT",
       "value": "103791",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 32177052,
+      "extra": {
+        "memo": "Ledger Live",
+        "sourceValidator": "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
+        "validators": [
+          {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "827539",
+          },
+        ],
+      },
+      "fee": "25149",
+      "hasFailed": false,
+      "hash": "B58678F8E6FDAF9E96C76F653DCA0F2967221832F98FBCA22ED8BE81C46B1098",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-B58678F8E6FDAF9E96C76F653DCA0F2967221832F98FBCA22ED8BE81C46B1098-REDELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": "277",
+      "type": "REDELEGATE",
+      "value": "25149",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",

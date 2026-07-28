@@ -11,7 +11,7 @@ import {
 import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { TrackScreen, track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE, trackDeviceflowCanceled } from "../../utils/trackDeviceIntent";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
 
@@ -215,9 +215,9 @@ function renderState({
   };
 
   const view = render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <DiscoveryErrorState state={state} platform={platform} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 
   return { ...view, ignore };
@@ -342,7 +342,7 @@ describe("DiscoveryErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
@@ -357,7 +357,7 @@ describe("DiscoveryErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
@@ -379,7 +379,7 @@ describe("DiscoveryErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
@@ -395,7 +395,7 @@ describe("DiscoveryErrorState", () => {
     mockedTrack.mockClear();
 
     // WHEN
-    trackDeviceflowCanceled({ sourceFlow: "my_ledger" });
+    trackDeviceflowCanceled({ sourceFlow: "my_ledger", extraProperties: {} });
 
     // THEN
     expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {

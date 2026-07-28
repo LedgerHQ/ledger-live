@@ -108,6 +108,24 @@ type ShieldedScanAccumulated = {
   accountUpdate: Partial<ZcashAccount>;
 };
 
+/**
+ * Resolve the scan cursor to persist, given what the chunk reported.
+ *
+ * A chunk that scanned nothing — an account already at the chain tip, the
+ * steady state of any synced account — carries no `lastProcessedBlock`. Writing
+ * that absence straight back as `null` clears the cursor, and the next sync
+ * restarts from the account birthday and rescans the entire shielded history.
+ * The cursor only ever moves forward.
+ */
+function advanceScanCursor(
+  previous: number | null | undefined,
+  fromChunk: number | undefined,
+): number | null {
+  if (fromChunk === undefined) return previous ?? null;
+  if (previous === null || previous === undefined) return fromChunk;
+  return Math.max(previous, fromChunk);
+}
+
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
@@ -124,6 +142,11 @@ export function reduceShieldedSyncResult(
   // Transparent balance comes from the transparent sync's UTXOs (stable source),
   // so we can recompute the transparent + private total here without double-counting.
   const transparentBalance = getTransparentBalance(info.initialAccount?.bitcoinResources?.utxos);
+
+  const lastProcessedBlock = advanceScanCursor(
+    existingPrivateInfo.lastProcessedBlock,
+    result.lastProcessedBlock,
+  );
 
   if (newTransactions.length === 0) {
     const totalBlocks = result.processedBlocks + result.remainingBlocks;
@@ -150,21 +173,32 @@ export function reduceShieldedSyncResult(
       spentNfs.length > 0
         ? computeBalanceFromNotes(updatedTransactions)
         : existingPrivateInfo.orchardBalance;
+
+    const balance = computeZcashBalance(transparentBalance, {
+      orchardBalance,
+      saplingBalance: existingPrivateInfo.saplingBalance,
+    });
+
+    log("bitcoin/reduceShieldedSyncResult", "No new shielded transactions", {
+      accountId,
+      balance: balance.toString(),
+      spentKnownNullifiers: spentNfs.length,
+      lastProcessedBlock,
+    });
+
     return {
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
-        balance: computeZcashBalance(transparentBalance, {
-          orchardBalance,
-          saplingBalance: existingPrivateInfo.saplingBalance,
-        }),
-        blockHeight: result.lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
+        balance,
+        spendableBalance: balance,
+        blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
         privateInfo: {
           ...existingPrivateInfo,
           syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
           progress:
             totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-          lastProcessedBlock: result.lastProcessedBlock ?? null,
+          lastProcessedBlock,
           lastSyncTimestamp: Date.now(),
           transactions: updatedTransactions,
           orchardBalance,
@@ -224,9 +258,11 @@ export function reduceShieldedSyncResult(
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
     lastSyncTimestamp: Date.now(),
-    lastProcessedBlock: result.lastProcessedBlock ?? null,
+    lastProcessedBlock,
     transactions: allShieldedTx,
   };
+
+  const balance = computeZcashBalance(transparentBalance, { orchardBalance, saplingBalance });
 
   log(
     "bitcoin/reduceShieldedSyncResult",
@@ -234,9 +270,8 @@ export function reduceShieldedSyncResult(
     {
       accountId,
       totalOperations: operations.length,
-      lastProcessedBlock: result.lastProcessedBlock ?? 0,
-      orchardBalance: orchardBalance.toString(),
-      previousOperations: currentOperations.length,
+      lastProcessedBlock,
+      balance: balance.toString(),
     },
   );
 
@@ -249,10 +284,11 @@ export function reduceShieldedSyncResult(
     processedOperations: [...result.transactions],
     accountUpdate: {
       ...accumulated.accountUpdate,
-      balance: computeZcashBalance(transparentBalance, { orchardBalance, saplingBalance }),
+      balance,
+      spendableBalance: balance,
       operations,
       operationsCount: missingOpsCount + operations.length,
-      blockHeight: result.lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
+      blockHeight: lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
       privateInfo,
     },
   };

@@ -125,4 +125,16 @@ describe("useAssetActions - custom send flow", () => {
       expect.arrayContaining([expect.objectContaining({ id: "custom-action" })]),
     );
   });
+
+  it("omits send and receive for a family that disables them (hypercore)", () => {
+    const currencyHypercore = getCryptoCurrencyById("hypercore");
+
+    const { result } = renderHook(
+      () => useAssetActions({ currency: currencyHypercore, accounts: [ALEO_ACCOUNT_1] }),
+      { overrideInitialState: withSingleAccount },
+    );
+
+    expect(result.current.mainActions.find(a => a.id === "send")).toBeUndefined();
+    expect(result.current.mainActions.find(a => a.id === "receive")).toBeUndefined();
+  });
 });

@@ -36,6 +36,26 @@ describe("rehydrateTransaction", () => {
     expect(result.fee.toFixed()).toBe("10000");
   });
 
+  // A transaction persisted before the scanner reported the transparent bundle
+  // has nothing to say about it. Reading that silence as zero would state that
+  // the transaction moved nothing out of the pools, which is a claim about the
+  // transaction rather than about what we know of it.
+  it("omits the transparent bundle when the raw transaction says nothing about it", () => {
+    const result = rehydrateTransaction(makeRawTx());
+
+    expect(result).not.toHaveProperty("transparentOut");
+    expect(result).not.toHaveProperty("hasTransparentInputs");
+  });
+
+  it("rehydrates the transparent bundle when the raw transaction carries it", () => {
+    const result = rehydrateTransaction(
+      makeRawTx({ transparentOut: "500000", hasTransparentInputs: false }),
+    );
+
+    expect(result.transparentOut?.toFixed()).toBe("500000");
+    expect(result.hasTransparentInputs).toBe(false);
+  });
+
   it("omits decryptedData when absent from raw", () => {
     const raw = makeRawTx();
     const result = rehydrateTransaction(raw);

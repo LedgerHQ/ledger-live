@@ -1,7 +1,6 @@
 import {
   LedgerDevices,
   Lightbulb,
-  PictureImage,
   Plus,
   Refresh,
   ShieldLock,
@@ -23,8 +22,6 @@ export function getLumenSymbolForActionId(id: PostOnboardingActionId): FinishFlo
   switch (id) {
     case PostOnboardingActionId.assetsTransfer:
       return Plus as FinishFlowLumenSymbol;
-    case PostOnboardingActionId.customImage:
-      return PictureImage as FinishFlowLumenSymbol;
     case PostOnboardingActionId.discoverWallet:
       return Lightbulb as FinishFlowLumenSymbol;
     case PostOnboardingActionId.deviceOnboarded:
@@ -41,22 +38,11 @@ export function getLumenSymbolForActionId(id: PostOnboardingActionId): FinishFlo
 /** Not shown in the finish-onboarding dialog / widget (hub-only). */
 export const EXCLUDED_FROM_FINISH_FLOW_ID = PostOnboardingActionId.buyCrypto;
 
-/**
- * How many “extra” steps the finish stepper counts for the first row, because
- * `FinishOnboardingDialogView` hardcodes a `PostOnboardingActionId.deviceOnboarded`
- * row (always complete) *above* the `actionList` from the hook. The widget
- * reuses the same `completedActionsAmount` / `totalActionsAmount` so the
- * portfolio stepper lines up with that first implicit step. Hub-derived
- * `allActionsCompleted` in the hook does *not* apply this offset.
- */
-export const IMPLICIT_DEVICE_STEP_OFFSET = 1;
-
 /** i18n segment under `postOnboarding.dialog.actions` (see `static/i18n/.../app.json`). */
 const ACTION_ID_TO_DIALOG_GROUP: Readonly<Partial<Record<PostOnboardingActionId, string>>> = {
   [PostOnboardingActionId.deviceOnboarded]: "deviceOnboarded",
   [PostOnboardingActionId.assetsTransfer]: "assetsTransfer",
   [PostOnboardingActionId.syncAccounts]: "syncAccounts",
-  [PostOnboardingActionId.customImage]: "customImage",
   [PostOnboardingActionId.discoverWallet]: "discoverWallet",
   [PostOnboardingActionId.recover]: "recover",
 };
@@ -65,11 +51,9 @@ const ACTION_ID_TO_DIALOG_GROUP: Readonly<Partial<Record<PostOnboardingActionId,
 const DIALOG_GROUPS_WITH_DESCRIPTION: ReadonlySet<string> = new Set([
   "assetsTransfer",
   "syncAccounts",
-  "customImage",
   "discoverWallet",
   "recover",
 ]);
-
 type ActionWithI18nKeys = PostOnboardingAction & PostOnboardingActionState;
 
 /**

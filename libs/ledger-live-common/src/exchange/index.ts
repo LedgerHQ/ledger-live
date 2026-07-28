@@ -1,6 +1,6 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import calService from "@ledgerhq/ledger-cal-service";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.

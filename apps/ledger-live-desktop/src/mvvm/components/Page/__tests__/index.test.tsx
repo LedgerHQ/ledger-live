@@ -20,6 +20,7 @@ describe("PageView - TopBar", () => {
   const defaultProps = {
     pageScrollerRef: jest.fn(),
     shouldRenderRightPanel: false,
+    pageTestId: "page-view-dashboard",
   };
 
   it("renders Wallet40TopBar", () => {

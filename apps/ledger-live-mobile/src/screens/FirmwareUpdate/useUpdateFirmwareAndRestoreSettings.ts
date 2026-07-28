@@ -9,24 +9,6 @@ import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import {
-  CantOpenDevice,
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-  LockedDeviceError,
-  UnresponsiveDeviceError,
-  UserRefusedAllowManager,
-  WebsocketConnectionError,
-  WebsocketConnectionFailed,
-  CustomErrorClassType,
-  TransportStatusErrorClassType,
-} from "@ledgerhq/errors";
-import {
-  ConnectManagerTimeout,
-  ImageCommitRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  LanguageInstallRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
-import {
   useAppDeviceAction,
   useInstallLanguageDeviceAction,
   useManagerDeviceAction,
@@ -36,29 +18,26 @@ import {
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: Array<
-  CustomErrorClassType | TransportStatusErrorClassType
-> = [
-  CantOpenDevice,
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-  LockedDeviceError,
-  UnresponsiveDeviceError,
-  ConnectManagerTimeout,
+export const reconnectDeviceErrorNames: string[] = [
+  "CantOpenDevice",
+  "DisconnectedDevice",
+  "DisconnectedDeviceDuringOperation",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
+  "ConnectManagerTimeout",
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
-  [
-    ...reconnectDeviceErrorClasses,
-    WebsocketConnectionError,
-    UserRefusedAllowManager,
-    LanguageInstallRefusedOnDevice,
-    ImageCommitRefusedOnDevice,
-    ImageLoadRefusedOnDevice,
-    WebsocketConnectionFailed,
-    DisconnectedDeviceDuringOperation,
-  ];
+export const userSolvableErrorNames: string[] = [
+  ...reconnectDeviceErrorNames,
+  "WebsocketConnectionError",
+  "UserRefusedAllowManager",
+  "LanguageInstallRefusedOnDevice",
+  "ImageCommitRefusedOnDevice",
+  "ImageLoadRefusedOnDevice",
+  "WebsocketConnectionFailed",
+  "DisconnectedDeviceDuringOperation",
+];
 
 export type FirmwareUpdateParams = {
   device: Device;
@@ -226,7 +205,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsBackup":
         hasUnrecoverableError =
           connectManagerState.error &&
-          !userSolvableErrorClasses.some(err => connectManagerState.error instanceof err);
+          !userSolvableErrorNames.includes(connectManagerState.error?.name ?? "");
 
         if (connectManagerState.result || hasUnrecoverableError) {
           if (connectManagerState.error) {
@@ -243,7 +222,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageBackup":
         hasUnrecoverableError =
           fetchImageState.error &&
-          !userSolvableErrorClasses.some(err => fetchImageState.error instanceof err);
+          !userSolvableErrorNames.includes(fetchImageState.error?.name ?? "");
 
         if (fetchImageState.imageFetched || hasUnrecoverableError) {
           if (fetchImageState.error) {
@@ -256,10 +235,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "firmwareUpdate":
         hasUnrecoverableError =
           updateActionState.error &&
-          !userSolvableErrorClasses.some(
-            err =>
-              updateActionState.error instanceof err ||
-              updateActionState.error?.name === "TimeoutError",
+          !(
+            userSolvableErrorNames.includes(updateActionState.error?.name ?? "") ||
+            updateActionState.error?.name === "TimeoutError"
           );
 
         if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
@@ -276,7 +254,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         hasUnrecoverableError =
           installLanguageState.error &&
-          !userSolvableErrorClasses.some(err => installLanguageState.error instanceof err);
+          !userSolvableErrorNames.includes(installLanguageState.error?.name ?? "");
 
         if (installLanguageState.languageInstalled || hasUnrecoverableError) {
           if (installLanguageState.error) {
@@ -294,7 +272,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageRestore":
         hasUnrecoverableError =
           loadImageState.error &&
-          !userSolvableErrorClasses.some(err => loadImageState.error instanceof err);
+          !userSolvableErrorNames.includes(loadImageState.error?.name ?? "");
 
         if (loadImageState.imageLoaded || hasUnrecoverableError || !fetchImageState.hexImage) {
           if (loadImageState.error) {
@@ -307,7 +285,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         hasUnrecoverableError =
           restoreAppsState.error &&
-          !userSolvableErrorClasses.some(err => restoreAppsState.error instanceof err);
+          !userSolvableErrorNames.includes(restoreAppsState.error?.name ?? "");
 
         if (restoreAppsState.opened || hasUnrecoverableError) {
           if (restoreAppsState.error) {
@@ -360,13 +338,13 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
   const hasReconnectErrors = useMemo(
     () =>
-      reconnectDeviceErrorClasses.some(
-        err =>
-          connectManagerState.error instanceof err ||
-          fetchImageState.error instanceof err ||
-          loadImageState.error instanceof err ||
-          restoreAppsState.error instanceof err ||
-          installLanguageState.error instanceof err,
+      reconnectDeviceErrorNames.some(
+        name =>
+          connectManagerState.error?.name === name ||
+          fetchImageState.error?.name === name ||
+          loadImageState.error?.name === name ||
+          restoreAppsState.error?.name === name ||
+          installLanguageState.error?.name === name,
       ),
     [
       connectManagerState.error,
@@ -398,7 +376,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         installLanguageState.error,
         restoreAppsState.error,
         loadImageState.error,
-      ].find(error => userSolvableErrorClasses.some(errorClass => error instanceof errorClass)),
+      ].find(error => userSolvableErrorNames.includes(error?.name ?? "")),
     [
       connectManagerState.error,
       installLanguageState.error,
@@ -413,7 +391,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "languageRestore" &&
       installLanguageState.error &&
-      installLanguageState.error instanceof LanguageInstallRefusedOnDevice
+      installLanguageState.error?.name === "LanguageInstallRefusedOnDevice"
     ) {
       return installLanguageState.error;
     }
@@ -421,8 +399,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "imageRestore" &&
       loadImageState.error &&
-      (loadImageState.error instanceof ImageLoadRefusedOnDevice ||
-        (loadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
+      (loadImageState.error?.name === "ImageLoadRefusedOnDevice" ||
+        loadImageState.error?.name === "ImageCommitRefusedOnDevice")
     ) {
       return loadImageState.error;
     }
@@ -430,7 +408,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     if (
       updateStep === "appsRestore" &&
       restoreAppsState.error &&
-      restoreAppsState.error instanceof UserRefusedAllowManager
+      restoreAppsState.error?.name === "UserRefusedAllowManager"
     ) {
       return restoreAppsState.error;
     }

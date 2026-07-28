@@ -292,6 +292,7 @@
   "fees": {
     "advanced": "Advanced",
     "custom": "Custom",
+    "defaultNetworkFee": "Default network fee",
     "fast": "Fast",
     "networkFees": "Network fees",
     "high": "High",
@@ -1387,10 +1388,6 @@
         "syncAccounts": {
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
-        },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
         },
         "discoverWallet": {
           "title": "Discover what your wallet can do",
@@ -8319,11 +8316,6 @@
         "doThisLater": "Maybe later"
       }
     },
-    "postOnboarding": {
-      "title": "Customize the lock screen",
-      "description": "Display your favorite digital art or photo as your device’s lock screen.",
-      "actionCompletedPopupLabel": "Device personalized"
-    },
     "customImageSet": "Lock screen customized",
     "finishCTA": "Close"
   },
@@ -8982,6 +8974,12 @@
     },
     "shielded": {
       "send": {
+        "modalTitle": {
+          "transparent": "Public Send",
+          "transparentToShielded": "Public to Private Send",
+          "shieldedToTransparent": "Private to Public Send",
+          "shielded": "Private Send"
+        },
         "transferFrom": {
           "label": "Transfer from",
           "public": {
@@ -8992,6 +8990,25 @@
             "title": "Private balance",
             "subtitle": "Shielded",
             "unavailable": "Private balance unavailable"
+          }
+        },
+        "memo": {
+          "label": "Memo (optional)",
+          "placeholder": "Enter a memo",
+          "tooltip": "Attach a private message to this shielded transaction. Only the recipient can read it. Up to 512 bytes."
+        },
+        "syncBanner": {
+          "stopped": {
+            "message": "Private balance is not synchronized",
+            "cta": "Resume sync"
+          },
+          "running": {
+            "message": "Private balance is synchronizing ({{progress}}%)",
+            "timeRemaining": "Estimated time remaining: {{hours}}:{{minutes}}"
+          },
+          "outdated": {
+            "message": "Balance may be slightly out of date",
+            "cta": "Sync balance"
           }
         }
       },
@@ -9347,13 +9364,27 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
+    "addContactDrawer": {
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "invalidNameError": "Special characters are not allowed."
+    },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addressCount_zero": "0 address",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "name": "Me"
+    },
+    "detail": {
+      "emptyState": {
+        "meTitle": "No saved addresses for you",
+        "contactTitle": "No saved addresses for {{name}}",
+        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "contactDescription": "Save their wallet addresses to send to them by name next time."
+      }
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",

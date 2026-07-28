@@ -1,13 +1,16 @@
 import Celo from "@ledgerhq/hw-app-celo";
+import { UpdateYourApp } from "@ledgerhq/errors";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { LegacySignerCelo } from "../src/LegacySignerCelo";
 import { ResolutionConfig, LoadConfig } from "@ledgerhq/hw-app-eth/services/types";
+import { SW_DERIVATION_PATH_UNAUTHORIZED } from "../src/deviceAuthorization";
 
 jest.mock("@ledgerhq/hw-app-celo");
 
 describe("LegacySignerCelo", () => {
   const celoMock = {
     getAddress: jest.fn(),
+    getAppConfiguration: jest.fn(),
     signTransaction: jest.fn(),
     signPersonalMessage: jest.fn(),
     signEIP712Message: jest.fn(),
@@ -87,6 +90,49 @@ describe("LegacySignerCelo", () => {
         publicKey: "publicKey",
         chainCode: "chainCode",
       });
+    });
+
+    const unauthorized = {
+      name: "TransportStatusError",
+      statusCode: SW_DERIVATION_PATH_UNAUTHORIZED,
+    };
+
+    it("translates a 0x6a15 path-unauthorized error into UpdateYourApp on an app < 1.7.0", async () => {
+      // GIVEN
+      celoMock.getAddress.mockRejectedValue(unauthorized);
+      celoMock.getAppConfiguration.mockResolvedValue({ version: "1.3.2" });
+
+      // WHEN / THEN
+      await expect(signer.getAddress("44'/60'/1'/0'/0'")).rejects.toBeInstanceOf(UpdateYourApp);
+      expect(celoMock.getAppConfiguration).toHaveBeenCalledTimes(1);
+    });
+
+    it("rethrows the raw 0x6a15 on an up-to-date app (>= 1.7.0)", async () => {
+      // GIVEN
+      celoMock.getAddress.mockRejectedValue(unauthorized);
+      celoMock.getAppConfiguration.mockResolvedValue({ version: "1.7.0" });
+
+      // WHEN / THEN
+      await expect(signer.getAddress("44'/60'/1'/0'/0'")).rejects.toEqual(unauthorized);
+    });
+
+    it("rethrows any other device error without reading the app version", async () => {
+      // GIVEN
+      const other = { name: "TransportStatusError", statusCode: 0x6a80 };
+      celoMock.getAddress.mockRejectedValue(other);
+
+      // WHEN / THEN
+      await expect(signer.getAddress("44'/60'/1'/0'/0'")).rejects.toEqual(other);
+      expect(celoMock.getAppConfiguration).not.toHaveBeenCalled();
+    });
+
+    it("rethrows the original 0x6a15 when the version lookup fails (best-effort, never masks)", async () => {
+      // GIVEN
+      celoMock.getAddress.mockRejectedValue(unauthorized);
+      celoMock.getAppConfiguration.mockRejectedValue(new Error("transport hiccup"));
+
+      // WHEN / THEN
+      await expect(signer.getAddress("44'/60'/1'/0'/0'")).rejects.toEqual(unauthorized);
     });
   });
 
@@ -212,5 +258,4 @@ describe("LegacySignerCelo", () => {
       expect(celoMock.setLoadConfig).toHaveBeenCalledWith(config);
     });
   });
-
 });

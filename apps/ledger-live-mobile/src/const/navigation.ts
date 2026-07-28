@@ -130,6 +130,7 @@ export enum ScreenName {
   MyLedgerChooseDevice = "MyLedgerChooseDevice",
   MyLedgerDevice = "MyLedgerDevice",
   MyWallet = "MyWallet",
+  MyWalletContactDetail = "MyWalletContactDetail",
   MyWalletHelp = "MyWalletHelp",
   MyWalletContacts = "MyWalletContacts",
   BackupHub = "BackupHub",

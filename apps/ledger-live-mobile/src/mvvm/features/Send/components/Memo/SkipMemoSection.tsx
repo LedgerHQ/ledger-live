@@ -37,7 +37,12 @@ function SkipMemoSectionComponent({
         <Text lx={{ color: "muted" }}>
           {t("send.newSendFlow.skipMemo.notRequired", { tag: memoLabel })}
         </Text>
-        <Link appearance="accent" size="sm" onPress={onRequestConfirm}>
+        <Link
+          testID="new-send-flow-skip-memo-link"
+          appearance="accent"
+          size="sm"
+          onPress={onRequestConfirm}
+        >
           {t("common.skip")}
         </Link>
       </Box>
@@ -51,7 +56,12 @@ function SkipMemoSectionComponent({
         title={t("send.newSendFlow.skipMemo.title", { tag: memoLabel })}
         description={t("send.newSendFlow.skipMemo.warning", { tag: memoLabel })}
         primaryAction={
-          <Button appearance="transparent" size="sm" onPress={handleConfirm}>
+          <Button
+            testID="new-send-flow-skip-memo-confirm"
+            appearance="transparent"
+            size="sm"
+            onPress={handleConfirm}
+          >
             {t("send.newSendFlow.skipMemo.confirm")}
           </Button>
         }

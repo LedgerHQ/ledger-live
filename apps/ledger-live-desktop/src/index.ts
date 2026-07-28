@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 if (getEnv("PLAYWRIGHT_RUN") && getEnv("MOCK")) {
   const timemachine = require("timemachine");

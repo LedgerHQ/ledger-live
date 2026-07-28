@@ -8,6 +8,7 @@ export function ModularDrawerWrapper() {
     preselectedCurrencies,
     closeDrawer,
     handleAccountSelected,
+    handleCurrencySelected,
     assetsConfiguration,
     networksConfiguration,
     useCase,
@@ -23,6 +24,7 @@ export function ModularDrawerWrapper() {
       assetsConfiguration={assetsConfiguration}
       networksConfiguration={networksConfiguration}
       onAccountSelected={handleAccountSelected}
+      onCurrencySelected={handleCurrencySelected}
       useCase={useCase}
       uiUseCase={uiUseCase}
       areCurrenciesFiltered={areCurrenciesFiltered}

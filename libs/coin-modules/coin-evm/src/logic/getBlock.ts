@@ -10,7 +10,6 @@ import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { rpcTransactionToBlockOperations } from "../adapters/blockOperations";
 import { DEFAULT_INTERNAL_TX_SOURCES, getCoinConfig } from "../config";
-import { UnsupportedRpcMethodError } from "../errors";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, PrefetchedBlockTransaction } from "../network/node/types";
 import { createInternalTransactionsFetcher } from "./internalTransactionsFetcher";
@@ -158,13 +157,14 @@ async function getTransactionsFromPrefetchedData(
 
     return transactions;
   } catch (error) {
-    if (!(error instanceof UnsupportedRpcMethodError) || error.method !== "eth_getBlockReceipts")
+    const err = error as { name?: string; method?: string; rawError?: unknown } | null | undefined;
+    if (err?.name !== "UnsupportedRpcMethodError" || err?.method !== "eth_getBlockReceipts")
       throw error;
 
     log("warn", "EVM getBlock fallback: eth_getBlockReceipts unsupported", {
       currencyId: currency.id,
       blockHeight,
-      error: error.rawError,
+      error: err?.rawError,
     });
     return null;
   }

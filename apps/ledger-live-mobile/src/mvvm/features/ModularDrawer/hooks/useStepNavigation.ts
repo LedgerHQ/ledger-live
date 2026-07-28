@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import { ModularDrawerStep } from "../types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
+  modularDrawerCompletionModeSelector,
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerStepSelector,
   setStep,
@@ -15,6 +16,7 @@ type UseStepNavigationParams = {
   clearNetwork: () => void;
   selectNetwork?: (n: CryptoOrTokenCurrency) => void;
   navigateToDeviceWithCurrency: (selectedCurrency: CryptoOrTokenCurrency) => void;
+  onCurrencySelected?: (selectedCurrency: CryptoOrTokenCurrency) => void;
 };
 
 export function useStepNavigation({
@@ -24,8 +26,10 @@ export function useStepNavigation({
   clearNetwork,
   selectNetwork,
   navigateToDeviceWithCurrency,
+  onCurrencySelected,
 }: UseStepNavigationParams) {
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const dispatch = useDispatch();
   const canGoBackToAsset = !hasOneCurrency;
   const canGoBackToNetwork = availableNetworksCount > 1;
@@ -55,13 +59,22 @@ export function useStepNavigation({
   const proceedToNextStep = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       if (selectNetwork) selectNetwork(selectedNetwork);
-      if (enableAccountSelection) {
+      if (completionMode === "currency") {
+        onCurrencySelected?.(selectedAsset);
+      } else if (enableAccountSelection) {
         dispatch(setStep(ModularDrawerStep.Account));
       } else {
         navigateToDeviceWithCurrency(selectedAsset);
       }
     },
-    [dispatch, selectNetwork, enableAccountSelection, navigateToDeviceWithCurrency],
+    [
+      completionMode,
+      dispatch,
+      enableAccountSelection,
+      navigateToDeviceWithCurrency,
+      onCurrencySelected,
+      selectNetwork,
+    ],
   );
 
   return {

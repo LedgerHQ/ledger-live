@@ -14,7 +14,8 @@ import {
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { type CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
@@ -44,7 +45,7 @@ const handleOpenReceiveDrawer = jest.fn();
 
 const eursToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/stasis_eurs",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/stasis_eurs"),
   contractAddress: "0xdB25f211AB05b1c97D595516F45794528a807ad8",
   parentCurrencyId: mockEthCryptoCurrency.id,
   tokenType: "erc20",

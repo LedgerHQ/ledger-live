@@ -50,7 +50,7 @@ jobs:
       BASE_USERDATA: e2e/desktop/tests/userdata/skip-onboarding-with-last-seen-device.json
       CACHE_PREFIX: e2e-userdata-desktop
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -91,13 +91,15 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
           # Scope the cache key to the IAM-writable S3 namespace: the develop
           # OIDC role can only write under `develop/`, so keys generated on the
           # develop branch (e.g. the daily cron) must carry that prefix.
           PREFIX=""
-          if [ "${{ github.ref_name }}" = "develop" ]; then
+          if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
           echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
@@ -155,7 +157,7 @@ jobs:
           fi
 
       - name: Save userdata to S3 cache
-        uses: tespkg/actions-cache/save@v1.10.0
+        uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}
@@ -176,7 +178,7 @@ jobs:
       BASE_USERDATA: e2e/mobile/userdata/skip-onboarding.json
       CACHE_PREFIX: e2e-userdata-mobile
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -217,13 +219,15 @@ jobs:
       - name: Compute cache key date
         id: meta
         shell: bash
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
           echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
           # Scope the cache key to the IAM-writable S3 namespace: the develop
           # OIDC role can only write under `develop/`, so keys generated on the
           # develop branch (e.g. the daily cron) must carry that prefix.
           PREFIX=""
-          if [ "${{ github.ref_name }}" = "develop" ]; then
+          if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
           echo "prefix=${PREFIX}" >> "$GITHUB_OUTPUT"
@@ -281,7 +285,7 @@ jobs:
           fi
 
       - name: Save userdata to S3 cache
-        uses: tespkg/actions-cache/save@v1.10.0
+        uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
         with:
           path: e2e/userdata/generated
           key: ${{ steps.meta.outputs.prefix }}${{ env.CACHE_PREFIX }}-${{ steps.meta.outputs.date }}

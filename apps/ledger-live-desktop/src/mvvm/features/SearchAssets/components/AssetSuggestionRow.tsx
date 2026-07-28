@@ -53,7 +53,7 @@ export function AssetSuggestionRow({
   const trailing = (
     <>
       <ListItemTitle>{formattedPrice}</ListItemTitle>
-      {priceChange && (
+      {priceChange !== undefined && (
         <Trend
           value={priceChange}
           size={isExpanded ? "sm" : "md"}

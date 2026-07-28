@@ -124,6 +124,30 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   },
 ];
 
+const memoSendTransactions: NewSendFlowEntry[] = [
+  {
+    transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "123456"),
+    xrayTicket: "B2CQA-6037",
+  },
+  {
+    transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "memoText"),
+    xrayTicket: "B2CQA-6038",
+    bugTicket: "LIVE-29554",
+  },
+  {
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "memo123"),
+    xrayTicket: "B2CQA-6039",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001", undefined, "memo123"),
+    xrayTicket: "B2CQA-6040",
+  },
+];
+
 test.describe("New Send Flow - Native Send", () => {
   registerNewSendFlowTests(nativeSendTransactions);
+});
+
+test.describe("New Send Flow - Memo field", () => {
+  registerNewSendFlowTests(memoSendTransactions);
 });

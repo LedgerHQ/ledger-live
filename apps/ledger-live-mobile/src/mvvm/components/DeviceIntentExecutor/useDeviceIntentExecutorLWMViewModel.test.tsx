@@ -37,6 +37,7 @@ const layerABaseProperties = {
 type Props = DeviceIntentExecutorProps<unknown, unknown, unknown, InitializationInput> & {
   initializerConfig?: InitializerConfig;
   sourceFlow: "swap";
+  analyticsProperties?: Record<string, string | number | boolean | undefined>;
 };
 
 function makeProps(overrides: Partial<Props> = {}): Props {
@@ -425,6 +426,85 @@ describe("useDeviceIntentExecutorLWMViewModel", () => {
       // THEN
       expect(mockedTrack).not.toHaveBeenCalledWith("deviceflow_aborted", expect.anything());
       expect(onUserCancel).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("GIVEN analyticsProperties (e.g. wallet-api manifest) are provided", () => {
+    const MANIFEST_PROPS = { manifestId: "swap-live-app", manifestName: "Swap" };
+
+    it("WHEN the flow starts THEN deviceflow_started is enriched with the analytics properties", () => {
+      // WHEN
+      renderViewModel({ analyticsProperties: MANIFEST_PROPS });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_started", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        ...MANIFEST_PROPS,
+      });
+    });
+
+    it("WHEN executingIntent is reached THEN app_ready and deviceflow_completed are enriched", () => {
+      // GIVEN
+      const { result } = renderViewModel({ analyticsProperties: MANIFEST_PROPS });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onExecutorStateChanged(executingIntentState());
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenNthCalledWith(1, "app_ready", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        ...MANIFEST_PROPS,
+      });
+      expect(mockedTrack).toHaveBeenNthCalledWith(2, "deviceflow_completed", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        transport: "ble",
+        ...MANIFEST_PROPS,
+      });
+    });
+
+    it("WHEN the drawer is closed THEN the Close button_clicked is enriched", () => {
+      // GIVEN
+      const { result } = renderViewModel({ analyticsProperties: MANIFEST_PROPS });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.onHeaderClosePressed();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        button: "Close",
+        ...MANIFEST_PROPS,
+      });
+    });
+
+    it("WHEN the user cancels before completion THEN deviceflow_aborted is enriched", () => {
+      // GIVEN
+      const { result } = renderViewModel({ analyticsProperties: MANIFEST_PROPS });
+      mockedTrack.mockClear();
+
+      // WHEN
+      act(() => {
+        result.current.wrappedProps.onUserCancel();
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        ...MANIFEST_PROPS,
+      });
     });
   });
 

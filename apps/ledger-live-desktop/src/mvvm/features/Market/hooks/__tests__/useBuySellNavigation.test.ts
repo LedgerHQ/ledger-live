@@ -2,10 +2,10 @@ import { act, renderHook } from "tests/testSetup";
 import { useBuyNavigation } from "../useBuyNavigation";
 import { useSellNavigation } from "../useSellNavigation";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockNavigate = jest.fn();
 const mockOpenAssetAndAccount = jest.fn();

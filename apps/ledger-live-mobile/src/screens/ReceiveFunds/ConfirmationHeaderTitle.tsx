@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 type Props = {

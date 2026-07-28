@@ -4,10 +4,10 @@
 import { renderHook } from "@testing-library/react";
 import { useCurrenciesUnderFeatureFlag } from "../useCurrenciesUnderFeatureFlag";
 import { useFeature } from "@features/platform-feature-flags";
-import useEnv from "../../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 
 jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
-jest.mock("../../../hooks/useEnv", () => jest.fn());
+jest.mock("@features/platform-env", () => jest.fn());
 
 const mockUseFeature = jest.mocked(useFeature);
 const mockedEnvironment = jest.mocked(useEnv);

@@ -3,7 +3,7 @@
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook } from "@testing-library/react";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-solana/types";
 import { getCurrentSolanaPreloadData } from "@ledgerhq/coin-solana/preload-data";

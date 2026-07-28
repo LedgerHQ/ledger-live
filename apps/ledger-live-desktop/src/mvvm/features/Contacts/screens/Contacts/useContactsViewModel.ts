@@ -6,24 +6,36 @@ import {
   createContactsListViewModel,
   createContactsSearchViewModel,
   resolveContactsLedgerSyncIntroductionOpen,
+  useAddAddressFlowViewModel,
   useContacts,
   useContactsFeatureIntroductionState,
   useContactsMeContact,
+  type AddAddressFlowState,
   type ContactsLedgerSyncStatus,
-  type ContactsPageLabels,
+  type ContactsListViewLabels,
+  type ContactsListViewProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
-import type { ContactsViewProps } from "./ContactsView";
+import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 
-export type ContactsViewModel = ContactsViewProps;
+export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
+  Readonly<{
+    addAddressFlowState: AddAddressFlowState;
+    onClearSearch: () => void;
+  }>;
 
-export function useContactsViewModel(): ContactsViewModel {
+export function useContactsViewModel(): ContactsPageViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const { state: addAddressFlowState, start: startAddAddress } = useAddAddressFlowViewModel();
+  const { detail, onOpenMe, onOpenContact } = useContactDetailPaneAdapter(
+    contacts,
+    startAddAddress,
+  );
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -31,13 +43,13 @@ export function useContactsViewModel(): ContactsViewModel {
     isContactsEntryAvailable: true,
     preference,
   });
-  const labels = useMemo<ContactsPageLabels>(
+  const labels = useMemo<ContactsListViewLabels>(
     () => ({
       title: t("contacts.title"),
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.me.addressCount", { count }),
+      formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
@@ -60,12 +72,7 @@ export function useContactsViewModel(): ContactsViewModel {
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);
-  const onOpenMe = useCallback<ContactsViewProps["onOpenMe"]>(_contactId => undefined, []);
-  const onOpenContact = useCallback<ContactsViewProps["onOpenContact"]>(
-    _contactId => undefined,
-    [],
-  );
-  const onAddContact = useCallback(() => undefined, []);
+  const onClearSearch = useCallback(() => setSearchQuery(""), []);
   const onDismissLedgerSyncIntroduction = useCallback(
     () => setIsLedgerSyncIntroductionDismissed(true),
     [],
@@ -90,14 +97,16 @@ export function useContactsViewModel(): ContactsViewModel {
   }, [navigate]);
 
   return {
+    addAddressFlowState,
     viewModel,
     labels,
     searchQuery,
     meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
     onSearchInputChange,
+    onClearSearch,
     onOpenMe,
     onOpenContact,
-    onAddContact,
+    detail,
     ledgerSyncStatus,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,

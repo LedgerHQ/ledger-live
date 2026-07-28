@@ -234,7 +234,7 @@ export class DeviceManagementKitBLETransport extends Transport {
               // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
               return throwError(() => new PairingFailed());
             } else if (
-              error instanceof PeerRemovedPairing ||
+              (error as { name?: string })?.name === "PeerRemovedPairing" ||
               error instanceof OpeningConnectionError
             ) {
               return throwError(() => error);

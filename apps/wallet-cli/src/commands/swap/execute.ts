@@ -317,6 +317,7 @@ export async function executeSwapCommand({
       operationHash: result.operationHash,
       swapId: result.swapId,
       amountExpectedTo: result.amountExpectedTo,
+      amountExpectedToAtomic: result.amountExpectedToAtomic,
       magnitudeAwareRate: result.magnitudeAwareRate,
     });
   });

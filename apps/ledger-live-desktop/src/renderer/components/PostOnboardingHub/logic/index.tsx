@@ -7,7 +7,6 @@ import {
 import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
-import CustomImage from "~/renderer/screens/customImage";
 import { getStoreValue } from "~/renderer/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { openProductTour } from "LLD/features/ProductTour/Drawer/productTourDialog";
@@ -79,25 +78,6 @@ const recover: PostOnboardingAction = {
     ),
 };
 
-const customImage: PostOnboardingAction = {
-  id: PostOnboardingActionId.customImage,
-  Icon: Icons.PictureImage,
-  title: "customImage.postOnboarding.title",
-  titleCompleted: "customImage.postOnboarding.title",
-  description: "customImage.postOnboarding.description",
-  actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: ({ deviceModelId }: StartActionArgs) =>
-    setDrawer(
-      CustomImage,
-      {
-        isFromPostOnboardingEntryPoint: true,
-        deviceModelId: deviceModelId || null,
-      },
-      { forceDisableFocusTrap: true },
-    ),
-  buttonLabelForAnalyticsEvent: "Set lock screen picture",
-};
-
 const discoverWallet: PostOnboardingAction = {
   id: PostOnboardingActionId.discoverWallet,
   featureFlagId: "lwdProductTour",
@@ -146,17 +126,6 @@ const migrateAssetsMock: PostOnboardingAction = {
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.migrateAssetsMock }),
 };
 
-const customImageMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.customImageMock,
-  Icon: Icons.PictureImage,
-  title: "customImage.postOnboarding.title",
-  titleCompleted: "customImage.postOnboarding.title",
-  description: "customImage.postOnboarding.description",
-  actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: () =>
-    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.customImageMock }),
-};
-
 const assetsTransferMock: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransferMock,
   Icon: Icons.Lock,
@@ -197,13 +166,11 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   assetsTransfer,
   buyCrypto,
   syncAccounts,
-  customImage,
   discoverWallet,
   recover,
   // Mocks for desktop development and tests
   assetsTransferMock,
   buyCryptoMock,
-  customImageMock,
   claimMock,
   personalizeMock,
   migrateAssetsMock,
@@ -221,11 +188,10 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
 const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   buyCryptoMock,
-  customImageMock,
   recoverMock,
 ];
 
-const apexPostOnboardingActionsMock: PostOnboardingAction[] = [customImageMock, recoverMock];
+const apexPostOnboardingActionsMock: PostOnboardingAction[] = [recoverMock];
 
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
@@ -240,21 +206,18 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
     case DeviceModelId.apex:
       if (mock) return apexPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet, recover];
     case DeviceModelId.nanoS:
-      // Post-onboarding actions for Nano S (no custom lock screen step).
       return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
-      // Post-onboarding actions for Nano S Plus (no custom lock screen step).
       return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     case DeviceModelId.nanoX:
-      // Post-onboarding actions for Nano X (no custom lock screen step).
       return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     default:
       return [];

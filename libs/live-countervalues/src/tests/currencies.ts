@@ -1,7 +1,7 @@
 import { CoinType } from "@ledgerhq/types-cryptoassets";
 import type { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 
-// Minimal currency fixtures so tests don't depend on @ledgerhq/cryptoassets.
+// Minimal currency fixtures so tests don't pull the full currency registry.
 // Only the fields consumed by the countervalues logic and the account mocks are populated.
 
 const bitcoin: CryptoCurrency = {

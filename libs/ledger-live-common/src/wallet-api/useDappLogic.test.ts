@@ -30,7 +30,7 @@ jest.mock("../bridge", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockReturnValue(true),
   changes: { subscribe: jest.fn() },
 }));
@@ -204,7 +204,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     // Re-establish the default mock return values for this suite.
-    const { getEnv } = jest.requireMock("@ledgerhq/live-env");
+    const { getEnv } = jest.requireMock("@shared/env");
     getEnv.mockReturnValue(true);
     const { getCryptoAssetsStore } = jest.requireMock(
       "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",
@@ -346,7 +346,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
 describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    const { getEnv } = jest.requireMock("@ledgerhq/live-env");
+    const { getEnv } = jest.requireMock("@shared/env");
     getEnv.mockReturnValue(true);
     const { getCryptoAssetsStore } = jest.requireMock(
       "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",

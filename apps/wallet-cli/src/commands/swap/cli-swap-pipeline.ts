@@ -106,7 +106,11 @@ export type FullSwapPipelineResult = {
   payload: SwapPayloadResponse;
   operationHash?: string;
   swapId?: string;
+  /** Destination amount in display units, e.g. "1.2345" for 1.2345 ETH. */
   amountExpectedTo?: string;
+  /** Destination amount in atomic units, exactly as decoded from the device payload. */
+  amountExpectedToAtomic?: string;
+  /** Atomic-to over atomic-from, same convention as live-common's `magnitudeAwareRate`. */
   magnitudeAwareRate?: string;
 };
 
@@ -373,10 +377,16 @@ export async function runFullSwapPipeline(
       );
 
       const decodePayload = await decodeSwapPayload(payload.binaryPayload);
-      const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+      const toUnit = toCurrency.units[0];
+      if (!toUnit) {
+        throw new Error(`Destination currency has no unit defined: ${toCurrency.id}`);
+      }
+      const amountExpectedToAtomic = new BigNumber(decodePayload.amountToWallet.toString());
+      // shiftedBy is exact, unlike dividedBy which rounds at BigNumber's DECIMAL_PLACES (20 here).
+      const amountExpectedTo = amountExpectedToAtomic.shiftedBy(-toUnit.magnitude);
       const magnitudeAwareRate =
         tx.amount && new BigNumber(tx.amount).gt(0)
-          ? amountExpectedTo.dividedBy(tx.amount)
+          ? amountExpectedToAtomic.dividedBy(tx.amount)
           : undefined;
       tx.amount = new BigNumber(tx.amount);
 
@@ -439,6 +449,7 @@ export async function runFullSwapPipeline(
         operationHash,
         swapId: payload.swapId,
         amountExpectedTo: amountExpectedTo.toFixed(),
+        amountExpectedToAtomic: amountExpectedToAtomic.toFixed(),
         ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
       };
     });

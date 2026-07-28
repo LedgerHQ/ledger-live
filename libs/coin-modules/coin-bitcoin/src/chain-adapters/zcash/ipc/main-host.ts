@@ -43,6 +43,8 @@ import type {
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
   BroadcastTransactionArgs,
+  TransactionDetailsArgs,
+  TransactionDetailsResult,
 } from "../types";
 import { OneShotResolver } from "./one-shot-router";
 
@@ -150,6 +152,7 @@ type HostState = {
     buildTx: OneShotResolver<BuildTransactionResult>;
     finalizeTx: OneShotResolver<FinalizeTransactionResult>;
     broadcastTx: OneShotResolver<string>;
+    transactionDetails: OneShotResolver<TransactionDetailsResult[]>;
   };
 };
 
@@ -163,6 +166,7 @@ const state: HostState = {
     buildTx: new OneShotResolver<BuildTransactionResult>("build-transaction"),
     finalizeTx: new OneShotResolver<FinalizeTransactionResult>("finalize-transaction"),
     broadcastTx: new OneShotResolver<string>("broadcast-transaction"),
+    transactionDetails: new OneShotResolver<TransactionDetailsResult[]>("transaction-details"),
   },
 };
 
@@ -275,7 +279,8 @@ function handleStreamMessage(event: StreamEvent): void {
 }
 
 function handleUtilityMessage(msg: UtilityOutboundMessage): void {
-  const { chainTip, blockHeight, buildTx, finalizeTx, broadcastTx } = state.resolvers;
+  const { chainTip, blockHeight, buildTx, finalizeTx, broadcastTx, transactionDetails } =
+    state.resolvers;
   switch (msg.type) {
     case "chain-tip":
       return resolveOneShot(chainTip, msg.requestId, msg.height, "chain-tip reply");
@@ -299,6 +304,20 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
       return resolveOneShot(broadcastTx, msg.requestId, msg.txid, "broadcast-transaction-result");
     case "broadcast-transaction-error":
       return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error");
+    case "transaction-details-result":
+      return resolveOneShot(
+        transactionDetails,
+        msg.requestId,
+        msg.results,
+        "transaction-details-result",
+      );
+    case "transaction-details-error":
+      return rejectOneShot(
+        transactionDetails,
+        msg.requestId,
+        msg.message,
+        "transaction-details-error",
+      );
     default: {
       const exhaustive: never = msg;
       log(LOG_TYPE, "unknown utility message", { msg: exhaustive });
@@ -393,6 +412,14 @@ function registerHandlers(): void {
     (_event, args): Promise<string> =>
       state.resolvers.broadcastTx.register(args.requestId, () =>
         postToUtility({ type: "broadcast-transaction", args }),
+      ),
+  );
+
+  ipcMain.handle<TransactionDetailsArgs, TransactionDetailsResult[]>(
+    ZCASH_IPC.transactionDetails,
+    (_event, args): Promise<TransactionDetailsResult[]> =>
+      state.resolvers.transactionDetails.register(args.requestId, () =>
+        postToUtility({ type: "transaction-details", args }),
       ),
   );
 }

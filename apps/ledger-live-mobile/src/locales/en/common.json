@@ -4505,6 +4505,28 @@
       "hideFullMessage": "Hide full message"
     }
   },
+  "walletApiSignMessage": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
+  "walletApiSignTransaction": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
   "sync": {
     "error": "Sync Error",
     "loading": "Sync"
@@ -4781,6 +4803,7 @@
       "slow": "Slow",
       "custom": "Custom",
       "customFees": "Custom fees",
+      "defaultNetworkFee": "Default network fee",
       "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
@@ -8826,10 +8849,6 @@
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
         },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
-        },
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
@@ -8857,10 +8876,6 @@
         "titleCompleted": "Crypto bought",
         "description": "Choose from 500+ coins and tokens.",
         "popupLabel": "Crypto bought"
-      },
-      "customImage": {
-        "titleCompleted": "Lock screen customized",
-        "popupLabel": "Lock screen customized successfully"
       },
       "recover": {
         "titleCompleted": "Backup secured",
@@ -10226,6 +10241,8 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
+    "addYourAddress": "Add your address",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
@@ -10243,12 +10260,42 @@
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
     },
+    "detail": {
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
+      "myAddresses": "My addresses",
+      "emptyState": {
+        "title": "No address yet",
+        "meTitle": "Save your own addresses",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
+        "contactDescription": "Save a wallet address to send to {{name}}"
+      }
+    },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "activate": "Turn on Ledger Sync",
       "dismiss": "Got it",
       "checkingAccessibilityLabel": "Checking Ledger Sync status"
+    },
+    "featureIntroduction": {
+      "title": "Introducing Contacts",
+      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
+      "primaryAction": "Try contacts",
+      "secondaryAction": "Maybe later",
+      "highlights": {
+        "saveAddresses": {
+          "title": "Save addresses once",
+          "description": "Keep the addresses you send to in one place."
+        },
+        "sendToRightAddress": {
+          "title": "Send to the right address",
+          "description": "Funds reach the right wallet every time."
+        },
+        "privateAcrossDevices": {
+          "title": "Private across your devices",
+          "description": "End-to-end encrypted with Ledger Sync."
+        }
+      }
     }
   }
 }

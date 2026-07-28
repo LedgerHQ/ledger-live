@@ -2,7 +2,7 @@ import { useMemo, useCallback } from "react";
 import type { BlockingStateType, EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type DeviceOutOfStorageSpaceState = Extract<
@@ -13,10 +13,10 @@ type DeviceOutOfStorageSpaceState = Extract<
 type Params = Readonly<{
   state: DeviceOutOfStorageSpaceState;
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 }>;
 
-export function useDeviceOutOfStorageSpaceViewModel({ state, device, sourceFlow }: Params) {
+export function useDeviceOutOfStorageSpaceViewModel({ state, device }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openMyLedger } = useInitializerActions(device);
   const modelId = device.modelId;
   const searchQuery = useMemo(() => state.appNames.join(", "), [state.appNames]);
@@ -25,9 +25,10 @@ export function useDeviceOutOfStorageSpaceViewModel({ state, device, sourceFlow 
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.ManageApps,
+      extraProperties: analyticsProperties,
     });
     openMyLedger(searchQuery);
-  }, [openMyLedger, searchQuery, sourceFlow, modelId]);
+  }, [analyticsProperties, openMyLedger, searchQuery, sourceFlow, modelId]);
 
   return {
     onOpenMyLedger,

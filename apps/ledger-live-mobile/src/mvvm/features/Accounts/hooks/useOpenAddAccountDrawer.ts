@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type Props = {

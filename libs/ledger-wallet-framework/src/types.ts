@@ -20,7 +20,7 @@ export interface ExplorerView {
 
 export interface CryptoCurrency {
   type: "CryptoCurrency";
-  id: string;
+  id: any;
   name: string;
   ticker: string;
   deviceTicker?: string;
@@ -52,11 +52,11 @@ export interface CryptoCurrency {
 
 export interface TokenCurrency {
   type: "TokenCurrency";
-  id: string;
+  id: any;
   name: string;
   ticker: string;
   contractAddress: string;
-  parentCurrencyId: string;
+  parentCurrencyId: any;
   units: Unit[];
   tokenType: string;
   delisted?: boolean;

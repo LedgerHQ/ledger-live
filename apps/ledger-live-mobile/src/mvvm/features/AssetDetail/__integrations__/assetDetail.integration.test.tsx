@@ -1,11 +1,24 @@
 import React from "react";
+import type { CurrencyResult } from "@features/platform-currencies";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor, within, withFlagOverrides } from "@tests/test-renderer";
+import {
+  render,
+  renderWithReactQuery,
+  screen,
+  waitFor,
+  within,
+  withFlagOverrides,
+} from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
+import MarketList from "LLM/features/Market/screens/MarketList";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
@@ -17,6 +30,8 @@ import {
 
 const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
+const mockUseCurrencyById = jest.fn<CurrencyResult, [string]>();
+type TokenCurrency = Extract<NonNullable<CurrencyResult["currency"]>, { type: "TokenCurrency" }>;
 
 jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
   useRampCatalog: () => ({ isCurrencyAvailable: mockIsCurrencyAvailable }),
@@ -24,6 +39,11 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockIsAcceptedCurrency,
+}));
+
+jest.mock("@features/platform-currencies", () => ({
+  ...jest.requireActual("@features/platform-currencies"),
+  useCurrencyById: (id: string) => mockUseCurrencyById(id),
 }));
 
 jest.mock("@ledgerhq/asset-detail", () => ({
@@ -54,7 +74,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   ),
 }));
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
 type NavigatorParams = {
   currencyId: string;
@@ -68,7 +88,7 @@ function AssetDetailTestNavigator({
   params?: NavigatorParams;
 } = {}) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator id={BASE_NAVIGATOR_ID}>
       <Stack.Screen
         name={NavigatorName.AssetDetail}
         component={AssetDetailNavigator}
@@ -78,6 +98,7 @@ function AssetDetailTestNavigator({
         }}
         options={{ headerShown: false }}
       />
+      <Stack.Screen name={ScreenName.MarketList} component={MarketList} />
     </Stack.Navigator>
   );
 }
@@ -125,6 +146,12 @@ function withBlacklistedTokens(tokenIds: string[]) {
 
 describe("AssetDetail screen layout", () => {
   beforeEach(() => {
+    mockUseCurrencyById.mockReset();
+    mockUseCurrencyById.mockImplementation((id: string) => ({
+      currency: findCryptoCurrencyById(id),
+      loading: false,
+      error: undefined,
+    }));
     mockIsCurrencyAvailable.mockReturnValue(false);
     mockIsAcceptedCurrency.mockReturnValue(false);
     setAvailability();
@@ -486,6 +513,127 @@ describe("AssetDetail screen layout", () => {
         expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
       });
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
+    });
+
+    it.each(["deeplink_asset", "deeplink_market"])(
+      "redirects a missing token %s deeplink to Market",
+      async source => {
+        const tokenId = "ethereum/erc20/does_not_exist";
+        mockUseCurrencyById.mockReturnValue({
+          currency: undefined,
+          loading: false,
+          error: undefined,
+        });
+
+        renderWithReactQuery(
+          <AssetDetailTestNavigator
+            params={{
+              currencyId: tokenId,
+              source,
+              marketState: { id: tokenId, ledgerIds: [tokenId] },
+            }}
+          />,
+        );
+
+        await waitFor(() => expect(screen.getByTestId("market-list")).toBeVisible());
+        expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeNull();
+      },
+    );
+
+    it("keeps a valid token deeplink on Asset Detail", () => {
+      const token = {
+        type: "TokenCurrency",
+        id: "ethereum/erc20/usd-tether" as TokenCurrency["id"],
+        parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
+        contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        tokenType: "erc20",
+        name: "Tether USD",
+        ticker: "USDT",
+        units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+      } satisfies TokenCurrency;
+      mockUseCurrencyById.mockReturnValue({
+        currency: token,
+        loading: false,
+        error: undefined,
+      });
+
+      render(
+        <AssetDetailTestNavigator
+          params={{
+            currencyId: token.id,
+            source: "deeplink_asset",
+            marketState: { id: token.id, ledgerIds: [token.id] },
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
+      expect(screen.queryByTestId("market-list")).toBeNull();
+    });
+
+    it("keeps Asset Detail visible while the token lookup is loading", () => {
+      const tokenId = "ethereum/erc20/loading";
+      mockUseCurrencyById.mockReturnValue({
+        currency: undefined,
+        loading: true,
+        error: undefined,
+      });
+
+      render(
+        <AssetDetailTestNavigator
+          params={{
+            currencyId: tokenId,
+            source: "deeplink_asset",
+            marketState: { id: tokenId, ledgerIds: [tokenId] },
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
+      expect(screen.queryByTestId("market-list")).toBeNull();
+    });
+
+    it("keeps the Asset Detail screen on token lookup errors", () => {
+      const tokenId = "ethereum/erc20/unavailable";
+      mockUseCurrencyById.mockReturnValue({
+        currency: undefined,
+        loading: false,
+        error: new Error("CAL unavailable"),
+      });
+
+      render(
+        <AssetDetailTestNavigator
+          params={{
+            currencyId: tokenId,
+            source: "deeplink_market",
+            marketState: { id: tokenId, ledgerIds: [tokenId] },
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
+      expect(screen.queryByTestId("market-list")).toBeNull();
+    });
+
+    it("keeps market-only assets on Asset Detail outside deeplinks", () => {
+      mockUseCurrencyById.mockReturnValue({
+        currency: undefined,
+        loading: false,
+        error: undefined,
+      });
+
+      render(
+        <AssetDetailTestNavigator
+          params={{
+            currencyId: "market-only-asset",
+            source: "market_banner",
+            marketState: { id: "market-only-asset" },
+          }}
+        />,
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
+      expect(screen.queryByTestId("market-list")).toBeNull();
     });
   });
 });

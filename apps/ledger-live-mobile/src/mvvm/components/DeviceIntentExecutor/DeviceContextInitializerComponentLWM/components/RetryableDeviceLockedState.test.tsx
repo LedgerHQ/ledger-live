@@ -3,6 +3,7 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { RetryableStateType } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen, track } from "~/analytics";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { RetryableDeviceLockedState } from "./RetryableDeviceLockedState";
 import type { InitializerDevice } from "../types";
@@ -33,12 +34,13 @@ function renderState() {
 
   return {
     ...render(
-      <RetryableDeviceLockedState
-        state={{ type: RetryableStateType.DeviceLocked, retry }}
-        device={device}
-        sourceFlow="my_ledger"
-        onCancel={onCancel}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+        <RetryableDeviceLockedState
+          state={{ type: RetryableStateType.DeviceLocked, retry }}
+          device={device}
+          onCancel={onCancel}
+        />
+      </DeviceIntentTrackingProvider>,
     ),
     retry,
     onCancel,

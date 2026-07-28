@@ -1,6 +1,6 @@
 import { from, defer, of, concat, EMPTY, Observable } from "rxjs";
 import { switchMap, mergeMap, concatMap, catchError, tap } from "rxjs/operators";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   formatOperation,
