@@ -24,14 +24,16 @@ runs:
           const fs = require("fs");
           const path = require("path");
 
+          const customMessage = core.getInput('custom_message');
+          const haltRunner = core.getInput('halt_runner');
           let header = "*Ledger Live CI: Test flake*";
-          let description = "Flake detected but interactive debugging was not enabled Workflow: ${{ github.workflow }}";
-          
-          if ("${{ inputs.custom_message }}"){
-            description = "${{ inputs.custom_message }} Workflow: ${{ github.workflow }}"
-          }else if ("${{ inputs.halt_runner }}" == "true"){
+          let description = `Flake detected but interactive debugging was not enabled Workflow: ${context.workflow}`;
+
+          if (customMessage){
+            description = `${customMessage} Workflow: ${context.workflow}`
+          }else if (haltRunner == "true"){
             header = ":fire: *Ledger Live CI: Test flake in progress* :fire:";
-            description = "Known flake detected. Runner held for interactive debugging session. Workflow: ${{ github.workflow }}";
+            description = `Known flake detected. Runner held for interactive debugging session. Workflow: ${context.workflow}`;
           }
 
           const notification = [

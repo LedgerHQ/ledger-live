@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -13,12 +14,12 @@ const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = {
   type: "TokenCurrency" as const,
-  id: "ethereum/erc20/usd_tether__erc20_",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
   name: "Tether USD (ERC-20)",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20" as const,
 };
 

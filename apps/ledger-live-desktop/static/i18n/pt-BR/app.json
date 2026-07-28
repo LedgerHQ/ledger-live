@@ -538,7 +538,9 @@
       "monad_title" : "A Ledger Nano S™ não é compatível com a troca de Monad",
       "monad_description" : "Para trocar Monad, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "zcash_title" : "A Ledger Nano™ S não é compatível com a troca de Zcash",
-      "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™."
+      "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™.",
+      "aleo_title" : "A Ledger Nano S™ não é compatível com a troca de Aleo",
+      "aleo_description" : "Para trocar Aleo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "Quantia da taxa ({{unit}})",
     "gasLimit" : "Limite de gás ({{unit}})",
     "feesPaid" : "Taxas pagas à rede para processar sua transação",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Você usará {{energy}} de energia e {{bandwidth}} de largura de banda para pagar a taxa de rede."
+      },
+      "insufficient" : {
+        "description" : "Você não tem energia ou largura de banda suficiente para cobrir esta transferência. O valor faltante será coberto pela queima de TRX."
+      }
+    },
     "insufficientBalanceFees" : "Saldo insuficiente para cobrir as taxas de rede",
     "amountToSend" : "Quantia a enviar em ({{currency}})",
     "coinToSend" : "Moeda a enviar",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Redelegar",
         "redelegateDisabledTooltip" : "Você pode delegar novamente em <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip" : "Você não pode redelegar a mais de <0>7</0> validadores por vez",
-        "undelegateDisabledTooltip" : "Você não pode desdelegar mais de <0>7</0> validadores por vez",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "Você não pode desdelegar mais de <0>7</0> validadores por vez",
+          "zero_gravity" : "Você precisa de pelo menos 1 Gwei de cotas delegadas para desdelegar"
+        },
         "undelegateActivatingTooltip" : "Você não pode desdelegar uma aplicação ainda em ativação.",
         "reward" : "Resgatar Recompensas",
         "activeTooltip" : "Quantias delegadas geram recompensas",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "Quantia"
+              "title" : "Quantia",
+              "visibilityDelay" : "Pode levar até {{numberOfMinutes}} minutos para que esta delegação apareça em seu painel de delegação."
             },
             "validator" : {
               "title" : "Validadores",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Depositar",
+      "OUT" : "Sacar"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "Famílias separadas por vírgula, usadas em testes personalizados com várias famílias.",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "Aplicar",
-        "resetOverride" : "Redefinir sobreposição"
+        "contactsData" : "Dados dos contatos",
+        "loadPopulatedContacts" : "Carregar contatos preenchidos",
+        "resetContacts" : "Redefinir contatos",
+        "resetOverride" : "Redefinir sobreposição",
+        "featureIntroduction" : {
+          "title" : "Introdução de Recursos",
+          "label" : "Introdução ao recurso Mostrar Contatos",
+          "dismissed" : "Dispensado — ative para exibir a introdução novamente em Contatos.",
+          "willShow" : "Será exibido em Contatos até ser dispensado."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Lista de Criptoativos",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "A conta do destinatário não aderiu ao ASA selecionado."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "O memo é muito longo.",
+      "description" : "Os memos da Algorand não podem exceder 1024 bytes. Escreva um memo mais curto."
     },
     "AmountRequired" : {
       "title" : "Quantia Necessária"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Veja mais. Clique menos. Economize {{discount}}%",
-      "subtitle" : "Aproveite uma tela maior, um jeito de rever transações mais inteligente, mais proteção e {{discount}}% de desconto exclusivo."
+      "subtitle" : "Aproveite uma tela maior, um jeito de rever transações mais inteligente, mais proteção e {{discount}}% de desconto exclusivo.",
+      "cta" : "Explore autenticadores com tela touch"
     },
     "optedOut" : {
-      "title" : "Identifique golpes. Veja cada detalhe",
-      "subtitle" : "Revise tudo com clareza em um autenticador com tela touch e detecte golpes com verificações de segurança avançadas."
-    },
-    "cta" : "Explore autenticadores com tela touch"
+      "title" : "Detecte golpes antes de assinar",
+      "subtitle" : "Saiba mais sobre recursos de segurança avançados que permitem detectar ameaças em tempo real.",
+      "cta" : "Saiba mais"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "Contatos",
     "addContact" : "Adicionar contato",
     "searchPlaceholder" : "Buscar contato",
+    "searchNoResults" : "Nenhum contato encontrado",
     "me" : {
       "name" : "Eu",
       "addressCount_zero" : "0 endereço",
       "addressCount_one" : "{{count}} endereço",
       "addressCount_other" : "{{count}} endereços"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Seus contatos são criptografados de ponta a ponta com sua Ledger e sincronizados entre seus dispositivos, apenas você pode desbloqueá-los.",
+      "dismiss" : "Entendi"
+    },
+    "featureIntroduction" : {
+      "title" : "Apresentando Contatos",
+      "description" : "Sua agenda de endereços para cripto — salve as carteiras para as quais envia, tudo em um só lugar.",
+      "primaryAction" : "Experimente os contatos",
+      "secondaryAction" : "Talvez mais tarde",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Salve endereços uma vez",
+          "description" : "Mantenha os endereços para os quais envia em um só lugar."
+        },
+        "sendToRightAddress" : {
+          "title" : "Envie para o endereço correto",
+          "description" : "Os fundos chegam sempre à carteira correta."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Privada em todos os seus dispositivos",
+          "description" : "Criptografada de ponta a ponta com o Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails" : {

@@ -1,9 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
 import {
-  DisconnectedDeviceDuringOperation,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
-} from "@ledgerhq/errors";
+  TransactionRefusedOnDevice,
+} from "../../errors";
 import {
   createExchange,
   ExchangeTypes,
@@ -21,7 +22,6 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
 import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";

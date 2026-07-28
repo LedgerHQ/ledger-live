@@ -1,5 +1,87 @@
 # @features/flow-contacts
 
+## 0.3.0
+
+### Minor Changes
+
+- [#19855](https://github.com/LedgerHQ/ledger-live/pull/19855) [`6b6f59e`](https://github.com/LedgerHQ/ledger-live/commit/6b6f59e77df6fc6794c13d12f476733624a53c96) Thanks [@deepyjr](https://github.com/deepyjr)! - Align Contacts Jest configuration with the shared Flow tooling.
+
+- [#19757](https://github.com/LedgerHQ/ledger-live/pull/19757) [`f115fc2`](https://github.com/LedgerHQ/ledger-live/commit/f115fc2cd159bd170bee3b9cdcc3f65f521017db) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Contacts list view-model and helper test coverage.
+
+- [#19666](https://github.com/LedgerHQ/ledger-live/pull/19666) [`732faa2`](https://github.com/LedgerHQ/ledger-live/commit/732faa27e81899b49a08e6a9c8fe2c8b75ac17ea) Thanks [@deepyjr](https://github.com/deepyjr)! - Add mock Ledger Sync presentation variants to Desktop Contacts.
+
+- [#19742](https://github.com/LedgerHQ/ledger-live/pull/19742) [`022f431`](https://github.com/LedgerHQ/ledger-live/commit/022f43122a713f9d4b2e10daaec0d44c91b58c9f) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Ledger Sync checking and introduction presentation variants to Mobile Contacts.
+
+- [#19790](https://github.com/LedgerHQ/ledger-live/pull/19790) [`d942108`](https://github.com/LedgerHQ/ledger-live/commit/d9421087b45b4a0febaee63b1f1a097c2f42a2a5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared add-contact scenario state and save hook for Contacts flows
+
+- [#19830](https://github.com/LedgerHQ/ledger-live/pull/19830) [`d7f59ec`](https://github.com/LedgerHQ/ledger-live/commit/d7f59ecfa0e7a549b0206042738244ec89c68b95) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Expose shared add-contact invalid name validation state
+
+- [#19827](https://github.com/LedgerHQ/ledger-live/pull/19827) [`35e9528`](https://github.com/LedgerHQ/ledger-live/commit/35e952874f86878788d636d7d362d239374738cd) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared Contacts feature introduction state, preference port, and Ledger Sync priority resolvers
+
+- [#19781](https://github.com/LedgerHQ/ledger-live/pull/19781) [`f8164bd`](https://github.com/LedgerHQ/ledger-live/commit/f8164bdd7fb0dc138c399d424eda1c8c129dd477) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an interactive section index to the Mobile Contacts list
+
+- [#19776](https://github.com/LedgerHQ/ledger-live/pull/19776) [`d43ab1d`](https://github.com/LedgerHQ/ledger-live/commit/d43ab1d5dcc111534b1633f4da051787d0ef3d2f) Thanks [@deepyjr](https://github.com/deepyjr)! - Render Contacts search results in Ledger Wallet Mobile.
+
+- [#19878](https://github.com/LedgerHQ/ledger-live/pull/19878) [`8e21dc0`](https://github.com/LedgerHQ/ledger-live/commit/8e21dc0eee799be29803d63b582da3463f1593b3) Thanks [@deepyjr](https://github.com/deepyjr)! - Add shared selection for an empty contact detail.
+
+- [#19902](https://github.com/LedgerHQ/ledger-live/pull/19902) [`ab74170`](https://github.com/LedgerHQ/ledger-live/commit/ab7417038021e37f932bac5551b862dce6a2c39f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add the Contacts feature introduction dialog, hero asset, and shared page wiring with a closed default state for apps.
+
+- [#19712](https://github.com/LedgerHQ/ledger-live/pull/19712) [`fd1e33b`](https://github.com/LedgerHQ/ledger-live/commit/fd1e33bb3976c8986e16579a4995c9fcf4dc52aa) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render the populated Desktop Contacts list and add Dev Tool controls to load mock contacts for testing.
+
+- [#19730](https://github.com/LedgerHQ/ledger-live/pull/19730) [`067b570`](https://github.com/LedgerHQ/ledger-live/commit/067b57005f76858bdaf2699dffde07ada4b5fa86) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Contacts search results and no-result state
+
+- [#19740](https://github.com/LedgerHQ/ledger-live/pull/19740) [`03dbe82`](https://github.com/LedgerHQ/ledger-live/commit/03dbe82bcaff5b4f0aedac2e6ea3cca767a0e05c) Thanks [@deepyjr](https://github.com/deepyjr)! - Render grouped populated Contacts lists on mobile.
+
+- [#19812](https://github.com/LedgerHQ/ledger-live/pull/19812) [`729a6f8`](https://github.com/LedgerHQ/ledger-live/commit/729a6f8bce7914da53b0f404ddc8904fa4339d9f) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the Mobile Contacts search input visible while the populated list scrolls.
+
+### Patch Changes
+
+- Updated dependencies [[`d7f59ec`](https://github.com/LedgerHQ/ledger-live/commit/d7f59ecfa0e7a549b0206042738244ec89c68b95), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f)]:
+  - @domain/entity-contact@0.3.0
+  - @shared/feature-flags@0.15.0
+  - @features/platform-feature-flags@0.6.2
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#19855](https://github.com/LedgerHQ/ledger-live/pull/19855) [`6b6f59e`](https://github.com/LedgerHQ/ledger-live/commit/6b6f59e77df6fc6794c13d12f476733624a53c96) Thanks [@deepyjr](https://github.com/deepyjr)! - Align Contacts Jest configuration with the shared Flow tooling.
+
+- [#19757](https://github.com/LedgerHQ/ledger-live/pull/19757) [`f115fc2`](https://github.com/LedgerHQ/ledger-live/commit/f115fc2cd159bd170bee3b9cdcc3f65f521017db) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Contacts list view-model and helper test coverage.
+
+- [#19666](https://github.com/LedgerHQ/ledger-live/pull/19666) [`732faa2`](https://github.com/LedgerHQ/ledger-live/commit/732faa27e81899b49a08e6a9c8fe2c8b75ac17ea) Thanks [@deepyjr](https://github.com/deepyjr)! - Add mock Ledger Sync presentation variants to Desktop Contacts.
+
+- [#19742](https://github.com/LedgerHQ/ledger-live/pull/19742) [`022f431`](https://github.com/LedgerHQ/ledger-live/commit/022f43122a713f9d4b2e10daaec0d44c91b58c9f) Thanks [@deepyjr](https://github.com/deepyjr)! - Add Ledger Sync checking and introduction presentation variants to Mobile Contacts.
+
+- [#19790](https://github.com/LedgerHQ/ledger-live/pull/19790) [`d942108`](https://github.com/LedgerHQ/ledger-live/commit/d9421087b45b4a0febaee63b1f1a097c2f42a2a5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared add-contact scenario state and save hook for Contacts flows
+
+- [#19830](https://github.com/LedgerHQ/ledger-live/pull/19830) [`d7f59ec`](https://github.com/LedgerHQ/ledger-live/commit/d7f59ecfa0e7a549b0206042738244ec89c68b95) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Expose shared add-contact invalid name validation state
+
+- [#19827](https://github.com/LedgerHQ/ledger-live/pull/19827) [`35e9528`](https://github.com/LedgerHQ/ledger-live/commit/35e952874f86878788d636d7d362d239374738cd) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared Contacts feature introduction state, preference port, and Ledger Sync priority resolvers
+
+- [#19781](https://github.com/LedgerHQ/ledger-live/pull/19781) [`f8164bd`](https://github.com/LedgerHQ/ledger-live/commit/f8164bdd7fb0dc138c399d424eda1c8c129dd477) Thanks [@deepyjr](https://github.com/deepyjr)! - Add an interactive section index to the Mobile Contacts list
+
+- [#19776](https://github.com/LedgerHQ/ledger-live/pull/19776) [`d43ab1d`](https://github.com/LedgerHQ/ledger-live/commit/d43ab1d5dcc111534b1633f4da051787d0ef3d2f) Thanks [@deepyjr](https://github.com/deepyjr)! - Render Contacts search results in Ledger Wallet Mobile.
+
+- [#19878](https://github.com/LedgerHQ/ledger-live/pull/19878) [`8e21dc0`](https://github.com/LedgerHQ/ledger-live/commit/8e21dc0eee799be29803d63b582da3463f1593b3) Thanks [@deepyjr](https://github.com/deepyjr)! - Add shared selection for an empty contact detail.
+
+- [#19902](https://github.com/LedgerHQ/ledger-live/pull/19902) [`ab74170`](https://github.com/LedgerHQ/ledger-live/commit/ab7417038021e37f932bac5551b862dce6a2c39f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add the Contacts feature introduction dialog, hero asset, and shared page wiring with a closed default state for apps.
+
+- [#19712](https://github.com/LedgerHQ/ledger-live/pull/19712) [`fd1e33b`](https://github.com/LedgerHQ/ledger-live/commit/fd1e33bb3976c8986e16579a4995c9fcf4dc52aa) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render the populated Desktop Contacts list and add Dev Tool controls to load mock contacts for testing.
+
+- [#19730](https://github.com/LedgerHQ/ledger-live/pull/19730) [`067b570`](https://github.com/LedgerHQ/ledger-live/commit/067b57005f76858bdaf2699dffde07ada4b5fa86) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Render Desktop Contacts search results and no-result state
+
+- [#19740](https://github.com/LedgerHQ/ledger-live/pull/19740) [`03dbe82`](https://github.com/LedgerHQ/ledger-live/commit/03dbe82bcaff5b4f0aedac2e6ea3cca767a0e05c) Thanks [@deepyjr](https://github.com/deepyjr)! - Render grouped populated Contacts lists on mobile.
+
+- [#19812](https://github.com/LedgerHQ/ledger-live/pull/19812) [`729a6f8`](https://github.com/LedgerHQ/ledger-live/commit/729a6f8bce7914da53b0f404ddc8904fa4339d9f) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep the Mobile Contacts search input visible while the populated list scrolls.
+
+### Patch Changes
+
+- Updated dependencies [[`d7f59ec`](https://github.com/LedgerHQ/ledger-live/commit/d7f59ecfa0e7a549b0206042738244ec89c68b95), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f)]:
+  - @domain/entity-contact@0.3.0-next.0
+  - @shared/feature-flags@0.15.0-next.0
+  - @features/platform-feature-flags@0.6.2-next.0
+
 ## 0.2.0
 
 ### Minor Changes

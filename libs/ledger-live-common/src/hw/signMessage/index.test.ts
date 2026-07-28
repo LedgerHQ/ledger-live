@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account, AnyMessage } from "@ledgerhq/types-live";
 import { createFixtureCryptoCurrency } from "../../mock/fixtures/cryptoCurrencies";
 import { prepareMessageToSign } from "./index";

@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   AssetType,
   AssetConfigurationOptions,
@@ -48,9 +48,9 @@ export function useAssetConfiguration(
   };
 
   const merged = assets.map<AssetWithComponents>((asset, i) => ({
-    ...asset,
     ...rightResults[rightElement]?.[i],
     ...leftResults[leftElement ?? ""]?.[i],
+    ...asset,
   }));
 
   return sortAssets(merged, rightElement);

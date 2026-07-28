@@ -16,6 +16,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 
 type ContactDetailScreenViewModel =
@@ -38,6 +39,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { t } = useTranslation();
   const contact = useEmptyContactDetail(route.params.contactId);
   const currencySelection = useContactsCurrencySelectionAdapter();
+  const addressValidation = useContactsAddressValidationAdapter();
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "mobile",
     currencySelection,
@@ -47,7 +49,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     start: startAddAddress,
     completeCurrencySelection,
     close: closeAddAddress,
-  } = useAddAddressFlowViewModel();
+  } = useAddAddressFlowViewModel({ addressValidation });
   const onAddAddress = useCallback(() => {
     if (!contact) return;
 
