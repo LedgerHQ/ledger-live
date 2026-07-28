@@ -1,6 +1,8 @@
 import { BigNumber } from "bignumber.js";
 
 import { addressToScriptPublicKey, getFeeRate, parseExtendedPublicKey, scanUtxos } from "../logic";
+import { getBlockDagInfo } from "../network";
+import { calcMaxSpendableAmount } from "../logic/utxos/lib";
 import { selectUtxos } from "../logic/utxos/selection";
 import {
   KaspaAccount,
@@ -33,9 +35,26 @@ export const buildTransaction = async (
 
   const { compressedPublicKey, chainCode } = parseExtendedPublicKey(Buffer.from(a.xpub, "hex"));
 
-  const { utxos, accountAddresses } = await scanUtxos(compressedPublicKey, chainCode);
+  const [{ utxos: allUtxos, accountAddresses }, dagInfo] = await Promise.all([
+    scanUtxos(compressedPublicKey, chainCode),
+    getBlockDagInfo(),
+  ]);
+  // Kaspa coinbase UTXOs cannot be spent until they are 1000 blocks old (DAA maturity).
+  const currentDaa = BigInt(dagInfo.virtualDaaScore);
+  const COINBASE_MATURITY = 1000n;
+  const utxos = allUtxos.filter(
+    u =>
+      !u.utxoEntry.isCoinbase ||
+      currentDaa - BigInt(u.utxoEntry.blockDaaScore) >= COINBASE_MATURITY,
+  );
   const recipientIsTypeECDSA: boolean = t.recipient.length > 67;
-  const result = selectUtxos(utxos, recipientIsTypeECDSA, t.amount, getFeeRate(t).toNumber());
+  const feerate = getFeeRate(t).toNumber();
+  // For useAllAmount, compute the true sendable from the capped UTXO set (max 88 inputs) rather
+  // than trusting estimateMaxSpendable which uses total balance and can exceed 88 × 50 KAS.
+  const amount = t.useAllAmount
+    ? calcMaxSpendableAmount(utxos, recipientIsTypeECDSA, feerate)
+    : t.amount;
+  const result = selectUtxos(utxos, recipientIsTypeECDSA, amount, feerate);
 
   const selectedUtxos = result.utxos;
 
@@ -54,7 +73,7 @@ export const buildTransaction = async (
 
   const txOutputs = [
     new KaspaHwTransactionOutput({
-      value: t.amount.toNumber(),
+      value: amount.toNumber(),
       scriptPublicKey: addressToScriptPublicKey(t.recipient),
     }),
   ];

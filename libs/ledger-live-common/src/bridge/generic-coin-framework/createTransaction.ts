@@ -98,6 +98,15 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         // craft, so the default tx is signable without callers having to set it.
         nonce: new BigNumber(0),
       };
+    case "kaspa":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

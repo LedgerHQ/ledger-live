@@ -7,6 +7,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
   AmountRequired,
+  DustLimit,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
@@ -17,6 +18,11 @@ import { isValidKaspaAddress } from "./kaspaAddresses";
 // Fees are flagged "too high" once they exceed 1/RATIO of the sent amount (i.e. 10%),
 // matching coin-cardano's threshold.
 const FEE_TOO_HIGH_RATIO = 10n;
+
+// KIP-9 storage mass makes outputs below 0.2 KAS economically unspendable: the storage
+// mass penalty exceeds the value of the UTXO itself. Matches the threshold in the legacy
+// bridge's getTransactionStatus.ts so both strategies surface the same error to the UI.
+const DUST_LIMIT = 20_000_000n; // sompi (0.2 KAS)
 
 function spendableNative(balances: Balance[]): bigint {
   const native = balances.find(b => b.asset.type === "native");
@@ -51,6 +57,8 @@ export async function validateIntent(
 
   if (!intent.useAllAmount && amount <= 0n) {
     errors.amount = new AmountRequired();
+  } else if (!intent.useAllAmount && amount < DUST_LIMIT) {
+    errors.amount = new DustLimit("");
   } else if (amount + estimatedFees > available) {
     errors.amount = new NotEnoughBalance();
   }

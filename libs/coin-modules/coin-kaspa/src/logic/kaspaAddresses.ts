@@ -29,6 +29,11 @@ export function addressToPublicKey(address: string): { version: number; publicKe
   }
 }
 
+export function normalizeToKaspaPrefix(address: string): string {
+  const { version, publicKey } = addressToPublicKey(address);
+  return publicKeyToAddress(Buffer.from(publicKey), false, version);
+}
+
 export function publicKeyToAddress(
   hashBuffer: Buffer,
   stripPrefix: boolean = false,

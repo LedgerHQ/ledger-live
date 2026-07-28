@@ -210,12 +210,14 @@ describe("createApi", () => {
     expect(result).toEqual(validation);
   });
 
+  it("returns 0n for getNextSequence (UTXO chain, no account sequence)", async () => {
+    const api = createApi(config, "kaspa");
+    await expect(api.getNextSequence(SENDER)).resolves.toBe(0n);
+  });
+
   it("throws synchronously for methods not applicable to Kaspa's UTXO model", () => {
     const api = createApi(config, "kaspa");
 
-    expect(() => api.getNextSequence(SENDER)).toThrow(
-      "getNextSequence is not applicable for Kaspa",
-    );
     expect(() => api.craftRawTransaction("raw", SENDER, "pubkey", 0n)).toThrow(
       "craftRawTransaction is not supported",
     );

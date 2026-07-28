@@ -3,6 +3,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ApiResponseTransaction } from "../../types";
 import { getAllTransactions } from "./getAllTransactions";
+import { normalizeToKaspaPrefix, scriptPublicKeyToAddress } from "../kaspaAddresses";
 
 const FETCH_CONCURRENCY = 5;
 
@@ -30,6 +31,31 @@ export type KaspaTransfer = {
  * Null guards on inputs cover indexer responses where `previous_outpoint_address` or
  * `previous_outpoint_amount` is missing (coinbase-like or unresolved inputs).
  */
+// The REST server may return addresses with any network prefix (e.g. "kaspasim:" for simnet)
+// or null when the indexer is configured with script-based storage. Normalize to "kaspa:"
+// using the raw public-key bytes (bech32 is prefix-independent at the key level).
+function resolveOutputAddress(output: {
+  script_public_key_address: string | null;
+  script_public_key: string | null;
+}): string | null {
+  const addr = output.script_public_key_address;
+  if (addr) {
+    try {
+      return normalizeToKaspaPrefix(addr);
+    } catch {
+      return addr; // return as-is if not a valid parseable address
+    }
+  }
+  if (output.script_public_key) {
+    try {
+      return scriptPublicKeyToAddress(output.script_public_key);
+    } catch {
+      // fall through
+    }
+  }
+  return null;
+}
+
 export function parseKaspaTransfer(
   tx: ApiResponseTransaction,
   addressSet: Set<string>,
@@ -38,14 +64,23 @@ export function parseKaspaTransfer(
   const outputs = tx.outputs ?? [];
 
   const myInputAmount = inputs.reduce((acc: BigNumber, v): BigNumber => {
-    if (v.previous_outpoint_address !== null && addressSet.has(v.previous_outpoint_address)) {
-      return acc.plus(BigNumber(v.previous_outpoint_amount ?? 0));
+    if (v.previous_outpoint_address !== null) {
+      let addr: string | null = null;
+      try {
+        addr = normalizeToKaspaPrefix(v.previous_outpoint_address);
+      } catch {
+        addr = v.previous_outpoint_address;
+      }
+      if (addr && addressSet.has(addr)) {
+        return acc.plus(BigNumber(v.previous_outpoint_amount ?? 0));
+      }
     }
     return acc;
   }, BigNumber(0));
 
   const myOutputAmount = outputs.reduce((acc: BigNumber, v) => {
-    if (addressSet.has(v.script_public_key_address)) {
+    const addr = resolveOutputAddress(v);
+    if (addr && addressSet.has(addr)) {
       return acc.plus(BigNumber(v.amount));
     }
     return acc;
@@ -72,8 +107,14 @@ export function parseKaspaTransfer(
         : BigNumber(0),
     senders: inputs
       .filter(inp => inp.previous_outpoint_address !== null)
-      .map(inp => inp.previous_outpoint_address),
-    recipients: outputs.map(output => output.script_public_key_address),
+      .map(inp => {
+        try {
+          return normalizeToKaspaPrefix(inp.previous_outpoint_address);
+        } catch {
+          return inp.previous_outpoint_address;
+        }
+      }),
+    recipients: outputs.map(output => resolveOutputAddress(output) ?? ""),
     blockHeight: tx.accepting_block_blue_score,
     blockHash: tx.block_hash[0] ?? "",
     date: new Date(tx.block_time),

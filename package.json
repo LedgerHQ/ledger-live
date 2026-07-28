@@ -134,6 +134,7 @@
     "coin:tester:cardano": "pnpm --filter coin-tester-cardano",
     "coin:tester:cosmos": "pnpm --filter coin-tester-cosmos",
     "coin:tester:evm": "pnpm --filter coin-tester-evm",
+    "coin:tester:kaspa": "pnpm --filter coin-tester-kaspa",
     "coin:tester:polkadot": "pnpm --filter coin-tester-polkadot",
     "coin:tester:solana": "pnpm --filter coin-tester-solana",
     "coin:tester:bitcoin": "pnpm --filter coin-tester-bitcoin",

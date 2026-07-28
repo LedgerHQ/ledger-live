@@ -5,7 +5,7 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getTransactions } from "../../network";
+import { getAllTransactions } from "./getAllTransactions";
 import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
 
 const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
@@ -46,38 +46,19 @@ function toFrameworkOperation(t: KaspaTransfer): Operation<MemoNotSupported> {
   };
 }
 
-function parseCursor(options: ListOperationsOptions): number {
-  if (options.cursor) {
-    const parsed = Number.parseInt(options.cursor, 10);
-    if (!Number.isNaN(parsed) && parsed >= 1) {
-      return parsed;
-    }
-  }
-  return 1;
-}
-
-/**
- * List native KAS operations for a Kaspa address, one indexer page at a time. The indexer's
- * opaque `X-Next-Page-After` cursor (surfaced by `network/getTransactions` as `nextPageAfter`)
- * is always propagated as the returned page's `next` cursor — it must never be hardcoded to
- * `undefined`, or synchronization would silently stop after the first page whenever more
- * transactions are available.
- */
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation<MemoNotSupported>>> {
-  const after = parseCursor(options);
-
-  const { transactions, nextPageAfter } = await getTransactions(address, after);
+  const allTransactions = await getAllTransactions(address, 1);
   const addressSet = new Set([address]);
 
-  const items = (transactions ?? [])
+  const items = allTransactions
     .filter(tx => !options.minHeight || tx.accepting_block_blue_score >= options.minHeight)
     .map(tx => toFrameworkOperation(parseKaspaTransfer(tx, addressSet)));
 
   return {
     items,
-    next: nextPageAfter ?? undefined,
+    next: undefined,
   };
 }

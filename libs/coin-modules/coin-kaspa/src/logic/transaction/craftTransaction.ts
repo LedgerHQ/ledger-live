@@ -4,7 +4,7 @@ import type {
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getFeeEstimate, getUtxosForAddresses } from "../../network";
+import { getBlockDagInfo, getFeeEstimate, getUtxosForAddresses } from "../../network";
 import { ApiResponseUtxo, KaspaUtxo } from "../../types";
 import { addressToScriptPublicKey, isValidKaspaAddress } from "../kaspaAddresses";
 import { MASS_LIMIT_PER_TX } from "../constants";
@@ -102,10 +102,21 @@ export async function craftTransaction(
     throw new Error("kaspa: invalid recipient address");
   }
 
-  const rawUtxos = await getUtxosForAddresses([intent.sender]);
-  const utxos = toKaspaUtxos(rawUtxos);
+  const [rawUtxos, dagInfo] = await Promise.all([
+    getUtxosForAddresses([intent.sender]),
+    getBlockDagInfo(),
+  ]);
+  const allUtxos = toKaspaUtxos(rawUtxos);
+  // Kaspa coinbase UTXOs cannot be spent until they are 1000 blocks old (DAA maturity).
+  const currentDaa = BigInt(dagInfo.virtualDaaScore);
+  const COINBASE_MATURITY = 1000n;
+  const utxos = allUtxos.filter(
+    u =>
+      !u.utxoEntry.isCoinbase ||
+      currentDaa - BigInt(u.utxoEntry.blockDaaScore) >= COINBASE_MATURITY,
+  );
   if (utxos.length === 0) {
-    throw new Error("kaspa: no spendable UTXOs for sender address");
+    throw new Error("kaspa: no spendable UTXOs for sender address (all coinbase UTXOs are still immature)");
   }
 
   const recipientIsEcdsa = intent.recipient.length > 67;

@@ -276,6 +276,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-kaspa/deviceTransactionConfig").then(m => m.default),
     loadLocalApi: () => import("../families/kaspa/coinModuleApi").then(m => m.createLocalKaspaApi),
+    loadValidateAddress: () =>
+      import("@ledgerhq/coin-kaspa/bridge/validateAddress").then(
+        ({ validateAddress }): ValidateAddressFn => validateAddress,
+      ),
   },
   {
     family: "mina",

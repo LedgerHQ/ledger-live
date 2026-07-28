@@ -51,6 +51,9 @@ services:
     platform: linux/amd64
     # -c initialises DB schema (creates composite types kaspa-rest needs at import time)
     # -u auto-upgrades schema if a newer indexer version is pulled
+    # -b / --batch-concurrency / --block-interval tune the virtual chain processor:
+    #   live mode (~1ms/block) vs historical resync (~240ms/block). These values were
+    #   experimentally tuned to keep the processor in live mode when blocks arrive at ~50ms.
     command: >
       -c
       -u
@@ -58,6 +61,9 @@ services:
       -n simnet
       -d postgresql://kaspa:kaspa@kaspa-db:5432/kaspa
       --exclude-fields tx_out_script_public_key_address
+      -b 10
+      --batch-concurrency 10
+      --block-interval 200
     depends_on:
       kaspad:
         condition: service_healthy
@@ -103,7 +109,14 @@ services:
     environment:
       KASPAD_WRPC_URL: ws://kaspad:17110
       MINING_ADDRESS: ${KASPA_MINING_ADDRESS}
+    ports:
+      - "3939:3939"
     depends_on:
       kaspad:
         condition: service_healthy
     restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3939/health',r=>process.exit(r.statusCode===200?0:1))\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20

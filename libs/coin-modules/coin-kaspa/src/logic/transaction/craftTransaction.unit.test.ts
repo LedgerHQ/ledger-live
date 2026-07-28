@@ -1,13 +1,15 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
-import { getFeeEstimate, getUtxosForAddresses } from "../../network";
+import { getBlockDagInfo, getFeeEstimate, getUtxosForAddresses } from "../../network";
 import { craftTransaction, UnsignedKaspaTransaction } from "./craftTransaction";
 
 const mockGetUtxosForAddresses = jest.fn();
 const mockGetFeeEstimate = jest.fn();
+const mockGetBlockDagInfo = jest.fn();
 jest.mock("../../network", () => ({
   ...jest.requireActual("../../network"),
   getUtxosForAddresses: (...args: unknown[]) => mockGetUtxosForAddresses(...args),
   getFeeEstimate: (...args: unknown[]) => mockGetFeeEstimate(...args),
+  getBlockDagInfo: (...args: unknown[]) => mockGetBlockDagInfo(...args),
 }));
 
 const SENDER = "kaspa:qrp78nf43jaz3zk0j4dxga4ncdzk95xhun95hp6scyh6g6z7kwugy02wfw6ee";
@@ -48,6 +50,8 @@ describe("craftTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetFeeEstimate.mockResolvedValue(FEE_ESTIMATE);
+    // Return a DAA score high enough that isCoinbase:false UTXOs are always spendable.
+    mockGetBlockDagInfo.mockResolvedValue({ virtualDaaScore: "2000000" });
   });
 
   it("validates the sender address before any network call", async () => {

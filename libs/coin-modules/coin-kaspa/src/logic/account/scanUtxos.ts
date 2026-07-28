@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getUtxosForAddresses } from "../../network";
 import { AccountAddress, AccountAddresses, KaspaUtxo } from "../../types";
+import { normalizeToKaspaPrefix } from "../kaspaAddresses";
 import { scanAddresses } from "./scanAddresses";
 
 export async function scanUtxos(
@@ -35,7 +36,13 @@ export async function scanUtxos(
 }
 
 function getTypeAndIndexFromAccountAddresses(accountAddreses: AccountAddress[], address: string) {
-  const foundAddress = accountAddreses.find(addr => addr.address === address);
+  // Normalize to kaspa: prefix before comparing so kaspasim: (simnet) and kaspa: (mainnet)
+  // UTXOs resolve to the same account address. The bech32 checksum encodes the prefix, so
+  // string-stripping the prefix is insufficient — we decode the pubkey and re-encode.
+  const normalized = normalizeToKaspaPrefix(address);
+  const foundAddress = accountAddreses.find(
+    addr => normalizeToKaspaPrefix(addr.address) === normalized,
+  );
   if (foundAddress) {
     return { accountType: foundAddress.type, accountIndex: foundAddress.index };
   } else {
