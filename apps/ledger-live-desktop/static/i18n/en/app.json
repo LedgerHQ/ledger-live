@@ -9102,10 +9102,10 @@
       }
     },
     "selfTransfer": {
-      "headerAction": "Self transfer",
+      "headerAction": "Convert",
       "headerActionTooltip": "You don't have any funds to perform a self transfer",
       "modal": {
-        "title": "Self transfer",
+        "title": "Convert",
         "stepRecipient": {
           "selectLabel": "Transfer from"
         }
