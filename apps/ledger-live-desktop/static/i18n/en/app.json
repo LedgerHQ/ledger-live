@@ -5489,11 +5489,6 @@
           "description": "Test all animations used in Ledger Wallet",
           "longDesc": "This is a tool provided as-is for the team to validate lottie animations used in the app."
         },
-        "testStories": {
-          "title": "Test Storyly stories",
-          "description": "Test all stories used in Ledger Wallet",
-          "longDesc": "This is a tool provided as-is for the team to validate storyly stories used in the app."
-        },
         "testStaxPostonboarding": {
           "title": "Test Stax Post Onboarding",
           "description": "Test all stax post onboarding features"
