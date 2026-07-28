@@ -5,6 +5,7 @@ export { craftRawTransaction } from "./transaction/craftRawTransaction";
 export { estimateFees } from "./transaction/estimateFees";
 export { getBalance } from "./account/getBalance";
 export { lastBlock } from "./history/lastBlock";
+export { getBlock } from "./history/getBlock";
 export { getBlockInfo } from "./history/getBlockInfo";
 export { listOperations } from "./history/listOperations";
 export { getNextValidSequence } from "./account/getNextSequence";

@@ -114,6 +114,46 @@ describe("Concordium Api (testnet)", () => {
     });
   });
 
+  describe("getBlock", () => {
+    it("returns block info matching getBlockInfo and a list of transactions", async () => {
+      const lastBlock = await api.lastBlock();
+      const targetHeight = lastBlock.height - 10;
+
+      const [block, info] = await Promise.all([
+        api.getBlock(targetHeight),
+        api.getBlockInfo(targetHeight),
+      ]);
+
+      expect(block.info).toEqual(info);
+      expect(Array.isArray(block.transactions)).toBe(true);
+    });
+
+    it("maps a real CCD transfer to a signed operation pair with fees on the transaction", async () => {
+      const { items } = await api.listOperations(ADDRESS_WITH_BALANCE, {
+        minHeight: 0,
+        order: "desc",
+        limit: 20,
+      });
+      const transfer = items.find(op => !op.tx.failed && op.senders[0] && op.recipients[0]);
+      if (!transfer) {
+        throw new Error("no transfer found for ADDRESS_WITH_BALANCE to exercise getBlock");
+      }
+
+      const block = await api.getBlock(transfer.tx.block.height);
+      const tx = block.transactions.find(t => t.hash === transfer.tx.hash);
+
+      if (!tx) {
+        throw new Error(
+          `transaction ${transfer.tx.hash} not found in block ${transfer.tx.block.height}`,
+        );
+      }
+      expect(tx.failed).toBe(false);
+      expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
+      const transferOps = tx.operations.filter(op => op.type === "transfer");
+      expect(transferOps.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
   describe("craftTransaction", () => {
     const RECIPIENT = ADDRESS_PRISTINE;
 
@@ -231,10 +271,6 @@ describe("Concordium Api (testnet)", () => {
   });
 
   describe("unsupported methods", () => {
-    it("getBlock throws not supported error", async () => {
-      await expect(async () => api.getBlock(100)).rejects.toThrow("getBlock is not supported");
-    });
-
     it("getStakes throws not supported error", async () => {
       await expect(async () => api.getStakes(ADDRESS_WITH_BALANCE)).rejects.toThrow();
     });
