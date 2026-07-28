@@ -137,7 +137,7 @@ export type CoinModuleLoader<
 > = {
   family: string;
   /** Currencies this loader supports. */
-  supportedCoins: string[];
+  supportedCoins: string[]; // TODO(branded-ids): replace with CryptoCurrencyId[] from @domain/entity-currency-crypto once framework adopts branded types
   loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule<T, U, A, TRaw, URaw>>;
   loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
