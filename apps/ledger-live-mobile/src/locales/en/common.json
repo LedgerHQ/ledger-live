@@ -10160,7 +10160,7 @@
       }
     },
     "accountActions": {
-      "publicToPrivate": "Self transfer"
+      "publicToPrivate": "Convert"
     },
     "send": {
       "balanceSelection": {
