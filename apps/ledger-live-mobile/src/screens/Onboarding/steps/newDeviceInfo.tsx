@@ -3,7 +3,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
 import { Flex, Carousel, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
