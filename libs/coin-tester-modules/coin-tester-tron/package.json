@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tron",
-  "version": "0.3.2-hotfix.0",
+  "version": "0.3.2",
   "private": true,
   "description": "Ledger Tron Coin Tester",
   "main": "src/scenarii.test.ts",
