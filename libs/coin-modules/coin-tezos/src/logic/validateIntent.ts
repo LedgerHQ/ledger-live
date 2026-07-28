@@ -9,7 +9,7 @@ import {
   NotEnoughBalanceToDelegate,
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import type { APIAccount } from "../network/types";

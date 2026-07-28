@@ -16,7 +16,6 @@ on:
         default: "all"
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -113,6 +112,9 @@ jobs:
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     runs-on: public-ledgerhq-shared-small
+    permissions:
+      id-token: write
+      contents: read
     continue-on-error: true
 
     strategy:
@@ -145,6 +147,11 @@ jobs:
           registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
           username: ${{ steps.jfrog-login.outputs.oidc-user }}
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Setup environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop

@@ -3,9 +3,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalance,
-  ClaimRewardsFeesWarning,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { ClaimRewardsFeesWarning } from "../errors";
 import * as accountHelpers from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_MODES } from "../constants";

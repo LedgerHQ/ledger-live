@@ -20,7 +20,7 @@ runs:
     - name: Get summary
       id: get-summary
       run: |
-        cd ${{ inputs.allure-results-path }}
+        cd ${INPUTS_ALLURE_RESULTS_PATH}
         allure generate .
         cd allure-report/widgets
         passedTests=$(jq '.statistic.passed' summary.json)
@@ -36,9 +36,13 @@ runs:
           echo "summary_message=✅ $passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT";
         fi
       shell: bash
+      env:
+        INPUTS_ALLURE_RESULTS_PATH: ${{ inputs.allure-results-path }}
     - name: Generate single file Allure report
-      run: allure generate ${{ inputs.allure-results-path }} --single-file --clean
+      run: allure generate ${INPUTS_ALLURE_RESULTS_PATH} --single-file --clean
       shell: bash
+      env:
+        INPUTS_ALLURE_RESULTS_PATH: ${{ inputs.allure-results-path }}
     - name: Upload Allure single file report
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
       with:

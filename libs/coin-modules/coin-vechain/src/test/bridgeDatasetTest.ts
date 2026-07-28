@@ -11,7 +11,7 @@ import { MAINNET_CHAIN_TAG } from "../types";
 import { vechain1, vechain3 } from "../datasets";
 import { generateNonce } from "../common-logic";
 import vechainScanAccounts1 from "../datasets/vechain.scanAccounts.1";
-import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
+import { AmountRequired, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { NotEnoughVTHO } from "../errors";
 import { ABIContract, VIP180_ABI } from "@vechain/sdk-core";
 

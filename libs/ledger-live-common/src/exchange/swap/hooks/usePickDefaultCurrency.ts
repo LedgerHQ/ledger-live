@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useEffect } from "react";
 import { currenciesByMarketcap } from "../../../currencies";
 

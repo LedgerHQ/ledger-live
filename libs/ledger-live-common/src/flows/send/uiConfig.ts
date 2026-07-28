@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { SendFlowUiConfig } from "./types";

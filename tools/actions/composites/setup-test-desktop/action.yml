@@ -53,9 +53,10 @@ runs:
     - name: Build LLD app for testing
       env:
         GOMEMLIMIT: 5GiB
+        INPUTS_BUILD_TYPE: ${{ inputs.build_type }}
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm desktop build:${{ inputs.build_type || 'testing' }}
+        pnpm desktop build:${INPUTS_BUILD_TYPE:-testing}
       shell: bash
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}

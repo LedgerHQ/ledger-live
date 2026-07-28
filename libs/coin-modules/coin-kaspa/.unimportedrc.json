@@ -91,6 +91,7 @@
     "lodash",
     "lru-cache",
     "prando",
-    "rxjs"
+    "rxjs",
+    "@ledgerhq/errors"
   ]
 }

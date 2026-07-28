@@ -9,13 +9,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
-  id-token: write
   contents: read
   pull-requests: write
 
 jobs:
   scan:
     name: Scan LLM && LLD & Libs
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     runs-on: [ledger-live-linux-16CPU-64RAM]
@@ -39,6 +41,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         env:
