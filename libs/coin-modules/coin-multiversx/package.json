@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
@@ -50,7 +50,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

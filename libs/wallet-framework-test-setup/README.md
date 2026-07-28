@@ -1,5 +1,8 @@
 # @ledgerhq/wallet-framework-test-setup
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Tied to `@ledgerhq/ledger-wallet-framework` which is actively being developed.
+
 Jest bootstrap for `@ledgerhq/ledger-wallet-framework`. Wires both framework ports for tests:
 
 - **`CurrenciesResolver`** — real domain currencies from `@domain/entity-currency-crypto`

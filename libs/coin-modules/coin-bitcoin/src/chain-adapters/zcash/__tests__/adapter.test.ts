@@ -9,7 +9,7 @@ import type {
   SpendableNote,
   DecryptedOutput,
 } from "../types";
-import { Observable } from "rxjs";
+import { Observable, firstValueFrom } from "rxjs";
 import { getChainAdapter } from "../../registry";
 import { setZcashShieldedEnabled } from "../constants";
 
@@ -124,22 +124,35 @@ describe("zcash chain adapter — transaction routing", () => {
   describe("signOperation", () => {
     // Contract: routing is flag-driven, not transferType-driven. flag ON ⇒ every
     // flow (including Public→Public / transparent t→t) goes through PCZT and
-    // returns an Observable; flag OFF ⇒ every flow returns undefined (legacy).
-    describe.each([
-      { label: "ON", enabled: true },
-      { label: "OFF", enabled: false },
-    ])("zcashShielded flag $label", ({ enabled }) => {
-      beforeEach(() => setZcashShieldedEnabled(enabled));
+    // returns an Observable. flag OFF ⇒ transparent-input flows fall back to the
+    // legacy Bitcoin path (undefined); shielded-input flows ("shielded",
+    // "shielded-to-transparent") cannot be represented by the legacy path (no
+    // Orchard note spends), so they return an error Observable rather than
+    // silently producing an invalid transaction.
+    describe("zcashShielded flag ON ⇒ every flow returns an Observable (PCZT)", () => {
+      beforeEach(() => setZcashShieldedEnabled(true));
 
       it.each<ZcashTransferType>([
         "transparent",
         "transparent-to-shielded",
         "shielded-to-transparent",
         "shielded",
-      ])(
-        enabled
-          ? "returns an Observable (PCZT) for %s transfers"
-          : "returns undefined (legacy) for %s transfers",
+      ])("returns an Observable (PCZT) for %s transfers", transferType => {
+        const result = adapter.signOperation!(
+          makeZcashAccount({ ufvk: "testufvk" }),
+          "device",
+          makeTx(transferType),
+          mockSignerContext,
+        );
+        expect(result).toBeInstanceOf(Observable);
+      });
+    });
+
+    describe("zcashShielded flag OFF", () => {
+      beforeEach(() => setZcashShieldedEnabled(false));
+
+      it.each<ZcashTransferType>(["transparent", "transparent-to-shielded"])(
+        "returns undefined (legacy Bitcoin path) for %s transfers",
         transferType => {
           const result = adapter.signOperation!(
             makeZcashAccount({ ufvk: "testufvk" }),
@@ -147,16 +160,34 @@ describe("zcash chain adapter — transaction routing", () => {
             makeTx(transferType),
             mockSignerContext,
           );
-          if (enabled) expect(result).toBeInstanceOf(Observable);
-          else expect(result).toBeUndefined();
+          expect(result).toBeUndefined();
+        },
+      );
+
+      it.each<ZcashTransferType>(["shielded", "shielded-to-transparent"])(
+        "returns an error Observable for %s transfers (legacy path cannot represent note spends)",
+        async transferType => {
+          const result = adapter.signOperation!(
+            makeZcashAccount({ ufvk: "testufvk" }),
+            "device",
+            makeTx(transferType),
+            mockSignerContext,
+          );
+          expect(result).toBeInstanceOf(Observable);
+          await expect(firstValueFrom(result as Observable<unknown>)).rejects.toThrow(
+            "require the zcashShielded feature to be enabled",
+          );
         },
       );
     });
   });
 
-  // Contract check: with the flag OFF, EVERY hook short-circuits to the legacy
-  // Bitcoin path (undefined) regardless of transfer type — including shielded
-  // flows, which the UI never surfaces while the flag is off.
+  // Contract check: with the flag OFF, prepareTransaction/getTransactionStatus/
+  // estimateMaxSpendable short-circuit to the legacy Bitcoin path (undefined)
+  // regardless of transfer type. signOperation follows the same rule for
+  // transparent-input flows, but shielded-input flows return an error Observable
+  // (asserted in the signOperation suite above) because the legacy path cannot
+  // represent Orchard note spends.
   describe("zcashShielded flag OFF ⇒ all hooks fall back to legacy", () => {
     beforeEach(() => setZcashShieldedEnabled(false));
 
@@ -166,14 +197,22 @@ describe("zcash chain adapter — transaction routing", () => {
       "shielded-to-transparent",
       "shielded",
     ])(
-      "signOperation/prepareTransaction/getTransactionStatus/estimateMaxSpendable are undefined for %s",
+      "prepareTransaction/getTransactionStatus/estimateMaxSpendable are undefined for %s",
+      transferType => {
+        const account = makeZcashAccount({ ufvk: "testufvk" });
+        const tx = makeTx(transferType);
+        expect(adapter.prepareTransaction!(account, tx)).toBeUndefined();
+        expect(adapter.getTransactionStatus!(account, tx)).toBeUndefined();
+        expect(adapter.estimateMaxSpendable!(account, undefined, tx)).toBeUndefined();
+      },
+    );
+
+    it.each<ZcashTransferType>(["transparent", "transparent-to-shielded"])(
+      "signOperation is undefined for %s (legacy Bitcoin path)",
       transferType => {
         const account = makeZcashAccount({ ufvk: "testufvk" });
         const tx = makeTx(transferType);
         expect(adapter.signOperation!(account, "device", tx, mockSignerContext)).toBeUndefined();
-        expect(adapter.prepareTransaction!(account, tx)).toBeUndefined();
-        expect(adapter.getTransactionStatus!(account, tx)).toBeUndefined();
-        expect(adapter.estimateMaxSpendable!(account, undefined, tx)).toBeUndefined();
       },
     );
   });

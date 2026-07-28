@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { parseExtendedPublicKey } from "../kaspaAddresses";
-import { scanUtxos } from "../scanUtxos";
+import { scanUtxos } from "../account/scanUtxos";
 
 // Module-level mocks for network functions
 const mockGetBalancesForAddresses = jest.fn();

@@ -434,8 +434,8 @@ describe("useMarket", () => {
       expect(result.current.marketData[0].price).toBe(100);
     });
 
-    it("requests crypto counter values in USD and rescales by the USD->BTC rate", () => {
-      mockSupportedCounterCurrencies(undefined);
+    it("requests BTC counter values in USD and rescales by the USD->BTC rate when BTC is not natively supported", () => {
+      mockSupportedCounterCurrencies(["usd", "eur"]);
       mockedUseUsdToFiatRate.mockReturnValue({ status: "ready", rate: 0.00001 });
       mockMarketData([createMarketCurrencyData({ id: "bitcoin", price: 100, marketcap: 200 })]);
 

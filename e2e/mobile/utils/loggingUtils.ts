@@ -126,6 +126,7 @@ export function formatWebviewConsoleLogs(entries: WebviewConsoleEntry[]): string
 
 type ParsedLogsPayload = {
   appLogs?: unknown;
+  appNetworkLogs?: unknown[];
   webviewNetworkLogs?: unknown[];
   webviewConsoleLogs?: WebviewConsoleEntry[];
   webviewLoadErrors?: unknown[];
@@ -155,6 +156,16 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     );
     parsed.webviewNetworkLogs = undefined;
   }
+
+  if (parsed.appNetworkLogs?.length) {
+    await allure.attachment(
+      "Ledger Wallet Network Logs",
+      JSON.stringify(parsed.appNetworkLogs, null, 2),
+      "application/json",
+    );
+    parsed.appNetworkLogs = undefined;
+  }
+
   if (parsed.webviewConsoleLogs?.length) {
     await allure.attachment(
       "Webview Console Logs",

@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import { Transaction } from "bitcoinjs-lib";
+import { getWalletAccount } from "./getWalletAccount";
 import type { Account } from "@ledgerhq/types-live";
-import { getWalletAccount } from "./wallet-btc/getWalletAccount";
-import type { Account as WalletAccount } from "./wallet-btc/account";
-import { getIncrementalFeeFloorSatVb } from "./wallet-btc/utils";
+import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/account";
+import { getIncrementalFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
 
 const ZERO = new BigNumber(0);
 export const RBF_SEQUENCE_THRESHOLD = 0xfffffffe;

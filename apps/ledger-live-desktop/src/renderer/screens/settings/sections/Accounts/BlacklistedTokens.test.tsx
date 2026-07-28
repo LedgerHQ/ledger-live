@@ -14,7 +14,7 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => mockSync,
 }));
 
-jest.mock("@ledgerhq/cryptoassets/state", () => ({
+jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
   getCryptoAssetsStore: () => ({
     findTokenById: mockFindTokenById,
   }),

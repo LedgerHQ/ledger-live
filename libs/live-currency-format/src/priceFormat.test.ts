@@ -7,7 +7,7 @@ import {
   roundFiatPrice,
 } from "./priceFormat";
 
-// Matches what `getFiatCurrencyByTicker("USD").units[0]` returns (see @ledgerhq/cryptoassets/src/fiats.ts).
+// USD unit: magnitude 2, prefixCode true, showAllDigits true.
 const usdUnit: Unit = {
   code: "$",
   name: "US Dollar",

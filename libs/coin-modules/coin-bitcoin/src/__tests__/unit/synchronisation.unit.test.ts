@@ -7,8 +7,8 @@ import { BitcoinAccount } from "../../types";
 
 jest.setTimeout(10000);
 
-jest.mock("../../wallet-btc/explorer", () => {
-  const Actual = jest.requireActual("../../wallet-btc/explorer").default;
+jest.mock("@ledgerhq/wallet-btc/explorer/index", () => {
+  const Actual = jest.requireActual("@ledgerhq/wallet-btc/explorer/index").default;
   return {
     __esModule: true,
     default: class MockBitcoinLikeExplorer extends Actual {

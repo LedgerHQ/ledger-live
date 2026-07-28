@@ -135,6 +135,10 @@
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
+    "AlgorandMemoExceededSizeError": {
+      "title": "Memo is too long",
+      "description": "Algorand memos cannot exceed 1024 bytes. Please shorten your memo."
+    },
     "BluetoothRequired": {
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
@@ -4289,7 +4293,9 @@
         "monad_title": "Ledger Nano S™ does not support swapping Monad",
         "monad_description": "To swap Monad, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
-        "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "aleo_title": "Ledger Nano S™ does not support swapping Aleo",
+        "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4574,6 +4580,16 @@
       "feesAmount": "Fees amount ({{unit}})",
       "gasLimit": "Gas limit ({{unit}})",
       "feesPaid": "Fees paid to the network to proceed your transaction",
+      "tronFees": {
+        "sufficient": {
+          "title": "TRX network fees",
+          "description": "You'll use {{energy}} energy and {{bandwidth}} bandwidth to pay for the network fees."
+        },
+        "insufficient": {
+          "title": "Network fee breakdown",
+          "description": "You don't have enough energy and bandwidth to cover this transfer. The shortfall will be covered by burning TRX."
+        }
+      },
       "insufficientBalanceFees": "Insufficient balance to cover the network fees",
       "amountToSend": "Amount to send in ({{currency}})",
       "coinToSend": "Coin to send",
@@ -6761,6 +6777,12 @@
       }
     }
   },
+  "hypercore": {
+    "operationTypes": {
+      "IN": "Deposit",
+      "OUT": "Withdraw"
+    }
+  },
   "tezos": {
     "AccountHeader": {
       "title": "You can earn rewards by delegating your account",
@@ -6953,6 +6975,7 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "visibilityDelay": "It can take up to {{numberOfMinutes}} minutes before seeing this delegation on your delegation board.",
             "cta": "Continue"
           },
           "verification": {
@@ -10204,11 +10227,28 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "searchPlaceholder": "Search contact",
+    "searchNoResults": "No contact found",
+    "addContactDrawer": {
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
+      "confirmName": "Confirm name",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "addressCount_zero": "0 address",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
     "me": {
       "name": "Me",
       "addressCount_zero": "0 address",
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
+    },
+    "ledgerSyncIntroduction": {
+      "title": "Turn on Ledger Sync to save contacts",
+      "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
+      "activate": "Turn on Ledger Sync",
+      "dismiss": "Got it",
+      "checkingAccessibilityLabel": "Checking Ledger Sync status"
     }
   }
 }

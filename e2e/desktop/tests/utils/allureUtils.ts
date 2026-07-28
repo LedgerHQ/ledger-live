@@ -6,7 +6,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
-import { WebviewLogCollector } from "tests/utils/webviewLogCollector";
+import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const readFileAsync = promisify(readFile);
@@ -189,7 +189,8 @@ export async function captureArtifacts(
   testInfo: TestInfo,
   electronApp: ElectronApplication,
   takeSpeculosScreenshot: boolean,
-  webviewCollector?: WebviewLogCollector,
+  webviewCollector?: PageLogCollector,
+  appCollector?: PageLogCollector,
 ) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });
@@ -226,6 +227,13 @@ export async function captureArtifacts(
 
     await testInfo.attach("Webview Network Logs", {
       body: Buffer.from(webviewCollector.getFormattedNetworkLogs()),
+      contentType: "application/json",
+    });
+  }
+
+  if (appCollector) {
+    await testInfo.attach("Ledger Wallet Network Logs", {
+      body: Buffer.from(appCollector.getFormattedNetworkLogs()),
       contentType: "application/json",
     });
   }

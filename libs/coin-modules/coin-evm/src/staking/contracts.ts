@@ -1,6 +1,10 @@
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import type { StakingContractConfig, StakingOperation } from "../types/staking";
 import { USEI_TO_EVM_SCALE } from "../utils";
+import { getCoinConfig } from "../config";
+import { withApi } from "../network/node/rpc.common";
+import { isExternalNodeConfig } from "../network/node/types";
 import { getValidatorAddressById } from "./validators/monadResolver";
 
 export function getStakingContractAddress(
@@ -87,6 +91,18 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async d => {
       return typeof d[0] === "string" ? d[0] : null;
     },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint"
+            ? new BigNumber((raw * USEI_TO_EVM_SCALE).toString())
+            : null;
+        }
+        default:
+          return null;
+      }
+    },
   },
 
   // Celo staking
@@ -103,6 +119,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async d => {
       return typeof d[0] === "string" ? d[0] : null;
     },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
+    },
   },
 
   // Monad staking
@@ -113,6 +139,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     // There is no bytecode at this address; it is a precompile, not a smart contract.
     contractAddress: () => "0x0000000000000000000000000000000000001000",
     value: ({ amount }) => amount,
+    delegationMaxAmountReserve: 10n ** 17n,
     functions: {
       // delegate(uint64 validatorId) payable — amount is msg.value (18-decimal MON wei).
       delegate: "delegate",
@@ -161,6 +188,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
         ? getValidatorAddressById("monad", d[0])
         : Promise.resolve(null);
     },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
+    },
   },
 
   // 0G staking - factory-per-validator model.
@@ -181,6 +218,7 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     },
     // https://docs.0g.ai/developer-hub/building-on-0g/contracts-on-0g/validator-contract-functions#delegateaddress-delegatoraddress
     calldataAmountScale: 10n ** 9n,
+    delegationMaxAmountReserve: 10n ** 16n,
     apiConfig: {
       baseUrl: "https://api.0g.exploreme.pro",
       validatorsEndpoint: "/api/v2/validators?limit=100",
@@ -194,6 +232,44 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     resolveValidatorAddress: async (_, contractAddress) => {
       return contractAddress ? ethers.getAddress(contractAddress) : null;
     },
+    resolveOperationAmount: async (decoded, operationType, currency, contractAddress) => {
+      switch (operationType) {
+        case "undelegate": {
+          const shares = decoded[1];
+          if (typeof shares !== "bigint") return null;
+          const node = getCoinConfig(currency.id).info.node;
+          if (!isExternalNodeConfig(node)) return null;
+          try {
+            return await withApi(
+              currency,
+              async provider => {
+                const iface = new ethers.Interface([
+                  "function convertToTokens(uint256 shares) view returns (uint256)",
+                ]);
+                const data = iface.encodeFunctionData("convertToTokens", [shares]);
+                const raw = await provider.call({ to: contractAddress, data });
+                const result = iface.decodeFunctionResult("convertToTokens", raw);
+                if (!Array.isArray(result) || typeof result[0] !== "bigint") return null;
+                return new BigNumber(result[0].toString());
+              },
+              node,
+            );
+          } catch {
+            return null;
+          }
+        }
+        default:
+          return null;
+      }
+    },
+    canUndelegate: delegation => {
+      return delegation.shares?.gte(1e9) ?? true;
+    },
+    gasMultiplier: ({ mode }) => {
+      return (["delegate", "undelegate"] as const).includes(mode as "delegate" | "undelegate")
+        ? new BigNumber(1.2)
+        : new BigNumber(1);
+    },
   },
   somnia: {
     contractAddress: () => "0xBe367d410D96E1cAeF68C0632251072CDf1b8250",
@@ -203,9 +279,28 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       getStakedBalance: "getDelegationInfo",
       claimReward: "claimDelegatorRewards",
     },
+    // Display names live off-chain at /api/validator-names on the official
+    // dashboard — it's a flat { [address]: name } JSON map maintained by Somnia.
+    // Treat it as a display overlay; the on-chain set remains authoritative.
+    validatorNameSource: {
+      baseUrl: "https://staking.somnia.network/api/validator-names",
+    },
     value: ({ mode, amount }) => (mode === "delegate" ? amount : 0n),
+    delegationMaxAmountReserve: 10n ** 17n,
+    // Somnia dashboard indexes delegations off-chain; new delegations can take up to 5 minutes to appear on the delegation board.
+    delegationVisibilityDelayMinutes: 5,
     resolveValidatorAddress: async parameters => {
       return typeof parameters[0] === "string" ? parameters[0] : null;
+    },
+    resolveOperationAmount: async (decoded, operationType) => {
+      switch (operationType) {
+        case "undelegate": {
+          const raw = decoded[1];
+          return typeof raw === "bigint" ? new BigNumber(raw.toString()) : null;
+        }
+        default:
+          return null;
+      }
     },
   },
 };

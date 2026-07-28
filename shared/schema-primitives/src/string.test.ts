@@ -1,29 +1,41 @@
 import { describe, expect, it } from "@jest/globals";
 import {
   BigNumberStrSchema,
-  CurrencyIdSchema,
+  CryptoCurrencyIdSchema,
   DateTimeIsoSchema,
+  FiatCurrencyIdSchema,
   HttpUrlSchema,
   NonEmptyStringSchema,
   SemVerSchema,
-  TokenIdSchema,
+  TokenCurrencyIdSchema,
 } from "./string";
 
-describe("CurrencyIdSchema", () => {
+describe("CryptoCurrencyIdSchema", () => {
   it("accepts a non-empty string", () => {
-    expect(CurrencyIdSchema.parse("bitcoin")).toBe("bitcoin");
+    expect(CryptoCurrencyIdSchema.parse("bitcoin")).toBe("bitcoin");
   });
   it("rejects an empty string", () => {
-    expect(() => CurrencyIdSchema.parse("")).toThrow();
+    expect(() => CryptoCurrencyIdSchema.parse("")).toThrow();
   });
 });
 
-describe("TokenIdSchema", () => {
+describe("TokenCurrencyIdSchema", () => {
   it("accepts a non-empty string", () => {
-    expect(TokenIdSchema.parse("ethereum/erc20/usd-tether")).toBe("ethereum/erc20/usd-tether");
+    expect(TokenCurrencyIdSchema.parse("ethereum/erc20/usd-tether")).toBe(
+      "ethereum/erc20/usd-tether",
+    );
   });
   it("rejects an empty string", () => {
-    expect(() => TokenIdSchema.parse("")).toThrow();
+    expect(() => TokenCurrencyIdSchema.parse("")).toThrow();
+  });
+});
+
+describe("FiatCurrencyIdSchema", () => {
+  it("accepts a non-empty string", () => {
+    expect(FiatCurrencyIdSchema.parse("usd")).toBe("usd");
+  });
+  it("rejects an empty string", () => {
+    expect(() => FiatCurrencyIdSchema.parse("")).toThrow();
   });
 });
 

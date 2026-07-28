@@ -1,16 +1,13 @@
+import { Cbor, requestIdOf } from "@dfinity/agent";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
-import { Cbor, requestIdOf } from "@zondax/ledger-live-icp/agent";
-import {
-  UnsignedTransaction,
-  createUnsignedSendTransaction,
-  hashTransaction,
-  pubkeyToDer,
-} from "@zondax/ledger-live-icp/utils";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { getPath } from "../common-logic";
+import { createUnsignedSendTransaction, type UnsignedTransaction } from "../logic/buildTransaction";
+import { pubkeyToDer } from "../logic/crypto";
+import { hashTransaction } from "../logic/hashTransaction";
 import { Transaction } from "../types";
 import { ICPSigner } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";

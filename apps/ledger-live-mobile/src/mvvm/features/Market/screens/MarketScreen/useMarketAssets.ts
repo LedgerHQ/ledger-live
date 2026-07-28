@@ -68,6 +68,7 @@ export function useMarketAssets({
   } = useResolveMarketCounterCurrency({
     counterCurrency: settingsCounterValue,
     fallbackForCryptoCountervalues: true,
+    isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
   });
   const counterValueUnit = counterValueCurrency.units[0];
   const normalizedSearch = search.trim();
@@ -126,14 +127,13 @@ export function useMarketAssets({
         ? []
         : getMarketAssets({
             marketData,
-            counterCurrency: displayCounterCurrency,
             counterValueUnit,
             rate,
             displayRange,
             locale,
             t,
           }),
-    [counterValueUnit, displayCounterCurrency, displayRange, locale, marketData, rate, t],
+    [counterValueUnit, displayRange, locale, marketData, rate, t],
   );
 
   const hasData = assets.length > 0;

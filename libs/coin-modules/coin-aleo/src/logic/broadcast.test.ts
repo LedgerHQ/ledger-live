@@ -1,4 +1,3 @@
-import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import {
@@ -20,7 +19,6 @@ jest.mock("./utils", () => ({
 const mockFromHex = jest.mocked(fromHex);
 
 describe("broadcast", () => {
-  const mockAccount = getMockedAccount();
   const mockSignedTx = "abcdef1234567890";
   const mockAuthorization = getMockedAuthorization();
   const mockFeeAuthorization = getMockedFeeAuthorization();
@@ -39,7 +37,6 @@ describe("broadcast", () => {
   it("should broadcast transaction and return the transaction id when useEncryptedProve is false", async () => {
     const result = await broadcast({
       configOrCurrencyId: mockConfig,
-      account: mockAccount,
       signedTx: mockSignedTx,
     });
 
@@ -47,7 +44,7 @@ describe("broadcast", () => {
     expect(mockFromHex).toHaveBeenCalledWith(mockSignedTx);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledTimes(1);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      config: mockConfig,
       authorization: mockAuthorization,
       feeAuthorization: mockFeeAuthorization,
       broadcast: true,
@@ -62,13 +59,12 @@ describe("broadcast", () => {
 
     await broadcast({
       configOrCurrencyId: mockConfig,
-      account: mockAccount,
       signedTx: mockSignedTx,
     });
 
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledTimes(1);
     expect(apiClient.submitDelegatedProvingRequest).toHaveBeenCalledWith({
-      currency: mockAccount.currency,
+      config: mockConfig,
       authorization: mockAuthorization,
       broadcast: true,
     });
@@ -80,7 +76,7 @@ describe("broadcast", () => {
       .mockRejectedValue(new Error("Network error: Connection refused"));
 
     await expect(
-      broadcast({ configOrCurrencyId: mockConfig, account: mockAccount, signedTx: mockSignedTx }),
+      broadcast({ configOrCurrencyId: mockConfig, signedTx: mockSignedTx }),
     ).rejects.toThrow("Network error: Connection refused");
   });
 
@@ -104,25 +100,24 @@ describe("broadcast", () => {
     it("should broadcast transaction using encrypted prove and return the transaction id", async () => {
       const result = await broadcast({
         configOrCurrencyId: encryptedConfig,
-        account: mockAccount,
         signedTx: mockSignedTx,
       });
 
       expect(apiClient.getProvePublicKey).toHaveBeenCalledTimes(1);
       expect(apiClient.getProvePublicKey).toHaveBeenCalledWith({
-        currency: mockAccount.currency,
+        config: encryptedConfig,
       });
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledTimes(1);
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.data.public_key,
-        currency: mockAccount.currency,
+        config: encryptedConfig,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
         broadcast: true,
       });
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledTimes(1);
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledWith({
-        currency: mockAccount.currency,
+        config: encryptedConfig,
         keyId: mockPublicKeyResponse.data.key_id,
         encryptedData: mockEncryptedData,
         stickySessionCookie: mockPublicKeyResponse.stickySessionCookie,
@@ -137,13 +132,12 @@ describe("broadcast", () => {
 
       await broadcast({
         configOrCurrencyId: encryptedConfig,
-        account: mockAccount,
         signedTx: mockSignedTx,
       });
 
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
         publicKey: mockPublicKeyResponse.data.public_key,
-        currency: mockAccount.currency,
+        config: encryptedConfig,
         authorization: mockAuthorization,
         broadcast: true,
       });
@@ -152,7 +146,6 @@ describe("broadcast", () => {
     it("should not call submitDelegatedProvingRequest", async () => {
       await broadcast({
         configOrCurrencyId: encryptedConfig,
-        account: mockAccount,
         signedTx: mockSignedTx,
       });
 
@@ -172,7 +165,6 @@ describe("broadcast", () => {
       await expect(
         broadcast({
           configOrCurrencyId: encryptedConfig,
-          account: mockAccount,
           signedTx: mockSignedTx,
         }),
       ).rejects.toThrow("aleo: broadcast failed with status: Rejected (Transaction rejected)");
@@ -189,7 +181,6 @@ describe("broadcast", () => {
       await expect(
         broadcast({
           configOrCurrencyId: encryptedConfig,
-          account: mockAccount,
           signedTx: mockSignedTx,
         }),
       ).rejects.toThrow("aleo: broadcast failed with status: Skipped (Unknown error)");

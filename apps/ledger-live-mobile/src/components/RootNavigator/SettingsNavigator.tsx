@@ -28,8 +28,6 @@ import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetO
 import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
-import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
-import DebugLumenVisualization from "~/screens/Settings/Debug/Debugging/LumenVisualization";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugContacts from "~/screens/Settings/Debug/Debugging/Contacts";
 import DebugDevTools from "LLM/features/DevTools/screens/DevToolsScreen";
@@ -39,6 +37,7 @@ import DebugPlayground from "~/screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "~/screens/Settings/Debug";
 import DebugAnalyticsConsentQA from "~/screens/Settings/Debug/AnalyticsConsentQA";
+import DebugNotificationsPromptQA from "~/screens/Settings/Debug/NotificationsPromptQA";
 import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
 import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
@@ -258,6 +257,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugNotificationsPromptQA}
+        component={DebugNotificationsPromptQA}
+        options={{
+          title: "Notifications prompt — QA",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugNetwork}
         component={DebugNetwork}
         options={{
@@ -400,20 +406,6 @@ export default function SettingsNavigator() {
         component={DebugPlayground}
         options={{
           title: "Playground",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugLumen}
-        component={DebugLumen}
-        options={{
-          title: "Lumen Debug",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugLumenVisualization}
-        component={DebugLumenVisualization}
-        options={{
-          title: "Lumen Visualization",
         }}
       />
       <Stack.Screen

@@ -24,9 +24,11 @@ const basePool: StakePool = {
 describe("computePoolApy", () => {
   it("returns a plausible mainnet APY for a healthy pool", () => {
     const apy = computePoolApy(basePool, baseEpoch);
-    // Sanity bounds: real Cardano APY sits ~3–10% depending on reserves / saturation.
-    expect(apy).toBeGreaterThan(0.03);
-    expect(apy).toBeLessThan(0.12);
+    // ≈6.1% for these mainnet-like inputs (σ ÷ circulation = maxLovelaceSupply − reserves). This band
+    // catches the old activeStake denominator (~8.7%) by a wide margin while tolerating minor
+    // reward-math tuning; re-baseline if the formula or EPOCHS_PER_YEAR changes.
+    expect(apy).toBeGreaterThan(0.05);
+    expect(apy).toBeLessThan(0.07);
   });
 
   it.each([

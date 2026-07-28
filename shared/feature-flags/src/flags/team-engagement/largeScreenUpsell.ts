@@ -23,6 +23,7 @@ const modalSchema = z.object({
 });
 
 const ctaSchema = z.object({
+  enabled: z.boolean().default(false),
   link: z.string(),
 });
 
@@ -42,8 +43,12 @@ export const largeScreenUpsell = flagWith(
       cooldownDays: { default: 30, nanoS: 0 },
       discount: 0.2,
       modal: { enabled: true, killThreshold: 3, cadenceDays: 30 },
-      opted_in: { link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program" },
+      opted_in: {
+        enabled: true,
+        link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
+      },
       opted_out: {
+        enabled: false,
         link: "https://shop.ledger.com/pages/ledger-nano-upgrade-program",
       },
     },

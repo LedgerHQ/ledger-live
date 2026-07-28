@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import {
   getDerivationScheme,
@@ -62,7 +62,7 @@ export function registerEsdtToken(token: TokenCurrency): void {
 // Resolve the ESDT identifier -> TokenCurrency the way both bridges expect.
 // The legacy path passes the identifier as `tokenIdentifier` (3rd arg); the generic
 // coin framework passes it as `address` (1st arg, the asset reference).
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
   findTokenByAddressInCurrency: async (
     address: string,
     currencyId: string,
@@ -72,6 +72,7 @@ setupMockCryptoAssetsStore({
     return esdtTokens.get(tokenIdentifier ?? address);
   },
   findTokenById: async (id: string) => esdtTokens.get(id),
+  getTokensSyncHash: async () => "",
 });
 
 export function makeAccount(address: string): MultiversXAccount {

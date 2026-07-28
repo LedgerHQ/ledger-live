@@ -1,0 +1,125 @@
+import React from "react";
+import { render, screen } from "@testing-library/react-native";
+import { NetworkFeesRow } from "../NetworkFeesRow";
+import type { NetworkFeesViewModel } from "../../types";
+
+const dismiss = jest.fn();
+
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const RN = jest.requireActual<typeof import("react-native")>("react-native");
+  return {
+    Text: ({ children }: { children: React.ReactNode }) => <RN.Text>{children}</RN.Text>,
+    Button: ({ children }: { children: React.ReactNode }) => <RN.Text>{children}</RN.Text>,
+    BottomSheet: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
+    BottomSheetView: ({ children }: { children: React.ReactNode }) => <RN.View>{children}</RN.View>,
+    BottomSheetHeader: ({ title }: { title: React.ReactNode }) => <RN.Text>{title}</RN.Text>,
+    Divider: () => null,
+    useBottomSheetRef: () => ({ current: { present: jest.fn(), dismiss } }),
+  };
+});
+jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => ({
+  Information: () => null,
+  ChevronDown: () => null,
+  Check: () => null,
+}));
+jest.mock("@ledgerhq/lumen-ui-rnative/styles", () => ({
+  useStyleSheet: (createStyles: (theme: { spacings: Record<string, number> }) => unknown) =>
+    createStyles({ spacings: { s4: 4, s8: 8, s10: 10, s12: 12, s16: 16, s24: 24 } }),
+}));
+jest.mock("~/context/Locale", () => ({
+  useTranslation: () => ({
+    t: (key: string, vals?: Record<string, string | number>) =>
+      vals ? `${key} ${JSON.stringify(vals)}` : key,
+  }),
+}));
+jest.mock("../../context/SendFlowContext", () => ({
+  useSendFlowData: () => ({ state: { account: { account: null, parentAccount: null } } }),
+}));
+jest.mock("~/analytics", () => ({ useAnalytics: () => ({ track: jest.fn() }) }));
+jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
+  getSendFlowTrackingProperties: () => ({}),
+}));
+
+const baseViewModel: NetworkFeesViewModel = {
+  label: "Network fees",
+  value: "0 TRX",
+  strategyLabel: "",
+  showFeeCurrencyAmount: false,
+  showFeePresets: false,
+  selectedFeeStrategy: null,
+  feePresetLabelsOptions: [],
+  onSelectFeeStrategy: jest.fn(),
+  networkFeesInfo: null,
+};
+
+describe("NetworkFeesRow fee value", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("shows the value followed by the strategy label by default", () => {
+    render(
+      <NetworkFeesRow viewModel={{ ...baseViewModel, value: "$0.12", strategyLabel: "Medium" }} />,
+    );
+    expect(screen.getByText("$0.12")).toBeOnTheScreen();
+    expect(screen.getByText("Medium")).toBeOnTheScreen();
+  });
+
+  it("shows the fiat • crypto value alone (no strategy label) when showFeeCurrencyAmount is set", () => {
+    render(
+      <NetworkFeesRow
+        viewModel={{
+          ...baseViewModel,
+          value: "$0.00 • 0 TRX",
+          strategyLabel: "Medium",
+          showFeeCurrencyAmount: true,
+        }}
+      />,
+    );
+    expect(screen.getByText("$0.00 • 0 TRX")).toBeOnTheScreen();
+    expect(screen.queryByText("Medium")).toBeNull();
+  });
+});
+
+describe("NetworkFeesRow info drawer", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("renders the generic static copy when no currency-specific info is present", () => {
+    render(<NetworkFeesRow viewModel={baseViewModel} />);
+    expect(screen.getByText("send.newSendFlow.feesPaid")).toBeOnTheScreen();
+  });
+
+  it("renders the TRON sufficient title and body when the breakdown covers the fee", () => {
+    render(
+      <NetworkFeesRow
+        viewModel={{
+          ...baseViewModel,
+          networkFeesInfo: {
+            translationKey: "tronFees.sufficient",
+            values: { energy: "65000", bandwidth: "1500" },
+          },
+        }}
+      />,
+    );
+    expect(screen.getByText("send.newSendFlow.tronFees.sufficient.title")).toBeOnTheScreen();
+    expect(
+      screen.getByText(/send\.newSendFlow\.tronFees\.sufficient\.description.*65000.*1500/),
+    ).toBeOnTheScreen();
+  });
+
+  it("renders the TRON insufficient breakdown title and burn-TRX body", () => {
+    render(
+      <NetworkFeesRow
+        viewModel={{
+          ...baseViewModel,
+          networkFeesInfo: {
+            translationKey: "tronFees.insufficient",
+            values: { energy: "0", bandwidth: "1500" },
+          },
+        }}
+      />,
+    );
+    expect(screen.getByText("send.newSendFlow.tronFees.insufficient.title")).toBeOnTheScreen();
+    expect(
+      screen.getByText(/send\.newSendFlow\.tronFees\.insufficient\.description/),
+    ).toBeOnTheScreen();
+  });
+});

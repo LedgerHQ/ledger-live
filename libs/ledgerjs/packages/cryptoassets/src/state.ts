@@ -13,6 +13,7 @@ declare global {
  * Uses globalThis to ensure a single shared reference across all module instances,
  * which is critical when coin-modules are lazy-loaded and may resolve to separate
  * module copies.
+ * @deprecated Use @domain/api-currency-token.
  */
 export function setCryptoAssetsStore(store: CryptoAssetsStore): void {
   globalThis.__ledgerCryptoAssetsStore = store;
@@ -20,6 +21,7 @@ export function setCryptoAssetsStore(store: CryptoAssetsStore): void {
 
 /**
  * Gets the global CryptoAssetsStore instance.
+ * @deprecated Use @domain/api-currency-token.
  * @throws {Error} If the store has not been set yet.
  */
 export function getCryptoAssetsStore(): CryptoAssetsStore {

@@ -2,7 +2,7 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
@@ -139,7 +139,7 @@ export function useAddressValidation({
   });
 
   const hasInvalidBridgeRecipient =
-    bridgeValidation.errors.recipient instanceof InvalidAddress && !ensResolution;
+    bridgeValidation.errors.recipient?.name === "InvalidAddress" && !ensResolution;
   const canMatchValidatedRecipient = Boolean(searchValue) && !hasInvalidBridgeRecipient;
 
   const userAccountsForCurrency = useMemo(() => {
@@ -306,7 +306,7 @@ export function useAddressValidation({
     }));
 
     const filteredBridgeErrors: BridgeValidationErrors = { ...bridgeValidation.errors };
-    if (ensResolution && filteredBridgeErrors.recipient instanceof InvalidAddress) {
+    if (ensResolution && filteredBridgeErrors.recipient?.name === "InvalidAddress") {
       delete filteredBridgeErrors.recipient;
     }
 

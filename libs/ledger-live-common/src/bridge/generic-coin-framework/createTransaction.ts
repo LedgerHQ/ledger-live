@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
@@ -66,7 +66,17 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "hypercore":
+      // No send flow; return a neutral tx only for (de)serialization.
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        mode: "send",
+      };
     case "multiversx":
+    case "tron":
       return {
         family: currency.family,
         amount: new BigNumber(0),

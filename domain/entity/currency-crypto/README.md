@@ -1,5 +1,8 @@
 # @domain/entity-currency-crypto
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+
 Zod-first canonical schema and static registry for the `CryptoCurrency` domain entity.
 
 ## Responsibility
@@ -26,7 +29,7 @@ parity test compares by `.id`.
 
 | Package | Why |
 |---|---|
-| `@shared/schema-primitives` | `CurrencyIdSchema` branded value object |
+| `@shared/schema-primitives` | `CryptoCurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 
 ## Public API
@@ -74,8 +77,8 @@ NODE_OPTIONS="--conditions=@ledgerhq/source" npx tsx scripts/generate-currencies
 
 **Zod-first, not a wrapper.** `CryptoCurrencySchema` is written from scratch. TypeScript types are derived via `z.infer<>`.
 
-**`currency()` is a branded-type constructor, not a validator.** `CryptoCurrency.id` is typed as `CurrencyId` — a branded string (`string & { __brand: "CurrencyId" }`). A plain type annotation (`const bitcoin: CryptoCurrency = { id: "bitcoin", ... }`) fails because `"bitcoin"` is not assignable to the branded type. `currency()` calls `CryptoCurrencySchema.parse()` which applies the brand, eliminating the need for `as CurrencyId` casts across all currency files.
+**`currency()` is a branded-type constructor, not a validator.** `CryptoCurrency.id` is typed as `CryptoCurrencyId` — a branded string (`string & { __brand: "CryptoCurrencyId" }`). A plain type annotation (`const bitcoin: CryptoCurrency = { id: "bitcoin", ... }`) fails because `"bitcoin"` is not assignable to the branded type. `currency()` calls `CryptoCurrencySchema.parse()` which applies the brand, eliminating the need for `as CryptoCurrencyId` casts across all currency files.
 
 **Static registry, no store.** Currency data never changes at runtime. Putting it in Redux would imply reactivity that doesn't exist — consumers resolve currencies directly from `CRYPTO_CURRENCIES_REGISTRY`.
 
-**No embedded parent reference.** `@domain/entity-currency-token` uses `parentCurrencyId: CurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.
+**No embedded parent reference.** `@domain/entity-currency-token` uses `parentCurrencyId: CryptoCurrencyId` (FK) instead of an embedded `CryptoCurrency` object, which eliminates the `fromTokenCurrencyRaw` lookup-at-restore problem that made `cal-client/persistence.ts` complex.

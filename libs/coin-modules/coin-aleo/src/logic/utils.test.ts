@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
 import {
@@ -50,7 +50,6 @@ import {
 } from "../__tests__/fixtures/transaction.fixture";
 import type { AleoOperationExtra, ProvableApi } from "../types";
 import {
-  getNetworkConfig,
   parseMicrocredits,
   parseAmount,
   normalizeAleoPlaintext,
@@ -119,33 +118,6 @@ const supportedPrivateTransactionModes = [
   TRANSACTION_TYPE.TRANSFER_PRIVATE,
   TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
 ] as const;
-
-describe("getNetworkConfig", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it("should return network config with correct structure", () => {
-    mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
-
-    const result = getNetworkConfig(mockCurrency);
-
-    expect(result).toEqual({
-      nodeUrl: "https://node.example.com",
-      sdkUrl: "https://sdk.example.com",
-      networkType: "mainnet",
-    });
-  });
-
-  it("should call getCoinConfig with correct currency", () => {
-    mockedAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
-
-    getNetworkConfig(mockCurrency);
-
-    expect(aleoConfig.getCoinConfig).toHaveBeenCalledTimes(1);
-    expect(aleoConfig.getCoinConfig).toHaveBeenCalledWith(mockCurrency.id);
-  });
-});
 
 describe("parseMicrocredits", () => {
   it.each([
@@ -2605,13 +2577,15 @@ describe("isAleoAccount", () => {
 describe("getCalTokens", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
       findTokenByAddressInCurrency: jest.fn().mockImplementation(async (programName: string) => {
         if (programName === MOCK_TOKEN_PROGRAM_ID) {
           return mockTokenCurrency;
         }
         return undefined;
       }),
+      getTokensSyncHash: async () => "",
     });
   });
 

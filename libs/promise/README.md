@@ -1,5 +1,8 @@
 # live-promise
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/live-promise` provides small, focused Promise utilities for Ledger Live. Rather than pulling in a heavy async library, it ships only the primitives the codebase actually needs: retrying, delaying, and composing async operations.
 
 ## What it does

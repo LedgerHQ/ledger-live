@@ -1,5 +1,8 @@
 # @ledgerhq/coin-tester-polkadot
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 This package contains the deterministic testing infrastructure for Polkadot in Ledger Live.
 
 ## Features

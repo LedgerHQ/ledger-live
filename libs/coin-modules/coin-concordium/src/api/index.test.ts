@@ -32,6 +32,7 @@ describe("api/index", () => {
   it("should return every api methods", () => {
     expect(createApi(TESTNET_COIN_CONFIG, "concordium_testnet")).toEqual({
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftRawTransaction: expect.any(Function),
       craftTransaction: expect.any(Function),

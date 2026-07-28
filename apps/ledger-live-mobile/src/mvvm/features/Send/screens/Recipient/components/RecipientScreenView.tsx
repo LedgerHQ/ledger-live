@@ -130,7 +130,7 @@ export const RecipientScreenView = ({
   return (
     <SendFlowLayout>
       <Box style={{ flex: 1, marginHorizontal: -8 }}>
-        {isLoading && <LoadingState />}
+        {isLoading && !showMatched && <LoadingState />}
 
         {showInitialState && clipboardAddress && (
           <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />

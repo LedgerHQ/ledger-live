@@ -659,7 +659,7 @@ test.describe("New Send Flow", () => {
         page,
         ACCOUNT_NAMES.algorand,
         TEST_ADDRESSES.algorandRecipient,
-        false,
+        true,
       );
       await app.newSendFlow.fillCryptoAmount("0.1");
       await expect(app.newSendFlow.feesMenuTrigger).toBeHidden();
@@ -892,6 +892,8 @@ test.describe("New Send Flow", () => {
         accountName: ACCOUNT_NAMES.algorand,
         address: TEST_ADDRESSES.algorandRecipient,
         amount: "0.1",
+        hasMemo: true,
+        memoValue: "some random memo",
       },
       {
         name: "Bitcoin",

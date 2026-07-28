@@ -1,4 +1,5 @@
-import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { calculate } from "@ledgerhq/live-countervalues/logic";

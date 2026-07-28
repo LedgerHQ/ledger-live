@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™, Monad takasını desteklemez",
       "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "zcash_title" : "Ledger Nano S™, Zcash takasını desteklemez",
-      "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+      "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "aleo_title" : "Ledger Nano S™, Aleo takasını desteklemez",
+      "aleo_description" : "Aleo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "Ücret tutarı ({{unit}})",
     "gasLimit" : "Gas limiti ({{unit}})",
     "feesPaid" : "İşleminizi başlatabilmek için ağa ödenen ücretler",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Ağ ücretini ödemek için {{energy}} enerji ve {{bandwidth}} bant genişliği kullanacaksınız."
+      },
+      "insufficient" : {
+        "description" : "Bu transferi karşılamak için yeterli enerji ve bant genişliğiniz yok. Eksik tutar TRX yakılarak karşılanacak."
+      }
+    },
     "insufficientBalanceFees" : "Ağ ücretlerini karşılayacak kadar bakiye mevcut değil.",
     "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
     "coinToSend" : "Gönderilecek coin",
@@ -4339,7 +4349,10 @@
         "redelegate" : "Yetki devret",
         "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
         "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
-        "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+          "zero_gravity" : "Yetki devrini sonlandırmak için en az 1 Gwei değerinde yetkisi devredilmiş payınız olmalıdır."
+        },
         "undelegateActivatingTooltip" : "Etkinleşmekte olan bir stake'in yetki devrini sonlandıramazsınız",
         "reward" : "Ödüllerinizi alın",
         "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "Miktar"
+              "title" : "Miktar",
+              "visibilityDelay" : "Bu yetki devrini yetki devri panonuzda görmeniz {{numberOfMinutes}} dakika kadar sürebilir."
             },
             "validator" : {
               "title" : "Doğrulayıcılar",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Yatır",
+      "OUT" : "Çek"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "Özel çoklu format testi için virgülle ayrılmış formatlar.",
         "customFamiliesPlaceholder" : "EVM, Stellar, Aptos",
         "applyFamilies" : "Uygula",
-        "resetOverride" : "Uygulamayı sıfırla"
+        "contactsData" : "Kişi verileri",
+        "loadPopulatedContacts" : "Örnek kişileri yükle",
+        "resetContacts" : "Kişileri sıfırla",
+        "resetOverride" : "Uygulamayı sıfırla",
+        "featureIntroduction" : {
+          "title" : "Özellik tanıtımı",
+          "label" : "Kişileri Göster özellikleri tanıtımı",
+          "dismissed" : "Kapatıldı: Tanıtımı Kişiler bölümünde tekrar göstermek için açın.",
+          "willShow" : "Kapatılana kadar Kişiler bölümünde gösterilir."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Kripto Varlık Listesi",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Alıcı hesap, seçili ASA'yı onaylamadı."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo çok uzun",
+      "description" : "Algorand memo'ları 1024 baytı aşamaz. Lütfen memo'nuzu kısaltın."
     },
     "AmountRequired" : {
       "title" : "Gerekli tutar"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
-      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın."
+      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
+      "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
     },
     "optedOut" : {
-      "title" : "Dolandırıcılık girişimlerini tespit edin. Tüm ayrıntıları görün",
-      "subtitle" : "İşlem detaylarını dokunmatik ekranlı bir imzalayıcıda net bir şekilde inceleyin ve gelişmiş güvenlik kontrolleriyle dolandırıcılıkları tespit edin."
-    },
-    "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "title" : "Dolandırıcılıkları imzalamadan önce fark edin",
+      "subtitle" : "Gerçek zamanlı tehdit tespiti sağlayan gelişmiş güvenlik özellikleri hakkında daha fazla bilgi edinin.",
+      "cta" : "Daha fazla bilgi"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
     "searchPlaceholder" : "Kişi ara",
+    "searchNoResults" : "Kişi bulunamadı",
     "me" : {
       "name" : "Ben",
       "addressCount_zero" : "0 adres",
       "addressCount_one" : "{{count}} adres",
       "addressCount_other" : "{{count}} adres"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
+      "dismiss" : "Anladım"
+    },
+    "featureIntroduction" : {
+      "title" : "Karşınızda Kişiler",
+      "description" : "Kripto adres defteriniz: Gönderim yaptığınız cüzdanları kaydedin, hepsi tek bir yerde.",
+      "primaryAction" : "Kişileri deneyin",
+      "secondaryAction" : "Belki sonra",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Adresleri bir kez kaydedin",
+          "description" : "Gönderim yaptığınız adresleri tek bir yerde tutun."
+        },
+        "sendToRightAddress" : {
+          "title" : "Doğru adrese gönderin",
+          "description" : "Fonlar her seferinde doğru cüzdana ulaşır."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Tüm cihazlarınızda gizli kalır",
+          "description" : "Ledger Sync ile uçtan uca şifrelenir."
+        }
+      }
     }
   },
   "assetDetails" : {

@@ -10,13 +10,14 @@ Deep code review
 
 ## Process
 
-1. Run `git diff develop..HEAD` to get the full diff.
+1. Run `git diff develop...HEAD` to get the full diff.
 
-2. Launch 4 `code-reviewer` agents **in parallel**, each with a different focus:
+2. Launch 5 `code-reviewer` agents **in parallel**, each with a different focus:
    - **A** — Architecture & MVVM compliance
-   - **B** — Correctness & security (edge cases, null handling, error states)
+   - **B** — Correctness (edge cases, null handling, error states)
    - **C** — Code quality & conventions (Lumen UI, TypeScript, naming, new deps)
    - **D** — General review — DRY, KISS, missing tests, anything that would slow down a reviewer or cause future regressions
+   - **E** — Security: invoke the `detect-data-leaks` skill for PII; check for auth bypass, injection, SSRF, crypto misuse; scan the diff for hardcoded secrets, tokens, API keys, or private keys.
 
    Each agent prompt: _"Review the diff vs develop. Focus on [FOCUS]. Return findings with file:line, severity (🔴 Critical / 🟡 Suggestion / 🟢 Nice to have), and suggested fix."_
 

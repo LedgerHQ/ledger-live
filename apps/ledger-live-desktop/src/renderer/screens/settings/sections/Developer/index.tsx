@@ -50,6 +50,8 @@ import DeviceActionContentDevTool from "./DeviceActionContentDevTool";
 import DeviceActionContentDevScreen from "./DeviceActionContentDevTool/screens/DeviceActionContentDevScreen";
 import DeviceIntentExecutorDevTool from "./DeviceIntentExecutorDevTool";
 import DeviceIntentExecutorDevScreen from "./DeviceIntentExecutorDevTool/screens/DeviceIntentExecutorDevScreen";
+import LargeScreenUpsellDevTool from "./LargeScreenUpsellDevTool";
+import { LargeScreenUpsellQa } from "LLD/features/LargeScreenUpsell";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -157,6 +159,7 @@ const Default = () => {
       <FeaturesAndFlowsDevTool />
       <AnalyticsConsentOptInDevTool />
       <GenericAwarenessModalDevTool />
+      <LargeScreenUpsellDevTool />
       <InfoStateDevTool />
       <DeviceActionContentDevTool />
       <DeviceIntentExecutorDevTool />
@@ -174,6 +177,7 @@ const SectionDeveloper = () => (
       <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
       <Route path="analytics-consent-opt-in-qa" element={<AnalyticsConsentOptInDevScreen />} />
       <Route path="generic-awareness-modal-qa" element={<GenericAwarenessModalDevScreen />} />
+      <Route path="large-screen-upsell-qa" element={<LargeScreenUpsellQa />} />
       <Route path="info-state-qa" element={<InfoStateDevScreen />} />
       <Route path="device-action-content-qa" element={<DeviceActionContentDevScreen />} />
       <Route path="device-intent-executor-qa" element={<DeviceIntentExecutorDevScreen />} />

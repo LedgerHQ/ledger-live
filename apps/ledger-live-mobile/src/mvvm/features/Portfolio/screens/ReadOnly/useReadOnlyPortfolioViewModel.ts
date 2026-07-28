@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAdjustedSafeAreaInsets } from "LLM/hooks/useNavigationBarHeights";
 
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
@@ -18,7 +18,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   goBack: () => void;
   navigate: (name: string, params?: object) => void;
 }): UseReadOnlyPortfolioViewModelResult => {
-  const { top: safeAreaTop } = useSafeAreaInsets();
+  const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
   usePortfolioAnalyticsOptInPrompt();

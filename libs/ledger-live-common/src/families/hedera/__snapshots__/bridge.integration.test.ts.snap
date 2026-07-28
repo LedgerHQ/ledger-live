@@ -9,7 +9,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "freshAddressPath": "44/3030",
     "hederaResources": {
       "delegation": {
-        "delegated": "851513",
+        "delegated": "92300851514",
         "nodeId": 20,
       },
       "isAutoTokenAssociationEnabled": false,
@@ -17,7 +17,7 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     },
     "id": "js:2:hedera:0.0.1040977:hederaBip44",
     "index": 0,
-    "operationsCount": 92,
+    "operationsCount": 94,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
     "subAccounts": [],
@@ -261,6 +261,29 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
 [
   [
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1783600346.045490061",
+        "feesPayer": "0.0.10096335",
+        "pagingToken": "1783600346.045490061",
+        "transactionId": "0.0.10096335-1783600331-553098000",
+      },
+      "fee": "141844",
+      "hasFailed": false,
+      "hash": "_rztbS9s1RPJ-GYcJpKWd7HuXgcIjpJKgJ8iUpHzyFraoajpdqs2s4h9LMiVfaTy",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-_rztbS9s1RPJ-GYcJpKWd7HuXgcIjpJKgJ8iUpHzyFraoajpdqs2s4h9LMiVfaTy-IN",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.10096335",
+      ],
+      "type": "IN",
+      "value": "92300000000",
+    },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
       "blockHash": null,
@@ -538,6 +561,29 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "type": "OUT",
       "value": "103687",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 10,
+      "extra": {
+        "consensusTimestamp": "1783600355.641401441",
+        "feesPayer": "0.0.10231006",
+        "pagingToken": "1783600355.641401441",
+        "transactionId": "0.0.10231006-1783600346-697279177",
+      },
+      "fee": "141844",
+      "hasFailed": false,
+      "hash": "8nAcKRZPzXChxdDe6PrwbYbL-R7TP3t62K2Du9w-V6Gij_PDQchi0-5rCk5Vqe7_",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-8nAcKRZPzXChxdDe6PrwbYbL-R7TP3t62K2Du9w-V6Gij_PDQchi0-5rCk5Vqe7_-IN",
+      "recipients": [
+        "0.0.1040977",
+      ],
+      "senders": [
+        "0.0.10231006",
+      ],
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",

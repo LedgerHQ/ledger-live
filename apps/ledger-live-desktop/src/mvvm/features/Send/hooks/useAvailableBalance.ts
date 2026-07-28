@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
-import { localeSelector, counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import {
+  localeSelector,
+  counterValueCurrencySelector,
+  discreetModeSelector,
+} from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -15,6 +19,7 @@ export function useAvailableBalance(
 ) {
   const locale = useSelector(localeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
   const unit = useMaybeAccountUnit(account ?? undefined);
 
   const accountCurrency = useMemo(
@@ -35,16 +40,18 @@ export function useAvailableBalance(
       showCode: true,
       disableRounding: false,
       locale,
+      discreet,
     });
-  }, [account, unit, locale]);
+  }, [account, unit, locale, discreet]);
 
   const counterValueFormatted = useMemo(() => {
     if (typeof counterValue !== "number" || !counterValueCurrency) return "";
     return formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(counterValue), {
       showCode: true,
       locale,
+      discreet,
     });
-  }, [counterValue, counterValueCurrency, locale]);
+  }, [counterValue, counterValueCurrency, locale, discreet]);
 
   return useMemo(() => {
     if (!account) return "";

@@ -4,7 +4,7 @@ import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
@@ -44,8 +44,10 @@ describe("genericPrepareTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: () => Promise.resolve(undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
     (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
     (getBridgeApi as jest.Mock).mockResolvedValue({
@@ -435,9 +437,11 @@ describe("genericPrepareTransaction", () => {
   });
 
   it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: tokenId =>
         Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),

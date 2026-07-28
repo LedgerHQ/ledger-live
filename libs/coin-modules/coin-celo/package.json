@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,6 @@
     "@celo/abis": "^14.0.1",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",

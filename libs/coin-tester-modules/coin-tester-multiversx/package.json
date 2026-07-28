@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-multiversx",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Ledger MultiversX Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -54,7 +54,6 @@
   "dependencies": {
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",

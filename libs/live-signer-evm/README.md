@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-evm
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet ETH JavaScript bindings via DMK or legacy hw-app-eth.

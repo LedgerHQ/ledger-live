@@ -1,10 +1,10 @@
-import { CurrencyIdSchema } from "@shared/schema-primitives";
+import { CryptoCurrencyIdSchema } from "@shared/schema-primitives";
 import type { CryptoCurrency } from "./schema";
 
 export function mockCryptoCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: CurrencyIdSchema.parse("bitcoin"),
+    id: CryptoCurrencyIdSchema.parse("bitcoin"),
     name: "Bitcoin",
     ticker: "BTC",
     units: [
@@ -29,7 +29,7 @@ export function mockCryptoCurrency(overrides?: Partial<CryptoCurrency>): CryptoC
 
 export function mockEthereumCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return mockCryptoCurrency({
-    id: CurrencyIdSchema.parse("ethereum"),
+    id: CryptoCurrencyIdSchema.parse("ethereum"),
     name: "Ethereum",
     ticker: "ETH",
     units: [

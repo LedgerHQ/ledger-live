@@ -1,10 +1,13 @@
+import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
+
+const COMPOSE_DIR = path.join(__dirname, "..");
 
 export async function spawnChopsticksAndSidecar(chopsticksConfig: string): Promise<void> {
   console.log("Starting chopsticks and sidecar...");
   await compose.upAll({
-    cwd: __dirname,
+    cwd: COMPOSE_DIR,
     log: Boolean(process.env.DEBUG),
     env: { ...process.env, CHOPSTICKS_CONFIG: chopsticksConfig },
     commandOptions: ["--wait"],
@@ -17,7 +20,7 @@ export async function spawnChopsticksAndSidecar(chopsticksConfig: string): Promi
 export const killChopsticksAndSidecar = async (): Promise<void> => {
   console.log("Stopping chopsticks...");
   await compose.down({
-    cwd: __dirname,
+    cwd: COMPOSE_DIR,
     log: Boolean(process.env.DEBUG),
     env: process.env,
   });

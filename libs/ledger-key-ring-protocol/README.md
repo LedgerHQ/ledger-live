@@ -1,5 +1,8 @@
 # @ledgerhq/ledger-key-ring-protocol
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Key Ring Protocol layer.
 
 > This is the Trustchain SDK powering **Ledger Sync**. For the full picture (auth, members, key

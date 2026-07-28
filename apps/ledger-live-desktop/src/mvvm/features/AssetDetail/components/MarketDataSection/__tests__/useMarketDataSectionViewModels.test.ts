@@ -12,12 +12,15 @@ jest.mock("~/renderer/hooks/useDateFormatter", () => ({
   fromNow: jest.fn(() => "2 years ago"),
 }));
 
+const usdUnit = { code: "$", name: "US Dollar", magnitude: 2, prefixCode: true };
+
 const buildCurrencyData = (
   overrides: Partial<MarketDataSectionCurrencyData> = {},
 ): MarketDataSectionCurrencyData => ({
   data: createMockMarketCurrencyData({ marketcapRank: 1 }),
   showSkeleton: false,
   counterCurrency: "usd",
+  counterValueUnit: usdUnit,
   locale: "en-US",
   ...overrides,
 });

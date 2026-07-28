@@ -147,7 +147,15 @@ export function useBalanceGraphViewModel({
     currentData: chartData,
     isLoading: isChartLoading,
     isFetching: isChartFetching,
-  } = useAssetChartDataInCounterValue({ id, counterCurrency, range }, { skip: !id });
+  } = useAssetChartDataInCounterValue(
+    {
+      id,
+      counterCurrency,
+      range,
+      isCryptoCountervalue: counterValueCurrency.type === "CryptoCurrency",
+    },
+    { skip: !id },
+  );
 
   const ranges = useMemo(
     () =>

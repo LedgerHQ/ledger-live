@@ -1,12 +1,14 @@
 import { fromAccountRaw } from "../../account/serialization";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 export const __NEXT_REWARD_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
-setupMockCryptoAssetsStore({
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
   getTokensSyncHash: async () => "test_hash",
 });
 

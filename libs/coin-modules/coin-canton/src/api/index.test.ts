@@ -5,6 +5,7 @@ describe("createApi", () => {
   it("should return every api methods", () => {
     expect(createApi({} as CantonCoinConfig)).toEqual({
       broadcast: expect.any(Function),
+      call: expect.any(Function),
       combine: expect.any(Function),
       craftTransaction: expect.any(Function),
       estimateFees: expect.any(Function),

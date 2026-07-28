@@ -57,6 +57,9 @@ export function createApi(
 
       return Buffer.from(response.transactionHash).toString("base64");
     },
+    async call() {
+      throw new Error("call is not supported");
+    },
     combine,
     craftTransaction: async (txIntent, customFees) => {
       invariant(!txIntent.useAllAmount, "useAllAmount is not supported");

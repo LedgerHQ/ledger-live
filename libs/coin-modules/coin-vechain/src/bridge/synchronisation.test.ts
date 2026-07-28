@@ -1,8 +1,8 @@
 import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
@@ -45,13 +45,15 @@ describe("scanAccounts", () => {
       units: [{ name: "VeThor", code: "VTHO", magnitude: 18 }],
     };
 
-    setupMockCryptoAssetsStore({
+    setCryptoAssetsStore({
       findTokenById: async (id: string) => {
         if (id === "vechain/vip180/vtho") {
           return vthoToken;
         }
         return undefined;
       },
+      findTokenByAddressInCurrency: async () => undefined,
+      getTokensSyncHash: async () => "",
     });
 
     setupServer().listen({ onUnhandledRequest: "error" });

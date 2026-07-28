@@ -1,5 +1,8 @@
 # live-dmk-desktop
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Desktop-specific integration of the Ledger Device Management Kit (DMK) for Ledger Live Desktop. Provides the Electron/USB transport adapter and React hooks that wire the DMK into the LLD renderer process, enabling USB-based hardware wallet communication on macOS, Windows, and Linux.
 
 ## What it does

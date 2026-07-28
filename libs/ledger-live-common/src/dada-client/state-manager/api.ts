@@ -5,8 +5,47 @@ import {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import { convertApiAssets } from "@ledgerhq/cryptoassets";
+import type { ApiAsset } from "../entities";
+import type { CryptoOrTokenCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
+
+function convertApiAssets(
+  apiAssets: Record<string, ApiAsset>,
+): Record<string, CryptoOrTokenCurrency> {
+  const result: Record<string, CryptoOrTokenCurrency> = {};
+  for (const [key, asset] of Object.entries(apiAssets)) {
+    if (asset.type === "token_currency") {
+      const token = convertApiToken(asset as Parameters<typeof convertApiToken>[0]);
+      if (token) result[key] = token;
+    } else {
+      const crypto = findCryptoCurrencyById(asset.id);
+      if (crypto) {
+        result[key] = crypto;
+      } else {
+        result[key] = {
+          type: "CryptoCurrency" as const,
+          id: asset.id as CryptoCurrencyId,
+          name: asset.name,
+          ticker: asset.ticker,
+          units: asset.units,
+          managerAppName: asset.name,
+          coinType: asset.coinType ?? 0,
+          scheme: asset.id.toLowerCase(),
+          color: "#999999",
+          family: asset.family ?? asset.id,
+          explorerViews: [],
+          symbol: asset.symbol,
+          disableCountervalue: asset.disableCountervalue,
+          supportsSegwit: asset.hasSegwit,
+          ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
+        };
+      }
+    }
+  }
+  return result;
+}
 import { getEnv } from "@ledgerhq/live-env";
 import {
   AssetsAdditionalData,

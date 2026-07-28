@@ -5,12 +5,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useTrustchainSdk } from "./useTrustchainSdk";
-import {
-  NoTrustchainInitialized,
-  TrustchainAlreadyInitialized,
-  TrustchainAlreadyInitializedWithOtherSeed,
-  TrustchainNotAllowed,
-} from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { NoTrustchainInitialized } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useCallback, useRef } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -23,7 +18,6 @@ import { ScreenName } from "~/const";
 import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
 import { DrawerProps, SceneKind, useFollowInstructionDrawer } from "./useFollowInstructionDrawer";
 import { OnboardingType } from "~/reducers/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES } from "~/analytics/hooks/variables";
 
 export function useAddMember({ device }: { device: Device | null }): DrawerProps {
@@ -79,16 +73,17 @@ export function useAddMember({ device }: { device: Device | null }): DrawerProps
           transitionToNextScreen(trustchainResult);
         }
       } catch (error) {
-        if (error instanceof TrustchainNotAllowed) {
+        const eName = (error as { name?: string })?.name;
+        if (eName === "TrustchainNotAllowed") {
           setScene({ kind: SceneKind.KeyError });
-        } else if (error instanceof TrustchainAlreadyInitialized) {
+        } else if (eName === "TrustchainAlreadyInitialized") {
           setScene({ kind: SceneKind.AlreadySecuredSameSeed });
-        } else if (error instanceof TrustchainAlreadyInitializedWithOtherSeed) {
+        } else if (eName === "TrustchainAlreadyInitializedWithOtherSeed") {
           setScene({ kind: SceneKind.AlreadySecuredOtherSeed });
-        } else if (error instanceof NoTrustchainInitialized) {
+        } else if (eName === "NoTrustchainInitialized") {
           setScene({ kind: SceneKind.UnbackedError });
         } else if (error instanceof Error) {
-          if (error instanceof UserRefusedOnDevice) {
+          if (eName === "UserRefusedOnDevice") {
             track(AnalyticsEvents.LedgerSyncRejectedOnDevice, {
               page: "Ledger Sync",
               modelId: device?.modelId,

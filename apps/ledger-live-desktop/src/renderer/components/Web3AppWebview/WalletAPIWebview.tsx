@@ -216,6 +216,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
+            allowNonOnboardedDevice: true,
             onResult: onSuccess,
             onCancel,
           }),
@@ -226,6 +227,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
+            allowNonOnboardedDevice: true,
             onResult: onSuccess,
             onCancel,
           }),

@@ -2,4 +2,7 @@
 
 ## @ledgerhq/types-live
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Live main types.

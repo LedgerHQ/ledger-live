@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stellar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "Ledger Stellar Coin Tester",
   "keywords": [
@@ -59,7 +59,6 @@
   "dependencies": {
     "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

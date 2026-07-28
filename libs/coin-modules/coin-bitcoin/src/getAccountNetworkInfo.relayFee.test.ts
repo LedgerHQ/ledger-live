@@ -9,8 +9,7 @@ const explorerWith = (relay_fee?: string) => ({
 
 let currentExplorer = explorerWith("0.00001000");
 
-jest.mock("./wallet-btc", () => ({
-  __esModule: true,
+jest.mock("./getWalletAccount", () => ({
   getWalletAccount: jest.fn(() => ({ xpub: { explorer: currentExplorer } })),
 }));
 

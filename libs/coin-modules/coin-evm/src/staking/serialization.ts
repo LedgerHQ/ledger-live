@@ -22,6 +22,7 @@ function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
     amount: d.amount.toString(),
     pendingRewards: d.pendingRewards.toString(),
     status: d.status,
+    ...(BigNumber.isBigNumber(d.shares) ? { shares: d.shares.toString() } : {}),
   };
 }
 
@@ -33,6 +34,7 @@ function fromStakingDelegationRaw(d: StakingDelegationRaw): StakingDelegation {
     amount: new BigNumber(d.amount),
     pendingRewards: new BigNumber(d.pendingRewards),
     status: d.status,
+    ...(typeof d.shares === "string" ? { shares: new BigNumber(d.shares) } : {}),
   };
 }
 

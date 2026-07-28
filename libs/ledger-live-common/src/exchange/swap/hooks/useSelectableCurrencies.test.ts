@@ -5,10 +5,14 @@ import { renderHook, waitFor } from "@testing-library/react";
 
 import { useSelectableCurrencies } from "./useSelectableCurrencies";
 import { getCryptoCurrencyById } from "../../../currencies";
-import { setupMockCryptoAssetsStore } from "../../../test-helpers/cryptoAssetsStore";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("useSelectableCurrencies", () => {
   test("returns an empty array when empty list are passed", async () => {

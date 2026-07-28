@@ -21,7 +21,6 @@ import {
   PolkadotValidator,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/families/polkadot/errors";
 import { radii } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
@@ -189,8 +188,8 @@ const ValidatorField = ({
   if (!status) return null;
   const error = getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
-  const maybeChill = error instanceof PolkadotValidatorsRequired;
-  const ignoreError = error instanceof PolkadotValidatorsRequired && !nominations.length; // Do not show error on first nominate
+  const maybeChill = error?.name === "PolkadotValidatorsRequired";
+  const ignoreError = error?.name === "PolkadotValidatorsRequired" && !nominations.length; // Do not show error on first nominate
 
   return (
     <>

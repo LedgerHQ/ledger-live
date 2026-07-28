@@ -21,6 +21,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
   SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
@@ -102,6 +103,13 @@ export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () => (dispatch: AppDis
     }),
   );
 };
+
+/**
+ * @deprecated QA / developer tools only. Do not use in production flows.
+ * Replaces `devicesModelList` so debug screens can simulate audience gates (e.g. pretend Nano seen).
+ */
+export const DANGEROUSLY_setDevicesModelListForQa = (devicesModelList: DeviceModelId[]) =>
+  saveSettings({ devicesModelList });
 
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
@@ -431,6 +439,13 @@ export const setHasSeenQ2Tour = (hasSeenQ2Tour: boolean) => ({
 export const setProductTourCompleted = (productTourCompleted: boolean) => ({
   type: SET_PRODUCT_TOUR_COMPLETED,
   payload: productTourCompleted,
+});
+
+export const setHasDismissedContactsFeatureIntroduction = (
+  hasDismissedContactsFeatureIntroduction: boolean,
+) => ({
+  type: SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
+  payload: hasDismissedContactsFeatureIntroduction,
 });
 
 export const setHasClickedRecover = (hasClickedRecover: boolean) => ({

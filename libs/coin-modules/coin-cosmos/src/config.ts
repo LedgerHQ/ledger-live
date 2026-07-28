@@ -116,16 +116,6 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
-  config_currency_umee: {
-    type: "object",
-    default: {
-      lcd: "https://umee-api.polkachu.com",
-      minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_coreum: {
     type: "object",
     default: {

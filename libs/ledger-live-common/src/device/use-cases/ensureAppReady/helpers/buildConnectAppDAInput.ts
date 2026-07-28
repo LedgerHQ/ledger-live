@@ -102,7 +102,8 @@ export function buildConnectAppDeviceActionInput(params: {
       appNameToDependency(appName, getMinVersion),
     ),
     requireLatestFirmware: ensureAppReadyInput.requireLatestFirmware,
-    allowMissingApplication: ensureAppReadyInput.allowPartialDependencies,
+    allowMissingApplication: false,
+    allowNonOnboardedDevice: false,
     unlockTimeout,
     requiredDerivation: createRequiredDerivation({
       dmk,

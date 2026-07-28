@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -121,6 +121,7 @@
     "cross-env": "^7.0.3",
     "jest": "catalog:",
     "jest-sonar": "0.2.16",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "timemachine": "^0.3.2"

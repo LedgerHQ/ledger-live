@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import {
   TOP_BAR_CONTENT_HEIGHT,
   TOP_BAR_WRAPPER_PADDING_TOP,
+  useAdjustedSafeAreaInsets,
 } from "LLM/hooks/useNavigationBarHeights";
 import { useSwapTopBarHeaderViewModel } from "./useSwapTopBarHeaderViewModel";
 import {
@@ -17,7 +17,7 @@ import { MyWalletTopBarAction } from "LLM/components/TopBar/components/MyWalletT
 import { Clock } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 export function SwapTopBarHeader() {
-  const insets = useSafeAreaInsets();
+  const insets = useAdjustedSafeAreaInsets();
   const {
     onMyLedgerPress,
     onMyWalletPress,

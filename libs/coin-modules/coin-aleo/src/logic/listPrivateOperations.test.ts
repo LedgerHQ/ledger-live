@@ -1,4 +1,4 @@
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedEnrichedPrivateRecord, getMockedRecord } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
@@ -14,7 +14,7 @@ const mockToPrivateBridgeOperation = jest.mocked(toPrivateBridgeOperation);
 
 describe("listPrivateOperations", () => {
   const mockOp = getMockedOperation();
-  const mockCurrency = getMockedCurrency();
+  const mockConfig = getMockedConfig("mainnet");
   const mockViewKey = "AViewKey1mockviewkey";
   const mockAddress = "aleo1test123address456";
   const mockLedgerAccountId = "js:2:aleo:aleo1test123address456:";
@@ -25,7 +25,7 @@ describe("listPrivateOperations", () => {
 
   it("should return an empty operations array and empty set when no private records are provided", async () => {
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -46,7 +46,7 @@ describe("listPrivateOperations", () => {
     mockEnrichPrivateRecord.mockResolvedValue(null);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -55,7 +55,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -75,7 +75,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -84,7 +84,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -103,7 +103,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -112,7 +112,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -131,7 +131,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -140,7 +140,7 @@ describe("listPrivateOperations", () => {
 
     expect(mockEnrichPrivateRecord).toHaveBeenCalledTimes(1);
     expect(mockEnrichPrivateRecord).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       rawRecord: record,
       viewKey: mockViewKey,
       address: mockAddress,
@@ -157,7 +157,7 @@ describe("listPrivateOperations", () => {
     mockEnrichPrivateRecord.mockResolvedValue(null);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -180,7 +180,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -212,7 +212,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -258,7 +258,7 @@ describe("listPrivateOperations", () => {
       .mockReturnValueOnce(ops[2]);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -288,7 +288,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -324,7 +324,7 @@ describe("listPrivateOperations", () => {
     mockEnrichPrivateRecord.mockResolvedValue(null);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -369,7 +369,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -410,7 +410,7 @@ describe("listPrivateOperations", () => {
     mockToPrivateBridgeOperation.mockReturnValue(mockOp);
 
     const result = await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -442,7 +442,7 @@ describe("listPrivateOperations", () => {
     const onProgress = jest.fn();
 
     await listPrivateOperations({
-      currency: mockCurrency,
+      config: mockConfig,
       viewKey: mockViewKey,
       address: mockAddress,
       ledgerAccountId: mockLedgerAccountId,
@@ -466,7 +466,7 @@ describe("listPrivateOperations", () => {
 
     await expect(
       listPrivateOperations({
-        currency: mockCurrency,
+        config: mockConfig,
         viewKey: mockViewKey,
         address: mockAddress,
         ledgerAccountId: mockLedgerAccountId,

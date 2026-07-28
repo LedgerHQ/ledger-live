@@ -2,6 +2,7 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
 import type { TokenUnit } from "./cal-client/entities";
 
+/** @deprecated Use @domain/api-currency-token. */
 export interface ApiTokenData {
   id: string;
   contractAddress: string;
@@ -16,11 +17,8 @@ export interface ApiTokenData {
 }
 
 /**
- * Converts API token data to Ledger Live TokenCurrency format
- *
- * This function applies client-side transformations to reconcile differences between
- * backend APIs (CAL/DaDa) and Ledger Live's expected token format:
- *
+ * Converts API token data to Ledger Live TokenCurrency format.
+ * @deprecated Use @domain/api-currency-token.
  * @param apiToken - Token data from backend API
  * @returns TokenCurrency object in Ledger Live format, or undefined if parent currency not found
  */

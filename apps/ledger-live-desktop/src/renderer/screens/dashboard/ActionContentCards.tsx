@@ -1,7 +1,6 @@
-import { useFeature } from "@features/platform-feature-flags";
 import { Carousel } from "@ledgerhq/react-ui";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import React, { PropsWithChildren, useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import { Card } from "~/renderer/components/Box";
@@ -9,43 +8,22 @@ import useActionCards from "~/renderer/hooks/useActionCards";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
 
-// Classic variants (carousel with background)
-const ActionVariantA = styled(Card)`
+const ActionCardsContainer = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
 `;
 
-const ActionVariantBContainer = styled.div`
-  position: relative;
-  margin-left: 24px;
-  margin-right: 24px;
-`;
+const actionCardAnalyticsProps = { variant: ABTestingVariants.variantA };
 
-const ActionVariantBWrapper = styled.div`
-  position: absolute;
-  width: 100%;
-  bottom: 30px;
-  zindex: 10000;
-  backdrop-filter: blur(15px);
-  border-radius: 8px;
-  background-color: ${p => p.theme.colors.opacityPurple.c10};
-`;
-
-const ActionVariantB = ({ children }: PropsWithChildren) => (
-  <ActionVariantBContainer>
-    <ActionVariantBWrapper>{children}</ActionVariantBWrapper>
-  </ActionVariantBContainer>
-);
-
-const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
+const ActionContentCards = () => {
   const { actionCards, onClick, onDismiss } = useActionCards();
-  const lldActionCarousel = useFeature("lldActionCarousel");
-  const additionalProps = useMemo(() => ({ variant }), [variant]);
+
+  useRefreshAccountsOrderingEffect({ onMount: true });
 
   const slides = actionCards.map((slide, index) => (
     <LogContentCardWrapper
       key={slide.id}
       id={slide.id}
-      additionalProps={additionalProps}
+      additionalProps={actionCardAnalyticsProps}
       displayedPosition={index}
       location={slide.location}
     >
@@ -71,33 +49,13 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
     </LogContentCardWrapper>
   ));
 
-  useRefreshAccountsOrderingEffect({
-    onMount: true,
-  });
+  if (slides.length === 0) return null;
 
-  if (!lldActionCarousel?.enabled || slides.length === 0) return null;
-
-  if (
-    lldActionCarousel?.params?.variant === ABTestingVariants.variantB &&
-    variant === ABTestingVariants.variantB
-  ) {
-    return (
-      <ActionVariantB>
-        <Carousel variant="content-card">{slides}</Carousel>
-      </ActionVariantB>
-    );
-  } else if (
-    lldActionCarousel?.params?.variant !== ABTestingVariants.variantB &&
-    variant === ABTestingVariants.variantA
-  ) {
-    return (
-      <ActionVariantA>
-        <Carousel variant="content-card">{slides}</Carousel>
-      </ActionVariantA>
-    );
-  }
-
-  return null;
+  return (
+    <ActionCardsContainer>
+      <Carousel variant="content-card">{slides}</Carousel>
+    </ActionCardsContainer>
+  );
 };
 
 export default ActionContentCards;

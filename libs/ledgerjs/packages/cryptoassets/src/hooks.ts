@@ -15,7 +15,7 @@ export type CurrencyResult = {
 };
 
 /**
- * Hook to find a token by its ID
+ * @deprecated Use @features/platform-currencies.
  */
 export function useTokenById(id: string, options?: { skip?: boolean }): TokenResult {
   const result = options
@@ -29,7 +29,7 @@ export function useTokenById(id: string, options?: { skip?: boolean }): TokenRes
 }
 
 /**
- * Hook to find a token by its contract address and currency
+ * @deprecated Use @features/platform-currencies.
  */
 export function useTokenByAddressInCurrency(
   address: string,
@@ -48,7 +48,7 @@ export function useTokenByAddressInCurrency(
 }
 
 /**
- * Hook to find a currency (crypto or token) by its ID
+ * @deprecated Use @features/platform-currencies.
  */
 export function useCurrencyById(id: string): CurrencyResult {
   const maybeCryptoCurrency = findCryptoCurrencyById(id);

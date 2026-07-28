@@ -1,5 +1,8 @@
 # @domain/api-market-sentiment
 
+> [!CAUTION]
+> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+
 Domain API client for **market sentiment**, backed by the CoinMarketCap Crypto Fear & Greed endpoint.
 RTK Query endpoint typed on the canonical `@domain/entity-market-sentiment` entity. Owns no
 env/config/logging dependency.

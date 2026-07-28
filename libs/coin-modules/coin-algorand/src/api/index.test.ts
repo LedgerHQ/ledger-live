@@ -34,6 +34,7 @@ describe("Algorand API", () => {
     it("should create an API instance with all required methods", () => {
       expect(api).toEqual({
         broadcast: expect.any(Function),
+        call: expect.any(Function),
         combine: expect.any(Function),
         craftTransaction: expect.any(Function),
         craftRawTransaction: expect.any(Function),

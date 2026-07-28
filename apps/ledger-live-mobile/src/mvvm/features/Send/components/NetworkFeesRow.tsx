@@ -158,12 +158,16 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
             <Text typography="body3" lx={{ color: "base" }}>
               {viewModel.value}
             </Text>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              •
-            </Text>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              {viewModel.strategyLabel}
-            </Text>
+            {viewModel.showFeeCurrencyAmount ? null : (
+              <>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  •
+                </Text>
+                <Text typography="body3" lx={{ color: "muted" }}>
+                  {viewModel.strategyLabel}
+                </Text>
+              </>
+            )}
           </View>
           {canOpenFeeSelector ? <ChevronDown size={16} /> : null}
         </Pressable>
@@ -171,10 +175,22 @@ export function NetworkFeesRow({ viewModel }: NetworkFeesRowProps) {
 
       <BottomSheet ref={infoBottomSheetRef} snapPoints="small">
         <BottomSheetView>
-          <BottomSheetHeader title={viewModel.label} density="compact" />
+          <BottomSheetHeader
+            title={
+              viewModel.networkFeesInfo
+                ? t(`send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.title`)
+                : viewModel.label
+            }
+            density="compact"
+          />
           <View style={styles.infoContent}>
             <Text typography="body2" lx={{ color: "muted" }} style={styles.infoDescription}>
-              {t("send.newSendFlow.feesPaid")}
+              {viewModel.networkFeesInfo
+                ? t(
+                    `send.newSendFlow.${viewModel.networkFeesInfo.translationKey}.description`,
+                    viewModel.networkFeesInfo.values,
+                  )
+                : t("send.newSendFlow.feesPaid")}
             </Text>
             <Button appearance="base" size="lg" onPress={handleCloseInfo}>
               {t("common.gotit")}

@@ -40,11 +40,11 @@ $HAS_UI_CHANGES
 
 ## Instructions
 
-**IMPORTANT**: Before any git commit, read and follow the `.agents/skills/git-workflow/SKILL.md` skill. All commit messages MUST use the Conventional Commits format defined there (`type(scope): description`). Analyze the staged diff to pick the correct type and scope.
+**IMPORTANT**: Before any git commit, read and follow the `.agents/skills/git-conventions/SKILL.md` skill. All commit messages MUST use the Conventional Commits format defined there (`type(scope): description`). Analyze the staged diff to pick the correct type and scope.
 
 ### Step 1: Analyze the changes
 
-1. Read `.agents/skills/git-workflow/SKILL.md` to load commit conventions
+1. Read `.agents/skills/git-conventions/SKILL.md` to load commit conventions
 2. Run `git status` and `git diff` to understand current changes
 3. Run `git log develop..HEAD --oneline` to see commits on this branch
 4. Identify all modified packages for the changeset

@@ -1,5 +1,8 @@
 # @features/flow-large-screen-upsell
 
+> [!CAUTION]
+> **Status: UNSTABLE** — In active development as part of the large-screen upsell feature.
+
 Eligibility + frequency-throttle decision for the large-screen upsell modal, plus the
 portable modal UI (Lumen Dialog) and content helpers.
 

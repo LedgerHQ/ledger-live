@@ -99,10 +99,14 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
-// Dual-maintained with `@domain/entity-currency-crypto` (the primary registry); see its README.
-// FIXME: We must be aware that we don't handle correcly currencies that use the same `managerApp`
-// to fix that we should always have the 'main' currency of the managerapp first in this list
-// e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
+/**
+ * @deprecated Use @domain/entity-currency-crypto.
+ *
+ * Dual-maintained with `@domain/entity-currency-crypto` (the primary registry); see its README.
+ * FIXME: We must be aware that we don't handle correcly currencies that use the same `managerApp`
+ * to fix that we should always have the 'main' currency of the managerapp first in this list
+ * e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
+ */
 export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   aptos: {
     type: "CryptoCurrency",
@@ -3072,35 +3076,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  umee: {
-    type: "CryptoCurrency",
-    id: "umee",
-    coinType: CoinType.ATOM,
-    name: "Umee",
-    managerAppName: "Cosmos",
-    ticker: "UMEE",
-    scheme: "umee",
-    color: "#bb90f8",
-    family: "cosmos",
-    units: [
-      {
-        name: "Umee",
-        code: "UMEE",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-Umee",
-        code: "uumee",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/umee/txs/$hash",
-        address: "https://www.mintscan.io/umee/validators/$address",
-      },
-    ],
-  },
   vechain: {
     type: "CryptoCurrency",
     id: "vechain",
@@ -4257,6 +4232,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  hypercore: {
+    type: "CryptoCurrency",
+    id: "hypercore",
+    coinType: CoinType.ETH,
+    name: "Hyperliquid",
+    managerAppName: "Ethereum",
+    ticker: "USDC",
+    scheme: "hypercore",
+    color: "#97FCE4",
+    family: "hypercore",
+    units: [
+      {
+        name: "USD Coin",
+        code: "USDC",
+        magnitude: 6,
+      },
+    ],
+    explorerViews: [
+      {
+        // Address view only (no HyperCore tx hash exposed by the proxy).
+        address: "https://app.hyperliquid.xyz/explorer/address/$address",
+      },
+    ],
+    keywords: ["usdc", "hype", "hyperliquid", "hypercore"],
+  },
   hyperevm: {
     type: "CryptoCurrency",
     id: "hyperevm",
@@ -5153,7 +5153,7 @@ function activeCurrenciesStore(): CryptoCurrenciesStore {
 }
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-crypto.
  * @param {*} withDevCrypto
  */
 export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
@@ -5162,7 +5162,7 @@ export function listCryptoCurrencies(withDevCrypto = false): CryptoCurrency[] {
 }
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-crypto.
  * @param {*} f
  */
 export function findCryptoCurrency(
@@ -5172,7 +5172,7 @@ export function findCryptoCurrency(
 }
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-crypto.
  * @param {*} scheme
  */
 export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | null | undefined {
@@ -5181,13 +5181,14 @@ export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | nul
 
 /**
  * @deprecated Tickers are not unique across currencies, so the result is ambiguous and arbitrary.
- * Look up by id with {@link findCryptoCurrencyById} instead.
+ * Use @domain/entity-currency-crypto. Look up by id with {@link findCryptoCurrencyById} instead.
  * @param ticker
  */
 export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
   return activeCurrenciesStore().cryptocurrenciesByTicker[ticker];
 }
 
+/** @deprecated Use @domain/entity-currency-crypto. */
 export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return activeCurrenciesStore().cryptocurrenciesById[id];
 }
@@ -5204,7 +5205,7 @@ const testsMap = {
 };
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-crypto.
  * @param {*} keyword
  */
 export const findCryptoCurrencyByKeyword = (
@@ -5226,6 +5227,7 @@ export const findCryptoCurrencyByKeyword = (
   }
 };
 
+/** @deprecated Use @domain/entity-currency-crypto. */
 export const findCryptoCurrencyByManagerAppName = (
   managerAppName: string,
 ): CryptoCurrency | null | undefined => {
@@ -5240,12 +5242,13 @@ export const findCryptoCurrencyByManagerAppName = (
 };
 
 /**
- *
+ * @deprecated Use @domain/entity-currency-crypto.
  * @param {*} id
  */
 export const hasCryptoCurrencyId = (id: string): boolean =>
   Object.prototype.hasOwnProperty.call(activeCurrenciesStore().cryptocurrenciesById, id);
 
+/** @deprecated Use @domain/entity-currency-crypto. */
 export function getCryptoCurrencyById(id: string): CryptoCurrency {
   const currency = findCryptoCurrencyById(id);
 

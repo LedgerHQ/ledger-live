@@ -6,4 +6,7 @@
 
 ## @ledgerhq/live-signer-cosmos
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Ledger Hardware Wallet Cosmos JavaScript bindings, integrating [`@ledgerhq/device-signer-kit-cosmos`](https://github.com/LedgerHQ/device-sdk-ts/tree/develop/packages/signer/signer-cosmos) from the Device Management Kit alongside legacy `hw-app-cosmos` and `ledger-cosmos-js`.

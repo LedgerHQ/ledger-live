@@ -543,6 +543,29 @@ describe("EVM Family", () => {
       });
     });
 
+    describe("call", () => {
+      it("forwards eth_call params and returns the raw result", async () => {
+        const send = jest
+          .spyOn(JsonRpcProvider.prototype, "send")
+          .mockResolvedValueOnce("0x00000001");
+
+        await expect(
+          nodeApi.call(fakeCurrency as CryptoCurrency, {
+            to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            data: "0x1234",
+            block: 42,
+          }),
+        ).resolves.toBe("0x00000001");
+        expect(send).toHaveBeenCalledWith("eth_call", [
+          {
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            data: "0x1234",
+          },
+          "0x2a",
+        ]);
+      });
+    });
+
     describe("getCoinBalance", () => {
       it("should return the expected payload", async () => {
         expect(

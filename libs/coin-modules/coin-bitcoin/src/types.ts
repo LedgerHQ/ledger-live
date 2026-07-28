@@ -1,5 +1,8 @@
 import type { BigNumber } from "bignumber.js";
-import type { Account as WalletAccount, SerializedAccount as WalletAccountRaw } from "./wallet-btc";
+import type {
+  Account as WalletAccount,
+  SerializedAccount as WalletAccountRaw,
+} from "@ledgerhq/wallet-btc/index";
 import {
   Account,
   AccountRaw,

@@ -1,5 +1,5 @@
 import { sdkClient } from "../network/sdk";
-import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { getMockedPreparedRequestResponse } from "../__tests__/fixtures/sdk.fixture";
 import {
   mockTxIntentFeePrivate,
@@ -14,7 +14,7 @@ import { mapTransactionIntentToSdkIntent, toHex } from "./utils";
 jest.mock("../network/sdk");
 jest.mock("./utils");
 
-const mockCurrency = getMockedCurrency();
+const mockConfig = getMockedConfig("mainnet");
 const mockViewKey = "AViewKey1mockviewkey";
 const mockSdkIntent: Intent = {
   type: "transfer_public",
@@ -50,7 +50,7 @@ describe("craftTransaction", () => {
 
   it("should craft transaction by mapping intent, calling SDK and serializing response", async () => {
     const result = await craftTransaction({
-      currency: mockCurrency,
+      config: mockConfig,
       txIntent: mockTxIntentTransferPublic,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
@@ -61,7 +61,7 @@ describe("craftTransaction", () => {
     expect(mapTransactionIntentToSdkIntent).toHaveBeenCalledWith(mockTxIntentTransferPublic);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       intent: mockSdkIntent,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
@@ -72,14 +72,14 @@ describe("craftTransaction", () => {
 
   it("should omit viewKey from request when not provided", async () => {
     await craftTransaction({
-      currency: mockCurrency,
+      config: mockConfig,
       txIntent: mockTxIntentTransferPublic,
       feeConfiguration: null,
     });
 
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       intent: mockSdkIntent,
       feeConfiguration: null,
     });
@@ -90,7 +90,7 @@ describe("craftTransaction", () => {
 
     await expect(
       craftTransaction({
-        currency: mockCurrency,
+        config: mockConfig,
         txIntent: mockTxIntentTransferPublic,
         feeConfiguration: mockFeeConfiguration,
         viewKey: mockViewKey,
@@ -100,7 +100,7 @@ describe("craftTransaction", () => {
 
   it("should craft fee_private intent and call SDK", async () => {
     await craftTransaction({
-      currency: mockCurrency,
+      config: mockConfig,
       txIntent: mockTxIntentFeePrivate,
       feeConfiguration: mockFeeConfiguration,
     });
@@ -116,7 +116,7 @@ describe("craftTransaction", () => {
     jest.mocked(mapTransactionIntentToSdkIntent).mockReturnValue(mockMultiRecordSdkIntent);
 
     await craftTransaction({
-      currency: mockCurrency,
+      config: mockConfig,
       txIntent: mockTxIntentTransferPrivate2,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
@@ -125,7 +125,7 @@ describe("craftTransaction", () => {
 
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledTimes(1);
     expect(sdkClient.createRequestFromIntent).toHaveBeenCalledWith({
-      currency: mockCurrency,
+      config: mockConfig,
       intent: mockMultiRecordSdkIntent,
       feeConfiguration: mockFeeConfiguration,
       viewKey: mockViewKey,
@@ -138,7 +138,7 @@ describe("craftTransaction", () => {
 
     await expect(
       craftTransaction({
-        currency: mockCurrency,
+        config: mockConfig,
         txIntent: mockTxIntentTransferPrivate2,
         feeConfiguration: mockFeeConfiguration,
         viewKey: mockViewKey,

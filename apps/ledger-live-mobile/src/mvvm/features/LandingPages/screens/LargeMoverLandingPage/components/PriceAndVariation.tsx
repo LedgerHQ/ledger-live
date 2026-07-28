@@ -46,7 +46,7 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
     <Flex flexDirection="column" alignItems="center" justifyContent="center">
       <Text fontWeight="semiBold" fontSize="26px" color="neutral.c100" numberOfLines={1}>
         {counterValueFormatter({
-          currency: counterValueCurrency.ticker,
+          unit: counterValueCurrency.units[0],
           value: price,
           locale,
           t,

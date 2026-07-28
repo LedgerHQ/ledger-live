@@ -1,5 +1,8 @@
 # @shared/schema-primitives
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Branded Zod value objects shared across the `domain/` layer. Provides common types so entity packages don't define them locally.
 
 ## Design constraints
@@ -10,8 +13,9 @@ Branded Zod value objects shared across the `domain/` layer. Provides common typ
 
 | Schema                  | Type              | Validates                                               |
 | ----------------------- | ----------------- | ------------------------------------------------------- |
-| `CurrencyIdSchema`      | `CurrencyId`      | Non-empty string                                        |
-| `TokenIdSchema`         | `TokenId`         | Non-empty string                                        |
+| `CryptoCurrencyIdSchema`      | `CryptoCurrencyId`      | Non-empty string                                        |
+| `TokenCurrencyIdSchema`         | `TokenCurrencyId`         | Non-empty string                                        |
+| `FiatCurrencyIdSchema`          | `FiatCurrencyId`          | Non-empty string                                        |
 | `BigNumberStrSchema`    | `BigNumberStr`    | Decimal number string (e.g. `"123"`, `"-1.5"`)          |
 | `NonEmptyStringSchema`  | `NonEmptyString`  | Trimmed string with length ≥ 1                          |
 | `DateTimeIsoSchema`     | `DateTimeIso`     | RFC 3339 datetime with UTC offset (e.g. `"2024-01-31T12:00:00Z"`) |
@@ -24,19 +28,19 @@ All schemas are [Zod branded types](https://zod.dev/?id=brand), preventing accid
 
 ```ts
 import {
-  CurrencyIdSchema,
+  CryptoCurrencyIdSchema,
   DateTimeIsoSchema,
-  type CurrencyId,
+  type CryptoCurrencyId,
   type DateTimeIso,
 } from "@shared/schema-primitives";
 
 const AssetSchema = z.object({
-  id: CurrencyIdSchema,
+  id: CryptoCurrencyIdSchema,
   lastSeen: DateTimeIsoSchema,
 });
 
 // Type-safe branded values
-const id: CurrencyId = CurrencyIdSchema.parse("bitcoin");
+const id: CryptoCurrencyId = CryptoCurrencyIdSchema.parse("bitcoin");
 const t: DateTimeIso = DateTimeIsoSchema.parse("2024-01-31T12:00:00Z");
 
 // Compatible with both Date and Temporal

@@ -896,6 +896,7 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.ETH.id:
     case Currency.ETH_USDT.id:
     case Currency.SEI_EVM.id:
+    case Currency.BASE_AERODROME.id:
       await sendEVM(tx);
       break;
     case Currency.BTC.id:
@@ -923,6 +924,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendStellar(tx);
       break;
     case Currency.ATOM.id:
+    case Currency.OSMO.id:
       await sendCosmos(tx);
       break;
     case Currency.ADA.id:

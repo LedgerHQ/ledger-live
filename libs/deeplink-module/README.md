@@ -1,5 +1,8 @@
 # deeplink-module
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 `@ledgerhq/wallet-api-deeplink-module` is a Wallet-API module that adds deep-link handling to Live apps embedded in Ledger Live. It allows web apps and DApps running inside the Ledger Live browser to trigger in-app navigation or actions by emitting deep-link URLs, which the host app then resolves.
 
 ## What it does

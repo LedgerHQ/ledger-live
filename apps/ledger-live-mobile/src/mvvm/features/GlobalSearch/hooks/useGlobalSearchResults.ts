@@ -34,7 +34,6 @@ export function useGlobalSearchResults(): GlobalSearchResults {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
   const counterValueUnit = counterValueCurrency.units[0];
   const { rate: usdToFiatRate, status: rateStatus } = useUsdToFiatRate(counterValueCurrency.ticker);
   const version = VersionNumber.appVersion ?? "";
@@ -94,20 +93,11 @@ export function useGlobalSearchResults(): GlobalSearchResults {
         mapDadaMarketToDisplayData(
           { id: meta.id, name: meta.name, ticker: meta.ticker, ledgerId: currency.id },
           data.markets[currency.id],
-          { counterCurrency, counterValueUnit, usdToFiatRate, locale, t },
+          { counterValueUnit, usdToFiatRate, locale, t },
         ),
       ];
     });
-  }, [
-    data,
-    query,
-    deactivatedCurrencyIds,
-    counterCurrency,
-    counterValueUnit,
-    usdToFiatRate,
-    locale,
-    t,
-  ]);
+  }, [data, query, deactivatedCurrencyIds, counterValueUnit, usdToFiatRate, locale, t]);
 
   const isLoadingSearch = isSearchActive && (isDebouncing || isLoading || rateStatus === "loading");
   const clearSearch = useCallback(() => handleSearch(""), [handleSearch]);

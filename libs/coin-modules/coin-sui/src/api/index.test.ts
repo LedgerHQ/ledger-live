@@ -32,6 +32,7 @@ describe("api/index", () => {
     expect(Object.keys(api)).toEqual(
       expect.arrayContaining([
         "broadcast",
+        "call",
         "combine",
         "craftTransaction",
         "estimateFees",

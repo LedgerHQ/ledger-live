@@ -23,7 +23,6 @@ const input = {
   appName: "Ethereum",
   dependencies: ["1inch"],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 } as any;
 const deprecationDismissedCurrencyNames = ["Ethereum"];
 const sideEffects = {

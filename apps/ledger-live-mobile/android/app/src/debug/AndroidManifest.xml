@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="25"
-        android:targetSdkVersion="35"
+        android:targetSdkVersion="36"
         tools:overrideLibrary="com.ledger.reactnative, ca.jaysoo.extradimensions" />
 
     <application

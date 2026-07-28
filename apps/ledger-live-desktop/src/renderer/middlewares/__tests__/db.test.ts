@@ -207,11 +207,10 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
     });
 
     expect(mockedSetKey).toHaveBeenCalledTimes(1);
-    expect(mockedSetKey).toHaveBeenCalledWith(
-      "app",
-      LARGE_SCREEN_UPSELL_MODAL,
-      state.largeScreenUpsellModal,
-    );
+    expect(mockedSetKey).toHaveBeenCalledWith("app", LARGE_SCREEN_UPSELL_MODAL, {
+      retries: 2,
+      lastSeenAt: 1_720_000_000_000,
+    });
   });
 });
 

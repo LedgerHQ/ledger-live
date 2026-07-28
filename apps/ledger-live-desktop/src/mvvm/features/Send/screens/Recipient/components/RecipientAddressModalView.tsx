@@ -5,6 +5,7 @@ import type {
   AddressSearchResult,
   AddressValidationError as AddressValidationErrorType,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
+import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
 import EmptyList from "./EmptyList";
@@ -67,10 +68,16 @@ export function RecipientAddressModalView({
       showBridgeRecipientWarning);
 
   const isWaitingForMemo = hasMemo && isAddressComplete && !hasFilledMemo;
+  const showMatched = shouldShowMatchedAddress({
+    showMatchedAddress,
+    hasMemo,
+    hasFilledMemo,
+    hasMemoError: hasMemoValidationError,
+  });
 
   return (
     <DialogBody className={cn("flex flex-col py-16", !isWaitingForMemo && "min-h-[156px]")}>
-      {isLoading && (
+      {isLoading && !showMatched && (
         <div className="flex flex-1 items-center">
           <LoadingState />
         </div>
@@ -78,7 +85,7 @@ export function RecipientAddressModalView({
 
       {showInitialState && <RecipientIntroCard />}
 
-      {showMatchedAddress && (!hasMemo || (hasFilledMemo && !hasMemoValidationError)) && (
+      {showMatched && (
         <AddressMatchedSection
           searchResult={result}
           searchValue={searchValue}

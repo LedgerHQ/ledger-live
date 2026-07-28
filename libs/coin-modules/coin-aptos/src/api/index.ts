@@ -32,6 +32,9 @@ export function createApi(config: AptosConfigApi): CoinModuleApi {
   const client = new AptosAPI(config.aptosSettings);
 
   return {
+    async call() {
+      throw new Error("call is not supported");
+    },
     broadcast: (tx: string) => client.broadcast(tx),
     combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
     craftTransaction: (transactionIntent, _customFees): Promise<CraftedTransaction> =>

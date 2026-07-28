@@ -405,6 +405,47 @@ describe("DmkSignerZcash", () => {
 
       await expect(signer.createPaymentTransaction(baseArg)).resolves.toBe("00signed");
     });
+
+    it("sets serializedPreviousTransactionOverride from rawTxHex so the device hashes the full original transaction", async () => {
+      // A V5 tx containing an Orchard bundle: serializeTransaction strips the
+      // bundle and the device would hash truncated bytes, computing the wrong
+      // ZIP-244 txid. rawTxHex carries the original bytes so the device gets the
+      // full transaction via serializedPreviousTransactionOverride.
+      const rawTxHex = "0500008001" + "ab".repeat(59);
+      const prevTxWithRaw = { ...prevTx, rawTxHex };
+
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction({
+        ...baseArg,
+        inputs: [[prevTxWithRaw, 0, null, 0xfffffffd, 2_000_000]] as Parameters<
+          typeof signer.createPaymentTransaction
+        >[0]["inputs"],
+      });
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      const legacyPrev = legacyArg.inputs[0][0];
+      expect(legacyPrev.serializedPreviousTransactionOverride).toBeInstanceOf(Uint8Array);
+      expect(Buffer.from(legacyPrev.serializedPreviousTransactionOverride).toString("hex")).toBe(
+        rawTxHex,
+      );
+    });
+
+    it("omits serializedPreviousTransactionOverride when rawTxHex is absent (plain transparent source tx)", async () => {
+      // Source transactions without a shielded bundle are handled correctly by
+      // serializeTransaction; no override is needed.
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createCompletedObservable("00signed"),
+      });
+
+      await signer.createPaymentTransaction(baseArg);
+
+      const [legacyArg] = mockSignerZcash.signTransaction.mock.calls[0];
+      const legacyPrev = legacyArg.inputs[0][0];
+      expect(legacyPrev.serializedPreviousTransactionOverride).toBeUndefined();
+    });
   });
 
   describe("signPcztTransaction", () => {

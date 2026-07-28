@@ -1,5 +1,3 @@
-import { TransportStatusError } from "@ledgerhq/errors";
-import { DeviceNotOnboarded } from "../errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 
@@ -46,11 +44,12 @@ export function getFlowNameFromMapping<TLocation extends string | number | symbo
 
 // remap transport status 6d06/6d07 as DeviceNotOnboarded for UX handling consistency.
 export function isDeviceNotOnboardedError(e: unknown) {
+  const eName = (e as { name?: string })?.name;
   const maybeMessage = (e as { message?: string })?.message;
 
   return (
-    e instanceof DeviceNotOnboarded ||
-    (e instanceof TransportStatusError &&
+    eName === "DeviceNotOnboarded" ||
+    (eName === "TransportStatusError" &&
       (maybeMessage?.includes("0x6d06") || maybeMessage?.includes("0x6d07")))
   );
 }

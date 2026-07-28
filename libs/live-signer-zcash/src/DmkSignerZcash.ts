@@ -147,6 +147,16 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   private toLegacyTransaction(tx: SignerTransactionLike): LegacyTransaction {
+    // When the source transaction carries a shielded bundle (e.g. an Orchard
+    // bundle in a V5 tx), serializeTransaction strips it and emits zeroed
+    // routing-count bytes instead. The device then computes the ZIP-244 txid of
+    // those truncated bytes — not the original txid — and the resulting trusted
+    // input references a txid that does not exist on-chain, causing "Missing
+    // inputs" on broadcast. Passing the full raw bytes via
+    // serializedPreviousTransactionOverride lets the device hash the original
+    // transaction and produce the correct txid.
+    const serializedPreviousTransactionOverride =
+      tx.rawTxHex !== undefined ? Buffer.from(tx.rawTxHex, "hex") : undefined;
     return {
       version: tx.version,
       inputs: tx.inputs.map(input => ({
@@ -163,6 +173,9 @@ export class DmkSignerZcash implements ZcashSigner {
       ...(tx.nVersionGroupId !== undefined ? { nVersionGroupId: tx.nVersionGroupId } : {}),
       ...(tx.nExpiryHeight !== undefined ? { nExpiryHeight: tx.nExpiryHeight } : {}),
       ...(tx.extraData !== undefined ? { extraData: tx.extraData } : {}),
+      ...(serializedPreviousTransactionOverride !== undefined
+        ? { serializedPreviousTransactionOverride }
+        : {}),
     };
   }
 

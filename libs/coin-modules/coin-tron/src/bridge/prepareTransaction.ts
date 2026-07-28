@@ -9,7 +9,7 @@ export const prepareTransaction: AccountBridge<
   const networkInfo =
     transaction.networkInfo || (await getTronAccountNetwork(account.freshAddress));
 
-  if (transaction.votes.length) {
+  if (transaction.votes?.length) {
     transaction.votes = await Promise.all(
       transaction.votes.map(async vote => ({
         ...vote,

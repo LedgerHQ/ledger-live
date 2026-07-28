@@ -12,7 +12,7 @@ function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
     const pathEntry = paths[pathKey];
     const pathValues = Array.isArray(pathEntry) ? pathEntry : [pathEntry];
     pathValues.forEach(pathValue => {
-      const jestKey = pathKey.replace(/\*$/, "(.*)");
+      const jestKey = `^${pathKey.replace(/\*$/, "(.*)")}$`;
       const jestValue = pathValue.replace(/\*/g, "$1");
       jestPaths[jestKey] = `${prefix}${jestValue}`;
     });
@@ -76,8 +76,7 @@ const config = {
   modulePaths: [compilerOptions.baseUrl ?? "."],
   maxWorkers: process.env.CI ? 3 : 1,
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
-    "^.+\\.(ts|tsx)?$": [
+    "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
@@ -102,8 +101,7 @@ const config = {
     ],
   },
   moduleNameMapper: {
-    "^@ledgerhq/live-e2e-shared/(.*)$": "<rootDir>/../../libs/live-e2e-shared/src/$1",
-    "^@ledgerhq/live-e2e-shared$": "<rootDir>/../../libs/live-e2e-shared/src/index",
+    // jest does not read tsconfig path mapping so we replicate it here
     ...pathsToModuleNameMapper(compilerOptions.paths, {
       prefix: "<rootDir>/",
     }),

@@ -1,4 +1,3 @@
-import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 const MAXIMUM_FRACTION_DIGITS = 8;
@@ -18,13 +17,13 @@ const getFractionDigitOptions = (
 };
 
 export const counterValueFormatter = ({
-  currency,
+  unit,
   value,
   shorten,
   locale,
   ticker,
 }: {
-  currency?: string;
+  unit?: Unit;
   value?: number;
   shorten?: boolean;
   locale: string;
@@ -33,10 +32,6 @@ export const counterValueFormatter = ({
   if (!value) {
     return "-";
   }
-  const normalizedCurrency = currency?.toUpperCase();
-  const fiat = normalizedCurrency ? findFiatCurrencyByTicker(normalizedCurrency) : undefined;
-  const crypto = normalizedCurrency ? findCryptoCurrencyByTicker(normalizedCurrency) : undefined;
-  const unit = fiat?.units[0] ?? crypto?.units[0];
   const baseOptions: Intl.NumberFormatOptions = {
     notation: shorten ? "compact" : "standard",
     ...getFractionDigitOptions(unit, shorten),
@@ -49,12 +44,17 @@ export const counterValueFormatter = ({
       ...baseOptions,
       style: "decimal",
     }).format(value);
-    formatted = unit.prefixCode ? `${unit.code}${number}` : `${number} ${unit.code}`;
+    if (unit.prefixCode) {
+      formatted = number.startsWith("-")
+        ? `-${unit.code}${number.slice(1)}`
+        : `${unit.code}${number}`;
+    } else {
+      formatted = `${number} ${unit.code}`;
+    }
   } else {
     formatted = new Intl.NumberFormat(locale, {
       ...baseOptions,
-      style: normalizedCurrency ? "currency" : "decimal",
-      currency: normalizedCurrency,
+      style: "decimal",
     }).format(value);
   }
   const upperTicker = ticker?.trim().toUpperCase();

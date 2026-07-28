@@ -1,6 +1,6 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 export { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
 

@@ -1,7 +1,10 @@
 import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
-import { getCryptoAssetsStore, setCryptoAssetsStore } from "@ledgerhq/cryptoassets";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import {
+  getCryptoAssetsStore,
+  setCryptoAssetsStore,
+  type FrameworkCryptoAssetsStore,
+} from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
@@ -366,7 +369,7 @@ describe("HumanCommandOutput", () => {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async () => undefined,
       getTokensSyncHash: async () => "",
-    } as unknown as CryptoAssetsStore);
+    } as unknown as FrameworkCryptoAssetsStore);
     try {
       const out = createCommandOutput("human", { command: "earn positions", network: "ethereum" });
       await out.earnPositions([

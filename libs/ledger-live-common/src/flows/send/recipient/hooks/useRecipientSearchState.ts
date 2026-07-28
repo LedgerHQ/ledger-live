@@ -1,4 +1,3 @@
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import type { AddressSearchResult } from "../types";
 
@@ -23,9 +22,9 @@ export function useRecipientSearchState({
   const bridgeSenderError = result.bridgeErrors?.sender;
 
   const isSelfTransferError =
-    bridgeRecipientError instanceof InvalidAddressBecauseDestinationIsAlsoSource;
+    bridgeRecipientError?.name === "InvalidAddressBecauseDestinationIsAlsoSource";
   const isBridgeInvalidAddress =
-    bridgeRecipientError instanceof InvalidAddress && !isSelfTransferError;
+    bridgeRecipientError?.name === "InvalidAddress" && !isSelfTransferError;
 
   const hasValidatedAddress =
     result.status === "valid" || result.status === "ens_resolved" || result.status === "sanctioned";

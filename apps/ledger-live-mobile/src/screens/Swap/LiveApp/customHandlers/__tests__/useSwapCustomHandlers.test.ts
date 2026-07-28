@@ -211,6 +211,17 @@ describe("useSwapCustomHandlers", () => {
       });
     });
 
+    it("resets the webview when swapRedirectToHistory handler is called", () => {
+      const { result } = render();
+
+      const handler = (result.current as Record<string, unknown>)["custom.swapRedirectToHistory"];
+      expect(typeof handler).toBe("function");
+
+      (handler as () => void)();
+
+      expect(mockResetWebview).toHaveBeenCalledTimes(1);
+    });
+
     it("passes swapId to SwapHistory when swapRedirectToHistory handler is called with params", () => {
       const { result } = render();
 

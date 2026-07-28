@@ -1,5 +1,8 @@
 # @ledgerhq/coin-modules-monitoring
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 A monitoring tool that measures the performance of cryptocurrency modules in the Ledger Live ecosystem. It tracks scan and sync operations across different blockchain networks, measuring execution time, network calls, CPU usage, and memory consumption.
 
 ## 🎯 Purpose

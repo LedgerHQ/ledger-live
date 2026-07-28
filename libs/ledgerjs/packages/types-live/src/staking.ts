@@ -15,6 +15,7 @@ export type StakingDelegation = {
   amount: BigNumber;
   pendingRewards: BigNumber;
   status: StakingDelegationStatus;
+  shares?: BigNumber;
 };
 
 export type StakingDelegationRaw = {
@@ -24,6 +25,7 @@ export type StakingDelegationRaw = {
   amount: string;
   pendingRewards: string;
   status: StakingDelegationStatus;
+  shares?: string;
 };
 
 export type StakingRedelegation = {

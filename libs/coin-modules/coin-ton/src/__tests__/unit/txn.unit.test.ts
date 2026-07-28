@@ -1,4 +1,4 @@
-import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Builder, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
@@ -19,7 +19,11 @@ import {
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
 
-setupMockCryptoAssetsStore();
+setCryptoAssetsStore({
+  findTokenById: async () => undefined,
+  findTokenByAddressInCurrency: async () => undefined,
+  getTokensSyncHash: async () => "",
+});
 
 describe("Transaction functions", () => {
   describe("mapTxToOps", () => {
@@ -139,7 +143,8 @@ describe("Transaction functions", () => {
 
   describe("mapJettonToOps", () => {
     beforeEach(() => {
-      setupMockCryptoAssetsStore({
+      setCryptoAssetsStore({
+        findTokenById: async () => undefined,
         findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
           // The address is converted to lowercase in mapJettonTxToOps
           // jetton_master from fixtures: "0:2F956143C461769579BAEF2E32CC2D7BC18283F40D20BB03E432CD603AC33FFC"

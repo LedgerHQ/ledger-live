@@ -5,7 +5,10 @@ import { AppUpdater } from "../../component/app.updater.component";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
-  env: { DEBUG_UPDATE: "true" },
+  env: { DEBUG_UPDATE: "true", ENABLE_MSW: "true" },
+  featureFlags: {
+    ptxPerpsLiveApp: { enabled: false },
+  },
 });
 
 test("Updater", async ({ page }) => {
