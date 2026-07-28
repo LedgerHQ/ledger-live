@@ -9,7 +9,7 @@ import {
 } from "@shared/feature-flags";
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { enabledExperimentalFeatures } from "~/renderer/experimental";
-import { sentryLogsSelector } from "~/renderer/reducers/settings";
+import { crashReportingSelector } from "~/renderer/reducers/settings";
 import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
 
@@ -37,19 +37,20 @@ export const ConnectEnvsToDatadog = () => {
   const store = useStore();
   const featureFlags = useFeatureFlags();
   const rawLldDatadog = useFeature("lldDatadog");
-  const sentryLogs = useSelector(sentryLogsSelector);
+  const crashReporting = useSelector(crashReportingSelector);
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
 
   useEffect(() => {
-    if (!lldDatadog?.enabled || !sentryLogs || !isDatadogAvailable() || datadogInitialized) return;
+    if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)
+      return;
     if (initInFlightRef.current) return;
 
     let cancelled = false;
     initInFlightRef.current = true;
 
-    const shouldSend = () => sentryLogsSelector(store.getState());
+    const shouldSend = () => crashReportingSelector(store.getState());
     initDatadogLogs(shouldSend);
     initDatadog(
       shouldSend,
@@ -73,7 +74,7 @@ export const ConnectEnvsToDatadog = () => {
       cancelled = true;
       initInFlightRef.current = false;
     };
-  }, [store, lldDatadog, sentryLogs, datadogInitialized]);
+  }, [store, lldDatadog, crashReporting, datadogInitialized]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !datadogInitialized) return;
