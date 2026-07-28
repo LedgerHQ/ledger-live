@@ -3,9 +3,10 @@ import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 import { selectSupportedFiats, selectSupportedFiatsReady } from "@domain/entity-currency-fiat";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { setSupportedCounterValues } from "~/actions/settings";
+import { setCountervalue, setSupportedCounterValues } from "~/actions/settings";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
+import { counterValueCurrencySelector, counterValueIdOf } from "~/reducers/settings";
 
 export const InitialQueriesContext = React.createContext({
   ofacResult: { blocked: false, isLoading: true },
@@ -26,10 +27,23 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
 
   // Keep supportedCounterValues in sync: re-dispatch whenever the slice updates (fallback → CVS result)
   const fiats = useSelector(selectSupportedFiats);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   useEffect(() => {
+    // Gate on fiatsReady so we act on the authoritative CVS list, not the boot-time
+    // fallback — resetting against the fallback would wipe valid but uncommon fiats.
     if (!fiatsReady) return;
-    dispatch(setSupportedCounterValues(buildSupportedCounterValues(fiats)));
-  }, [dispatch, fiats, fiatsReady]);
+    const supportedCounterValues = buildSupportedCounterValues(fiats);
+    dispatch(setSupportedCounterValues(supportedCounterValues));
+
+    // Safety net: if the persisted counterValue is no longer supported by CVS, fall back to USD.
+    const currentId = counterValueIdOf(counterValueCurrency);
+    const isSupported = supportedCounterValues.some(
+      ({ currency }) => counterValueIdOf(currency) === currentId,
+    );
+    if (!isSupported) {
+      dispatch(setCountervalue("USD"));
+    }
+  }, [dispatch, fiats, fiatsReady, counterValueCurrency]);
   const ofacResult = useMemo(
     () => ({ blocked: ofacQueryResult.data ?? false, isLoading: ofacQueryResult.isLoading }),
     [ofacQueryResult.data, ofacQueryResult.isLoading],

@@ -41,8 +41,6 @@ import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import {
-  INITIAL_STATE as settingsState,
-  counterValueIdOf,
   migrateLegacyCryptoCounterValue,
   migrateLegacyStarredMarketCoins,
 } from "~/reducers/settings";
@@ -54,7 +52,6 @@ import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/s
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
-import type { SettingsState } from "~/reducers/types";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
@@ -273,7 +270,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      updateSupportedCountervalues(store, settingsData);
+      updateSupportedCountervalues(store);
       await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
@@ -333,19 +330,12 @@ async function hydrateCurrencies() {
   });
 }
 
-function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
+// Seeds supportedCounterValues from the offline fallback fiats so the UI has a
+// list before the CVS query settles. The "reset unsupported counterValue to USD"
+// safety net intentionally lives in InitialQueriesProvider, gated on fiatsReady:
+// at boot only the fallback list is known, so resetting here would wrongly wipe
+// any valid CVS fiat absent from the fallback (e.g. AMD) on every restart.
+function updateSupportedCountervalues(store: Store) {
   const supportedFiats = selectSupportedFiats(store.getState());
-  const supportedCounterValues = buildSupportedCounterValues(supportedFiats);
-  store.dispatch(setSupportedCounterValues(supportedCounterValues));
-
-  if (
-    settingsData?.counterValue &&
-    !supportedCounterValues.find(
-      ({ currency }) => counterValueIdOf(currency) === settingsData.counterValue,
-    ) &&
-    settingsData.counterValue !== settingsState.counterValue
-  ) {
-    settingsData.counterValue = settingsState.counterValue;
-    store.dispatch(importSettings(settingsData));
-  }
+  store.dispatch(setSupportedCounterValues(buildSupportedCounterValues(supportedFiats)));
 }
