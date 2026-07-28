@@ -9,7 +9,7 @@ import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBot
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useSelector } from "~/context/hooks";
 import {
   modularDrawerCompletionModeSelector,
