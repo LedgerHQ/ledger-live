@@ -439,7 +439,10 @@ jobs:
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
-          event_name: ${{ github.event_name }}
+          # Worker-count comparison branch: force nightly/release-level sharding
+          # (iOS up to 12 shards instead of the manual-dispatch cap of 3) so the
+          # runner count matches what release/nightly runs use.
+          event_name: schedule
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
           android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
