@@ -168,16 +168,8 @@ const withFullscreenSuspense = Component => props => (
   </Suspense>
 );
 
-// in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
-};
-
-const LetMainSendCrashTest = () => {
-  useEffect(() => {
-    ipcRenderer.send("mainCrashTest");
-  }, []);
-  return null;
 };
 
 const LetInternalSendCrashTest = () => {
@@ -351,9 +343,6 @@ export const MainAppLayout = () => {
 
       <KeyboardContent sequence="CRASH_TEST">
         <LetThisCrashForCrashTest />
-      </KeyboardContent>
-      <KeyboardContent sequence="CRASH_MAIN">
-        <LetMainSendCrashTest />
       </KeyboardContent>
       <KeyboardContent sequence="CRASH_INTERNAL">
         <LetInternalSendCrashTest />

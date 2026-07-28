@@ -13,11 +13,6 @@ import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import RecipientField from "./RecipientField";
 import { importLLDCoinFamily } from "~/renderer/families";
 
-// Temp mock to prevent error on sentry init
-jest.mock("../../../../sentry/install", () => ({
-  init: () => null,
-}));
-
 nock.disableNetConnect();
 
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
