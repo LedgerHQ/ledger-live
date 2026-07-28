@@ -11858,6 +11858,12 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../ledger-live-common
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../live-dmk-speculos
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../live-signer-evm
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -11885,6 +11891,9 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.5
+      ethers:
+        specifier: 6.15.0
+        version: 6.15.0
       expect:
         specifier: 'catalog:'
         version: 30.2.0
@@ -11913,6 +11922,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.20.6
     optionalDependencies:
       '@oxlint/binding-darwin-arm64':
         specifier: 1.51.0

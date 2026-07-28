@@ -89,6 +89,7 @@
     "unimported": "nx run-many -t unimported",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
+    "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",
     "cli": "pnpm --filter live-cli",
     "wallet-framework": "pnpm --filter ledger-wallet-framework",
     "wallet-cli": "pnpm --filter wallet-cli",

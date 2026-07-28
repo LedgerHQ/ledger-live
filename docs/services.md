@@ -97,6 +97,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Ramp catalog | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Partner signatures (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | Buy/Sell limits | `buy.api.aws.prd.ldg-tech.com`<br>_E2E only_ | [code](/libs/ledger-live-common/src/e2e/buySell.ts) | test |
+| Borrow API (partner loans) | `global.api.stg.ledger-test.com`<br>_path: `/borrow`; staging only, E2E tooling_ | [code](/libs/live-e2e-shared/src/borrow/borrowApi.ts) | test |
 | Live app — Swap | `swap-live-app.ledger.com`<br>_manifest [`swap-live-app-aws`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Buy / Sell | `buy-sell.live.ledger.com`<br>_manifest [`buy-sell`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Earn | `earn.live.ledger.com`<br>_manifest [`earn`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
