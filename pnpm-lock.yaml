@@ -12044,6 +12044,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
+      tsx:
+        specifier: ^4.19.3
+        version: 4.20.6
     optionalDependencies:
       '@oxlint/binding-darwin-arm64':
         specifier: 1.51.0

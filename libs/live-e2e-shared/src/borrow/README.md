@@ -18,8 +18,8 @@ with the Speculos transport from `@ledgerhq/live-dmk-speculos`.
 ## Usage
 
 ```bash
-# from e2e/desktop
-pnpm e2e borrow <open|close|repay|withdraw> [options]
+# from the repo root (or anywhere via `pnpm -w e2e-cli …`)
+pnpm e2e-cli borrow <open|close|repay|withdraw> --catalog <nano-app-catalog.json> [options]
 ```
 
 Runs against the **staging** Borrow API, which builds **real Ethereum
@@ -27,17 +27,20 @@ mainnet** transactions. Options: `--account ETH_4`, `--rpc <url>` (an Ethereum R
 defaults to `https://ethereum-rpc.publicnode.com`; override via `--rpc` or `EVM_RPC_URL`),
 `--dry-run` (sign but do not broadcast), `--force` (open despite an existing position),
 `--all` (act on every position), and per-flow args `--market-id`, `--collateral-amount`,
-`--loan-amount`, `--repay-amount`, `--withdraw-amount`.
+`--loan-amount`, `--repay-amount`, `--withdraw-amount`. `--catalog <path>` points at the Speculos
+nano-app-version catalog (required when booting its own Speculos); desktop's lives at
+`e2e/desktop/tests/artifacts/appVersion/nano-app-catalog.json`. Can also be set via `E2E_NANO_APP_VERSION_PATH`.
 
 `SEED` comes from the environment.
 
 ```bash
 # Close (repay + withdraw) whatever is open for ETH_4; no-op if nothing open
-pnpm e2e borrow close --rpc "$EVM_RPC_URL"
+pnpm e2e-cli borrow close \
+  --catalog e2e/desktop/tests/artifacts/appVersion/nano-app-catalog.json --rpc "$EVM_RPC_URL"
 
 # Open a USDT loan (WBTC collateral) — the default market; always borrows USDT
-pnpm e2e borrow open --force \
-  --collateral-amount 0.0002 --loan-amount 1 --rpc "$EVM_RPC_URL"
+pnpm e2e-cli borrow open --force --collateral-amount 0.0002 --loan-amount 1 \
+  --catalog e2e/desktop/tests/artifacts/appVersion/nano-app-catalog.json --rpc "$EVM_RPC_URL"
 ```
 
 ## Use in E2E before/after hooks

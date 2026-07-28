@@ -8,16 +8,16 @@ const SUBCOMMANDS: Subcommand[] = [
   {
     name: "borrow",
     describe: "Open/close/repay/withdraw on-chain loans (Borrow API + Speculos)",
-    // Loaded lazily so `pnpm e2e` / `--help` / an unknown command never pull in the
+    // Loaded lazily so `pnpm e2e-cli` / `--help` / an unknown command never pull in the
     // Speculos + live-common signing chain.
-    run: async argv => (await import("./borrow/borrowDriver.js")).runBorrowCommand(argv),
+    run: async argv => (await import("./borrow.js")).runBorrowCommand(argv),
   },
 ];
 
 function usage(): string {
   const width = Math.max(...SUBCOMMANDS.map(c => c.name.length));
   const commands = SUBCOMMANDS.map(c => `  ${c.name.padEnd(width)}  ${c.describe}`).join("\n");
-  return `Usage: pnpm e2e <command> [options]\n\nCommands:\n${commands}`;
+  return `Usage: pnpm e2e-cli <command> [options]\n\nCommands:\n${commands}`;
 }
 
 async function main(argv: string[]): Promise<void> {

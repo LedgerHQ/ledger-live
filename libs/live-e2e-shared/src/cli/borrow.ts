@@ -1,10 +1,9 @@
-import { resolve as resolvePath } from "node:path";
 import {
   DEFAULT_RPC_URL,
   runBorrow,
   type BorrowFlowOptions,
   type Flow,
-} from "@ledgerhq/live-e2e-shared/borrow/borrowFlow";
+} from "../borrow/borrowFlow";
 
 const FLOWS: Flow[] = ["open", "close", "repay", "withdraw"];
 const FLOW_SET = new Set<string>(FLOWS);
@@ -13,7 +12,7 @@ const isFlow = (v: string | undefined): v is Flow => v !== undefined && FLOW_SET
 function parseArgs(argv: string[]): BorrowFlowOptions {
   const flow = argv[0];
   if (!isFlow(flow))
-    throw new Error("Usage: pnpm e2e borrow <open|close|repay|withdraw> [options]");
+    throw new Error("Usage: pnpm e2e-cli borrow <open|close|repay|withdraw> [options]");
 
   const get = (name: string): string | undefined => {
     const i = argv.indexOf(`--${name}`);
@@ -35,10 +34,7 @@ function parseArgs(argv: string[]): BorrowFlowOptions {
     loanAmount: get("loan-amount"),
     repayAmount: get("repay-amount"),
     withdrawAmount: get("withdraw-amount"),
-    nanoAppCatalogPath: resolvePath(
-      __dirname,
-      "../../tests/artifacts/appVersion/nano-app-catalog.json",
-    ),
+    nanoAppCatalogPath: get("catalog"),
   };
 }
 
