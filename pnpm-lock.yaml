@@ -3725,9 +3725,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
-      '@shared/schema-primitives':
-        specifier: workspace:*
-        version: link:../../../shared/schema-primitives
       zod:
         specifier: 'catalog:'
         version: 4.3.6
