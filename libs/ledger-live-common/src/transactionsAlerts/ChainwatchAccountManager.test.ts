@@ -1,4 +1,4 @@
-import { LedgerAPI5xx } from "@ledgerhq/errors";
+import { LedgerAPI5xx } from "@ledgerhq/live-network";
 import network from "@ledgerhq/live-network/network";
 import type { ChainwatchNetwork } from "@ledgerhq/types-live";
 import { AxiosHeaders, type AxiosResponse } from "axios";
