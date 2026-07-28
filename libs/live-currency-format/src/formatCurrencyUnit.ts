@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { getSeparators } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
 import { forceLTRIfRTL } from "./rtl";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "./types";
 
 const nonBreakableSpace = " ";
 const defaultFormatOptions = {

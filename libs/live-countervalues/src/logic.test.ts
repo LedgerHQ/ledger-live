@@ -11,7 +11,11 @@ import {
 } from "./logic";
 import type { CounterValuesState, TrackingPair } from "./types";
 import { datapointRetention, formatCounterValueDay, formatCounterValueHour } from "./helpers";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 
 describe("inferTrackingPairForAccounts", () => {
   const accounts = Array(20)

@@ -1,4 +1,8 @@
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,

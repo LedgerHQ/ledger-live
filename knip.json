@@ -98,7 +98,8 @@
       "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
     },
     "./libs/live-countervalues": {
-      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
+      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"],
+      "ignoreDependencies": ["@ledgerhq/live-network"]
     },
     "./libs/live-countervalues-react": {
       "entry": ["src/index.tsx", "src/portfolio.tsx"]

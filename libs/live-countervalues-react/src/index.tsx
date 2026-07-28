@@ -13,7 +13,7 @@ import type {
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, {
