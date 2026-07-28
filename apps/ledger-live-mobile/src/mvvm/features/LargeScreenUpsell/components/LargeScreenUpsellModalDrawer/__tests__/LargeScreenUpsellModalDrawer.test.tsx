@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { Dimensions, Platform } from "react-native";
+import { fireEvent, render, screen } from "@tests/test-renderer";
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalFeatureIntro,
@@ -13,9 +14,11 @@ type MockQueuedDrawerBottomSheetProps = Readonly<{
   onClose?: () => void;
   onHeaderClosePressed?: () => void;
   onBackdropPress?: () => void;
+  maxDynamicContentSize?: "fullWithOffset";
 }>;
 
 let capturedDrawerProps: MockQueuedDrawerBottomSheetProps | null = null;
+const originalPlatformOS = Platform.OS;
 
 jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => ({
   __esModule: true,
@@ -52,13 +55,14 @@ const viewModel: FeatureIntroViewModel = {
 function renderLargeScreenUpsellModalDrawer(
   isOpen: boolean,
   onDismiss: (dismissMethod: LargeScreenUpsellDismissMethod) => void = jest.fn(),
+  bottomInset = 0,
 ) {
   return render(
     <LargeScreenUpsellModalDrawer
       isOpen={isOpen}
       onDismiss={onDismiss}
       featureIntroViewModel={viewModel}
-      bottomInset={0}
+      bottomInset={bottomInset}
     />,
   );
 }
@@ -82,6 +86,10 @@ describe("LargeScreenUpsellModalDrawer", () => {
     capturedDrawerProps = null;
   });
 
+  afterEach(() => {
+    Platform.OS = originalPlatformOS;
+  });
+
   it("should not render drawer content before it is opened", () => {
     renderLargeScreenUpsellModalDrawer(false);
 
@@ -92,6 +100,38 @@ describe("LargeScreenUpsellModalDrawer", () => {
     renderLargeScreenUpsellModalDrawer(true);
 
     expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeOnTheScreen();
+  });
+
+  it("should shrink the hero to the space left by the other content", () => {
+    renderLargeScreenUpsellModalDrawer(true);
+
+    fireEvent(screen.getByTestId("large-screen-upsell-modal-drawer"), "layout", {
+      nativeEvent: { layout: { height: Dimensions.get("window").height } },
+    });
+
+    expect(screen.getByTestId("large-screen-upsell-modal-hero-container")).toHaveStyle({
+      height: 425,
+    });
+  });
+
+  it("should exclude the iOS-only bottom inset from hero sizing on Android", () => {
+    Platform.OS = "android";
+    renderLargeScreenUpsellModalDrawer(true, jest.fn(), 24);
+
+    fireEvent(screen.getByTestId("large-screen-upsell-modal-drawer"), "layout", {
+      nativeEvent: { layout: { height: Dimensions.get("window").height } },
+    });
+
+    expect(screen.getByTestId("large-screen-upsell-modal-hero-container")).toHaveStyle({
+      height: 425,
+    });
+  });
+
+  it("should leave dynamic content size unconstrained on Android", () => {
+    Platform.OS = "android";
+    renderLargeScreenUpsellModalDrawer(true);
+
+    expect(capturedDrawerProps?.maxDynamicContentSize).toBeUndefined();
   });
 
   it("should ignore close signals before the drawer has opened", () => {
