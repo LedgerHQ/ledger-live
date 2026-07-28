@@ -10,6 +10,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - `useContacts` and `useContactsMeContact` hooks (`@domain/entity-contact`)
 - Empty contact detail selection and presentation
 - Populated contact detail view model (address rows, count, and open-detail intents)
+- Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session state from currency selection to address entry
 - Add Address network eligibility and final currency selection state (MAD integration uses an

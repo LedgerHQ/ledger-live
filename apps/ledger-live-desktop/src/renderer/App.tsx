@@ -22,7 +22,6 @@ import { ServiceStatusProviderWrapper } from "~/renderer/components/ServiceStatu
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import { ConnectEnvsToDatadog } from "~/renderer/components/ConnectEnvsToDatadog";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
@@ -85,7 +84,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
             }
           }}
         >
-          <ConnectEnvsToSentry />
           <ConnectEnvsToDatadog />
           <UpdaterProvider>
             <AppDataStorageProvider>

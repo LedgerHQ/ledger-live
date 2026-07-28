@@ -337,7 +337,6 @@
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
       "@datadog/mobile-react-native",
-      "@sentry/cli",
       "@swc/core",
       "@taquito/taquito",
       "bigint-buffer",

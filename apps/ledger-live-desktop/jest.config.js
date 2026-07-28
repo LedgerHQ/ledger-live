@@ -71,7 +71,6 @@ const commonConfig = {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",
     __GIT_REVISION__: "xxx",
-    __SENTRY_URL__: null,
     __DATADOG_APPLICATION_ID__: null,
     __DATADOG_CLIENT_TOKEN__: null,
     __DATADOG_SITE__: null,

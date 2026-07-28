@@ -2,7 +2,6 @@
 /// <reference types="jest-dom" />
 
 declare const INDEX_URL: string;
-declare const __SENTRY_URL__: string;
 declare const __DATADOG_APPLICATION_ID__: string | null;
 declare const __DATADOG_CLIENT_TOKEN__: string | null;
 declare const __DATADOG_SITE__: string | null;
