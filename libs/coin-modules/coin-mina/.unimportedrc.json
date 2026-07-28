@@ -29,7 +29,6 @@
     "jest-util"
   ],
   "ignoreUnused": [
-    "lodash",
-    "@ledgerhq/cryptoassets"
+    "lodash"
   ]
 }
