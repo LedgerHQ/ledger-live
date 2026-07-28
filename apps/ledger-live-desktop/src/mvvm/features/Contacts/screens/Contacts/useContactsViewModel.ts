@@ -6,9 +6,11 @@ import {
   createContactsListViewModel,
   createContactsSearchViewModel,
   resolveContactsLedgerSyncIntroductionOpen,
+  useAddAddressFlowViewModel,
   useContacts,
   useContactsFeatureIntroductionState,
   useContactsMeContact,
+  type AddAddressFlowState,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
   type ContactsListViewProps,
@@ -19,6 +21,7 @@ import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
+    addAddressFlowState: AddAddressFlowState;
     onClearSearch: () => void;
   }>;
 
@@ -28,7 +31,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
-  const { detail, onOpenMe, onOpenContact } = useContactDetailPaneAdapter(contacts);
+  const { state: addAddressFlowState, start: startAddAddress } = useAddAddressFlowViewModel();
+  const { detail, onOpenMe, onOpenContact } = useContactDetailPaneAdapter(
+    contacts,
+    startAddAddress,
+  );
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -90,6 +97,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
   }, [navigate]);
 
   return {
+    addAddressFlowState,
     viewModel,
     labels,
     searchQuery,
