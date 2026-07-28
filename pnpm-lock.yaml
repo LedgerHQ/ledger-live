@@ -661,9 +661,6 @@ importers:
       chalk:
         specifier: 4.1.2
         version: 4.1.2
-      danger:
-        specifier: 13.0.10
-        version: 13.0.10
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -14124,6 +14121,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      danger:
+        specifier: 13.0.10
+        version: 13.0.10
       jest:
         specifier: 'catalog:'
         version: 30.2.0
@@ -19148,9 +19148,6 @@ packages:
   '@octokit/openapi-types@20.0.0':
     resolution: {integrity: sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==}
 
-  '@octokit/openapi-types@22.2.0':
-    resolution: {integrity: sha512-QBhVjcUa9W7Wwhm6DBFu6ZZ+1/t/oYxqc2tp81Pi41YNuJinbFRx8B133qVOrAaBbF7D/m0Et6f9/pZt9Rc+tg==}
-
   '@octokit/openapi-types@24.2.0':
     resolution: {integrity: sha512-9sIH3nSUttelJSXUrmGzl7QUBFul0/mB8HRYl3fOlgHbIWG+WnYDXU3v/2zMtAvuzZ/ed00Ei6on975FhBfzrg==}
 
@@ -19201,9 +19198,6 @@ packages:
 
   '@octokit/types@13.10.0':
     resolution: {integrity: sha512-ifLaO34EbbPj0Xgro4G5lP5asESjwHracYJvVaPIyXMuiuXLlhic3S47cBdTb+jfODkTE5YtGCLt3Ay3+J97sA==}
-
-  '@octokit/types@13.5.0':
-    resolution: {integrity: sha512-HdqWTf5Z3qwDVlzCrP8UJquMwunpDiMPt5er+QjGzL4hqr/vBVY/MauQgS1xWxCDT1oMx1EULyqxncdCY/NVSQ==}
 
   '@open-draft/deferred-promise@2.2.0':
     resolution: {integrity: sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA==}
@@ -43739,7 +43733,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.16
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     optionalDependencies:
@@ -43817,7 +43811,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.16
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     optionalDependencies:
@@ -47747,7 +47741,7 @@ snapshots:
 
   '@octokit/endpoint@9.0.6':
     dependencies:
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       universal-user-agent: 6.0.1
 
   '@octokit/graphql@7.0.2':
@@ -47757,8 +47751,6 @@ snapshots:
       universal-user-agent: 6.0.1
 
   '@octokit/openapi-types@20.0.0': {}
-
-  '@octokit/openapi-types@22.2.0': {}
 
   '@octokit/openapi-types@24.2.0': {}
 
@@ -47788,7 +47780,7 @@ snapshots:
 
   '@octokit/request-error@5.1.1':
     dependencies:
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       deprecation: 2.3.1
       once: 1.4.0
 
@@ -47796,7 +47788,7 @@ snapshots:
     dependencies:
       '@octokit/endpoint': 9.0.6
       '@octokit/request-error': 5.1.1
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       universal-user-agent: 6.0.1
 
   '@octokit/rest@20.1.2':
@@ -47813,10 +47805,6 @@ snapshots:
   '@octokit/types@13.10.0':
     dependencies:
       '@octokit/openapi-types': 24.2.0
-
-  '@octokit/types@13.5.0':
-    dependencies:
-      '@octokit/openapi-types': 22.2.0
 
   '@open-draft/deferred-promise@2.2.0': {}
 

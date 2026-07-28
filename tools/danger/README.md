@@ -17,7 +17,7 @@ In future we may also use it to give PR authors extra information on failing che
 
 ## How is it setup?
 
-1. **package** – `danger` is installed as an npm dev-dependency
+1. **package** – `danger` is installed as a dev-dependency of `@tools/danger`
 2. **workflow** – [danger.yml](../../.github/workflows/danger.yml) defines how it is run in GitHub
 3. **config** –  [dangerfile.ts](./dangerfile.ts) is the entry point targeted by the workflow
 
@@ -30,7 +30,13 @@ If you are making changes to your pull request, or to the dangerfile you can get
 1. Create a new fine-grained personal access token: https://github.com/settings/personal-access-tokens/new
 2. It only needs "Public repositories" access
 3. Export your token, like: `export DANGER_GITHUB_API_TOKEN=github_pat_xxxxx`
-4. Run Danger against your PR, like: `pnpm danger pr https://github.com/LedgerHQ/ledger-live/pull/19915 --dangerfile tools/danger/dangerfile.ts`
+4. From `tools/danger`, run Danger against your PR:
+
+```bash
+cd tools/danger
+pnpm danger pr https://github.com/LedgerHQ/ledger-live/pull/19915 --dangerfile dangerfile.ts
+```
+
 5. See feedback in the Terminal before pushing your changes
 
 ### Run tests locally

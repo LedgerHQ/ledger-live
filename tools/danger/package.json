@@ -10,6 +10,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "danger": "13.0.10",
     "jest": "catalog:"
   }
 }
