@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 36.6.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f)]:
+  - @ledgerhq/coin-solana@0.59.1-hotfix.0
+  - @ledgerhq/live-signer-solana@0.18.1-hotfix.0
+
 ## 36.6.0
 
 ### Minor Changes

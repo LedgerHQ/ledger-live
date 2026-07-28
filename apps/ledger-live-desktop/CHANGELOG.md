@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 4.13.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.6.1-hotfix.0
+  - @ledgerhq/asset-detail@0.9.2-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.20.3-hotfix.0
+
 ## 4.13.0
 
 ### Minor Changes
