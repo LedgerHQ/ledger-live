@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const xbt = fiat({
   type: "FiatCurrency",
-  id: "xbt",
   ticker: "XBT",
   name: "Bitcoin",
   symbol: "Ƀ",

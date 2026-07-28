@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const php = fiat({
   type: "FiatCurrency",
-  id: "php",
   ticker: "PHP",
   name: "Philippine Peso",
   symbol: "₱",

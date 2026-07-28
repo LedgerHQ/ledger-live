@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const btn = fiat({
   type: "FiatCurrency",
-  id: "btn",
   ticker: "BTN",
   name: "Bhutanese Ngultrum",
   symbol: "Nu.",

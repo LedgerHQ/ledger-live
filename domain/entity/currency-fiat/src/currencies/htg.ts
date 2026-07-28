@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const htg = fiat({
   type: "FiatCurrency",
-  id: "htg",
   ticker: "HTG",
   name: "Haitian Gourde",
   symbol: "G",

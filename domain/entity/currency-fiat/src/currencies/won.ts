@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const won = fiat({
   type: "FiatCurrency",
-  id: "won",
   ticker: "WON",
   name: "North Korean Won",
   symbol: "₩",

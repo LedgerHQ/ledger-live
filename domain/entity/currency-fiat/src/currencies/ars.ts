@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const ars = fiat({
   type: "FiatCurrency",
-  id: "ars",
   ticker: "ARS",
   name: "Argentine Peso",
   symbol: "$",
