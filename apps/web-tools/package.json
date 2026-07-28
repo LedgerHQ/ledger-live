@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@devtools/shell": "workspace:*",
+    "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
     "@devtools/protocols": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
