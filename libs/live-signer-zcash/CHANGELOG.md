@@ -1,5 +1,11 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.6.0
+
+### Minor Changes
+
+- [#19727](https://github.com/LedgerHQ/ledger-live/pull/19727) [`887f8c9`](https://github.com/LedgerHQ/ledger-live/commit/887f8c93e66c2730cbecc1adc09b6a2faa95bba6) Thanks [@semeano](https://github.com/semeano)! - Fix wrong ZIP-244 txid
+
 ## 0.6.0-next.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-large-screen-upsell-modal",
-  "version": "0.3.0-next.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Domain entity for the large-screen upsell modal: display-frequency schema, state, and selectors",
   "main": "src/index.ts",

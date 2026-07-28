@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.19.0
+
+### Minor Changes
+
+- [#19691](https://github.com/LedgerHQ/ledger-live/pull/19691) [`4ed4471`](https://github.com/LedgerHQ/ledger-live/commit/4ed4471040f1437f461091d1f58306dc4fc68c79) Thanks [@henri-ly](https://github.com/henri-ly)! - Update polkadot chopstick dockerfile
+
+### Patch Changes
+
+- Updated dependencies [[`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/coin-polkadot@6.31.0
+  - @ledgerhq/types-live@6.116.0
+  - @ledgerhq/ledger-wallet-framework@2.5.0
+  - @ledgerhq/coin-tester@0.20.0
+
 ## 1.19.0-next.0
 
 ### Minor Changes

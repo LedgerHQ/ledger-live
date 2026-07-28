@@ -1,5 +1,18 @@
 # @ledgerhq/asset-aggregation
 
+## 0.12.0
+
+### Minor Changes
+
+- [#19800](https://github.com/LedgerHQ/ledger-live/pull/19800) [`0ee3ad8`](https://github.com/LedgerHQ/ledger-live/commit/0ee3ad8ef853baa7b17bb4ca07f41f1bed12268e) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint cryptoasset/fiat currency lookups off @ledgerhq/cryptoassets onto @domain/entity-currency-crypto and @domain/entity-currency-fiat
+
+### Patch Changes
+
+- Updated dependencies [[`f57602a`](https://github.com/LedgerHQ/ledger-live/commit/f57602a679ed08b437955a2858f84e3086d6e417), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f)]:
+  - @ledgerhq/live-countervalues@0.23.0
+  - @ledgerhq/types-live@6.116.0
+  - @domain/entity-currency-crypto@0.7.0
+
 ## 0.12.0-next.0
 
 ### Minor Changes
