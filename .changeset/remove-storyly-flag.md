@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/types-live": patch
-"ledger-live-desktop": patch
+"@ledgerhq/types-live": minor
+"ledger-live-desktop": minor
 ---
 
 Remove deprecated storyly feature flag, types, and orphaned i18n keys.

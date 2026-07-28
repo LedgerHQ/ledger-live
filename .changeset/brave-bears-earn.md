@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-evm": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

@@ -1,14 +1,14 @@
 ---
-"@ledgerhq/coin-tester-multiversx": patch
-"@ledgerhq/coin-tester-polkadot": patch
-"@ledgerhq/coin-tester-bitcoin": patch
-"@ledgerhq/coin-tester-stellar": patch
-"@ledgerhq/coin-tester-cosmos": patch
-"@ledgerhq/coin-tester-solana": patch
-"@ledgerhq/coin-tester-tezos": patch
-"@ledgerhq/coin-tester-tron": patch
-"@ledgerhq/coin-tester-evm": patch
-"@ledgerhq/coin-tester-xrp": patch
+"@ledgerhq/coin-tester-multiversx": minor
+"@ledgerhq/coin-tester-polkadot": minor
+"@ledgerhq/coin-tester-bitcoin": minor
+"@ledgerhq/coin-tester-stellar": minor
+"@ledgerhq/coin-tester-cosmos": minor
+"@ledgerhq/coin-tester-solana": minor
+"@ledgerhq/coin-tester-tezos": minor
+"@ledgerhq/coin-tester-tron": minor
+"@ledgerhq/coin-tester-evm": minor
+"@ledgerhq/coin-tester-xrp": minor
 ---
 
 chore(coin-testers): add MSW guards and homogenize error message
