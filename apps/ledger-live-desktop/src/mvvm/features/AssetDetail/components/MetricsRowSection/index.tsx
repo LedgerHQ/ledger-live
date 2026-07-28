@@ -1,5 +1,5 @@
 import React from "react";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { PnLSection } from "../PnL";
 import { StakingSection } from "../StakingSection";

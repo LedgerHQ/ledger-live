@@ -1,7 +1,8 @@
 import React, { useCallback, memo } from "react";
 import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
@@ -10,7 +11,6 @@ import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {

@@ -1,7 +1,7 @@
 import React from "react";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetHeaderView } from "./AssetHeaderView";
 import { useAssetHeaderViewModel } from "./useAssetHeaderViewModel";
 

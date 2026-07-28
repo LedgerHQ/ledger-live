@@ -1,5 +1,6 @@
 import type { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
+import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 
 // --- Sync source mock functions ---
 
@@ -28,6 +29,7 @@ const dayRange: PortfolioRange = "day";
 
 export const mockCounterValue = {
   type: "FiatCurrency" as const,
+  id: FiatCurrencySchema.shape.id.parse("usd"),
   ticker: "USD",
   name: "US Dollar",
   units: [{ name: "US Dollar", code: "$", magnitude: 2, showAllDigits: true, prefixCode: true }],

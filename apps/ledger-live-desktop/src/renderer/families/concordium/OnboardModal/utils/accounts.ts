@@ -1,5 +1,5 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 
 export function getCreatableAccount(selectedAccounts: Account[]): Account | undefined {
