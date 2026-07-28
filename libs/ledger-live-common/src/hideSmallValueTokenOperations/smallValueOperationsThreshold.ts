@@ -3,17 +3,14 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "../account";
 import { formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
-import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import type { Unit } from "@domain/entity-currency-unit";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-
-type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
+import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 
 export const MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD = 0.5;
 export const SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY = getFiatCurrencyByTicker("USD");
 
-const getMagnitudeFactor = (currency: CompatCurrency) =>
+const getMagnitudeFactor = (currency: Currency) =>
   new BigNumber(10).pow(currency.units[0].magnitude);
 
 export const clampSmallValueThresholdUsd = (threshold: number, fallback: number) =>
@@ -23,7 +20,7 @@ export const clampSmallValueThresholdUsd = (threshold: number, fallback: number)
 
 export const floorThresholdToCurrencyMinorUnit = (
   threshold: number,
-  currency: CompatCurrency,
+  currency: Currency,
 ): BigNumber | null => {
   if (!Number.isFinite(threshold)) {
     return null;
@@ -36,12 +33,12 @@ export const floorThresholdToCurrencyMinorUnit = (
 
 export const convertThresholdMinorUnitToMajor = (
   thresholdMinorUnit: BigNumber,
-  currency: CompatCurrency,
+  currency: Currency,
 ) => thresholdMinorUnit.div(getMagnitudeFactor(currency));
 
 export const formatThresholdMinorUnitForInput = (
   thresholdMinorUnit: BigNumber,
-  currency: CompatCurrency,
+  currency: Currency,
 ) => convertThresholdMinorUnitToMajor(thresholdMinorUnit, currency).toFixed();
 
 const formatCounterValueThreshold = ({
@@ -49,7 +46,7 @@ const formatCounterValueThreshold = ({
   locale,
   thresholdMinorUnit,
 }: {
-  currency: CompatCurrency;
+  currency: Currency;
   locale: string | null | undefined;
   thresholdMinorUnit: BigNumber;
 }) => {
@@ -97,7 +94,7 @@ export function formatSmallValueOperationsThreshold({
   thresholdUsd,
 }: {
   countervaluesState?: CounterValuesState;
-  counterValueCurrency: CompatCurrency;
+  counterValueCurrency: Currency;
   locale: string | null | undefined;
   thresholdUsd: number;
 }) {
@@ -129,7 +126,7 @@ export function convertThresholdFromUsdToCountervalueMinorUnit({
   countervaluesState,
   thresholdUsd,
 }: {
-  counterValueCurrency: CompatCurrency;
+  counterValueCurrency: Currency;
   countervaluesState: CounterValuesState;
   thresholdUsd: number;
 }): BigNumber | null {
@@ -159,7 +156,7 @@ export function convertThresholdFromCountervalueMinorUnitToUsd({
   countervaluesState,
   thresholdMinorUnit,
 }: {
-  counterValueCurrency: CompatCurrency;
+  counterValueCurrency: Currency;
   countervaluesState: CounterValuesState;
   thresholdMinorUnit: BigNumber;
 }): number | null {
@@ -210,7 +207,7 @@ export function isSmallValueOperation({
   countervaluesState: CounterValuesState;
   /** The user's selected countervalue (fiat) currency, e.g. EUR.
    *  Countervalues are computed from the operation currency (native or token) to this currency. */
-  userCounterValueCurrency: CompatCurrency;
+  userCounterValueCurrency: Currency;
   /** USD threshold below which an incoming or outgoing operation is considered dust.
    *  Defaults to MAX_SMALL_VALUE_OPERATIONS_THRESHOLD_USD ($0.5).
    *  Callers provide their product-specific dust-filter threshold. */

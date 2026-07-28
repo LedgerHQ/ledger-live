@@ -1,7 +1,4 @@
-import type { FiatCurrency } from "@domain/entity-currency-fiat";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-
-type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import {
   groupAccountsByAsset,
   type GroupedAccount,
@@ -21,7 +18,7 @@ export const getBalanceAndFiatValueByAssets = (
   accounts: AccountLike[],
   assets: CryptoOrTokenCurrency[],
   counterValuesState: CounterValuesState,
-  targetCurrency: CompatCurrency,
+  targetCurrency: Currency,
 ): ExtendedAssetType[] => {
   const groupedAccountsByAsset = groupAccountsByAsset(accounts, counterValuesState, targetCurrency);
 

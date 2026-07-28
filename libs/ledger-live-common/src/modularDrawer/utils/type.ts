@@ -1,10 +1,6 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { FiatCurrency } from "@domain/entity-currency-fiat";
 import { Unit } from "@domain/entity-currency-unit";
 import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
-
-// Accepts both domain FiatCurrency (id required) and legacy types-cryptoassets FiatCurrency (no id)
-type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
 import { AccountLike } from "@ledgerhq/types-live";
 import type { ComponentType, ReactNode, ReactElement } from "react";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
@@ -41,7 +37,7 @@ export type AssetWithBalance = AssetType & {
 export type UseBalanceDeps = () => {
   flattenedAccounts: AccountLike[];
   state: CounterValuesState;
-  counterValueCurrency: CompatCurrency;
+  counterValueCurrency: Currency;
   locale: string;
 };
 

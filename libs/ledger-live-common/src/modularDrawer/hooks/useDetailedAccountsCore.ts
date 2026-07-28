@@ -1,9 +1,6 @@
 import { useCallback } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { FiatCurrency } from "@domain/entity-currency-fiat";
-import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-
-type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
+import { Currency } from "@domain/entity-currency";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
@@ -20,7 +17,7 @@ import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
  */
 export function useDetailedAccountsCore(
   counterValuesState: CounterValuesState,
-  counterValueCurrency: CompatCurrency,
+  counterValueCurrency: Currency,
 ) {
   /**
    * Calculate fiat value for an account using counter values

@@ -5,10 +5,7 @@ import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { FiatCurrency } from "@domain/entity-currency-fiat";
-import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-
-type CompatCurrency = CryptoOrTokenCurrency | (Omit<FiatCurrency, "id"> & { id?: string });
+import type { Currency } from "@domain/entity-currency";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
@@ -18,7 +15,7 @@ type Field = {
     arg0: AccountLike,
     arg1: Account | null | undefined,
     arg2: Operation,
-    arg3: CompatCurrency | null | undefined,
+    arg3: Currency | null | undefined,
     arg4: CounterValuesState | null | undefined,
     arg5: WalletState | null | undefined,
   ) => string;
@@ -135,7 +132,7 @@ const fields: Field[] = [
 const accountRows = (
   account: AccountLike,
   parentAccount: Account | null | undefined,
-  counterValueCurrency?: CompatCurrency,
+  counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
   walletState?: WalletState,
 ): Array<string[]> =>
@@ -156,7 +153,7 @@ const accountRows = (
 
 const accountsRows = (
   accounts: Account[],
-  counterValueCurrency?: CompatCurrency,
+  counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
   walletState?: WalletState,
 ): Array<string[]> => {
@@ -181,7 +178,7 @@ const mapRowValue = (row: string[]): string => {
 
 export const accountsOpToCSV = (
   accounts: Account[],
-  counterValueCurrency?: CompatCurrency,
+  counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState, // cvs state required for countervalues export
   walletState?: WalletState, // wallet state required for account name
 ): string => {
