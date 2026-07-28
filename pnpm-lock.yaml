@@ -9451,9 +9451,6 @@ importers:
       '@ledgerhq/device-react':
         specifier: workspace:^
         version: link:../device-react
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-cryptoassets

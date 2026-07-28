@@ -1,6 +1,6 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
-// @ts-expect-error – @ledgerhq/live-env is typed in PR1; becomes type-lossy in PR2
+// @ts-expect-error – "yolo" is not a valid env key
 getEnv("yolo");
 
 test("typecheck env", () => {
