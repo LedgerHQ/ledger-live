@@ -1794,7 +1794,7 @@
       "finish": "Confirmation"
     },
     "tokensTip": "{token} ({ticker}) is an {tokenType} token. You can receive tokens directly on a/an {currency} account.",
-    "accountToImportSubtitle": "{count, plural, other {Add existing accounts}}",
+    "accountToImportSubtitle": "{count, plural, one {Add existing account} other {Add existing accounts}}",
     "selectAll": "Select all ({count})",
     "unselectAll": "Deselect all ({count})",
     "noAccountToImport": "No existing {currencyName} accounts to add",
@@ -2007,7 +2007,7 @@
         "marketcap_desc": "Market cap"
       },
       "installSuccess": {
-        "title": "{count, plural, one {App installed successfully. You can now add your {app} accounts} other {Apps installed successfully. You can now add your accounts}}",
+        "title": "{count, plural, one {App installed successfully. You can now add your {app} accounts} other {Apps installed successfully. You can now add your {app} accounts}}",
         "manageAccount": "Manage my accounts"
       },
       "updatable": {
