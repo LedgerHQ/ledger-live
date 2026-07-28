@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
 import { TruncatedText } from "LLD/components/TruncatedText";
 
 type BalanceCellViewProps = {
@@ -8,8 +8,11 @@ type BalanceCellViewProps = {
 };
 
 export const BalanceCellView = ({ formattedBalance, className }: BalanceCellViewProps) => (
-  <TableCellContent
-    align="end"
-    title={<TruncatedText text={formattedBalance} className={className} />}
-  />
+  <TableCellItem align="end">
+    <TableCellContent>
+      <TableCellContentTitle>
+        <TruncatedText text={formattedBalance} className={className} />
+      </TableCellContentTitle>
+    </TableCellContent>
+  </TableCellItem>
 );

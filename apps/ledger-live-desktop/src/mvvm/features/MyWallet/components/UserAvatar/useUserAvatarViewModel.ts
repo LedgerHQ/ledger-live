@@ -4,7 +4,7 @@ import type { UserAvatarProps, UserAvatarViewProps } from "./types";
 export function useUserAvatarViewModel({
   showNotification,
   unseenCount,
-  size,
+  ...rest
 }: UserAvatarProps): UserAvatarViewProps {
   const { totalNotifCount } = useNotificationIndicator();
 
@@ -12,8 +12,8 @@ export function useUserAvatarViewModel({
   const resolvedCount = unseenCount ?? totalNotifCount;
 
   return {
+    ...rest,
     showNotification: resolvedShow,
     unseenCount: resolvedShow ? resolvedCount : 0,
-    size,
   };
 }

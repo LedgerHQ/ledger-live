@@ -1,6 +1,17 @@
 import React, { memo } from "react";
 import { TFunction } from "i18next";
-import { TableRow, TableCell, TableCellContent, Trend, Tag } from "@ledgerhq/lumen-ui-react";
+import {
+  TableRow,
+  TableCell,
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+  TableCellContentDescription,
+  TableCellContentRow,
+  Trend,
+  Tag,
+  MediaImage,
+} from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { TruncatedText } from "LLD/components/TruncatedText";
@@ -51,37 +62,54 @@ export const MarketRowView = memo<MarketRowViewProps>(function MarketRowView({
       style={{ ...style, gridTemplateColumns: MARKET_TABLE_GRID_TEMPLATE }}
     >
       <TableCell className={`${MARKET_CELL_CLASSNAME} min-w-0 [&>div]:min-w-0`}>
-        <TableCellContent
-          className="overflow-hidden"
-          leadingContent={
-            currency.ledgerIds.length > 0 ? (
-              <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size={32} />
-            ) : (
-              <img width="32px" height="32px" src={currency.image} alt={currency.name} />
-            )
-          }
-          title={<TruncatedText text={currency.name} />}
-          description={
-            <span className="flex items-center gap-6">
-              {ticker}
+        <TableCellItem className="overflow-hidden">
+          {currency.ledgerIds.length > 0 ? (
+            <CryptoIcon ledgerId={currency.ledgerIds[0]} ticker={currency.ticker} size={32} />
+          ) : (
+            <MediaImage
+              src={currency.image}
+              alt={currency.name}
+              shape="circle"
+              size={32}
+              fallback={currency.name}
+            />
+          )}
+          <TableCellContent>
+            <TableCellContentTitle>
+              <TruncatedText text={currency.name} />
+            </TableCellContentTitle>
+            <TableCellContentRow>
+              <TableCellContentDescription>{ticker}</TableCellContentDescription>
               {currency.marketcapRank ? (
                 <Tag size="sm" appearance="gray" label={`#${currency.marketcapRank}`} />
               ) : null}
-            </span>
-          }
-        />
+            </TableCellContentRow>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
 
       <TableCell align="end" className={MARKET_CELL_CLASSNAME} data-testid="market-coin-price">
-        <TableCellContent align="end" title={formattedPrice} />
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>{formattedPrice}</TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
 
       <TableCell align="end" className={MARKET_CELL_CLASSNAME} data-testid="market-volume">
-        <TableCellContent align="end" title={formattedVolume} />
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>{formattedVolume}</TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
 
       <TableCell align="end" className={MARKET_CELL_CLASSNAME} data-testid="market-cap">
-        <TableCellContent align="end" title={formattedMarketCap} />
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>{formattedMarketCap}</TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
 
       <TableCell align="end" className={MARKET_CELL_CLASSNAME} data-testid="market-price-change">
