@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import type { Contact, ContactId } from "@domain/entity-contact";
 import {
   useEmptyContactDetail,
-  type AddAddressFlowViewModel,
   type ContactDetailLabels,
   type ContactDetailViewProps,
   type ContactsListViewProps,
@@ -12,7 +11,7 @@ import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/User
 
 export function useContactDetailPaneAdapter(
   contacts: readonly Contact[],
-  startAddAddress: AddAddressFlowViewModel["start"],
+  onAddAddress: (contactId: ContactId) => void,
 ): Readonly<{
   detail: ContactDetailViewProps | undefined;
   onOpenMe: ContactsListViewProps["onOpenMe"];
@@ -59,9 +58,9 @@ export function useContactDetailPaneAdapter(
       contact: selectedContact,
       labels,
       meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
-      onAddAddress: () => startAddAddress(selectedContact.id),
+      onAddAddress: () => onAddAddress(selectedContact.id),
     };
-  }, [labels, selectedContact, startAddAddress]);
+  }, [labels, onAddAddress, selectedContact]);
 
   return {
     detail,
