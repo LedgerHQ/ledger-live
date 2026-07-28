@@ -8,7 +8,7 @@ import {
 import { Flex } from "@ledgerhq/native-ui";
 import { getAccountSpendableBalance, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ScreenName, NavigatorName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";

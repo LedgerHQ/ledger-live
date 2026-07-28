@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useState } from "react";
 import * as Keychain from "react-native-keychain";
-import { PasswordsDontMatchError } from "@ledgerhq/errors";
+import { PasswordsDontMatchError } from "@ledgerhq/live-common/errors";
 import { Vibration } from "react-native";
 import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";

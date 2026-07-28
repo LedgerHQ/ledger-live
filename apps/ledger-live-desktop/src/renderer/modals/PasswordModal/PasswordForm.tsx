@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { PasswordsDontMatchError } from "@ledgerhq/errors";
+import { PasswordsDontMatchError } from "@ledgerhq/live-common/errors";
 import { TFunction } from "i18next";
 import Box from "~/renderer/components/Box";
 import InputPassword from "~/renderer/components/InputPassword";

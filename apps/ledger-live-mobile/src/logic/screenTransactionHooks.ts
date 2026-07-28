@@ -13,7 +13,7 @@ import type {
   BroadcastConfig,
 } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import {
   addPendingOperation,
