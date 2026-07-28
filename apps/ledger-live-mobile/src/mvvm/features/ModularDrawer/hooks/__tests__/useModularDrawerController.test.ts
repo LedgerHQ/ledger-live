@@ -2,6 +2,7 @@ import { renderHook, act } from "@tests/test-renderer";
 import { useModularDrawerController } from "../useModularDrawerController";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { AccountLike } from "@ledgerhq/types-live";
+import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 const mockAccount = genAccount("test_account");
 const mockParentAccount = genAccount("parent_account");
@@ -114,6 +115,82 @@ describe("useModularDrawerController", () => {
       });
 
       expect(onAccountSelected).toHaveBeenCalledWith(mockAccount, undefined);
+    });
+  });
+
+  describe("currency completion", () => {
+    it("should return the selected currency and close the drawer", () => {
+      const onCurrencySelected = jest.fn();
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          onCurrencySelected,
+        });
+      });
+      act(() => result.current.handleCurrencySelected(mockEthCryptoCurrency));
+
+      expect(onCurrencySelected).toHaveBeenCalledWith(mockEthCryptoCurrency);
+      expect(onCurrencySelected).toHaveBeenCalledTimes(1);
+      expect(store.getState().modularDrawer.isOpen).toBe(false);
+    });
+
+    it("should return null once when currency selection is cancelled", () => {
+      const onCurrencySelected = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          onCurrencySelected,
+        });
+      });
+      act(() => result.current.closeDrawer());
+      act(() => result.current.closeDrawer());
+
+      expect(onCurrencySelected).toHaveBeenCalledWith(null);
+      expect(onCurrencySelected).toHaveBeenCalledTimes(1);
+    });
+
+    it("should cancel an active currency selection when replaced", () => {
+      const firstSelection = jest.fn();
+      const nextSelection = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          onCurrencySelected: firstSelection,
+        });
+      });
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          onCurrencySelected: nextSelection,
+        });
+      });
+
+      expect(firstSelection).toHaveBeenCalledWith(null);
+      expect(firstSelection).toHaveBeenCalledTimes(1);
+      expect(nextSelection).not.toHaveBeenCalled();
+    });
+
+    it("should clear a stale callback id when the next drawer has no callback", () => {
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          onCurrencySelected: jest.fn(),
+        });
+      });
+      expect(store.getState().modularDrawer.callbackId).toBe("generated-id");
+
+      act(() => result.current.openDrawer({ flow: "add_account" }));
+
+      expect(store.getState().modularDrawer.callbackId).toBeUndefined();
+      expect(store.getState().modularDrawer.completionMode).toBeUndefined();
     });
   });
 });

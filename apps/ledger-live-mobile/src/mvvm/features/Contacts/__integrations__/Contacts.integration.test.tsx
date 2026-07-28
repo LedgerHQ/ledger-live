@@ -11,6 +11,8 @@ import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail
 import { useContactDetailScreenViewModel } from "LLM/features/Contacts/screens/ContactDetail/useContactDetailScreenViewModel";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import { useMyWalletHeaderViewModel } from "LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 
 jest.mock("LLM/features/MyWallet/views/Header/useMyWalletHeaderViewModel");
 
@@ -137,15 +139,22 @@ function ContactsGatingTestApp() {
 
 function ContactDetailViewModelProbe() {
   const viewModel = useContactDetailScreenViewModel();
+  const { closeDrawer, handleCurrencySelected, isOpen } = useModularDrawerController();
 
   if (viewModel.status === "redirecting") {
     return null;
   }
 
-  const stateLabel =
-    viewModel.addAddressFlowState.status === "closed"
-      ? "closed"
-      : `${viewModel.addAddressFlowState.status}:${viewModel.addAddressFlowState.selectedContactId}`;
+  const stateLabel = (() => {
+    switch (viewModel.addAddressFlowState.status) {
+      case "closed":
+        return "closed";
+      case "selectingCurrency":
+        return `selectingCurrency:${viewModel.addAddressFlowState.selectedContactId}`;
+      case "enteringAddress":
+        return `enteringAddress:${viewModel.addAddressFlowState.selectedContactId}:${viewModel.addAddressFlowState.selectedCurrencyId}`;
+    }
+  })();
 
   return (
     <>
@@ -157,6 +166,19 @@ function ContactDetailViewModelProbe() {
       >
         <Text>Start Add Address</Text>
       </Pressable>
+      {isOpen ? (
+        <>
+          <Pressable
+            testID="contacts-select-currency"
+            onPress={() => handleCurrencySelected(mockEthCryptoCurrency)}
+          >
+            <Text>Select currency</Text>
+          </Pressable>
+          <Pressable testID="contacts-cancel-currency" onPress={closeDrawer}>
+            <Text>Cancel currency</Text>
+          </Pressable>
+        </>
+      ) : null}
     </>
   );
 }
@@ -457,6 +479,11 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       "selectingCurrency:contact-me",
     );
+
+    await user.press(screen.getByTestId("contacts-cancel-currency"));
+    await waitFor(() =>
+      expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed"),
+    );
   });
 
   it("should expose the Add Address session started for a saved contact", async () => {
@@ -477,6 +504,34 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
       `selectingCurrency:${contact.id}`,
     );
+
+    await user.press(screen.getByTestId("contacts-cancel-currency"));
+  });
+
+  it("should continue Add Address with the final currency selected by MAD", async () => {
+    const { user } = render(<ContactDetailViewModelTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+        },
+      }),
+    });
+
+    await user.press(screen.getByTestId("contacts-start-add-address"));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
+      "selectingCurrency:contact-me",
+    );
+
+    await user.press(screen.getByTestId("contacts-select-currency"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent(
+        `enteringAddress:contact-me:${mockEthCryptoCurrency.id}`,
+      );
+    });
   });
 
   it("should open Ledger Wallet addresses from the Me contact detail", async () => {

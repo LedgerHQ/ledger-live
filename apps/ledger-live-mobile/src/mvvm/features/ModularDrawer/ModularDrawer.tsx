@@ -9,8 +9,10 @@ import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBot
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 import { AccountLike } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "~/context/hooks";
 import {
+  modularDrawerCompletionModeSelector,
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerSearchValueSelector,
 } from "~/reducers/modularDrawer";
@@ -40,6 +42,8 @@ export type ModularDrawerProps = {
   // Account selection
   /** Callback fired when an account is selected */
   readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
+  /** Callback fired after the final asset and network are resolved in currency mode */
+  readonly onCurrencySelected?: (currency: CryptoOrTokenCurrency) => void;
 
   /** The use case identifier for the drawer (sent to API as transaction param) */
   readonly useCase?: string;
@@ -60,6 +64,7 @@ export function ModularDrawer({
   assetsConfiguration,
   networksConfiguration,
   onAccountSelected,
+  onCurrencySelected,
   useCase,
   uiUseCase,
   areCurrenciesFiltered,
@@ -76,9 +81,11 @@ export function ModularDrawer({
 
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
     {
-      currencyIds: currencies,
+      currencyIds: completionMode === "currency" ? undefined : currencies,
+      networkIds: completionMode === "currency" ? currencies : undefined,
       searchedValue: searchValue,
       useCase,
       areCurrenciesFiltered,
@@ -97,11 +104,12 @@ export function ModularDrawer({
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
-    currencyIds: currencies ?? [],
+    currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
+    onCurrencySelected,
   });
 
   const flowManagerProps = {

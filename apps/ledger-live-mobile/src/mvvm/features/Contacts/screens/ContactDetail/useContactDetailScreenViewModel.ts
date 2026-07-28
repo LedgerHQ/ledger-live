@@ -6,6 +6,7 @@ import {
   type AddAddressFlowState,
   type ContactDetailLabels,
   type ContactDetailViewProps,
+  useAddAddressCurrencySelectionViewModel,
   useAddAddressFlowViewModel,
   useContactsFeature,
   useEmptyContactDetail,
@@ -15,6 +16,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 
 type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
@@ -35,12 +37,32 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const { isEnabled } = useContactsFeature("mobile");
   const { t } = useTranslation();
   const contact = useEmptyContactDetail(route.params.contactId);
-  const { state: addAddressFlowState, start: startAddAddress } = useAddAddressFlowViewModel();
+  const currencySelection = useContactsCurrencySelectionAdapter();
+  const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
+    platform: "mobile",
+    currencySelection,
+  });
+  const {
+    state: addAddressFlowState,
+    start: startAddAddress,
+    completeCurrencySelection,
+    close: closeAddAddress,
+  } = useAddAddressFlowViewModel();
   const onAddAddress = useCallback(() => {
-    if (contact) {
-      startAddAddress(contact.id);
-    }
-  }, [contact, startAddAddress]);
+    if (!contact) return;
+
+    const contactId = contact.id;
+    startAddAddress(contactId);
+    void selectCurrency()
+      .then(result => {
+        if (result.status === "selected") {
+          completeCurrencySelection(contactId, result.currencyId);
+        } else if (result.status === "cancelled" || result.status === "unavailable") {
+          closeAddAddress();
+        }
+      })
+      .catch(closeAddAddress);
+  }, [closeAddAddress, completeCurrencySelection, contact, selectCurrency, startAddAddress]);
   const onOpenLedgerWalletAddresses = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.CryptoAddresses,
