@@ -30,7 +30,7 @@ beforeAll(async () => {
 });
 
 const withPnlFlag = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
+  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
 
 describe("useAssetPnlViewModel", () => {
   let spy: jest.SpyInstance<

@@ -442,7 +442,6 @@ export enum ScreenName {
   OnboardingTermsOfUse = "OnboardingTermsOfUse",
   OnboardingDeviceSelection = "OnboardingDeviceSelection",
   OnboardingUseCase = "OnboardingUseCase",
-  OnboardingModalDiscoverLive = "OnboardingModalDiscoverLive",
   OnboardingSetNewDevice = "OnboardingSetNewDevice",
   OnboardingSetupDeviceInformation = "OnboardingSetupDeviceInformation",
   OnboardingGeneralInformation = "OnboardingGeneralInformation",

@@ -89,20 +89,11 @@ type DrawerVariant = {
 
 const DRAWER_VARIANTS: DrawerVariant[] = [
   {
-    label: "Gorhom (legacy)",
-    backButtonTestId: "drawer-back-button",
-    renderOptions: {
-      overrideInitialState: withReadOnlyDisabled,
-    },
-  },
-  {
-    label: "Lumen BottomSheet (lwmWallet40)",
+    label: "Lumen BottomSheet",
     backButtonTestId: "bottom-sheet-header-back-button",
     renderOptions: {
       overrideInitialState: (state: State) =>
-        withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
-          withReadOnlyDisabled(state),
-        ),
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
     },
   },
 ];
@@ -239,9 +230,7 @@ describe.each(DRAWER_VARIANTS)(
         overrideInitialState: (state: State) =>
           withFlagOverrides({
             ...mockedFF,
-            ...(renderOptions?.overrideInitialState
-              ? { lwmWallet40: { enabled: true } }
-              : undefined),
+            ...(renderOptions?.overrideInitialState ? {} : undefined),
           })({
             ...withReadOnlyDisabled(state),
             accounts: { active: mockedAccounts },
@@ -309,9 +298,7 @@ describe.each(DRAWER_VARIANTS)(
 describe("ModularDrawer — Lumen BottomSheet specific", () => {
   const lumenOverride = {
     overrideInitialState: (state: State) =>
-      withFlagOverrides({ ...mockedFF, lwmWallet40: { enabled: true } })(
-        withReadOnlyDisabled(state),
-      ),
+      withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
   };
 
   beforeEach(() => {

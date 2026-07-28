@@ -21,10 +21,7 @@ const compose =
     transforms.reduce((acc, t) => t(acc), state);
 
 const withPnl = (enabled: boolean) =>
-  compose(
-    withAccounts,
-    withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } }),
-  );
+  compose(withAccounts, withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } }));
 
 const DRAWER_DESCRIPTION =
   "Your portfolio performance broken down into estimated unrealised and realised return.";
@@ -55,7 +52,7 @@ describe("PnlSection integration", () => {
     it("renders nothing when there are no accounts", () => {
       render(<PnlSection />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { pnl: true } },
+          lwmWallet40: { params: { pnl: true } },
         }),
       });
 

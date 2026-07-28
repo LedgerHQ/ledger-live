@@ -17,7 +17,6 @@ import Assets from "./Assets";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -83,8 +82,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
 
-  const { isEnabled: isWallet40Enabled, shouldDisplayAssetSection } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
 
   const onPressButton = useCallback(
     (_uiEvent: GestureResponderEvent) => {
@@ -133,8 +131,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   return (
     <>
-      {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
-
       {isAccountListUIEnabled ? (
         <TabSection
           handleToggle={handleToggle}

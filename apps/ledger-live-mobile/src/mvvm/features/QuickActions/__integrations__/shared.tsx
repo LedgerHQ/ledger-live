@@ -121,9 +121,6 @@ export const overrideStateReadOnly = (state: State): State => {
 
 export const overrideStateWithFundsVariant = withFlagOverrides(
   {
-    lwmWallet40: {
-      enabled: true,
-    },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
   overrideStateWithFunds,
@@ -131,9 +128,6 @@ export const overrideStateWithFundsVariant = withFlagOverrides(
 
 export const overrideStateWithoutFundsVariant = withFlagOverrides(
   {
-    lwmWallet40: {
-      enabled: true,
-    },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
   overrideStateWithoutFunds,

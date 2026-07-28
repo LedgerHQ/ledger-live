@@ -27,7 +27,7 @@ const NavigatorWrapper = () => (
 );
 
 const enableAssetDiscoverability = withFlagOverrides({
-  lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
+  lwmWallet40: { params: { assetDiscoverability: true } },
 });
 
 const daiMarket = {
@@ -40,7 +40,7 @@ const daiMarket = {
 
 function withStarredMarketCoins(starredMarketCoins: string[] = []) {
   return withFlagOverrides(
-    { lwmWallet40: { enabled: true, params: { assetDiscoverability: true } } },
+    { lwmWallet40: { params: { assetDiscoverability: true } } },
     (state: State): State => ({
       ...state,
       settings: { ...state.settings, starredMarketCoins },
