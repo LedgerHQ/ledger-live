@@ -1,4 +1,4 @@
-import { WebsocketConnectionError } from "@ledgerhq/errors";
+import { WebsocketConnectionError } from "../errors";
 import axios from "axios";
 import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
