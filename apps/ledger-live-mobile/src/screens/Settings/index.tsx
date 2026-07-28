@@ -26,7 +26,7 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
-  const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
+  const { handleSettingsRateApp } = useRatings();
 
   const debugVisible = useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
@@ -108,7 +108,7 @@ export default function Settings({
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={IconsLegacy.StarMedium}
-          onClick={handleLegacyRatingsRateApp}
+          onClick={handleSettingsRateApp}
         />
       </FeatureToggle>
       <SettingsCard
