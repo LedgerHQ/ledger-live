@@ -4,12 +4,9 @@ import {
   UseTrackGenericDAppTransactionSend,
 } from "./useTrackGenericDAppTransactionSend";
 import { track } from "../segment";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  CantOpenDevice,
-  LockedDeviceError,
-} from "@ledgerhq/errors";
+import { CantOpenDevice, LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
