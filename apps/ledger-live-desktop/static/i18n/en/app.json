@@ -541,7 +541,9 @@
       "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
       "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "aleo_title": "Ledger Nano S™ does not support swapping Aleo",
-      "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "aleo_tokens_title": "Ledger Nano S™ does not support swapping Aleo tokens",
+      "aleo_tokens_description": "To swap Aleo tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
