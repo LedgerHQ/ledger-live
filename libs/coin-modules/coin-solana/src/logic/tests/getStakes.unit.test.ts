@@ -63,7 +63,6 @@ function makeStakeAccount(overrides?: {
             stake: new BigNumber(4_997_717_120),
             activationEpoch: new BigNumber(300),
             deactivationEpoch: new BigNumber("18446744073709551615"),
-            warmupCooldownRate: 0.09,
           },
           creditsObserved: 100000,
         },
