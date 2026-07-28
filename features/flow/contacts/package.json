@@ -27,7 +27,8 @@
     "@domain/entity-currency-token": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
     "@features/platform-feature-flags": "workspace:^",
-    "@shared/feature-flags": "workspace:^"
+    "@shared/feature-flags": "workspace:^",
+    "qrcode": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -35,7 +36,8 @@
     "react-redux": ">=9.0.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react-native-svg": ">=13.0.0"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/lumen-ui-react": {
@@ -48,6 +50,9 @@
       "optional": true
     },
     "react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
       "optional": true
     }
   },
@@ -70,6 +75,7 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/qrcode": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "class-variance-authority": "catalog:",

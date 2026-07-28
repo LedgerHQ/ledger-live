@@ -182,6 +182,8 @@ catalog:
   tailwind-merge: 3.4.0
   tsx: 4.20.6
   ws: 8.18.3
+  qrcode: 1.5.4
+  "@types/qrcode": 1.5.5
   zod: 4.3.6
   semver: 7.7.3
   "@types/semver": 7.7.1

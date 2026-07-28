@@ -9,4 +9,5 @@ module.exports = {
   },
   View: "View",
   Text: "Text",
+  ScrollView: "ScrollView",
 };

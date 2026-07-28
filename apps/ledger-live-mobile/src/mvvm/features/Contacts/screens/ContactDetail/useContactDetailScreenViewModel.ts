@@ -5,18 +5,23 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   type AddAddressFlowState,
   type AddAddressInputSource,
+  type ContactAddressDetailDialogNativeLabels,
+  type ContactAddressDetailDialogNativeProps,
   type ContactDetailLabels,
   type ContactDetailViewProps,
   resolveEligibleAddressCurrencyIds,
   useAddAddressFlowViewModel,
+  useContactAddressDetailDialog,
   useContactsFeature,
   useEmptyContactDetail,
+  usePopulatedContactDetail,
 } from "@features/flow-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
+import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 
@@ -29,6 +34,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowState: AddAddressFlowState;
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
+      addressDetailDialog: ContactAddressDetailDialogNativeProps;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -41,7 +47,16 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
   const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const { t } = useTranslation();
-  const contact = useEmptyContactDetail(route.params.contactId);
+  const currencyPort = useContactsAddressCurrencyAdapter();
+  const emptyContact = useEmptyContactDetail(route.params.contactId);
+  const populatedContactDetail = usePopulatedContactDetail(route.params.contactId, currencyPort);
+  const {
+    isOpen,
+    selection,
+    onAddressRowPress,
+    onClose: onCloseAddressDetail,
+  } = useContactAddressDetailDialog(populatedContactDetail);
+  const contact = populatedContactDetail?.contact ?? emptyContact;
   const addressValidation = useContactsAddressValidationAdapter();
   const eligibleNetworkIds = useMemo(
     () => resolveEligibleAddressCurrencyIds(eligibleAddressFamilies),
@@ -108,6 +123,20 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }),
     [t],
   );
+  const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
+    () => ({
+      send: t("contacts.addressDetail.send"),
+      copy: t("contacts.addressDetail.copy"),
+      copyAddress: t("contacts.addressDetail.copyAddress"),
+      copied: t("contacts.addressDetail.copied"),
+      edit: t("contacts.addressDetail.edit"),
+      share: t("contacts.addressDetail.share"),
+      delete: t("contacts.addressDetail.delete"),
+      formatNetworkTag: networkName =>
+        t("contacts.addressDetail.networkTag", { name: networkName }),
+    }),
+    [t],
+  );
   const shouldRedirect = !isEnabled || !contact;
 
   useLayoutEffect(() => {
@@ -124,6 +153,20 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     return { status: "redirecting" };
   }
 
+  const pageProps: ContactDetailViewProps = {
+    contact,
+    labels,
+    meAvatarSrc: USER_AVATAR_URL,
+    onAddAddress,
+    onOpenLedgerWalletAddresses,
+    ...(populatedContactDetail
+      ? {
+          addressGroups: populatedContactDetail.addressGroups,
+          onAddressRowPress,
+        }
+      : {}),
+  };
+
   return {
     status: "ready",
     addAddressFlowState,
@@ -139,12 +182,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       onCurrencySelected,
       onQrCodeClick,
     },
-    pageProps: {
-      contact,
-      labels,
-      meAvatarSrc: USER_AVATAR_URL,
-      onAddAddress,
-      onOpenLedgerWalletAddresses,
+    pageProps,
+    addressDetailDialog: {
+      isOpen,
+      contactName: contact.name,
+      row: selection?.row,
+      network: selection?.network,
+      labels: addressDetailDialogLabels,
+      onClose: onCloseAddressDetail,
     },
   };
 }
