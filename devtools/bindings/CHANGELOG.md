@@ -1,5 +1,14 @@
 # @devtools/bindings
 
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd)]:
+  - @shared/feature-flags@0.16.0-next.0
+  - @features/platform-feature-flags@0.6.3-next.0
+  - @devtools/registry@0.1.8-next.0
+
 ## 0.2.1
 
 ### Patch Changes

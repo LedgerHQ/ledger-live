@@ -1,5 +1,14 @@
 # @ledgerhq/wallet-framework-test-setup
 
+## 0.1.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @shared/env@0.1.1-next.0
+
 ## 0.1.2
 
 ### Patch Changes

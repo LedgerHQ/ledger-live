@@ -1,5 +1,35 @@
 # web-tools
 
+## 0.50.0-next.0
+
+### Minor Changes
+
+- [#20070](https://github.com/LedgerHQ/ledger-live/pull/20070) [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the now-dead `@ledgerhq/cryptoassets` currency/fiat store injection from the app bootstraps. Nothing reads the legacy currency/fiat accessors anymore (the runtime source of truth is the domain-backed wallet-framework currency resolver), so `setCryptoCurrenciesStore` / `setFiatCurrenciesStore` injected a store no consumer queried. Drop the calls, drop the `@ledgerhq/cryptoassets` dependency from the apps, and remove the remaining stale references to the package in comments.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-common@36.7.0-next.0
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @ledgerhq/live-countervalues@0.24.0-next.0
+  - @shared/feature-flags@0.16.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/domain-service@1.8.12-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.2-next.0
+  - @ledgerhq/live-wallet@0.30.1-next.0
+  - @ledgerhq/wallet-pnl@0.7.4-next.0
+  - @domain/api-currency-token@0.2.3-next.0
+  - @features/platform-currencies@0.4.1-next.0
+  - @devtools/bindings@0.2.2-next.0
+  - @features/platform-feature-flags@0.6.3-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.11.2-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/hw-app-eth@7.8.12-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+  - @devtools/shell@0.5.3-next.0
+
 ## 0.49.0
 
 ### Minor Changes

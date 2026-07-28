@@ -1,5 +1,15 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.20.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd)]:
+  - @ledgerhq/live-common@36.7.0-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+
 ## 0.20.2
 
 ### Patch Changes

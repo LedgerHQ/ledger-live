@@ -1,5 +1,24 @@
 # @ledgerhq/live-e2e-shared
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#19756](https://github.com/LedgerHQ/ledger-live/pull/19756) [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df) Thanks [@dilaouid](https://github.com/dilaouid)! - tests(lwd): add e2e coverage for the new send flow (incl. memo on Speculos)
+
+### Patch Changes
+
+- Updated dependencies [[`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd)]:
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-common@36.7.0-next.0
+  - @shared/feature-flags@0.16.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/device-core@0.11.9-next.0
+  - @ledgerhq/live-signer-evm@0.21.3-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/live-dmk-speculos@0.10.3-next.0
+  - @ledgerhq/speculos-transport@0.10.9-next.0
+
 ## 0.4.0
 
 ### Minor Changes

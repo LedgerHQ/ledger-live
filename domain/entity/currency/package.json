@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-currency",
-  "version": "0.2.2",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Currency union types (Currency, CryptoOrTokenCurrency) composed from the currency entity packages",
   "main": "src/index.ts",

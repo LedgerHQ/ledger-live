@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-cli
 
+## 2.3.0-next.0
+
+### Minor Changes
+
+- [#19773](https://github.com/LedgerHQ/ledger-live/pull/19773) [`2a532b7`](https://github.com/LedgerHQ/ledger-live/commit/2a532b7a27f2536ae64b2e6e35829b91046ad968) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - `swap execute` now reports `amountExpectedTo` in display units (e.g. `1.2345` ETH) instead of atomic units, both in the human output and the JSON envelope, and sends the same display-unit value as the `toAmount` analytics property. The atomic value is still available under the new `amountExpectedToAtomic` field for scripts that relied on the previous behaviour. `magnitudeAwareRate` is unchanged and stays an atomic-to over atomic-from ratio, matching live-common's convention.
+
 ## 2.2.0
 
 ### Minor Changes

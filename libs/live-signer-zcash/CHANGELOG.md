@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-zcash
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`0afef49`](https://github.com/LedgerHQ/ledger-live/commit/0afef49b60283afb44172de65891e435c2f0d637) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Take `@ledgerhq/device-signer-kit-zcash` 0.4.3, which asks the device for a spend-auth signature only on real Orchard spends. The dummy padding spend of a single-spend bundle is self-signed host-side by the PCZT IO finalizer, so signing it on-device too made the device return one signature more than the finalizer had unsigned actions, and the transaction was rejected. Sending from a shielded balance with a single note now goes through.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
+  - @ledgerhq/errors@7.0.0-next.0
+
 ## 0.6.0
 
 ### Minor Changes

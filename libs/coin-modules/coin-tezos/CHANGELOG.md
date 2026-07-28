@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 7.11.0-next.0
+
+### Minor Changes
+
+- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+
 ## 7.10.0
 
 ### Minor Changes

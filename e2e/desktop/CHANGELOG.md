@@ -1,5 +1,32 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#20020](https://github.com/LedgerHQ/ledger-live/pull/20020) [`ffa89fb`](https://github.com/LedgerHQ/ledger-live/commit/ffa89fb4ad24075d5837641f04436fcc65b07c41) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Refactor Borrow desktop E2E page object to use stable `BORROW_TEST_IDS` locators
+  (LIVE-34696) now that borrow-live-app exposes data-testids in the catalog.
+
+- [#19907](https://github.com/LedgerHQ/ledger-live/pull/19907) [`59706b5`](https://github.com/LedgerHQ/ledger-live/commit/59706b5d93253c3350e8dd12500c1be38ae5a360) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add a headless Borrow driver (Borrow API + Speculos) exposed via `pnpm e2e-cli borrow <open|close|repay|withdraw>` to create/tear down real on-chain loan state, plus reusable E2E setup/teardown hooks (`ensureLoanOpen` / `resetLoanState`), an `afterAll` reset for the open-loan spec, and a `pnpm e2e-cli` subcommand dispatcher. (QAA-1401)
+
+- [#19756](https://github.com/LedgerHQ/ledger-live/pull/19756) [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df) Thanks [@dilaouid](https://github.com/dilaouid)! - tests(lwd): add e2e coverage for the new send flow (incl. memo on Speculos)
+
+- [#19623](https://github.com/LedgerHQ/ledger-live/pull/19623) [`8269231`](https://github.com/LedgerHQ/ledger-live/commit/8269231ec2f36452a5fc08f9406d71acbdff94c2) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update earn v2 ice-cold-start E2E tests for earnSimulator/earnUpselling UI
+
+- [#19947](https://github.com/LedgerHQ/ledger-live/pull/19947) [`f98da7f`](https://github.com/LedgerHQ/ledger-live/commit/f98da7f31c7cf67bdf07c8691998e0b3425e08e6) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix Base and Polkadot add-account assertions for aggregated portfolio assets
+
+### Patch Changes
+
+- Updated dependencies [[`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd)]:
+  - @ledgerhq/live-common@36.7.0-next.0
+  - @ledgerhq/live-e2e-shared@0.5.0-next.0
+  - @ledgerhq/live-cli@26.2.0-next.0
+  - @shared/feature-flags@0.16.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.2-next.0
+  - @ledgerhq/live-wallet@0.30.1-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/live-dmk-speculos@0.10.3-next.0
+
 ## 0.34.0
 
 ### Minor Changes
