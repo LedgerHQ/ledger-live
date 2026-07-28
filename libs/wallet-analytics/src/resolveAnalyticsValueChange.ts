@@ -1,5 +1,5 @@
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, Portfolio, PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { computeAllTimeValueChangeFromFirstReceive } from "./computeAllTimeValueChangeFromFirstReceive";
 

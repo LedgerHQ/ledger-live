@@ -3,7 +3,7 @@ import { createFixtureAccount, createFixtureTokenAccount } from "./fixtures";
 import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
@@ -17,7 +17,7 @@ describe("groupAccountsByAsset", () => {
 
   const usdcToken: TokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usdc",
+    id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     parentCurrencyId: ethCurrency.id,
     tokenType: "erc20",
