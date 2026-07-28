@@ -11,7 +11,7 @@ const loaders = new Map<string, CoinModuleLoader>();
 const loaderCaches: Array<() => void> = [];
 
 // Caches derived from the registered loaders' supportedCoins, invalidated on registry change.
-let supportedIds: Set<string> | null = null; // TODO(branded-ids): Set<CryptoCurrencyId> once CoinModuleLoader.supportedCoins is branded
+let supportedIds: Set<string> | null = null; // TO BE REPLACED soon by branded id
 let supportedCurrencies: CryptoCurrency[] | null = null;
 
 function getSupportedIds(): Set<string> {

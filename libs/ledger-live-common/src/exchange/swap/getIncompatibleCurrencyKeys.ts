@@ -1,6 +1,6 @@
 import { ExchangeSwap } from "./types";
 
-type Keys = Partial<Record<string, { title: string; description: string }>>;
+type Keys = Partial<Record<string, { title: string; description: string }>>; // TO BE REPLACED soon by branded id
 
 const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
   solana: {
