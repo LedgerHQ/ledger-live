@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const tzs = fiat({
   type: "FiatCurrency",
-  id: "tzs",
   ticker: "TZS",
   name: "Tanzanian Shilling",
   symbol: "TSh",

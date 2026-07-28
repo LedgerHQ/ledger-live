@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const krw = fiat({
   type: "FiatCurrency",
-  id: "krw",
   ticker: "KRW",
   name: "South Korean Won",
   symbol: "₩",

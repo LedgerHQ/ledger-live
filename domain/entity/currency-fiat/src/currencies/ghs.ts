@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const ghs = fiat({
   type: "FiatCurrency",
-  id: "ghs",
   ticker: "GHS",
   name: "Ghanaian Cedi",
   symbol: "₵",

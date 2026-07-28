@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const pln = fiat({
   type: "FiatCurrency",
-  id: "pln",
   ticker: "PLN",
   name: "Polish Złoty",
   symbol: "zł",

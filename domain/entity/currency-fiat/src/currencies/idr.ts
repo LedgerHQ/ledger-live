@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const idr = fiat({
   type: "FiatCurrency",
-  id: "idr",
   ticker: "IDR",
   name: "Indonesian Rupiah",
   symbol: "Rp",

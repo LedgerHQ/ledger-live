@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const mtl = fiat({
   type: "FiatCurrency",
-  id: "mtl",
   ticker: "MTL",
   name: "Maltese Lira",
   symbol: "₤",

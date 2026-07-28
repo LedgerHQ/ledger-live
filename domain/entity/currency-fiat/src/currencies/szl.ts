@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const szl = fiat({
   type: "FiatCurrency",
-  id: "szl",
   ticker: "SZL",
   name: "Swazi Lilangeni",
   symbol: "E",

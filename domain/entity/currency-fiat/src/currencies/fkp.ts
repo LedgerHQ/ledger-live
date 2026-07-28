@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const fkp = fiat({
   type: "FiatCurrency",
-  id: "fkp",
   ticker: "FKP",
   name: "Falkland Islands Pound",
   symbol: "£",
