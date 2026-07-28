@@ -1,12 +1,6 @@
-import type {
-  Contact,
-  ContactAddress,
-  ContactId,
-  ContactInput,
-} from "@domain/entity-contact";
+import type { Contact, ContactAddress, ContactId, ContactInput } from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
-/** Injected by app wiring; aligns with the future @features/platform-contacts contract. */
 export type ContactAddressCurrencyPort = Readonly<{
   resolveNetworkId(currencyId: ContactAddress["currencyId"]): CryptoCurrency["id"] | undefined;
 }>;
@@ -16,12 +10,10 @@ export type ContactRenameInput = Readonly<{
   name: ContactInput["name"];
 }>;
 
-/** Injected by app wiring; aligns with the future @features/platform-contacts contract. */
 export type ContactEditPort = Readonly<{
   renameContact(input: ContactRenameInput): Promise<Contact>;
 }>;
 
-/** Injected by app wiring; aligns with the future @features/platform-contacts contract. */
 export type ContactDeletionPort = Readonly<{
   deleteContact(contactId: ContactId): Promise<void>;
 }>;
