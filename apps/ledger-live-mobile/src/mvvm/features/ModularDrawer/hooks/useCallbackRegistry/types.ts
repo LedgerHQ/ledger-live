@@ -1,5 +1,5 @@
 import { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type AccountCallback = (account: AccountLike, parentAccount?: AccountLike) => void;
 export type CurrencyCallback = (currency: CryptoOrTokenCurrency | null) => void;

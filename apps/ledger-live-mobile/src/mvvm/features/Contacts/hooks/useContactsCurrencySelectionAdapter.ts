@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { ContactCurrencyIdSchema, type ContactAddress } from "@domain/entity-contact";
 import type { ContactsCurrencySelectionPort } from "@features/flow-contacts";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 

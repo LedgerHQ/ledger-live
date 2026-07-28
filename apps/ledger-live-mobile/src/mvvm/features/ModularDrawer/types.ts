@@ -1,6 +1,6 @@
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export enum ModularDrawerStep {
   Asset = "Asset",
