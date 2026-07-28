@@ -1,5 +1,5 @@
-import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidParameterError } from "@ledgerhq/errors";
+import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AlgorandCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";

@@ -1,7 +1,7 @@
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { createAction, getViewKeyExec, Request, State, type ViewKeyProgress } from "./index";
 import { viewKeyResolver } from "../../setup";
 

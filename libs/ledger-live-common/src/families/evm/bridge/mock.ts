@@ -1,5 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";

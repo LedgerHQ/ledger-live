@@ -12,7 +12,7 @@ import {
   NotEnoughBalance,
   NotEnoughBalanceInParentAccount,
   NotEnoughBalanceBecauseDestinationNotCreated,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { isValidAddress } from "algosdk";
 import { AlgorandASANotOptInInRecipient, AlgorandMemoExceededSizeError } from "../errors";
 import { getAccount } from "../network";

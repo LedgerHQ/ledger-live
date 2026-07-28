@@ -3,7 +3,7 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useSelector } from "~/context/hooks";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   getRecentAddressesStore,
   getMainAccount,

@@ -27,6 +27,7 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "invariant"
+    "invariant",
+    "@ledgerhq/errors"
   ]
 }

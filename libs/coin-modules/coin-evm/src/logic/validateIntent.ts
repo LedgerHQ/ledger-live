@@ -10,23 +10,25 @@ import type {
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
-  ClaimRewardsFeesWarning,
-  ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
-  GasLessThanEstimate,
   InvalidAddress,
-  MaxFeeTooLow,
   NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import {
+  ClaimRewardsFeesWarning,
+  ETHAddressNonEIP,
+  GasLessThanEstimate,
+  GasPriceTooLow,
+  MaxFeeTooLow,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
-  RecipientRequired,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
-} from "@ledgerhq/errors";
-import { GasPriceTooLow } from "../errors";
+} from "../errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";

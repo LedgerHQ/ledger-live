@@ -1,9 +1,9 @@
+import { InvalidParameterError } from "@ledgerhq/errors";
 import {
   CoinModuleApi,
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import coinConfig, { TronConfig } from "../config";
 import {

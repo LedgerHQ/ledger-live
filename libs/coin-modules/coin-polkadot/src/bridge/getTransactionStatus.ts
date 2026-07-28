@@ -8,7 +8,7 @@ import {
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

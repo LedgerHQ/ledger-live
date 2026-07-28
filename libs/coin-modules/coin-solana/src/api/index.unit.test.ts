@@ -1,3 +1,4 @@
+import { InvalidParameterError } from "@ledgerhq/errors";
 import type {
   CoinModuleApi,
   Balance,
@@ -7,7 +8,6 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import type { SolanaCoinConfig } from "../config";
 import coinConfig from "../config";

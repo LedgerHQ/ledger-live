@@ -43,6 +43,7 @@
     "@ledgerhq/live-promise",
     "@ledgerhq/logs",
     "prando",
-    "rxjs"
+    "rxjs",
+    "@ledgerhq/errors"
   ]
 }

@@ -9,8 +9,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
-import { TokenCurrency } from "@domain/entity-currency-token";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   MessageSignParams,
   MessageSignResult,
@@ -31,9 +30,10 @@ import {
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;

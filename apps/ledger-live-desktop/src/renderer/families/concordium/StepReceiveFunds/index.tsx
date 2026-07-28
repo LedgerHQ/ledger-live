@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { firstValueFrom } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { getEnv } from "@shared/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
