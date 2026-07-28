@@ -26,26 +26,27 @@ module.exports = {
     "!src/__tests__/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup", "@ledgerhq/disable-network-setup"],
   projects: [
     {
       ...sharedConfig,
       displayName: "unit",
       testPathIgnorePatterns: [...sharedConfig.testPathIgnorePatterns, "\\.msw\\.test\\.ts"],
-      setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+      setupFilesAfterEnv: [
+        "@ledgerhq/wallet-framework-test-setup",
+        "@ledgerhq/disable-network-setup",
+      ],
     },
     {
       ...sharedConfig,
       displayName: "msw",
       testMatch: ["**/*.msw.test.ts"],
-      setupFiles: ["./src/test/msw-setup.ts"],
+      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
     },
   ],
 };

@@ -15,7 +15,7 @@ import {
 } from "../fixtures";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import BigNumber from "bignumber.js";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { airdrop, killAgave, spawnAgave } from "../agave";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { encodeAccountIdWithTokenAccountAddress } from "@ledgerhq/coin-solana/logic";
