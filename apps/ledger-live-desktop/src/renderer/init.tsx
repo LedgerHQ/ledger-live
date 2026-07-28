@@ -1,8 +1,8 @@
-import { getEnv } from "@shared/env";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { getEnv } from "@shared/env";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";

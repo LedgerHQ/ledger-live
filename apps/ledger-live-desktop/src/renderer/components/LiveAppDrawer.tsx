@@ -31,7 +31,6 @@ import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { getIncompatibleCurrencyKeys } from "@ledgerhq/live-common/exchange/swap/index";
 import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
 import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -66,7 +65,9 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   return "exchangeType" in data;
 }
 
-const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
