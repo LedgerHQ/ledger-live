@@ -2,9 +2,17 @@ import type { ContactAddress } from "@domain/entity-contact";
 import { listCryptoCurrencies, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { ContactAddressCurrencyPort } from "./ports";
 
+const DEFAULT_NETWORK_ORDER_INDEX: ReadonlyMap<CryptoCurrency["id"], number> = new Map(
+  listCryptoCurrencies().map((network, index) => [network.id, index]),
+);
+
 function createNetworkOrderIndex(
-  networkIds: readonly CryptoCurrency["id"][] = listCryptoCurrencies().map(network => network.id),
+  networkIds?: readonly CryptoCurrency["id"][],
 ): ReadonlyMap<CryptoCurrency["id"], number> {
+  if (networkIds === undefined) {
+    return DEFAULT_NETWORK_ORDER_INDEX;
+  }
+
   return new Map(networkIds.map((networkId, index) => [networkId, index]));
 }
 

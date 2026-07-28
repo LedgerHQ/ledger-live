@@ -1,14 +1,34 @@
-import type {
-  Contact,
-  ContactAddress,
-  ContactAddressId,
-  ContactId,
-} from "@domain/entity-contact";
+import type { Contact, ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
+import type { ContactEditRequirement } from "./model/editRequirement";
 
 export type ContactDetailAddressRowIntent = Readonly<{
   type: "open-address-detail";
   contactId: ContactId;
   addressId: ContactAddressId;
+}>;
+
+export type ContactDetailEditIntent = Readonly<{
+  type: "edit-contact";
+  contactId: ContactId;
+  editRequirement: ContactEditRequirement;
+}>;
+
+export type ContactDetailDeleteIntent = Readonly<{
+  type: "delete-contact";
+  contactId: ContactId;
+}>;
+
+export type ContactDeleteLifecycle =
+  | Readonly<{ status: "idle" }>
+  | Readonly<{ status: "open"; contactId: ContactId }>
+  | Readonly<{ status: "success"; contactId: ContactId }>
+  | Readonly<{ status: "error"; contactId: ContactId }>;
+
+export type ContactDetailActionsViewModel = Readonly<{
+  editIntent: ContactDetailEditIntent | undefined;
+  deleteIntent: ContactDetailDeleteIntent;
+  deleteLifecycle: ContactDeleteLifecycle;
+  isSignerRequiredForEdit: boolean;
 }>;
 
 export type ContactDetailAddressRow = Readonly<{
