@@ -1,14 +1,11 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import { CardLogin } from "../../components/CardLogin/CardLogin.native";
-import type { CardLoginViewProps } from "../../components/CardLogin/types";
+import { CardLogin } from "../../components/CardLogin/index.native";
 import type { CardScreenViewModel } from "./useCardScreenViewModel";
 
-type CardScreenViewProps = CardScreenViewModel & {
-  readonly cardLogin: CardLoginViewProps;
-};
+type CardScreenViewProps = CardScreenViewModel;
 
-export function CardScreenView({ cardLogin, description, title }: CardScreenViewProps) {
+export function CardScreenView({ description, title }: CardScreenViewProps) {
   return (
     <Box style={{ flex: 1 }} lx={{ paddingHorizontal: "s16", paddingVertical: "s16" }}>
       <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s16" }}>
@@ -20,7 +17,7 @@ export function CardScreenView({ cardLogin, description, title }: CardScreenView
             {description}
           </Text>
         </Box>
-        <CardLogin {...cardLogin} />
+        <CardLogin />
       </Box>
     </Box>
   );

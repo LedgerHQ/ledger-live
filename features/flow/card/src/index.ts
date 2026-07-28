@@ -1,2 +1,2 @@
 export { CardScreen } from "./screens/CardScreen";
-export { usePayCard } from "./store/usePayCard";
+export { usePayCard } from "./hooks/usePayCard";

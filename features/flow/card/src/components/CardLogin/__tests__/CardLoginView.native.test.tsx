@@ -1,32 +1,32 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardLogin } from "../CardLogin.native";
+import { CardLoginView } from "../CardLoginView.native";
 
-const defaultProps: React.ComponentProps<typeof CardLogin> = {
+const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   loginLabel: "Login",
   isLoading: false,
   errorMessage: null,
   onLoginPress: jest.fn(),
 };
 
-function renderCardLogin(props: Partial<React.ComponentProps<typeof CardLogin>> = {}) {
-  return render(<CardLogin {...defaultProps} {...props} />);
+function renderCardLoginView(props: Partial<React.ComponentProps<typeof CardLoginView>> = {}) {
+  return render(<CardLoginView {...defaultProps} {...props} />);
 }
 
-describe("CardLogin (Native)", () => {
+describe("CardLoginView (Native)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders the login action", () => {
-    renderCardLogin();
+    renderCardLoginView();
 
     expect(screen.getByLabelText("Login")).toBeTruthy();
   });
 
   it("calls the login handler when pressing Login", () => {
     const onLoginPress = jest.fn();
-    renderCardLogin({ onLoginPress });
+    renderCardLoginView({ onLoginPress });
 
     fireEvent.press(screen.getByLabelText("Login"));
 
@@ -34,7 +34,7 @@ describe("CardLogin (Native)", () => {
   });
 
   it("renders a login error when provided", () => {
-    renderCardLogin({ errorMessage: "Unable to start login. Please try again." });
+    renderCardLoginView({ errorMessage: "Unable to start login. Please try again." });
 
     expect(screen.getByText("Unable to start login. Please try again.")).toBeTruthy();
   });

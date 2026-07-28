@@ -1,14 +1,11 @@
 import React from "react";
 import { Subheader, SubheaderDescription, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
-import { CardLogin } from "../../components/CardLogin/CardLogin.web";
-import type { CardLoginViewProps } from "../../components/CardLogin/types";
+import { CardLogin } from "../../components/CardLogin";
 import type { CardScreenViewModel } from "./useCardScreenViewModel";
 
-type CardScreenViewProps = CardScreenViewModel & {
-  readonly cardLogin: CardLoginViewProps;
-};
+type CardScreenViewProps = CardScreenViewModel;
 
-export function CardScreenView({ cardLogin, description, title }: CardScreenViewProps) {
+export function CardScreenView({ description, title }: CardScreenViewProps) {
   return (
     <Subheader>
       <div className="flex w-full items-center gap-16">
@@ -18,7 +15,7 @@ export function CardScreenView({ cardLogin, description, title }: CardScreenView
           </SubheaderTitle>
           <SubheaderDescription className="body-2 text-muted">{description}</SubheaderDescription>
         </div>
-        <CardLogin {...cardLogin} />
+        <CardLogin />
       </div>
     </Subheader>
   );

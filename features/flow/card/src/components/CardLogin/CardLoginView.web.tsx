@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import type { CardLoginViewProps } from "./types";
 
-export function CardLogin({
+export function CardLoginView({
   loginLabel,
   isLoading,
   errorMessage,
