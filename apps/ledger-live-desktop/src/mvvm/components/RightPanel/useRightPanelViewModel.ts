@@ -16,12 +16,8 @@ import type { RightPanelViewModel } from "./types";
 const ASSET_PATH_PREFIX = "/asset/";
 const WEBVIEW_KEY_PLACEHOLDER = "none";
 
-const buildSwapWebViewKey = (
-  routeAssetId?: string,
-  currencyId?: string,
-  accountId?: string,
-): string =>
-  [routeAssetId, currencyId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
+const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
+  [assetId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
 
 export const DEFAULT_RIGHT_PANEL_VIEW_MODEL: RightPanelViewModel = {
   initialSwapState: undefined,
@@ -88,7 +84,7 @@ export const useRightPanelViewModel = ({
 
   const webviewKey = useMemo(
     () =>
-      buildSwapWebViewKey(decodedRouteAssetId, currency?.id, initialSwapState?.defaultAccountId),
+      buildSwapWebViewKey(decodedRouteAssetId || currency?.id, initialSwapState?.defaultAccountId),
     [decodedRouteAssetId, currency?.id, initialSwapState?.defaultAccountId],
   );
 
