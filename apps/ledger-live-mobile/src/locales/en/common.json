@@ -179,6 +179,10 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloEpochProcessingActive": {
+      "title": "This action is temporarily unavailable",
+      "description": "Celo is currently processing an epoch update. During this short on-chain window, staking actions such as voting, activating, revoking, locking, and unlocking are temporarily blocked by the network. Please try again once epoch processing is complete."
+    },
     "CeloGroupNotVotable": {
       "title": "This validator group cannot receive votes. It may be full or no longer eligible."
     },
