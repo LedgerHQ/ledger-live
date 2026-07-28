@@ -1,4 +1,4 @@
-import { lockedGoldABI } from "@celo/abis";
+import { electionABI, lockedGoldABI } from "@celo/abis";
 import { isAddress } from "viem";
 import {
   AmountRequired,
@@ -12,7 +12,7 @@ import {
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { CeloAllFundsWarning, CeloGroupNotVotable } from "../errors";
+import { CeloAllFundsWarning, CeloEpochProcessingActive, CeloGroupNotVotable } from "../errors";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
@@ -167,6 +167,29 @@ export const getTransactionStatus: AccountBridge<
       )
     ) {
       errors.recipient = new CeloGroupNotVotable();
+    }
+  }
+
+  // During the Celo epoch-processing window the EpochManager blocks `Election.vote`
+  // (onlyWhenNotBlocked), so on-chain estimation/broadcast reverts with an opaque
+  // "RPC request failed". Probe the same isBlocked() condition the modifier checks
+  // and surface a clear, actionable error before the user can sign. Set on `amount`
+  // so it takes precedence over the balance checks above and disables Continue.
+  // A transient probe failure is swallowed — the sign-step guard in buildTransaction
+  // remains the safety net.
+  if (transaction.mode === "vote") {
+    try {
+      const electionAddress = await getRegistryAddressFor("Election");
+      const blocked = await client.readContract({
+        address: electionAddress,
+        abi: electionABI,
+        functionName: "isBlocked",
+      });
+      if (blocked) {
+        errors.amount = new CeloEpochProcessingActive();
+      }
+    } catch {
+      // ignore — do not block on a failed probe
     }
   }
 

@@ -10,7 +10,7 @@ import {
   tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
 import { ZERO_ADDRESS } from "../../constants";
-import { CeloGroupNotVoted } from "../../errors";
+import { CeloEpochProcessingActive, CeloGroupNotVoted } from "../../errors";
 
 const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
 const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
@@ -314,6 +314,45 @@ describe("buildTransaction", () => {
       to: ELECTION_ADDRESS,
       data: expectedData,
     });
+  });
+
+  it("should throw CeloEpochProcessingActive when a vote reverts during epoch processing (LIVE-32861)", async () => {
+    estimateGasMock.mockRejectedValueOnce(
+      new Error("execution reverted: Contract is blocked from performing this action"),
+    );
+
+    await expect(
+      buildTransaction(
+        {
+          ...accountFixture,
+          spendableBalance: BigNumber(123),
+          celoResources: {
+            registrationStatus: false,
+            lockedBalance: BigNumber(0),
+            nonvotingLockedBalance: BigNumber(40),
+            pendingWithdrawals: null,
+            votes: null,
+            electionAddress: null,
+            lockedGoldAddress: null,
+            maxNumGroupsVotedFor: BigNumber(0),
+          },
+        },
+        { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+      ),
+    ).rejects.toThrow(CeloEpochProcessingActive);
+  });
+
+  it("should rethrow the raw error for a non-vote mode blocked during epoch processing", async () => {
+    estimateGasMock.mockRejectedValueOnce(
+      new Error("execution reverted: Contract is blocked from performing this action"),
+    );
+
+    await expect(
+      buildTransaction(
+        { ...accountFixture, spendableBalance: BigNumber(123) },
+        { ...transactionFixture, mode: "send" },
+      ),
+    ).rejects.toThrow("Contract is blocked from performing this action");
   });
 
   it("should build a revoke transaction", async () => {
