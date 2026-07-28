@@ -15,10 +15,9 @@ const tmsLinks: string[] = ["B2CQA-5740"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sei_evm", "@family-evm"];
 
 setTeamOwner(Team.COIN_INTEGRATION);
+tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+tags.forEach(tag => $Tag(tag));
 describe("Delegate", () => {
-  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-  tags.forEach(tag => $Tag(tag));
-
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.SEI,
