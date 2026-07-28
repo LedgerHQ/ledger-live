@@ -11,6 +11,7 @@ Be aware of project conventions in relevant skills under `.agents/skills/`. Use 
 
 - `.agents/skills/mvvm-architecture/SKILL.md` — Distinguishing new MVVM code (`src/mvvm/`) from legacy patterns
 - `.agents/skills/ddd-structure-flow/SKILL.md` — Identifying DDD layers and `features/flow` packages whose `steps` are MVVM screen equivalents
+- `docs/ddd-monorepo-architecture.md` — Distinguishing supported DDD placement from standalone or legacy `libs/` packages
 
 ## Core Mission
 

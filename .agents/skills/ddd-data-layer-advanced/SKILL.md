@@ -1,6 +1,6 @@
 ---
 name: ddd-data-layer-advanced
-description: Structure a Ledger Wallet data layer where one API response hydrates several entity slices. Use when creating or reviewing cross-entity domain/api orchestration, response validation, dispatching, and tests spanning multiple domain/entity packages.
+description: Structure a Ledger Wallet data layer where one API response serves several entities. Use when creating or reviewing cross-entity domain/api orchestration with RTK Query, createAsyncThunk, or both, including response validation and tests spanning multiple domain/entity packages.
 ---
 
 # DDD Data Layer: Multiple Entities
@@ -12,41 +12,29 @@ Source: [Data Layer Advanced Use Case](https://ledgerhq.atlassian.net/wiki/space
 ## Split Ownership
 
 ```text
-domain/entity/<first>/src/data/
-├── schema.ts
-├── schema.mock.ts
-└── slice.ts
-
-domain/entity/<second>/src/data/
-├── schema.ts
-├── schema.mock.ts
-└── slice.ts
-
-domain/api/<orchestrator>/src/
-├── <orchestrator>.thunk.ts
-└── <orchestrator>.thunk.test.ts
+domain/entity/<first>/src/schema.ts
+domain/entity/<second>/src/schema.ts
+domain/api/<orchestrator>/src/api.ts
 ```
 
-- Let each entity own its schema, type, initial state, mocks, selectors, slice, and tests.
-- Let one `domain/api` package own the cross-entity response contract, request, transformation, validation, and dispatch sequence.
+- Let each entity own its schema and inferred type. Add state, selectors, mocks, and tests only when that entity needs them.
+- Let one `domain/api` package own the cross-entity response contract, request, transformation, and validation.
 - Keep UI and feature state in `features/flow`.
-- Register entity reducers in each app; do not move orchestration into an app.
+- Keep app composition out of the domain package.
 
 ## Process The Response
 
-1. Fetch the response in the orchestrating API package.
-2. Reject transport failures before reading the payload.
-3. Validate every response branch as a collection with its owning entity schema.
-4. Transform data only in the API layer.
-5. Dispatch already validated entities to their respective slices.
-6. Return a useful typed result when callers need completion or error state.
+1. Fetch with RTK Query, `createAsyncThunk`, or both.
+2. In the API layer, validate and transform each response collection with its owning entity schema.
+3. Keep the result in RTK Query or dispatch the validated entities when slices must be hydrated.
 
-Validate the collection shape itself, not only each item. With Zod, prefer `entitySchema.array().parse(value)` over calling `.map()` on untrusted data.
+Validate the collection before iterating over it: prefer `entitySchema.array().parse(value)` to `.map()` on untrusted data.
 
 ## Test The Orchestration
 
-- Build payloads with each entity's mock builder.
-- Create a minimal local store with the involved reducers, or use an existing domain test harness.
+- Use entity mock builders when available; otherwise build schema-valid fixtures.
+- Test RTK Query endpoints, thunks, or their integration according to the chosen orchestration.
+- When reducers are involved, create a minimal local store or use an existing domain test harness.
 - Never import an app store or app alias into a domain test.
-- Assert the returned result and every hydrated slice.
+- Assert the validated result, cache entry, and any hydrated slice that the orchestration owns.
 - Cover transport failure, invalid collection shape, and invalid entity data when relevant.

@@ -7,25 +7,28 @@ description: Place and organize Ledger Wallet code in the DDD monorepo. Use when
 
 Use the lowest layer that can own the concern without depending on a higher layer.
 
-Source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow)
+Read [the canonical architecture guide](../../../docs/ddd-monorepo-architecture.md) and [the package creation checklist](../../../docs/new-library.md) before creating a package.
+
+Upstream source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow)
 
 ## Choose The Owner
 
-| Concern                          | Location                      | Owns                                                                           | Does not own                    |
-| -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------- |
-| Platform entry point             | `apps/<app>`                  | Screens, global routing, store composition, analytics, observability, app glue | Reusable feature internals      |
-| User-visible capability          | `features/flow/<feature>`     | Business-aware UI, user journeys, local state, flow routing                    | App-specific screen composition |
-| Invisible feature infrastructure | `features/platform/<feature>` | Domain-aware hooks, selectors, NFR rules, React glue, non-visual components    | Screens and app routing         |
-| Business object                  | `domain/entity/<entity>`      | Runtime schema, inferred type, defaults, mocks, selectors, slice               | Network calls and feature state |
-| Network/data access              | `domain/api/<name>`           | API contracts, calls, transformations, RTK Query, thunks                       | UI and app composition          |
-| Cross-entity business concept    | `domain/aggregate/<name>`     | A cohesive concept spanning entities                                           | Generic feature helpers         |
-| Business-agnostic primitive      | `shared/<name>`               | Generic schemas, utilities, Redux primitives                                   | Domain or app knowledge         |
-| Development-only tooling         | `support/<name>`              | Shared test, TypeScript, lint, and format configuration                        | Runtime code                    |
+| Concern                                  | Location                      | Owns                                                                                             | Does not own                                       |
+| ---------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Platform entry point                     | `apps/<app>`                  | Screens, global routing, store composition, analytics, observability, app glue                   | Reusable feature internals                         |
+| User-visible capability                  | `features/flow/<feature>`     | Business-aware UI, user journeys, local state, flow routing                                      | App-specific screen composition                    |
+| Capability shared across flows           | `features/platform/<feature>` | Hooks, selectors, NFR rules, React glue, and components shared by several flows or use cases     | Single-flow internals and fully generic components |
+| Business object                          | `domain/entity/<entity>`      | Runtime schema, inferred type, defaults, mocks, selectors, slice                                 | Network calls and feature state                    |
+| Network/data access                      | `domain/api/<name>`           | API contracts, calls, transformations, RTK Query, thunks                                         | UI and app composition                             |
+| Business-agnostic primitive or component | `shared/<name>`               | Generic schemas, utilities, Redux primitives, and components without domain or feature knowledge | Domain or app knowledge                            |
+| Development-only tooling                 | `support/<name>`              | Shared test, TypeScript, lint, and format configuration                                          | Runtime code                                       |
 
 Use these distinctions:
 
 - Keep feature-scoped state in its `features/flow` package; do not promote it to an entity.
-- Put domain-aware helpers shared by features in `features/platform`, not `domain`.
+- Keep an element in `features/flow` when it belongs to one flow or use case.
+- Move a feature-level element to `features/platform` when several flows or use cases need it, especially when it connects them to the domain.
+- Keep fully generic, business-agnostic elements in `shared` or the existing design-system package.
 - Keep app screens in each app. Let them compose exported flow entry points.
 - Keep `.web` and `.native` variants beside each other inside the owning feature.
 
@@ -49,15 +52,14 @@ features/flow/<feature>/src/
 └── index.ts                   # minimal public API
 
 domain/entity/<entity>/src/
-├── data/
-│   ├── schema.ts
-│   ├── schema.mock.ts
-│   ├── selectors.ts
-│   └── slice.ts
+├── schema.ts
+├── schema.mock.ts
+├── selectors.ts
+├── slice.ts
 └── index.ts
 
 domain/api/<name>/src/
-├── <name>.api.ts              # or a focused thunk
+├── api.ts
 └── index.ts
 ```
 
@@ -83,7 +85,7 @@ More precisely:
 | `apps`              | Any new-architecture layer                                     |
 | `support`           | Development tooling only; consume it through `devDependencies` |
 
-- Never import legacy `libs/` or `@ledgerhq/*` packages from `shared`, `domain`, or `features`.
+- Never import internal legacy `libs/*` packages from `shared`, `domain`, or `features`.
 - Let legacy code consume new architecture only as migration glue.
 - Inject private new-architecture packages into published legacy packages at the app composition root.
 - Import another package through its npm name, never through a relative path.

@@ -12,7 +12,7 @@ Source: [Types, Initial State & Mocks](https://ledgerhq.atlassian.net/wiki/space
 ## Place Files
 
 ```text
-domain/entity/<entity>/src/data/
+domain/entity/<entity>/src/
 ├── schema.ts
 ├── schema.mock.ts
 ├── schema.test.ts
@@ -22,21 +22,21 @@ domain/entity/<entity>/src/data/
 └── slice.test.ts
 
 domain/api/<entity>/src/
-├── <entity>.api.ts
-└── <entity>.api.test.ts
+├── api.ts
+└── api.test.ts
 ```
 
 Export only the contracts consumers need from each package `index.ts`.
 
 ## Keep Ownership Clear
 
-| File              | Responsibility                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| `schema.ts`       | Define the runtime schema, infer the TypeScript type, and declare a complete initial state |
-| `schema.mock.ts`  | Build valid entity data with sensible defaults and optional overrides                      |
-| `slice.ts`        | Own focused entity reducers and actions                                                    |
-| `selectors.ts`    | Read or derive entity state without importing an app store type                            |
-| `<entity>.api.ts` | Own transport contracts, network calls, and transformations                                |
+| File             | Responsibility                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `schema.ts`      | Define the runtime schema, infer the TypeScript type, and declare a complete initial state |
+| `schema.mock.ts` | Build valid entity data with sensible defaults and optional overrides                      |
+| `slice.ts`       | Own focused entity reducers and actions                                                    |
+| `selectors.ts`   | Read or derive entity state without importing an app store type                            |
+| `api.ts`         | Own transport contracts, network calls, and transformations                                |
 
 Follow the package's runtime-schema precedent (Zod or Typia). Do not maintain a separate handwritten type that can drift from the schema.
 
