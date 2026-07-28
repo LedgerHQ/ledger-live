@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Text, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { TouchableOpacity, Modal } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -33,35 +33,37 @@ export const PickerField = ({
   };
 
   return (
-    <Flex mb={3}>
-      <Text variant="body" fontWeight="medium" color="neutral.c100" mb={2}>
+    <Box lx={{ marginBottom: "s8" }}>
+      <Text typography="body2" lx={{ color: "base", marginBottom: "s4" }}>
         {label}
       </Text>
       {description && (
-        <Text variant="small" color="neutral.c70" mb={2}>
+        <Text typography="body3" lx={{ color: "muted", marginBottom: "s4" }}>
           {description}
         </Text>
       )}
 
       <TouchableOpacity onPress={() => setIsOpen(true)}>
-        <Flex
-          backgroundColor="neutral.c30"
-          borderRadius={8}
-          borderWidth={1}
-          borderColor="neutral.c50"
-          px={3}
-          py={3}
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
+        <Box
+          lx={{
+            backgroundColor: "surface",
+            borderRadius: "md",
+            borderColor: "muted",
+            paddingHorizontal: "s8",
+            paddingVertical: "s8",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+          style={{ borderWidth: 1 }}
         >
-          <Text variant="body" color="neutral.c100">
+          <Text typography="body2" lx={{ color: "base" }}>
             {selectedOption?.label || "Select an option"}
           </Text>
-          <Text variant="body" color="neutral.c70" style={{ fontSize: 16 }}>
+          <Text typography="body2" lx={{ color: "muted" }}>
             {isOpen ? "▲" : "▼"}
           </Text>
-        </Flex>
+        </Box>
       </TouchableOpacity>
 
       <Modal
@@ -75,49 +77,61 @@ export const PickerField = ({
           onPress={() => setIsOpen(false)}
           activeOpacity={1}
         >
-          <Flex flex={1} justifyContent="center" alignItems="center" px={4}>
+          <Box
+            lx={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingHorizontal: "s12",
+            }}
+          >
             <TouchableOpacity activeOpacity={1} style={{ width: "100%", maxWidth: 300 }}>
-              <Flex backgroundColor="neutral.c00" borderRadius={12} p={4} maxHeight={300}>
-                <Text variant="h5" color="neutral.c100" fontWeight="semiBold" mb={3}>
+              <Box
+                lx={{ backgroundColor: "canvas", borderRadius: "lg", padding: "s12" }}
+                style={{ maxHeight: 300 }}
+              >
+                <Text typography="heading5SemiBold" lx={{ color: "base", marginBottom: "s8" }}>
                   {label}
                 </Text>
 
                 <ScrollView style={{ maxHeight: 200 }}>
                   {options.map(option => (
                     <TouchableOpacity key={option.value} onPress={() => handleSelect(option.value)}>
-                      <Flex
-                        py={3}
-                        px={2}
-                        backgroundColor={value === option.value ? "neutral.c40" : "transparent"}
-                        borderRadius={6}
-                        mb={1}
+                      <Box
+                        lx={{
+                          paddingVertical: "s8",
+                          paddingHorizontal: "s4",
+                          borderRadius: "sm",
+                          marginBottom: "s2",
+                          ...(value === option.value ? { backgroundColor: "surface" } : {}),
+                        }}
                       >
                         <Text
-                          variant="body"
-                          color={value === option.value ? "neutral.c100" : "neutral.c80"}
-                          fontWeight={value === option.value ? "semiBold" : "medium"}
+                          typography={value === option.value ? "body2SemiBold" : "body2"}
+                          lx={{ color: value === option.value ? "base" : "muted" }}
                         >
                           {option.label}
                         </Text>
-                      </Flex>
+                      </Box>
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
 
-                <Flex mt={3} pt={3} borderTopWidth={1} borderTopColor="neutral.c40">
+                <Box lx={{ marginTop: "s8", paddingTop: "s8" }}>
+                  <Divider />
                   <TouchableOpacity onPress={() => setIsOpen(false)}>
-                    <Flex py={2} alignItems="center">
-                      <Text variant="body" color="neutral.c70">
+                    <Box lx={{ paddingVertical: "s4", alignItems: "center" }}>
+                      <Text typography="body2" lx={{ color: "muted" }}>
                         {"Cancel"}
                       </Text>
-                    </Flex>
+                    </Box>
                   </TouchableOpacity>
-                </Flex>
-              </Flex>
+                </Box>
+              </Box>
             </TouchableOpacity>
-          </Flex>
+          </Box>
         </TouchableOpacity>
       </Modal>
-    </Flex>
+    </Box>
   );
 };

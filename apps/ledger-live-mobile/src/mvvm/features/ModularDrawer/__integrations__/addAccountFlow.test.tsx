@@ -172,8 +172,8 @@ describe("AddAccountFlow with MAD", () => {
     expect(getByText(/bitcoin/i)).toBeVisible();
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
     expect(getByText(/connect device/i)).toBeVisible();
     advanceTimers();
@@ -204,8 +204,8 @@ describe("AddAccountFlow with MAD", () => {
     expect(getByText(/bitcoin/i)).toBeVisible();
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
     expect(getByText(/connect device/i)).toBeVisible();
     advanceTimers();
@@ -233,7 +233,7 @@ describe("AddAccountFlow with MAD", () => {
     advanceTimers();
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
-    await user.press(getByText(/add new or existing account/i));
+    await user.press(getByText(/add account/i));
     advanceTimers();
     const deviceItem = getByText(/ledger stax/i);
     expect(deviceItem).toBeVisible();
@@ -267,8 +267,8 @@ describe("AddAccountFlow with MAD", () => {
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
 
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
 
     expect(getByText(/connect device/i)).toBeVisible();
@@ -320,8 +320,8 @@ describe("AddAccountFlow with MAD", () => {
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
 
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
 
     expect(getByText(/connect device/i)).toBeVisible();
@@ -374,8 +374,8 @@ describe("AddAccountFlow with MAD", () => {
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
 
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
 
     expect(getByText(/connect device/i)).toBeVisible();
@@ -428,8 +428,8 @@ describe("AddAccountFlow with MAD", () => {
     await user.press(getByText(/bitcoin/i));
     advanceTimers();
 
-    expect(getByText(/add new or existing account/i)).toBeVisible();
-    await user.press(getByText(/add new or existing account/i));
+    expect(getByText(/add account/i)).toBeVisible();
+    await user.press(getByText(/add account/i));
     advanceTimers();
 
     expect(getByText(/connect device/i)).toBeVisible();

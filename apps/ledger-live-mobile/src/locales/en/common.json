@@ -9652,6 +9652,8 @@
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
+    "addAccount": "Add account",
     "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",

@@ -108,7 +108,6 @@ export function ModularDrawer({
   });
 
   const flowManagerProps = {
-    useLumenBottomSheet: true,
     assetsViewModel: {
       availableAssets: sortedCryptoCurrencies,
       onAssetSelected: handleAsset,
