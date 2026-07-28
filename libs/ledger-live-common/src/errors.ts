@@ -1070,3 +1070,18 @@ export class WebsocketConnectionFailed extends Error {
     super(message || "WebsocketConnectionFailed");
   }
 }
+
+export class DustLimit extends Error {
+  override name = "DustLimit";
+  constructor(message?: string) {
+    super(message || "DustLimit");
+  }
+}
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}
