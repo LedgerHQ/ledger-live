@@ -2,12 +2,11 @@ import {
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
-  DustLimit,
   FeeTooHigh,
   FeeRequired,
-  OpReturnDataSizeLimit,
   InvalidAddress,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit, OpReturnDataSizeLimit } from "./errors";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";

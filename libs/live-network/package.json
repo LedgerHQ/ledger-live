@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-network",
-  "version": "2.7.0",
+  "version": "2.6.8",
   "description": "Ledger Live network and cache utilities",
   "keywords": [
     "Ledger"
@@ -30,10 +30,18 @@
       "*": [
         "lib/*",
         "lib/batcher/*"
+      ],
+      "errors": [
+        "./src/errors.ts"
       ]
     }
   },
   "exports": {
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",

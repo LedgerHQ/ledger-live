@@ -1,6 +1,5 @@
 import React from "react";
 import { Linking } from "react-native";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { Trans, useLocale } from "~/context/Locale";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
@@ -9,7 +8,9 @@ import Button from "../Button";
 import ExternalLink from "../ExternalLink";
 import { urls } from "~/utils/urls";
 
-const WebPTXPlayerNetworkFail = createCustomErrorClass("WebPTXPlayerNetworkFail");
+class WebPTXPlayerNetworkFail extends Error {
+  override name = "WebPTXPlayerNetworkFail";
+}
 
 const ExternalLinkWrapper = styled.View`
   margin-top: 19px;

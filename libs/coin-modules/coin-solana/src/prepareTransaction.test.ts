@@ -1,4 +1,4 @@
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughGas } from "./errors";
 import {
   SolanaMemoIsTooLong,
   SolanaRecipientAccountNotFunded,

@@ -7,7 +7,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeTooHigh,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

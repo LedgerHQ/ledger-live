@@ -2,10 +2,10 @@ import {
   isAddressSanctioned,
   isCheckSanctionedAddressEnabled,
 } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { decodeAccountId, getMainAccount, checkAccountSupported } from "../account";
 import { getEnv } from "@shared/env";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AccountBridge,

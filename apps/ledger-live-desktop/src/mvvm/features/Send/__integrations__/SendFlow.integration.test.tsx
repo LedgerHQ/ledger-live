@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -165,7 +165,7 @@ describe("Send Flow Integration", () => {
 
   describe("Invalid recipient", () => {
     it("should not allow proceeding with invalid address", async () => {
-      const { InvalidAddress } = jest.requireActual("@ledgerhq/errors");
+      const { InvalidAddress } = jest.requireActual("@ledgerhq/ledger-wallet-framework/errors");
       setMockBridgeRecipientValidation({
         errors: { recipient: new InvalidAddress() },
         warnings: {},

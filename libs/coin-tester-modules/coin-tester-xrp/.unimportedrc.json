@@ -1,3 +1,10 @@
 {
-  "ignorePatterns": ["**/node_modules/**", "**/lib/**", "**/lib-es/**"]
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/lib/**",
+    "**/lib-es/**"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
+  ]
 }

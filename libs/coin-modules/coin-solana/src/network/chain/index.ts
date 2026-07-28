@@ -1,4 +1,4 @@
-import { NetworkError } from "@ledgerhq/errors";
+import { NetworkError } from "../../errors";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   TOKEN_2022_PROGRAM_ID,

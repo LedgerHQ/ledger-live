@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { TransportStatusError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getMainAccount } from "../../../account/index";
 import { getAccountBridge } from "../../../bridge/index";
@@ -28,7 +29,7 @@ const parentAccount = { id: "parent-account-1" } as Account;
 const mainAccount = {
   id: "main-account-1",
   currency: getCryptoCurrencyById("ethereum"),
-} as unknown as Account;
+} as Account;
 const transaction = { family: "evm" } as SignTransactionIntentInput["transaction"];
 const signedOperation = { operation: { id: "operation-1" } } as SignedOperation;
 

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-celo",
-  "version": "7.1.8",
+  "version": "7.1.7",
   "description": "Ledger Hardware Wallet Celo Application API",
   "keywords": [
     "Ledger",
@@ -29,7 +29,6 @@
   "dependencies": {
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2",

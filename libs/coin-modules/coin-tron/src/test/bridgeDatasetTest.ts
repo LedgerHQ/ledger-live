@@ -3,9 +3,8 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, CurrenciesData, DatasetTest, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -14,6 +13,7 @@ import { ACTIVATION_FEES, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getChainParameters } from "../network";
 import type { Transaction, TransactionStatus, TronAccountRaw } from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronInvalidVoteCount,

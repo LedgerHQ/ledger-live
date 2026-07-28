@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "6.7.0",
+  "version": "6.6.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -86,6 +86,11 @@
       "@ledgerhq/source": "./src/bridge/transaction.ts",
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types/*": {
+      "@ledgerhq/source": "./src/types/*.ts",
+      "require": "./lib/types/*.js",
+      "default": "./lib-es/types/*.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

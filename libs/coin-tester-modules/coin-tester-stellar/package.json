@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-stellar",
-  "version": "1.2.1",
+  "version": "1.2.0",
   "private": true,
   "description": "Ledger Stellar Coin Tester",
   "keywords": [
@@ -60,11 +60,11 @@
     "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "^1.8.0",
