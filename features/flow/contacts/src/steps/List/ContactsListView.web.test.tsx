@@ -143,6 +143,24 @@ describe("ContactsPage", () => {
     expect(contactsList).toHaveTextContent("Add contact");
   });
 
+  it("renders the add contact row as the last item in the scrollable contacts list", () => {
+    const contacts = mockPopulatedContacts();
+    const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+
+    renderContactsPage({
+      viewModel: createPopulatedContactsListViewModel(me, contacts),
+    });
+
+    const scrollContainer = screen.getByTestId("contacts-list-scroll");
+    const addContactRow = screen.getByTestId("contacts-add-contact");
+
+    expect(scrollContainer).toContainElement(screen.getByTestId("contacts-section-A"));
+    expect(scrollContainer).toContainElement(addContactRow);
+    expect(addContactRow.compareDocumentPosition(screen.getByTestId("contacts-section-O"))).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
+  });
+
   it("keeps the Contacts page visible while Ledger Sync is checking", () => {
     renderContactsPage({ ledgerSyncStatus: "checking" });
 
