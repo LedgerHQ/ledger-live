@@ -2,7 +2,11 @@ import React from "react";
 import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import AccountsSettings from "./index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  TokenCurrencyIdSchema,
+  TokenCurrencySchema,
+  type TokenCurrency,
+} from "@domain/entity-currency-token";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -18,12 +22,12 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 }));
 
 const mockUsdtToken: TokenCurrency = {
-  id: "ethereum/erc20/usdt",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdt"),
   type: "TokenCurrency",
   name: "Tether USD",
   ticker: "USDT",
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -35,12 +39,12 @@ const mockUsdtToken: TokenCurrency = {
 };
 
 const mockUsdcToken: TokenCurrency = {
-  id: "ethereum/erc20/usdc",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin",
   ticker: "USDC",
   contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("ethereum"),
   tokenType: "erc20",
   units: [
     {
@@ -52,12 +56,12 @@ const mockUsdcToken: TokenCurrency = {
 };
 
 const mockPolygonUsdcToken: TokenCurrency = {
-  id: "polygon/erc20/usdc",
+  id: TokenCurrencyIdSchema.parse("polygon/erc20/usdc"),
   type: "TokenCurrency",
   name: "USD Coin (Polygon)",
   ticker: "USDC",
   contractAddress: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
-  parentCurrencyId: "polygon",
+  parentCurrencyId: TokenCurrencySchema.shape.parentCurrencyId.parse("polygon"),
   tokenType: "erc20",
   units: [
     {

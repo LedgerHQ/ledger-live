@@ -2,7 +2,8 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { fireEvent, screen, render } from "@tests/test-renderer";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import DelegationRow from "../Row";
 

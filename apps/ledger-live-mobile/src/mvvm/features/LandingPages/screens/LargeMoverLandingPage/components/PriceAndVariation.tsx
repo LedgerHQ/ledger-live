@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import Delta from "~/components/Delta";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { useLocale, useTranslation } from "~/context/Locale";

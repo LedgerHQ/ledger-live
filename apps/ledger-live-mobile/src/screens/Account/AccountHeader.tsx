@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import { SharedValue } from "react-native-reanimated";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";

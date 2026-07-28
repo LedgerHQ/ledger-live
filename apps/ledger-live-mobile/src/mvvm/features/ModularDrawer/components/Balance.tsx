@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";

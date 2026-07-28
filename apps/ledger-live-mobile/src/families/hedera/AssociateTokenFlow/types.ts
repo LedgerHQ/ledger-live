@@ -1,6 +1,6 @@
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
 import type { Operation } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { ScreenName } from "~/const";

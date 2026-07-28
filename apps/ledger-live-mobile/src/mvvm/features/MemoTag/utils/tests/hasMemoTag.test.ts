@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { hasMemoDisclaimer } from "../hasMemoTag";
 
 describe("hasMemoDisclaimer", () => {

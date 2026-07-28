@@ -13,7 +13,7 @@ import { useSelector } from "~/context/hooks";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export type AccountSelectionStepProps = {

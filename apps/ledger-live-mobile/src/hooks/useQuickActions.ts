@@ -10,7 +10,7 @@ import {
   isReceiveDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
