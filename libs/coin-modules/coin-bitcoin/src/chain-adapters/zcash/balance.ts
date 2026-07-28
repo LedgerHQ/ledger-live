@@ -2,7 +2,10 @@ import { BigNumber } from "bignumber.js";
 import type { BitcoinOutput } from "../../types";
 import type { ZcashPrivateInfo } from "./types";
 
-type PrivateBalances = Pick<ZcashPrivateInfo, "orchardBalance" | "saplingBalance">;
+type PrivateBalances = Pick<
+  ZcashPrivateInfo,
+  "orchardBalance" | "saplingBalance" | "ironwoodBalance"
+>;
 
 /**
  * Transparent balance = sum of the account's unspent transparent UTXOs.
@@ -17,12 +20,12 @@ export function getTransparentBalance(
   return (utxos ?? []).reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0));
 }
 
-/** Private (shielded) balance = orchard + sapling. */
+/** Private (shielded) balance = orchard + sapling + ironwood. */
 export function getPrivateBalance(privateInfo: PrivateBalances | undefined | null): BigNumber {
   if (!privateInfo) return new BigNumber(0);
-  return (privateInfo.orchardBalance ?? new BigNumber(0)).plus(
-    privateInfo.saplingBalance ?? new BigNumber(0),
-  );
+  return (privateInfo.orchardBalance ?? new BigNumber(0))
+    .plus(privateInfo.saplingBalance ?? new BigNumber(0))
+    .plus(privateInfo.ironwoodBalance ?? new BigNumber(0));
 }
 
 /** Total balance shown to the user = transparent + private. */

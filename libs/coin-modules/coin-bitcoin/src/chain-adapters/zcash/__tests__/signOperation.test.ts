@@ -551,6 +551,7 @@ describe("signOperation — error handling", () => {
       privateInfo: {
         saplingBalance: new BigNumber(0),
         orchardBalance: new BigNumber(0),
+        ironwoodBalance: new BigNumber(0),
         syncState: "disabled",
         progress: 0,
         estimatedTimeRemaining: { hours: 0, minutes: 0 },
