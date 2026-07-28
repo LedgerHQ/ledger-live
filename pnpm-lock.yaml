@@ -4277,6 +4277,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-token
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../platform/feature-flags

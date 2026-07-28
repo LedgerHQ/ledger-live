@@ -4,6 +4,11 @@ export type {
   ContactsCurrencySelectionPort,
 } from "./model/ports";
 export {
+  createContactsAddressValidationService,
+  type ContactsAddressValidationDependencies,
+  type ContactsAddressValidationInput,
+} from "./model/addressValidation";
+export {
   resolveEligibleAddressCurrencyIds,
   type EligibleAddressNetwork,
 } from "./model/resolveEligibleAddressCurrencyIds";
