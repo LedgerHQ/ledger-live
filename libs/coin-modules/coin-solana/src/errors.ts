@@ -221,3 +221,19 @@ export class SolanaTokenNonTransferable extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class NetworkError extends Error {
+  override name = "NetworkError";
+  constructor(message?: string, fields?: Record<string, unknown>, options?: ErrorOptions) {
+    super(message || "NetworkError", options);
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}
