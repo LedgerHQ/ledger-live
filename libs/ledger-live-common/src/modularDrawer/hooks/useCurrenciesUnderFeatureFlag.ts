@@ -102,6 +102,7 @@ export function useCurrenciesUnderFeatureFlag() {
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<string, Feature<unknown> | null>> => ({
+      // TO BE REPLACED soon by branded id
       adi,
       aleo,
       aleo_testnet: aleoTestnet,

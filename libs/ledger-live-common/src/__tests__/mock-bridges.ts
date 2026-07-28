@@ -25,6 +25,7 @@ afterAll(() => {
 });
 
 const mockedCoins: string[] = [
+  // TO BE REPLACED soon by branded id
   "bitcoin",
   "zcash",
   "ethereum",

@@ -28,7 +28,7 @@ type Args = {
    * comma seperated currencyIds
    * eg: --currencies ethereum,polygon,bitcoin
    */
-  currencies?: string;
+  currencies?: string; // TO BE REPLACED soon by branded id
   /**
    * absolute path for the output folder for the json file
    * eg: --outputFolderPath ~/outputs/

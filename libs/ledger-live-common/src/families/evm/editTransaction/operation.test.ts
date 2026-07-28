@@ -1,4 +1,8 @@
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+import {
+  getCryptoCurrencyById,
+  CryptoCurrency,
+  CryptoCurrencyIdSchema,
+} from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   genAccount,
@@ -102,7 +106,7 @@ describe("EVM Family", () => {
 
           const tokenCurrencyWithoutGasTracker: TokenCurrency = {
             ...usdc,
-            parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
+            parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
           };
 
           const account = genAccount("myAccount", { currency: evmWithoutGasTracker });

@@ -101,7 +101,7 @@ const mockTokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
   id: TokenCurrencyIdSchema.parse("ethereum/erc20/acre_btc"),
   contractAddress: "0x1234567890123456789012345678901234567890",
-  parentCurrencyId: "ethereum" as TokenCurrency["parentCurrencyId"],
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   name: "ACRE Bitcoin",
   ticker: "acreBTC",

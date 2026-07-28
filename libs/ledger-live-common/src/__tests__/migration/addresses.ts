@@ -1,6 +1,6 @@
 export type MigrationAddress =
-  | { currencyId: string; address: string; xpub?: never }
-  | { currencyId: string; xpub: string; address?: never };
+  | { currencyId: string; address: string; xpub?: never } // TO BE REPLACED soon by branded id
+  | { currencyId: string; xpub: string; address?: never }; // TO BE REPLACED soon by branded id
 
 export const migrationAddresses: MigrationAddress[] = [
   // bitcoin
