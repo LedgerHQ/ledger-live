@@ -538,7 +538,9 @@
       "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
       "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
-      "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "aleo_title" : "Ledger Nano S™は、Aleoのスワップに対応していません",
+      "aleo_description" : "Aleoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -2596,6 +2598,14 @@
     "feesAmount" : "手数料金額 ({{unit}})",
     "gasLimit" : "ガス制限（{{unit}}）",
     "feesPaid" : "トランザクションを処理するためにネットワークへ支払われる手数料です",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "ネットワーク手数料の支払いには、{{energy}}のエネルギーと{{bandwidth}}のバンド幅を使用します。"
+      },
+      "insufficient" : {
+        "description" : "この送金を行うのに十分なエネルギーとバンド幅がありません。不足分はTRXをバーンすることで補われます。"
+      }
+    },
     "insufficientBalanceFees" : "ネットワーク手数料をカバーするための残高が不足しています",
     "amountToSend" : "送金金額 ({{currency}})",
     "coinToSend" : "送付するコイン",
@@ -4339,7 +4349,10 @@
         "redelegate" : "再デリゲート",
         "redelegateDisabledTooltip" : "再デリゲートは、<0>{{days}}</0>後に可能です",
         "redelegateMaxDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターを再デリゲートすることはできません。",
-        "undelegateDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+          "zero_gravity" : "デリゲート解除するには、デリゲートされたシェアが1 Gwei以上必要です。"
+        },
         "undelegateActivatingTooltip" : "アクティベート中のステーキングはデリゲート解除できません",
         "reward" : "報酬獲得を申請",
         "activeTooltip" : "デリゲートして報酬を得る",
@@ -4363,7 +4376,8 @@
               }
             },
             "amount" : {
-              "title" : "数量"
+              "title" : "数量",
+              "visibilityDelay" : "このデリゲーションがデリゲーションボードに反映されるまでに、最大{{numberOfMinutes}}分かかる場合があります。"
             },
             "validator" : {
               "title" : "バリデーター",
@@ -4732,6 +4746,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "入金",
+      "OUT" : "出金"
     }
   },
   "tezos" : {
@@ -5232,7 +5252,16 @@
         "customFamiliesHint" : "カスタムマルチファミリーテスト用のカンマ区切りファミリー。",
         "customFamiliesPlaceholder" : "evm、stellar、aptos",
         "applyFamilies" : "適用",
-        "resetOverride" : "上書きをリセット"
+        "contactsData" : "連絡先データ",
+        "loadPopulatedContacts" : "入力済みの連絡先を読み込む",
+        "resetContacts" : "連絡先をリセット",
+        "resetOverride" : "上書きをリセット",
+        "featureIntroduction" : {
+          "title" : "新機能の紹介",
+          "label" : "連絡先の登録機能の紹介を表示",
+          "dismissed" : "非表示 — オンにすると、連絡先の案内通知を再び表示します。",
+          "willShow" : "非表示にするまで「連絡先」に表示されます。"
+        }
       },
       "cryptoAssetsList" : {
         "title" : "暗号資産リスト",
@@ -6714,6 +6743,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "送付先アカウントは、選択したASAをオプトインしていません。"
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "メモが長すぎます。",
+      "description" : "Algorandのメモは1024バイトを超えることはできません。メモを短くしてください。"
     },
     "AmountRequired" : {
       "title" : "数量は必須です。"
@@ -8622,13 +8655,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "詳細を表示。数回のタップで取引。{{discount}}％OFF",
-      "subtitle" : "大画面、スマートなトランザクション、強化された保護を{{discount}}％OFFでお楽しみください。"
+      "subtitle" : "大画面、スマートなトランザクション、強化された保護を{{discount}}％OFFでお楽しみください。",
+      "cta" : "タッチスクリーン搭載の署名用デバイスを詳しく見る"
     },
     "optedOut" : {
-      "title" : "詐欺を見抜く。すべての詳細を確認する",
-      "subtitle" : "タッチスクリーン搭載の署名用デバイスで詳細を明確に確認し、高度なセキュリティチェックで詐欺を検知しましょう。"
-    },
-    "cta" : "タッチスクリーン搭載の署名用デバイスを詳しく見る"
+      "title" : "署名前に詐欺を見抜く",
+      "subtitle" : "リアルタイムの脅威検出を可能にする、高度なセキュリティ機能についての詳細をご確認ください。",
+      "cta" : "詳細をチェック"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -9272,11 +9306,36 @@
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
     "searchPlaceholder" : "連絡先を検索",
+    "searchNoResults" : "連絡先が見つかりません",
     "me" : {
       "name" : "自分",
       "addressCount_zero" : "0アドレス",
       "addressCount_one" : "{{count}}アドレス",
       "addressCount_other" : "{{count}}アドレス"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
+      "dismiss" : "了解"
+    },
+    "featureIntroduction" : {
+      "title" : "連絡先の登録機能のご紹介",
+      "description" : "暗号資産用のアドレス帳 — 送信先のウォレットをすべて1か所に保存。",
+      "primaryAction" : "連絡先の登録機能を試す",
+      "secondaryAction" : "後で",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "アドレスを一度保存するだけ",
+          "description" : "送信先のアドレスを1か所で管理。"
+        },
+        "sendToRightAddress" : {
+          "title" : "正しいアドレスに送信",
+          "description" : "資金は常に正しいウォレットに届きます。"
+        },
+        "privateAcrossDevices" : {
+          "title" : "デバイス間でプライバシーを保護",
+          "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
+        }
+      }
     }
   },
   "assetDetails" : {

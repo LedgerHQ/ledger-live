@@ -1,5 +1,19 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.18.5
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0
+
+## 1.18.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
 ## 1.18.4
 
 ### Patch Changes
