@@ -64,8 +64,8 @@ const subAccounts: Array<{
   },
   {
     account: TokenAccount.SOL_GIGA_1,
-    xrayTicket1: "B2CQA-XXXX",
-    xrayTicket2: "B2CQA-XXXX",
+    xrayTicket1: "B2CQA-6119",
+    xrayTicket2: "B2CQA-6128",
     notPreSeeded: true,
   },
 ];
