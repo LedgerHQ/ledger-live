@@ -1,162 +1,95 @@
 ---
 name: ddd-structure-flow
-description: Apply the Ledger Wallet monorepo DDD re-architecture structure and flow guidelines. Use when creating or reviewing packages under apps, features/platform, features/flow, domain/entity, domain/api, domain/aggregate, or shared, when structuring flow steps with MVVM, and when checking dependency boundaries, package naming, Nx tags, or legacy libs imports.
+description: Place and organize Ledger Wallet code in the DDD monorepo. Use when creating, moving, or reviewing code under apps, features, domain, shared, or support; deciding which layer owns a concern; structuring packages and flow steps; or checking package names, dependency boundaries, platform variants, and legacy imports.
 ---
 
 # DDD Structure And Flow
 
-Source: https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow
+Use the lowest layer that can own the concern without depending on a higher layer.
 
-## Goal
+Source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117/Guideline+Monorepo+DDD+Re-architecture+Structure+Flow)
 
-Optimize code discovery with a C4-like structure:
+## Choose The Owner
 
-- root: app boundaries and external connections
-- one level deep: core capabilities
-- two levels deep: feature or domain business logic
-- colocate files that change together
-- keep mobile, web, and desktop variants close with `.native` and `.web` files
-- enforce boundaries with Nx tags and package dependencies, not tacit conventions
+| Concern                          | Location                      | Owns                                                                           | Does not own                    |
+| -------------------------------- | ----------------------------- | ------------------------------------------------------------------------------ | ------------------------------- |
+| Platform entry point             | `apps/<app>`                  | Screens, global routing, store composition, analytics, observability, app glue | Reusable feature internals      |
+| User-visible capability          | `features/flow/<feature>`     | Business-aware UI, user journeys, local state, flow routing                    | App-specific screen composition |
+| Invisible feature infrastructure | `features/platform/<feature>` | Domain-aware hooks, selectors, NFR rules, React glue, non-visual components    | Screens and app routing         |
+| Business object                  | `domain/entity/<entity>`      | Runtime schema, inferred type, defaults, mocks, selectors, slice               | Network calls and feature state |
+| Network/data access              | `domain/api/<name>`           | API contracts, calls, transformations, RTK Query, thunks                       | UI and app composition          |
+| Cross-entity business concept    | `domain/aggregate/<name>`     | A cohesive concept spanning entities                                           | Generic feature helpers         |
+| Business-agnostic primitive      | `shared/<name>`               | Generic schemas, utilities, Redux primitives                                   | Domain or app knowledge         |
+| Development-only tooling         | `support/<name>`              | Shared test, TypeScript, lint, and format configuration                        | Runtime code                    |
 
-## Layers
+Use these distinctions:
 
-Use four layers:
+- Keep feature-scoped state in its `features/flow` package; do not promote it to an entity.
+- Put domain-aware helpers shared by features in `features/platform`, not `domain`.
+- Keep app screens in each app. Let them compose exported flow entry points.
+- Keep `.web` and `.native` variants beside each other inside the owning feature.
 
-| Layer      | Purpose                                                           | Typical weight |
-| ---------- | ----------------------------------------------------------------- | -------------- |
-| `apps`     | Platform entry points, routing, screens, observability, analytics | 20%            |
-| `features` | Shared business code split into `platform` and `flow`             | 60%            |
-| `domain`   | Business objects, schemas, APIs, aggregates                       | 10%            |
-| `shared`   | Business-agnostic primitives and tooling                          | 10%            |
+## Organize The Package
 
-### `apps`
-
-Use apps for platform-specific composition:
-
-- screens and routes
-- state-manager composition
-- observability and analytics wiring
-- app-specific platform glue
-
-Do not put reusable feature internals in apps. Each app composes `features/flow` packages into its own screens.
-
-### `features/platform`
-
-Use for feature-level non-functional requirements that are required by user-facing flows but are not screens.
-
-Contains:
-
-- hooks, selectors, feature-level NFR rules
-- cross-feature helpers that understand domain concepts
-- React glue and non-visual components such as `FeatureToggle`
-
-Does not contain:
-
-- screen-specific rendering
-- app-specific routing or composition
-
-Example packages:
-
-- `@features/platform-feature-flags`
-- `@features/platform-coin-loader`
-
-### `features/flow`
-
-Use for user-facing shared features that apps assemble into screens.
-
-Contains:
-
-- business-aware UI components
-- local state and user-facing logic
-- `.web` and `.native` component variants when needed
-- `steps/<StepName>` units for screen-like MVVM flows
-
-Does not contain:
-
-- app-specific screen composition
-- direct app routing ownership
-
-Structure each flow as a private package:
+Every unit is a private package with `package.json`, `src/`, explicit exports, and no cross-package relative imports.
 
 ```text
-features/flow/<feature>/
-├── src/
-│   ├── components/
-│   ├── hooks/
-│   ├── router/
-│   ├── steps/
-│   │   └── <StepName>/
-│   │       ├── components/
-│   │       ├── viewModel.ts
-│   │       ├── view.ts
-│   │       ├── view.test.ts
-│   │       └── index.ts
-│   ├── state/
-│   ├── utils/
+features/flow/<feature>/src/
+├── components/                # shared by several steps
+├── hooks/
+├── router/                    # flow-local routing only
+├── state/                     # feature-scoped state
+├── steps/<StepName>/
+│   ├── components/            # used only by this step
+│   ├── viewModel.ts           # state and orchestration
+│   ├── view.ts                # rendering and callbacks
+│   ├── view.test.ts
 │   └── index.ts
-└── package.json
+├── utils/
+└── index.ts                   # minimal public API
+
+domain/entity/<entity>/src/
+├── data/
+│   ├── schema.ts
+│   ├── schema.mock.ts
+│   ├── selectors.ts
+│   └── slice.ts
+└── index.ts
+
+domain/api/<name>/src/
+├── <name>.api.ts              # or a focused thunk
+└── index.ts
 ```
 
-- Treat each `steps/<StepName>` as the flow equivalent of an MVVM screen.
-- Keep connected state and orchestration in `viewModel`; keep `view` focused on rendering and callbacks.
-- Colocate step-only components under the step. Keep components shared across steps at `src/components`.
-- Export only the flow entry points that apps need. Let app screens compose those entry points.
+Colocate tests with the files they cover. Add folders only when they group files that change together.
 
-### `domain`
+## Respect Boundaries
 
-Use for semantic business foundations:
+Dependencies flow downward:
 
-- `domain/entity`: Zod schemas, inferred types, defaults, mocks, selectors, slices
-- `domain/api`: network calls, API contracts, transformations, RTK Query, thunks
-- `domain/aggregate`: cross-entity aggregates when a domain concept spans entities
+```text
+apps → features/flow → features/platform → domain → shared
+```
 
-Do not put cross-cutting feature helpers in `domain`; move those to `features/platform`.
+More precisely:
 
-### `shared`
+| Source              | May depend on                                                  |
+| ------------------- | -------------------------------------------------------------- |
+| `shared`            | `shared`                                                       |
+| `domain/entity`     | `domain/entity`, `shared`                                      |
+| `domain/api`        | `domain/api`, `domain/entity`, `shared`                        |
+| `features/platform` | `features/platform`, `domain`, `shared`                        |
+| `features/flow`     | `features/flow`, `features/platform`, `domain`, `shared`       |
+| `apps`              | Any new-architecture layer                                     |
+| `support`           | Development tooling only; consume it through `devDependencies` |
 
-Use only for business-agnostic primitives:
+- Never import legacy `libs/` or `@ledgerhq/*` packages from `shared`, `domain`, or `features`.
+- Let legacy code consume new architecture only as migration glue.
+- Inject private new-architecture packages into published legacy packages at the app composition root.
+- Import another package through its npm name, never through a relative path.
+- Let Nx infer tags from paths; do not add manual tags unless local tooling requires them.
 
-- no app context
-- no domain business logic
-- examples: `@shared/feature-flags`, primitives, schema helpers
-
-## Dependency Rules
-
-Allowed dependencies by source:
-
-| Source              | May depend on                                                    |
-| ------------------- | ---------------------------------------------------------------- |
-| `shared`            | `shared`                                                         |
-| `domain`            | `domain`, `shared`                                               |
-| `features/platform` | `features/platform`, `domain`, `shared`                          |
-| `features/flow`     | `features/flow`, `features/platform`, `domain`, `shared`         |
-| `apps`              | `apps`, `features/flow`, `features/platform`, `domain`, `shared` |
-
-Forbidden:
-
-- `shared`, `domain`, and `features` must not import legacy `libs/` or `@ledgerhq/*` packages.
-- New-arch core must stay legacy-free; legacy code can consume new-arch only as temporary migration glue.
-- Published `libs/` packages must consume private new-arch packages through injection at the app composition root, not direct imports.
-- Do not use cross-package relative imports; import through the npm package name.
-
-## Nx Tags
-
-Nx tags are inferred from paths by `tools/nx-plugins/project-tags/plugin.js`; do not add manual `tags` unless the local tooling requires it.
-
-| Path prefix          | Tags                    |
-| -------------------- | ----------------------- |
-| `shared/`            | `scope:shared`          |
-| `domain/`            | `scope:domain`          |
-| `features/`          | `scope:features`        |
-| `apps/`              | `scope:apps`            |
-| `domain/entity/`     | `type:domain-entity`    |
-| `domain/api/`        | `type:domain-api`       |
-| `features/platform/` | `type:feature-platform` |
-| `features/flow/`     | `type:feature-flow`     |
-
-## Package Naming
-
-Every layer unit is a private npm package with `package.json`, `src/`, and explicit exports.
+## Name Packages
 
 | Location                   | Package name                |
 | -------------------------- | --------------------------- |
@@ -165,30 +98,12 @@ Every layer unit is a private npm package with `package.json`, `src/`, and expli
 | `domain/api/<name>`        | `@domain/api-<name>`        |
 | `features/platform/<name>` | `@features/platform-<name>` |
 | `features/flow/<name>`     | `@features/flow-<name>`     |
+| `support/<name>`           | `@support/<name>`           |
 
-## Skeleton
+## Review
 
-```text
-apps/ledger-live-desktop/screens/WalletScreen.web.tsx
-apps/ledger-live-mobile/screens/WalletScreen.native.tsx
-features/platform/feature-flags/src/hooks/useFeatureFlags.ts
-features/flow/wallet-balance/src/components/WalletBalance/WalletBalance.web.tsx
-features/flow/wallet-balance/src/components/WalletBalance/WalletBalance.native.tsx
-features/flow/wallet-balance/src/steps/Overview/viewModel.ts
-features/flow/wallet-balance/src/steps/Overview/view.ts
-domain/entity/crypto-asset/src/data/schema.ts
-domain/entity/crypto-asset/src/data/slice.ts
-domain/api/crypto-asset/src/cryptoAsset.api.ts
-shared/feature-flags/src/data/schema.ts
-```
-
-## Review Checklist
-
-- The package is in the lowest layer that can own the behavior.
-- Apps compose screens; flows expose reusable user-facing blocks.
-- Flow steps use MVVM separation and colocate step-specific files.
-- Platform features hold invisible feature infrastructure, not screens.
-- Domain packages own business objects and APIs, not cross-cutting feature glue.
-- Shared packages stay business-agnostic.
-- Imports follow the dependency table and use package names.
-- Legacy `libs/` imports are kept out of `shared`, `domain`, and `features`.
+- Confirm the concern sits in the lowest valid layer.
+- Confirm folders express ownership and colocation, not arbitrary categories.
+- Confirm apps only compose reusable flows and platform concerns.
+- Confirm feature, entity, API, and development-only state have distinct owners.
+- Confirm imports follow the dependency table and package public APIs.
