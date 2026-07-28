@@ -71,7 +71,7 @@ export function ContactsList({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-16" data-testid="contacts-list">
-      <div className="flex flex-col gap-8">
+      <div className="flex shrink-0 flex-col gap-8">
         <SearchInput
           value={searchQuery}
           placeholder={labels.searchPlaceholder}
@@ -88,8 +88,15 @@ export function ContactsList({
           />
         ) : null}
       </div>
-      {savedContactsContent}
-      <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
+      <div
+        className="min-h-0 flex-1 overflow-auto scrollbar-custom [scrollbar-gutter:auto]"
+        data-testid="contacts-list-scroll"
+      >
+        <div className="flex flex-col gap-16">
+          {savedContactsContent}
+          <ContactsAddContactListItem label={labels.addContact} onAddContact={onAddContact} />
+        </div>
+      </div>
     </div>
   );
 }

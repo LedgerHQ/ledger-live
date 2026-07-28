@@ -9,7 +9,7 @@ export function ContactsListPane({
 }: ContactsListPaneProps): React.ReactNode {
   return (
     <aside
-      className="flex w-2/5 min-w-[400px] max-w-[445px] shrink-0 flex-col overflow-auto rounded-lg bg-section p-16"
+      className="flex w-2/5 min-h-0 min-w-[400px] max-w-[445px] shrink-0 flex-col overflow-hidden rounded-lg bg-section p-16"
       data-testid="contacts-list-pane"
     >
       {children}
