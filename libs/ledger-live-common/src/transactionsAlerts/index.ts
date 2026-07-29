@@ -1,26 +1,58 @@
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
-const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Account[]) => {
-  const accountsByCurrencies: Record<
+const hexAddressPattern = /^0x[0-9a-f]+$/i;
+
+export type TransactionsAlertsAddress = {
+  currencyId: string;
+  address: string;
+};
+
+export const getTransactionsAlertsAddressKey = (currencyId: string, address: string) =>
+  `${currencyId}:${hexAddressPattern.test(address) ? address.toLowerCase() : address}`;
+
+const getAddressKey = ({ currencyId, address }: TransactionsAlertsAddress) =>
+  getTransactionsAlertsAddressKey(currencyId, address);
+
+export const deduplicateTransactionsAlertsAddresses = (addresses: TransactionsAlertsAddress[]) =>
+  Array.from(new Map(addresses.map(address => [getAddressKey(address), address])).values());
+
+export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
+  deduplicateTransactionsAlertsAddresses(
+    accounts
+      .filter(account => account.freshAddress)
+      .map(account => ({
+        currencyId: account.currency.id,
+        address: account.freshAddress,
+      })),
+  );
+
+const formatAddressesByCurrencies = (
+  newAddresses: TransactionsAlertsAddress[],
+  removedAddresses: TransactionsAlertsAddress[],
+) => {
+  const addressesByCurrencies: Record<
     string,
-    { newAccounts: Account[]; removedAccounts: Account[] }
+    { newAddresses: TransactionsAlertsAddress[]; removedAddresses: TransactionsAlertsAddress[] }
   > = {};
 
-  for (const newAccount of newAccounts) {
-    if (!accountsByCurrencies[newAccount.currency.id]) {
-      accountsByCurrencies[newAccount.currency.id] = { newAccounts: [], removedAccounts: [] };
+  for (const newAddress of newAddresses) {
+    if (!addressesByCurrencies[newAddress.currencyId]) {
+      addressesByCurrencies[newAddress.currencyId] = { newAddresses: [], removedAddresses: [] };
     }
-    accountsByCurrencies[newAccount.currency.id].newAccounts.push(newAccount);
+    addressesByCurrencies[newAddress.currencyId].newAddresses.push(newAddress);
   }
-  for (const removedAccount of removedAccounts) {
-    if (!accountsByCurrencies[removedAccount.currency.id]) {
-      accountsByCurrencies[removedAccount.currency.id] = { newAccounts: [], removedAccounts: [] };
+  for (const removedAddress of removedAddresses) {
+    if (!addressesByCurrencies[removedAddress.currencyId]) {
+      addressesByCurrencies[removedAddress.currencyId] = {
+        newAddresses: [],
+        removedAddresses: [],
+      };
     }
-    accountsByCurrencies[removedAccount.currency.id].removedAccounts.push(removedAccount);
+    addressesByCurrencies[removedAddress.currencyId].removedAddresses.push(removedAddress);
   }
 
-  return accountsByCurrencies;
+  return addressesByCurrencies;
 };
 
 export const getSupportedChainsAccounts = (
@@ -40,27 +72,38 @@ export const getSupportedChainsAccounts = (
   );
 };
 
-export const updateTransactionsAlertsAddresses = async (
+export const reconcileTransactionsAlertsAddresses = async (
   userId: string,
   chainwatchBaseUrl: string,
   supportedChains: ChainwatchNetwork[],
-  newAccounts: Account[],
-  removedAccounts: Account[],
+  addresses: TransactionsAlertsAddress[],
+  previousAddresses: TransactionsAlertsAddress[],
 ) => {
-  const accountsByCurrencies = formatAccountsByCurrencies(newAccounts, removedAccounts);
+  const addressesToRegister = deduplicateTransactionsAlertsAddresses(addresses);
+  const addressKeys = new Set(addressesToRegister.map(getAddressKey));
+  const removedAddresses = deduplicateTransactionsAlertsAddresses(
+    previousAddresses.filter(address => !addressKeys.has(getAddressKey(address))),
+  );
+  const addressesByCurrencies = formatAddressesByCurrencies(addressesToRegister, removedAddresses);
 
-  for (const [currencyId, accounts] of Object.entries(accountsByCurrencies)) {
+  for (const [currencyId, currencyAddresses] of Object.entries(addressesByCurrencies)) {
     const network = supportedChains.find(
       (chain: ChainwatchNetwork) => chain.ledgerLiveId === currencyId,
     );
     if (network) {
       const accountManager = new ChainwatchAccountManager(chainwatchBaseUrl, userId, network);
 
-      await accountManager.setupChainwatchAccount();
-      await Promise.all([
-        accountManager.registerNewAccountsAddresses(accounts.newAccounts),
-        accountManager.removeAccountsAddresses(accounts.removedAccounts),
-      ]);
+      if (currencyAddresses.newAddresses.length > 0) {
+        await accountManager.setupChainwatchAccount();
+      } else if (!(await accountManager.loadChainwatchAccount())) {
+        continue;
+      }
+      await accountManager.removeAddresses(
+        currencyAddresses.removedAddresses.map(({ address }) => address),
+      );
+      await accountManager.registerNewAddresses(
+        currencyAddresses.newAddresses.map(({ address }) => address),
+      );
     }
   }
 };
