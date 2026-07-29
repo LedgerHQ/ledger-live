@@ -1,8 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MODULAR_DRAWER_KEY, ModularDrawerStep } from "LLM/features/ModularDrawer/types";
+import {
+  MODULAR_DRAWER_KEY,
+  ModularDrawerStep,
+  type ModularDrawerCompletionMode,
+  type ModularDrawerPresentation,
+  type DrawerExtras,
+  type DrawerRemoteParams,
+} from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import type { ModularDrawerCompletionMode } from "LLM/features/ModularDrawer/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;
@@ -10,6 +16,7 @@ export interface ModularDrawerState {
   callbackId?: string;
   enableAccountSelection?: boolean;
   completionMode?: ModularDrawerCompletionMode;
+  presentation: ModularDrawerPresentation;
   flow: string;
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -27,6 +34,7 @@ export const INITIAL_STATE: ModularDrawerState = {
   callbackId: undefined,
   enableAccountSelection: false,
   completionMode: undefined,
+  presentation: "drawer",
   flow: "",
   source: "",
   assetsConfiguration: {
@@ -54,6 +62,7 @@ export const modularDrawerEnableAccountSelectionSelector = (state: State) =>
   state.modularDrawer.enableAccountSelection;
 export const modularDrawerCompletionModeSelector = (state: State) =>
   state.modularDrawer.completionMode;
+export const modularDrawerPresentationSelector = (state: State) => state.modularDrawer.presentation;
 export const modularDrawerStepSelector = (state: State) => state.modularDrawer.step;
 
 const modularDrawerSlice = createSlice({
@@ -62,20 +71,7 @@ const modularDrawerSlice = createSlice({
   reducers: {
     openModularDrawer: (
       state,
-      action: PayloadAction<{
-        currencies?: string[];
-        callbackId?: string;
-        enableAccountSelection?: boolean;
-        completionMode?: ModularDrawerCompletionMode;
-        flow?: string;
-        source?: string;
-        assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
-        networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
-        useCase?: string;
-        uiUseCase?: string;
-        areCurrenciesFiltered?: boolean;
-        step?: ModularDrawerStep;
-      }>,
+      action: PayloadAction<DrawerRemoteParams<DrawerExtras & { step?: ModularDrawerStep }>>,
     ) => {
       state.isOpen = true;
       state.searchValue = "";
@@ -84,6 +80,7 @@ const modularDrawerSlice = createSlice({
         callbackId,
         enableAccountSelection,
         completionMode,
+        presentation,
         flow,
         source,
         assetsConfiguration,
@@ -93,13 +90,17 @@ const modularDrawerSlice = createSlice({
         areCurrenciesFiltered,
         step,
       } = action.payload;
+      const isEmbeddedCurrency = completionMode === "currency" && presentation === "embedded";
 
       if (currencies !== undefined) {
         state.preselectedCurrencies = currencies;
       }
       state.callbackId = callbackId;
       state.completionMode = completionMode;
-      if (enableAccountSelection !== undefined) {
+      state.presentation = completionMode === "currency" ? (presentation ?? "drawer") : "drawer";
+      if (isEmbeddedCurrency) {
+        state.enableAccountSelection = false;
+      } else if (enableAccountSelection !== undefined) {
         state.enableAccountSelection = enableAccountSelection;
       }
       if (flow !== undefined) {
@@ -123,7 +124,9 @@ const modularDrawerSlice = createSlice({
       if (areCurrenciesFiltered !== undefined) {
         state.areCurrenciesFiltered = areCurrenciesFiltered;
       }
-      if (step !== undefined) {
+      if (isEmbeddedCurrency) {
+        state.step = ModularDrawerStep.Asset;
+      } else if (step !== undefined) {
         state.step = step;
       }
     },
@@ -133,6 +136,7 @@ const modularDrawerSlice = createSlice({
       state.callbackId = undefined;
       state.enableAccountSelection = false;
       state.completionMode = undefined;
+      state.presentation = "drawer";
       state.flow = "";
       state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
