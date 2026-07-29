@@ -279,6 +279,45 @@ describe("useRecipientSearchState", () => {
     expect(result.current.showMatchedAddress).toBe(true);
   });
 
+  it("should keep matched address while recipient validation reloads a complete result", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "0xvalid",
+        isLoading: true,
+        result: createDefaultResult({
+          status: "valid",
+          error: null,
+          isBridgeLoading: false,
+        }),
+      }),
+    );
+
+    expect(result.current.showMatchedAddress).toBe(true);
+  });
+
+  it("should hide empty state and validation error while recipient validation is loading", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "dsjkfhkjsdfhds",
+        isLoading: true,
+        result: createDefaultResult({
+          status: "loading",
+          error: null,
+          matchedAccounts: [],
+          matchedRecentAddress: undefined,
+          ensName: undefined,
+          isLedgerAccount: false,
+        }),
+      }),
+    );
+
+    expect(result.current.showEmptyState).toBe(false);
+    expect(result.current.showMatchedAddress).toBe(false);
+    expect(result.current.showAddressValidationError).toBe(false);
+  });
+
   it("should show matched address when has matchedRecentAddress", () => {
     const recent = {
       address: "0xrecent",

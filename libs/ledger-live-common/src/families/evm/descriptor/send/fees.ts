@@ -171,14 +171,25 @@ export const evmCustomFeeConfig: CustomFeeConfig = {
       feesStrategy: "custom",
     };
 
-    if ("maxFeePerGas" in values) {
-      patch.maxFeePerGas = gweiToWei(values.maxFeePerGas);
+    if ("maxFeePerGas" in values || "maxPriorityFeePerGas" in values) {
+      patch.type = 2;
+      patch.gasPrice = null;
+      if ("maxFeePerGas" in values) {
+        patch.maxFeePerGas = gweiToWei(values.maxFeePerGas);
+      }
+      if ("maxPriorityFeePerGas" in values) {
+        patch.maxPriorityFeePerGas = gweiToWei(values.maxPriorityFeePerGas);
+      }
+      return patch;
     }
-    if ("maxPriorityFeePerGas" in values) {
-      patch.maxPriorityFeePerGas = gweiToWei(values.maxPriorityFeePerGas);
-    }
+
     if ("gasPrice" in values) {
+      // Legacy custom fees: force type 0 and drop any leftover EIP-1559 fields
+      // so estimateFees / isEip1559 do not flip the UI to dual inputs.
+      patch.type = 0;
       patch.gasPrice = gweiToWei(values.gasPrice);
+      patch.maxFeePerGas = null;
+      patch.maxPriorityFeePerGas = null;
     }
     return patch;
   },
