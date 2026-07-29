@@ -1,5 +1,5 @@
 import { getDefaultExplorerView, getDRepExplorer } from "@ledgerhq/live-common/explorers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import React, { useCallback } from "react";
 import styled, { css } from "styled-components";
 import Box from "~/renderer/components/Box";
