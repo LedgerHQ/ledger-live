@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "tests/testSetup";
 import DRepRow from "./DRepRow";
 import { openURL } from "~/renderer/linking";
 import { getDefaultExplorerView, getDRepExplorer } from "@ledgerhq/live-common/explorers";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
 
 jest.mock("~/renderer/linking", () => ({
