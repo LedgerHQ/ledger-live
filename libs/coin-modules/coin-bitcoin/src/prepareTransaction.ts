@@ -83,8 +83,6 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     invariant(networkInfo.family === "bitcoin", "bitcoin networkInfo expected");
   }
 
-  const feePerByte = inferFeePerByte(transaction, networkInfo);
-
   // Auto-populate excludeUTXOs from UTXOs whose transactions can't be fetched
   // This ensures stale/replaced UTXOs are not used
   const autoExcludeUTXOs = await getExcludeUTXOsFromUnfetchable(account);
@@ -100,6 +98,24 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     }
   }
 
+  const utxoStrategy = { ...transaction.utxoStrategy, excludeUTXOs: mergedExclusions };
+
+  const inferredFeePerByte = inferFeePerByte(transaction, networkInfo);
+
+  // A chain whose fee is not a rate per vByte resolves the rate from the layout
+  // this transaction resolves to (see ChainAdapter.resolveFeePerByte). It runs on
+  // the merged exclusions, so the rate is resolved against the very UTXO set the
+  // transaction will be built from, and before the change detection below, so
+  // repeated preparations settle at a fixed point instead of re-deriving a rate
+  // that inferFeePerByte would discard.
+  const feePerByte =
+    (await adapter.resolveFeePerByte?.(account, {
+      ...transaction,
+      networkInfo,
+      feePerByte: inferredFeePerByte,
+      utxoStrategy,
+    })) ?? inferredFeePerByte;
+
   if (
     transaction.networkInfo === networkInfo &&
     (feePerByte === transaction.feePerByte || feePerByte.eq(transaction.feePerByte || 0)) &&
@@ -113,10 +129,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     return {
       ...transaction,
       networkInfo,
-      utxoStrategy: {
-        ...transaction.utxoStrategy,
-        excludeUTXOs: mergedExclusions,
-      },
+      utxoStrategy,
     };
   }
 
@@ -124,10 +137,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     ...transaction,
     networkInfo,
     feePerByte,
-    utxoStrategy: {
-      ...transaction.utxoStrategy,
-      excludeUTXOs: mergedExclusions,
-    },
+    utxoStrategy,
   };
 };
 
