@@ -111,6 +111,7 @@ const baseAPI = {
   },
   getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
   getBalance: (_: string) => Promise.resolve(10),
+  getMinimumBalanceForRentExemption: (_: number) => Promise.resolve(0),
   findAssocTokenAccAddress: (owner: string, mint: string, program: SolanaTokenProgram) => {
     return Promise.resolve(
       PublicKey.findProgramAddressSync(

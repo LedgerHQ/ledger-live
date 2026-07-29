@@ -142,6 +142,7 @@ describe("solana staking", () => {
 async function runStakeTest(stakeTestSpec: StakeTestSpec) {
   const api = {
     ...baseAPI,
+    getBalance: () => Promise.resolve(0),
     getMinimumBalanceForRentExemption: () =>
       Promise.resolve(testOnChainData.fees.stakeAccountRentExempt),
     getAccountInfo: () => {

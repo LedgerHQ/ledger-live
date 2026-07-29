@@ -9,7 +9,7 @@ import {
   getMaybeTokenMint,
   getStakeAccountMinimumBalanceForRentExemption,
 } from "./network/chain/web3";
-import type { SolanaTokenAccount, Transaction } from "./types";
+import type { SolanaAccount, SolanaTokenAccount, Transaction } from "./types";
 
 export const estimateFeeAndSpendable = async (
   api: ChainAPI,
@@ -17,9 +17,28 @@ export const estimateFeeAndSpendable = async (
   transaction?: Transaction | undefined | null,
 ): Promise<{ fee: number; spendable: BigNumber }> => {
   const txKind = transaction?.model.kind ?? "transfer";
-  const txFee = await estimateTxFee(api, account.freshAddress, txKind);
 
-  const spendableBalance = BigNumber.max(account.spendableBalance.minus(txFee), 0);
+  // Fetch the live on-chain balance instead of relying on the synced
+  // account.spendableBalance, which can be stale (e.g. right after a swap/send).
+  const [txFee, onChainLamports, rentExemptMin] = await Promise.all([
+    estimateTxFee(api, account.freshAddress, txKind),
+    api.getBalance(account.freshAddress),
+    api.getMinimumBalanceForRentExemption(0),
+  ]);
+
+  // Re-apply the same reservations sync does (balance − rentExempt − unstakeReserve)
+  // to the freshly fetched balance, then subtract the fee. Reading the live on-chain
+  // balance is fresher than the synced account.spendableBalance (which only updates on
+  // the next full sync): it already reflects any outflow confirmed on-chain, without
+  // waiting for the app's periodic re-sync.
+  const onChainBalance = new BigNumber(onChainLamports);
+  const rentExempt = new BigNumber(rentExemptMin);
+  const unstakeReserve =
+    (account as SolanaAccount).solanaResources?.unstakeReserve ?? new BigNumber(0);
+  const spendableBalance = BigNumber.max(
+    onChainBalance.minus(rentExempt).minus(unstakeReserve).minus(txFee),
+    0,
+  );
 
   switch (txKind) {
     case "token.createATA": {
@@ -98,7 +117,6 @@ export const estimateMaxSpendableWithAPI = async (
   api: ChainAPI,
 ): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
-
   switch (account.type) {
     case "Account":
       return (await estimateFeeAndSpendable(api, mainAccount, transaction)).spendable;

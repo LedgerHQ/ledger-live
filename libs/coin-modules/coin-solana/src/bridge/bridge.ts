@@ -1,3 +1,4 @@
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
@@ -12,7 +13,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
@@ -96,12 +97,21 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
 
   const cacheKeyByAccSpendableBalance = ({
     account,
+    parentAccount,
     transaction,
   }: {
     account: AccountLike;
+    parentAccount?: Account | null | undefined;
     transaction?: Transaction | null | undefined;
   }) => {
-    return `${account.id}:${account.spendableBalance.toString()}:tx:${
+    // estimateMaxSpendable now derives the spendable from the live on-chain balance,
+    // so it can change even when the synced account.spendableBalance is still stale
+    // (e.g. right after a send/swap, before the next full sync). Include the pending
+    // operations in the key so a fresh outflow busts the cache instead of returning a
+    // stale pre-outflow max-spendable value.
+    const mainAccount = getMainAccount(account, parentAccount);
+    const pendingOpsSig = mainAccount.pendingOperations.map(op => op.hash).join(",");
+    return `${account.id}:${account.spendableBalance.toString()}:pending:${pendingOpsSig}:tx:${
       transaction?.model.kind ?? "<no transaction>"
     }`;
   };
