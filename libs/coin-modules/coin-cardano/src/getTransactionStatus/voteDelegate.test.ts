@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 
 import { CardanoAccount, Transaction } from "../types";
 import { getVoteDelegateTransactionStatus } from "./voteDelegate";
