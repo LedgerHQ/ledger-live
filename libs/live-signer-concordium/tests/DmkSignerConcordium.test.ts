@@ -7,6 +7,8 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { SignerConcordiumBuilder } from "@ledgerhq/device-signer-kit-concordium";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
+import { getEnv } from "@ledgerhq/live-env";
 import { TransactionType, AccountAddress } from "@ledgerhq/concordium-core";
 import type { Transaction, CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";
 import { of } from "rxjs";
@@ -17,6 +19,29 @@ jest.mock("@ledgerhq/device-signer-kit-concordium", () => {
     SignerConcordiumBuilder: jest.fn(),
   };
 });
+
+jest.mock("@ledgerhq/context-module", () => {
+  class MockContextModuleBuilder {
+    setAppSource() {
+      return this;
+    }
+    setChain() {
+      return this;
+    }
+    setCalConfig() {
+      return this;
+    }
+    build() {
+      return {};
+    }
+  }
+  return {
+    ContextModuleBuilder: MockContextModuleBuilder,
+    ContextModuleChainID: { Concordium: "concordium" },
+  };
+});
+
+jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
 
 describe("DmkSignerConcordium", () => {
   let signer: DmkSignerConcordium;
@@ -35,8 +60,10 @@ describe("DmkSignerConcordium", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
     jest.mocked(SignerConcordiumBuilder).mockImplementation(() => {
       return {
+        withContextModule: jest.fn().mockReturnThis(),
         build: () => mockSignerConcordium,
       } as unknown as SignerConcordiumBuilder;
     });
@@ -415,6 +442,45 @@ describe("DmkSignerConcordium", () => {
       await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
         backendMessage,
       );
+    });
+  });
+
+  describe("CAL config wiring", () => {
+    let setCalConfigSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setCalConfigSpy = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+    });
+
+    afterEach(() => {
+      setCalConfigSpy.mockRestore();
+    });
+
+    it("passes prod mode and the env URL with /v1 for a prod endpoint", () => {
+      const url = "https://global.api.prd.ledger.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerConcordium(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "prod", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
+      const url = "https://global.api.stg.ledger-test.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerConcordium(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
+      const url = "https://global.api.stg.example.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerConcordium(dmkMock as unknown as DeviceManagementKit, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
     });
   });
 });

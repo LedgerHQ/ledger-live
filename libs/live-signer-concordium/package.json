@@ -31,6 +31,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-concordium": "catalog:",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "rxjs": "catalog:"
   },
   "scripts": {
