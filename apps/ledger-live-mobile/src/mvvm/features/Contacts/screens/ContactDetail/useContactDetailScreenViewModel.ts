@@ -4,9 +4,10 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   type AddAddressFlowState,
+  type AddAddressInputSource,
   type ContactDetailLabels,
   type ContactDetailViewProps,
-  useAddAddressCurrencySelectionViewModel,
+  resolveEligibleAddressCurrencyIds,
   useAddAddressFlowViewModel,
   useContactsFeature,
   useEmptyContactDetail,
@@ -17,13 +18,16 @@ import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
-import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
+import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
+
+const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
 type ContactDetailScreenViewModel =
   | Readonly<{ status: "redirecting" }>
   | Readonly<{
       status: "ready";
       addAddressFlowState: AddAddressFlowState;
+      addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
     }>;
 
@@ -35,36 +39,40 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const navigation = useNavigation<NavigationProp>();
   const route =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
-  const { isEnabled } = useContactsFeature("mobile");
+  const { isEnabled, eligibleAddressFamilies } = useContactsFeature("mobile");
   const { t } = useTranslation();
   const contact = useEmptyContactDetail(route.params.contactId);
-  const currencySelection = useContactsCurrencySelectionAdapter();
   const addressValidation = useContactsAddressValidationAdapter();
-  const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
-    platform: "mobile",
-    currencySelection,
-  });
+  const eligibleNetworkIds = useMemo(
+    () => resolveEligibleAddressCurrencyIds(eligibleAddressFamilies),
+    [eligibleAddressFamilies],
+  );
   const {
     state: addAddressFlowState,
     start: startAddAddress,
     completeCurrencySelection,
+    updateAddress,
+    confirmAddress,
+    continueFromName,
+    continueFromReview,
+    goBack: goBackAddAddress,
     close: closeAddAddress,
-  } = useAddAddressFlowViewModel({ addressValidation });
+  } = useAddAddressFlowViewModel({
+    addressValidation,
+    manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
+  });
   const onAddAddress = useCallback(() => {
     if (!contact) return;
-
-    const contactId = contact.id;
-    startAddAddress(contactId);
-    void selectCurrency()
-      .then(result => {
-        if (result.status === "selected") {
-          completeCurrencySelection(contactId, result.currencyId);
-        } else if (result.status === "cancelled" || result.status === "unavailable") {
-          closeAddAddress();
-        }
-      })
-      .catch(closeAddAddress);
-  }, [closeAddAddress, completeCurrencySelection, contact, selectCurrency, startAddAddress]);
+    startAddAddress(contact.id);
+  }, [contact, startAddAddress]);
+  const onCurrencySelected = useCallback<ContactsAddAddressFlowDrawerProps["onCurrencySelected"]>(
+    currencyId => {
+      if (addAddressFlowState.status === "selectingCurrency") {
+        completeCurrencySelection(addAddressFlowState.selectedContactId, currencyId);
+      }
+    },
+    [addAddressFlowState, completeCurrencySelection],
+  );
   const onOpenLedgerWalletAddresses = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.CryptoAddresses,
@@ -73,6 +81,19 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       },
     });
   }, [navigation]);
+  const onAddressChange = useCallback(
+    (value: string, inputMethod: AddAddressInputSource) => {
+      void updateAddress(value, inputMethod);
+    },
+    [updateAddress],
+  );
+  const onQrCodeClick = useCallback(() => {
+    navigation.navigate(ScreenName.ScanRecipient, {
+      onScanned: value => {
+        void updateAddress(value, "qr_code");
+      },
+    });
+  }, [navigation, updateAddress]);
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -106,6 +127,18 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   return {
     status: "ready",
     addAddressFlowState,
+    addAddressFlowProps: {
+      state: addAddressFlowState,
+      eligibleNetworkIds,
+      onAddressChange,
+      onAddressConfirm: confirmAddress,
+      onBack: goBackAddAddress,
+      onClose: closeAddAddress,
+      onContinueFromName: continueFromName,
+      onContinueFromReview: continueFromReview,
+      onCurrencySelected,
+      onQrCodeClick,
+    },
     pageProps: {
       contact,
       labels,
