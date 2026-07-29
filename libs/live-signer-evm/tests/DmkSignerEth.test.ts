@@ -637,13 +637,13 @@ describe("DmkSignerEth", () => {
       setCalConfigSpy.mockRestore();
     });
 
-    it("passes prod mode and the env URL for a prod endpoint", () => {
+    it("passes prod mode and the env URL with /v1 for a prod endpoint", () => {
       const url = "https://global.api.prd.ledger.com/cal";
       jest.mocked(getEnv).mockReturnValue(url as never);
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "prod", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "prod", branch: "main" });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
@@ -652,7 +652,7 @@ describe("DmkSignerEth", () => {
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
@@ -661,7 +661,7 @@ describe("DmkSignerEth", () => {
 
       new DmkSignerEth(dmkMock as unknown as DeviceManagementKit, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
     });
   });
 });

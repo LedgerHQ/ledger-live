@@ -63,7 +63,7 @@ export class DmkSignerEth implements EvmSigner {
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
       .setChain(ContextModuleChainID.Ethereum)
-      .setCalConfig({ url: calUrl, mode: calMode, branch: "main" })
+      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
       .build();
     this.signer = new SignerEthBuilder({
       dmk,
