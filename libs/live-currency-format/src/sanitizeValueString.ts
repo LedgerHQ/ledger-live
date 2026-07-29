@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "./types";
 import { getSeparators } from "./localeUtility";
 
 const numbers = "0123456789";
