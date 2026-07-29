@@ -9,6 +9,7 @@ export interface CategoryGroup {
 
 export interface DevToolsShellValue {
   readonly categories: CategoryGroup[];
+  readonly footer?: ReactNode;
 }
 
 interface DevToolsShellContextValue extends DevToolsShellValue {

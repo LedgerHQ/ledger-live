@@ -12,7 +12,7 @@ interface SidebarInput {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
-  sidebarFooter?: ReactNode;
+  footer?: ReactNode;
 }
 
 export interface SidebarViewProps {
@@ -27,7 +27,7 @@ export interface SidebarViewProps {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
-  sidebarFooter?: ReactNode;
+  footer?: ReactNode;
 }
 
 export function useSidebarViewModel({
@@ -36,7 +36,7 @@ export function useSidebarViewModel({
   onSelectTool,
   onHome,
   onClose,
-  sidebarFooter,
+  footer,
 }: SidebarInput): SidebarViewProps {
   const [query, setQuery] = useState("");
 
@@ -68,6 +68,6 @@ export function useSidebarViewModel({
     onSelectTool,
     onHome,
     onClose,
-    sidebarFooter,
+    footer,
   };
 }
