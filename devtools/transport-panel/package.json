@@ -3,8 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "description": "Ledger Live DevTools — transport status panel",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "src/index.web.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.web.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.web.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src jest",
@@ -33,6 +41,7 @@
     "jest-environment-jsdom": "catalog:",
     "jest-sonar": "0.2.16",
     "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
