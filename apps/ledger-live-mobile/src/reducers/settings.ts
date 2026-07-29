@@ -450,7 +450,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (state, action) => ({
     ...state,
-    dismissedDynamicCards: (action as Action<SettingsSetDismissedDynamicCardsPayload>).payload,
+    dismissedDynamicCards: Array.from(
+      new Set((action as Action<SettingsSetDismissedDynamicCardsPayload>).payload),
+    ),
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({

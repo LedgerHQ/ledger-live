@@ -8,7 +8,7 @@ import {
 export function shouldShowHardwareCarouselCloseAll(category: CategoryContentCard): boolean {
   return (
     category.location === ContentCardLocation.TopWallet &&
-    category.isDismissable &&
+    category.isDismissable === true &&
     category.cardsLayout === ContentCardsLayout.carousel &&
     category.cardsType === ContentCardsType.smallSquare
   );

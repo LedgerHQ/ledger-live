@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import LogContentCardWrapper from "LLM/features/DynamicContent/components/LogContentCardWrapper";
-import { useHardwareCarouselCloseAll } from "~/dynamicContent/hardwareCarousel/useHardwareCarouselCloseAll";
 import { shouldShowHardwareCarouselCloseAll } from "~/dynamicContent/hardwareCarousel/shouldShowHardwareCarouselCloseAll";
 import { CategoryContentCard, BrazeContentCard } from "../types";
 import Header from "./Header";
@@ -13,12 +12,13 @@ type Props = {
 };
 
 const ContentCardsCategory = ({ category, categoryContentCards }: Props) => {
-  const cardIds = useMemo(
-    () => categoryContentCards.map(card => card.id),
-    [categoryContentCards],
-  );
-  const showCloseAll = shouldShowHardwareCarouselCloseAll(category);
-  const handleCloseAll = useHardwareCarouselCloseAll(cardIds);
+  const closeAllCardIds = useMemo(() => {
+    if (!shouldShowHardwareCarouselCloseAll(category)) {
+      return undefined;
+    }
+
+    return categoryContentCards.map(card => card.id);
+  }, [category, categoryContentCards]);
 
   return (
     <LogContentCardWrapper id={category.id} location={category.location}>
@@ -29,8 +29,7 @@ const ContentCardsCategory = ({ category, categoryContentCards }: Props) => {
           cta={category.cta}
           link={category.link}
           centered={category.centeredText}
-          showCloseAll={showCloseAll}
-          onCloseAll={handleCloseAll}
+          closeAllCardIds={closeAllCardIds}
         />
         <Layout category={category} cards={categoryContentCards} />
       </Box>

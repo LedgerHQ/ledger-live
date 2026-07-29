@@ -22,7 +22,7 @@ describe("useHardwareCarouselCloseAll", () => {
     jest.clearAllMocks();
     mockUseDynamicContent.mockReturnValue({
       dismissCards: mockDismissCards,
-    } as ReturnType<typeof useDynamicContent>);
+    } as unknown as ReturnType<typeof useDynamicContent>);
   });
 
   it("tracks analytics only when dismissCards dismisses at least one card", () => {

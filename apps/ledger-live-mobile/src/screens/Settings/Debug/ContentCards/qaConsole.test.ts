@@ -193,7 +193,9 @@ describe("Content Cards QA console helpers", () => {
   });
 
   it("should build a Top wallet hero carousel preset with hero cards in carousel layout", () => {
-    const result = buildDebugContentCard(buildPresetCardBuilderValues("topWalletHeroCarousel", 1000));
+    const result = buildDebugContentCard(
+      buildPresetCardBuilderValues("topWalletHeroCarousel", 1000),
+    );
 
     expect(result.category).toMatchObject({
       categoryId: "alwayson",
