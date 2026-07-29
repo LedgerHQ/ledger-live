@@ -6,6 +6,21 @@ on:
       coverage_generated:
         value: ${{ jobs.unit-tests.outputs.coverage_generated }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      SLACK_LIVE_CI_BOT_TOKEN:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -29,7 +44,6 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -39,6 +53,9 @@ env:
 jobs:
   codechecks:
     name: "Desktop Code Check"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -46,7 +63,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -85,6 +102,9 @@ jobs:
 
   unit-tests:
     name: "Desktop Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 10
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
@@ -95,7 +115,7 @@ jobs:
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
 
@@ -111,6 +131,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
@@ -160,31 +185,44 @@ jobs:
     # Only report on push events (e.g. develop, main, release, hotfix).
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: prepare status
         id: status
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.username || '' }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          CODECHECKS_RESULT: ${{ needs.codechecks.result }}
+          UNIT_TESTS_RESULT: ${{ needs.unit-tests.result }}
         with:
           script: |
             const fs = require("fs");
 
+            const refName = process.env.REF_NAME;
+            const commitAuthor = process.env.COMMIT_AUTHOR;
+            const repository = process.env.REPOSITORY;
+            const runId = process.env.RUN_ID;
+
             const typecheck = {
-              pass: ${{ needs.codechecks.result == 'success' }},
-              status: "${{ needs.codechecks.result }}",
+              pass: process.env.CODECHECKS_RESULT === "success",
+              status: process.env.CODECHECKS_RESULT,
             };
 
             const unitTests = {
-              pass: ${{ needs.unit-tests.result == 'success' }},
-              status: "${{ needs.unit-tests.result }}",
+              pass: process.env.UNIT_TESTS_RESULT === "success",
+              status: process.env.UNIT_TESTS_RESULT,
             };
 
             const slackPayload = {
-              "text": "[Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+              "channel": "C05FKJ7DFAP",
+              "text": "[Alert] Ledger Live Desktop lint & unit tests failed on ${refName}",
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":warning: [Alert] Ledger Live Desktop lint & unit tests failed on ${{ github.ref_name }}",
+                    "text": `:warning: [Alert] Ledger Live Desktop lint & unit tests failed on ${refName}`,
                     "emoji": true
                   }
                 },
@@ -209,7 +247,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": `Commit by ${commitAuthor}\nhttps://github.com/${repository}/actions/runs/${runId}`
                   }
                 }
               ]
@@ -219,10 +257,9 @@ jobs:
 
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
         with:
-          channel-id: "C05FKJ7DFAP"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}

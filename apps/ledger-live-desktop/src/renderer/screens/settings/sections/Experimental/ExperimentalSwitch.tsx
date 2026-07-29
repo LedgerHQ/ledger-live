@@ -1,4 +1,4 @@
-import { EnvName } from "@ledgerhq/live-env";
+import { EnvName } from "@shared/env";
 import React, { useCallback } from "react";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";

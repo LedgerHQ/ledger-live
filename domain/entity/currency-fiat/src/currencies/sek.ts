@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const sek = fiat({
   type: "FiatCurrency",
-  id: "sek",
   ticker: "SEK",
   name: "Swedish Krona",
   symbol: "kr",

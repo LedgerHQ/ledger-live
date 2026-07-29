@@ -8,7 +8,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTokensData } from "@features/platform-currencies";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import {
@@ -26,7 +26,7 @@ import Info from "~/icons/Info";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
 const Row = ({

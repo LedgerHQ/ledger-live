@@ -21,7 +21,8 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
@@ -29,7 +30,9 @@
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@shared/feature-flags": "workspace:*",
+    "@shared/env": "workspace:*",
     "axios": "catalog:",
+    "ethers": "catalog:",
     "expect": "catalog:",
     "invariant": "^2.2.4",
     "rxjs": "catalog:",
@@ -40,7 +43,8 @@
     "@types/node": "catalog:",
     "@types/uuid": "^9.0.0",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "tsx": "^4.19.3"
   },
   "optionalDependencies": {
     "@oxlint/binding-darwin-arm64": "1.51.0",
@@ -58,7 +62,8 @@
     "lint:fix": "oxfmt . && oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
-    "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node"
+    "typecheck": "tsc --noEmit -p tsconfig.json --customConditions node",
+    "e2e-cli": "tsx src/cli/e2e-cli.ts"
   },
   "exports": {
     ".": {

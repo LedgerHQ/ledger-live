@@ -21,7 +21,7 @@ export const TableLine = styled(Box).attrs(() => ({
     white-space: nowrap;
   }
 `;
-export const Header = ({ showRewards }: { showRewards: boolean }) => (
+export const Header = () => (
   <HeaderWrapper>
     <TableLine>
       <Trans i18nKey="delegation.validator" />
@@ -32,7 +32,9 @@ export const Header = ({ showRewards }: { showRewards: boolean }) => (
     <TableLine>
       <Trans i18nKey="delegation.delegated" />
     </TableLine>
-    <TableLine>{showRewards ? <Trans i18nKey="delegation.rewards" /> : null}</TableLine>
+    <TableLine>
+      <Trans i18nKey="delegation.rewards" />
+    </TableLine>
     <TableLine />
   </HeaderWrapper>
 );

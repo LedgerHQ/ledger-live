@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { SendFlowUiConfig } from "./types";
@@ -13,6 +13,7 @@ export const DEFAULT_SEND_UI_CONFIG: SendFlowUiConfig = {
   hasFeePresets: false,
   hasCustomFees: false,
   hasCoinControl: false,
+  hasDefaultStrategy: false,
 };
 
 export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlowUiConfig {
@@ -35,5 +36,6 @@ export function getSendUiConfig(currency: CryptoOrTokenCurrency | null): SendFlo
     hasFeePresets: sendFeatures.hasFeePresets(currency),
     hasCustomFees: sendFeatures.hasCustomFees(currency),
     hasCoinControl: sendFeatures.hasCoinControl(currency),
+    hasDefaultStrategy: sendFeatures.hasDefaultStrategy(currency),
   };
 }

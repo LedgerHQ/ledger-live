@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-env";
+import useEnv from "@features/platform-env";
+import { setEnv } from "@shared/env";
 import { Box } from "@ledgerhq/native-ui";
 import TextInput from "~/components/FocusedTextInput";
 import { useTranslation } from "~/context/Locale";

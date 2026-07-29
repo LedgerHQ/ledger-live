@@ -16,7 +16,11 @@ import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
-import { SourceFlowProvider, type SourceFlow } from "./utils/SourceFlowContext";
+import {
+  DeviceIntentTrackingProvider,
+  type DeviceIntentTrackingProperties,
+  type SourceFlow,
+} from "./utils/DeviceIntentTrackingContext";
 import { DeviceIntentExecutorHeaderContext } from "./utils/DeviceIntentExecutorHeaderContext";
 import type { InitializationInput } from "./types";
 import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
@@ -26,7 +30,10 @@ export {
   type BuildDeviceInitializationInputParams,
 } from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
 export type { InitializationInput } from "./types";
-export type { SourceFlow } from "./utils/SourceFlowContext";
+export type {
+  DeviceIntentTrackingProperties,
+  SourceFlow,
+} from "./utils/DeviceIntentTrackingContext";
 export { OverrideDeviceIntentExecutorHeader };
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
@@ -40,6 +47,11 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
    * Originating user intent that initiated the device flow. Required for analytics.
    */
   sourceFlow: SourceFlow;
+  /**
+   * Generic analytics bag merged into the deviceUxV2 funnel events emitted by this
+   * flow.
+   */
+  analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
@@ -49,6 +61,8 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
   IntentErrorComponent: IntentError,
   InvalidOperationComponent: InvalidOperation,
 };
+
+const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 
 /**
  * LWM wrapper around `@ledgerhq/device-intent`'s `DeviceIntentExecutor`.
@@ -68,6 +82,11 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
     onHeaderClosePressed,
     onBackdropPress,
   } = useDeviceIntentExecutorLWMViewModel(props);
+  const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
+  const trackingContextValue = React.useMemo(
+    () => ({ sourceFlow, analyticsProperties }),
+    [sourceFlow, analyticsProperties],
+  );
 
   return (
     <QueuedDrawerBottomSheet
@@ -79,7 +98,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       enableDynamicSizing
       maxDynamicContentSize={maxDynamicContentSize}
     >
-      <SourceFlowProvider value={sourceFlow}>
+      <DeviceIntentTrackingProvider value={trackingContextValue}>
         <DeviceIntentExecutorHeaderContext.Provider value={headerContextValue}>
           <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: bottomInset + 16 }}
@@ -93,7 +112,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
             />
           </BottomSheetScrollView>
         </DeviceIntentExecutorHeaderContext.Provider>
-      </SourceFlowProvider>
+      </DeviceIntentTrackingProvider>
     </QueuedDrawerBottomSheet>
   );
 }

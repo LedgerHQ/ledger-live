@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const aoa = fiat({
   type: "FiatCurrency",
-  id: "aoa",
   ticker: "AOA",
   name: "Angolan Kwanza",
   symbol: "Kz",

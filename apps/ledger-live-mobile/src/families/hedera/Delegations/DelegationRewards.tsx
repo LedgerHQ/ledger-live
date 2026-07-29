@@ -7,7 +7,7 @@ import type {
   HederaAccount,
   HederaEnrichedDelegation,
 } from "@ledgerhq/live-common/families/hedera/types";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import CounterValue from "~/components/CounterValue";
 import Button from "~/components/Button";
 import AccountSectionLabel from "~/components/AccountSectionLabel";

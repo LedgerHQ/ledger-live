@@ -9,7 +9,7 @@ import {
   STABLECOIN_ASSET,
 } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
 import type { CategorizedAssetItem } from "@ledgerhq/asset-aggregation/assetCategorization/types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,

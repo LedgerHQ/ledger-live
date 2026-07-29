@@ -1,7 +1,7 @@
 import { getSendDescriptor } from "../../../bridge/descriptor/registry";
 import { resolveFeeUnitLabel } from "../../../bridge/descriptor/send/features";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatFeeRate } from "./gas";
 
 export type FeePresetLegendMap = Readonly<Record<string, string>>;

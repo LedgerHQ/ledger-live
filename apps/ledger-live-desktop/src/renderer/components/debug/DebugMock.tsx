@@ -2,10 +2,9 @@
 /* eslint-disable @typescript-eslint/no-deprecated */
 
 import React, { useCallback, useState } from "react";
-import { getEnv, getAllEnvs } from "@ledgerhq/live-env";
+import { getEnv, getAllEnvs } from "@shared/env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
-import { deserializeError } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   deviceInfo155,
@@ -265,7 +264,12 @@ if (getEnv("MOCK")) {
         return (rawEvents: RawEvents | RawEvents[], maybeKey?: string): unknown => {
           if (rawEvents && typeof rawEvents === "object") {
             if (maybeKey === "error") {
-              return deserializeError(rawEvents) as Error;
+              const obj = rawEvents as Record<string, unknown>;
+              return Object.assign(
+                new Error(typeof obj.message === "string" ? obj.message : "unknown reason"),
+                { name: typeof obj.name === "string" ? obj.name : "Error" },
+                obj,
+              ) as Error;
             }
             if (Array.isArray(rawEvents)) return rawEvents.map(rE => this.parseRawEvents(rE));
             const event: Record<string, unknown> = {};

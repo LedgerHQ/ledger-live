@@ -12,7 +12,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -64,10 +64,13 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      // aggregatedAssets ON opens swap as the AssetDetail embedded rail; otherwise the legacy
-      // asset page's Swap CTA navigates to the full /swap page.
-      const swapSurface = (await isAggregatedAssetsEnabled(app.getPage())) ? "embedded" : "full";
-      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow(), swapSurface);
+      if (await isAggregatedAssetsEnabled(app.getPage())) {
+        await app
+          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+          .swapContainer.expectSwapContainerVisible();
+      } else {
+        await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
+      }
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -108,7 +111,9 @@ test.describe("Swap flow from different entry point", () => {
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
       if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app.assetDetail.expectMarketInfoVisible();
+        await app
+          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+          .swapContainer.expectSwapContainerVisible();
       } else {
         await app.marketCoin.expectMarketCoinPageToBeVisible(
           swapEntryPoint.swap.accountToDebit.currency.id,

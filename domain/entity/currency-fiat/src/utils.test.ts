@@ -7,7 +7,7 @@ import {
 
 describe("findFiatCurrencyByTicker", () => {
   it("resolves a known ticker", () => {
-    expect(findFiatCurrencyByTicker("USD")?.id).toBe("usd");
+    expect(findFiatCurrencyByTicker("USD")?.ticker).toBe("USD");
   });
 
   it("returns undefined for an unknown ticker", () => {
@@ -22,7 +22,6 @@ describe("findFiatCurrencyByTicker", () => {
 describe("getFiatCurrencyByTicker", () => {
   it("resolves a known ticker to its registry object", () => {
     const usd = getFiatCurrencyByTicker("USD");
-    expect(usd.id).toBe("usd");
     expect(usd.ticker).toBe("USD");
   });
 

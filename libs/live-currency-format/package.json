@@ -21,9 +21,9 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "@ledgerhq/live-env": "workspace:^"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:*",

@@ -27,6 +27,29 @@ on:
         default: "false"
         type: string
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      VERCEL_LEDGER_WALLET_TEAM_ID:
+        required: false
+      VERCEL_LEDGER_WALLET_TOKEN:
+        required: false
+      VERCEL_PROJECT_NATIVE_STORYBOOK:
+        required: false
+      VERCEL_PROJECT_REACT_STORYBOOK:
+        required: false
+      VERCEL_PROJECT_WEBTOOLS:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -54,19 +77,21 @@ on:
         type: string
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
 
   build-web-tools:
     name: "Web Tools Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-web-tools != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
 
@@ -109,12 +134,15 @@ jobs:
 
   build-native-storybook:
     name: "Native Storybook Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-native-storybook != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
@@ -142,12 +170,15 @@ jobs:
 
   build-react-storybook:
     name: "React Storybook Build"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-react-storybook != 'false' }}
     runs-on: ubuntu-24.04
     outputs:
       deployment-url: ${{ steps.build-deploy.outputs.deployment-url }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -182,7 +213,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Post build status summary
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const needs = JSON.parse(process.env.NEEDS_JSON || '{}');

@@ -1,13 +1,12 @@
+import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "~/live-common-setup-base";
-import { captureException } from "~/sentry/main";
 import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
  * Sets env variables for the main process.
@@ -18,10 +17,6 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
-
-ipcMain.on("mainCrashTest", () => {
-  captureException(new Error("CrashTestMain"));
-});
 
 ipcMain.on("updater", (e, type) => {
   updater(type);

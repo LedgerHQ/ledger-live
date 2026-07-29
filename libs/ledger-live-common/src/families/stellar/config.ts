@@ -1,5 +1,5 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export const stellarConfig: Record<string, ConfigInfo> = {
   config_currency_stellar: {

@@ -1,8 +1,7 @@
+import { getEnv } from "@shared/env";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-env";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
@@ -27,7 +26,6 @@ import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-to
 import { currencyFiatApi } from "@domain/api-currency-fiat";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
-import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
@@ -39,7 +37,6 @@ import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
   languageSelector,
-  sentryLogsSelector,
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
@@ -107,7 +104,6 @@ async function init() {
   }
 
   checkLibs({
-    NotEnoughBalance,
     React,
     log,
     Transport,
@@ -169,25 +165,7 @@ async function init() {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
-  // Initialize identities before Sentry so Sentry user id (datadogId) is set correctly
   await initIdentities(store);
-  // lldDatadog XOR-switches the crash backend (see main/index.ts): when the flag is on, Datadog is
-  // active and Sentry is muted; both stay gated by the sentryLogs opt-in. Read live from the store
-  // so the backend flips as soon as the flag resolves.
-  sentry(
-    () =>
-      sentryLogsSelector(store.getState()) &&
-      !selectFeature(store.getState(), "lldDatadog").enabled,
-    store,
-  );
-  let notifiedSentryLogs = false;
-  store.subscribe(() => {
-    const next = sentryLogsSelector(store.getState());
-    if (next !== notifiedSentryLogs) {
-      notifiedSentryLogs = next;
-      ipcRenderer.send("sentryLogsChanged", next);
-    }
-  });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
   if (process.env.LEDGER_LIVE_DEEPLINK) {
     deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
@@ -210,6 +188,13 @@ async function init() {
 
   // supportedCounterValues is now derived at runtime from @domain/entity-currency-fiat — strip stale persisted copy.
   delete (settingsToLoad as Record<string, unknown>).supportedCounterValues;
+
+  // sentryLogs was renamed to crashReporting (LIVE-34932); migrate persisted value to avoid silent opt-in reset.
+  const legacySettings = settingsToLoad as Record<string, unknown>;
+  if (legacySettings.sentryLogs !== undefined && legacySettings.crashReporting === undefined) {
+    settingsToLoad.crashReporting = Boolean(legacySettings.sentryLogs);
+    delete legacySettings.sentryLogs;
+  }
 
   if (deepLinkUrl) {
     settingsToLoad.deepLinkUrl = deepLinkUrl;

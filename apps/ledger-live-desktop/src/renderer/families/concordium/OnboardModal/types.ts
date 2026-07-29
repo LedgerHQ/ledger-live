@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
 import { TFunction } from "i18next";

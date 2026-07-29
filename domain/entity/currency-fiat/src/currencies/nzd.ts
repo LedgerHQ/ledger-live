@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const nzd = fiat({
   type: "FiatCurrency",
-  id: "nzd",
   ticker: "NZD",
   name: "New Zealand Dollar",
   symbol: "NZ$",

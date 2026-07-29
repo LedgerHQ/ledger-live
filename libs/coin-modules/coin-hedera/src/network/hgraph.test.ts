@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { resolveConfig } from "../logic/utils";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
-import { getMockResponse } from "../test/fixtures/network.fixture";
+import { getMockResponse } from "../test/fixtures/common.fixture";
 import { hgraphClient } from "./hgraph";
 
 jest.mock("@ledgerhq/live-network");
@@ -334,6 +334,87 @@ describe("hgraphClient", () => {
 
       const query = getRequestData(0).query;
       expect(query).toContain("order_by: { consensus_timestamp: desc }");
+    });
+
+    it("uses _gt pagination direction when fetchAllPages is false and order is asc with timestamp", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        timestamp: "1234.000000000",
+        order: "asc",
+        fetchAllPages: false,
+      });
+
+      const query = getRequestData(0).query;
+      expect(query).toContain("consensus_timestamp: { _gt: $cursor }");
+    });
+
+    it("uses _lt pagination direction when fetchAllPages is false and order is desc with timestamp", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: [] },
+        }),
+      );
+
+      await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        timestamp: "1234.000000000",
+        order: "desc",
+        fetchAllPages: false,
+      });
+
+      const query = getRequestData(0).query;
+      expect(query).toContain("consensus_timestamp: { _lt: $cursor }");
+    });
+
+    it("throws with empty message when error object has no message", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          errors: [{}],
+        }),
+      );
+
+      await expect(
+        hgraphClient.getERC20Transfers({
+          configOrCurrencyId: mockConfig,
+          address: "0.0.1234",
+          tokenEvmAddresses: ["0xabc123"],
+          fetchAllPages: true,
+        }),
+      ).rejects.toThrow("hedera: failed to fetch ERC20 transfers from Hgraph: ");
+    });
+
+    it("splices transfers to limit when fetchAllPages is false and page exceeds limit", async () => {
+      const mockTransfers = [
+        { consensus_timestamp: "1000000000000000000", transaction_hash: "0xhash1" },
+        { consensus_timestamp: "1100000000000000000", transaction_hash: "0xhash2" },
+      ];
+
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          data: { erc_token_transfer: mockTransfers },
+        }),
+      );
+
+      const result = await hgraphClient.getERC20Transfers({
+        configOrCurrencyId: mockConfig,
+        address: "0.0.1234",
+        tokenEvmAddresses: ["0xabc123"],
+        limit: 1,
+        fetchAllPages: false,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].consensus_timestamp).toBe("1000000000000000000");
     });
 
     it("should throw error when API returns errors", async () => {

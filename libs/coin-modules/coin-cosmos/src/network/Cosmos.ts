@@ -1,6 +1,6 @@
 import { SequenceNumberError } from "@ledgerhq/errors";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -27,10 +27,37 @@ import * as CosmosSDKTypes from "./types";
 
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
+/**
+ * Throw on a failed broadcast result: a non-zero code, or a code:0 response with an empty tx
+ * hash. Code 32 is cosmos-sdk ErrWrongSequence;
+ * Ledger's cosmos LCD proxy sometimes returns a stale account sequence (LIVE-11301),
+ * so map it to SequenceNumberError.
+ */
+function assertBroadcastOk(txResponse: CosmosTx): void {
+  if (txResponse.code !== 0) {
+    if (txResponse.code === 32) {
+      throw new SequenceNumberError();
+    }
+    throw new Error(
+      "invalid broadcast return (code: " +
+        (txResponse.code || "?") +
+        ", message: '" +
+        (txResponse.raw_log || "") +
+        "')",
+    );
+  }
+
+  if (!txResponse.txhash) {
+    throw new Error("invalid broadcast return: empty transaction hash");
+  }
+}
+
 export class CosmosAPI {
-  protected defaultEndpoint: string;
-  private version: string;
-  private chainInstance: cosmosBase;
+  protected readonly defaultEndpoint: string;
+  private readonly version: string;
+  private readonly chainInstance: cosmosBase;
+  private readonly currencyId: string;
+  private _currency?: CryptoCurrency;
   private _cosmosSDKVersion: Promise<string> | null = null;
   private get cosmosSDKVersion(): Promise<string> {
     if (!this._cosmosSDKVersion) {
@@ -39,15 +66,20 @@ export class CosmosAPI {
     return this._cosmosSDKVersion;
   }
 
-  constructor(
-    currencyId: string,
-    options?: { endpoint: EnvValue<EnvName> | undefined; version: string },
-  ) {
+  constructor(currencyId: string, options?: { endpoint: string | undefined; version: string }) {
     const crypto = cryptoFactory(currencyId);
+    this.currencyId = currencyId;
     this.chainInstance = crypto;
     this.defaultEndpoint = options?.endpoint?.toString() ?? crypto.lcd;
     this.version = options?.version ?? crypto.version;
   }
+
+  /**
+   * Resolve the `CryptoCurrency` once, behind the API boundary, so the logic layer stays free of the
+   * `@ledgerhq/ledger-wallet-framework` currency registry (which the coin-module import allowlist forbids
+   * under src/logic, src/api and src/network). Memoized — the registry lookup runs at most once per API.
+   */
+  getCurrency = (): CryptoCurrency => (this._currency ??= getCryptoCurrencyById(this.currencyId));
 
   getAccountInfo = async (
     address: string,
@@ -241,6 +273,23 @@ export class CosmosAPI {
     });
 
     return sdk_block ? parseInt(sdk_block.header.height) : parseInt(block.header.height);
+  };
+
+  /** Latest block metadata — unlike {@link getHeight}, also returns the block hash and time. */
+  getLatestBlockInfo = async (): Promise<{ height: number; hash: string; time: Date }> => {
+    const {
+      data: { block_id, block, sdk_block },
+    } = await network<CosmosSDKTypes.GetLatestBlockSDK>({
+      method: "GET",
+      url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
+    });
+
+    const header = (sdk_block ?? block).header;
+    return {
+      height: Number.parseInt(header.height),
+      hash: block_id.hash,
+      time: new Date(header.time),
+    };
   };
 
   /**
@@ -445,12 +494,9 @@ export class CosmosAPI {
       let page = 1;
       let maxTxs = 0;
 
-      let cosmosSDKVersion = await this.cosmosSDKVersion;
-      const coerceResult = semver.coerce(cosmosSDKVersion);
-      if (coerceResult !== null) {
-        cosmosSDKVersion = coerceResult.version;
-      }
-      const useModernParams = semver.gte(cosmosSDKVersion, "0.50.0");
+      // Unparseable version → legacy params: semver.gte throws, and the catch would hide it as empty history.
+      const coerced = semver.coerce(await this.cosmosSDKVersion);
+      const useModernParams = coerced !== null && semver.gte(coerced, "0.50.0");
       const queryParam = useModernParams ? "query" : "events";
 
       do {
@@ -481,6 +527,51 @@ export class CosmosAPI {
       log("debug", "Could not fetch txs", { e });
       // Tx fetching failed, we return an empty array
       return [];
+    }
+  }
+
+  /**
+   * Bounded fetch for the Alpaca `listOperations`: at most `count` most-recent txs per stream
+   * (one query each, no fetch-all loop). The existing `getTransactions` keeps its full-history behaviour.
+   */
+  getTransactionsPage = async (
+    address: string,
+    count: number,
+  ): Promise<{ txs: CosmosTx[]; hasMore: boolean }> => {
+    const [sender, recipient] = await Promise.all([
+      this.fetchTransactionsPage(address, "message.sender", count),
+      this.fetchTransactionsPage(address, "transfer.recipient", count),
+    ]);
+    return {
+      txs: [...sender.txs, ...recipient.txs],
+      hasMore: Number(sender.total) > count || Number(recipient.total) > count,
+    };
+  };
+
+  private async fetchTransactionsPage(
+    address: string,
+    filterOn: "message.sender" | "transfer.recipient",
+    count: number,
+  ): Promise<{ txs: CosmosTx[]; total: number }> {
+    try {
+      // Unparseable version → legacy params: semver.gte throws, and the catch would hide it as empty history.
+      const coerced = semver.coerce(await this.cosmosSDKVersion);
+      const useModernParams = coerced !== null && semver.gte(coerced, "0.50.0");
+      const queryParam = useModernParams ? "query" : "events";
+      const params = new URLSearchParams({ [queryParam]: `${filterOn}='${address}'` });
+      if (useModernParams) {
+        params.set("page", "1");
+        params.set("limit", String(count));
+        params.set("order_by", "ORDER_BY_DESC");
+      } else {
+        params.set("pagination.limit", String(count));
+        params.set("pagination.offset", "0");
+        params.set("pagination.reverse", "true");
+      }
+      return await this.fetchTransactions(params);
+    } catch (e) {
+      log("debug", "Could not fetch txs page", { e });
+      return { txs: [], total: 0 };
     }
   }
 
@@ -529,23 +620,30 @@ export class CosmosAPI {
       },
     });
 
-    if (txResponse.code !== 0) {
-      // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
-      // Handle cosmos sequence mismatch error(error code 32) because the backend returns a wrong sequence sometimes
-      // This is a temporary fix until we have a better backend
-      if (txResponse.code === 32) {
-        throw new SequenceNumberError();
-      }
-      throw new Error(
-        "invalid broadcast return (code: " +
-          (txResponse.code || "?") +
-          ", message: '" +
-          (txResponse.raw_log || "") +
-          "')",
-      );
-    }
+    assertBroadcastOk(txResponse);
 
     return patchOperationWithHash(operation, txResponse.txhash);
+  };
+
+  /**
+   * Broadcast a hex-encoded protobuf TxRaw, returning the hash. The bridge
+   * `broadcast` above wraps this with SignedOperation/Operation.
+   */
+  broadcastRawTransaction = async (txHex: string): Promise<string> => {
+    const {
+      data: { tx_response: txResponse },
+    } = await network<CosmosSDKTypes.PostBroadcast>({
+      method: "POST",
+      url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs`,
+      data: {
+        tx_bytes: Array.from(Uint8Array.from(Buffer.from(txHex, "hex"))),
+        mode: "BROADCAST_MODE_SYNC",
+      },
+    });
+
+    assertBroadcastOk(txResponse);
+
+    return txResponse.txhash;
   };
 
   /**

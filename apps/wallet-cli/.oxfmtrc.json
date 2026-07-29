@@ -4,5 +4,5 @@
   "trailingComma": "all",
   "arrowParens": "avoid",
   "sortPackageJson": false,
-  "ignorePatterns": ["package.json", "**/*.json", "dist/**", ".bunli/commands.gen.ts"]
+  "ignorePatterns": ["**/*.md", "package.json", "**/*.json", "dist/**", ".bunli/commands.gen.ts"]
 }

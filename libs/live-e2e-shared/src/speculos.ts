@@ -12,7 +12,7 @@ import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
@@ -71,6 +71,10 @@ const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
+const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+  SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
+);
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -699,6 +703,14 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
+/** Asserts memo/tag appears on Speculos screens when the tx includes one. */
+export function expectMemoTagInEvents(tx: Transaction, events: string[]) {
+  if (!tx.memoTag || tx.memoTag === "noTag") {
+    return;
+  }
+  expect(containsSubstringInEvent(tx.memoTag, events)).toBeTruthy();
+}
+
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
   const speculosAddress = getSpeculosAddress();
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
@@ -960,11 +972,14 @@ export async function signSendTransaction(tx: Transaction) {
   }
 }
 
-export async function getSendEvents(tx: Transaction): Promise<string[]> {
+export async function getSendEvents(
+  tx: Transaction,
+  verifyMaxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+): Promise<string[]> {
   const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
     tx.accountToDebit.currency.speculosApp,
   );
-  await waitFor(sendVerifyLabel);
+  await waitFor(sendVerifyLabel, verifyMaxAttempts);
   return await pressUntilTextFound(sendConfirmLabel);
 }
 

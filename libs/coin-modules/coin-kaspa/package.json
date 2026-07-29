@@ -78,6 +78,11 @@
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",

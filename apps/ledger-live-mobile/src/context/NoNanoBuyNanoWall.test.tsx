@@ -20,7 +20,6 @@ const overrideInitialState = ({
   withFlagOverrides(
     {
       lwmWallet40: {
-        enabled: true,
         params: {
           lazyOnboarding,
         },

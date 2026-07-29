@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const gnf = fiat({
   type: "FiatCurrency",
-  id: "gnf",
   ticker: "GNF",
   name: "Guinean Franc",
   symbol: "FG",

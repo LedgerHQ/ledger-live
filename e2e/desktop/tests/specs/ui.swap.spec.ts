@@ -3,7 +3,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
@@ -15,7 +14,6 @@ const swapUiTags = [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@fa
 
 const kycFromAccount = Account.BTC_NATIVE_SEGWIT_1;
 const kycToAccount = Account.ETH_1;
-const kycProvider = SwapProvider.NEAR_INTENTS;
 const accPair: string[] = [kycFromAccount, kycToAccount].map(acc =>
   acc.currency.speculosApp.name.replaceAll(" ", "_"),
 );
@@ -70,11 +68,11 @@ test.describe("Swap - feedback link", () => {
       const initialSwap = new Swap(kycFromAccount, kycToAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, initialSwap, minAmount);
-      await app.swap.selectSpecificProvider(kycProvider);
+      const provider = await app.swap.selectExchangeWithoutKyc();
       const amountToSend = await app.swap.getAmountToSend();
       const swap = new Swap(kycFromAccount, kycToAccount, amountToSend);
 
-      await app.swap.clickExchangeButton(kycProvider.name);
+      await app.swap.clickExchangeButton(provider.name);
       // TODO: re-enable once Changelly provider is re-enabled
       // await app.swapDrawer.checkKycWarningBannerVisible();
       await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);

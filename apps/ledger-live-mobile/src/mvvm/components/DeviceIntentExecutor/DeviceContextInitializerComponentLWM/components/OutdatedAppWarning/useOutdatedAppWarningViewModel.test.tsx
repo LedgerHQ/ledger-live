@@ -4,10 +4,12 @@ import {
   AppInteractionRequiredStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
+import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useOutdatedAppWarningViewModel } from "./useOutdatedAppWarningViewModel";
 import type { InitializerDevice } from "../../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
@@ -24,6 +26,11 @@ const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
 const openMyLedger = jest.fn();
 const onContinue = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -54,9 +61,9 @@ describe("useOutdatedAppWarningViewModel", () => {
   });
 
   it("GIVEN an outdated app WHEN rendering THEN it exposes the view props", () => {
-    const { result } = renderHook(() =>
-      useOutdatedAppWarningViewModel({ state, device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useOutdatedAppWarningViewModel({ state, device }), {
+      wrapper,
+    });
 
     expect(result.current).toEqual(
       expect.objectContaining({
@@ -66,9 +73,9 @@ describe("useOutdatedAppWarningViewModel", () => {
   });
 
   it("GIVEN an outdated app WHEN opening My Ledger THEN it tracks Manage Apps and forwards the app name", () => {
-    const { result } = renderHook(() =>
-      useOutdatedAppWarningViewModel({ state, device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useOutdatedAppWarningViewModel({ state, device }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.onOpenMyLedger();
@@ -84,9 +91,9 @@ describe("useOutdatedAppWarningViewModel", () => {
   });
 
   it("GIVEN an outdated app WHEN continuing THEN it tracks Continue and forwards to onContinue", () => {
-    const { result } = renderHook(() =>
-      useOutdatedAppWarningViewModel({ state, device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useOutdatedAppWarningViewModel({ state, device }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.onContinue();

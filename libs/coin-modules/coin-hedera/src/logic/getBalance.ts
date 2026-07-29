@@ -1,8 +1,6 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { type HederaCoinConfig } from "../config";
-import { HederaAddAccountError } from "../errors";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 import type { HederaERC20TokenBalance, HederaMirrorToken } from "../types";
@@ -87,8 +85,10 @@ export async function getBalance({
 
     return [nativeBalance, ...tokenBalances];
   } catch (err) {
+    const errNamed = err as { name?: string; status?: number } | null | undefined;
     const isNonExistentAccount =
-      err instanceof HederaAddAccountError || (err instanceof LedgerAPI4xx && err.status === 404);
+      errNamed?.name === "HederaAddAccountError" ||
+      (errNamed?.name === "LedgerAPI4xx" && errNamed?.status === 404);
 
     if (isNonExistentAccount) {
       return [];

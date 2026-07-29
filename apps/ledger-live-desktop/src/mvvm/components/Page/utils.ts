@@ -64,6 +64,21 @@ export const isWallet40Page = (pathname: string, options: IsWallet40PageOptions 
 };
 
 // =============================================================================
+// Fullscreen overlay routes (Recover, Perps webviews)
+// =============================================================================
+
+const isRecoverPlayerRoute = (pathname: string): boolean => /^\/recover\/[^/]+$/.test(pathname);
+
+const isPerpsWebviewRoute = (pathname: string): boolean =>
+  pathname === "/perps" || pathname.startsWith("/perps/");
+
+/**
+ * Routes that render a fullscreen webview overlay and should not show the main app shell.
+ */
+export const isFullscreenOverlayRoute = (pathname: string): boolean =>
+  isRecoverPlayerRoute(pathname) || isPerpsWebviewRoute(pathname);
+
+// =============================================================================
 // Right panel (swap sidebar)
 // =============================================================================
 
@@ -88,3 +103,11 @@ export const shouldDisplayRightPanel = (
   }
   return false;
 };
+
+// =============================================================================
+// Page testid
+// =============================================================================
+
+// Testid kept verbatim from the pathname so it mirrors the route exactly; `/` falls back to dashboard.
+export const getPageTestId = (pathname: string): string =>
+  `page-view-${pathname.replace(/^\/+/, "") || "dashboard"}`;

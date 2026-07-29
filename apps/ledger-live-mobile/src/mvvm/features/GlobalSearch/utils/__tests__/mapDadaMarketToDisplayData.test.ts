@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import { mapDadaMarketToDisplayData } from "../mapDadaMarketToDisplayData";
 
 const usd = { name: "US Dollar", code: "USD", magnitude: 2 } as Unit;

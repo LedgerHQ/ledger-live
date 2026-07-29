@@ -1,5 +1,5 @@
 import type { DeviceInfo } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getProviderIdUseCase } from "../device/use-cases/getProviderIdUseCase";
 
 export { PROVIDERS } from "../device/use-cases/getProviderIdUseCase";

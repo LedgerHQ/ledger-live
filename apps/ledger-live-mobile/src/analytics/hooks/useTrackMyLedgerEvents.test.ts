@@ -3,7 +3,7 @@ import {
   UseTrackMyLedgerSectionEvents,
 } from "./useTrackMyLedgerEvents";
 import { track } from "../segment";
-import { UserRefusedAllowManager, UserRefusedDeviceNameChange } from "@ledgerhq/errors";
+import { UserRefusedAllowManager, UserRefusedDeviceNameChange } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { renderHook } from "@testing-library/react-native";
 

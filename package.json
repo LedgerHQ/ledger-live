@@ -47,17 +47,17 @@
     "build:llm:deps": "nx run-many -t build -p live-mobile",
     "build:coin-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-*\"",
     "build:coin-tester-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-tester-*\"",
-    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "build:hw-app": "nx run-many -t build -p \"@ledgerhq/hw-app-*\"",
     "build:web-tools": "nx run-many -t build -p @ledgerhq/web-tools",
     "build-ci:llm:ios": "nx run-many -t ios:ci:adhoc -p live-mobile",
     "build-ci:llm:android": "nx run-many -t android:apk -p live-mobile",
-    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
-    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "watch:coin": "nx run-many -t watch -p \"@ledgerhq/coin-*\" --parallel=20",
     "watch:es:coin": "nx run-many -t watch:es -p \"@ledgerhq/coin-*\" --parallel=20",
-    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
-    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
     "watch:common": "nx run-many -t watch -p @ledgerhq/live-common",
     "watch:es:common": "nx run-many -t watch:es -p @ledgerhq/live-common",
     "watch:countervalues": "nx run-many -t watch -p @ledgerhq/live-countervalues",
@@ -89,6 +89,7 @@
     "unimported": "nx run-many -t unimported",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
+    "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",
     "cli": "pnpm --filter live-cli",
     "wallet-framework": "pnpm --filter ledger-wallet-framework",
     "wallet-cli": "pnpm --filter wallet-cli",
@@ -251,6 +252,7 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "4.4.1",
+    "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "unimported": "1.30.0",
     "zx": "8.8.5"
@@ -313,7 +315,8 @@
       "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
       "usb@2.17.0": "patches/usb@2.17.0.patch",
-      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch",
+      "@hiero-ledger/proto@2.25.0": "patches/@hiero-ledger__proto@2.25.0.patch"
     },
     "packageExtensions": {
       "detox-allure2-adapter": {
@@ -335,7 +338,6 @@
     "onlyBuiltDependencies": [
       "@apollo/protobufjs",
       "@datadog/mobile-react-native",
-      "@sentry/cli",
       "@swc/core",
       "@taquito/taquito",
       "bigint-buffer",

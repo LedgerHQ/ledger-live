@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import {
+  HEDERA_OPERATION_TYPES,
+  HEDERA_TRANSACTION_MODES,
+  MAP_STAKING_MODE_TO_MEMO,
+} from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -9,6 +13,13 @@ import {
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
 import type { EstimateFeesResult } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
+
+jest.mock("@ledgerhq/live-env", () => ({
+  getEnv: jest.fn((key: string) => {
+    if (key === "HEDERA_CLAIM_REWARDS_RECIPIENT_ACCOUNT_ID") return "0.0.98";
+    return "";
+  }),
+}));
 
 jest.mock("../logic/estimateFees");
 
@@ -59,6 +70,7 @@ describe("prepareTransaction", () => {
 
     await prepareTransaction(accountWithToken, transaction);
 
+    expect(estimateFees).toHaveBeenCalledTimes(1);
     expect(estimateFees).toHaveBeenCalledWith({
       configOrCurrencyId: accountWithToken.currency.id,
       operationType: HEDERA_OPERATION_TYPES.ContractCall,
@@ -104,6 +116,7 @@ describe("prepareTransaction", () => {
 
     await prepareTransaction(accountWithToken, transaction);
 
+    expect(estimateFees).toHaveBeenCalledTimes(1);
     expect(estimateFees).toHaveBeenCalledWith({
       currencyId: accountWithToken.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenTransfer,
@@ -121,6 +134,7 @@ describe("prepareTransaction", () => {
 
     await prepareTransaction(mockAccount, transaction);
 
+    expect(estimateFees).toHaveBeenCalledTimes(1);
     expect(estimateFees).toHaveBeenCalledWith({
       currencyId: mockAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
@@ -136,9 +150,48 @@ describe("prepareTransaction", () => {
 
     await prepareTransaction(mockAccount, transaction);
 
+    expect(estimateFees).toHaveBeenCalledTimes(1);
     expect(estimateFees).toHaveBeenCalledWith({
       currencyId: mockAccount.currency.id,
       operationType: HEDERA_OPERATION_TYPES.CryptoTransfer,
     });
+  });
+
+  it("should use CryptoUpdate operation type for staking transactions", async () => {
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      properties: { stakingNodeId: 3 },
+    });
+
+    await prepareTransaction(mockAccount, transaction);
+
+    expect(estimateFees).toHaveBeenCalledTimes(1);
+    expect(estimateFees).toHaveBeenCalledWith({
+      currencyId: mockAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
+    });
+  });
+
+  it("should set memo from MAP_STAKING_MODE_TO_MEMO for staking transactions", async () => {
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.Delegate,
+      properties: { stakingNodeId: 3 },
+    });
+
+    const result = await prepareTransaction(mockAccount, transaction);
+
+    expect(result.memo).toBe(MAP_STAKING_MODE_TO_MEMO[HEDERA_TRANSACTION_MODES.Delegate]);
+  });
+
+  it("should set recipient to reward account and amount to 1 for ClaimRewards", async () => {
+    const transaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+    });
+
+    const result = await prepareTransaction(mockAccount, transaction);
+
+    expect(result.recipient).toBe("0.0.98");
+    expect(result.amount).toEqual(new BigNumber(1));
+    expect(result.memo).toBe(MAP_STAKING_MODE_TO_MEMO[HEDERA_TRANSACTION_MODES.ClaimRewards]);
   });
 });

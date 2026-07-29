@@ -2,16 +2,16 @@ import * as currencies from "./currencies";
 import type { FiatCurrency } from "./schema";
 
 /**
- * Pre-built registry of all known fiat currencies, keyed by currency id.
+ * Pre-built registry of all known fiat currencies, keyed by ISO 4217 ticker (e.g. `"USD"`).
  */
 export const FIAT_CURRENCIES_REGISTRY: Record<string, FiatCurrency> = Object.fromEntries(
   Object.values(currencies)
     .filter((c): c is FiatCurrency => Boolean(c))
-    .map(c => [c.id, c]),
+    .map(c => [c.ticker, c]),
 );
 
-/** All known fiat currency ids as a constant array. */
-export const FIAT_CURRENCIES_IDS = Object.values(FIAT_CURRENCIES_REGISTRY).map(c => c.id);
+/** All known fiat currency ISO 4217 tickers as a constant array. */
+export const FIAT_CURRENCIES_TICKERS = Object.values(FIAT_CURRENCIES_REGISTRY).map(c => c.ticker);
 
 /**
  * Registry of all known fiat currencies, keyed by ISO 4217 ticker (e.g. `"USD"`).

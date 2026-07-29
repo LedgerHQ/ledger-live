@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const npr = fiat({
   type: "FiatCurrency",
-  id: "npr",
   ticker: "NPR",
   name: "Nepalese Rupee",
   symbol: "₨",

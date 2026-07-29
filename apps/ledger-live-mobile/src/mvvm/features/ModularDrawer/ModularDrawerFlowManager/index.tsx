@@ -8,7 +8,6 @@ export interface ModularDrawerFlowProps {
   assetsViewModel: AssetSelectionStepProps;
   networksViewModel: NetworkSelectionStepProps;
   accountsViewModel: AccountSelectionStepProps;
-  useLumenBottomSheet: boolean;
 }
 
 /**
@@ -26,7 +25,6 @@ export default function ModularDrawerFlow(props: ModularDrawerFlowProps) {
       assetsViewModel={props.assetsViewModel}
       networksViewModel={props.networksViewModel}
       accountsViewModel={props.accountsViewModel}
-      useLumenBottomSheet={props.useLumenBottomSheet}
     />
   );
 }

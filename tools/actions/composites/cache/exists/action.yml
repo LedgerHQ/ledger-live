@@ -48,9 +48,9 @@ runs:
       id: check-cache
       shell: bash
       run: |
-        CACHE_KEY="${{ inputs.key }}"
-        BUCKET="${{ inputs.bucket }}"
-        ENDPOINT="${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }}"
+        CACHE_KEY="${INPUTS_KEY}"
+        BUCKET="${INPUTS_BUCKET}"
+        ENDPOINT="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
 
         echo "Checking for cache key: ${CACHE_KEY}"
         echo "Bucket: ${BUCKET}"
@@ -61,7 +61,7 @@ runs:
           --bucket "${BUCKET}" \
           --key "${CACHE_KEY}/cache.tzst" \
           --endpoint-url "https://${ENDPOINT}" \
-          --region "${{ inputs.region }}" > /dev/null 2>&1; then
+          --region "${INPUTS_REGION}" > /dev/null 2>&1; then
           echo "cache-hit=true" >> $GITHUB_OUTPUT
           echo "✅ Cache found: ${CACHE_KEY}/cache.tzst"
         else
@@ -72,3 +72,10 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+
+        INPUTS_KEY: ${{ inputs.key }}
+
+        INPUTS_BUCKET: ${{ inputs.bucket }}
+
+        INPUTS_REGION: ${{ inputs.region }}
+        INPUTS_ENDPOINT: ${{ inputs.endpoint }}

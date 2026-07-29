@@ -17,6 +17,7 @@ import PortfolioEmptyStatePage from "./wallet/portfolioEmptyState.page";
 import PortfolioPage from "./wallet/portfolio.page";
 import AssetDetailPage from "./wallet/assetDetail.page";
 import ReceivePage from "./trade/receive.page";
+import NewSendFlowPage from "./trade/newSendFlow.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsHelpPage from "./settings/settingsHelp.page";
@@ -27,7 +28,6 @@ import EvmStakePage from "./trade/evmStake.page";
 import TezosStakePage from "./trade/tezosStake.page";
 import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
-import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import MainNavigationPage from "./wallet/mainNavigation.page";
 import MyWalletPage from "./wallet/myWallet.page";
 import OperationPage from "./wallet/operation.page";
@@ -79,6 +79,7 @@ export class Application {
   private portfolioPageInstance = lazyInit(PortfolioPage);
   private readonly assetDetailPageInstance = lazyInit(AssetDetailPage);
   private receivePageInstance = lazyInit(ReceivePage);
+  private newSendFlowPageInstance = lazyInit(NewSendFlowPage);
   private sendPageInstance = lazyInit(SendPage);
   private settingsPageInstance = lazyInit(SettingsPage);
   private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
@@ -88,7 +89,6 @@ export class Application {
   private readonly tezosStakePageInstance = lazyInit(TezosStakePage);
   private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
-  private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private mainNavigationPageInstance = lazyInit(MainNavigationPage);
   private myWalletPageInstance = lazyInit(MyWalletPage);
   private operationPageInstance = lazyInit(OperationPage);
@@ -187,6 +187,10 @@ export class Application {
     return this.receivePageInstance();
   }
 
+  public get newSend() {
+    return this.newSendFlowPageInstance();
+  }
+
   public get send() {
     return this.sendPageInstance();
   }
@@ -221,10 +225,6 @@ export class Application {
 
   public get swapLiveApp() {
     return this.swapLiveAppInstance();
-  }
-
-  public get walletTabNavigator() {
-    return this.walletTabNavigatorPageInstance();
   }
 
   public get mainNavigation() {

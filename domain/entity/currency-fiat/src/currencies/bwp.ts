@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const bwp = fiat({
   type: "FiatCurrency",
-  id: "bwp",
   ticker: "BWP",
   name: "Botswana Pula",
   symbol: "P",

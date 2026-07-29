@@ -1,4 +1,4 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";

@@ -11,8 +11,8 @@ import {
 
 const FinishOnboardingWidgetView = memo(function FinishOnboardingWidgetView({
   postOnboardingInProgress,
-  completedActionsAmount,
-  totalActionsAmount,
+  completedStepsAmount,
+  totalStepsAmount,
   handleOpenFinishOnboardingDialog,
 }: FinishOnboardingWidgetViewProps) {
   const { t } = useTranslation();
@@ -30,9 +30,9 @@ const FinishOnboardingWidgetView = memo(function FinishOnboardingWidgetView({
     >
       <ContentBanner>
         <Stepper
-          currentStep={completedActionsAmount}
-          totalSteps={totalActionsAmount}
-          label={`${completedActionsAmount}/${totalActionsAmount}`}
+          currentStep={completedStepsAmount}
+          totalSteps={totalStepsAmount}
+          label={`${completedStepsAmount}/${totalStepsAmount}`}
         />
         <ContentBannerContent>
           <ContentBannerTitle>{t("postOnboarding.widget.title")}</ContentBannerTitle>

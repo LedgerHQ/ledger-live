@@ -34,7 +34,8 @@ const mockPipelineResult = {
   },
   operationHash: "0xmockoperationhash",
   swapId: "mock-swap-id",
-  amountExpectedTo: "1000000000000000000",
+  amountExpectedTo: "1",
+  amountExpectedToAtomic: "1000000000000000000",
   magnitudeAwareRate: "2500.5",
 } as const;
 
@@ -247,6 +248,7 @@ describe("swap execute command", () => {
     expect(data.operationHash).toBe(mockPipelineResult.operationHash);
     expect(data.swapId).toBe("mock-swap-id");
     expect(data.amountExpectedTo).toBe(mockPipelineResult.amountExpectedTo);
+    expect(data.amountExpectedToAtomic).toBe(mockPipelineResult.amountExpectedToAtomic);
     expect(data.magnitudeAwareRate).toBe(mockPipelineResult.magnitudeAwareRate);
 
     expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);

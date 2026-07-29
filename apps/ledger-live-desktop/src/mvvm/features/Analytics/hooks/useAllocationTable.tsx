@@ -1,5 +1,11 @@
 import React, { useMemo } from "react";
-import { TableCellContent, useLumenDataTable } from "@ledgerhq/lumen-ui-react";
+import {
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+  TableCellContentDescription,
+  useLumenDataTable,
+} from "@ledgerhq/lumen-ui-react";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
@@ -25,21 +31,25 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
         header: t("analytics.allocation.columns.name"),
         enableSorting: false,
         cell: ({ row }) => (
-          <TableCellContent
-            leadingContent={
-              shouldDisplayAggregatedAssets ? (
-                <CryptoIcon
-                  ledgerId={row.original.currency.id}
-                  ticker={row.original.currency.ticker}
-                  size={getValidCryptoIconSize(32)}
-                />
-              ) : (
-                <CryptoCurrencyIcon currency={row.original.currency} size={32} />
-              )
-            }
-            title={<TruncatedText text={row.original.currency.name} />}
-            description={row.original.currency.ticker}
-          />
+          <TableCellItem>
+            {shouldDisplayAggregatedAssets ? (
+              <CryptoIcon
+                ledgerId={row.original.currency.id}
+                ticker={row.original.currency.ticker}
+                size={getValidCryptoIconSize(32)}
+              />
+            ) : (
+              <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+            )}
+            <TableCellContent>
+              <TableCellContentTitle>
+                <TruncatedText text={row.original.currency.name} />
+              </TableCellContentTitle>
+              <TableCellContentDescription>
+                {row.original.currency.ticker}
+              </TableCellContentDescription>
+            </TableCellContent>
+          </TableCellItem>
         ),
       },
       {
@@ -70,10 +80,13 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
             maximumFractionDigits: 2,
           });
           return (
-            <TableCellContent
-              align="end"
-              title={<span className="text-muted">{formatted}%</span>}
-            />
+            <TableCellItem align="end">
+              <TableCellContent>
+                <TableCellContentTitle>
+                  <span className="text-muted">{formatted}%</span>
+                </TableCellContentTitle>
+              </TableCellContent>
+            </TableCellItem>
           );
         },
         meta: { align: "end" },

@@ -1,7 +1,8 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { screen, render } from "@tests/test-renderer";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import type { StakingPosition } from "@ledgerhq/live-common/families/tezos/types";
 import UnstakingRow from "../UnstakingRow";
 

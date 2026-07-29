@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Operation } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { OperationRow } from "../OperationRow";
 import type { OperationRow as OperationRowType, OperationTableItem } from "../../types";
 

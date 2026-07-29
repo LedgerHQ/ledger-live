@@ -1,4 +1,5 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type {
   Account,
   AccountLike,
@@ -192,9 +193,9 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     transaction?: Transaction;
     justScanned?: boolean;
+    onScanned?: (address: string) => void;
   };
   [ScreenName.BleDevicePairingFlow]: undefined;
-  [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {
     accountsIds: string[];
   };

@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
 
 type TrendCellViewProps = {
   readonly formattedTrend: string;
@@ -7,5 +7,11 @@ type TrendCellViewProps = {
 };
 
 export const TrendCellView = ({ formattedTrend, colorClass }: TrendCellViewProps) => (
-  <TableCellContent align="end" title={<span className={colorClass}>{formattedTrend}</span>} />
+  <TableCellItem align="end">
+    <TableCellContent>
+      <TableCellContentTitle>
+        <span className={colorClass}>{formattedTrend}</span>
+      </TableCellContentTitle>
+    </TableCellContent>
+  </TableCellItem>
 );

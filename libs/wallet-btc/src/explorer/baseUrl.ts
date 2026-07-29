@@ -7,7 +7,7 @@ const EXPLORER_VERSION = "v4";
  *
  * The explorer id and endpoint are provided by the consumer through
  * `WalletBtcCurrency` (dependency inversion): wallet-btc no longer reads the
- * Ledger currency registry (@ledgerhq/cryptoassets) or the env (@ledgerhq/live-env).
+ * Ledger currency registry or the env (@ledgerhq/live-env).
  * The caller resolves the endpoint (e.g. from the EXPLORER / EXPLORER_REGTEST env)
  * and the explorer id, and passes them in.
  */

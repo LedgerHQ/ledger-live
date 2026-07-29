@@ -27,13 +27,9 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
     label: "Network Fees",
     value: "--",
     strategyLabel: "Medium",
-    showNetworkFees: true,
-    showFeePresets: false,
     selectedFeeStrategy: null,
-    onSelectFeeStrategy: jest.fn(),
-    feePresetLabelsOptions: [],
-    fiatByPreset: {},
-    legendByPreset: {},
+    displayOptions: [],
+    canOpenSelector: false,
   }),
 }));
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError", () => ({

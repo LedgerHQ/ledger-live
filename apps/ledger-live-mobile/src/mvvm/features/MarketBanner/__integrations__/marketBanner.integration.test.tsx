@@ -64,7 +64,7 @@ describe("MarketBanner Integration Tests", () => {
 
       return renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetDiscoverability } },
+          lwmWallet40: { params: { assetDiscoverability } },
         }),
       });
     };
@@ -129,7 +129,6 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: state => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
-              enabled: true,
               params: { assetDiscoverability: true },
             },
           })(state);
@@ -162,7 +161,6 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: state => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
-              enabled: true,
               params: { assetDiscoverability: true },
             },
           })(state);
@@ -192,7 +190,6 @@ describe("MarketBanner Integration Tests", () => {
         overrideInitialState: state => {
           const flagged = withFlagOverrides({
             lwmWallet40: {
-              enabled: true,
               params: { assetDiscoverability: false },
             },
           })(state);
@@ -219,9 +216,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByTestId("market-banner-skeleton-0")).toBeVisible();
@@ -234,9 +229,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByText(/Connection failed/i)).toBeVisible();
@@ -246,9 +239,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByText(/Connection failed/i)).toBeVisible();
@@ -262,9 +253,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByTestId("market-banner-tile-0")).toBeVisible();
@@ -277,9 +266,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByTestId("market-banner-view-all")).toBeVisible();
@@ -290,9 +277,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByText("Market")).toBeVisible();
@@ -316,7 +301,6 @@ describe("MarketBanner Integration Tests", () => {
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
-            enabled: true,
             params: { assetDiscoverability: true },
           },
         }),
@@ -335,7 +319,6 @@ describe("MarketBanner Integration Tests", () => {
       renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
-            enabled: true,
             params: { assetDiscoverability: true },
           },
         }),
@@ -353,7 +336,6 @@ describe("MarketBanner Integration Tests", () => {
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
-            enabled: true,
             params: { aggregatedAssets: true },
           },
         }),
@@ -378,9 +360,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       const viewAllTile = await screen.findByTestId("market-banner-view-all");
@@ -395,9 +375,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       const sectionTitle = await screen.findByText("Market");
@@ -416,7 +394,6 @@ describe("MarketBanner Integration Tests", () => {
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
-            enabled: true,
             params: { aggregatedAssets: true },
           },
         }),
@@ -443,7 +420,6 @@ describe("MarketBanner Integration Tests", () => {
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
         overrideInitialState: withFlagOverrides({
           lwmWallet40: {
-            enabled: true,
             params: { aggregatedAssets: false },
           },
         }),
@@ -463,9 +439,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get("*/v3/markets", () => HttpResponse.json(MOCK_MARKET_PERFORMERS)));
 
       const { user } = renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       const viewAllTile = await screen.findByTestId("market-banner-view-all");
@@ -505,9 +479,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.findByText(/neutral/i)).toBeVisible();
@@ -517,9 +489,7 @@ describe("MarketBanner Integration Tests", () => {
       server.use(http.get(API_ENDPOINT, () => HttpResponse.json(null, { status: 500 })));
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       expect(await screen.queryByText(/neutral/i)).toBeNull();
@@ -547,9 +517,7 @@ describe("MarketBanner Integration Tests", () => {
       );
 
       renderWithReactQuery(<MarketBannerTest />, {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true },
-        }),
+        overrideInitialState: withFlagOverrides({}),
       });
 
       await waitFor(() => expect(screen.getByText(/view all/i)).toBeVisible());

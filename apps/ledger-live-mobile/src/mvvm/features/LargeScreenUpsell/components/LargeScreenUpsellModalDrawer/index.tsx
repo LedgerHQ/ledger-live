@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { Platform } from "react-native";
+import { type LayoutChangeEvent, Platform, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
 import type { LargeScreenUpsellDismissMethod } from "../../analytics";
+
+const LARGE_SCREEN_UPSELL_HERO_MAX_HEIGHT = 473;
+const BOTTOM_SHEET_CHROME_HEIGHT = 48;
 
 type LargeScreenUpsellModalDrawerProps = Readonly<{
   isOpen: boolean;
@@ -19,6 +23,11 @@ export function LargeScreenUpsellModalDrawer({
   featureIntroViewModel,
   bottomInset,
 }: LargeScreenUpsellModalDrawerProps) {
+  const { height: windowHeight } = useWindowDimensions();
+  const { top: topInset } = useSafeAreaInsets();
+  const bottomSafeArea = Platform.OS === "ios" ? bottomInset : 0;
+  const contentCeiling = windowHeight - topInset - bottomSafeArea - BOTTOM_SHEET_CHROME_HEIGHT;
+  const [heroHeight, setHeroHeight] = useState(LARGE_SCREEN_UPSELL_HERO_MAX_HEIGHT);
   const [hasRenderedContent, setHasRenderedContent] = useState(isOpen);
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
@@ -73,6 +82,20 @@ export function LargeScreenUpsellModalDrawer({
     reportDismiss("outside tap");
   }, [reportDismiss]);
 
+  const handleContentLayout = useCallback(
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      const measuredHeight = nativeEvent.layout.height;
+
+      setHeroHeight(previousHeroHeight => {
+        const nonHeroHeight = measuredHeight - previousHeroHeight;
+        const availableHeroHeight = Math.floor(contentCeiling - nonHeroHeight);
+
+        return Math.min(LARGE_SCREEN_UPSELL_HERO_MAX_HEIGHT, Math.max(0, availableHeroHeight));
+      });
+    },
+    [contentCeiling],
+  );
+
   const shouldRenderContent = isOpen || hasRenderedContent;
 
   return (
@@ -84,6 +107,7 @@ export function LargeScreenUpsellModalDrawer({
       onBackdropPress={handleBackdropPress}
       onModalHide={handleModalHide}
       enableDynamicSizing
+      maxDynamicContentSize={Platform.OS === "ios" ? "fullWithOffset" : undefined}
     >
       {shouldRenderContent ? (
         <BottomSheetView
@@ -93,9 +117,12 @@ export function LargeScreenUpsellModalDrawer({
             paddingBottom: Platform.OS === "ios" ? bottomInset : 0,
           }}
         >
-          <Box testID="large-screen-upsell-modal-drawer">
+          <Box onLayout={handleContentLayout} testID="large-screen-upsell-modal-drawer">
             <BottomSheetHeader spacing />
-            <LargeScreenUpsellModalContent viewModel={featureIntroViewModel} />
+            <LargeScreenUpsellModalContent
+              viewModel={featureIntroViewModel}
+              heroHeight={heroHeight}
+            />
           </Box>
         </BottomSheetView>
       ) : null}

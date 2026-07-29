@@ -3,13 +3,10 @@ import React from "react";
 import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import {
-  Unit,
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-  ExplorerView,
-} from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
+import { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
+import { Unit } from "@domain/entity-currency-unit";
 import {
   Account,
   AnyMessage,
@@ -313,6 +310,20 @@ export type LLDCoinFamily<
    * Allow to override default send flow steps
    */
   createSendSteps?: (disableBacks?: string[]) => Step<string, SendStepProps>[];
+
+  /**
+   * Allow a family to override the Send modal title (e.g. Zcash
+   * transparent/shielded transfer types). Provided as a component so the family
+   * owns its own hooks and gating (feature flags, currency checks) inside its
+   * own render boundary — this keeps the Rules of Hooks satisfied regardless of
+   * which family is resolved at runtime (e.g. EMPTY_FAMILY → bitcoin). Render
+   * `fallback` when the override does not apply.
+   */
+  SendModalTitle?: React.ComponentType<{
+    account: A;
+    transaction: T | undefined | null;
+    fallback: React.ReactNode;
+  }>;
 
   /**
    * Allow to override the "Recipient" step in the Send modal.

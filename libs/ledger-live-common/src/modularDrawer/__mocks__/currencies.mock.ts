@@ -1,4 +1,5 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "../../currencies";
 
 export const mockBtcCryptoCurrency = getCryptoCurrencyById("bitcoin");
@@ -11,9 +12,9 @@ export const mockBscCryptoCurrency = getCryptoCurrencyById("bsc");
 
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "arbitrum/erc20/arbitrum",
+  id: TokenCurrencyIdSchema.parse("arbitrum/erc20/arbitrum"),
   contractAddress: "0x912CE59144191C1204E64559FE8253a0e49E6548",
-  parentCurrencyId: "arbitrum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("arbitrum"),
   tokenType: "erc20",
   name: "Arbitrum",
   ticker: "ARB",
@@ -27,9 +28,9 @@ export const arbitrumToken: TokenCurrency = {
 };
 export const usdcToken: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/usd__coin",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   name: "USD Coin",
   ticker: "USDC",
@@ -44,10 +45,10 @@ export const usdcToken: TokenCurrency = {
 
 export const maticEth: TokenCurrency = {
   type: "TokenCurrency" as const,
-  id: "ethereum/erc20/matic",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/matic"),
   ledgerSignature: "",
   contractAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20" as const,
   name: "Matic",
   ticker: "MATIC",
@@ -64,10 +65,10 @@ export const maticEth: TokenCurrency = {
 
 export const maticBsc: TokenCurrency = {
   type: "TokenCurrency" as const,
-  id: "bsc/bep20/matic_token",
+  id: TokenCurrencyIdSchema.parse("bsc/bep20/matic_token"),
   ledgerSignature: "",
   contractAddress: "0xCC42724C6683B7E57334c4E856f4c9965ED682bD",
-  parentCurrencyId: "bsc",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("bsc"),
   tokenType: "bep20" as const,
   name: "Matic Token",
   ticker: "MATIC",

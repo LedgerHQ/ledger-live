@@ -16,9 +16,10 @@ export const PageView = memo(function PageView({
   children,
   pageScrollerRef,
   shouldRenderRightPanel,
+  pageTestId,
 }: PageViewProps) {
   return (
-    <div className="relative flex flex-1 flex-col min-w-0">
+    <div className="relative flex flex-1 flex-col min-w-0" data-testid={pageTestId}>
       <Wallet40TopBar />
 
       <Wallet40Layout

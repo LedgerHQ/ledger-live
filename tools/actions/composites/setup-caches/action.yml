@@ -51,6 +51,7 @@ outputs:
 runs:
   using: "composite"
   steps:
+    # zizmor: ignore[github-env]
     - name: Skip Nx cache for job
       if: inputs.skip-nx-cache == 'true'
       shell: bash
@@ -81,9 +82,10 @@ runs:
         sudo apt-get install -y build-essential pkg-config
 
     - name: Get pnpm store directory
+      id: get-store-path
       shell: bash
       run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
 
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache
@@ -103,10 +105,12 @@ runs:
     - name: Export NX_KEY for Nx self-hosted cache
       if: inputs.nx-key != ''
       shell: bash
-      run: echo "NX_KEY=${{ inputs.nx-key }}" >> "$GITHUB_ENV"
+      run: echo "NX_KEY=${INPUTS_NX_KEY}" >> "$GITHUB_ENV" # zizmor: ignore[github-env]
+      env:
+        INPUTS_NX_KEY: ${{ inputs.nx-key }}
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v6
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
       if: steps.nx-remote-cache.conclusion == 'success'
       id: aws
       with:
@@ -114,10 +118,10 @@ runs:
         aws-region: ${{ inputs.region }}
 
     - name: Cache pnpm store
-      uses: tespkg/actions-cache@v1
+      uses: tespkg/actions-cache@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
-        path: ${{ env.STORE_PATH }}
+        path: ${{ steps.get-store-path.outputs.store-path }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
@@ -129,7 +133,7 @@ runs:
         use-fallback: false
 
     - name: Cache LLM pods
-      uses: actions/cache@v3
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       if: inputs.skip-pod-cache != 'true'
       with:
         path: |

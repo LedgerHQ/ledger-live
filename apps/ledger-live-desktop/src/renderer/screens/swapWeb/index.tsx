@@ -27,7 +27,6 @@ const Swap = () => {
 
   const handleCrash = useDebounce(() => {
     console.log("[swap web player] Unable to load live app", {
-      shouldLogAsSentryException: true,
       shouldGoBack: true,
     });
     logger.critical(

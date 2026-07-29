@@ -21,7 +21,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { ConnectManagerTimeout } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import { LOG_TYPE } from "..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export enum ImplementationType {
   event = "enum",
@@ -59,13 +59,11 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   config?: PollingImplementationConfig;
   // retryableWithDelayDisconnectedErrors has default value of [DisconnectedDevice, DisconnectedDeviceDuringOperation]
   // used to filter which error(s) retry polling after a delay, reconnectWaitTime
-  retryableWithDelayDisconnectedErrors?: ReadonlyArray<ErrorConstructor>;
+  retryableWithDelayDisconnectedErrors?: ReadonlyArray<new (message?: string) => Error>;
 };
 
-const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<ErrorConstructor> = [
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-];
+const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<new (message?: string) => Error> =
+  [DisconnectedDevice, DisconnectedDeviceDuringOperation];
 
 export const defaultImplementationConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,

@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { FLOW_STATUS, type FlowStatus } from "@ledgerhq/live-common/flows/wizard/types";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";

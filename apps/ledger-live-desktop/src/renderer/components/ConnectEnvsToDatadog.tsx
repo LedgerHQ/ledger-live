@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ipcRenderer } from "electron";
 import { useSelector, useStore } from "LLD/hooks/redux";
-import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { EnvName, getEnv } from "@shared/env";
 import {
   FEATURE_FLAGS_DEFAULTS,
   type Feature,
@@ -10,7 +9,7 @@ import {
 } from "@shared/feature-flags";
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { enabledExperimentalFeatures } from "~/renderer/experimental";
-import { sentryLogsSelector } from "~/renderer/reducers/settings";
+import { crashReportingSelector } from "~/renderer/reducers/settings";
 import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
 
@@ -38,25 +37,20 @@ export const ConnectEnvsToDatadog = () => {
   const store = useStore();
   const featureFlags = useFeatureFlags();
   const rawLldDatadog = useFeature("lldDatadog");
-  const sentryLogs = useSelector(sentryLogsSelector);
+  const crashReporting = useSelector(crashReportingSelector);
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
 
-  // The main process can't resolve the lldDatadog flag itself, so mirror it over IPC; the main
-  // process uses this signal to mute its own Sentry when Datadog is the active backend.
   useEffect(() => {
-    ipcRenderer.send("lldDatadogChanged", lldDatadog?.enabled === true);
-  }, [lldDatadog?.enabled]);
-
-  useEffect(() => {
-    if (!lldDatadog?.enabled || !sentryLogs || !isDatadogAvailable() || datadogInitialized) return;
+    if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)
+      return;
     if (initInFlightRef.current) return;
 
     let cancelled = false;
     initInFlightRef.current = true;
 
-    const shouldSend = () => sentryLogsSelector(store.getState());
+    const shouldSend = () => crashReportingSelector(store.getState());
     initDatadogLogs(shouldSend);
     initDatadog(
       shouldSend,
@@ -67,6 +61,8 @@ export const ConnectEnvsToDatadog = () => {
         traceSampleRate: lldDatadog.params?.traceSampleRate,
         allowedTracingUrls: lldDatadog.params?.allowedTracingUrls,
         profilingSampleRate: lldDatadog.params?.profilingSampleRate,
+        trackUserInteractions: lldDatadog.params?.trackUserInteractions,
+        trackResources: lldDatadog.params?.trackResources,
       },
       store,
     ).then(done => {
@@ -78,7 +74,7 @@ export const ConnectEnvsToDatadog = () => {
       cancelled = true;
       initInFlightRef.current = false;
     };
-  }, [store, lldDatadog, sentryLogs, datadogInitialized]);
+  }, [store, lldDatadog, crashReporting, datadogInitialized]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !datadogInitialized) return;

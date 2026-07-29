@@ -5,6 +5,7 @@
   "arrowParens": "avoid",
   "sortPackageJson": false,
   "ignorePatterns": [
+    "**/*.md",
     "**/lib/**",
     "**/lib-es/**",
     "**/__snapshots__/**",

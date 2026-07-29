@@ -140,6 +140,7 @@ describe("getStakes", () => {
 
     const result = await getStakes({ configOrCurrencyId: mockCurrency.id, address: mockAddress });
 
+    expect(mockGetNode).toHaveBeenCalledTimes(1);
     expect(mockGetNode).toHaveBeenCalledWith({
       configOrCurrencyId: mockCurrency.id,
       nodeId,

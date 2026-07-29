@@ -1,14 +1,22 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  CryptoCurrencyIdSchema,
+  type CryptoCurrency,
+  getCryptoCurrencyById,
+} from "@domain/entity-currency-crypto";
 
-export const createMockCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
+type CurrencyOverrides = Partial<Omit<CryptoCurrency, "id">> & { id?: string };
+
+export const createMockCurrency = (overrides?: CurrencyOverrides): CryptoCurrency => {
   const currency = getCryptoCurrencyById("bitcoin");
+  const { id, ...rest } = overrides ?? {};
   return {
     ...currency,
-    ...overrides,
+    ...(id !== undefined ? { id: CryptoCurrencyIdSchema.parse(id) } : {}),
+    ...rest,
   };
 };
 

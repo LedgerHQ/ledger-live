@@ -1,8 +1,9 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { Features } from "@shared/feature-flags";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import {
   flattenAccounts,
   getAccountCurrency,

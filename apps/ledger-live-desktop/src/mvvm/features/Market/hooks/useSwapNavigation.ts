@@ -6,7 +6,7 @@ import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/i
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildSwapNavigationState } from "../utils/swapNavigation";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type NavigateToSwap = (ledgerCurrency: CryptoOrTokenCurrency) => void;
 

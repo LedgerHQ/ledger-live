@@ -33,7 +33,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 const createAccountState = withFlagOverrides(
-  { lwmWallet40: { enabled: true, params: { assetSection: true } } },
+  { lwmWallet40: { params: { assetSection: true } } },
   state => {
     const btcAccount = genAccount("btc-1", { currency: btcCurrency });
     const ethAccount = genAccount("eth-1", { currency: ethCurrency });

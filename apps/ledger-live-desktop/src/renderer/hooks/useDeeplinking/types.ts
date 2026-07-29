@@ -1,5 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AppDispatch } from "~/state-manager/configureStore";
 
 export type NavigateFn = (

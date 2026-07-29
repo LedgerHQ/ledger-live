@@ -21,7 +21,6 @@ import {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
@@ -48,7 +47,6 @@ import {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
@@ -65,6 +63,7 @@ import {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetHasDismissedContactsFeatureIntroductionPayload,
   SettingsSetDoNotAskAgainSkipMemoPayload,
   SettingsSetProductTourCompletedPayload,
   SettingsSetHasSeenQ2WalletV4TourPayload,
@@ -172,10 +171,6 @@ export const setDiscreetMode = createAction<SettingsSetDiscreetModePayload>(
 export const setLanguage = createAction<SettingsSetLanguagePayload>(
   SettingsActionTypes.SETTINGS_SET_LANGUAGE,
 );
-export const setLocale = createAction<SettingsSetLocalePayload>(
-  SettingsActionTypes.SETTINGS_SET_LOCALE,
-);
-
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );
@@ -246,8 +241,6 @@ export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTer
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
 );
 
-export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
-
 export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
   SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
 );
@@ -295,6 +288,11 @@ export const setSelectedTabPortfolioAssets =
 export const setHasSeenWalletV4Tour = createAction<SettingsSetHasSeenWalletV4TourPayload>(
   SettingsActionTypes.SET_HAS_SEEN_WALLET_V4_TOUR,
 );
+
+export const setHasDismissedContactsFeatureIntroduction =
+  createAction<SettingsSetHasDismissedContactsFeatureIntroductionPayload>(
+    SettingsActionTypes.SET_HAS_DISMISSED_CONTACTS_FEATURE_INTRODUCTION,
+  );
 
 export const setDoNotAskAgainSkipMemo = createAction<SettingsSetDoNotAskAgainSkipMemoPayload>(
   SettingsActionTypes.SET_DO_NOT_ASK_AGAIN_SKIP_MEMO,

@@ -51,7 +51,7 @@ jest.mock("./utils", () => ({
 
 describe("listOperationsV2", () => {
   const mockCurrency = getMockedCurrency();
-  const mockMirrorAccount = getMockedMirrorAccount({ account: "0.0.12345" });
+  const mockMirrorAccount = getMockedMirrorAccount();
   const mockSyntheticBlock: SyntheticBlock = {
     blockHeight: 1000000,
     blockHash: "0x100000",
@@ -166,7 +166,6 @@ describe("listOperationsV2", () => {
     });
 
     expect(result.tokenOperations).toEqual([]);
-    expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations).toMatchObject([
       {
         type: "OUT",
@@ -1324,7 +1323,7 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(0);
+    expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toHaveLength(1);
     expect(result.tokenOperations[0].type).toBe("OUT");
   });
@@ -1364,8 +1363,7 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.coinOperations[0].hash).toBe("encoded-hash1");
+    expect(result.coinOperations).toEqual([expect.objectContaining({ hash: "encoded-hash1" })]);
   });
 
   it("should use synthetic blocks when useSyntheticBlocks is true", async () => {
@@ -1718,7 +1716,38 @@ describe("listOperationsV2", () => {
       useSyntheticBlocks: false,
     });
 
-    expect(result.coinOperations).toHaveLength(1);
-    expect(result.coinOperations[0].recipients).toEqual([nodeAccountId]);
+    expect(result.coinOperations).toEqual([
+      expect.objectContaining({ recipients: [nodeAccountId] }),
+    ]);
+  });
+
+  it("should return no coin operations for a mirror tx with empty transfers", async () => {
+    const mockTransaction = getMockedMirrorTransaction({
+      token_transfers: [],
+      staking_reward_transfers: [],
+      transfers: [],
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+    (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toEqual([]);
   });
 });

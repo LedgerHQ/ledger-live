@@ -4,14 +4,13 @@ import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ErrorDisplay from "../../../ErrorDisplay";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useNavigate } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 
 export type Props = {
@@ -28,7 +27,8 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isNotFoundEntityError =
-    error.message === "not found entity" || error instanceof FirmwareNotRecognized;
+    error.message === "not found entity" ||
+    (error as { name?: string })?.name === "FirmwareNotRecognized";
   const providerNumber = useEnv("FORCE_PROVIDER");
 
   const drawerAnalyticsName = `Error: ${

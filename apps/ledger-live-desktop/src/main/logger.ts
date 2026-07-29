@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Log } from "@ledgerhq/logs";
 export type { Log };
 

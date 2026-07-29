@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "~/context/hooks";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
 import { accountsSelector } from "~/reducers/accounts";

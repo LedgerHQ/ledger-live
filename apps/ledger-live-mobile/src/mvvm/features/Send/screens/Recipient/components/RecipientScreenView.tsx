@@ -1,5 +1,5 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
@@ -8,6 +8,7 @@ import { useMemoViewModel } from "LLM/features/Send/components/Memo/hooks/useMem
 import { shouldShowMatchedAddress } from "@ledgerhq/live-common/flows/send/recipient/utils/shouldShowMatchedAddress";
 import { useSendFlowData } from "LLM/features/Send/context/SendFlowContext";
 import React, { useCallback, useEffect, useMemo } from "react";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { useRecipientScreenView } from "../hooks/useRecipientScreenView";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
@@ -16,6 +17,7 @@ import { PasteFromClipboard } from "./PasteFromClipboard";
 import { ValidationBanner } from "./ValidationBanner";
 import { useAnalytics } from "~/analytics";
 import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework/tracking/send";
+import { shouldUseKeyboardAvoidance } from "~/logic/keyboardVisible";
 
 type RecipientScreenViewProps = Readonly<{
   account: AccountLike;
@@ -127,56 +129,68 @@ export const RecipientScreenView = ({
     }
   }, [track, trackingProperties, uiConfig.hasMemo, memoVm.hasFilledMemo, memoVm.memoError]);
 
+  const keyboardBehavior = shouldUseKeyboardAvoidance(Platform.OS, Platform.Version)
+    ? "padding"
+    : undefined;
+
   return (
     <SendFlowLayout>
-      <Box style={{ flex: 1, marginHorizontal: -8 }}>
-        {isLoading && !showMatched && <LoadingState />}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={keyboardBehavior}>
+        <ScrollView
+          style={{ flex: 1, marginHorizontal: -8 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}
+        >
+          {isLoading && !showMatched && <LoadingState />}
 
-        {showInitialState && clipboardAddress && (
-          <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
-        )}
+          {showInitialState && clipboardAddress && (
+            <PasteFromClipboard address={clipboardAddress} onPaste={handlePasteFromClipboard} />
+          )}
 
-        {showMemo && <MemoControls vm={memoVm} />}
+          {showMemo && <MemoControls vm={memoVm} />}
 
-        {showMatched && (
-          <AddressMatchedSection
-            searchResult={result}
-            searchValue={searchValue}
-            onSelect={handleMatchedAddress}
-            isSanctioned={showSanctionedBanner}
-            isAddressComplete={isAddressComplete}
-            hasBridgeError={showBridgeRecipientError}
-          />
-        )}
+          {showMatched && (
+            <AddressMatchedSection
+              searchResult={result}
+              searchValue={searchValue}
+              onSelect={handleMatchedAddress}
+              isSanctioned={showSanctionedBanner}
+              isAddressComplete={isAddressComplete}
+              hasBridgeError={showBridgeRecipientError}
+            />
+          )}
 
-        {showAddressValidationError && (
-          <AddressValidationError error={addressValidationErrorType} />
-        )}
+          {showAddressValidationError && (
+            <AddressValidationError error={addressValidationErrorType} />
+          )}
 
-        {shouldShowErrorBanner && (
-          <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
-            {showBridgeSenderError && (
-              <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
-            )}
-            {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
-            {showBridgeRecipientError && (
-              <ValidationBanner
-                type="error"
-                error={bridgeRecipientError}
-                variant="recipient"
-                excludeRecipientRequired
-              />
-            )}
-            {showBridgeRecipientWarning && (
-              <ValidationBanner
-                type="warning"
-                warning={bridgeRecipientWarning}
-                variant="recipient"
-              />
-            )}
-          </Box>
-        )}
-      </Box>
+          {shouldShowErrorBanner && (
+            <Box lx={{ marginHorizontal: "s8", gap: "s16" }}>
+              {showBridgeSenderError && (
+                <ValidationBanner type="error" error={bridgeSenderError} variant="sender" />
+              )}
+              {showSanctionedBanner && <ValidationBanner type="sanctioned" />}
+              {showBridgeRecipientError && (
+                <ValidationBanner
+                  type="error"
+                  error={bridgeRecipientError}
+                  variant="recipient"
+                  excludeRecipientRequired
+                />
+              )}
+              {showBridgeRecipientWarning && (
+                <ValidationBanner
+                  type="warning"
+                  warning={bridgeRecipientWarning}
+                  variant="recipient"
+                />
+              )}
+            </Box>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SendFlowLayout>
   );
 };

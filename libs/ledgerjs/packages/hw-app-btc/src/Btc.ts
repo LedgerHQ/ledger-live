@@ -77,7 +77,7 @@ export default class Btc {
    * @param arg derivation parameter
    * - path: a BIP 32 path of the account level. (e.g. The derivation path `84'/0'/0'`
    * follows the `purpose' / coin_type' / account'` standard, with purpose=84, coin_type=0, account=0)
-   * - xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts
+   * - xpubVersion: the XPUBVersion of the coin used. (refer to @domain/entity-currency-crypto
    * for the XPUBVersion value if needed)
    * @returns XPUB of the account
    */

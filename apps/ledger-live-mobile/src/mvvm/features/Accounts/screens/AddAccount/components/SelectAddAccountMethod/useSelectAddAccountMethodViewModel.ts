@@ -3,7 +3,8 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useCallback } from "react";
 import { track } from "~/analytics";
 import { useFeature } from "@features/platform-feature-flags";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 
 type AddAccountMethodViewModelProps = {

@@ -1,11 +1,7 @@
 import React, { memo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom, {
-  BottomSheetView as GorhomBottomSheetView,
-} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 import { useTranslation } from "~/context/Locale";
 
 type Props = Readonly<{
@@ -16,7 +12,6 @@ type Props = Readonly<{
 function FearAndGreedDefinitionSheet({ isOpen, onClose }: Props) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const content = (
     <>
@@ -36,27 +31,13 @@ function FearAndGreedDefinitionSheet({ isOpen, onClose }: Props) {
     </>
   );
 
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={isOpen}
-        onClose={onClose}
-        enableDynamicSizing
-      >
-        <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-          <BottomSheetHeader />
-          {content}
-        </BottomSheetView>
-      </QueuedDrawerBottomSheet>
-    );
-  }
-
   return (
-    <QueuedDrawerGorhom isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
-      <GorhomBottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
+    <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetHeader />
         {content}
-      </GorhomBottomSheetView>
-    </QueuedDrawerGorhom>
+      </BottomSheetView>
+    </QueuedDrawerBottomSheet>
   );
 }
 

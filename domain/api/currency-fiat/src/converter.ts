@@ -20,9 +20,9 @@ export function resolveSupportedFiats(tickers: string[]): FiatCurrency[] {
     if (OFAC_FIAT_TICKERS.has(upper)) continue;
 
     const currency = findFiatCurrencyByTicker(upper);
-    if (!currency || seen.has(currency.id)) continue;
+    if (!currency || seen.has(currency.ticker)) continue;
 
-    seen.add(currency.id);
+    seen.add(currency.ticker);
     resolved.push(currency);
   }
 

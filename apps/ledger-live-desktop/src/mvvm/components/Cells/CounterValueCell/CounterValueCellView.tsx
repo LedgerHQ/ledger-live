@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
 
 type CounterValueCellViewProps = {
   readonly formattedCounterValue: string;
@@ -10,10 +10,15 @@ export const CounterValueCellView = ({
   formattedCounterValue,
   className,
 }: CounterValueCellViewProps) => (
-  <TableCellContent
-    align="end"
-    title={
-      className ? <span className={className}>{formattedCounterValue}</span> : formattedCounterValue
-    }
-  />
+  <TableCellItem align="end">
+    <TableCellContent>
+      <TableCellContentTitle>
+        {className ? (
+          <span className={className}>{formattedCounterValue}</span>
+        ) : (
+          formattedCounterValue
+        )}
+      </TableCellContentTitle>
+    </TableCellContent>
+  </TableCellItem>
 );

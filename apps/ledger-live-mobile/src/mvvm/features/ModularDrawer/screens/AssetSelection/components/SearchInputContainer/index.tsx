@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "~/context/Locale";
 import { SearchProps, useSearch } from "./useSearch";
-import { Flex } from "@ledgerhq/native-ui";
-import { Search } from "@ledgerhq/native-ui/pre-ldls/index";
+import { Box, SearchInput } from "@ledgerhq/lumen-ui-rnative";
 import { useFeature } from "@features/platform-feature-flags";
+
+const DEFAULT_DEBOUNCE_TIME = 500;
 
 type Props = SearchProps & {
   withHorizontalPadding?: boolean;
@@ -19,6 +20,7 @@ const SearchInputContainer = ({
 }: Props) => {
   const { t } = useTranslation();
   const modularDrawer = useFeature("llmModularDrawer");
+  const debounceTime = modularDrawer?.params?.searchDebounceTime ?? DEFAULT_DEBOUNCE_TIME;
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch({
     source,
@@ -27,18 +29,40 @@ const SearchInputContainer = ({
     formatAssetConfig,
   });
 
+  const previousValueRef = useRef(displayedValue ?? "");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const onChangeText = useCallback(
+    (text: string) => {
+      handleSearch(text);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        handleDebouncedChange(text, previousValueRef.current);
+        previousValueRef.current = text;
+      }, debounceTime);
+    },
+    [handleSearch, handleDebouncedChange, debounceTime],
+  );
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
   return (
-    <Flex mb={4} {...(withHorizontalPadding ? { px: 4 } : {})}>
-      <Search
-        onPressIn={onPressIn}
+    <Box
+      onTouchStart={onPressIn}
+      lx={{ marginBottom: "s16", ...(withHorizontalPadding ? { paddingHorizontal: "s16" } : {}) }}
+    >
+      <SearchInput
         value={displayedValue}
-        debounceTime={modularDrawer?.params?.searchDebounceTime}
         placeholder={t("modularDrawer.searchPlaceholder")}
-        onDebouncedChange={handleDebouncedChange}
-        onChange={e => handleSearch(e.nativeEvent.text)}
+        onChangeText={onChangeText}
         testID="modular-drawer-search-input"
       />
-    </Flex>
+    </Box>
   );
 };
 

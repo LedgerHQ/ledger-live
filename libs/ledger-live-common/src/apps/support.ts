@@ -1,7 +1,7 @@
 import semver from "semver";
 import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import { getDependencies } from "./polyfill";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
 

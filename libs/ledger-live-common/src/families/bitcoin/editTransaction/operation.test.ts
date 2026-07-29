@@ -1,11 +1,11 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { isEditableOperation, isStuckOperation, getStuckAccountAndOperation } from "./operation";
 
 // Deterministic stuck-timeout threshold, decoupled from the real env default.
 const STUCK_TIMEOUT = 20 * 60 * 1000;
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn(),
 }));
 

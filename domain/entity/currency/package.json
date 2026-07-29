@@ -2,7 +2,7 @@
   "name": "@domain/entity-currency",
   "version": "0.2.2",
   "private": true,
-  "description": "Currency union types (Currency, CryptoOrTokenCurrency) and re-exports from all currency entity packages",
+  "description": "Currency union types (Currency, CryptoOrTokenCurrency) composed from the currency entity packages",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -21,7 +21,6 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
-    "@domain/entity-currency-unit": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

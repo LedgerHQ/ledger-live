@@ -23,6 +23,7 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
+    "src/errors.ts",
     "src/network/index.ts",
     "src/signer/signMessage.ts",
     "src/supportedFeatures.ts"

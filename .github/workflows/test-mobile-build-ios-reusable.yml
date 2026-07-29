@@ -5,7 +5,7 @@ on:
     inputs:
       macos-specificity-runner-label:
         description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
-        required: true
+        required: false
         type: string
         default: "general-pool"
       disable-nx-cache:
@@ -19,12 +19,12 @@ on:
         type: string
       build-ios-native:
         description: Whether to build the iOS native app
-        required: true
+        required: false
         type: boolean
         default: true
       build-ios-js:
         description: Whether to build the iOS JS bundle
-        required: true
+        required: false
         type: boolean
         default: true
       ios-native-cache-key:
@@ -47,6 +47,21 @@ on:
         description: The JS bundle size of the built app
         value: ${{ jobs.build-ios-js.outputs.js-bundle-size }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      S3_DIRECTCONNECT_ENDPOINT:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -88,7 +103,6 @@ on:
         default: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -99,6 +113,9 @@ env:
 jobs:
   build-ios-native:
     name: "iOS Build Native"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-ios-native == true }}
     timeout-minutes: 120
     env:
@@ -109,13 +126,13 @@ jobs:
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -141,7 +158,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - uses: nick-fields/retry@v4
+      - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies
         with:
@@ -149,20 +166,6 @@ jobs:
           timeout_minutes: 15
           command: pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm && pnpm nx:write-cache-config --cache-key-prefix "${{ steps.setup-caches.outputs.nx-cache-key-prefix }}"
-
-      - name: Flake alert - ArgumentError
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
-        if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
-        with:
-          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          halt_runner: true
-
-      - name: Flake alert - Reruns
-        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
-        if: success() && steps.install-dependencies.outputs.total_attempts == 2
-        with:
-          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
 
       - name: Build iOS app for Detox test run
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
@@ -187,6 +190,9 @@ jobs:
 
   build-ios-js:
     name: "iOS Build JS"
+    permissions:
+      id-token: write
+      contents: read
     if: ${{ inputs.build-ios-js == true }}
     timeout-minutes: 20
     env:
@@ -199,13 +205,13 @@ jobs:
       js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -231,7 +237,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - uses: nick-fields/retry@v4
+      - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies
         with:

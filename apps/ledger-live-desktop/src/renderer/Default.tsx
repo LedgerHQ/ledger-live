@@ -25,7 +25,7 @@ import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
 import Page from "LLD/components/Page";
 import NightlyLayer from "LLD/components/NightlyLayer";
-import { isWallet40Page } from "LLD/components/Page/utils";
+import { isFullscreenOverlayRoute, isWallet40Page } from "LLD/components/Page/utils";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -56,7 +56,7 @@ import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useSuppressQ2TourForNewUsers } from "LLD/features/Q2Tour/hooks/useSuppressQ2TourForNewUsers";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
@@ -168,16 +168,8 @@ const withFullscreenSuspense = Component => props => (
   </Suspense>
 );
 
-// in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
-};
-
-const LetMainSendCrashTest = () => {
-  useEffect(() => {
-    ipcRenderer.send("mainCrashTest");
-  }, []);
-  return null;
 };
 
 const LetInternalSendCrashTest = () => {
@@ -211,84 +203,99 @@ const RecoverPlayerWithFeatureToggle = () => {
 };
 
 // Shared content for the main app layout
-const MainAppContent = ({
-  shouldDisplayAssetSection,
-  shouldDisplayAggregatedAssets,
-}: {
+type MainAppContentProps = Readonly<{
   shouldDisplayAssetSection: boolean;
   shouldDisplayAggregatedAssets: boolean;
-}) => (
-  <>
-    <Routes>
-      <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
-      <Route path="/perps/*" element={withFullscreenSuspense(Perps)({})} />
-    </Routes>
-    <SideBar />
+}>;
 
-    <Page>
-      <TopBannerContainer>
-        <VaultSignerBanner />
-      </TopBannerContainer>
+function MainAppContent({
+  shouldDisplayAssetSection,
+  shouldDisplayAggregatedAssets,
+}: MainAppContentProps) {
+  const { pathname } = useLocation();
+  const hideMainShell = isFullscreenOverlayRoute(pathname);
+
+  return (
+    <>
       <Routes>
-        <Route path="/" element={withSuspense(PortfolioPage)({})} />
-        <Route path="/settings/*" element={withSuspense(Settings)({})} />
-        <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
-        <Route path="/accounts" element={withSuspense(Accounts)({})} />
-        <Route
-          path="/cryptos"
-          element={
-            shouldDisplayAssetSection ? (
-              withSuspense(CryptoAddresses)({})
-            ) : (
-              <Navigate to="/accounts" replace />
-            )
-          }
-        />
-        <Route
-          path="/assets"
-          element={
-            shouldDisplayAssetSection ? (
-              withSuspense(CryptoAssets)({})
-            ) : (
-              <Navigate to="/accounts" replace />
-            )
-          }
-        />
-        <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
-        <Route path="/card/:appId?" element={withSuspense(Card)({})} />
-        <Route path="/paytab" element={withSuspense(PayTab)({})} />
-        <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
-        <Route path="/manager/*" element={withSuspense(Manager)({})} />
-        <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
-        <Route path="/platform/:appId" element={<LiveApp />} />
-        <Route path="/earn/*" element={withSuspense(Earn)({})} />
-        <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
-        <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
-        <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
-        <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
-        <Route path="/account/:id/*" element={withSuspense(Account)({})} />
-        <Route
-          path="/asset/*"
-          element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
-        />
-        <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route
-          path="/market/:currencyId"
-          element={
-            shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
-          }
-        />
-        <Route path="/market" element={withSuspense(Market)({})} />
-        <Route path="/bank/*" element={withSuspense(Bank)({})} />
-        <Route path="/analytics" element={withSuspense(Analytics)({})} />
-        <Route path="/history" element={withSuspense(History)({})} />
-        <Route path="/contacts" element={withSuspense(Contacts)({})} />
+        <Route path="/recover/:appId" element={<RecoverPlayerWithFeatureToggle />} />
+        <Route path="/perps/*" element={withFullscreenSuspense(Perps)({})} />
       </Routes>
-    </Page>
-    <Drawer />
-    <ToastOverlay />
-  </>
-);
+      {!hideMainShell && (
+        <>
+          <SideBar />
+
+          <Page>
+            <TopBannerContainer>
+              <VaultSignerBanner />
+            </TopBannerContainer>
+            <Routes>
+              <Route path="/" element={withSuspense(PortfolioPage)({})} />
+              <Route path="/settings/*" element={withSuspense(Settings)({})} />
+              <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
+              <Route path="/accounts" element={withSuspense(Accounts)({})} />
+              <Route
+                path="/cryptos"
+                element={
+                  shouldDisplayAssetSection ? (
+                    withSuspense(CryptoAddresses)({})
+                  ) : (
+                    <Navigate to="/accounts" replace />
+                  )
+                }
+              />
+              <Route
+                path="/assets"
+                element={
+                  shouldDisplayAssetSection ? (
+                    withSuspense(CryptoAssets)({})
+                  ) : (
+                    <Navigate to="/accounts" replace />
+                  )
+                }
+              />
+              <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
+              <Route path="/card/:appId?" element={withSuspense(Card)({})} />
+              <Route path="/paytab" element={withSuspense(PayTab)({})} />
+              <Route path="/manager/reload" element={<Navigate to="/manager" replace />} />
+              <Route path="/manager/*" element={withSuspense(Manager)({})} />
+              <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
+              <Route path="/platform/:appId" element={<LiveApp />} />
+              <Route path="/earn/*" element={withSuspense(Earn)({})} />
+              <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
+              <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
+              <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
+              <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
+              <Route path="/account/:id/*" element={withSuspense(Account)({})} />
+              <Route
+                path="/asset/*"
+                element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
+              />
+              <Route path="/swap/*" element={withSuspense(Swap2)({})} />
+              <Route
+                path="/market/:currencyId"
+                element={
+                  shouldDisplayAggregatedAssets ? (
+                    <RedirectMarketToAsset />
+                  ) : (
+                    withSuspense(MarketCoin)({})
+                  )
+                }
+              />
+              <Route path="/market" element={withSuspense(Market)({})} />
+              <Route path="/bank/*" element={withSuspense(Bank)({})} />
+              <Route path="/analytics" element={withSuspense(Analytics)({})} />
+              <Route path="/history" element={withSuspense(History)({})} />
+              <Route path="/contacts" element={withSuspense(Contacts)({})} />
+            </Routes>
+          </Page>
+          <Drawer />
+          <ToastOverlay />
+        </>
+      )}
+    </>
+  );
+}
 
 // Main app layout component that handles the main navigation after onboarding (exported for testing)
 export const MainAppLayout = () => {
@@ -351,9 +358,6 @@ export const MainAppLayout = () => {
 
       <KeyboardContent sequence="CRASH_TEST">
         <LetThisCrashForCrashTest />
-      </KeyboardContent>
-      <KeyboardContent sequence="CRASH_MAIN">
-        <LetMainSendCrashTest />
       </KeyboardContent>
       <KeyboardContent sequence="CRASH_INTERNAL">
         <LetInternalSendCrashTest />

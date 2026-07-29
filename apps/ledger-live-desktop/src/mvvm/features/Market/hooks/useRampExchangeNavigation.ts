@@ -11,7 +11,7 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { buildBuyNavigationState, type BuyNavigationOnRampState } from "../utils/buyNavigation";
 import { buildSellNavigationState, type SellNavigationOffRampState } from "../utils/sellNavigation";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type RampExchangeKind = "buy" | "sell";

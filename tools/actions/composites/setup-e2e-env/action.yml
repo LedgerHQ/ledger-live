@@ -17,20 +17,24 @@ runs:
       id: set-broadcast
       shell: bash
       run: |
-        if [[ "${{ inputs.enable_broadcast }}" == "true" || ("${{ github.event_name }}" == "schedule" && "$(date +%u)" == "1") ]]; then
+        if [[ "${INPUTS_ENABLE_BROADCAST}" == "true" || ("${{ github.event_name }}" == "schedule" && "$(date +%u)" == "1") ]]; then
           echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
         else
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
         fi
+      env:
+        INPUTS_ENABLE_BROADCAST: ${{ inputs.enable_broadcast }}
 
     - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
       id: set-envs
       shell: bash
       run: |
-        if [[ "${{ inputs.build_type }}" == "js" ]]; then
+        if [[ "${INPUTS_BUILD_TYPE}" == "js" ]]; then
           echo "SWAP_API_BASE=https://swap.ledger.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=PROD" >> $GITHUB_ENV
         else
           echo "SWAP_API_BASE=https://swap-stg.ledger-test.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=STAGING" >> $GITHUB_ENV
         fi
+      env:
+        INPUTS_BUILD_TYPE: ${{ inputs.build_type }}

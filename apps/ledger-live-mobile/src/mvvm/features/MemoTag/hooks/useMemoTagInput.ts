@@ -3,7 +3,7 @@ import { FC, useMemo, useState } from "react";
 
 import { useFeature } from "@features/platform-feature-flags";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import perFamily from "~/generated/MemoTagInput";
 import { MemoTagInputProps, TxPatch } from "../types";
 

@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import type { DisplayedDevice } from "@ledgerhq/live-dmk-mobile";
 import { track } from "~/analytics";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { DeviceListItem } from "./DeviceListItem";
 
 jest.mock("~/analytics", () => {
@@ -43,9 +43,9 @@ describe("DeviceListItem", () => {
 
   function renderDeviceListItem(device: DisplayedDevice) {
     return render(
-      <SourceFlowProvider value="my_ledger">
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
         <DeviceListItem device={device} />
-      </SourceFlowProvider>,
+      </DeviceIntentTrackingProvider>,
     );
   }
 

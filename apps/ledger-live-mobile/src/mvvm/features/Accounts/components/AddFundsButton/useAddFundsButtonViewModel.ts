@@ -1,5 +1,5 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useState, useCallback } from "react";

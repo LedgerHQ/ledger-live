@@ -1,5 +1,5 @@
 import React from "react";
-import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
+import { setEnvUnsafe, isEnvDefault, getEnv } from "@shared/env";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { useFeature } from "@features/platform-feature-flags";
 import type { FeatureId } from "@shared/feature-flags";

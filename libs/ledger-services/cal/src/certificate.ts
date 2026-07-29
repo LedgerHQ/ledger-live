@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 const DeviceModel = {
   blue: "blue",

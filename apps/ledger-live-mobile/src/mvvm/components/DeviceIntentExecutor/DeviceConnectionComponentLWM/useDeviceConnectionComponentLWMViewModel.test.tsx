@@ -17,7 +17,10 @@ import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import type { DeviceLike, State } from "~/reducers/types";
 import { urls } from "~/utils/urls";
-import { SourceFlowProvider, type SourceFlow } from "../utils/SourceFlowContext";
+import {
+  DeviceIntentTrackingProvider,
+  type SourceFlow,
+} from "../utils/DeviceIntentTrackingContext";
 import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
 jest.mock("~/analytics", () => {
@@ -90,7 +93,7 @@ function withViewModelState({
       : { buyDeviceFromLive: { enabled: buyDeviceFromLiveEnabled } }),
     ...(myWalletEnabled === undefined
       ? {}
-      : { lwmWallet40: { enabled: myWalletEnabled, params: { myWallet: myWalletEnabled } } }),
+      : { lwmWallet40: { params: { myWallet: myWalletEnabled } } }),
   };
 
   return {
@@ -118,7 +121,9 @@ const layerABaseProperties = {
 };
 
 function SourceFlowWrapper({ children }: { children?: React.ReactNode }) {
-  return <SourceFlowProvider value={sourceFlow}>{children}</SourceFlowProvider>;
+  return (
+    <DeviceIntentTrackingProvider value={{ sourceFlow }}>{children}</DeviceIntentTrackingProvider>
+  );
 }
 
 function renderViewModel(

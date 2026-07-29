@@ -27,6 +27,7 @@
     "react": ">=19"
   },
   "devDependencies": {
+    "@shared/env": "workspace:*",
     "@types/node": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",

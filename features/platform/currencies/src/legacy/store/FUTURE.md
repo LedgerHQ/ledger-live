@@ -12,7 +12,7 @@ apps inject the result through the legacy `setCryptoAssetsStore` global singleto
 ## Why it's temporary
 
 It is a **strangler facade**. The destination is: consumers read the `@domain/*` data layer
-directly, and the legacy `@ledgerhq/cryptoassets` store (`getCryptoAssetsStore` /
+directly, and the legacy global token store (`getCryptoAssetsStore` /
 `setCryptoAssetsStore`) is removed. The facade exists only to keep the legacy contract alive
 during the migration, so there is a **single runtime source** — one RTK cache (the
 `@domain/api-currency-token` instance), never a parallel cache — without changing every caller
@@ -24,10 +24,9 @@ at once.
    (not adding to) the legacy `cryptoAssetsApi` reducer. One cache, app-wide.
 2. **Repoint our own consumers** — live-common and the apps read `@domain/*` directly instead of
    going through `getCryptoAssetsStore()`.
-3. **Coin-modules are the blocker** — they still depend on `@ledgerhq/cryptoassets` and call
-   `getCryptoAssetsStore()`. We **cannot** repoint them from here: they must first be decoupled
-   from `cryptoassets`, which is owned by **#team-coin-integration** and runs on their roadmap, not
-   ours. This is the gate on removing `legacy/store/`.
+3. **Coin-modules** — now decoupled from the legacy currency lib; they read the token store through
+   the wallet-framework port (`getCryptoAssetsStore` from
+   `@ledgerhq/ledger-wallet-framework/cryptoAssetsStore`), not from a direct dependency.
 4. **Drop** — once nothing calls `getCryptoAssetsStore()`, this directory and the legacy store are
    deleted (kept frozen / extracted only if external consumers that cannot migrate still need it).
 

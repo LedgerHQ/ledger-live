@@ -16,22 +16,27 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/github-script@v8
+    - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       name: prepare status
       id: status
+      env:
+        CUSTOM_MESSAGE: ${{ inputs.custom_message }}
+        HALT_RUNNER: ${{ inputs.halt_runner }}
       with:
         script: |
           const fs = require("fs");
           const path = require("path");
 
+          const customMessage = process.env.CUSTOM_MESSAGE;
+          const haltRunner = process.env.HALT_RUNNER;
           let header = "*Ledger Live CI: Test flake*";
-          let description = "Flake detected but interactive debugging was not enabled Workflow: ${{ github.workflow }}";
-          
-          if ("${{ inputs.custom_message }}"){
-            description = "${{ inputs.custom_message }} Workflow: ${{ github.workflow }}"
-          }else if ("${{ inputs.halt_runner }}" == "true"){
+          let description = `Flake detected but interactive debugging was not enabled Workflow: ${context.workflow}`;
+
+          if (customMessage){
+            description = `${customMessage} Workflow: ${context.workflow}`
+          }else if (haltRunner == "true"){
             header = ":fire: *Ledger Live CI: Test flake in progress* :fire:";
-            description = "Known flake detected. Runner held for interactive debugging session. Workflow: ${{ github.workflow }}";
+            description = `Known flake detected. Runner held for interactive debugging session. Workflow: ${context.workflow}`;
           }
 
           const notification = [
@@ -62,6 +67,7 @@ runs:
             }];
 
           const output = {
+              channel: "C08JQKWS9KK",
               text: "[Alert] Test flake in progress",
               blocks: notification
           };
@@ -71,12 +77,11 @@ runs:
 
     - name: post to a Slack channel
       id: slack
-      uses: slackapi/slack-github-action@v1.23.0
+      uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
       with:
-        channel-id: "C08JQKWS9KK"
+        method: chat.postMessage
+        token: ${{ inputs.live_bot_token }}
         payload-file-path: ${{ github.workspace }}/slack_notification.json
-      env:
-        SLACK_BOT_TOKEN: ${{ inputs.live_bot_token }}
     - name: "Sleep"
       if: ${{ inputs.halt_runner == 'true' }}
       run: sleep 3h

@@ -6,7 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useFeature } from "@features/platform-feature-flags";
 import { useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
@@ -71,8 +71,7 @@ const AccountBalanceSummaryFooter = ({
 
   if (account.type !== "Account") return null;
 
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
 
   if (!isEvmNativeStakingEnabled || !isCurrencySupported) return null;
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConcordiumPairingProgress } from "@ledgerhq/coin-concordium/types";
 import { ConcordiumPairingStatus } from "@ledgerhq/coin-concordium/types";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { log } from "@ledgerhq/logs";
 import { Subscription } from "rxjs";
 import { getConcordiumBridge } from "@ledgerhq/live-common/families/concordium/bridgeHelper";

@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import keyto from "@trust/keyto";
-import { UpdateIncorrectSig } from "@ledgerhq/errors";
+import { UpdateIncorrectSig } from "../../errors";
 export async function getFingerprint(pubKey: string) {
   const hash = crypto.createHash("sha256");
   hash.update(pubKey);

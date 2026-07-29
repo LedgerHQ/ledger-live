@@ -1,5 +1,23 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class IconAllFundsWarning extends Error {
+  override name = "IconAllFundsWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "IconAllFundsWarning");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const IconAllFundsWarning = createCustomErrorClass("IconAllFundsWarning");
-export const IconValidatorsRequired = createCustomErrorClass("IconValidatorsRequired");
-export const IconDoMaxSendInstead = createCustomErrorClass("IconDoMaxSendInstead");
+export class IconValidatorsRequired extends Error {
+  override name = "IconValidatorsRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "IconValidatorsRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class IconDoMaxSendInstead extends Error {
+  override name = "IconDoMaxSendInstead";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "IconDoMaxSendInstead");
+    if (fields) Object.assign(this, fields);
+  }
+}

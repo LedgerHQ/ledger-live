@@ -107,6 +107,7 @@ export type TransportConfig = {
 export type TransportState<M extends MessageMap> = {
   status: ConnectionStatus;
   url: string;
+  origin: string;
   history: ReadonlyArray<Envelope<M>>;
   lastError?: Error;
 };

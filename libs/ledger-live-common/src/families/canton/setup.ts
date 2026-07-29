@@ -1,7 +1,7 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-canton/bridge/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import Transport from "@ledgerhq/hw-transport";
 import { CantonSigner } from "@ledgerhq/coin-canton";
 import cantonResolver from "@ledgerhq/coin-canton/signer";
