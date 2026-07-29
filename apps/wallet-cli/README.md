@@ -1,10 +1,10 @@
 # wallet-cli (`@ledgerhq/wallet-cli`)
 
-Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.0.1**.
+Command-line tool for Ledger Wallet flows over **USB**, built on the **Device Management Kit (DMK)** and [Bunli](https://www.npmjs.com/package/bunli). Version **2.1.0**.
 
 ## Status (v2)
 
-wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups.
+wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is intentionally focused: it does not aim for full Ledger Live desktop or mobile feature parity. The `2.0.0` release adds the **`earn`** (staking & DeFi yield) and **`ring`** (Ledger Key Ring / LKRP encryption) command groups. The `2.1.0` release adds the **`skill`** command group, which installs the Ledger wallet-cli agent skill — embedded in the compiled binary — into your coding agent.
 
 **Supported networks** today: **bitcoin**, **ethereum**, and **solana** (aligned with `live-common-setup.ts`). Token flows are supported for tokens on those networks.
 
@@ -28,6 +28,9 @@ wallet-cli is the stable CLI for USB-based Ledger Wallet flows. Its scope is int
 | `ring init`                           | One-time provisioning of your Ledger Key Ring (LKRP) via the device. Prompts for a password unless `--unsecure-no-password`.                                                                                     |
 | `ring encrypt` / `ring decrypt`       | AES-256-GCM encrypt/decrypt of files (`-i`/`-o`) or text (stdin/stdout) under a named key (`--key`). **No device** after `init`; requires network to restore the trustchain.                                     |
 | `ring keys` / `ring destroy`          | List the keys this machine has used, or tear down the ring (local credentials + remote LKRP application).                                                                                                        |
+| `skill list` / `skill retrieve`       | List the agent skills shipped inside the binary, or print one to stdout. **No device** required.                                                                                                                |
+| `skill install`                       | Install the embedded agent skill for `--agent` (`claude`, `cursor`, `codex`, or generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides. **No device** required.                             |
+| `skill doctor`                        | Detect drift between installed skills and those shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`); `--fix` self-heals, `--force` also overwrites local edits.              |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
 
@@ -52,6 +55,8 @@ pnpm wallet-cli start -- earn withdraw --help
 pnpm wallet-cli start -- ring init --help
 pnpm wallet-cli start -- ring encrypt --help
 pnpm wallet-cli start -- ring decrypt --help
+pnpm wallet-cli start -- skill install --help
+pnpm wallet-cli start -- skill doctor --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
