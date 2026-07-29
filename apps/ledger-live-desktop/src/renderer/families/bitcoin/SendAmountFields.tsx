@@ -1,4 +1,3 @@
-import { useFeature } from "@features/platform-feature-flags";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
@@ -37,12 +36,15 @@ const Fields: Props = ({
   const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
-  const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
-  const hideAdvancedFees = account.currency.id === "zcash" && shieldedEnabled;
+  // Zcash prices fees with ZIP-317 (deterministic, action-based): there is no
+  // sat/vByte fee market, so the whole fee selector — the strategy list AND the
+  // advanced/custom controls — is removed. The ZIP-317 fee is applied
+  // automatically (see getAccountNetworkInfo).
+  const hideFeeSelection = account.currency.id === "zcash";
   const [advanceMode, setAdvanceMode] = useState(
     !transaction.feesStrategy || transaction.feesStrategy === "custom",
   );
-  const isAdvanceMode = !hideAdvancedFees && advanceMode;
+  const isAdvanceMode = advanceMode;
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
@@ -87,11 +89,11 @@ const Fields: Props = ({
     },
     [onChange, trackProperties],
   );
+  if (hideFeeSelection) return null;
+
   return (
     <>
-      {!hideAdvancedFees && (
-        <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
-      )}
+      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceModeAndTrack} />
       {isAdvanceMode ? (
         <Box>
           <FeesField

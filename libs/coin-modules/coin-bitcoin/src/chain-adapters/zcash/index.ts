@@ -465,6 +465,13 @@ const zcashChainAdapter: ChainAdapter = {
   buildExtraSyncObservable,
 
   computeAccountBalance(account: BitcoinAccount | undefined, transparentBalance: BigNumber) {
+    // Flag OFF ⇒ every send falls back to the legacy transparent Bitcoin path,
+    // so the shielded (Orchard/Sapling) pools are NOT spendable. Counting them in
+    // the balance would make the account show more than the transparent max
+    // spendable — the displayed balance and the send flow's "maximum estimated
+    // amount" could never agree, and toggling "Send max" could not reach the
+    // shown balance. Report the transparent balance only until the feature is on.
+    if (!isZcashShieldedEnabled()) return transparentBalance;
     return computeZcashBalance(
       transparentBalance,
       (account as ZcashAccount | undefined)?.privateInfo,
