@@ -19,7 +19,10 @@ import {
 } from "../../constants";
 import { buildAssetsPagePath } from "../../utils/buildAssetsPagePath";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AssetTableItem } from "../../types";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -81,14 +84,20 @@ const onboardedStateWithAccounts = {
 function makeItems(count: number): CategorizedAssetItem[] {
   return Array.from({ length: count }, (_, i) => ({
     ...BITCOIN_ASSET,
-    currency: { ...BITCOIN_ASSET.currency, id: `crypto-${i}` },
+    currency: {
+      ...BITCOIN_ASSET.currency,
+      id: CryptoCurrencyIdSchema.parse(`crypto-${i}`),
+    } as CryptoCurrency,
   }));
 }
 
 function makeStablecoinItems(count: number): CategorizedAssetItem[] {
   return Array.from({ length: count }, (_, i) => ({
     ...STABLECOIN_ASSET,
-    currency: { ...STABLECOIN_ASSET.currency, id: `stablecoin-${i}` },
+    currency: {
+      ...STABLECOIN_ASSET.currency,
+      id: TokenCurrencyIdSchema.parse(`stablecoin-${i}`),
+    } as TokenCurrency,
   }));
 }
 
@@ -132,7 +141,7 @@ function buildMockAssetsData(
 function item(id: string, placeholder = false): AssetTableItem {
   return {
     ...BITCOIN_ASSET,
-    currency: { ...BITCOIN_ASSET.currency, id },
+    currency: { ...BITCOIN_ASSET.currency, id: CryptoCurrencyIdSchema.parse(id) } as CryptoCurrency,
     isPlaceholder: placeholder,
   };
 }
@@ -341,7 +350,10 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
-      currency: { ...BITCOIN_ASSET.currency, id: "ethereum/erc20/usd_tether__erc20_" },
+      currency: {
+        ...BITCOIN_ASSET.currency,
+        id: CryptoCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
+      } as CryptoCurrency,
       isPlaceholder: true,
     };
 
@@ -358,7 +370,10 @@ describe("useAssetsViewModel", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
-      currency: { ...BITCOIN_ASSET.currency, id: "ethereum/erc20/usd_tether__erc20_" },
+      currency: {
+        ...BITCOIN_ASSET.currency,
+        id: CryptoCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
+      } as CryptoCurrency,
       isPlaceholder: true,
       marketId: "tether",
     };
