@@ -29,17 +29,21 @@ runs:
     - name: "Merge ${{ inputs.head-branch }} into ${{ inputs.base-branch }}"
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       id: merge
+      env:
+        BASE_BRANCH: ${{ inputs.base-branch }}
+        HEAD_BRANCH: ${{ inputs.head-branch }}
+        COMMIT_MESSAGE: ${{ inputs.commit-message }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
           try {
-          
+
             const output = await github.rest.repos.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              base: core.getInput('base-branch'),
-              head: core.getInput('head-branch'),
-              commit_message: core.getInput('commit-message')
+              base: process.env.BASE_BRANCH,
+              head: process.env.HEAD_BRANCH,
+              commit_message: process.env.COMMIT_MESSAGE
             });
           
             return {
