@@ -60,9 +60,6 @@ jobs:
       - name: install dependencies
         run: pnpm i -F "ledger-live"
 
-      - name: exit prerelease mode
-        run: pnpm changeset pre exit
-
       - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
