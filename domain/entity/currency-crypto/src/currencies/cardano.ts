@@ -28,6 +28,7 @@ export const cardano = currency({
       tx: "https://cardanoscan.io/transaction/$hash",
       address: "https://cardanoscan.io/address/$address",
       stakePool: "https://cardanoscan.io/pool/$poolId",
+      dRep: "https://cardanoscan.io/drep/$hex",
     },
   ],
   keywords: ["ada", "cardano"],
