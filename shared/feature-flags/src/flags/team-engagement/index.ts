@@ -12,6 +12,7 @@ export * from "./lwdAnalyticsOptInScreenV2";
 export * from "./lldNanoSUpsellBanners";
 export * from "./lldOnboardingEnableSync";
 export * from "./largeScreenUpsell";
+export * from "./lazyOnboardingBanner";
 export * from "./lwdProductTour";
 export { analyticsOptIn } from "./analyticsOptIn";
 export * from "./llmNanoOnboardingFundWallet";
