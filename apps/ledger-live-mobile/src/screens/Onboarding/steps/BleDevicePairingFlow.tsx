@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Flex } from "@ledgerhq/native-ui";
 import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,

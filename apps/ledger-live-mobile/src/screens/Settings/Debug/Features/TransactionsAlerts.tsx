@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";
