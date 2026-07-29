@@ -1,4 +1,4 @@
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { receive } from "./receive";
 
