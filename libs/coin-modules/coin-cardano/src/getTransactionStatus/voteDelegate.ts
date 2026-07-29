@@ -6,7 +6,7 @@ import {
   CardanoStakeKeyDepositError,
 } from "../errors";
 import { isHexString } from "../logic";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CardanoAccount, Transaction, TransactionStatus } from "../types";
 
 export async function getVoteDelegateTransactionStatus(
