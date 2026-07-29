@@ -3474,8 +3474,6 @@
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
-      "region": "Region",
-      "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
       "passwordDesc": "Set a password to lock the Ledger Wallet app.",
       "passwordDescBioCompat": "Set a password or {{biometricsType}} to lock the Ledger Wallet app.",
@@ -8505,9 +8503,6 @@
   "ApplicationVersion": "v{{version}}",
   "analytics": {
     "title": "Analytics",
-    "allocation": {
-      "title": "Allocation"
-    },
     "operations": {
       "title": "Transaction history"
     }

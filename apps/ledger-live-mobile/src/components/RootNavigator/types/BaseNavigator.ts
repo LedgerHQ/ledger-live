@@ -196,7 +196,6 @@ export type BaseNavigatorStackParamList = {
     onScanned?: (address: string) => void;
   };
   [ScreenName.BleDevicePairingFlow]: undefined;
-  [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {
     accountsIds: string[];
   };

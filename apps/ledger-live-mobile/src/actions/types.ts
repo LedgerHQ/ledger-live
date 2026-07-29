@@ -288,7 +288,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
-  SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
@@ -359,7 +358,6 @@ export type SettingsSetOsThemePayload = SettingsState["osTheme"];
 export type SettingsSetDismissedDynamicCardsPayload = SettingsState["dismissedDynamicCards"];
 export type SettingsSetDiscreetModePayload = SettingsState["discreetMode"];
 export type SettingsSetLanguagePayload = SettingsState["language"];
-export type SettingsSetLocalePayload = SettingsState["locale"];
 export type SettingsAcceptSwapProviderPayload = Unpacked<
   SettingsState["swap"]["acceptedProviders"]
 >;
@@ -449,7 +447,6 @@ export type SettingsPayload =
   | SettingsSetOsThemePayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
-  | SettingsSetLocalePayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceLanguagePayload
