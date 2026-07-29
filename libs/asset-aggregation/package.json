@@ -2,7 +2,7 @@
   "name": "@ledgerhq/asset-aggregation",
   "version": "0.12.0",
   "private": true,
-  "description": "Ledger Live asset-aggregation module – asset aggregation & categorization",
+  "description": "Ledger Live asset-aggregation module \u2013 asset aggregation & categorization",
   "keywords": [
     "Ledger"
   ],
@@ -19,10 +19,11 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/entity-currency": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
-    "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
+    "@domain/entity-currency-token": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
+    "@ledgerhq/types-live": "workspace:*",
     "bignumber.js": "^9.1.2"
   },
   "peerDependencies": {
@@ -34,13 +35,13 @@
     }
   },
   "devDependencies": {
-    "@types/node": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
     "react": "catalog:"
   },
   "scripts": {

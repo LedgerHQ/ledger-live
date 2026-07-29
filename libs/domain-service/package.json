@@ -82,19 +82,18 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@testing-library/jest-dom": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "jest-environment-jsdom": "catalog:",
-    "react-test-renderer": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "react-test-renderer": "catalog:"
   }
 }

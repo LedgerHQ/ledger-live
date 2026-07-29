@@ -1,7 +1,7 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 
 export type GroupedAccount = {

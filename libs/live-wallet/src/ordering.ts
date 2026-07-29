@@ -5,7 +5,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { FlattenAccountsOptions } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { WalletState, accountNameWithDefaultSelector } from "./store";
 
 export type AccountComparator = (a: AccountLike, b: AccountLike) => number;

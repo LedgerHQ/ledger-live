@@ -1,5 +1,5 @@
 import type { DistributionItem, AccountLike } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
 
 export const btc = cryptocurrenciesById["bitcoin"];
@@ -8,7 +8,7 @@ export const eth = cryptocurrenciesById["ethereum"];
 export function makeToken(id: string, ticker: string, name: string, magnitude = 6): TokenCurrency {
   return {
     type: "TokenCurrency",
-    id,
+    id: TokenCurrencyIdSchema.parse(id),
     contractAddress: `0x${id.replace(/\//g, "")}`,
     parentCurrencyId: eth.id,
     tokenType: "erc20",
