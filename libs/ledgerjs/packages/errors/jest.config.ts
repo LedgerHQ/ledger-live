@@ -7,4 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default {
   ...baseConfig,
   rootDir: __dirname,
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
 };

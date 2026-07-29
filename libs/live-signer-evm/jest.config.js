@@ -4,6 +4,9 @@ module.exports = {
     customExportConditions: ["@ledgerhq/source"],
   },
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
