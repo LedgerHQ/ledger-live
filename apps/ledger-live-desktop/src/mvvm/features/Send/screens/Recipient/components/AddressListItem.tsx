@@ -1,4 +1,5 @@
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import {
   ListItem,
   ListItemContent,
@@ -47,11 +48,11 @@ export function AddressListItem({
 }: AddressListItemProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
-  const displayName = name ?? formatAddress(address, { prefixLength: 5, suffixLength: 5 });
+  const displayName = name ?? formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS);
 
   const fallbackDescription = date
     ? formatRelativeDate(date)
-    : formatAddress(address, { prefixLength: 5, suffixLength: 5 });
+    : formatAddress(address, SEND_ADDRESS_FORMAT_OPTIONS);
 
   const subtitle = disabled || hideDescription ? undefined : (description ?? fallbackDescription);
   const icon = isLedgerAccount ? LedgerLogo : Wallet;

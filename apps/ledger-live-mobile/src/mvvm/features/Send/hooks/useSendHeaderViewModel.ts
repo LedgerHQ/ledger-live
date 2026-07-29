@@ -14,7 +14,9 @@ import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
+  SEND_ADDRESS_FORMAT_OPTIONS,
 } from "@ledgerhq/live-common/flows/send/utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
 
 export type SendHeaderViewModel = {
@@ -87,15 +89,10 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
-      return recipientSearch.value.length > 11
-        ? `${recipientSearch.value.slice(0, 4)}...${recipientSearch.value.slice(-4)}`
-        : recipientSearch.value;
+      return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return getRecipientDisplayValue(recipientFromTransaction, {
-        prefixLength: 4,
-        suffixLength: 4,
-      });
+      return getRecipientDisplayValue(recipientFromTransaction);
     }
     return "";
   }, [isRecipientStep, isAmountStep, recipientSearch.value, recipientFromTransaction]);
