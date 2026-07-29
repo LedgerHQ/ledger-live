@@ -92,18 +92,16 @@ const TransactionsAlerts = () => {
             transactionsAlertsAddresses,
             refAddresses.current,
           );
-          if (refScheduledOperation.current === operation) {
-            refAddresses.current = transactionsAlertsAddresses;
-          }
+          refAddresses.current = transactionsAlertsAddresses;
         } else {
           await deleteUserChainwatchAccounts(
             userId.exportUserIdForChainwatch(),
             chainwatchBaseUrl,
             supportedChains,
           );
+          refAddresses.current = [];
           if (refScheduledOperation.current === operation) {
             refActive.current = false;
-            refAddresses.current = [];
           }
         }
       });

@@ -289,6 +289,29 @@ describe("TransactionsAlerts", () => {
     expect(chainwatch.getRemote().exists).toBe(false);
   });
 
+  it("should reconcile queued address changes from the last completed state", async () => {
+    let releaseAddressPut = () => {};
+    const addressPutGate = new Promise<void>(resolve => {
+      releaseAddressPut = resolve;
+    });
+    const chainwatch = installChainwatchHandlers({ exists: true, suffixes: [] }, 0, addressPutGate);
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toEqual([["0x01"]]));
+
+    act(() => {
+      store.dispatch(replaceAccounts([account02]));
+    });
+    await act(async () => {
+      releaseAddressPut();
+    });
+
+    await waitFor(() => expect(chainwatch.addressDeletes).toEqual([["0x01"]]));
+    expect(chainwatch.addressPuts).toEqual([["0x01"], ["0x02"]]);
+    expect(chainwatch.getRemote().suffixes).toEqual(["0x02"]);
+  });
+
   it("should not delete Chainwatch accounts when alerts start disabled", async () => {
     const chainwatch = installChainwatchHandlers({ exists: true, suffixes: ["0x01"] });
 
