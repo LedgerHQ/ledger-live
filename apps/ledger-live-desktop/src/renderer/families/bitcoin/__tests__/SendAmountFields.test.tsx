@@ -114,28 +114,26 @@ describe("bitcoin SendAmountFields", () => {
     });
   });
 
-  describe("zcash shielded handling", () => {
-    it("should hide the fee mode selector and advanced fields for a zcash account when shielded is enabled", () => {
-      renderFields({
-        account: buildZcashAccount(),
-        transaction: buildTransaction({ feesStrategy: "custom" }),
-        flagEnabled: true,
-      });
+  describe("zcash fee handling", () => {
+    // Zcash uses ZIP-317 fees (no sat/vByte market), so the entire fee selector —
+    // the strategy list, the standard/advanced toggle and the custom input — is
+    // removed, independent of the zcashShielded feature flag.
+    it.each([true, false])(
+      "renders no fee selector for a zcash account (shielded flag = %s)",
+      flagEnabled => {
+        renderFields({
+          account: buildZcashAccount(),
+          transaction: buildTransaction({ feesStrategy: "custom" }),
+          flagEnabled,
+        });
 
-      expect(screen.queryByTestId("send-fee-mode")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument();
-    });
-
-    it("should keep the advanced fee controls for a zcash account when shielded is disabled", () => {
-      renderFields({
-        account: buildZcashAccount(),
-        transaction: buildTransaction({ feesStrategy: "custom" }),
-        flagEnabled: false,
-      });
-
-      expect(screen.getByTestId("send-fee-mode")).toBeVisible();
-      expect(screen.getByTestId("currency-textbox")).toBeVisible();
-    });
+        expect(screen.queryByTestId("send-fee-mode")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument();
+        // The standard fast/medium/slow strategy list must be gone too.
+        expect(screen.queryByText("Medium")).not.toBeInTheDocument();
+        expect(screen.queryByText("Slow")).not.toBeInTheDocument();
+      },
+    );
   });
 
   describe("coin control button", () => {

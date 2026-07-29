@@ -457,7 +457,9 @@ describe("zcash chain adapter — transaction routing", () => {
     it("does not use Orchard notes for ironwood transfer type", async () => {
       // An account with orchard notes but zero ironwood notes — ironwood should
       // return empty selectedNotes, not accidentally pick orchard notes.
-      const orchardNote = makeSpendableNote({ amount: new BigNumber(1_000_000) });
+      const orchardNote = makeSpendableNote({
+        amount: new BigNumber(1_000_000),
+      });
       const account = makeZcashAccount({
         orchardBalance: new BigNumber(1_000_000),
         ironwoodBalance: new BigNumber(0),
@@ -505,7 +507,9 @@ describe("zcash chain adapter — transaction routing", () => {
 
     it("returns error when amount <= 0", async () => {
       const note = makeSpendableNote({ amount: new BigNumber(500_000) });
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       const tx = makeTx("shielded", new BigNumber(0), {
         selectedNotes: [note],
         zcashFee: new BigNumber(10_000),
@@ -517,7 +521,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns error for insufficient shielded balance", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(5_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(5_000),
+      });
       const tx = makeTx("shielded", new BigNumber(100_000), {
         selectedNotes: [makeSpendableNote()],
         zcashFee: new BigNumber(10_000),
@@ -529,7 +535,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns insufficient balance error when selectedNotes is empty", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       const tx = makeTx("shielded", new BigNumber(100_000), {
         zcashFee: new BigNumber(10_000),
         selectedNotes: [],
@@ -541,7 +549,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns recipient error for shielded-to-transparent without recipient", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       const tx = makeTx("shielded-to-transparent", new BigNumber(100_000), {
         selectedNotes: [makeSpendableNote()],
         zcashFee: new BigNumber(10_000),
@@ -553,7 +563,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns recipient error for shielded (private -> private) without recipient", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       // Selecting the private balance with an empty address derives transferType
       // "shielded"; the recipient step must not be considered valid.
       const tx = makeTx("shielded", new BigNumber(100_000), {
@@ -567,7 +579,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns insufficient balance error when selectedNotes is undefined (prepareTransaction not called)", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       // No selectedNotes at all — tx was not prepared
       const tx = makeTx("shielded", new BigNumber(100_000), {
         zcashFee: new BigNumber(10_000),
@@ -579,7 +593,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns error when selectedNotes do not cover amount + fee", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       // amount(100k) + fee(10k) = 110k, but selectedNotes only total 50k
       const tx = makeTx("shielded", new BigNumber(100_000), {
         selectedNotes: [makeSpendableNote({ amount: new BigNumber(50_000) })],
@@ -592,7 +608,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns no errors for a valid shielded transaction", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       const tx = makeTx("shielded", new BigNumber(100_000), {
         recipient: UA_ORCHARD_ONLY,
         selectedNotes: [makeSpendableNote({ amount: new BigNumber(120_000) })],
@@ -606,7 +624,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("uses default fee of 10_000 when zcashFee is not set on tx", async () => {
-      const account = makeZcashAccount({ orchardBalance: new BigNumber(500_000) });
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(500_000),
+      });
       const tx = makeTx("shielded", new BigNumber(100_000), {
         selectedNotes: [makeSpendableNote({ amount: new BigNumber(200_000) })],
       });
@@ -708,7 +728,7 @@ describe("zcash chain adapter — transaction routing", () => {
   // ── computeAccountBalance ──────────────────────────────────────
 
   describe("computeAccountBalance", () => {
-    it("returns transparent + private (orchard + sapling)", () => {
+    it("returns transparent + private (orchard + sapling) when the flag is ON", () => {
       const account = makeZcashAccount({
         orchardBalance: new BigNumber(5_000),
         saplingBalance: new BigNumber(2_000),
@@ -718,7 +738,9 @@ describe("zcash chain adapter — transaction routing", () => {
     });
 
     it("returns the transparent balance when there is no privateInfo", () => {
-      const account = { currency: { id: "zcash" } } as unknown as BitcoinAccount;
+      const account = {
+        currency: { id: "zcash" },
+      } as unknown as BitcoinAccount;
       const result = adapter.computeAccountBalance!(account, new BigNumber(10_000));
       expect(result).toEqual(new BigNumber(10_000));
     });
@@ -731,6 +753,18 @@ describe("zcash chain adapter — transaction routing", () => {
       }) as unknown as BitcoinAccount;
       const result = adapter.computeAccountBalance!(account, new BigNumber(10_000));
       expect(result).toEqual(new BigNumber(20_000));
+    });
+
+    it("ignores shielded funds and returns transparent-only when the flag is OFF", () => {
+      // Flag OFF ⇒ shielded pools aren't spendable (legacy transparent path), so
+      // they must not inflate the balance beyond the transparent max spendable.
+      setZcashShieldedEnabled(false);
+      const account = makeZcashAccount({
+        orchardBalance: new BigNumber(5_000),
+        saplingBalance: new BigNumber(2_000),
+      }) as unknown as BitcoinAccount;
+      const result = adapter.computeAccountBalance!(account, new BigNumber(10_000));
+      expect(result).toEqual(new BigNumber(10_000));
     });
   });
 
@@ -853,7 +887,9 @@ describe("zcash chain adapter — transaction routing", () => {
     it("does not use orchard notes for ironwood transfer type", async () => {
       // Account with a large orchard balance but no ironwood notes — ironwood
       // estimate must be 0, not accidentally use orchard notes.
-      const orchardNote = makeSpendableNote({ amount: new BigNumber(2_000_000) });
+      const orchardNote = makeSpendableNote({
+        amount: new BigNumber(2_000_000),
+      });
       const account = makeZcashAccount({
         orchardBalance: new BigNumber(2_000_000),
         ironwoodBalance: new BigNumber(0),
