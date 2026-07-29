@@ -3,7 +3,13 @@ import type { Action } from "redux-actions";
 import type { Currency } from "@domain/entity-currency";
 import { type CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Unit } from "@domain/entity-currency-unit";
-import { getFiatCurrencyByTicker, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import {
+  getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  OFAC_FIAT_TICKERS,
+  selectSupportedFiats,
+} from "@domain/entity-currency-fiat";
+import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -56,7 +62,6 @@ import type {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
@@ -160,7 +165,6 @@ export const INITIAL_STATE: SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: false,
   },
-  supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
   dismissedContentCards: {},
@@ -577,10 +581,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
   }),
-  [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
-    ...state,
-    supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
-  }),
   [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
     ...state,
     hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
@@ -715,10 +715,14 @@ export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly str
     new Set(starredMarketCoins.map(id => (id === LEGACY_DAI_V2_FAVORITE_ID ? DAI_MARKET_ID : id))),
   );
 
-const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findFiatCurrencyByTicker(state.counterValue) ||
-  findCryptoCurrencyById(state.counterValue) ||
-  getFiatCurrencyByTicker("USD");
+const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
+  if (OFAC_FIAT_TICKERS.has(state.counterValue)) return getFiatCurrencyByTicker("USD");
+  return (
+    findFiatCurrencyByTicker(state.counterValue) ||
+    findCryptoCurrencyById(state.counterValue) ||
+    getFiatCurrencyByTicker("USD")
+  );
+};
 
 export const counterValueCurrencySelector = createSelector(
   settingsStoreSelector,
@@ -942,8 +946,10 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
-export const supportedCounterValuesSelector = (state: State) =>
-  state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = createSelector(
+  selectSupportedFiats,
+  buildSupportedCounterValues,
+);
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const debugOsUpdateBannerModeSelector = (state: State) =>

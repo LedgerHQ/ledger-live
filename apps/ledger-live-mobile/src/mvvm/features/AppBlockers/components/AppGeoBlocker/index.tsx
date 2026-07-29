@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Icons, Text, Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import AppBlocker from "../AppBlocker";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
-  const { blocked } = useContext(InitialQueriesContext).ofacResult;
+  const { data: blocked = false } = ofacGeoBlockApi.useCheckQuery();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const localizedUrl = useLocalizedUrl(urls.geoBlock.learnMore);

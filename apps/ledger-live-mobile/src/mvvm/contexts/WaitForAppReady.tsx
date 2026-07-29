@@ -1,5 +1,7 @@
-import React, { useContext } from "react";
-import { InitialQueriesContext } from "./InitialQueriesContext";
+import React from "react";
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
+import { selectRemoteFlagsReady } from "@shared/feature-flags";
+import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
 import { useWait } from "../hooks/useWait";
 import { logStartupEvent } from "../utils/logStartupTime";
@@ -12,9 +14,9 @@ export function WaitForAppReady({
 }: React.PropsWithChildren<{ currencyInitialized: boolean }>) {
   logStartupEvent("WaitForAppReady render");
 
-  const initialQueries = useContext(InitialQueriesContext);
-  const isLoaded =
-    currencyInitialized && !initialQueries.ofacResult.isLoading && initialQueries.firebaseIsReady;
+  const { isLoading: ofacLoading } = ofacGeoBlockApi.useCheckQuery();
+  const firebaseIsReady = useSelector(selectRemoteFlagsReady);
+  const isLoaded = currencyInitialized && !ofacLoading && firebaseIsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
 
