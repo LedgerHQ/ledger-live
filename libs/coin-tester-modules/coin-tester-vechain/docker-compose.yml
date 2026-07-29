@@ -1,0 +1,12 @@
+services:
+  thor-solo:
+    image: vechain/thor:v2.4.4
+    container_name: coin-tester-vechain
+    command: solo --api-addr 0.0.0.0:8669 --api-cors "*" --on-demand
+    ports:
+      - "8669:8669"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8669/blocks/best || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 60

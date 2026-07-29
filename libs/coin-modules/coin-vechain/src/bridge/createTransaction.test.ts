@@ -1,6 +1,7 @@
 import { createTransaction } from "./createTransaction";
 import { Account } from "@ledgerhq/types-live";
 import { generateNonce } from "../common-logic";
+import { setCoinConfig } from "../config";
 import { MAINNET_CHAIN_TAG } from "../types";
 import BigNumber from "bignumber.js";
 
@@ -40,6 +41,7 @@ describe("createTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGenerateNonce.mockReturnValue("0x1234567890abcdef");
+    setCoinConfig(() => ({ status: { type: "active" } }));
   });
 
   it("should create a transaction with correct default values", () => {
@@ -70,6 +72,22 @@ describe("createTransaction", () => {
 
     expect(result.body.chainTag).toBe(MAINNET_CHAIN_TAG);
     expect(result.body.chainTag).toBe(74);
+  });
+
+  it("should fall back to MAINNET_CHAIN_TAG when the config has no chainTag", () => {
+    setCoinConfig(() => ({ status: { type: "active" } }));
+
+    const result = createTransaction(mockAccount);
+
+    expect(result.body.chainTag).toBe(74);
+  });
+
+  it("should use the config-provided chainTag when set", () => {
+    setCoinConfig(() => ({ status: { type: "active" }, chainTag: 39 }));
+
+    const result = createTransaction(mockAccount);
+
+    expect(result.body.chainTag).toBe(39);
   });
 
   it("should generate a unique nonce for each transaction", () => {

@@ -74,11 +74,20 @@ describe("craftTransaction", () => {
     expect(crafted.details?.isTokenAccount).toBe(false);
   });
 
-  it("crafts with the mainnet chainTag (74)", async () => {
+  it("defaults chainTag to mainnet (74) when the config has no chainTag", async () => {
     const crafted = await craftTransaction(NATIVE_INTENT);
 
     const body = JSON.parse(crafted.transaction);
     expect(body.chainTag).toBe(74);
+  });
+
+  it("uses the config-provided chainTag when set", async () => {
+    setCoinConfig(() => ({ status: { type: "active" }, chainTag: 39 }));
+
+    const crafted = await craftTransaction(NATIVE_INTENT);
+
+    const body = JSON.parse(crafted.transaction);
+    expect(body.chainTag).toBe(39);
   });
 
   it("crafts a VTHO transaction using calculateClausesVtho", async () => {

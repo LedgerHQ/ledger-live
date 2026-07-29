@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import getAddressWrapper from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { prepareTransaction } from "./prepareTransaction";
@@ -17,6 +18,7 @@ import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
 import resolver from "../signer";
 import { VECHAIN_DUMMY_ADDRESS } from "../constants";
+import { setCoinConfig, type VechainCurrencyConfig } from "../config";
 import type { Transaction, VechainSigner } from "../types";
 import { validateAddress } from "../common-logic/validateAddress";
 
@@ -62,7 +64,12 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<VechainSigner>) {
+export function createBridges(
+  signerContext: SignerContext<VechainSigner>,
+  coinConfig: CoinConfig<VechainCurrencyConfig> = () => ({ status: { type: "active" } }),
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

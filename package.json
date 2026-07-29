@@ -141,6 +141,7 @@
     "coin:tester:tezos": "pnpm --filter coin-tester-tezos",
     "coin:tester:multiversx": "pnpm --filter coin-tester-multiversx",
     "coin:tester:tron": "pnpm --filter coin-tester-tron",
+    "coin:tester:vechain": "pnpm --filter coin-tester-vechain",
     "coin:tester:xrp": "pnpm --filter coin-tester-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",

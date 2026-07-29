@@ -85,6 +85,16 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         useAllAmount: false,
         mode: "send",
       };
+    case "vechain":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        nonce: new BigNumber(0),
+      };
     case "cardano":
       return {
         family: currency.family,

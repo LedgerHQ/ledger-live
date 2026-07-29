@@ -1,3 +1,8 @@
 # Test private keys used in ledger-key-ring-protocol unit/integration tests — not real secrets.
 libs/ledger-key-ring-protocol/src/__tests__/unit/utils.test.ts:generic-api-key:11
 libs/ledger-key-ring-protocol/src/__tests__/LKRPIdentityProvider.integration.test.ts:generic-api-key:28
+
+# thor-solo's well-known pre-funded dev-account private keys (public, from vechain/thor's genesis),
+# used by the VeChain coin-tester scenario — not real secrets.
+libs/coin-tester-modules/coin-tester-vechain/src/scenarii/vechain.ts:generic-api-key:19
+libs/coin-tester-modules/coin-tester-vechain/src/scenarii/vechain.ts:generic-api-key:20

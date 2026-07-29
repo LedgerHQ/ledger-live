@@ -11,6 +11,7 @@ const vechainConfig: CurrencyLiveConfigDefinition = {
       infra: {
         API_VECHAIN_THOREST: "https://vechain.coin.ledger.com",
       },
+      chainTag: 74,
     },
   },
 };

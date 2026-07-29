@@ -249,6 +249,9 @@
     },
     "./libs/coin-tester-modules/coin-tester-multiversx": {
       "entry": ["src/scenarii/multiversx.ts"]
+    },
+    "./libs/coin-tester-modules/coin-tester-vechain": {
+      "entry": ["src/scenarii/vechain.ts"]
     }
   }
 }
