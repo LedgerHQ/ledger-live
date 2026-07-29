@@ -57,11 +57,6 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./api": {
-      "@ledgerhq/source": "./src/api/index.ts",
-      "require": "./lib/api/index.js",
-      "default": "./lib-es/api/index.js"
-    },
     "./bridge": {
       "@ledgerhq/source": "./src/bridge/index.ts",
       "require": "./lib/bridge/index.js",
@@ -71,11 +66,6 @@
       "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
-    },
-    "./logic": {
-      "@ledgerhq/source": "./src/logic/index.ts",
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
     },
     "./signer": {
       "@ledgerhq/source": "./src/signer/index.ts",

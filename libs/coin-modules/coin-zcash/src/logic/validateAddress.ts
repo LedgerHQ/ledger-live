@@ -21,12 +21,11 @@ export function isValidZcashAddress(address: string): boolean {
 }
 
 /**
- * Whether the address is a transparent one (t1/t3). Distinct from
- * {@link isValidZcashAddress}, which also accepts Orchard-capable unified
- * addresses: the headless, address-indexed reads (balance, history) can only
- * answer for transparent addresses, since shielded value needs a viewing key.
+ * The Base58Check verdict on a transparent address (t1/t3), which is what makes
+ * a mistyped one fail: `wallet-btc` verifies the checksum, so this agrees with
+ * how coin-bitcoin validates the same address.
  */
-export function isTransparentZcashAddress(address: string): boolean {
+function isTransparentZcashAddress(address: string): boolean {
   if (!address) return false;
 
   try {
@@ -37,9 +36,9 @@ export function isTransparentZcashAddress(address: string): boolean {
 }
 
 /**
- * CoinModuleApi-level validateAddress (see api/index.ts). `parameters` is
- * part of the framework contract (currencyId/networkId) but Zcash address
- * validity does not depend on it.
+ * The `CurrencyBridge` entry point (see bridge/index.ts). `parameters` is part
+ * of its contract (currencyId/networkId) but Zcash address validity does not
+ * depend on it.
  */
 export async function validateAddress(
   address: string,

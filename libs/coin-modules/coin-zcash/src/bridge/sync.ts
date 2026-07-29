@@ -34,7 +34,7 @@ import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge"
 import type { BitcoinXPub, SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
 import { toWalletBtcCurrency } from "../network/walletBtcCurrency";
-import { computeZcashBalance, getTransparentBalance } from "../logic/account/getBalance";
+import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
 import { explorerFee, spentOutpoints, txDate } from "../logic/history/transparentTx";
 import { computeBalanceFromNotes, convertShieldedTransactionsToOperations } from "./operations";
 import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "../constants";

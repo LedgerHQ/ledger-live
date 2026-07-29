@@ -18,27 +18,27 @@ implementations coexist temporarily; routing between them is controlled by the
 
 ## Main exports
 
-- `./api` — `createApi`, the `CoinModuleApi` implementation (headless/framework path).
-- `.` (`createBridges`) — the Ledger Live `AccountBridge`/`CurrencyBridge` (device-sync path
-  used by Ledger Live Desktop/Mobile).
-- `./logic` — the framework-agnostic logic the headless api is built from (PCZT
-  craft/combine/broadcast, ZIP-317 coin selection, address classification, chain tip).
+- `.` (`createBridges`) — the Ledger Live `AccountBridge`/`CurrencyBridge`, the only path
+  Ledger Live Desktop/Mobile uses.
 - `./types` — bridge/signer/error type contracts.
+
+There is deliberately no `CoinModuleApi` (`createApi`) here. Migrating to it is a separate
+task, kept out of the switch away from the `coin-bitcoin` adapter so that transition changes
+nothing but where the code lives: an address-indexed api would need a second data source the
+bridge never exercises, and one that cannot answer for shielded value at all, since notes are
+encrypted to a viewing key the api's address argument does not carry.
 
 ## Layout
 
-- `src/logic/` — the functions backing the `CoinModuleApi` surface, and nothing else:
-  whatever `src/api/index.ts` cannot reach belongs to `src/bridge/`. Organized by concern
-  (`account/`, `history/`, `transaction/`) with tests co-located. `src/bridge/` may import
-  from here (coin selection, address rules, balance arithmetic, the transparent transaction
-  primitives and the PCZT steps are shared); the reverse never happens.
-- `src/api/` — thin `createApi` assembly over `src/logic/`.
+- `src/logic/` — chain logic with no Ledger Live shape to it: PCZT craft/combine/broadcast,
+  ZIP-317 coin selection, address rules, balance arithmetic, the explorer-transaction
+  primitives. Organized by concern (`account/`, `history/`, `transaction/`) with tests
+  co-located. `src/bridge/` imports from here; the reverse never happens.
 - `src/bridge/` — the `AccountBridge`, with everything only it needs: sync (transparent +
   shielded), operation mapping, serialization and wallet-btc account plumbing. The only
   bespoke residue is `bridge/signOperation.ts` (PCZT device-signing orchestration).
 - `src/network/` — data access: the `@ledgerhq/zcash-utils` native engine, the in-process /
-  Electron-IPC / React-Native-stub client polymorphism, the UtilityProcess IPC bridge, and
-  the Ledger explorer reads the engine has no address index for.
+  Electron-IPC / React-Native-stub client polymorphism, and the UtilityProcess IPC bridge.
 - `src/signer/` — device signer resolution (`getAddress`, `getFullViewingKey`, xpub
   composition).
 - `src/types/` — bridge, signer and error type contracts (self-contained — no

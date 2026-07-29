@@ -1,8 +1,6 @@
 {
   "entry": [
     "src/index.ts",
-    "src/api/index.ts",
-    "src/logic/index.ts",
     "src/bridge/index.ts",
     "src/signer/index.ts",
     "src/network/ZCash.ts",
