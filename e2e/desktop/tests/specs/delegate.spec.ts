@@ -28,8 +28,7 @@ const e2eDelegationAccounts = [
     transactionType: "Staked",
   },
   {
-    // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
-    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise"),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
     requiresExpertMode: true,
@@ -402,8 +401,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
-  // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
