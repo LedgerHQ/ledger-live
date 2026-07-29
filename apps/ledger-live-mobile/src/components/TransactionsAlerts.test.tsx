@@ -83,6 +83,7 @@ const withTransactionsAlertsState =
 const installChainwatchHandlers = (
   initialRemote: { exists: boolean; suffixes: string[] } = { exists: false, suffixes: [] },
   failAddressPuts = 0,
+  addressPutGate?: Promise<void>,
 ) => {
   const accountUrl = `https://chainwatch/${network.chainwatchId}/account/${chainwatchUserId}/`;
   const addressesUrl = `${accountUrl}addresses/`;
@@ -118,6 +119,7 @@ const installChainwatchHandlers = (
     http.put(addressesUrl, async ({ request }) => {
       const body = await request.json();
       addressPuts.push(body);
+      await addressPutGate;
       if (remainingAddressPutFailures > 0) {
         remainingAddressPutFailures -= 1;
         return new HttpResponse(null, { status: 500 });
@@ -263,6 +265,30 @@ describe("TransactionsAlerts", () => {
     });
 
     await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
+  });
+
+  it("should wait for reconciliation before deleting disabled alerts", async () => {
+    let releaseAddressPut = () => {};
+    const addressPutGate = new Promise<void>(resolve => {
+      releaseAddressPut = resolve;
+    });
+    const chainwatch = installChainwatchHandlers({ exists: true, suffixes: [] }, 0, addressPutGate);
+    const { store } = render(<TransactionsAlerts />, {
+      overrideInitialState: withTransactionsAlertsState([account01]),
+    });
+    await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
+
+    act(() => {
+      store.dispatch(setNotifications({ transactionsAlertsCategory: false }));
+    });
+    await act(async () => {});
+    expect(chainwatch.getAccountDeletes()).toBe(0);
+
+    await act(async () => {
+      releaseAddressPut();
+    });
+    await waitFor(() => expect(chainwatch.getAccountDeletes()).toBe(1));
+    expect(chainwatch.getRemote().exists).toBe(false);
   });
 
   it("should not delete Chainwatch accounts when alerts start disabled", async () => {

@@ -44,6 +44,7 @@ const TransactionsAlerts = () => {
   const refActive = useRef(false);
   const refAddresses = useRef<TransactionsAlertsAddress[]>([]);
   const refScheduledOperation = useRef<ScheduledOperation | undefined>(undefined);
+  const refOperationQueue = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     if (!chainwatchBaseUrl) return;
@@ -80,28 +81,33 @@ const TransactionsAlerts = () => {
     };
     refScheduledOperation.current = operation;
 
-    const operationPromise = isActive
-      ? reconcileTransactionsAlertsAddresses(
-          userId.exportUserIdForChainwatch(),
-          chainwatchBaseUrl,
-          supportedChains,
-          transactionsAlertsAddresses,
-          refAddresses.current,
-        ).then(() => {
+    const operationPromise = refOperationQueue.current
+      .catch(() => undefined)
+      .then(async () => {
+        if (isActive) {
+          await reconcileTransactionsAlertsAddresses(
+            userId.exportUserIdForChainwatch(),
+            chainwatchBaseUrl,
+            supportedChains,
+            transactionsAlertsAddresses,
+            refAddresses.current,
+          );
           if (refScheduledOperation.current === operation) {
             refAddresses.current = transactionsAlertsAddresses;
           }
-        })
-      : deleteUserChainwatchAccounts(
-          userId.exportUserIdForChainwatch(),
-          chainwatchBaseUrl,
-          supportedChains,
-        ).then(() => {
+        } else {
+          await deleteUserChainwatchAccounts(
+            userId.exportUserIdForChainwatch(),
+            chainwatchBaseUrl,
+            supportedChains,
+          );
           if (refScheduledOperation.current === operation) {
             refActive.current = false;
             refAddresses.current = [];
           }
-        });
+        }
+      });
+    refOperationQueue.current = operationPromise;
 
     void operationPromise.catch(() => {
       if (refScheduledOperation.current === operation) {
