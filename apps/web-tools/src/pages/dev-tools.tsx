@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { ThemeProvider } from "@ledgerhq/lumen-ui-react";
 import { DevTools, type DevToolsConfig } from "@devtools/shell";
 import { useFeatureFlagsToolProps } from "@devtools/bindings";
+import { TransportPanel } from "@devtools/transport-panel";
 import { buildTransport, buildCopyStoreProtocol, combineProtocols } from "@devtools/wire";
 import { store } from "../store";
 import { sleepingListener } from "../store/sleepingListener";
@@ -21,11 +22,24 @@ export default function DevToolsPage() {
     () => [{ id: "feature-flags", config: featureFlagsProps }],
     [featureFlagsProps],
   );
+  const wireState = useSyncExternalStore(wire.subscribe, wire.getState, wire.getState);
 
   return (
     <ThemeProvider colorScheme="system">
       <div style={{ height: "100vh" }}>
-        <DevTools config={config} />
+        <DevTools
+          config={config}
+          sidebarFooter={
+            <TransportPanel
+              transport={wire.transport}
+              hubUrl={wireState.hubUrl}
+              setHubUrl={wire.setHubUrl}
+              role={wireState.role}
+              target={wireState.target}
+              setTarget={wire.setTarget}
+            />
+          }
+        />
       </div>
     </ThemeProvider>
   );

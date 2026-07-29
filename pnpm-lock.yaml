@@ -78,6 +78,9 @@ catalogs:
     '@ledgerhq/lumen-ui-rnative-visualization':
       specifier: 0.1.29
       version: 0.1.29
+    '@ledgerhq/lumen-utils-shared':
+      specifier: 0.1.7
+      version: 0.1.7
     '@ledgerhq/speculos-device-controller':
       specifier: 0.3.0
       version: 0.3.0
@@ -2566,6 +2569,9 @@ importers:
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
+      '@devtools/transport-panel':
+        specifier: workspace:*
+        version: link:../../devtools/transport-panel
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
@@ -2939,7 +2945,7 @@ importers:
         specifier: 'catalog:'
         version: 0.1.52(270d3755349a23492d91ca093f57aa47)
       '@ledgerhq/lumen-utils-shared':
-        specifier: 0.1.7
+        specifier: 'catalog:'
         version: 0.1.7(react@19.1.4)
       '@radix-ui/react-checkbox':
         specifier: 'catalog:'
@@ -3152,6 +3158,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.52(3d4e8367284189935a47ae5c345b5680)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.7(react@19.1.4)
       '@radix-ui/react-checkbox':
         specifier: 'catalog:'
         version: 1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3284,6 +3293,91 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  devtools/transport-panel:
+    dependencies:
+      '@devtools/transport':
+        specifier: workspace:*
+        version: link:../transport
+    devDependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.23
+      '@ledgerhq/lumen-ui-react':
+        specifier: 'catalog:'
+        version: 0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+      '@ledgerhq/lumen-utils-shared':
+        specifier: 'catalog:'
+        version: 0.1.7(react@19.1.4)
+      '@radix-ui/react-checkbox':
+        specifier: 'catalog:'
+        version: 1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-dialog':
+        specifier: 'catalog:'
+        version: 1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.4
+        version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@radix-ui/react-switch':
+        specifier: 'catalog:'
+        version: 1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-tooltip':
+        specifier: 'catalog:'
+        version: 1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@tanstack/react-table':
+        specifier: 'catalog:'
+        version: 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -18253,11 +18347,6 @@ packages:
       '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
       '@ledgerhq/logs': ^6.17.0
-
-  '@ledgerhq/coin-module-framework@4.0.0':
-    resolution: {integrity: sha512-V0kXnykw2M+J+EtWP7lB7qZLX/HSlbNBalQx7dxiNFPlCxNqUvjOZ6HkuCOZTEXA0Sk96svBFkrZVHGG4VOvHg==}
-    peerDependencies:
-      '@ledgerhq/errors': ^6.33.0
 
   '@ledgerhq/coin-module-framework@4.0.2':
     resolution: {integrity: sha512-uYbsVd6t5qzgSEyINEhfuruTO74wAEi+lpMvAPF67F9gWAsFC7109kxlG1AgRdIQmmW5cCMYaSMt69DrhN0BuQ==}
@@ -34105,7 +34194,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -46241,11 +46329,6 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
 
-  '@ledgerhq/coin-module-framework@4.0.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
-    dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
-      bignumber.js: 9.1.2
-
   '@ledgerhq/coin-module-framework@4.0.2':
     dependencies:
       bignumber.js: 9.1.2
@@ -46267,7 +46350,7 @@ snapshots:
 
   '@ledgerhq/coin-xrp@7.25.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 4.0.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-module-framework': 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
@@ -46649,6 +46732,26 @@ snapshots:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
       react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      tailwind-merge: 3.4.0
+    transitivePeerDependencies:
+      - react-native
+
+  '@ledgerhq/lumen-ui-react@0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.23
+      '@ledgerhq/lumen-utils-shared': 0.1.10(react@19.1.4)
+      '@radix-ui/react-checkbox': 1.3.2(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-dialog': 1.1.15(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.0.14)(react@19.1.4)
+      '@radix-ui/react-switch': 1.2.6(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@radix-ui/react-tooltip': 1.2.8(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@tanstack/react-table': 8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      i18next: 23.10.1
+      react: 19.1.4
+      react-dom: 19.1.4(react@19.1.4)
+      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       tailwind-merge: 3.4.0
     transitivePeerDependencies:
       - react-native
