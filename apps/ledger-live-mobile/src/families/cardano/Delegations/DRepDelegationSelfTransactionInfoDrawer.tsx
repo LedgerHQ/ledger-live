@@ -7,7 +7,7 @@ import type {
 import { StyleSheet } from "react-native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "~/const";
-import QueuedDrawer from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
@@ -50,7 +50,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
   }, [account, bridge, navigation, onClose]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Flex alignItems="center" testID="cardano-undelegate-info-drawer">
         <Illustration lightSource={EarnLight} darkSource={EarnDark} size={100} />
 
@@ -65,7 +65,7 @@ export default function DRepDelegationSelfTransactionInfoDrawer({
           <Trans i18nKey="common.continue" />
         </Button>
       </Flex>
-    </QueuedDrawer>
+    </QueuedBottomSheet>
   );
 }
 
