@@ -9,7 +9,7 @@ import { useBottomSheetBackgroundToneRequests } from "LLM/hooks/useBottomSheetBa
 import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
 import { logDrawer } from "./utils/logDrawer";
 
-interface UseQueuedDrawerBottomSheetProps {
+interface UseQueuedBottomSheetProps {
   isRequestingToBeOpened?: boolean;
   isForcingToBeOpened?: boolean;
   onClose?: () => void;
@@ -22,7 +22,7 @@ interface UseQueuedDrawerBottomSheetProps {
 
 type DrawerState = "idle" | "open" | "dismissing";
 
-const useQueuedDrawerBottomSheet = ({
+const useQueuedBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
@@ -31,7 +31,7 @@ const useQueuedDrawerBottomSheet = ({
   onBackdropPress,
   onModalHide,
   preventBackdropClick,
-}: UseQueuedDrawerBottomSheetProps) => {
+}: UseQueuedBottomSheetProps) => {
   const { backgroundTone, backgroundContextValue } = useBottomSheetBackgroundToneRequests();
   const { addDrawerToQueue } = useQueuedDrawerContext();
   const drawerInQueueRef = useRef<DrawerInQueue | undefined>(undefined);
@@ -216,4 +216,4 @@ const useQueuedDrawerBottomSheet = ({
   };
 };
 
-export default useQueuedDrawerBottomSheet;
+export default useQueuedBottomSheet;

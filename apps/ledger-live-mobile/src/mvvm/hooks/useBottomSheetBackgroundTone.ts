@@ -5,7 +5,7 @@ import {
 } from "LLM/contexts/BottomSheetBackgroundContext";
 
 /**
- * Tints the enclosing `QueuedDrawerBottomSheet` with the given status tone.
+ * Tints the enclosing `QueuedBottomSheet` with the given status tone.
  *
  * - Call from any descendant of the sheet; the tone propagates via
  *   `BottomSheetBackgroundContext` and the sheet repaints its background.

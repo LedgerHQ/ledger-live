@@ -3,7 +3,7 @@ import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnat
 import { type LayoutChangeEvent, Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { LargeScreenUpsellModalContent } from "../LargeScreenUpsellModalContent";
 import type { LargeScreenUpsellDismissMethod } from "../../analytics";
 
@@ -99,7 +99,7 @@ export function LargeScreenUpsellModalDrawer({
   const shouldRenderContent = isOpen || hasRenderedContent;
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       key="large-screen-upsell-modal-drawer"
       isRequestingToBeOpened={isOpen}
       onClose={handleClose}
@@ -126,6 +126,6 @@ export function LargeScreenUpsellModalDrawer({
           </Box>
         </BottomSheetView>
       ) : null}
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

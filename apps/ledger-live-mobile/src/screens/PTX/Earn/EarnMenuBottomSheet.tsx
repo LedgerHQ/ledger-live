@@ -15,7 +15,7 @@ import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { track } from "~/analytics";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";
 import { earnMenuBottomSheetSelector } from "~/reducers/earn";
@@ -94,7 +94,7 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
   const isRequestingToBeOpened = options.length > 0;
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={closeBottomSheet}
       enableDynamicSizing
@@ -121,6 +121,6 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
           ) : null;
         })}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

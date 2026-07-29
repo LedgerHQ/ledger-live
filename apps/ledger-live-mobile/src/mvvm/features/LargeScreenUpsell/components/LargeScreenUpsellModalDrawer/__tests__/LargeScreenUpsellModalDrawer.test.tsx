@@ -9,7 +9,7 @@ import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/ty
 import type { LargeScreenUpsellDismissMethod } from "../../../analytics";
 import { LargeScreenUpsellModalDrawer } from "..";
 
-type MockQueuedDrawerBottomSheetProps = Readonly<{
+type MockQueuedBottomSheetProps = Readonly<{
   children: React.ReactNode;
   onClose?: () => void;
   onHeaderClosePressed?: () => void;
@@ -17,12 +17,12 @@ type MockQueuedDrawerBottomSheetProps = Readonly<{
   maxDynamicContentSize?: "fullWithOffset";
 }>;
 
-let capturedDrawerProps: MockQueuedDrawerBottomSheetProps | null = null;
+let capturedDrawerProps: MockQueuedBottomSheetProps | null = null;
 const originalPlatformOS = Platform.OS;
 
-jest.mock("LLM/components/QueuedDrawer/QueuedDrawerBottomSheet", () => ({
+jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => ({
   __esModule: true,
-  default: (props: MockQueuedDrawerBottomSheetProps) => {
+  default: (props: MockQueuedBottomSheetProps) => {
     const React = require("react");
     const { BottomSheet } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
 

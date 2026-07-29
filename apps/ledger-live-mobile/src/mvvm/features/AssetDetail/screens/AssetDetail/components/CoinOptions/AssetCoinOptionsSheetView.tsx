@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross, Star, StarFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { CoinOptionRow } from "./CoinOptionRow";
 
@@ -38,7 +38,7 @@ export function AssetCoinOptionsSheetView({
     : t("assetDetail.coinOptions.hideFromPortfolio");
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={ASSET_DETAIL_TEST_IDS.coinOptionsSheet}
       isRequestingToBeOpened={isOpen}
       enableDynamicSizing
@@ -60,6 +60,6 @@ export function AssetCoinOptionsSheetView({
           testID={ASSET_DETAIL_TEST_IDS.coinOptionsHideRow}
         />
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
 import { useWalletV4TourDrawerViewModel } from "./hooks/useWalletV4TourDrawerViewModel";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import { default as QueuedDrawerBottomSheet } from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import { default as QueuedBottomSheet } from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
 import { Platform, StyleSheet } from "react-native";
@@ -34,7 +34,7 @@ export const WalletV4TourDrawer = ({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
       onClose={closeDrawer}
       enableDynamicSizing
@@ -83,7 +83,7 @@ export const WalletV4TourDrawer = ({
           </Slides>
         </BottomSheetView>
       ) : null}
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 };
 
