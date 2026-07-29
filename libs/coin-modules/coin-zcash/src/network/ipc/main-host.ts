@@ -176,6 +176,10 @@ const state: HostState = {
  * Both dev and prod builds emit it alongside `main.bundle.js` in `.webpack/`
  * (see `rspack.zcashUtility.ts`), and `__dirname` at runtime points to that
  * directory -- so a single resolution works for both.
+ *
+ * `zcash-utility.bundle.js` is built from this module's utility entry: the
+ * Zcash chain-adapter of `coin-bitcoin` is never hosted by the app, so there is
+ * only one Zcash engine to spawn.
  */
 function resolveUtilityBundlePath(): string {
   return path.join(__dirname, "zcash-utility.bundle.js");

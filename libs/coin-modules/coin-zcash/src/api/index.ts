@@ -25,6 +25,7 @@ import {
   craftTransaction as craftTransactionPlan,
   estimateFees as estimateFeesForPlan,
   getBalance,
+  getNextValidSequence,
   lastBlock,
   listOperations,
   validateAddress,
@@ -90,9 +91,7 @@ export function createApi(config: ZcashApiConfig): CoinModuleApi {
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address: string) => {
-      throw new Error("getNextSequence is not supported: Zcash has no account sequence number");
-    },
+    getNextSequence: getNextValidSequence,
     validateAddress,
     craftTransactionData,
   };

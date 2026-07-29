@@ -10,10 +10,11 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from "../types/bridge";
 import type { SignerContext } from "../types/signer";
 import { ZcashSignerNotSupported, ZcashSigningCancelled } from "../types/errors";
+import { assertCanSend } from "../logic/engineClient";
 import { craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
-import { mapOutputs, mapSpends, mapTransparentInputs } from "../logic/transaction/mapping";
-import { getWalletAccount } from "../logic/getWalletAccount";
+import { mapOutputs, mapSpends, mapTransparentInputs } from "./mapping";
+import { getWalletAccount } from "./getWalletAccount";
 import { resolveTransparentUtxos } from "./statusHelpers";
 
 /**
@@ -45,6 +46,8 @@ export const buildSignOperation =
           throw new Error("Missing selectedNotes -- run prepareTransaction first");
         if (transaction.zcashFee === undefined)
           throw new Error("Missing zcashFee -- run prepareTransaction first");
+
+        await assertCanSend();
 
         const accountIndex = getWalletAccount(account).params.index;
         const transparentUtxos = resolveTransparentUtxos(account, transaction);

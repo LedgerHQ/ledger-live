@@ -112,5 +112,4 @@ export * from "./llmWebviewManifestDomainCheck";
 export * from "./newSendFlow";
 export * from "./useDeviceActionSignatureSend";
 export * from "./web3hub";
-export * from "./zcashCoinModule";
 export * from "./zcashShielded";

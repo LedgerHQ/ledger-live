@@ -25,29 +25,23 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
-import { getFeature } from "../firebase/featureFlags";
+import { isZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";
 
-// Resolves the family that actually owns a currency's bridge. For every
-// currency but zcash this is just `currency.family`. Zcash is the first
-// flag-driven routing branch: when the `zcashCoinModule` feature is enabled,
-// zcash resolves to the standalone "zcash" family (@ledgerhq/coin-zcash)
-// instead of its static `currency.family` ("bitcoin", @ledgerhq/coin-bitcoin's
-// Zcash chain-adapter). `currency.family` is never persisted (accountId only
-// stores currencyId), so this can flip freely between app sessions/flag
-// updates without touching stored data.
+// Resolves the family owning a currency's bridge: `currency.family`, except
+// zcash, which `zcashShielded` routes to the standalone "zcash" family
+// (@ledgerhq/coin-zcash) rather than coin-bitcoin's chain-adapter. The flag is
+// read from the mirror the host app feeds (`setZcashShieldedEnabled`), so a
+// developer-drawer override routes too; nothing persists `currency.family`, so
+// it may flip freely between sessions.
 export function resolveFamily(currency: CryptoCurrency): string {
-  if (currency.id === "zcash" && getFeature({ key: "zcashCoinModule" })?.enabled) {
+  if (currency.id === "zcash" && isZcashShieldedEnabled()) {
     return "zcash";
   }
   return currency.family;
 }
 
-// Cache key for the currency/account bridge caches below. Identical to the
-// resolved family for every currency except zcash: "zcash" and "bitcoin" are
-// already distinct strings so a flag flip can never collide on a stale
-// cache entry, but zcash is additionally keyed by currencyId as a
-// belt-and-braces measure since it is the first family whose resolution
-// depends on more than the currency's own static `family` field.
+// Cache key for the bridge caches below: the resolved family, plus the
+// currencyId for zcash, the one family whose resolution can flip mid-session.
 function bridgeCacheKey(currency: CryptoCurrency): string {
   const family = resolveFamily(currency);
   return currency.id === "zcash" ? `${family}:${currency.id}` : family;

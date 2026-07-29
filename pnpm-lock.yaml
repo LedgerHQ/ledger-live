@@ -934,6 +934,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-zcash':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-zcash
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-react@0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)

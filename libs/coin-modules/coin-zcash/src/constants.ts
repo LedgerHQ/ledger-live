@@ -7,7 +7,7 @@ export const ZCASH_GRPC_URL_MAINNET = "https://zec-indexer.coin.ledger-test.com"
 
 // ── Zaino gRPC endpoint resolution ─────────────────────────────────────────
 //
-// The shielded sync path (logic/sync.ts) and the shielded send path
+// The shielded sync path (bridge/sync.ts) and the shielded send path
 // (bridge/signOperation.ts) MUST target the same endpoint and network.
 // `setZainoGrpcUrl` lets callers override the default mainnet endpoint (e.g.
 // point at testnet or a local node). Both paths resolve through
@@ -50,8 +50,30 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
   network: getZainoNetwork(),
 });
 
-export const ZCASH_ACTIVATION_DATE = new Date("2016-10-28");
-export const ZCASH_ACTIVATION_DATE_STRING = "2016-10-28";
+// ── Routing toggle ─────────────────────────────────────────────────────────
+//
+// The host app resolves the `zcashShielded` feature flag itself -- remote config,
+// env override and the developer drawer's override folded in -- and mirrors it
+// here, the same way `setZainoGrpcUrl` overrides the endpoint. The bridge router
+// reads it to decide whether a Zcash account is served by this module or by
+// coin-bitcoin's Zcash chain-adapter (see live-common `bridge/impl.ts`). This
+// module never has to ask: it is only ever reached when the answer is yes.
+// Defaults to `false` so an unconfigured environment stays on the adapter.
+
+let shieldedEnabled = false;
+
+/** Mirror the resolved `zcashShielded` feature flag (see above). */
+export const setZcashShieldedEnabled = (enabled: boolean): void => {
+  shieldedEnabled = enabled;
+};
+
+/** Whether Zcash accounts are served by this module. */
+export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
+
+// NU5 activation, the earliest block a Ledger-created shielded account can hold
+// a note -- and so the default birthday a scan starts from.
+export const ZCASH_ACTIVATION_DATE = new Date("2022-05-31");
+export const ZCASH_ACTIVATION_DATE_STRING = "2022-05-31";
 export const ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES = 2;
 export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000; // 5 seconds
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {

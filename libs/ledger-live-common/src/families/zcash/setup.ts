@@ -46,3 +46,10 @@ const resolver = createResolver(createSigner, zcashAddressResolver);
 // No `messageSigner`: the Zcash DMK signer kit does not expose message
 // signing (see @ledgerhq/coin-zcash/types/signer BitcoinSigner surface).
 export { bridge, resolver, signerContext };
+
+// Re-exported so the host apps can mirror the `zcashShielded` feature flag into
+// the coin module (via `useFeature` → `setZcashShieldedEnabled`), the same way
+// `setSuiGraphqlEnabled` / `setCosmosLdmkEnabled` are wired. A coin module cannot
+// read React feature flags directly, and the bridge router reads that same mirror
+// to decide which module serves a Zcash account.
+export { setZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";

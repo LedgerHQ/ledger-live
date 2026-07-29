@@ -11,14 +11,29 @@ import { classifyZcashRecipient } from "./address";
 export function isValidZcashAddress(address: string): boolean {
   if (!address) return false;
 
-  try {
-    if (isValidAddress(address, "zcash" as Currency)) return true;
-  } catch {
-    // fall through to shielded classification
-  }
+  // A transparent address is settled by the Base58Check verdict, which verifies
+  // the checksum. Falling through to the classifier instead would accept a
+  // mistyped t-address: it reads the ZIP-316 prefix, not the checksum.
+  if (address.startsWith("t")) return isTransparentZcashAddress(address);
 
   const cls = classifyZcashRecipient(address);
   return !("error" in cls);
+}
+
+/**
+ * Whether the address is a transparent one (t1/t3). Distinct from
+ * {@link isValidZcashAddress}, which also accepts Orchard-capable unified
+ * addresses: the headless, address-indexed reads (balance, history) can only
+ * answer for transparent addresses, since shielded value needs a viewing key.
+ */
+export function isTransparentZcashAddress(address: string): boolean {
+  if (!address) return false;
+
+  try {
+    return isValidAddress(address, "zcash" as Currency);
+  } catch {
+    return false;
+  }
 }
 
 /**

@@ -5,7 +5,7 @@ import type { ZcashAccount } from "../types/bridge";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import type { BtcOperation } from "../types/bridge";
 
-jest.mock("./engineClient", () => ({
+jest.mock("../logic/engineClient", () => ({
   getZCashModule: jest.fn(),
   getZCashClient: jest.fn(),
 }));

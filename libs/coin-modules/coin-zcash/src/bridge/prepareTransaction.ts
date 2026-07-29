@@ -1,6 +1,6 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
-import { collectSpendableNotes } from "../logic/operations";
+import { collectSpendableNotes } from "./operations";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,

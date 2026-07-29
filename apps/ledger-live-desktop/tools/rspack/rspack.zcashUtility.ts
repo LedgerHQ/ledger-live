@@ -7,7 +7,13 @@ import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
  * Creates the rspack configuration for the ZCash UtilityProcess bundle.
  *
  * Spawned by Electron main via `utilityProcess.fork(.webpack/zcash-utility.bundle.js)`
- * to host the napi-rs `.node` addon outside the renderer.
+ * to host the napi-rs `.node` addon outside the renderer. The host forks lazily,
+ * on the first request, so a session that never touches Zcash never pays for it.
+ *
+ * The engine is the one of the standalone `coin-zcash` module: the Zcash
+ * chain-adapter of `coin-bitcoin` also ships an engine, but only ever reaches it
+ * from its shielded path, which the `zcashShielded` feature flag now routes to
+ * `coin-zcash` instead — so it is left unbuilt and unhosted.
  *
  * Target is `node` rather than `electron-main`: UtilityProcesses run in a
  * plain Node context (no Electron APIs beyond `process.parentPort`).
@@ -29,7 +35,7 @@ export function createZcashUtilityConfig(
     entry: {
       zcashUtility: path.resolve(
         rootFolder,
-        "../../libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/ipc/utility-entry.ts",
+        "../../libs/coin-modules/coin-zcash/src/network/ipc/utility-entry.ts",
       ),
     },
     output: {

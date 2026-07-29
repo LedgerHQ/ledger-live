@@ -16,7 +16,7 @@ import type {
   ZcashPrivateInfoRaw,
 } from "../network/types";
 import { rehydrateOutput } from "../network/serialization/rehydrate";
-import { walletBtcCurrencyById } from "../logic/walletBtcCurrency";
+import { walletBtcCurrencyById } from "../network/walletBtcCurrency";
 
 // ── Transparent (bitcoinResources) serialization ────────────────────────
 //

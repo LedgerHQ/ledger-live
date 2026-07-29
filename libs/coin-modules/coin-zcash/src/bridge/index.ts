@@ -9,7 +9,11 @@ import type { CoinConfig } from "../config";
 import { setCoinConfig } from "../config";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
+import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import getAddress from "../signer/getAddress";
+import getFullViewingKeyResolver, {
+  type GetFullViewingKeyResult,
+} from "../signer/getFullViewingKey";
 import { getSerializedAddressParameters } from "./exchange";
 import { validateAddress } from "../logic/validateAddress";
 import { broadcast } from "./broadcast";
@@ -24,14 +28,29 @@ import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import formatters from "./transaction";
 
 /**
- * Assembles the thin `AccountBridge`/`CurrencyBridge` (LL device path) --
- * every method here delegates to `logic/` (see logic/index.ts). The only
- * bespoke residue is `signOperation` (PCZT device orchestration).
+ * `getFullViewingKey` is not part of `AccountBridge`: the UFVK export flow is
+ * Zcash-only, so the host app reaches it through this widened type (LLD's
+ * ZCashExportKeyFlowModal). Mirrors coin-bitcoin's `BitcoinAccountBridge`.
+ */
+export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, TransactionStatus> & {
+  getFullViewingKey: (
+    account: ZcashAccount,
+    options: { deviceId: string; path?: string },
+  ) => Promise<GetFullViewingKeyResult>;
+};
+
+/**
+ * Assembles the thin `AccountBridge`/`CurrencyBridge` (LL device path) -- every
+ * method here delegates to a sibling module, or to `logic/` for what the
+ * headless api shares (coin selection, address rules, PCZT craft/combine/
+ * broadcast). The only bespoke residue is `signOperation` (PCZT device
+ * orchestration).
  */
 export function createBridges(signerContext: SignerContext, coinConfig: CoinConfig) {
   setCoinConfig(coinConfig);
 
   const getAddressFn = getAddress(signerContext);
+  const getFullViewingKeyFn = getFullViewingKeyResolver(signerContext);
   const getAccountShape = makeGetAccountShape(signerContext);
 
   const scanAccounts = makeScanAccounts<ZcashAccount>({
@@ -52,7 +71,7 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
 
   const receive = makeAccountBridgeReceive<ZcashAccount>(getAddressWrapper(getAddressFn));
 
-  const accountBridge: AccountBridge<Transaction, ZcashAccount, TransactionStatus> = {
+  const accountBridge: ZcashAccountBridge = {
     createTransaction,
     updateTransaction,
     prepareTransaction,
@@ -71,6 +90,15 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
     getSerializedAddressParameters,
     validateAddress: (address: string) =>
       validateAddress(address, { currencyId: "zcash", networkId: 0 }),
+    // Placeholder recipient for the flows that price a transaction before the
+    // user has typed one (swap max estimation, quote fee context). Without it
+    // live-common's default extension throws.
+    getEstimationRecipient: () => ZCASH_ESTIMATION_RECIPIENT,
+    getFullViewingKey: (account, { deviceId, path }) =>
+      getFullViewingKeyFn(deviceId, {
+        currency: account.currency,
+        path: path ?? account.freshAddressPath,
+      }),
   };
 
   return {

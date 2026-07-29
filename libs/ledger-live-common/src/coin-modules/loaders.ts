@@ -426,7 +426,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
     // added to genericCoinFrameworkFamilies.json). Routing between this family
     // and the "bitcoin" family's Zcash chain-adapter is decided in
-    // bridge/impl.ts's resolveFamily, gated on the `zcashCoinModule` feature
+    // bridge/impl.ts's resolveFamily, gated on the `zcashShielded` feature
     // flag -- the "bitcoin" loader's supportedCoins still lists "zcash" so the
     // flag-OFF path keeps resolving to coin-bitcoin unchanged.
     family: "zcash",

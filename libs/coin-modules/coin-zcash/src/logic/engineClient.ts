@@ -1,3 +1,4 @@
+import { getZainoEndpoint } from "../constants";
 import type { ZCashClient } from "../network/types";
 
 // Lazy module import (renderer-safe): ZCash.ts transitively loads the native
@@ -26,4 +27,16 @@ export async function getZCashClient(args: {
 }): Promise<ZCashClient> {
   const { createZCashClient } = await getZCashModule();
   return createZCashClient(args);
+}
+
+/**
+ * Checked once before a send starts, because the three steps happen either side
+ * of the device: a client that can build but not finalize would otherwise let
+ * the user sign and only then fail (the React Native stub omits all three).
+ */
+export async function assertCanSend(): Promise<void> {
+  const client = await getZCashClient(getZainoEndpoint());
+  if (!client.buildTransaction || !client.finalizeTransaction || !client.broadcastTransaction) {
+    throw new Error("Shielded Zcash transactions are not supported in this environment");
+  }
 }

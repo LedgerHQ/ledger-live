@@ -8,7 +8,7 @@ import type { ZcashAccount, ZcashAccountRaw } from "../types/bridge";
 // this fixture -- see file header for why). This is the coexistence
 // guarantee under test: an account synced while coin-bitcoin owned Zcash
 // must still round-trip through coin-zcash's assignFromAccountRaw/
-// assignToAccountRaw once the `zcashCoinModule` flag routes to coin-zcash.
+// assignToAccountRaw once the `zcashShielded` flag routes to coin-zcash.
 function makeBitcoinShapedAccountRaw(): AccountRaw {
   return {
     id: "js:2:zcash:xpub6Dxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:",

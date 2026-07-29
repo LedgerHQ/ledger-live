@@ -1,7 +1,7 @@
-import type { BuildTransactionArgs, SpendableNote } from "../../network/types";
-import type { BitcoinOutput, Transaction, ZcashAccount } from "../../types/bridge";
-import { ZcashUtxoNotInAccount } from "../../types/errors";
-import { getWalletAccount } from "../getWalletAccount";
+import type { BuildTransactionArgs, SpendableNote } from "../network/types";
+import type { BitcoinOutput, Transaction, ZcashAccount } from "../types/bridge";
+import { ZcashUtxoNotInAccount } from "../types/errors";
+import { getWalletAccount } from "./getWalletAccount";
 
 type OrchardSpendInputJs = BuildTransactionArgs["spends"][number];
 type TransparentInputJs = BuildTransactionArgs["transparentInputs"][number];

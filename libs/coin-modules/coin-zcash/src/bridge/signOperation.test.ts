@@ -11,18 +11,21 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { buildSignOperation } from "./signOperation";
 import { craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
-import { getWalletAccount } from "../logic/getWalletAccount";
+import { assertCanSend } from "../logic/engineClient";
+import { getWalletAccount } from "./getWalletAccount";
 import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount } from "../types/bridge";
 
 jest.mock("../logic/transaction/craftTransaction");
 jest.mock("../logic/transaction/combine");
-jest.mock("../logic/getWalletAccount");
+jest.mock("../logic/engineClient");
+jest.mock("./getWalletAccount");
 
 const mockCraftTransaction = craftTransaction as jest.MockedFunction<typeof craftTransaction>;
 const mockCombine = combine as jest.MockedFunction<typeof combine>;
 const mockGetWalletAccount = getWalletAccount as jest.MockedFunction<typeof getWalletAccount>;
+const mockAssertCanSend = assertCanSend as jest.MockedFunction<typeof assertCanSend>;
 
 const currency = getCryptoCurrencyById("zcash");
 
@@ -153,6 +156,7 @@ describe("bridge/signOperation", () => {
     jest.clearAllMocks();
     mockCraftTransaction.mockResolvedValue(defaultBuildResult);
     mockCombine.mockResolvedValue(defaultFinalizeResult);
+    mockAssertCanSend.mockResolvedValue(undefined);
     mockGetWalletAccount.mockReturnValue({
       params: { index: 0 },
     } as unknown as ReturnType<typeof getWalletAccount>);
@@ -203,6 +207,27 @@ describe("bridge/signOperation", () => {
       expect(signedEvent!.signedOperation.operation.extra).toMatchObject({ zcashShielded: true });
     },
   );
+
+  it("gives up before touching the device when the engine cannot complete a send", async () => {
+    // A client that can build but not finalize would otherwise be discovered
+    // after the user has signed.
+    mockAssertCanSend.mockRejectedValue(
+      new Error("Shielded Zcash transactions are not supported in this environment"),
+    );
+    const signerContext = makeSignerContext();
+    const signOp = buildSignOperation(signerContext);
+
+    await expect(
+      collectEvents(signOp, {
+        account: makeAccount(),
+        deviceId: "device-1",
+        transaction: makeTx("transparent"),
+      } as never),
+    ).rejects.toThrow("not supported in this environment");
+
+    expect(signerContext).not.toHaveBeenCalled();
+    expect(mockCraftTransaction).not.toHaveBeenCalled();
+  });
 
   it("errors when the account has no UFVK yet (not synced)", async () => {
     const account = makeAccount();

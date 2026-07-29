@@ -13,6 +13,12 @@ describe("logic/validateAddress", () => {
     expect(isValidZcashAddress("not-an-address")).toBe(false);
   });
 
+  it("rejects a t-address whose checksum does not hold", () => {
+    // The valid address above with its last character changed: only Base58Check
+    // catches this, the ZIP-316 classifier reads the prefix alone.
+    expect(isValidZcashAddress("t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7G")).toBe(false);
+  });
+
   it("rejects a Sapling zs1 address (unsupported)", () => {
     expect(
       isValidZcashAddress(

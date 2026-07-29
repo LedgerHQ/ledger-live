@@ -1,12 +1,9 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { setZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";
 import { genAccount } from "../../mock/account";
 import { coinModuleLoaders } from "../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
-import { getFeature } from "../../firebase/featureFlags";
 import { clearBridgeCache, getAccountBridge, getCurrencyBridge, resolveFamily } from "../impl";
-
-jest.mock("../../firebase/featureFlags");
-const mockGetFeature = getFeature as jest.MockedFunction<typeof getFeature>;
 
 const ZCASH = getCryptoCurrencyById("zcash");
 const BITCOIN = getCryptoCurrencyById("bitcoin");
@@ -14,42 +11,49 @@ const BITCOIN = getCryptoCurrencyById("bitcoin");
 const loadersFor = (...families: string[]) =>
   coinModuleLoaders.filter(l => families.includes(l.family));
 
-describe("bridge/impl -- zcash routing (zcashCoinModule flag)", () => {
+// The host app resolves the flag itself -- remote config, env override and the
+// developer drawer's override all folded in -- and mirrors that resolution into
+// the coin module (`setZcashShieldedEnabled`). The router reads that same mirror,
+// so a flag flipped from the drawer moves the routing with it.
+describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
   beforeEach(() => {
     resetCoinModulesForTests();
     registerCoinModules(loadersFor("bitcoin", "zcash"));
     clearBridgeCache();
-    mockGetFeature.mockReset();
+    setZcashShieldedEnabled(false);
   });
 
-  it("resolveFamily returns 'bitcoin' for zcash when the flag is absent/off", () => {
-    mockGetFeature.mockReturnValue(null);
-    expect(resolveFamily(ZCASH)).toBe("bitcoin");
+  afterAll(() => setZcashShieldedEnabled(false));
 
-    mockGetFeature.mockReturnValue({ enabled: false } as ReturnType<typeof getFeature>);
-    expect(resolveFamily(ZCASH)).toBe("bitcoin");
-  });
-
-  it("resolveFamily returns 'zcash' for zcash when the flag is enabled", () => {
-    mockGetFeature.mockReturnValue({ enabled: true } as ReturnType<typeof getFeature>);
+  it("resolveFamily returns 'zcash' when the flag is on", () => {
+    setZcashShieldedEnabled(true);
     expect(resolveFamily(ZCASH)).toBe("zcash");
   });
 
+  it("resolveFamily returns 'bitcoin' when the flag is off", () => {
+    expect(resolveFamily(ZCASH)).toBe("bitcoin");
+  });
+
+  it("resolveFamily follows a flip within the session", () => {
+    setZcashShieldedEnabled(true);
+    expect(resolveFamily(ZCASH)).toBe("zcash");
+    setZcashShieldedEnabled(false);
+    expect(resolveFamily(ZCASH)).toBe("bitcoin");
+  });
+
   it("resolveFamily never touches any other currency's family", () => {
-    mockGetFeature.mockReturnValue({ enabled: true } as ReturnType<typeof getFeature>);
+    setZcashShieldedEnabled(true);
     expect(resolveFamily(BITCOIN)).toBe("bitcoin");
-    expect(mockGetFeature).not.toHaveBeenCalled();
   });
 
   it("getCurrencyBridge resolves the coin-zcash currencyBridge when the flag is ON", async () => {
-    mockGetFeature.mockReturnValue({ enabled: true } as ReturnType<typeof getFeature>);
+    setZcashShieldedEnabled(true);
     const bridge = await getCurrencyBridge(ZCASH);
     expect(bridge).toBeDefined();
     expect(typeof bridge.scanAccounts).toBe("function");
   });
 
   it("getCurrencyBridge resolves the coin-bitcoin currencyBridge when the flag is OFF", async () => {
-    mockGetFeature.mockReturnValue({ enabled: false } as ReturnType<typeof getFeature>);
     const bridge = await getCurrencyBridge(ZCASH);
     expect(bridge).toBeDefined();
     expect(typeof bridge.scanAccounts).toBe("function");
@@ -58,17 +62,17 @@ describe("bridge/impl -- zcash routing (zcashCoinModule flag)", () => {
   it("getAccountBridge routes a zcash account to the right family bridge in both flag states, with no cache leak", async () => {
     const account = genAccount("zcash-routing-test", { currency: ZCASH });
 
-    mockGetFeature.mockReturnValue({ enabled: true } as ReturnType<typeof getFeature>);
+    setZcashShieldedEnabled(true);
     const onBridge = await getAccountBridge(account);
     expect(onBridge).toBeDefined();
 
-    mockGetFeature.mockReturnValue({ enabled: false } as ReturnType<typeof getFeature>);
+    setZcashShieldedEnabled(false);
     const offBridge = await getAccountBridge(account);
     expect(offBridge).toBeDefined();
 
     // Distinct family caches (bitcoin vs zcash) -- flipping the flag back must
     // resolve the ON bridge again rather than staying stuck on the OFF one.
-    mockGetFeature.mockReturnValue({ enabled: true } as ReturnType<typeof getFeature>);
+    setZcashShieldedEnabled(true);
     const onBridgeAgain = await getAccountBridge(account);
     expect(onBridgeAgain).toBe(onBridge);
     expect(onBridgeAgain).not.toBe(offBridge);
