@@ -32,6 +32,7 @@ import {
 } from "../test/fixtures/currency.fixture";
 import { getMockedMirrorTransaction } from "../test/fixtures/mirror.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
+import { getMockedValidator } from "../test/fixtures/validator.fixture";
 import type {
   HederaAccount,
   HederaMemo,
@@ -80,6 +81,8 @@ import {
   toTimestamp,
   createStakingRewardOperationHash,
   resolveConfig,
+  base64ToUrlSafeBase64,
+  getHederaTransactionBodyBytes,
 } from "./utils";
 
 jest.mock("../config");
@@ -803,17 +806,11 @@ describe("logic utils", () => {
   });
 
   describe("filterValidatorBySearchTerm", () => {
-    const mockValidator: HederaValidator = {
+    const mockValidator = getMockedValidator({
       nodeId: 123,
       name: "Validator Test",
       address: "0.0.456",
-      addressChecksum: "abcde",
-      minStake: new BigNumber(0),
-      maxStake: new BigNumber(0),
-      activeStake: new BigNumber(0),
-      activeStakePercentage: new BigNumber(0),
-      overstaked: false,
-    };
+    });
 
     it("should match by nodeId", () => {
       expect(filterValidatorBySearchTerm(mockValidator, "123")).toBe(true);
@@ -1426,6 +1423,50 @@ describe("logic utils", () => {
       });
 
       expect(() => resolveConfig("hedera")).toThrow("No config for currency: hedera");
+    });
+  });
+
+  describe("base64ToUrlSafeBase64", () => {
+    it("replaces / with _ and + with -", () => {
+      expect(base64ToUrlSafeBase64("ab/cd+ef")).toBe("ab_cd-ef");
+    });
+
+    it("leaves strings without / or + unchanged", () => {
+      expect(base64ToUrlSafeBase64("abcdef1234")).toBe("abcdef1234");
+    });
+
+    it("replaces multiple occurrences", () => {
+      expect(base64ToUrlSafeBase64("a/b/c+d+e")).toBe("a_b_c-d-e");
+    });
+  });
+
+  describe("getHederaTransactionBodyBytes", () => {
+    it("returns bodyBytes from the first signed transaction", () => {
+      const bodyBytes = new Uint8Array([1, 2, 3]);
+      const mockTx = {
+        _signedTransactions: { get: jest.fn().mockReturnValue({ bodyBytes }) },
+      };
+      const result = getHederaTransactionBodyBytes(mockTx as never);
+      expect(result).toBe(bodyBytes);
+      expect(mockTx._signedTransactions.get).toHaveBeenCalledWith(0);
+    });
+
+    it("throws invariant when bodyBytes are missing", () => {
+      const mockTx = {
+        _signedTransactions: { get: jest.fn().mockReturnValue({ bodyBytes: undefined }) },
+      };
+      expect(() => getHederaTransactionBodyBytes(mockTx as never)).toThrow(
+        "hedera: tx body bytes are missing",
+      );
+    });
+
+    it("throws invariant when signed transaction entry is missing", () => {
+      const mockTx = {
+        _signedTransactions: { get: jest.fn().mockReturnValue(undefined) },
+      };
+      expect(() => getHederaTransactionBodyBytes(mockTx as never)).toThrow(
+        "hedera: tx body bytes are missing",
+      );
     });
   });
 });

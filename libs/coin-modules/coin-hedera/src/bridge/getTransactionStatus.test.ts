@@ -159,6 +159,22 @@ describe("getTransactionStatus", () => {
     expect(result.amount).toEqual(new BigNumber(200));
   });
 
+  it("token associate transaction uses BigNumber(0) when usdRate is null", async () => {
+    mockGetCurrencyToUSDRate.mockResolvedValueOnce(null);
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
+    const mockedAccount = getMockedAccount({ balance: new BigNumber(0) });
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      properties: { token: mockedTokenCurrency },
+    });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.insufficientAssociateBalance).toBeInstanceOf(
+      HederaInsufficientFundsForAssociation,
+    );
+  });
+
   it("token associate transaction with sufficient USD worth completes successfully", async () => {
     const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedAccount = getMockedAccount();
@@ -176,6 +192,21 @@ describe("getTransactionStatus", () => {
     expect(result.warnings).toEqual({});
     expect(result.totalSpent).toEqual(mockedEstimatedFee.tinybars);
     expect(result.estimatedFees).toEqual(mockedEstimatedFee.tinybars);
+  });
+
+  it("token associate transaction skips association check when token is already associated", async () => {
+    const mockedTokenCurrency = getMockedHTSTokenCurrency();
+    const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
+    const mockedAccount = getMockedAccount({ subAccounts: [tokenAccount] });
+    const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
+      properties: { token: mockedTokenCurrency },
+    });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.insufficientAssociateBalance).toBeUndefined();
+    expect(result.errors).toEqual({});
   });
 
   it("recipient with checksum is supported", async () => {
@@ -389,6 +420,53 @@ describe("getTransactionStatus", () => {
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
   });
 
+  it("adds error when main account balance cannot cover fees during HTS token transfer", async () => {
+    const tokenCurrency = getMockedHTSTokenCurrency();
+    const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(1000) });
+    const account = getMockedAccount({ balance: new BigNumber(0), subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      subAccountId: tokenAccount.id,
+      recipient: validRecipientAddress,
+      amount: new BigNumber(100),
+    });
+    mockEstimateFees.mockResolvedValueOnce({ tinybars: new BigNumber(500) });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("adds error during ERC20 token transfer with insufficient sub-account balance", async () => {
+    const tokenCurrency = getMockedERC20TokenCurrency();
+    const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(0) });
+    const account = getMockedAccount({ balance: new BigNumber(1000), subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      subAccountId: tokenAccount.id,
+      recipient: validRecipientAddress,
+      amount: new BigNumber(100),
+    });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it("adds error when main account balance cannot cover fees during ERC20 token transfer", async () => {
+    const tokenCurrency = getMockedERC20TokenCurrency();
+    const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(1000) });
+    const account = getMockedAccount({ balance: new BigNumber(0), subAccounts: [tokenAccount] });
+    const transaction = getMockedTransaction({
+      subAccountId: tokenAccount.id,
+      recipient: validRecipientAddress,
+      amount: new BigNumber(100),
+    });
+    mockEstimateFees.mockResolvedValueOnce({ tinybars: new BigNumber(500) });
+
+    const result = await getTransactionStatus(account, transaction);
+
+    expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
   it("adds error if amount is zero and useAllAmount is false", async () => {
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
@@ -440,18 +518,18 @@ describe("getTransactionStatus", () => {
     expect(result.errors.stakingNodeId).toBeInstanceOf(HederaInvalidStakingNodeIdError);
   });
 
+  const hederaResourcesDelegatedToNode1 = {
+    maxAutomaticTokenAssociations: 0,
+    isAutoTokenAssociationEnabled: false,
+    delegation: {
+      nodeId: 1,
+      pendingReward: new BigNumber(0),
+      delegated: new BigNumber(1000),
+    },
+  };
+
   it("adds error for delegation to already delegated node", async () => {
-    const account = getMockedAccount({
-      hederaResources: {
-        maxAutomaticTokenAssociations: 0,
-        isAutoTokenAssociationEnabled: false,
-        delegation: {
-          nodeId: 1,
-          pendingReward: new BigNumber(0),
-          delegated: new BigNumber(1000),
-        },
-      },
-    });
+    const account = getMockedAccount({ hederaResources: hederaResourcesDelegatedToNode1 });
     const transaction = getMockedTransaction({
       mode: HEDERA_TRANSACTION_MODES.Delegate,
       properties: { stakingNodeId: 1 },
@@ -495,17 +573,7 @@ describe("getTransactionStatus", () => {
   });
 
   it("adds error when claiming rewards with no rewards available", async () => {
-    const account = getMockedAccount({
-      hederaResources: {
-        maxAutomaticTokenAssociations: 0,
-        isAutoTokenAssociationEnabled: false,
-        delegation: {
-          nodeId: 1,
-          pendingReward: new BigNumber(0),
-          delegated: new BigNumber(1000),
-        },
-      },
-    });
+    const account = getMockedAccount({ hederaResources: hederaResourcesDelegatedToNode1 });
     const transaction = getMockedTransaction({
       mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
     });

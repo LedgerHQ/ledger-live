@@ -245,6 +245,83 @@ describe("getEstimatedFees", () => {
     });
   });
 
+  it("returns zero tinybars early when asset has no assetReference (native asset for ContractCall)", async () => {
+    const result = await estimateFees({
+      configOrCurrencyId: mockedAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.ContractCall,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: senderAddress,
+        recipient: recipientAddress,
+        amount: BigInt(1000000),
+        asset: { type: "native" },
+      },
+    });
+
+    expect(result).toMatchObject({ tinybars: new BigNumber(0) });
+    expect(apiClient.getNetworkFees).not.toHaveBeenCalled();
+  });
+
+  it("uses DEFAULT_GAS_PRICE_TINYBARS when ContractCall fee type is absent from network fees", async () => {
+    const estimatedGasLimit = new BigNumber(50000);
+    const transferAmount = BigInt(1000000);
+
+    (apiClient.getAccount as jest.Mock).mockImplementation(({ address }) => ({
+      address,
+      evm_address: "0x0000000000000000000000000000000000012345",
+    }));
+    (apiClient.getNetworkFees as jest.Mock).mockResolvedValueOnce({ fees: [] });
+    (apiClient.estimateContractCallGas as jest.Mock).mockResolvedValueOnce(estimatedGasLimit);
+
+    const result = await estimateFees({
+      configOrCurrencyId: mockedAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.ContractCall,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: senderAddress,
+        recipient: recipientAddress,
+        amount: transferAmount,
+        asset: { type: "erc20", assetReference: mockedTokenCurrencyERC20.contractAddress },
+      },
+    });
+
+    const expectedGas = estimatedGasLimit
+      .multipliedBy(ESTIMATED_GAS_SAFETY_RATE)
+      .integerValue(BigNumber.ROUND_CEIL);
+    const expectedTinybars = expectedGas
+      .multipliedBy(DEFAULT_GAS_PRICE_TINYBARS)
+      .integerValue(BigNumber.ROUND_CEIL);
+
+    expect(result).toMatchObject({ tinybars: expectedTinybars, gas: expectedGas });
+  });
+
+  it("returns zero tinybars early when EVM address cannot be resolved (no evm_address on account)", async () => {
+    const transferAmount = BigInt(1000000);
+
+    (apiClient.getAccount as jest.Mock).mockResolvedValue({ account: senderAddress });
+
+    const result = await estimateFees({
+      configOrCurrencyId: mockedAccount.currency.id,
+      operationType: HEDERA_OPERATION_TYPES.ContractCall,
+      txIntent: {
+        intentType: "transaction",
+        type: HEDERA_TRANSACTION_MODES.Send,
+        sender: senderAddress,
+        recipient: recipientAddress,
+        amount: transferAmount,
+        asset: {
+          type: "erc20",
+          assetReference: mockedTokenCurrencyERC20.contractAddress,
+        },
+      },
+    });
+
+    expect(result).toMatchObject({ tinybars: new BigNumber(0) });
+    expect(apiClient.getNetworkFees).not.toHaveBeenCalled();
+  });
+
   it("falls back to default estimate on cvs api failure", async () => {
     (cvsApi.fetchLatest as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
 
