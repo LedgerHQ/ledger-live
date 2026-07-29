@@ -1,5 +1,23 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.34.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.6.1
+  - @ledgerhq/live-cli@26.1.1
+  - @ledgerhq/live-e2e-shared@0.4.1
+
+## 0.34.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.6.1-hotfix.0
+  - @ledgerhq/live-cli@26.1.1-hotfix.0
+  - @ledgerhq/live-e2e-shared@0.4.1-hotfix.0
+
 ## 0.34.0
 
 ### Minor Changes
