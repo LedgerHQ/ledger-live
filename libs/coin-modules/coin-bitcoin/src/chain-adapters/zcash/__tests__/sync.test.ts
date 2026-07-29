@@ -92,6 +92,7 @@ describe("reduceShieldedSyncResult", () => {
         privateInfo: {
           orchardBalance: new BigNumber(100_000),
           saplingBalance: new BigNumber(0),
+          ironwoodBalance: new BigNumber(0),
           syncState: "running" as const,
           ufvk: "uview1key",
           birthday: null,
@@ -1203,6 +1204,172 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(250_000));
   });
 
+  // ── Ironwood pool balance and nullifier scenarios ────────────────────
+
+  it("computes ironwoodBalance from ironwood_outputs in a new transaction", () => {
+    const iwTx: ShieldedTransaction = {
+      id: "tx-iw-in",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-iw",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(10_000),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          {
+            amount: new BigNumber(5_000_000),
+            memo: "",
+            transfer_type: "incoming",
+            isSpent: false,
+            nullifier: "aa".repeat(32),
+          },
+        ],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [iwTx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: new BigNumber(0) }),
+      "acc-1",
+    );
+    expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(5_000_000));
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(5_000_000));
+  });
+
+  it("total balance includes ironwoodBalance alongside orchardBalance", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-both",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-both",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(10_000),
+      decryptedData: {
+        orchard_outputs: [
+          { amount: new BigNumber(2_000_000), memo: "", transfer_type: "incoming", isSpent: false },
+        ],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          { amount: new BigNumber(3_000_000), memo: "", transfer_type: "incoming", isSpent: false },
+        ],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: new BigNumber(1_000_000) }),
+      "acc-1",
+    );
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(2_000_000));
+    expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(3_000_000));
+    // balance = transparent(1M) + orchard(2M) + ironwood(3M) = 6M
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(6_000_000));
+  });
+
+  it("spentKnownNullifiers marks ironwood notes as spent and recomputes ironwoodBalance", () => {
+    const NF_IW = "cc".repeat(32);
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: {
+        operations: [] as BtcOperation[],
+        privateInfo: {
+          orchardBalance: new BigNumber(0),
+          saplingBalance: new BigNumber(0),
+          ironwoodBalance: new BigNumber(2_000_000),
+          syncState: "running" as const,
+          ufvk: "uview1key",
+          birthday: null,
+          lastSyncTimestamp: null,
+          lastProcessedBlock: 100,
+          transactions: [
+            {
+              id: "tx-iw-old",
+              hex: "00",
+              blockHeight: 100,
+              blockHash: "hash-iw-old",
+              timestamp: 1_700_000_000,
+              fee: new BigNumber(0),
+              decryptedData: {
+                orchard_outputs: [],
+                sapling_outputs: [],
+                ironwood_outputs: [
+                  {
+                    amount: new BigNumber(2_000_000),
+                    memo: "",
+                    transfer_type: "incoming",
+                    isSpent: false,
+                    nullifier: NF_IW,
+                  },
+                ],
+              },
+            },
+          ],
+          progress: 50,
+          estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        },
+      } as Partial<ZcashAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      transactions: [],
+      lastProcessedBlock: 200,
+      processedBlocks: 100,
+      remainingBlocks: 0,
+      spentKnownNullifiers: [NF_IW],
+    };
+    const output = reduceShieldedSyncResult(
+      accumulated,
+      result,
+      createMockInfo({ balance: new BigNumber(0) }),
+      "acc-1",
+    );
+    // ironwood note must be marked spent
+    const iwNote =
+      output.accountUpdate.privateInfo?.transactions?.[0]?.decryptedData?.ironwood_outputs?.[0];
+    expect(iwNote?.isSpent).toBe(true);
+    // ironwoodBalance recomputed to 0
+    expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(0));
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(0));
+  });
+
+  it("ironwood nullifiers are included in knownNullifiers passed to syncShielded (via zcashSyncShielded)", () => {
+    // This scenario is tested at the zcashSyncShielded level below — here we verify
+    // that reduceShieldedSyncResult preserves ironwood_outputs in transactions so
+    // the next sync call can gather them as knownNullifiers.
+    const iwTx: ShieldedTransaction = {
+      id: "tx-iw-nf",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash-iw-nf",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(0),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          {
+            amount: new BigNumber(1_000_000),
+            memo: "",
+            transfer_type: "incoming",
+            isSpent: false,
+            nullifier: "dd".repeat(32),
+          },
+        ],
+      },
+    };
+    const output = reduceShieldedSyncResult(
+      { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
+      { transactions: [iwTx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
+      createMockInfo({ balance: new BigNumber(0) }),
+      "acc-1",
+    );
+    // ironwood_outputs are preserved in the stored transaction
+    const storedTx = output.accountUpdate.privateInfo?.transactions?.[0];
+    expect(storedTx?.decryptedData?.ironwood_outputs).toHaveLength(1);
+    expect(storedTx?.decryptedData?.ironwood_outputs?.[0].nullifier).toBe("dd".repeat(32));
+  });
+
   // A synced account polls a chain it is already at the tip of, and the engine then
   // reports a chunk that scanned nothing and carries no cursor. Persisting that as
   // `null` sends the next sync back to the account birthday, which is why the same
@@ -1220,6 +1387,7 @@ describe("reduceShieldedSyncResult", () => {
         privateInfo: {
           orchardBalance: new BigNumber(0),
           saplingBalance: new BigNumber(0),
+          ironwoodBalance: new BigNumber(0),
           syncState: "running" as const,
           progress: 100,
           estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -1337,6 +1505,7 @@ describe("serialization round-trip (toRaw → fromRaw)", () => {
     const info: import("../types").ZcashPrivateInfo = {
       orchardBalance: new BigNumber(500_000),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: new BigNumber(0),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -1391,6 +1560,7 @@ describe("serialization round-trip (toRaw → fromRaw)", () => {
     const info: import("../types").ZcashPrivateInfo = {
       orchardBalance: new BigNumber(100),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: new BigNumber(0),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -1437,6 +1607,7 @@ describe("serialization round-trip (toRaw → fromRaw)", () => {
     const info: import("../types").ZcashPrivateInfo = {
       orchardBalance: new BigNumber(1000),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: new BigNumber(0),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -1711,6 +1882,7 @@ function makePrivateInfo(overrides: Record<string, unknown> = {}) {
     ufvk: "uview1realkey",
     saplingBalance: new BigNumber(0),
     orchardBalance: new BigNumber(0),
+    ironwoodBalance: new BigNumber(0),
     syncState: "complete" as const,
     birthday: null,
     lastSyncTimestamp: null,

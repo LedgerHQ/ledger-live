@@ -13,6 +13,8 @@ const ZCASH_SEND_TITLE_KEY: Record<ZcashTransferType, string> = {
   "transparent-to-shielded": "zcash.shielded.send.modalTitle.transparentToShielded",
   "shielded-to-transparent": "zcash.shielded.send.modalTitle.shieldedToTransparent",
   shielded: "zcash.shielded.send.modalTitle.shielded",
+  ironwood: "zcash.shielded.send.modalTitle.shielded",
+  "ironwood-to-transparent": "zcash.shielded.send.modalTitle.shieldedToTransparent",
 };
 
 const SendModalTitle = ({
