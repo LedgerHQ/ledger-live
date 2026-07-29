@@ -3,6 +3,8 @@ export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
 export { useContactAddressDetail } from "./useContactAddressDetail";
+export { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
+export type { UseContactAddressDetailActionsViewModelResult } from "./useContactAddressDetailActionsViewModel";
 export {
   createContactDetailAddressRowIntent,
   createPopulatedContactDetailViewModel,
@@ -21,9 +23,25 @@ export {
   type ContactDetailActionsController,
 } from "./model/contactActionsController";
 export { createContactAddressDetailViewModel } from "./model/addressDetailViewModel";
+export {
+  createContactAddressDetailDeleteIntent,
+  createContactAddressDetailEditIntent,
+  createContactAddressDetailSendIntent,
+  createErrorContactAddressDeleteLifecycle,
+  createIdleContactAddressDeleteLifecycle,
+  createOpenContactAddressDeleteLifecycle,
+  createSuccessContactAddressDeleteLifecycle,
+} from "./model/addressDetailActionsViewModel";
+export {
+  createContactAddressDetailActionsController,
+  type ContactAddressDetailActionsController,
+} from "./model/addressDetailActionsController";
 export { sortContactAddressesByNetwork } from "./model/sortContactAddressesByNetwork";
 export type {
   ContactAddressCurrencyPort,
+  ContactAddressDeletionInput,
+  ContactAddressDeletionPort,
+  ContactAddressDetailActionsPorts,
   ContactAddressDetailPort,
   ContactDeletionPort,
   ContactDetailActionsPorts,
@@ -31,8 +49,13 @@ export type {
   ContactRenameInput,
 } from "./model/ports";
 export type {
+  ContactAddressDeleteLifecycle,
+  ContactAddressDetailActionsViewModel,
   ContactAddressDetailAsset,
+  ContactAddressDetailDeleteIntent,
+  ContactAddressDetailEditIntent,
   ContactAddressDetailNetwork,
+  ContactAddressDetailSendIntent,
   ContactAddressDetailViewModel,
   ContactDeleteLifecycle,
   ContactDetailActionsViewModel,
