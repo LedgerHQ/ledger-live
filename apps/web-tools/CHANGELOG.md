@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.48.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.5.1-hotfix.0
+
 ## 0.48.0
 
 ### Minor Changes
