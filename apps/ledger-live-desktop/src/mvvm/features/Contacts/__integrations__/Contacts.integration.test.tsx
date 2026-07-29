@@ -8,7 +8,15 @@ import {
   mockMeContact,
   mockPopulatedContacts,
 } from "@domain/entity-contact/schema.mock";
-import { act, fireEvent, render, screen, withFlagOverrides, waitFor } from "tests/testSetup";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  within,
+  withFlagOverrides,
+  waitFor,
+} from "tests/testSetup";
 import ContactsScreen, { ContactsButton } from "LLD/features/Contacts";
 import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/useContactsViewModel";
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
@@ -570,7 +578,7 @@ describe("Contacts integration", () => {
     expect(store.getState().modularDialog.isOpen).toBe(false);
   });
 
-  it("should not render the detail state when a contact with addresses is selected", async () => {
+  it("should render populated contact detail when a contact with addresses is selected", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
@@ -585,11 +593,62 @@ describe("Contacts integration", () => {
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
 
-    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
-    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    const detailScreen = screen.getByTestId("contacts-detail-screen");
+    expect(detailScreen).toBeVisible();
+    expect(within(detailScreen).getByText("2 addresses")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-address-list")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-network-group-polygon")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeInTheDocument();
   });
 
-  it("should clear the detail state when selecting a contact with addresses after an empty contact", async () => {
+  it("should open the address detail dialog when an address row is clicked", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+    expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
+      "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+    );
+  });
+
+  it("should close the address detail dialog when switching contacts", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: mockPopulatedContacts() } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    expect(screen.getByTestId("contacts-address-detail-dialog")).toBeVisible();
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+
+    expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should switch populated detail when selecting another contact with addresses", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
@@ -604,10 +663,13 @@ describe("Contacts integration", () => {
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
     expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+    expect(screen.getByText("No saved addresses for Ada")).toBeInTheDocument();
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
 
-    expect(screen.queryByTestId("contacts-detail-screen")).not.toBeInTheDocument();
-    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    const detailScreen = screen.getByTestId("contacts-detail-screen");
+    expect(detailScreen).toBeVisible();
+    expect(within(detailScreen).getByText("2 addresses")).toBeInTheDocument();
+    expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 });

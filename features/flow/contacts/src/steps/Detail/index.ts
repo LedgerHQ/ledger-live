@@ -1,5 +1,6 @@
 export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
+export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
 export { useContactAddressDetail } from "./useContactAddressDetail";
@@ -36,6 +37,7 @@ export type {
   ContactAddressDetailViewModel,
   ContactDeleteLifecycle,
   ContactDetailActionsViewModel,
+  ContactDetailAddressNetworkGroup,
   ContactDetailAddressRow,
   ContactDetailAddressRowIntent,
   ContactDetailDeleteIntent,
@@ -44,3 +46,4 @@ export type {
   ContactDetailViewProps,
   PopulatedContactDetailViewModel,
 } from "./types";
+export type { ContactAddressDetailDialogLabels, ContactAddressDetailDialogProps } from "./components/ContactAddressDetailDialog/types";
