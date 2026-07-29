@@ -102,6 +102,46 @@ const useDynamicContent = () => {
     ],
   );
 
+  const dismissCards = useCallback(
+    (cardIds: readonly string[]): boolean => {
+      const idsToDismiss = cardIds.filter(cardId => !hiddenCards.includes(cardId));
+      if (idsToDismiss.length === 0) {
+        return false;
+      }
+
+      dispatch(setDismissedDynamicCards([...hiddenCards, ...idsToDismiss]));
+
+      const localIds = idsToDismiss.filter(
+        cardId =>
+          localMobileCards.some(c => c.id === cardId) ||
+          localWalletCards.some(c => c.id === cardId),
+      );
+      const brazeIds = idsToDismiss.filter(cardId => !localIds.includes(cardId));
+
+      localIds.forEach(cardId => dispatch(removeLocalCard(cardId)));
+
+      if (brazeIds.length > 0) {
+        dispatch(
+          setDynamicContentMobileCards(
+            mobileCardsFromBraze.filter(card => !brazeIds.includes(card.id)),
+          ),
+        );
+      }
+
+      idsToDismiss.forEach(cardId => logDismissCard(cardId));
+
+      return true;
+    },
+    [
+      dispatch,
+      hiddenCards,
+      localMobileCards,
+      localWalletCards,
+      mobileCardsFromBraze,
+      logDismissCard,
+    ],
+  );
+
   const clickedCampaignsInFlightRef = useRef(new Set<string>());
 
   const trackContentCardEvent = useCallback(
@@ -150,6 +190,7 @@ const useDynamicContent = () => {
     logDismissCard,
     logImpressionCard,
     dismissCard,
+    dismissCards,
     trackContentCardEvent,
     notificationCards,
     refreshDynamicContent,

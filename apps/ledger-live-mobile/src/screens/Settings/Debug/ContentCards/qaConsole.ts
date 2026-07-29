@@ -153,6 +153,8 @@ export type CardBuilderValues = {
   id: string;
   categoryId: string;
   campaignId: string;
+  /** Category shell title when it differs from the child card title (e.g. "Touchscreen offers"). */
+  categoryTitle: string;
   title: string;
   description: string;
   mediaUrl: string;
@@ -171,6 +173,8 @@ export type BuiltDebugCards = {
 
 export type CardBuilderPreset =
   | "topWalletHero"
+  | "topWalletHardwareCarousel"
+  | "topWalletHeroCarousel"
   | "topWalletAction"
   | "walletCarousel"
   | "asset"
@@ -219,10 +223,14 @@ const LEDGER_IMAGE_URLS = [
 ];
 const CATEGORY_PRESETS = new Set<CardBuilderPreset>([
   "topWalletHero",
+  "topWalletHardwareCarousel",
+  "topWalletHeroCarousel",
   "topWalletAction",
   "myLedger",
   "landingPageCategory",
 ]);
+
+const HARDWARE_CAROUSEL_PRODUCTS = ["Ledger Stax", "Nano Pod", "Ledger Flex"] as const;
 
 const uniq = <T>(values: T[]): T[] => Array.from(new Set(values));
 
@@ -245,6 +253,7 @@ export function buildDefaultCardBuilderValues(timestamp = Date.now()): CardBuild
     id: `${DEBUG_CARD_PREFIX}-${timestamp}`,
     categoryId: TOP_WALLET_CATEGORY_ID,
     campaignId: `${DEBUG_GAM_PREFIX}-${timestamp}`,
+    categoryTitle: "",
     title: "QA debug card",
     description: "Local payload generated from the Content Cards QA console.",
     mediaUrl: buildRandomLedgerImageUrl(),
@@ -289,6 +298,32 @@ export function buildPresetCardBuilderValues(
   const base = buildDefaultCardBuilderValues(timestamp);
 
   switch (preset) {
+    case "topWalletHardwareCarousel":
+      return withPresetTrackingDefaults(preset, {
+        ...base,
+        type: ContentCardsType.smallSquare,
+        layout: ContentCardsLayout.carousel,
+        id: `${DEBUG_CARD_PREFIX}-top-wallet-hardware-${timestamp}`,
+        categoryId: TOP_WALLET_CATEGORY_ID,
+        categoryTitle: "Touchscreen offers",
+        title: HARDWARE_CAROUSEL_PRODUCTS[0],
+        description: "",
+        cta: "",
+        link: "",
+        extras: { tag: "30% off" },
+      });
+    case "topWalletHeroCarousel":
+      return withPresetTrackingDefaults(preset, {
+        ...base,
+        type: ContentCardsType.hero,
+        layout: ContentCardsLayout.carousel,
+        id: `${DEBUG_CARD_PREFIX}-top-wallet-hero-carousel-${timestamp}`,
+        categoryId: TOP_WALLET_CATEGORY_ID,
+        title: "Touchscreen offers",
+        description: "",
+        cta: "",
+        link: "",
+      });
     case "topWalletAction":
       return withPresetTrackingDefaults(preset, {
         ...base,
@@ -528,7 +563,7 @@ export function buildDebugContentCard(
     cardsLayout: values.layout,
     cardsType: values.type,
     type: ContentCardsType.category,
-    title: values.title,
+    title: values.categoryTitle.trim() || values.title,
     description: values.description,
     cta: values.cta,
     link: values.link,

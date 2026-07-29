@@ -2873,7 +2873,8 @@
       "desc": "Simply send crypto assets to your receiving address and wait for the app to sync."
     },
     "carousel": {
-      "title": "For you"
+      "title": "For you",
+      "closeAll": "Close all"
     },
     "perpsEntry": {
       "title": "Perpetuals",
