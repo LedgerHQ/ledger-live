@@ -88,9 +88,10 @@ const subAccountReceive: Array<{
   { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
-const SKIP_LNS_PARENT_CURRENCY_IDS = new Set<string>([Currency.SUI.id, Currency.SOL.id]);
-const shouldSkipLNS = (account: TokenAccount): boolean =>
-  SKIP_LNS_PARENT_CURRENCY_IDS.has(account.parentAccount?.currency.id ?? "");
+const shouldSkipLNS = (account: TokenAccount): boolean => {
+  const parentCurrencyId = account.parentAccount?.currency.id;
+  return parentCurrencyId === Currency.SUI.id || parentCurrencyId === Currency.SOL.id;
+};
 
 for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
