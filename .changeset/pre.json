@@ -200,6 +200,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "blue-lizards-hunt",
     "solana-stake-warmup-cooldown-rate"
   ]
 }
