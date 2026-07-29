@@ -242,9 +242,7 @@ describe("TransactionsAlerts", () => {
     });
     await waitFor(() => expect(chainwatch.addressPuts).toHaveLength(1));
 
-    await act(async () => {
-      await jest.runOnlyPendingTimersAsync();
-    });
+    await act(async () => {});
     act(() => {
       store.dispatch(replaceAccounts([account01]));
     });
