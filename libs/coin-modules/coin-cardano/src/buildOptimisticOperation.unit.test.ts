@@ -278,7 +278,7 @@ describe("buildOptimisticOperation", () => {
 
         expect(operation).toBeDefined();
         expect(operation.type).toBe("VOTE");
-        expect(operation.extra.vote).toBe("testDRep");
+        expect(operation.extra.vote).toBe("22testDRep");
       });
     });
   });
