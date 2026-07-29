@@ -1,4 +1,4 @@
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
 import { CompleteExchangeError } from "../error";
 import {
