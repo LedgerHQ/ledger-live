@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-tezos
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.5.1
+
 ## 1.3.1-hotfix.0
 
 ### Patch Changes

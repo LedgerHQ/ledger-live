@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.20.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.5.1
+
 ## 0.20.2-hotfix.0
 
 ### Patch Changes

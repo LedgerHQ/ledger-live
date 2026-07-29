@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.12.1
+
+### Patch Changes
+
+- [#20178](https://github.com/LedgerHQ/ledger-live/pull/20178) [`036c82f`](https://github.com/LedgerHQ/ledger-live/commit/036c82f79f99928dd382f2c9f0c0b1b2e54aa6cb) Thanks [@henri-ly](https://github.com/henri-ly)! - trigger change on mobile for solana hotfix
+
 ## 4.12.1-hotfix.0
 
 ### Patch Changes
