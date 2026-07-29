@@ -17,6 +17,7 @@ import {
   screen,
   waitFor,
   setMockBridgeRecipientValidation,
+  setMockScannedCode,
   setMockStatus,
   setMockStatusResolver,
   setMockTransaction,
@@ -68,6 +69,55 @@ describe("Send Flow Integration", () => {
       await waitFor(() => {
         expect(screen.queryByTestId("send-recipient-recent-history-step")).not.toBeInTheDocument();
         expect(screen.getByTestId("send-recent-history-warning")).toBeVisible();
+      });
+    });
+
+    it("should open the QR scanner from the empty recipient field and fill it with the scanned address", async () => {
+      setMockScannedCode(`ethereum:${VALID_EVM_RECIPIENT}`);
+      const { user } = renderSendFlow(ethereumAccount);
+
+      expect(await screen.findByTestId("send-recipient-intro-card")).toBeVisible();
+
+      await user.click(screen.getByRole("button", { name: /qr/i }));
+
+      expect(await screen.findByTestId("send-recipient-qr-scanner")).toBeVisible();
+      expect(screen.queryByTestId("send-recipient-intro-card")).not.toBeInTheDocument();
+
+      await user.click(screen.getByTestId("mock-qrcode-pick"));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("send-recipient-qr-scanner")).not.toBeInTheDocument();
+      });
+      expect(screen.getByTestId("send-recipient-input")).toHaveValue(VALID_EVM_RECIPIENT);
+    });
+
+    it("should show the clear button instead of the QR icon once the recipient field has content", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      const recipientInput = await screen.findByTestId("send-recipient-input");
+
+      expect(screen.getByRole("button", { name: /qr/i })).toBeVisible();
+
+      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+
+      expect(screen.queryByRole("button", { name: /qr/i })).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /clear/i }));
+
+      expect(recipientInput).toHaveValue("");
+      expect(screen.getByRole("button", { name: /qr/i })).toBeVisible();
+    });
+
+    it("should close the QR scanner as soon as the user types an address", async () => {
+      const { user } = renderSendFlow(ethereumAccount);
+      const recipientInput = await screen.findByTestId("send-recipient-input");
+
+      await user.click(screen.getByRole("button", { name: /qr/i }));
+      expect(await screen.findByTestId("send-recipient-qr-scanner")).toBeVisible();
+
+      await user.type(recipientInput, VALID_EVM_RECIPIENT);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("send-recipient-qr-scanner")).not.toBeInTheDocument();
       });
     });
 

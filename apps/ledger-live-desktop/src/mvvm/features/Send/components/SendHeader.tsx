@@ -19,6 +19,7 @@ import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSel
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
+import { RecipientQrScanner } from "../screens/Recipient/components/RecipientQrScanner";
 import type { SendStepConfig } from "../types";
 
 export function SendHeader() {
@@ -86,6 +87,10 @@ export function SendHeader() {
     descriptionText,
     handleBack,
     handleRecipientInputClick,
+    handleRecipientInputChange,
+    handleQrCodeClick,
+    handleScanPicked,
+    isScannerOpen,
     showBackButton,
     showMemoControls,
     showRecipientInput,
@@ -130,14 +135,16 @@ export function SendHeader() {
           autoFocus
           prefix={t("newSendFlow.to")}
           value={addressInputValue}
-          onChange={e => recipientSearch.setValue(e.target.value)}
+          onChange={e => handleRecipientInputChange(e.target.value)}
           onClear={recipientSearch.clear}
+          onQrCodeClick={handleQrCodeClick}
           placeholder={
             uiConfig.recipientSupportsDomain
               ? t("newSendFlow.placeholder")
               : t("newSendFlow.placeholderNoENS")
           }
         />
+        {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
         {showMemoControls && currencyId ? (
           <div className="px-24">
             <div className="flex flex-col gap-12">
@@ -204,6 +211,10 @@ export function SendHeader() {
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
     handleRecipientInputClick,
+    handleRecipientInputChange,
+    handleQrCodeClick,
+    handleScanPicked,
+    isScannerOpen,
   ]);
 
   return (
