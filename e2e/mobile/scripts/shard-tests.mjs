@@ -1,66 +1,22 @@
 /* eslint-disable no-console */
+// Distributes mobile E2E spec files across CI shards (by timing), after selecting them
+// with e2e/tooling/filter/selectSpecs.mjs. Run from the repo root by the mobile E2E workflows.
 // Usage:
-//   node shard-tests.mjs [testFilter] [testRootDir]
-//   node shard-tests.mjs [testFilter] [platform] [testRootDir] [shardIndex] [shardTotal]
+//   Selection mode: node shard-tests.mjs [testFilter] [testRootDir]
+//   Sharding mode:  node shard-tests.mjs [fileList] [platform] [testRootDir] [shardIndex] [shardTotal]
+//   In sharding mode the first arg is the precomputed spec-file list from a prior
+//   selection call (used directly, no re-scan/re-filter), not a filter.
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
-const baseDir = path.resolve(path.dirname(new URL(import.meta.url).pathname));
+import {
+  compareStrings,
+  findTestFiles,
+  filterTestFiles,
+} from "../../tooling/filter/selectSpecs.mjs";
 
-// Cross-platform deterministic string comparison
-function compareStrings(a, b) {
-  const normalizedA = path.normalize(a);
-  const normalizedB = path.normalize(b);
-
-  return normalizedA.localeCompare(normalizedB, "en", {
-    sensitivity: "case",
-    numeric: true,
-    ignorePunctuation: false,
-  });
-}
-
-function findTestFiles(dir) {
-  let results = [];
-  try {
-    const entries = fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => {
-      if (a.isDirectory() !== b.isDirectory()) {
-        return a.isDirectory() ? -1 : 1;
-      }
-      return compareStrings(a.name, b.name);
-    });
-
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        results = results.concat(findTestFiles(fullPath));
-      } else if (entry.name.endsWith(".spec.ts") && !entry.name.endsWith(".skip.spec.ts")) {
-        results.push(fullPath);
-      }
-    }
-  } catch (e) {
-    if (e.code === "ENOENT") return [];
-    console.error("[shard-tests] Error reading directory:", dir, e);
-    throw new Error(`Failed to read directory ${dir}: ${e.message}`);
-  }
-  return results.sort(compareStrings);
-}
-
-function filterTestFiles(files, testFilter) {
-  if (!testFilter) return files;
-  const filters = testFilter.trim().split(/\s+/).filter(Boolean);
-  const filterRegex = new RegExp(filters.join("|"), "i");
-
-  const filtered = files.filter(filePath => {
-    if (filterRegex.test(filePath)) return true;
-    try {
-      return filterRegex.test(fs.readFileSync(filePath, "utf8"));
-    } catch {
-      return false;
-    }
-  });
-
-  return filtered.sort(compareStrings);
-}
+const baseDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)));
 
 function loadTimingData(platform, testRootDir) {
   try {
@@ -155,40 +111,50 @@ function distributeFilesByTiming(files, timingData, shardIndex, shardTotal) {
 }
 
 /**
- * Main entry point that:
- * 1. Gets parameters from command line args
- * 2. Finds all test files in the directory
- * 3. Applies any filters
- * 4. If sharding parameters provided, distributes files by timing
- * 5. Outputs the final list of files as a space-separated string
+ * Main entry point. Two modes:
+ * - Selection (2 args): `[testFilter] [testRootDir]` — scan + filter, print the matching spec files.
+ * - Sharding (5 args): `[fileList] [platform] [testRootDir] [shardIndex] [shardTotal]` — the first
+ *   arg is the precomputed spec-file list (from the selection call), so it's used directly (no
+ *   re-scan / re-filter); files are distributed across shards by timing.
  */
-function main() {
+export function main() {
   const args = process.argv.slice(2);
 
-  if (args.length >= 4) {
-    const [testFilter, platform, testRootDir, shardIndex, shardTotal] = args;
+  if (args.length === 5) {
+    const [fileList, platform, testRootDir, shardIndex, shardTotal] = args;
 
-    const files = findTestFiles(testRootDir);
-    const filteredFiles = filterTestFiles(files, testFilter);
+    // The first arg is already the selected spec-file list, not a filter.
+    const files = fileList.trim().split(/\s+/).filter(Boolean);
 
     const timingData = loadTimingData(platform, testRootDir);
 
     const shardFiles = distributeFilesByTiming(
-      filteredFiles,
+      files,
       timingData,
       parseInt(shardIndex),
       parseInt(shardTotal),
     );
 
     console.log(shardFiles.join(" "));
-  } else {
+  } else if (args.length <= 2) {
     const [testFilter, testRootDir] = args;
 
     const files = findTestFiles(testRootDir || baseDir);
     const filteredFiles = filterTestFiles(files, testFilter || "");
 
     console.log(filteredFiles.join(" "));
+  } else {
+    console.error(
+      "[shard-tests] Invalid arguments.\n" +
+        "  Selection mode: node shard-tests.mjs [testFilter] [testRootDir]\n" +
+        "  Sharding mode:  node shard-tests.mjs [fileList] [platform] [testRootDir] [shardIndex] [shardTotal]",
+    );
+    process.exitCode = 1;
   }
 }
 
-main();
+// Only run when invoked directly (e.g. `node shard-tests.mjs ...`), so the module
+// can be imported by unit tests without executing.
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}

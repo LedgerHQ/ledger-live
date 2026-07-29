@@ -616,7 +616,7 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          SMOKE_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
+          SMOKE_FILES=$(node e2e/mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -784,7 +784,7 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          SMOKE_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
+          SMOKE_FILES=$(node e2e/mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
             echo "has_tests=false" >> $GITHUB_OUTPUT
