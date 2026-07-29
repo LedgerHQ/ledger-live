@@ -6,6 +6,7 @@ import type {
   AccountBalanceResponse,
   BlockInfoResponse,
   BlocksAtHeightResponse,
+  BlockTransactionEventsResponse,
   ConsensusInfoResponse,
   GetTransactionCostParams,
   TransactionsResponse,
@@ -123,6 +124,23 @@ export function getBlocksAtHeight(
     client.request<BlocksAtHeightResponse>({
       method: "GET",
       url: `/v0/blocksAtHeight/${height}`,
+    }),
+  );
+}
+
+/**
+ * Get all transaction summaries (with structured, tagged events) for a block.
+ * GET /v0/blockTransactionEvents/{blockHash}
+ * Returns an empty array for blocks with no transactions.
+ */
+export function getBlockTransactionEvents(
+  currencyId: string,
+  blockHash: string,
+): Promise<BlockTransactionEventsResponse> {
+  return withClient(currencyId, async client =>
+    client.request<BlockTransactionEventsResponse>({
+      method: "GET",
+      url: `/v0/blockTransactionEvents/${blockHash}`,
     }),
   );
 }
