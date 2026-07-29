@@ -1,29 +1,77 @@
+/**
+ * Fields common to tzkt account types that own a manager key (`user` and `delegate`):
+ * these types carry manager-key metadata — an on-chain reveal state (`revealed`), a counter,
+ * a balance, and (un)staked balances, plus the public key once it has been revealed.
+ * `publicKey` is optional: an unrevealed account (`revealed: false`) has not published one yet.
+ * See https://api.tzkt.io/#operation/Accounts_GetByAddress (schemas `User` / `Delegate`).
+ */
+type APIManagerAccountBase = {
+  address: string;
+  /** Absent until the account is revealed (`revealed: false` → no public key on-chain yet). */
+  publicKey?: string;
+  revealed: boolean;
+  balance: number;
+  stakedBalance?: number;
+  unstakedBalance?: number;
+  stakingUpdatesCount?: number;
+  counter: number;
+  /**
+   * The baker this account delegates to, if any. Present on plain wallets that have set a
+   * delegate. We do not rely on it for registered bakers: a `delegate` account is its own
+   * baker (self-delegated), and staking logic keys off `type === "delegate"` rather than this
+   * field, so it's fine whether or not tzkt populates it.
+   */
+  delegate?: {
+    alias: string;
+    address: string;
+    active: boolean;
+  };
+};
+
+/**
+ * tzkt's `/v1/accounts/{address}` returns a discriminated union on `type` with seven
+ * variants: `user`, `delegate`, `contract`, `ghost`, `empty`, `rollup`, `smart_rollup`.
+ * We model only the ones we consume: `empty` (never appeared on-chain) plus the two
+ * manager-key variants, `user` (plain wallet) and `delegate` (registered baker). A baker
+ * is reported as `type: "delegate"`, NOT `"user"` — so any manager-key logic must accept
+ * both (see {@link hasManagerKey}).
+ */
 export type APIAccount =
   | {
       type: "empty";
       address: string;
       counter: number;
     }
-  | {
+  | (APIManagerAccountBase & {
       type: "user";
-      address: string;
-      publicKey: string;
-      revealed: boolean;
-      balance: number;
-      stakedBalance?: number;
-      unstakedBalance?: number;
-      stakingUpdatesCount?: number;
-      counter: number;
-      delegate?: {
-        alias: string;
-        address: string;
-        active: boolean;
-      };
       delegationLevel: number;
       delegationTime: string;
       numTransactions: number;
       firstActivityTime: string;
-    };
+    })
+  | (APIManagerAccountBase & {
+      // A registered baker. tzkt reports these with `type: "delegate"` (not `"user"`),
+      // still carrying `revealed`/`publicKey`/`counter`. In practice a delegate is revealed
+      // (registration is a manager operation, which requires a prior reveal), but we still
+      // read `revealed` from the payload rather than assuming it.
+      type: "delegate";
+    });
+
+/** tzkt account variants that own a manager key — both `user` and `delegate` qualify. */
+export type APIManagerAccount = Extract<APIAccount, { type: "user" | "delegate" }>;
+
+/**
+ * True for account *types* that own a manager key and therefore carry the `revealed`,
+ * `publicKey`, `counter`, and `balance` fields: plain wallets (`user`) and registered bakers
+ * (`delegate`). This narrows on the account type, not on whether the key is already published —
+ * it returns true for unrevealed `user` accounts too (check `revealed` separately for that).
+ * `empty` accounts (and the non-manager `contract` / `ghost` / `rollup` types we don't model)
+ * do not qualify. Use this instead of a bare `type === "user"` check so baker accounts aren't
+ * mistaken for non-manager ones.
+ */
+export function hasManagerKey(account: APIAccount): account is APIManagerAccount {
+  return account.type === "user" || account.type === "delegate";
+}
 
 type CommonOperationType = {
   id: number;

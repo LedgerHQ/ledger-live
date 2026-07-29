@@ -1,7 +1,8 @@
 import type { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import api from "../network/tzkt";
-import type { APIAccount, APIUnstakeRequest } from "../network/types";
+import type { APIAccount, APIManagerAccount, APIUnstakeRequest } from "../network/types";
+import { hasManagerKey } from "../network/types";
 import { partitionNativeBalance } from "../utils";
 import { STAKING_UID_PREFIX } from "./positionUid";
 
@@ -12,13 +13,11 @@ export {
   isUnstakingPosition,
 } from "./positionUid";
 
-type APIUserAccount = Extract<APIAccount, { type: "user" }>;
-
 export function fetchUnstakeRequests(
   address: string,
   account: APIAccount,
 ): Promise<APIUnstakeRequest[]> {
-  if (account.type !== "user") return Promise.resolve([]);
+  if (!hasManagerKey(account)) return Promise.resolve([]);
   return (account.unstakedBalance ?? 0) > 0 ? api.getUnstakeRequests(address) : Promise.resolve([]);
 }
 
@@ -62,7 +61,7 @@ function unstakeRequestToStake(address: string, req: APIUnstakeRequest): Stake |
 
 export function buildStakesForAccount(
   address: string,
-  account: APIUserAccount,
+  account: APIManagerAccount,
   unstakeRequests: APIUnstakeRequest[],
 ): Stake[] {
   const balance = BigInt(account.balance ?? 0);
@@ -124,7 +123,7 @@ export function buildStakesForAccount(
 
 export async function getStakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
   const accountInfo = await api.getAccountByAddress(address);
-  if (accountInfo.type !== "user") return { items: [] };
+  if (!hasManagerKey(accountInfo)) return { items: [] };
   const unstakeRequests = await fetchUnstakeRequests(address, accountInfo);
   return { items: buildStakesForAccount(address, accountInfo, unstakeRequests) };
 }
