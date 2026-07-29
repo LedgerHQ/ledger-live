@@ -706,6 +706,16 @@ describe("counterValueCurrencySelector", () => {
     // so the user never sees a blocked currency even if they had it stored.
     expect(counterValueCurrencySelector(buildState("RUB"))).toBe(getFiatCurrencyByTicker("USD"));
   });
+
+  it("resolves a non-fallback fiat without resetting to USD (regression guard for LIVE-35110)", () => {
+    // AMD (Armenian Dram) is in the domain registry but NOT in the ~36-currency
+    // offline fallback list. Before this fix, booting the app would call
+    // updateSupportedCountervalues against the fallback, causing AMD to be treated
+    // as unsupported and silently reset to USD on every restart.
+    // The selector must resolve AMD directly from the registry regardless of what
+    // the supportedFiats slice currently holds.
+    expect(counterValueCurrencySelector(buildState("AMD"))).toBe(getFiatCurrencyByTicker("AMD"));
+  });
 });
 
 describe("counterValueIdOf", () => {
