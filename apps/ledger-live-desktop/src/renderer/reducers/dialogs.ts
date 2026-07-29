@@ -56,4 +56,7 @@ export const { openDialog, closeDialog } = dialogsSlice.actions;
 /** Select whether a specific dialog is currently open. */
 export const selectIsDialogOpen = (state: Pick<State, "dialogs">, id: DialogId) =>
   !!state.dialogs[id];
+
+export const selectIsAnyDialogOpen = (state: Pick<State, "dialogs">) =>
+  Object.values(state.dialogs).some(Boolean);
 export default dialogsSlice.reducer;
