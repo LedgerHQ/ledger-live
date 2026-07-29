@@ -616,12 +616,12 @@ export function selectMinimumUtxos(
 
   // sorting utxo from higher to lower ADA value
   // to minimize the number of utxo use in transaction
-  const sortedUtxos = utxos.sort((a, b) => {
+  const sortedUtxos = [...utxos].sort((a, b) => {
     const diff = b.amount.minus(a.amount);
     return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
   });
 
-  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredAmount); i++) {
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lt(requiredAmount); i++) {
     const utxo = sortedUtxos[i];
     selectedUtxos.push(utxo);
     usedUtxoAdaAmount = usedUtxoAdaAmount.plus(utxo.amount);

@@ -181,11 +181,16 @@ export const buildOptimisticOperation = (
       const isNoConfidence =
         walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE;
 
+      const dRep = walletVoteDelegation.cert.dRep;
       extra.vote = isAbstain
         ? "ABSTAIN"
         : isNoConfidence
           ? "NO CONFIDENCE"
-          : walletVoteDelegation.cert.dRep.key?.toString("hex");
+          : dRep.type === TyphonTypes.DRepType.ADDRESS && dRep.key
+            ? `22${dRep.key.toString("hex")}`
+            : dRep.type === TyphonTypes.DRepType.SCRIPT && dRep.key
+              ? `23${dRep.key.toString("hex")}`
+              : undefined;
     }
   }
 

@@ -47,8 +47,8 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
       searchQuery ? 500 : 0,
     );
 
-    return () => clearInterval(delayDebounceFn);
-  }, [searchQuery]); // oxlint-disable-line react-hooks/exhaustive-deps
+    return () => clearTimeout(delayDebounceFn);
+  }, [currency, searchQuery]);
 
   const onScrollEndReached = () => {
     if (isPaginationDisabled.current) return;
@@ -114,8 +114,8 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency): {
       searchQuery ? 500 : 0,
     );
 
-    return () => clearInterval(delayDebounceFn);
-  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => clearTimeout(delayDebounceFn);
+  }, [currency, searchQuery]);
 
   const onScrollEndReached = () => {
     if (isPaginationDisabled.current) return;

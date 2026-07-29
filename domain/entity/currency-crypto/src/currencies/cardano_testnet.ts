@@ -28,7 +28,7 @@ export const cardano_testnet = currency({
   explorerViews: [
     {
       tx: "https://preprod.cardanoscan.io/transaction/$hash",
-      address: "https://prerpod.cardanoscan.io/address/$address",
+      address: "https://preprod.cardanoscan.io/address/$address",
       stakePool: "https://preprod.cardanoscan.io/pool/$poolId",
     },
   ],
