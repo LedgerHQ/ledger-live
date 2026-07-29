@@ -1,7 +1,15 @@
+import type {
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from "@reduxjs/toolkit/query";
 import { z } from "zod";
 
 export type AuthenticatedBaseQueryExtraOptions = {
   authenticated?: boolean;
+  refreshAndRetryWhen?: (
+    result: QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>,
+  ) => boolean;
 };
 
 export type AuthToken = {

@@ -9,6 +9,8 @@ const API_BASE_URL = "https://api.ledger.test";
 
 describe("createAuthenticatedBaseQuery", () => {
   const withToken = jest.fn();
+  const retryPredicateError = new Error("Retry predicate failed");
+  const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => undefined);
   const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
 
   // Setup RTK API
@@ -32,6 +34,29 @@ describe("createAuthenticatedBaseQuery", () => {
           url: "/private",
           headers: { "x-custom-header": "request-value" },
         }),
+      }),
+      gatedQueryWithValidatedStatus: build.query<{ ok: boolean }, void>({
+        query: () => ({
+          url: "/private",
+          validateStatus: () => true,
+        }),
+      }),
+      gatedQueryWithValidatedStatusAndCustomRetry: build.query<{ ok: boolean }, void>({
+        query: () => ({
+          url: "/private",
+          validateStatus: () => true,
+        }),
+        extraOptions: {
+          refreshAndRetryWhen: result => result.meta?.response?.status === 401,
+        },
+      }),
+      gatedQueryWithThrowingRetry: build.query<{ ok: boolean }, void>({
+        query: () => "/private",
+        extraOptions: {
+          refreshAndRetryWhen() {
+            throw retryPredicateError;
+          },
+        },
       }),
     }),
   });
@@ -67,7 +92,13 @@ describe("createAuthenticatedBaseQuery", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    withToken.mockReset();
+    withToken.mockReset().mockImplementation(async ({ queryFn, refreshAndRetryWhen }) => {
+      const result = await queryFn({ tokenType: "Bearer", accessToken: "access-token" });
+      return refreshAndRetryWhen?.(result)
+        ? queryFn({ tokenType: "Bearer", accessToken: "refreshed-token" })
+        : result;
+    });
+
     store.dispatch(api.util.resetApiState());
 
     endpoints.public.mockReturnValue(HttpResponse.json({ ok: true }));
@@ -79,6 +110,7 @@ describe("createAuthenticatedBaseQuery", () => {
   });
 
   afterAll(() => {
+    consoleErrorSpy.mockRestore();
     consoleWarnSpy.mockRestore();
     server.close();
   });
@@ -98,10 +130,6 @@ describe("createAuthenticatedBaseQuery", () => {
   });
 
   it("preserves request headers while appending authorization by default", async () => {
-    withToken.mockImplementation(({ queryFn }) =>
-      queryFn({ tokenType: "Bearer", accessToken: "access-token" }),
-    );
-
     const { status, data, error } = await store.dispatch(
       api.endpoints.gatedQueryWithHeader.initiate(),
     );
@@ -118,13 +146,6 @@ describe("createAuthenticatedBaseQuery", () => {
   });
 
   it("refreshes the token and retries once on 401", async () => {
-    withToken.mockImplementation(async ({ queryFn, refreshAndRetryWhen }) => {
-      const result = await queryFn({ tokenType: "Bearer", accessToken: "stale-token" });
-      return refreshAndRetryWhen?.(result)
-        ? queryFn({ tokenType: "Bearer", accessToken: "fresh-token" })
-        : result;
-    });
-
     endpoints.private
       .mockReturnValueOnce(HttpResponse.json({ ok: false }, { status: 401 }))
       .mockReturnValueOnce(HttpResponse.json({ ok: true }));
@@ -137,20 +158,13 @@ describe("createAuthenticatedBaseQuery", () => {
 
     expect(endpoints.private).toHaveBeenCalledTimes(2);
     const firstRequest = endpoints.private.mock.calls[0][0].request;
-    expect(firstRequest.headers.get("authorization")).toBe("Bearer stale-token");
+    expect(firstRequest.headers.get("authorization")).toBe("Bearer access-token");
     const secondRequest = endpoints.private.mock.calls[1][0].request;
-    expect(secondRequest.headers.get("authorization")).toBe("Bearer fresh-token");
+    expect(secondRequest.headers.get("authorization")).toBe("Bearer refreshed-token");
     expect(authProvider.withToken).toHaveBeenCalledTimes(1);
   });
 
   it("does not refresh or retry non-401 failures", async () => {
-    withToken.mockImplementation(async ({ queryFn, refreshAndRetryWhen }) => {
-      const result = await queryFn({ tokenType: "Bearer", accessToken: "access-token" });
-      return refreshAndRetryWhen?.(result)
-        ? queryFn({ tokenType: "Bearer", accessToken: "refreshed-token" })
-        : result;
-    });
-
     endpoints.private.mockReturnValueOnce(HttpResponse.json({ ok: true }, { status: 500 }));
 
     const { status, data, error } = await store.dispatch(api.endpoints.gatedQuery.initiate());
@@ -161,6 +175,66 @@ describe("createAuthenticatedBaseQuery", () => {
 
     expect(endpoints.private).toHaveBeenCalledTimes(1);
     expect(authProvider.withToken).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not retry a 401 accepted by validateStatus by default", async () => {
+    endpoints.private.mockReturnValueOnce(HttpResponse.json({ ok: false }, { status: 401 }));
+
+    const { status, data, error } = await store.dispatch(
+      api.endpoints.gatedQueryWithValidatedStatus.initiate(),
+    );
+
+    expect(status).toBe("fulfilled");
+    expect(data).toEqual({ ok: false });
+    expect(error).toBe(undefined);
+    expect(endpoints.private).toHaveBeenCalledTimes(1);
+    expect(endpoints.private.mock.calls[0][0].request.headers.get("authorization")).toBe(
+      "Bearer access-token",
+    );
+    expect(authProvider.withToken).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses a custom predicate to retry a 401 accepted by validateStatus", async () => {
+    endpoints.private
+      .mockReturnValueOnce(HttpResponse.json({ ok: false }, { status: 401 }))
+      .mockReturnValueOnce(HttpResponse.json({ ok: true }));
+
+    const { status, data, error } = await store.dispatch(
+      api.endpoints.gatedQueryWithValidatedStatusAndCustomRetry.initiate(),
+    );
+
+    expect(status).toBe("fulfilled");
+    expect(data).toEqual({ ok: true });
+    expect(error).toBe(undefined);
+    expect(endpoints.private).toHaveBeenCalledTimes(2);
+    expect(endpoints.private.mock.calls[0][0].request.headers.get("authorization")).toBe(
+      "Bearer access-token",
+    );
+    expect(endpoints.private.mock.calls[1][0].request.headers.get("authorization")).toBe(
+      "Bearer refreshed-token",
+    );
+    expect(authProvider.withToken).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns the original authenticated response when a custom predicate throws", async () => {
+    endpoints.private.mockReturnValueOnce(HttpResponse.json({ ok: false }, { status: 401 }));
+
+    const { status, data, error } = await store.dispatch(
+      api.endpoints.gatedQueryWithThrowingRetry.initiate(),
+    );
+
+    expect(status).toBe("rejected");
+    expect(data).toBe(undefined);
+    expect(error).toHaveProperty("status", 401);
+    expect(endpoints.private).toHaveBeenCalledTimes(1);
+    expect(endpoints.private.mock.calls[0][0].request.headers.get("authorization")).toBe(
+      "Bearer access-token",
+    );
+    expect(authProvider.withToken).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "AuthenticatedBaseQuery retry predicate failed:",
+      retryPredicateError,
+    );
   });
 
   it("performs one unauthenticated request when the provider does not supply a token", async () => {

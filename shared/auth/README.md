@@ -46,6 +46,25 @@ authorization: `${token.tokenType} ${token.accessToken}`;
 
 Set `extraOptions.authenticated` to `false` on endpoints that must stay public.
 
+By default, `401` and `403` responses rejected by `fetchBaseQuery` refresh the token
+and retry the request once. If an endpoint accepts these responses through
+`validateStatus`, set `extraOptions.refreshAndRetryWhen` to inspect the response
+metadata instead:
+
+```ts
+query: () => ({
+  url: "foo/read",
+  validateStatus: () => true,
+}),
+extraOptions: {
+  refreshAndRetryWhen: result => result.meta?.response?.status === 401,
+},
+```
+
+Supplying `refreshAndRetryWhen` replaces the default predicate.
+Only match responses that definitively indicate an authentication failure. Retried
+mutations must be idempotent or use idempotency keys to avoid duplicate side effects.
+
 Use `authApiExtra` to provide a stable `authProvider` through RTK Query's
 [`api.extra`](https://redux-toolkit.js.org/rtk-query/api/fetchBaseQuery#prepareheaders)
 ([Redux thunk `extraArgument`](https://redux-toolkit.js.org/api/getDefaultMiddleware#customizing-the-included-middleware)):

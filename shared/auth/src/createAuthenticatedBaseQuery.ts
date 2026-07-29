@@ -25,7 +25,7 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
     if (extraOptions?.authenticated !== false) {
       try {
         return await getAuthProvider(api.extra).withToken({
-          queryFn: async token => {
+          async queryFn(token) {
             if (!token) {
               return fetchBaseQuery(baseQueryArgs)(args, api, extraOptions);
             }
@@ -40,10 +40,21 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
             })(args, api, extraOptions);
           },
 
-          refreshAndRetryWhen: result =>
-            !!result.error &&
-            typeof result.error?.status === "number" &&
-            UNAUTHORIZED_STATUSES.has(result.error.status),
+          refreshAndRetryWhen(result) {
+            if (extraOptions?.refreshAndRetryWhen) {
+              try {
+                return extraOptions.refreshAndRetryWhen(result);
+              } catch (error) {
+                console?.error("AuthenticatedBaseQuery retry predicate failed:", error);
+                return false;
+              }
+            }
+            return (
+              !!result.error &&
+              typeof result.error?.status === "number" &&
+              UNAUTHORIZED_STATUSES.has(result.error.status)
+            );
+          },
         });
       } catch (error) {
         // Authentication failed; fall back to an unauthenticated request.
