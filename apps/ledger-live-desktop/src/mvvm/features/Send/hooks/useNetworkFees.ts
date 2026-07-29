@@ -17,7 +17,11 @@ import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-r
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
 import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
-import { buildFeeSelectorOptions } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import {
+  buildFeeSelectorOptions,
+  feeStrategySublabel,
+} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import type { FeeSelectorOption } from "../screens/Amount/types";
 
 type UseNetworkFeesParams = Readonly<{
@@ -54,6 +58,7 @@ export function useNetworkFees({
   const calculateCountervalue = useCalculateCountervalueCallback({
     to: counterValueCurrency,
   });
+  const { displayMode } = useSendAmountDisplayMode();
 
   const core = useNetworkFeesCore({
     account,
@@ -65,6 +70,7 @@ export function useNetworkFees({
     fiatUnit,
     accountUnit,
     locale,
+    displayMode,
     calculateCountervalue,
   });
 
@@ -81,7 +87,9 @@ export function useNetworkFees({
             defaultValue: option.id.toUpperCase(),
           }),
         sublabelFor: option =>
-          shouldShowFeeRateLegend ? option.sublabelLegend : option.sublabelFiat,
+          feeStrategySublabel(option, {
+            preferLegend: shouldShowFeeRateLegend,
+          }),
         custom: {
           enabled: core.hasCustomFees,
           label: t("fees.custom"),
@@ -109,11 +117,8 @@ export function useNetworkFees({
   return useMemo(
     () => ({
       feesRowLabel: t("fees.networkFees"),
-      // A selected preset's fiat value takes precedence here. Coins using `showFeeCurrencyAmount`
-      // have no fee presets today, so this never drops the combined value; revisit if that changes.
-      feesRowValue:
-        core.selectedPresetFiatValue ??
-        (core.displayFeesValue === "-" ? "--" : core.displayFeesValue),
+      feesRowValue: core.feesRowValue === "-" ? "--" : core.feesRowValue,
+      feesRowSecondaryValue: core.feesRowSecondaryValue,
       feesRowStrategyLabel: t(`fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`, {
         defaultValue: core.selectedFeeStrategyId.toUpperCase(),
       }),

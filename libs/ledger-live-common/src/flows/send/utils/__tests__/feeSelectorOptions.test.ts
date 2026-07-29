@@ -1,12 +1,51 @@
-import { buildFeeSelectorOptions } from "../feeSelectorOptions";
+import { buildFeeSelectorOptions, feeStrategySublabel } from "../feeSelectorOptions";
 import type { FeeStrategyOption } from "../feeSelectorOptions";
 
 const preset = (id: string, over: Partial<FeeStrategyOption> = {}): FeeStrategyOption => ({
   id,
   kind: "preset",
   sublabelFiat: `${id}-fiat`,
+  sublabelCrypto: `${id}-crypto`,
   sublabelLegend: `${id}-legend`,
   ...over,
+});
+
+describe("feeStrategySublabel", () => {
+  it("joins the fiat and native amounts", () => {
+    expect(feeStrategySublabel(preset("slow"), { preferLegend: false })).toBe(
+      "slow-fiat · slow-crypto",
+    );
+  });
+
+  it("prefers the fee-rate legend for coins that price fees by rate", () => {
+    expect(feeStrategySublabel(preset("slow"), { preferLegend: true })).toBe("slow-legend");
+  });
+
+  it("falls back to the amounts when a legend coin has no legend for the preset", () => {
+    expect(
+      feeStrategySublabel(preset("slow", { sublabelLegend: null }), {
+        preferLegend: true,
+      }),
+    ).toBe("slow-fiat · slow-crypto");
+  });
+
+  it("degrades to whichever amount is available", () => {
+    expect(
+      feeStrategySublabel(preset("slow", { sublabelCrypto: null }), {
+        preferLegend: false,
+      }),
+    ).toBe("slow-fiat");
+    expect(
+      feeStrategySublabel(preset("slow", { sublabelFiat: null }), {
+        preferLegend: false,
+      }),
+    ).toBe("slow-crypto");
+    expect(
+      feeStrategySublabel(preset("slow", { sublabelFiat: null, sublabelCrypto: null }), {
+        preferLegend: false,
+      }),
+    ).toBeNull();
+  });
 });
 
 describe("buildFeeSelectorOptions", () => {
@@ -27,7 +66,11 @@ describe("buildFeeSelectorOptions", () => {
       label: "label:slow",
       selected: false,
     });
-    expect(options[1]).toMatchObject({ id: "medium", label: "label:medium", selected: true });
+    expect(options[1]).toMatchObject({
+      id: "medium",
+      label: "label:medium",
+      selected: true,
+    });
 
     options[0].onSelect();
     expect(onSelectFeeStrategyId).toHaveBeenCalledWith("slow");
@@ -64,7 +107,11 @@ describe("buildFeeSelectorOptions", () => {
       onSelectFeeStrategyId: jest.fn(),
       labelFor: o => o.id,
       sublabelFor: () => null,
-      coinControl: { enabled: true, label: "Coin control", onSelect: onCoinControl },
+      coinControl: {
+        enabled: true,
+        label: "Coin control",
+        onSelect: onCoinControl,
+      },
     });
 
     expect(options.map(o => o.id)).toEqual(["fast", "coinControl"]);
@@ -94,7 +141,11 @@ describe("buildFeeSelectorOptions", () => {
       labelFor: o => o.id,
       sublabelFor: () => null,
       custom: { enabled: false, label: "Custom", onSelect: jest.fn() },
-      coinControl: { enabled: true, label: "Coin control", onSelect: undefined },
+      coinControl: {
+        enabled: true,
+        label: "Coin control",
+        onSelect: undefined,
+      },
     });
 
     expect(options.map(o => o.kind)).toEqual(["preset"]);

@@ -26,10 +26,19 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     canEstimateFeePresetsWithZeroAmount: jest.fn(() => false),
     getFeePresetOptions: jest.fn(() => []),
     getFeeCurrencyAccountId: jest.fn(() => null),
-    showFeeCurrencyAmount: jest.fn(() => false),
-    getDefaultStrategyPatch: jest.fn(() => ({ feesStrategy: undefined, fees: undefined })),
+    getDefaultStrategyPatch: jest.fn(() => ({
+      feesStrategy: undefined,
+      fees: undefined,
+    })),
     hasFeeRateLegend: jest.fn(() => false),
   },
+}));
+let mockDisplayMode: "fiat" | "crypto" = "fiat";
+jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext", () => ({
+  useSendAmountDisplayMode: () => ({
+    displayMode: mockDisplayMode,
+    setDisplayMode: jest.fn(),
+  }),
 }));
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues-react"),
@@ -51,6 +60,7 @@ function isAccount(account: unknown): account is Account {
 
 function buildBaseParams(overrides?: {
   transaction?: Partial<Transaction>;
+  status?: Partial<TransactionStatus>;
   uiConfig?: {
     hasFeePresets?: boolean;
     hasCustomFees?: boolean;
@@ -81,6 +91,7 @@ function buildBaseParams(overrides?: {
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
+    ...overrides?.status,
   } as TransactionStatus;
   const updateTransaction = jest.fn();
 
@@ -103,6 +114,7 @@ function buildBaseParams(overrides?: {
 describe("useNetworkFees", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDisplayMode = "fiat";
 
     const bridge = {
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
@@ -111,7 +123,10 @@ describe("useNetworkFees", () => {
       }),
     };
     mockedGetAccountBridge.mockReturnValue(
-      Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }) as never,
+      Object.assign(Promise.resolve(bridge), {
+        status: "fulfilled",
+        value: bridge,
+      }) as never,
     );
   });
 
@@ -119,7 +134,9 @@ describe("useNetworkFees", () => {
     const params = buildBaseParams({ uiConfig: { hasFeePresets: true } });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.showNetworkFees).toBe(true);
@@ -129,7 +146,9 @@ describe("useNetworkFees", () => {
     const params = buildBaseParams({ uiConfig: { hasFeePresets: false } });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.feeSelector.options).toHaveLength(0);
@@ -151,7 +170,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.selectedFeeStrategy).toBe("fast");
@@ -162,7 +183,9 @@ describe("useNetworkFees", () => {
     const params = buildBaseParams({ uiConfig: { hasFeePresets: true } });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.selectedFeeStrategy).toBeNull();
@@ -176,7 +199,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.feesRowStrategyLabel).toBe("Custom");
@@ -184,24 +209,103 @@ describe("useNetworkFees", () => {
 
   it("returns feesRowStrategyLabel Default network fee for a preset-less coin with no override", () => {
     const params = buildBaseParams({
-      uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      uiConfig: {
+        hasFeePresets: false,
+        hasCustomFees: true,
+        hasDefaultStrategy: true,
+      },
     });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.feesRowStrategyLabel).toBe("Default network fee");
   });
 
-  it("returns feesRowValue as -- when no preset selected and no fee summary", () => {
-    const params = buildBaseParams({ uiConfig: { hasFeePresets: true } });
+  it("returns feesRowValue as -- when the fee is editable but unknown", () => {
+    const params = buildBaseParams({
+      uiConfig: { hasFeePresets: true, hasCustomFees: true },
+    });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.feesRowValue).toBe("--");
+  });
+
+  it("follows the fiat⇄crypto toggle for the row value when fees are editable", () => {
+    const params = buildBaseParams({
+      uiConfig: { hasFeePresets: true, hasCustomFees: true },
+      status: { estimatedFees: new BigNumber(1_000) },
+    });
+
+    const { result: fiat } = renderHook(() => useNetworkFees(params), {
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
+    });
+    expect(fiat.current.feesRowValue).toMatch(/\$/);
+    expect(fiat.current.feesRowSecondaryValue).toBeNull();
+
+    mockDisplayMode = "crypto";
+    const { result: crypto } = renderHook(() => useNetworkFees(params), {
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
+    });
+    expect(crypto.current.feesRowValue).toMatch(/BTC/);
+    expect(crypto.current.feesRowSecondaryValue).toBeNull();
+  });
+
+  it("exposes both values on the row when fees are not editable", () => {
+    const params = buildBaseParams({
+      uiConfig: {
+        hasFeePresets: false,
+        hasCustomFees: false,
+        hasCoinControl: false,
+      },
+      status: { estimatedFees: new BigNumber(1_000) },
+    });
+
+    const { result } = renderHook(() => useNetworkFees(params), {
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
+    });
+
+    expect(result.current.feeSelector.canOpen).toBe(false);
+    expect(result.current.feesRowValue).toMatch(/\$/);
+    expect(result.current.feesRowSecondaryValue).toMatch(/BTC/);
+  });
+
+  it("sub-labels presets with both amounts", () => {
+    const mockedSendFeatures = jest.requireMock(
+      "@ledgerhq/live-common/bridge/descriptor/send/features",
+    ).sendFeatures;
+    mockedSendFeatures.hasFeePresets.mockReturnValue(true);
+    mockedSendFeatures.getFeePresetOptions.mockReturnValue([
+      { id: "slow", amount: new BigNumber(1_000) },
+      { id: "medium", amount: new BigNumber(2_000) },
+    ]);
+
+    const params = buildBaseParams({ uiConfig: { hasFeePresets: true } });
+
+    const { result } = renderHook(() => useNetworkFees(params), {
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
+    });
+
+    const slow = result.current.feeSelector.options.find(o => o.id === "slow");
+    expect(slow?.sublabel).toContain(" · ");
+    expect(slow?.sublabel).toMatch(/\$/);
+    expect(slow?.sublabel).toMatch(/BTC/);
   });
 
   it("feeSelector option onSelect calls updateTransaction with bridge-updated transaction", () => {
@@ -220,7 +324,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     const mediumOption = result.current.feeSelector.options.find(o => o.id === "medium");
@@ -246,7 +352,9 @@ describe("useNetworkFees", () => {
     const params = buildBaseParams({ uiConfig: { hasFeePresets: true } });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current).toMatchObject({
@@ -268,7 +376,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees({ ...params, onSelectCustomFees }), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     const customOption = result.current.feeSelector.options.find(o => o.id === "custom");
@@ -285,7 +395,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees(params), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     expect(result.current.feeSelector.options.some(o => o.id === "custom")).toBe(false);
@@ -298,7 +410,9 @@ describe("useNetworkFees", () => {
     });
 
     const { result } = renderHook(() => useNetworkFees({ ...params, onSelectCoinControl }), {
-      initialState: { settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" } },
+      initialState: {
+        settings: { ...INITIAL_STATE_SETTINGS, counterValue: "USD" },
+      },
     });
 
     const coinControlOption = result.current.feeSelector.options.find(o => o.id === "coinControl");

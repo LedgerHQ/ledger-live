@@ -17,6 +17,7 @@ export function AmountScreenView({
   secondaryValue,
   feesRowLabel,
   feesRowValue,
+  feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
   quickActions,
@@ -55,6 +56,7 @@ export function AmountScreenView({
       <AmountFooter
         feesRowLabel={feesRowLabel}
         feesRowValue={feesRowValue}
+        feesRowSecondaryValue={feesRowSecondaryValue}
         feesRowStrategyLabel={feesRowStrategyLabel}
         feeSelector={feeSelector}
         reviewLabel={reviewLabel}

@@ -17,7 +17,11 @@ import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-r
 import { useNetworkFeesCore } from "@ledgerhq/live-common/flows/send/hooks/useNetworkFeesCore";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { feeSelectorLabelKeySuffix } from "@ledgerhq/live-common/flows/send/utils/feeStrategyLabels";
-import { buildFeeSelectorOptions } from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import {
+  buildFeeSelectorOptions,
+  feeStrategySublabel,
+} from "@ledgerhq/live-common/flows/send/utils/feeSelectorOptions";
+import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
 import type { FeeSelectorOption, NetworkFeesViewModel } from "../types";
 
 type UseNetworkFeesParams = Readonly<{
@@ -55,6 +59,7 @@ export function useNetworkFees({
   const calculateCountervalue = useCalculateCountervalueCallback({
     to: counterValueCurrency,
   });
+  const { displayMode } = useSendAmountDisplayMode();
 
   const core = useNetworkFeesCore({
     account,
@@ -66,8 +71,11 @@ export function useNetworkFees({
     fiatUnit,
     accountUnit,
     locale,
+    displayMode,
     calculateCountervalue,
   });
+
+  const shouldShowFeeRateLegend = sendFeatures.hasFeeRateLegend(accountCurrency);
 
   const networkFeesInfo = useMemo(
     () => sendFeatures.getNetworkFeesInfo(accountCurrency, { transaction, status }),
@@ -82,7 +90,8 @@ export function useNetworkFees({
         onSelectFeeStrategyId: core.onSelectFeeStrategyId,
         labelFor: option =>
           t(option.kind === "default" ? "send.fees.defaultNetworkFee" : `send.fees.${option.id}`),
-        sublabelFor: option => option.sublabelFiat,
+        sublabelFor: option =>
+          feeStrategySublabel(option, { preferLegend: shouldShowFeeRateLegend }),
         custom: {
           enabled: core.hasCustomFees,
           label: t("send.fees.customFees"),
@@ -102,6 +111,7 @@ export function useNetworkFees({
       core.selectedFeeStrategyId,
       onSelectCoinControl,
       onSelectCustomFees,
+      shouldShowFeeRateLegend,
       t,
     ],
   );
@@ -109,19 +119,19 @@ export function useNetworkFees({
   return useMemo(
     () => ({
       label: t("send.fees.title"),
-      value: core.displayFeesValue,
+      value: core.feesRowValue,
+      secondaryValue: core.feesRowSecondaryValue,
       strategyLabel: t(`send.fees.${feeSelectorLabelKeySuffix(core.selectedFeeStrategyId)}`),
-      showFeeCurrencyAmount: core.showFeeCurrencyAmount,
       selectedFeeStrategy: core.selectedFeeStrategy,
       displayOptions,
       canOpenSelector: displayOptions.length > 0,
       networkFeesInfo,
     }),
     [
-      core.displayFeesValue,
+      core.feesRowSecondaryValue,
+      core.feesRowValue,
       core.selectedFeeStrategy,
       core.selectedFeeStrategyId,
-      core.showFeeCurrencyAmount,
       displayOptions,
       networkFeesInfo,
       t,

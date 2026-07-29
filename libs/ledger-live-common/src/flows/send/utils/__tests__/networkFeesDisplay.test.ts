@@ -3,9 +3,8 @@
  */
 import { BigNumber } from "bignumber.js";
 import {
-  formatCombinedFeesValue,
-  formatDisplayFeesValue,
-  getSelectedPresetFiatValue,
+  formatFeesValue,
+  joinFeeSublabelValues,
   resolveFeeDisplayContext,
 } from "../networkFeesDisplay";
 import type { Account } from "@ledgerhq/types-live";
@@ -53,112 +52,141 @@ describe("networkFeesDisplay", () => {
     expect(context.displayCurrency.ticker).toBe("USDC");
   });
 
-  it("formatDisplayFeesValue returns '-' when fees are zero", () => {
-    expect(
-      formatDisplayFeesValue({
-        estimatedFees: new BigNumber(0),
-        estimatedFeesCountervalue: null,
-        fiatUnit: usdUnit,
-        displayUnit: btcUnit,
-      }).displayFeesValue,
-    ).toBe("-");
+  const baseParams: {
+    estimatedFeesCountervalue: BigNumber | null;
+    fiatUnit: typeof usdUnit;
+    displayUnit: typeof btcUnit;
+  } = {
+    estimatedFeesCountervalue: null,
+    fiatUnit: usdUnit,
+    displayUnit: btcUnit,
+  };
+
+  describe.each(["fiat", "crypto"] as const)("%s mode", mode => {
+    it("returns '-' when fees are zero", () => {
+      expect(
+        formatFeesValue({
+          ...baseParams,
+          estimatedFees: new BigNumber(0),
+          mode,
+        }).displayFeesValue,
+      ).toBe("-");
+    });
+
+    it("returns '-' for a non-finite estimate (never renders NaN)", () => {
+      expect(
+        formatFeesValue({
+          ...baseParams,
+          estimatedFees: new BigNumber(NaN),
+          mode,
+        }).displayFeesValue,
+      ).toBe("-");
+    });
+
+    it("never sets a secondary value", () => {
+      expect(
+        formatFeesValue({
+          ...baseParams,
+          estimatedFees: new BigNumber(1000),
+          mode,
+        }).secondaryFeesValue,
+      ).toBeNull();
+    });
   });
 
-  it("formatDisplayFeesValue prefers fiat formatting when countervalue is available", () => {
-    const result = formatDisplayFeesValue({
+  it("fiat mode prefers fiat formatting when a countervalue is available", () => {
+    const result = formatFeesValue({
+      ...baseParams,
       estimatedFees: new BigNumber(1000),
       estimatedFeesCountervalue: new BigNumber(42),
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
+      mode: "fiat",
     });
 
     expect(result.displayFeesValue).toBe("FMT_42");
-    expect(result.formattedEstimatedFeesFiat).toBe("FMT_42");
   });
 
-  it("formatDisplayFeesValue falls back to the crypto amount when no countervalue is available", () => {
-    const result = formatDisplayFeesValue({
+  it("fiat mode falls back to the crypto amount when no countervalue is available", () => {
+    const result = formatFeesValue({
+      ...baseParams,
       estimatedFees: new BigNumber(1000),
-      estimatedFeesCountervalue: null,
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
+      mode: "fiat",
     });
 
     expect(result.displayFeesValue).toBe("FMT_1000");
-    expect(result.formattedEstimatedFeesFiat).toBeNull();
   });
 
-  it("formatDisplayFeesValue returns '-' for a non-finite estimate (never renders NaN)", () => {
-    expect(
-      formatDisplayFeesValue({
-        estimatedFees: new BigNumber(NaN),
-        estimatedFeesCountervalue: null,
-        fiatUnit: usdUnit,
-        displayUnit: btcUnit,
-      }).displayFeesValue,
-    ).toBe("-");
-  });
-
-  it("formatCombinedFeesValue shows fiat • crypto and 0 (not '-') for a zero fee", () => {
-    const result = formatCombinedFeesValue({
-      estimatedFees: new BigNumber(0),
-      estimatedFeesCountervalue: null,
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
-    });
-
-    expect(result.displayFeesValue).toBe("FMT_0 • FMT_0");
-    expect(result.formattedEstimatedFeesFiat).toBe("FMT_0");
-  });
-
-  it("formatCombinedFeesValue shows fiat • crypto for a non-zero fee with a countervalue", () => {
-    const result = formatCombinedFeesValue({
+  it("crypto mode shows the native amount even when a countervalue is available", () => {
+    const result = formatFeesValue({
+      ...baseParams,
       estimatedFees: new BigNumber(1000),
       estimatedFeesCountervalue: new BigNumber(42),
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
-    });
-
-    expect(result.displayFeesValue).toBe("FMT_42 • FMT_1000");
-    expect(result.formattedEstimatedFeesFiat).toBe("FMT_42");
-  });
-
-  it("formatCombinedFeesValue shows the crypto amount alone for a non-zero fee with no countervalue", () => {
-    const result = formatCombinedFeesValue({
-      estimatedFees: new BigNumber(1000),
-      estimatedFeesCountervalue: null,
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
+      mode: "crypto",
     });
 
     expect(result.displayFeesValue).toBe("FMT_1000");
-    expect(result.formattedEstimatedFeesFiat).toBeNull();
   });
 
-  it("formatCombinedFeesValue clamps a negative/invalid estimate to zero", () => {
-    const result = formatCombinedFeesValue({
+  it("both mode shows fiat + crypto, and 0 (not '-') for a zero fee", () => {
+    const result = formatFeesValue({
+      ...baseParams,
+      estimatedFees: new BigNumber(0),
+      mode: "both",
+    });
+
+    expect(result.displayFeesValue).toBe("FMT_0");
+    expect(result.secondaryFeesValue).toBe("FMT_0");
+  });
+
+  it("both mode shows fiat + crypto for a non-zero fee with a countervalue", () => {
+    const result = formatFeesValue({
+      ...baseParams,
+      estimatedFees: new BigNumber(1000),
+      estimatedFeesCountervalue: new BigNumber(42),
+      mode: "both",
+    });
+
+    expect(result.displayFeesValue).toBe("FMT_42");
+    expect(result.secondaryFeesValue).toBe("FMT_1000");
+  });
+
+  it("both mode promotes the crypto amount for a non-zero fee with no countervalue", () => {
+    const result = formatFeesValue({
+      ...baseParams,
+      estimatedFees: new BigNumber(1000),
+      mode: "both",
+    });
+
+    expect(result.displayFeesValue).toBe("FMT_1000");
+    expect(result.secondaryFeesValue).toBeNull();
+  });
+
+  it("both mode clamps a negative/invalid estimate to zero", () => {
+    const result = formatFeesValue({
+      ...baseParams,
       estimatedFees: new BigNumber(-5),
       estimatedFeesCountervalue: new BigNumber(3),
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
+      mode: "both",
     });
 
-    expect(result.displayFeesValue).toBe("FMT_0 • FMT_0");
+    expect(result.displayFeesValue).toBe("FMT_0");
+    expect(result.secondaryFeesValue).toBe("FMT_0");
   });
 
-  it("formatCombinedFeesValue treats a non-finite estimate as zero (never renders NaN)", () => {
-    const result = formatCombinedFeesValue({
+  it("both mode treats a non-finite estimate as zero (never renders NaN)", () => {
+    const result = formatFeesValue({
+      ...baseParams,
       estimatedFees: new BigNumber(NaN),
-      estimatedFeesCountervalue: null,
-      fiatUnit: usdUnit,
-      displayUnit: btcUnit,
+      mode: "both",
     });
 
-    expect(result.displayFeesValue).toBe("FMT_0 • FMT_0");
+    expect(result.displayFeesValue).toBe("FMT_0");
+    expect(result.secondaryFeesValue).toBe("FMT_0");
   });
 
-  it("getSelectedPresetFiatValue ignores custom strategy", () => {
-    expect(getSelectedPresetFiatValue("custom", { slow: "$1" })).toBeNull();
-    expect(getSelectedPresetFiatValue("slow", { slow: "$1" })).toBe("$1");
+  it("joinFeeSublabelValues joins both values and degrades to whichever side exists", () => {
+    expect(joinFeeSublabelValues("$0.03", "0.000329 ETH")).toBe("$0.03 · 0.000329 ETH");
+    expect(joinFeeSublabelValues("$0.03", null)).toBe("$0.03");
+    expect(joinFeeSublabelValues(null, "0.000329 ETH")).toBe("0.000329 ETH");
+    expect(joinFeeSublabelValues(null, null)).toBeNull();
   });
 });

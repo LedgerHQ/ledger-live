@@ -3,7 +3,6 @@ import { BigNumber } from "bignumber.js";
 import type { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { Currency } from "@domain/entity-currency";
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { FeePresetOption } from "../../../bridge/descriptor/types";
 import { getAccountBridge } from "../../../bridge/impl";
 import type { Transaction } from "../../../coin-modules/transaction-types";
@@ -12,10 +11,17 @@ import {
   buildPresetEstimationPatch,
   getFeesStrategyForPreset,
 } from "../utils/feeEstimation";
+import { formatFeeCurrencyAmount } from "../utils/networkFeesDisplay";
 
-export type FeeFiatMap = Readonly<Record<string, string | null>>;
+/** Formatted fee amounts for one preset. Either side is `null` when it cannot be computed. */
+export type FeePresetValues = Readonly<{
+  fiat: string | null;
+  crypto: string | null;
+}>;
 
-export type UseFeePresetFiatValuesCoreParams = Readonly<{
+export type FeePresetValueMap = Readonly<Record<string, FeePresetValues>>;
+
+export type UseFeePresetValuesCoreParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
   mainAccount: Account;
@@ -23,6 +29,8 @@ export type UseFeePresetFiatValuesCoreParams = Readonly<{
   feePresetOptions: readonly FeePresetOption[];
   fallbackPresetIds?: readonly string[];
   fiatUnit: Unit;
+  /** Unit of the currency the fee is actually paid in, used for the native amount. */
+  displayUnit: Unit;
   locale?: string;
   enabled: boolean;
   shouldEstimateWithBridge: boolean;
@@ -36,26 +44,23 @@ function formatCountervalueAsFiat(
   locale?: string,
 ): string | null {
   return countervalue !== null && countervalue !== undefined
-    ? formatCurrencyUnit(fiatUnit, countervalue, {
-        showCode: true,
-        disableRounding: true,
-        ...(locale ? { locale } : {}),
-      })
+    ? formatFeeCurrencyAmount(fiatUnit, countervalue, locale)
     : null;
 }
 
-async function estimateFiatValuesForPresets(params: {
+async function estimateValuesForPresets(params: {
   bridge: AccountBridge<Transaction>;
   mainAccount: Account;
   transaction: Transaction;
   presetIds: readonly string[];
   calculateCountervalue: (currency: Currency, value: BigNumber) => BigNumber | null | undefined;
   fiatUnit: Unit;
+  displayUnit: Unit;
   locale?: string;
   requestId: number;
   requestIdRef: React.RefObject<number>;
   inFlightRef: React.RefObject<string | null>;
-  setFiatByPreset: (value: FeeFiatMap) => void;
+  setValuesByPreset: (value: FeePresetValueMap) => void;
 }): Promise<void> {
   try {
     const entries = await Promise.all(
@@ -76,19 +81,22 @@ async function estimateFiatValuesForPresets(params: {
           params.mainAccount.currency,
           estimatedFees,
         );
-        const fiatValue = formatCountervalueAsFiat(params.fiatUnit, countervalue, params.locale);
+        const values: FeePresetValues = {
+          fiat: formatCountervalueAsFiat(params.fiatUnit, countervalue, params.locale),
+          crypto: formatFeeCurrencyAmount(params.displayUnit, estimatedFees, params.locale),
+        };
 
-        return [presetId, fiatValue] as const;
+        return [presetId, values] as const;
       }),
     );
 
     if (params.requestIdRef.current !== params.requestId) return;
 
-    const next: Record<string, string | null> = {};
+    const next: Record<string, FeePresetValues> = {};
     for (const [id, value] of entries) {
       next[id] = value;
     }
-    params.setFiatByPreset(next);
+    params.setValuesByPreset(next);
   } finally {
     if (params.requestIdRef.current === params.requestId) {
       params.inFlightRef.current = null;
@@ -96,7 +104,7 @@ async function estimateFiatValuesForPresets(params: {
   }
 }
 
-export function useFeePresetFiatValuesCore({
+export function useFeePresetValuesCore({
   account,
   parentAccount,
   mainAccount,
@@ -104,13 +112,14 @@ export function useFeePresetFiatValuesCore({
   feePresetOptions,
   fallbackPresetIds,
   fiatUnit,
+  displayUnit,
   locale,
   enabled,
   shouldEstimateWithBridge,
   allowZeroAmountEstimation,
   calculateCountervalue,
-}: UseFeePresetFiatValuesCoreParams): FeeFiatMap {
-  const [fiatByPreset, setFiatByPreset] = useState<FeeFiatMap>({});
+}: UseFeePresetValuesCoreParams): FeePresetValueMap {
+  const [valuesByPreset, setValuesByPreset] = useState<FeePresetValueMap>({});
 
   const recipient = transaction.recipient ?? "";
   const amount = useMemo(() => transaction.amount ?? new BigNumber(0), [transaction.amount]);
@@ -147,19 +156,23 @@ export function useFeePresetFiatValuesCore({
   const inFlightRef = useRef<string | null>(null);
   const requestIdRef = useRef(0);
 
-  const directFiatValues = useMemo<FeeFiatMap>(() => {
+  const directValues = useMemo<FeePresetValueMap>(() => {
     if (!enabled || shouldEstimateWithBridge || feePresetOptions.length === 0) {
       return {};
     }
 
-    const next: Record<string, string | null> = {};
+    const next: Record<string, FeePresetValues> = {};
     for (const option of feePresetOptions) {
       const countervalue = calculateCountervalue(mainAccount.currency, option.amount);
-      next[option.id] = formatCountervalueAsFiat(fiatUnit, countervalue, locale);
+      next[option.id] = {
+        fiat: formatCountervalueAsFiat(fiatUnit, countervalue, locale),
+        crypto: formatFeeCurrencyAmount(displayUnit, option.amount, locale),
+      };
     }
     return next;
   }, [
     calculateCountervalue,
+    displayUnit,
     enabled,
     feePresetOptions,
     fiatUnit,
@@ -187,18 +200,19 @@ export function useFeePresetFiatValuesCore({
       void (async () => {
         try {
           const bridge = await getAccountBridge(account, parentAccount ?? undefined);
-          await estimateFiatValuesForPresets({
+          await estimateValuesForPresets({
             bridge,
             mainAccount,
             transaction,
             presetIds: presetIdsToEstimate,
             calculateCountervalue,
             fiatUnit,
+            displayUnit,
             locale,
             requestId,
             requestIdRef,
             inFlightRef,
-            setFiatByPreset,
+            setValuesByPreset,
           });
         } catch {
           if (requestIdRef.current === requestId) {
@@ -210,5 +224,5 @@ export function useFeePresetFiatValuesCore({
     });
   }
 
-  return shouldEstimateWithBridge ? fiatByPreset : directFiatValues;
+  return shouldEstimateWithBridge ? valuesByPreset : directValues;
 }

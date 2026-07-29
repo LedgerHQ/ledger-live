@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { useFeePresetFiatValuesCore } from "../useFeePresetFiatValuesCore";
+import { useFeePresetValuesCore } from "../useFeePresetValuesCore";
 import { getAccountBridge } from "../../../../bridge/impl";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import type { Transaction } from "../../../../coin-modules/transaction-types";
@@ -20,6 +20,7 @@ const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 
 const usdUnit: Unit = { name: "US Dollar", code: "USD", magnitude: 2 };
+const btcUnit: Unit = { name: "Bitcoin", code: "BTC", magnitude: 8 };
 const flushAsyncEstimation = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 
 const mockCurrency = {
@@ -42,7 +43,7 @@ const createMainAccount = (overrides?: Partial<Account>): Account =>
     ...overrides,
   }) as unknown as Account;
 
-describe("useFeePresetFiatValuesCore", () => {
+describe("useFeePresetValuesCore", () => {
   const mockCalculateCountervalue = jest.fn();
   const defaultBridge = {
     updateTransaction: jest.fn((tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
@@ -72,6 +73,7 @@ describe("useFeePresetFiatValuesCore", () => {
       { id: "fast", amount: new BigNumber(3_000) },
     ] satisfies readonly FeePresetOption[],
     fiatUnit: usdUnit,
+    displayUnit: btcUnit,
     enabled: true,
     shouldEstimateWithBridge: false,
     allowZeroAmountEstimation: false,
@@ -82,31 +84,34 @@ describe("useFeePresetFiatValuesCore", () => {
     jest.clearAllMocks();
     mockedGetAccountBridge.mockResolvedValue(defaultBridge as never);
     mockCalculateCountervalue.mockImplementation((_currency, value) => value);
-    mockedFormatCurrencyUnit.mockImplementation((_unit, value) => value.toString());
+    // Tag the unit so the assertions can tell the fiat side from the native side.
+    mockedFormatCurrencyUnit.mockImplementation(
+      (unit, value) => `${unit.code}_${value.toString()}`,
+    );
   });
 
-  it("returns direct fiat values when preset amounts are available", () => {
+  it("returns direct fiat and native values when preset amounts are available", () => {
     const feePresetOptions = [
       { id: "slow", amount: new BigNumber(1) },
       { id: "fast", amount: new BigNumber(3) },
     ] satisfies readonly FeePresetOption[];
 
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({
+      useFeePresetValuesCore({
         ...defaultParams,
         feePresetOptions,
       }),
     );
 
     expect(result.current).toEqual({
-      slow: "1",
-      fast: "3",
+      slow: { fiat: "USD_1", crypto: "BTC_1" },
+      fast: { fiat: "USD_3", crypto: "BTC_3" },
     });
   });
 
   it("returns empty map when enabled is false", () => {
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({ ...defaultParams, enabled: false }),
+      useFeePresetValuesCore({ ...defaultParams, enabled: false }),
     );
 
     expect(result.current).toEqual({});
@@ -114,32 +119,37 @@ describe("useFeePresetFiatValuesCore", () => {
 
   it("returns empty map when feePresetOptions is empty and no fallback ids", () => {
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({ ...defaultParams, feePresetOptions: [] }),
+      useFeePresetValuesCore({ ...defaultParams, feePresetOptions: [] }),
     );
 
     expect(result.current).toEqual({});
   });
 
-  it("returns null for a preset when countervalue is unavailable", () => {
+  it("returns a null fiat side, but keeps the native amount, when countervalue is unavailable", () => {
     mockCalculateCountervalue.mockReturnValue(null);
 
-    const { result } = renderHook(() => useFeePresetFiatValuesCore(defaultParams));
+    const { result } = renderHook(() => useFeePresetValuesCore(defaultParams));
 
-    Object.values(result.current).forEach(value => {
-      expect(value).toBeNull();
+    expect(result.current).toEqual({
+      slow: { fiat: null, crypto: "BTC_1000" },
+      medium: { fiat: null, crypto: "BTC_2000" },
+      fast: { fiat: null, crypto: "BTC_3000" },
     });
   });
 
   it("does not use direct path when shouldEstimateWithBridge is true", () => {
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({ ...defaultParams, shouldEstimateWithBridge: true }),
+      useFeePresetValuesCore({
+        ...defaultParams,
+        shouldEstimateWithBridge: true,
+      }),
     );
 
     expect(result.current).toEqual({});
   });
 
   it("passes locale to formatCurrencyUnit", () => {
-    renderHook(() => useFeePresetFiatValuesCore({ ...defaultParams, locale: "fr" }));
+    renderHook(() => useFeePresetValuesCore({ ...defaultParams, locale: "fr" }));
 
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       usdUnit,
@@ -162,13 +172,16 @@ describe("useFeePresetFiatValuesCore", () => {
           fast: new BigNumber(3),
         };
         const strategy = typeof tx.feesStrategy === "string" ? tx.feesStrategy : "";
-        return { estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0), errors: {} };
+        return {
+          estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0),
+          errors: {},
+        };
       },
     };
     mockedGetAccountBridge.mockResolvedValue(bridge as never);
 
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({
+      useFeePresetValuesCore({
         ...defaultParams,
         feePresetOptions: [],
         fallbackPresetIds: ["slow", "medium", "fast"],
@@ -185,9 +198,9 @@ describe("useFeePresetFiatValuesCore", () => {
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        slow: "1",
-        medium: "2",
-        fast: "3",
+        slow: { fiat: "USD_1", crypto: "BTC_1" },
+        medium: { fiat: "USD_2", crypto: "BTC_2" },
+        fast: { fiat: "USD_3", crypto: "BTC_3" },
       });
     });
   });
@@ -220,13 +233,16 @@ describe("useFeePresetFiatValuesCore", () => {
           medium: new BigNumber(2),
           fast: new BigNumber(3),
         };
-        return { estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0), errors: {} };
+        return {
+          estimatedFees: feesByStrategy[strategy] ?? new BigNumber(0),
+          errors: {},
+        };
       },
     };
     mockedGetAccountBridge.mockResolvedValue(bridge as never);
 
     const { result } = renderHook(() =>
-      useFeePresetFiatValuesCore({
+      useFeePresetValuesCore({
         ...defaultParams,
         feePresetOptions: [],
         fallbackPresetIds: ["slow", "medium", "fast"],
@@ -251,9 +267,9 @@ describe("useFeePresetFiatValuesCore", () => {
 
     await waitFor(() => {
       expect(result.current).toEqual({
-        slow: "1",
-        medium: "2",
-        fast: "3",
+        slow: { fiat: "USD_1", crypto: "BTC_1" },
+        medium: { fiat: "USD_2", crypto: "BTC_2" },
+        fast: { fiat: "USD_3", crypto: "BTC_3" },
       });
     });
   });
@@ -262,7 +278,7 @@ describe("useFeePresetFiatValuesCore", () => {
     mockedGetAccountBridge.mockRejectedValueOnce(new Error("Bridge error"));
 
     const { result, rerender } = renderHook(() =>
-      useFeePresetFiatValuesCore({
+      useFeePresetValuesCore({
         ...defaultParams,
         shouldEstimateWithBridge: true,
       }),
@@ -281,9 +297,9 @@ describe("useFeePresetFiatValuesCore", () => {
     await waitFor(() => {
       expect(mockedGetAccountBridge).toHaveBeenCalledTimes(2);
       expect(result.current).toEqual({
-        slow: "1000",
-        medium: "1000",
-        fast: "1000",
+        slow: { fiat: "USD_1000", crypto: "BTC_1000" },
+        medium: { fiat: "USD_1000", crypto: "BTC_1000" },
+        fast: { fiat: "USD_1000", crypto: "BTC_1000" },
       });
     });
   });
@@ -310,10 +326,13 @@ describe("useFeePresetFiatValuesCore", () => {
 
     const { rerender } = renderHook(
       ({ recipient }: { recipient: string }) =>
-        useFeePresetFiatValuesCore({
+        useFeePresetValuesCore({
           ...defaultParams,
           feePresetOptions: presetsWithoutAmounts,
-          transaction: { ...defaultParams.transaction, recipient } as Transaction,
+          transaction: {
+            ...defaultParams.transaction,
+            recipient,
+          } as Transaction,
           shouldEstimateWithBridge: true,
         }),
       { initialProps: { recipient: "bc1qrecipient" } },
