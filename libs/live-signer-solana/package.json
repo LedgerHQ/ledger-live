@@ -28,9 +28,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
+    "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-solana": "catalog:",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",

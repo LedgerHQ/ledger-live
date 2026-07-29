@@ -3,14 +3,32 @@
 // tests/DmkSignerSol.test.ts
 import { DmkSignerSol } from "../src/DmkSignerSol";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
+import { ContextModuleBuilder } from "@ledgerhq/context-module";
+import { getEnv } from "@ledgerhq/live-env";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
+jest.mock("@ledgerhq/context-module", () => {
+  class MockContextModuleBuilder {
+    setAppSource() { return this; }
+    setChain() { return this; }
+    setCalConfig() { return this; }
+    build() { return {}; }
+  }
+  return {
+    ContextModuleBuilder: MockContextModuleBuilder,
+    ContextModuleChainID: { Solana: "solana" },
+  };
+});
+
+jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
+
 // Mock the SignerSolanaBuilder to avoid actual builder logic
 jest.mock("@ledgerhq/device-signer-kit-solana", () => ({
   SignerSolanaBuilder: jest.fn().mockImplementation(() => ({
+    withContextModule: jest.fn().mockReturnThis(),
     build: () => ({}),
   })),
   SignMessageVersion: { Raw: "raw", Legacy: "legacy", V0: "v0", V1: "v1" },
@@ -22,6 +40,7 @@ describe("DmkSignerSol", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
     signer = new DmkSignerSol(dmkMock, "sessionId");
   });
 
@@ -376,6 +395,45 @@ describe("DmkSignerSol", () => {
       const result = callMapError({ _tag: "NoErrorCode" });
       expect(result).toBeInstanceOf(Error);
       expect(result.message).toBe("NoErrorCode");
+    });
+  });
+
+  describe("CAL config wiring", () => {
+    let setCalConfigSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      setCalConfigSpy = jest.spyOn(ContextModuleBuilder.prototype, "setCalConfig");
+    });
+
+    afterEach(() => {
+      setCalConfigSpy.mockRestore();
+    });
+
+    it("passes prod mode and the env URL with /v1 for a prod endpoint", () => {
+      const url = "https://global.api.prd.ledger.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerSol(dmkMock, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "prod", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
+      const url = "https://global.api.stg.ledger-test.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerSol(dmkMock, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+    });
+
+    it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
+      const url = "https://global.api.stg.example.com/cal";
+      jest.mocked(getEnv).mockReturnValue(url as never);
+
+      new DmkSignerSol(dmkMock, "sessionId");
+
+      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
     });
   });
 });
