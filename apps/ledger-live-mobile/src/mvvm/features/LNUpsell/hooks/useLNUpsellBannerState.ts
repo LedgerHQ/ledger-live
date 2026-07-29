@@ -12,7 +12,6 @@ import type { LNBannerLocation } from "../types";
 type LNUpsellBannerState = {
   isShown: boolean;
   ctaLink?: string;
-  discount?: number;
   deviceModelId?: LargeScreenUpsellNanoDeviceModelId;
   tracking: "opted_in" | "opted_out";
 };
@@ -37,16 +36,15 @@ export function useLNUpsellBannerState(location: LNBannerLocation): LNUpsellBann
   const ctaConfig = largeScreenUpsell?.params?.[tracking];
   const isCTAEnabled = ctaConfig?.enabled ?? false;
   const ctaLink = ctaConfig?.link?.trim() || undefined;
-  const discount = largeScreenUpsell?.params?.discount;
   const placement = LARGE_SCREEN_UPSELL_BANNER_PLACEMENT_BY_LOCATION[location];
   const isPlacementEnabled = largeScreenUpsell?.params?.banners?.[placement] ?? true;
 
   const { mobileCards } = useDynamicContent();
-  const isExcluded = isOptIn && mobileCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER);
+  const isExcluded = isOptIn && mobileCards.some(c => c.extras?.campaign === LNS_UPSELL_HIGH_TIER);
 
   const isShown =
     eligibility.isEligible && isCTAEnabled && isPlacementEnabled && !isExcluded && Boolean(ctaLink);
   const deviceModelId = eligibility.isEligible ? eligibility.deviceModelId : undefined;
 
-  return { isShown, ctaLink, discount, deviceModelId, tracking };
+  return { isShown, ctaLink, deviceModelId, tracking };
 }

@@ -124,6 +124,11 @@ describe("LNUpsellBanner", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
+    it("should still render when content cards omit extras", () => {
+      renderBanner({ contentCardsWithoutExtras: true });
+      expect(screen.getByText(t(`lnsUpsell.opted_in.cta`))).toBeVisible();
+    });
+
     it("should track click on the cta", () => {
       renderBanner({});
       fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
@@ -195,6 +200,7 @@ describe("LNUpsellBanner", () => {
       hasLargeScreenBannersParam = true,
       hasTrackingParams = true,
       ctaLink = undefined as string | undefined,
+      contentCardsWithoutExtras = false,
     }) {
       const largeScreenUpsellParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
 
@@ -238,6 +244,16 @@ describe("LNUpsellBanner", () => {
         params: hasLargeScreenBannersParam ? paramsWithTracking : legacyLargeScreenUpsellParams,
       };
 
+      const mobileCards = contentCardsWithoutExtras
+        ? [{}]
+        : [
+            {
+              extras: {
+                campaign: targetedByHighTierUpsell && "LNS_UPSELL_HIGH_TIER",
+              },
+            },
+          ];
+
       render(<LNUpsellBanner location={location} />, {
         overrideInitialState: state =>
           merge({}, state, {
@@ -261,13 +277,7 @@ describe("LNUpsellBanner", () => {
               },
             },
             dynamicContent: {
-              mobileCards: [
-                {
-                  extras: {
-                    campaign: targetedByHighTierUpsell && "LNS_UPSELL_HIGH_TIER",
-                  },
-                },
-              ],
+              mobileCards,
             },
             postOnboarding: {
               onboardingDate,

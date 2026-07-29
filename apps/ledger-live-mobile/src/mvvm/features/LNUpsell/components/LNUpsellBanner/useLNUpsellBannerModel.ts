@@ -8,7 +8,7 @@ import { useLNUpsellBannerState } from "../../hooks/useLNUpsellBannerState";
 const lnUpsellImageUri = Image.resolveAssetSource(require("~/images/lns-upsell-banner.webp")).uri;
 
 export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerModel {
-  const { isShown, ctaLink, discount, deviceModelId, tracking } = useLNUpsellBannerState(location);
+  const { isShown, ctaLink, deviceModelId, tracking } = useLNUpsellBannerState(location);
   const analyticsPage = AnalyticsPageMap[location];
   const deviceModel = deviceModelId
     ? toLargeScreenUpsellDeviceModelAnalyticsValue(deviceModelId)
@@ -29,7 +29,6 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
   return {
     location,
     isShown,
-    discount,
     tracking,
     handleCTAPress,
     imageUrl: lnUpsellImageUri,
