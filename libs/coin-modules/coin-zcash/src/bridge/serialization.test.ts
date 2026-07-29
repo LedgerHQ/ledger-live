@@ -68,6 +68,7 @@ describe("bridge/serialization", () => {
     raw.privateInfo = {
       orchardBalance: "5000",
       saplingBalance: "0",
+      ironwoodBalance: "0",
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -108,6 +109,7 @@ describe("bridge/serialization", () => {
       raw.privateInfo = {
         orchardBalance: "5000",
         saplingBalance: "0",
+        ironwoodBalance: "0",
         syncState: "complete",
         progress: 100,
         estimatedTimeRemaining: { hours: 0, minutes: 0 },

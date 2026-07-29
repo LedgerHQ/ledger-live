@@ -24,6 +24,7 @@ const infoWith = (privateInfo: Partial<ZcashAccount["privateInfo"]>, transparent
     privateInfo: {
       orchardBalance: new BigNumber(0),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: new BigNumber(0),
       syncState: "running" as const,
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -49,6 +50,32 @@ const incomingTx = (blockHeight: number, amount: number): ShieldedTransaction =>
       { amount: new BigNumber(amount), memo: "", transfer_type: "incoming", isSpent: false },
     ],
     sapling_outputs: [],
+  },
+});
+
+const ironwoodTx = (
+  blockHeight: number,
+  amount: number,
+  nullifier?: string,
+): ShieldedTransaction => ({
+  id: `tx-iw-${blockHeight}`,
+  hex: "00",
+  blockHeight,
+  blockHash: "hash",
+  timestamp: 1_700_000_000,
+  fee: new BigNumber(0),
+  decryptedData: {
+    orchard_outputs: [],
+    sapling_outputs: [],
+    ironwood_outputs: [
+      {
+        amount: new BigNumber(amount),
+        memo: "",
+        transfer_type: "incoming",
+        isSpent: false,
+        ...(nullifier && { nullifier }),
+      },
+    ],
   },
 });
 
@@ -131,6 +158,76 @@ describe("reduceShieldedSyncResult", () => {
       );
 
       expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(3_425_900);
+    });
+  });
+
+  describe("ironwood pool", () => {
+    it("computes the ironwood balance from the notes a chunk discovered", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, transactions: [ironwoodTx(3_425_869, 5_000_000)] },
+        infoWith({}),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(5_000_000));
+      expect(output.accountUpdate.balance).toEqual(new BigNumber(5_000_000));
+    });
+
+    // Each pool is counted once and only once: the balance is their sum, not the
+    // newest pool shadowing the others.
+    it("counts ironwood alongside orchard and the transparent UTXOs", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        {
+          ...emptyChunk,
+          transactions: [incomingTx(3_425_869, 2_000_000), ironwoodTx(3_425_870, 3_000_000)],
+        },
+        infoWith({}, 1_000_000),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(2_000_000));
+      expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(3_000_000));
+      expect(output.accountUpdate.balance).toEqual(new BigNumber(6_000_000));
+    });
+
+    // The engine reports the nullifiers it saw spent in a single list covering
+    // every pool, so an ironwood note has to be recognised in it like an orchard one.
+    it("marks an ironwood note spent when the engine reports its nullifier", () => {
+      const nullifier = "cc".repeat(32);
+      const stored = ironwoodTx(3_425_868, 2_000_000, nullifier);
+
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, spentKnownNullifiers: [nullifier] },
+        infoWith({ ironwoodBalance: new BigNumber(2_000_000), transactions: [stored] }),
+        "acc-1",
+      );
+
+      const notes =
+        output.accountUpdate.privateInfo?.transactions?.[0].decryptedData?.ironwood_outputs;
+      expect(notes?.[0].isSpent).toBe(true);
+      expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(0));
+      expect(output.accountUpdate.balance).toEqual(new BigNumber(0));
+    });
+
+    // The next sync gathers its knownNullifiers from the stored transactions, so a
+    // dropped ironwood note would make the engine miss that it was spent.
+    it("keeps the ironwood notes of a stored transaction, nullifier included", () => {
+      const nullifier = "dd".repeat(32);
+
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        { ...emptyChunk, transactions: [ironwoodTx(3_425_869, 1_000_000, nullifier)] },
+        infoWith({}),
+        "acc-1",
+      );
+
+      const notes =
+        output.accountUpdate.privateInfo?.transactions?.[0].decryptedData?.ironwood_outputs;
+      expect(notes).toHaveLength(1);
+      expect(notes?.[0].nullifier).toBe(nullifier);
     });
   });
 });

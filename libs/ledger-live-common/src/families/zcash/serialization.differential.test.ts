@@ -60,6 +60,7 @@ function syncedAccount(): Account {
     privateInfo: {
       orchardBalance: new BigNumber(5_000),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: new BigNumber(7_000),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -95,6 +96,20 @@ function syncedAccount(): Account {
               },
             ],
             sapling_outputs: [],
+            ironwood_outputs: [
+              {
+                amount: new BigNumber(7_000),
+                transfer_type: "incoming",
+                memo: "",
+                nullifier: "33".repeat(32),
+                rho: "44".repeat(32),
+                rseed: "55".repeat(32),
+                cmx: "66".repeat(32),
+                position: "43",
+                recipient: "77".repeat(43),
+                isSpent: false,
+              },
+            ],
           },
         },
       ],
@@ -156,5 +171,20 @@ describe("zcash account serialization, coin-bitcoin vs coin-zcash", () => {
     const bare = baseRaw();
 
     expect(readBy(zcash, bare)).toEqual(readBy(bitcoin, bare));
+  });
+
+  // Every account already on disk was written before the Ironwood pool existed,
+  // so both modules have to read that older shape -- and read it the same way,
+  // or the pool a rollback leaves behind is not the pool the rollout found.
+  it("reads an account persisted before Ironwood identically", () => {
+    const persisted = writtenBy(bitcoin) as AccountRaw & {
+      privateInfo: Record<string, unknown> & {
+        transactions: { decryptedData?: Record<string, unknown> }[];
+      };
+    };
+    delete persisted.privateInfo.ironwoodBalance;
+    delete persisted.privateInfo.transactions[0].decryptedData?.ironwood_outputs;
+
+    expect(readBy(zcash, persisted)).toEqual(readBy(bitcoin, persisted));
   });
 });

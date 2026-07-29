@@ -61,6 +61,9 @@ export function rehydrateTransaction(raw: ShieldedTransactionRaw): ShieldedTrans
       decryptedData: {
         orchard_outputs: raw.decryptedData.orchard_outputs.map(rehydrateOutput),
         sapling_outputs: raw.decryptedData.sapling_outputs.map(rehydrateOutput),
+        ...(raw.decryptedData.ironwood_outputs && {
+          ironwood_outputs: raw.decryptedData.ironwood_outputs.map(rehydrateOutput),
+        }),
       },
     }),
   };

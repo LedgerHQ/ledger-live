@@ -95,7 +95,9 @@ export type ZcashTransferType =
   | "transparent"
   | "transparent-to-shielded"
   | "shielded-to-transparent"
-  | "shielded";
+  | "shielded"
+  | "ironwood"
+  | "ironwood-to-transparent";
 
 export type Transaction = TransactionCommon & {
   family: "zcash";

@@ -40,6 +40,18 @@ export const buildSignOperation =
       };
 
       (async () => {
+        // Ironwood signing is not yet available — finalizeIronwoodTransaction has
+        // not shipped in @ledgerhq/zcash-utils. Fail before reaching the device so
+        // the UI surfaces a user-visible error rather than hanging during proving.
+        if (
+          transaction.transferType === "ironwood" ||
+          transaction.transferType === "ironwood-to-transparent"
+        ) {
+          throw new Error(
+            `Zcash ${transaction.transferType} signing is not yet supported — requires finalizeIronwoodTransaction`,
+          );
+        }
+
         const ufvk = account.privateInfo?.ufvk;
         if (!ufvk) throw new Error("Missing UFVK -- account not yet synced");
         if (!transaction.selectedNotes)

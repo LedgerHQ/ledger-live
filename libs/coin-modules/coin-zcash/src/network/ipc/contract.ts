@@ -35,6 +35,8 @@ import type {
   ShieldedSyncResultRaw,
   BuildTransactionArgs,
   BuildTransactionResult,
+  BuildIronwoodTransactionArgs,
+  BuildIronwoodTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
   BroadcastTransactionArgs,
@@ -70,6 +72,8 @@ export const ZCASH_IPC = {
   stream: "zcash:stream",
   /** invoke -> BuildTransactionResult */
   buildTransaction: "zcash:buildTransaction",
+  /** invoke -> BuildIronwoodTransactionResult */
+  buildIronwoodTransaction: "zcash:buildIronwoodTransaction",
   /** invoke -> FinalizeTransactionResult */
   finalizeTransaction: "zcash:finalizeTransaction",
   /** invoke -> string (txid) */
@@ -132,6 +136,7 @@ export type UtilityInboundMessage =
   | { type: "start-sync"; args: StartSyncArgs }
   | { type: "cancel-sync"; args: CancelSyncArgs }
   | { type: "build-transaction"; args: BuildTransactionArgs }
+  | { type: "build-ironwood-transaction"; args: BuildIronwoodTransactionArgs }
   | { type: "finalize-transaction"; args: FinalizeTransactionArgs }
   | { type: "broadcast-transaction"; args: BroadcastTransactionArgs }
   | { type: "transaction-details"; args: TransactionDetailsArgs };
@@ -144,6 +149,12 @@ export type UtilityOutboundMessage =
   | { type: "stream"; event: StreamEvent }
   | { type: "build-transaction-result"; requestId: RequestId; result: BuildTransactionResult }
   | { type: "build-transaction-error"; requestId: RequestId; message: string }
+  | {
+      type: "build-ironwood-transaction-result";
+      requestId: RequestId;
+      result: BuildIronwoodTransactionResult;
+    }
+  | { type: "build-ironwood-transaction-error"; requestId: RequestId; message: string }
   | { type: "finalize-transaction-result"; requestId: RequestId; result: FinalizeTransactionResult }
   | { type: "finalize-transaction-error"; requestId: RequestId; message: string }
   | { type: "broadcast-transaction-result"; requestId: RequestId; txid: string }

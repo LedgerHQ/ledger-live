@@ -36,7 +36,11 @@ import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "
 import { toWalletBtcCurrency } from "../network/walletBtcCurrency";
 import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
 import { explorerFee, spentOutpoints, txDate } from "../logic/history/transparentTx";
-import { computeBalanceFromNotes, convertShieldedTransactionsToOperations } from "./operations";
+import {
+  computeBalanceFromNotes,
+  computeIronwoodBalanceFromNotes,
+  convertShieldedTransactionsToOperations,
+} from "./operations";
 import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "../constants";
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
@@ -519,9 +523,10 @@ export const zcashSyncShielded = (
     }
     const { lastProcessedBlock, birthday, transactions } = acc.initialAccount?.privateInfo ?? {};
 
+    // The NAPI uses a unified knownNullifiers field for all pools.
     const knownNullifiers: string[] = [
-      ...new Set(
-        (transactions ?? []).flatMap(tx =>
+      ...new Set([
+        ...(transactions ?? []).flatMap(tx =>
           (tx.decryptedData?.orchard_outputs ?? [])
             .filter(
               n =>
@@ -531,7 +536,17 @@ export const zcashSyncShielded = (
             )
             .map(n => n.nullifier!),
         ),
-      ),
+        ...(transactions ?? []).flatMap(tx =>
+          (tx.decryptedData?.ironwood_outputs ?? [])
+            .filter(
+              n =>
+                n.isSpent !== true &&
+                n.nullifier !== undefined &&
+                (n.transfer_type === "incoming" || n.transfer_type === "internal"),
+            )
+            .map(n => n.nullifier!),
+        ),
+      ]),
     ];
 
     return from(getZCashClient(getZainoEndpoint())).pipe(
@@ -575,6 +590,33 @@ function advanceScanCursor(
   return Math.max(previous, fromChunk);
 }
 
+/**
+ * Return `tx` with its orchard/ironwood notes marked spent when their nullifier
+ * appears in `spentSet`. Returns the original reference untouched when nothing
+ * matches, preserving immutability of the accumulated state.
+ */
+function markSpentNotes(tx: ShieldedTransaction, spentSet: Set<string>): ShieldedTransaction {
+  const orchardOutputs = tx.decryptedData?.orchard_outputs;
+  const ironwoodOutputs = tx.decryptedData?.ironwood_outputs;
+  const orchardHit = orchardOutputs?.some(n => n.nullifier && spentSet.has(n.nullifier));
+  const ironwoodHit = ironwoodOutputs?.some(n => n.nullifier && spentSet.has(n.nullifier));
+  if (!orchardHit && !ironwoodHit) return tx;
+  return {
+    ...tx,
+    decryptedData: {
+      orchard_outputs: (orchardOutputs ?? []).map(n =>
+        n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+      ),
+      sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
+      ...(ironwoodOutputs && {
+        ironwood_outputs: ironwoodOutputs.map(n =>
+          n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+        ),
+      }),
+    },
+  };
+}
+
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
@@ -597,31 +639,26 @@ export function reduceShieldedSyncResult(
 
   if (newTransactions.length === 0) {
     const totalBlocks = result.processedBlocks + result.remainingBlocks;
+    // The NAPI uses a unified spentKnownNullifiers list for all pools.
     const spentNfs = result.spentKnownNullifiers ?? [];
     let updatedTransactions = existingPrivateInfo.transactions;
     if (spentNfs.length > 0) {
       const spentSet = new Set(spentNfs);
-      updatedTransactions = updatedTransactions.map(tx => {
-        const outputs = tx.decryptedData?.orchard_outputs;
-        if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) return tx;
-        return {
-          ...tx,
-          decryptedData: {
-            orchard_outputs: outputs.map(n =>
-              n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
-            ),
-            sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
-          },
-        };
-      });
+      updatedTransactions = updatedTransactions.map(tx => markSpentNotes(tx, spentSet));
     }
     const orchardBalance =
       spentNfs.length > 0
         ? computeBalanceFromNotes(updatedTransactions)
         : existingPrivateInfo.orchardBalance;
+    const ironwoodBalance =
+      spentNfs.length > 0
+        ? computeIronwoodBalanceFromNotes(updatedTransactions)
+        : existingPrivateInfo.ironwoodBalance;
+
     const balance = computeZcashBalance(transparentBalance, {
       orchardBalance,
       saplingBalance: existingPrivateInfo.saplingBalance,
+      ironwoodBalance,
     });
 
     return {
@@ -640,6 +677,7 @@ export function reduceShieldedSyncResult(
           lastSyncTimestamp: Date.now(),
           transactions: updatedTransactions,
           orchardBalance,
+          ironwoodBalance,
         },
       },
     };
@@ -656,32 +694,25 @@ export function reduceShieldedSyncResult(
     ...newTransactions,
   ];
 
+  // The NAPI uses a unified spentKnownNullifiers list for all pools.
   const spentNfs = result.spentKnownNullifiers ?? [];
   if (spentNfs.length > 0) {
     const spentSet = new Set(spentNfs);
+    // markSpentNotes returns the same reference when nothing matches.
     for (let i = 0; i < allShieldedTx.length; i++) {
-      const tx = allShieldedTx[i];
-      const outputs = tx.decryptedData?.orchard_outputs;
-      if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) continue;
-      allShieldedTx[i] = {
-        ...tx,
-        decryptedData: {
-          orchard_outputs: outputs.map(n =>
-            n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
-          ),
-          sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
-        },
-      };
+      allShieldedTx[i] = markSpentNotes(allShieldedTx[i], spentSet);
     }
   }
 
   const orchardBalance = computeBalanceFromNotes(allShieldedTx);
+  const ironwoodBalance = computeIronwoodBalanceFromNotes(allShieldedTx);
   const saplingBalance = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
 
   const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance,
     orchardBalance,
+    ironwoodBalance,
     syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
     progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
     estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
@@ -692,7 +723,11 @@ export function reduceShieldedSyncResult(
     transactions: allShieldedTx,
   };
 
-  const balance = computeZcashBalance(transparentBalance, { orchardBalance, saplingBalance });
+  const balance = computeZcashBalance(transparentBalance, {
+    orchardBalance,
+    saplingBalance,
+    ironwoodBalance,
+  });
 
   log(
     "zcash/reduceShieldedSyncResult",

@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, ZcashAccount } from "../types/bridge";
-import { collectSpendableNotes } from "./operations";
+import { collectIronwoodSpendableNotes, collectSpendableNotes } from "./operations";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
@@ -21,11 +21,21 @@ export const estimateMaxSpendable: AccountBridge<
   }
 
   const transferType = tx?.transferType ?? "transparent";
-  if (transferType !== "shielded" && transferType !== "shielded-to-transparent") {
+  // Max spendable from note-based pools (Orchard or Ironwood).
+  if (
+    transferType !== "shielded" &&
+    transferType !== "shielded-to-transparent" &&
+    transferType !== "ironwood" &&
+    transferType !== "ironwood-to-transparent"
+  ) {
     const utxoValues = (mainAccount.bitcoinResources?.utxos ?? []).map(utxo => utxo.value);
     return estimateMaxSpendableTransparent(utxoValues, "transparent");
   }
 
-  const notes = collectSpendableNotes(mainAccount.privateInfo?.transactions ?? []);
+  const transactions = mainAccount.privateInfo?.transactions ?? [];
+  const notes =
+    transferType === "ironwood" || transferType === "ironwood-to-transparent"
+      ? collectIronwoodSpendableNotes(transactions)
+      : collectSpendableNotes(transactions);
   return estimateMaxSpendableAmount(notes, transferType);
 };

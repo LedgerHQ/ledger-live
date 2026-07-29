@@ -98,6 +98,7 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
   return {
     saplingBalance: info.saplingBalance.toString(),
     orchardBalance: info.orchardBalance.toString(),
+    ironwoodBalance: info.ironwoodBalance.toString(),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState,
@@ -116,6 +117,9 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
       decryptedData: {
         orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
         sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
+        ...(decryptedData?.ironwood_outputs && {
+          ironwood_outputs: decryptedData.ironwood_outputs.map(mapDecryptedOutput),
+        }),
       },
     })),
   };
@@ -125,6 +129,8 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
   return {
     saplingBalance: new BigNumber(info.saplingBalance),
     orchardBalance: new BigNumber(info.orchardBalance),
+    // Guard accounts persisted before Ironwood support was added.
+    ironwoodBalance: new BigNumber(info.ironwoodBalance ?? "0"),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState as ZcashPrivateInfo["syncState"],
@@ -142,6 +148,9 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
       decryptedData: {
         orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
         sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
+        ...(decryptedData?.ironwood_outputs && {
+          ironwood_outputs: decryptedData.ironwood_outputs.map(rehydrateOutput),
+        }),
       },
     })),
   };

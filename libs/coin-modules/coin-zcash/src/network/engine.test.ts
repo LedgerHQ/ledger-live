@@ -13,6 +13,7 @@ const mockFindBlockHeight = jest.fn<Promise<number>, [string, number]>();
 const mockStartSync = jest.fn();
 const mockParsePczt = jest.fn();
 const mockBuildTransaction = jest.fn();
+const mockBuildIronwoodTransaction = jest.fn();
 const mockFinalizeTransaction = jest.fn();
 const mockBroadcastTransaction = jest.fn();
 
@@ -26,6 +27,7 @@ const mockNativeModule: Record<string, unknown> = {
   startSync: (...args: unknown[]) => mockStartSync(...(args as [unknown])),
   parsePczt: (...args: unknown[]) => mockParsePczt(...args),
   buildTransaction: (...args: unknown[]) => mockBuildTransaction(...args),
+  buildIronwoodTransaction: (...args: unknown[]) => mockBuildIronwoodTransaction(...args),
   finalizeTransaction: (...args: unknown[]) => mockFinalizeTransaction(...args),
   broadcastTransaction: (...args: unknown[]) => mockBroadcastTransaction(...args),
 };
@@ -82,11 +84,16 @@ import {
   findBlockHeightJob,
   startSyncJob,
   buildTransactionJob,
+  buildIronwoodTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
   type StartSyncJobArgs,
 } from "./engine";
-import type { BuildTransactionArgs, FinalizeTransactionArgs } from "./types";
+import type {
+  BuildTransactionArgs,
+  BuildIronwoodTransactionArgs,
+  FinalizeTransactionArgs,
+} from "./types";
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -202,7 +209,7 @@ describe("startSyncJob", () => {
         startHeight: 100,
         endHeight: 200,
         network: "main",
-        orchardOnly: true,
+        orchardOnly: false,
         maxRetries: 3,
       }),
     );
@@ -890,5 +897,138 @@ describe("getPcztModule guard (via jobs)", () => {
     } finally {
       mockNativeModule.finalizeTransaction = original;
     }
+  });
+});
+
+// ── mapNativeTx — Ironwood notes ───────────────────────────────────────
+
+describe("mapNativeTx (Ironwood notes via startSyncJob)", () => {
+  it("maps ironwoodNotes to ironwood_outputs in the raw transaction", async () => {
+    mockGetChainTip.mockResolvedValue(200);
+    const tx = makeNativeTx({
+      ironwoodNotes: [
+        {
+          amount: 700_000n,
+          memo: "iw-memo",
+          transferType: "incoming",
+          nullifier: "aa".repeat(32),
+          rho: "bb".repeat(32),
+          rseed: "cc".repeat(32),
+          cmx: "dd".repeat(32),
+          position: "99",
+        },
+      ],
+    });
+    const stream = makeMockStream([tx]);
+    mockStartSync.mockResolvedValue(stream);
+
+    const onChunk = jest.fn();
+    await startSyncJob(
+      {
+        grpcUrl: "https://grpc.example.com",
+        network: "main",
+        viewingKey: "vk",
+        startBlockHeight: 100,
+        maxBatchSize: 500,
+      },
+      onChunk,
+      { isCancelled: () => false },
+    );
+
+    const mapped = onChunk.mock.calls[0][0].transactions[0];
+    expect(mapped.decryptedData).toHaveProperty("ironwood_outputs");
+    expect(mapped.decryptedData.ironwood_outputs).toHaveLength(1);
+    const iwOut = mapped.decryptedData.ironwood_outputs[0];
+    expect(iwOut.amount).toBe("700000");
+    expect(iwOut.memo).toBe("iw-memo");
+    expect(iwOut.transfer_type).toBe("incoming");
+    expect(iwOut.nullifier).toBe("aa".repeat(32));
+  });
+
+  it("omits ironwood_outputs key when ironwoodNotes is absent or empty", async () => {
+    mockGetChainTip.mockResolvedValue(200);
+    // tx without ironwoodNotes at all
+    const txNoIw = makeNativeTx({ ironwoodNotes: undefined });
+    // tx with empty ironwoodNotes
+    const txEmptyIw = makeNativeTx({ txid: "tx-empty-iw", ironwoodNotes: [] });
+
+    const stream = makeMockStream([txNoIw, txEmptyIw]);
+    mockStartSync.mockResolvedValue(stream);
+
+    const onChunk = jest.fn();
+    await startSyncJob(
+      {
+        grpcUrl: "https://grpc.example.com",
+        network: "main",
+        viewingKey: "vk",
+        startBlockHeight: 100,
+        maxBatchSize: 500,
+      },
+      onChunk,
+      { isCancelled: () => false },
+    );
+
+    const txs = onChunk.mock.calls[0][0].transactions;
+    expect(txs[0].decryptedData).not.toHaveProperty("ironwood_outputs");
+    expect(txs[1].decryptedData).not.toHaveProperty("ironwood_outputs");
+  });
+});
+
+// ── buildIronwoodTransactionJob ────────────────────────────────────────
+
+describe("buildIronwoodTransactionJob", () => {
+  const nativeIwBuildResult = {
+    pcztHex: "cafebeef",
+    feeZat: "15000",
+    anchorHeight: 3_000_000,
+    nActionsIronwood: 2,
+    nTransparentInputs: 0,
+    nTransparentOutputs: 0,
+  };
+
+  const iwBuildArgs: Omit<BuildIronwoodTransactionArgs, "requestId"> = {
+    grpcUrl: "https://grpc.example.com",
+    ufvk: "uview1test",
+    seedFingerprint: "00".repeat(32),
+    accountIndex: 0,
+    feeZat: "15000",
+    spends: [],
+    transparentInputs: [],
+    outputs: [{ address: "u1recipient", valueZat: "50000" }],
+  };
+
+  it("calls native.buildIronwoodTransaction, parsePczt, and returns the adapted result", async () => {
+    mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPczt());
+
+    const result = await buildIronwoodTransactionJob(iwBuildArgs);
+
+    expect(mockBuildIronwoodTransaction).toHaveBeenCalledWith(iwBuildArgs);
+    expect(mockParsePczt).toHaveBeenCalledWith("cafebeef");
+
+    expect(result.pcztHex).toBe("cafebeef");
+    expect(result.feeZat).toBe("15000");
+    expect(result.anchorHeight).toBe(3_000_000);
+    expect(result.nActionsIronwood).toBe(2);
+    expect(result.nTransparentInputs).toBe(0);
+    expect(result.nTransparentOutputs).toBe(0);
+  });
+
+  it("normalises the PCZT result via adaptPcztForSigner (same path as buildTransactionJob)", async () => {
+    mockBuildIronwoodTransaction.mockResolvedValue(nativeIwBuildResult);
+    mockParsePczt.mockReturnValue(makeRawPczt());
+
+    const { pcztTransaction } = await buildIronwoodTransactionJob(iwBuildArgs);
+
+    // Verify that adaptPcztForSigner ran (BigNumber normalisation is its signature)
+    expect(pcztTransaction.transparentInputs[0].value).toBe(100000n);
+    expect(pcztTransaction.orchardBundle?.valueBalance).toBe(-20000n);
+  });
+
+  it("propagates errors from native.buildIronwoodTransaction", async () => {
+    mockBuildIronwoodTransaction.mockRejectedValue(new Error("proving failed (ironwood)"));
+    await expect(buildIronwoodTransactionJob(iwBuildArgs)).rejects.toThrow(
+      "proving failed (ironwood)",
+    );
   });
 });

@@ -22,6 +22,7 @@ import { getChainAdapter } from "@ledgerhq/coin-bitcoin/chain-adapters/registry"
 import { setZcashShieldedEnabled } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 import { getTransactionStatus } from "@ledgerhq/coin-zcash/bridge/getTransactionStatus";
 import { estimateMaxSpendable } from "@ledgerhq/coin-zcash/bridge/estimateMaxSpendable";
+import { prepareTransaction } from "@ledgerhq/coin-zcash/bridge/prepareTransaction";
 import { computeZcashBalance } from "@ledgerhq/coin-zcash/logic/account/balance";
 
 // Registers the adapter with the registry (see its index.ts).
@@ -58,8 +59,17 @@ const utxo = (value: number, index: number) => ({
   isChange: false,
 });
 
-function account({ utxos = [100_000, 25_000], notes = [40_000, 10_000] } = {}): Account {
+const sum = (notes: { amount: BigNumber }[]): BigNumber =>
+  notes.reduce((total, n) => total.plus(n.amount), new BigNumber(0));
+
+function account({
+  utxos = [100_000, 25_000],
+  notes = [40_000, 10_000],
+  ironwoodNotes = [30_000, 20_000],
+} = {}): Account {
   const shieldedNotes = notes.map(note);
+  // Offset the indices so the two pools never share a nullifier or a position.
+  const ironwood = ironwoodNotes.map((amount, i) => note(amount, i + 100));
 
   return {
     type: "Account",
@@ -67,8 +77,9 @@ function account({ utxos = [100_000, 25_000], notes = [40_000, 10_000] } = {}): 
     currency,
     bitcoinResources: { utxos: utxos.map(utxo) },
     privateInfo: {
-      orchardBalance: shieldedNotes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0)),
+      orchardBalance: sum(shieldedNotes),
       saplingBalance: new BigNumber(0),
+      ironwoodBalance: sum(ironwood),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -84,7 +95,11 @@ function account({ utxos = [100_000, 25_000], notes = [40_000, 10_000] } = {}): 
           blockHash: "cc".repeat(32),
           timestamp: 1_700_000_000,
           fee: new BigNumber(15_000),
-          decryptedData: { orchard_outputs: shieldedNotes, sapling_outputs: [] },
+          decryptedData: {
+            orchard_outputs: shieldedNotes,
+            sapling_outputs: [],
+            ironwood_outputs: ironwood,
+          },
         },
       ],
     },
@@ -128,6 +143,7 @@ describe("zcash balance, coin-bitcoin adapter vs coin-zcash", () => {
   it.each([
     ["a fully synced account", account()],
     ["an account with no shielded state", { ...account(), privateInfo: undefined } as Account],
+    ["an account holding only Ironwood notes", account({ notes: [] })],
   ])("agrees on the total balance of %s", (_label, acc) => {
     const transparent = new BigNumber(125_000);
 
@@ -175,6 +191,29 @@ describe("zcash transaction status, coin-bitcoin adapter vs coin-zcash", () => {
       "no note selected for a shielded send",
       { transferType: "shielded", recipient: U_ADDRESS, selectedNotes: [] },
     ],
+    [
+      "an ironwood send",
+      { transferType: "ironwood", recipient: U_ADDRESS, selectedNotes: [note(30_000, 100)] },
+    ],
+    [
+      "an ironwood unshielding send",
+      {
+        transferType: "ironwood-to-transparent",
+        recipient: T_ADDRESS,
+        selectedNotes: [note(30_000, 100)],
+      },
+    ],
+    // The amount is validated against the pool being spent, so an ironwood send
+    // must not be allowed to draw on the orchard balance.
+    [
+      "an ironwood amount the ironwood pool alone cannot cover",
+      {
+        transferType: "ironwood",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(60_000),
+        selectedNotes: [note(30_000, 100), note(20_000, 101)],
+      },
+    ],
   ];
 
   it.each(cases)("agrees on %s", async (_label, overrides) => {
@@ -196,12 +235,47 @@ describe("zcash transaction status, coin-bitcoin adapter vs coin-zcash", () => {
   });
 });
 
+// What prepare resolves -- which notes are spent, the ZIP-317 fee, the change --
+// is what the user signs and what the fee shown in the send modal comes from.
+describe("zcash prepared transaction, coin-bitcoin adapter vs coin-zcash", () => {
+  it.each([
+    ["a transparent send", { transferType: "transparent" }],
+    ["a shielding send", { transferType: "transparent-to-shielded", recipient: U_ADDRESS }],
+    ["a shielded send", { transferType: "shielded", recipient: U_ADDRESS }],
+    ["an unshielding send", { transferType: "shielded-to-transparent" }],
+    ["an ironwood send", { transferType: "ironwood", recipient: U_ADDRESS }],
+    ["an ironwood unshielding send", { transferType: "ironwood-to-transparent" }],
+    [
+      "a send of everything",
+      { transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true },
+    ],
+    [
+      "an ironwood send of everything",
+      { transferType: "ironwood", recipient: U_ADDRESS, useAllAmount: true },
+    ],
+    [
+      "more than the account holds",
+      { transferType: "shielded", amount: new BigNumber(10_000_000) },
+    ],
+    ["more ironwood than the pool holds", { transferType: "ironwood", amount: new BigNumber(1e7) }],
+  ])("agrees on the fee, change and spent notes for %s", async (_label, overrides) => {
+    const acc = account();
+    const tx = transaction(overrides);
+
+    expect(await prepareTransaction(acc as never, tx)).toEqual(
+      await adapter.prepareTransaction?.(acc, tx),
+    );
+  });
+});
+
 describe("zcash max spendable, coin-bitcoin adapter vs coin-zcash", () => {
   it.each([
     ["a transparent send", { transferType: "transparent" }],
     ["a shielding send", { transferType: "transparent-to-shielded" }],
     ["a shielded send", { transferType: "shielded" }],
     ["an unshielding send", { transferType: "shielded-to-transparent" }],
+    ["an ironwood send", { transferType: "ironwood" }],
+    ["an ironwood unshielding send", { transferType: "ironwood-to-transparent" }],
   ])("agrees on the maximum spendable for %s", async (_label, overrides) => {
     const acc = account();
     const tx = transaction(overrides);

@@ -79,6 +79,7 @@ export const ZCASH_CHECK_OUTDATED_SYNC_INTERVAL = 5_000; // 5 seconds
 export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   orchardBalance: new BigNumber(0),
   saplingBalance: new BigNumber(0),
+  ironwoodBalance: new BigNumber(0),
   ufvk: null,
   syncState: "disabled",
   progress: 0,

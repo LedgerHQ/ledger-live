@@ -67,14 +67,19 @@ export const getTransactionStatus: AccountBridge<
     };
   }
 
-  const orchardBalance = privateInfo.orchardBalance;
+  // Validate against the pool balance that will be spent.
+  const poolBalance =
+    transaction.transferType === "ironwood" ||
+    transaction.transferType === "ironwood-to-transparent"
+      ? privateInfo.ironwoodBalance
+      : privateInfo.orchardBalance;
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 
   const recipientError = computeRecipientError(transaction.recipient, account.currency.name);
   if (recipientError) errors.recipient = recipientError;
 
-  const amountError = computeAmountError(transaction, totalSpent, orchardBalance);
+  const amountError = computeAmountError(transaction, totalSpent, poolBalance);
   if (amountError) errors.amount = amountError;
 
   return { errors, warnings, estimatedFees: fee, amount: transaction.amount, totalSpent };

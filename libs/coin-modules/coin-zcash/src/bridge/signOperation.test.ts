@@ -105,6 +105,7 @@ function makeAccount(overrides: Partial<ZcashAccount> = {}): ZcashAccount {
     privateInfo: {
       saplingBalance: new BigNumber(0),
       orchardBalance: new BigNumber(1_000_000),
+      ironwoodBalance: new BigNumber(0),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },

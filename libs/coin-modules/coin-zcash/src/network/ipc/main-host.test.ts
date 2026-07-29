@@ -170,6 +170,7 @@ describe("setupZcashNativeHost", () => {
         ZCASH_IPC.finalizeTransaction,
         ZCASH_IPC.broadcastTransaction,
         ZCASH_IPC.transactionDetails,
+        ZCASH_IPC.buildIronwoodTransaction,
       ].sort(),
     );
     expect(typeof mockRegistry.beforeQuit).toBe("function");
