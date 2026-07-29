@@ -19,8 +19,7 @@ import {
 } from "../../constants";
 import { buildAssetsPagePath } from "../../utils/buildAssetsPagePath";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { AssetTableItem } from "../../types";
@@ -81,14 +80,18 @@ const onboardedStateWithAccounts = {
   accounts: [genAccount("acc-1", { currency: getCryptoCurrencyById("bitcoin") })],
 };
 
+const MAKE_ITEMS_CURRENCIES = [
+  "bitcoin",
+  "ethereum",
+  "solana",
+  "cardano",
+  "polkadot",
+  "ripple",
+  "tron",
+].map(getCryptoCurrencyById);
+
 function makeItems(count: number): CategorizedAssetItem[] {
-  return Array.from({ length: count }, (_, i) => ({
-    ...BITCOIN_ASSET,
-    currency: {
-      ...BITCOIN_ASSET.currency,
-      id: CryptoCurrencyIdSchema.parse(`crypto-${i}`),
-    } as CryptoCurrency,
-  }));
+  return MAKE_ITEMS_CURRENCIES.slice(0, count).map(currency => ({ ...BITCOIN_ASSET, currency }));
 }
 
 function makeStablecoinItems(count: number): CategorizedAssetItem[] {
@@ -141,57 +144,57 @@ function buildMockAssetsData(
 function item(id: string, placeholder = false): AssetTableItem {
   return {
     ...BITCOIN_ASSET,
-    currency: { ...BITCOIN_ASSET.currency, id: CryptoCurrencyIdSchema.parse(id) } as CryptoCurrency,
+    currency: getCryptoCurrencyById(id),
     isPlaceholder: placeholder,
   };
 }
 
 describe("padItems", () => {
   it("should return realItems when count already meets target", () => {
-    const real = [item("a"), item("b"), item("c")];
-    expect(padItems(real, [item("d", true)], 3)).toBe(real);
+    const real = [item("bitcoin"), item("ethereum"), item("solana")];
+    expect(padItems(real, [item("cardano", true)], 3)).toBe(real);
   });
 
   it("should return realItems when count exceeds target", () => {
-    const real = [item("a"), item("b"), item("c"), item("d")];
-    expect(padItems(real, [item("e", true)], 3)).toBe(real);
+    const real = [item("bitcoin"), item("ethereum"), item("solana"), item("cardano")];
+    expect(padItems(real, [item("polkadot", true)], 3)).toBe(real);
   });
 
   it("should pad with defaults up to targetCount", () => {
-    const real = [item("a")];
-    const defaults = [item("b", true), item("c", true), item("d", true)];
+    const real = [item("bitcoin")];
+    const defaults = [item("ethereum", true), item("solana", true), item("cardano", true)];
     const result = padItems(real, defaults, 3);
 
     expect(result).toHaveLength(3);
-    expect(result[0].currency.id).toBe("a");
-    expect(result[1].currency.id).toBe("b");
-    expect(result[2].currency.id).toBe("c");
+    expect(result[0].currency.id).toBe("bitcoin");
+    expect(result[1].currency.id).toBe("ethereum");
+    expect(result[2].currency.id).toBe("solana");
   });
 
   it("should fill entirely from defaults when realItems is empty", () => {
-    const defaults = [item("x", true), item("y", true), item("z", true)];
+    const defaults = [item("ripple", true), item("tron", true), item("litecoin", true)];
     const result = padItems([], defaults, 3);
 
     expect(result).toHaveLength(3);
-    expect(result.map(i => i.currency.id)).toEqual(["x", "y", "z"]);
+    expect(result.map(i => i.currency.id)).toEqual(["ripple", "tron", "litecoin"]);
   });
 
   it("should skip defaults whose currency.id already exists in realItems", () => {
-    const real = [item("a")];
-    const defaults = [item("a", true), item("b", true), item("c", true)];
+    const real = [item("bitcoin")];
+    const defaults = [item("bitcoin", true), item("ethereum", true), item("solana", true)];
     const result = padItems(real, defaults, 3);
 
     expect(result).toHaveLength(3);
-    expect(result.map(i => i.currency.id)).toEqual(["a", "b", "c"]);
+    expect(result.map(i => i.currency.id)).toEqual(["bitcoin", "ethereum", "solana"]);
   });
 
   it("should return fewer items when defaults are exhausted before targetCount", () => {
-    const real = [item("a")];
-    const defaults = [item("b", true)];
+    const real = [item("bitcoin")];
+    const defaults = [item("ethereum", true)];
     const result = padItems(real, defaults, 5);
 
     expect(result).toHaveLength(2);
-    expect(result.map(i => i.currency.id)).toEqual(["a", "b"]);
+    expect(result.map(i => i.currency.id)).toEqual(["bitcoin", "ethereum"]);
   });
 
   it("should return empty array when both inputs are empty", () => {
@@ -349,11 +352,7 @@ describe("useAssetsViewModel", () => {
   it("should use encodeURIComponent on currency.id when marketId is missing on a placeholder", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
-      ...BITCOIN_ASSET,
-      currency: {
-        ...BITCOIN_ASSET.currency,
-        id: CryptoCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
-      } as CryptoCurrency,
+      ...STABLECOIN_ASSET,
       isPlaceholder: true,
     };
 
@@ -362,18 +361,14 @@ describe("useAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent("ethereum/erc20/usd_tether__erc20_")}`,
+      `/market/${encodeURIComponent(STABLECOIN_ASSET.currency.id)}`,
     );
   });
 
   it("should navigate to /market with marketId for token placeholder items instead of currency.id", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
-      ...BITCOIN_ASSET,
-      currency: {
-        ...BITCOIN_ASSET.currency,
-        id: CryptoCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
-      } as CryptoCurrency,
+      ...STABLECOIN_ASSET,
       isPlaceholder: true,
       marketId: "tether",
     };
