@@ -1,20 +1,29 @@
 import React from "react";
 import { View } from "react-native";
 import { getProductName } from "@ledgerhq/devices";
-import { Spinner } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { InfoState } from "LLM/components/InfoState";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { SignTransactionIntentJobState } from "@ledgerhq/live-common/intents/signTransactionIntent";
 import { useTranslation } from "~/context/Locale";
+import { TermsAndConditionsFooter } from "./TermsAndConditionsFooter";
+
+/** Props forwarded from the drawer container so the confirmation step can show provider terms. */
+export type SignTransactionIntentComponentExtraProps = {
+  manifestId: string;
+  manifestName?: string;
+  recipient?: string;
+};
 
 type SignTransactionIntentComponentProps = Readonly<{
   jobState: SignTransactionIntentJobState | undefined;
-  extraProps: undefined;
+  extraProps: SignTransactionIntentComponentExtraProps;
   onClose: () => void;
 }>;
 
 export function SignTransactionIntentComponent({
   jobState,
+  extraProps,
   onClose,
 }: SignTransactionIntentComponentProps) {
   const { t } = useTranslation();
@@ -27,15 +36,22 @@ export function SignTransactionIntentComponent({
     case "pending":
     case "device-signature-requested":
       return (
-        <DeviceActionContent
-          action="continue"
-          description={t("walletApiSignTransaction.sign.description")}
-          deviceModelId={jobState.deviceModelId}
-          testID="wallet-api-signature-prompt"
-          title={t("walletApiSignTransaction.sign.title", {
-            productName: getProductName(jobState.deviceModelId),
-          })}
-        />
+        <Box lx={{ width: "full", alignItems: "center", gap: "s24" }}>
+          <DeviceActionContent
+            action="continue"
+            description={t("walletApiSignTransaction.sign.description")}
+            deviceModelId={jobState.deviceModelId}
+            testID="wallet-api-signature-prompt"
+            title={t("walletApiSignTransaction.sign.title", {
+              productName: getProductName(jobState.deviceModelId),
+            })}
+          />
+          <TermsAndConditionsFooter
+            manifestId={extraProps.manifestId}
+            manifestName={extraProps.manifestName}
+            recipient={extraProps.recipient}
+          />
+        </Box>
       );
     case "device-streaming":
     case "device-signature-granted":

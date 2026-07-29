@@ -303,7 +303,10 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
+  // Uniswap Universal Router (Ethereum mainnet): v1.2, v2.0 and v2.1.1 respectively.
   "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
+  "0x66a9893cc07d91d95644aedd05d03f95e1dba8af": "Uniswap",
+  "0x4c82d1fbfe28c977cbb58d8c7ff8fcf9f70a2cca": "Uniswap",
   "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
   "0x6a000f20005980200259b80c5102003040001068": "velora",
 };

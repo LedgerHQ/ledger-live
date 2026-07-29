@@ -13,6 +13,7 @@ type ExecutorProps = {
   sourceFlow: string;
   analyticsProperties?: Record<string, unknown>;
   intent: unknown;
+  intentComponentExtraProps?: Record<string, unknown>;
   onIntentJobStateChanged: (state: { type: string; [key: string]: unknown }) => void;
   onUserCancel: () => void;
 };
@@ -74,10 +75,14 @@ describe("WalletApiSignature feature", () => {
   it("mounts the executor for a transaction request and resolves the promise on signed", async () => {
     const onSuccess = jest.fn();
     const onClose = jest.fn();
+    const transaction = {
+      family: "ethereum",
+      recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+    };
     const request = {
       account,
       parentAccount: undefined,
-      transaction: { family: "ethereum" },
+      transaction,
       appName: undefined,
       dependencies: undefined,
       manifestId: "swap-live-app",
@@ -96,7 +101,13 @@ describe("WalletApiSignature feature", () => {
       manifestId: "swap-live-app",
       manifestName: "Swap",
     });
-    expect(mockPrepareTransaction).toHaveBeenCalledWith(account, { family: "ethereum" });
+    // The provider terms footer relies on manifest + recipient being forwarded to the component.
+    expect(mockExecutorProps?.intentComponentExtraProps).toEqual({
+      manifestId: "swap-live-app",
+      manifestName: "Swap",
+      recipient: "0x111111125421ca6dc452d289314280a0f8842a65",
+    });
+    expect(mockPrepareTransaction).toHaveBeenCalledWith(account, transaction);
 
     const signedOperation = { operation: { id: "op-1" } };
     act(() => mockExecutorProps!.onIntentJobStateChanged({ type: "signed", signedOperation }));

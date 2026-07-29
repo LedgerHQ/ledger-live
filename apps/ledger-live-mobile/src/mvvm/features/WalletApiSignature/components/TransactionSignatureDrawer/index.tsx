@@ -34,6 +34,15 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
     [request.manifestId, request.manifestName],
   );
 
+  const intentComponentExtraProps = useMemo(
+    () => ({
+      manifestId: request.manifestId,
+      manifestName: request.manifestName,
+      recipient: request.transaction.recipient,
+    }),
+    [request.manifestId, request.manifestName, request.transaction.recipient],
+  );
+
   if (!deviceInitializationInput || !signatureIntent) {
     return null;
   }
@@ -51,7 +60,7 @@ function TransactionSignatureDrawer({ request, onClose }: Props) {
         deviceConnectionParams={deviceConnectionParams}
         deviceInitializationInput={deviceInitializationInput}
         intent={signatureIntent}
-        intentComponentExtraProps={undefined}
+        intentComponentExtraProps={intentComponentExtraProps}
         onExecutorStateChanged={noop}
         onIntentJobStateChanged={onIntentJobStateChanged}
         onIntentJobComplete={noop}
