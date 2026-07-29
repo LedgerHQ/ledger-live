@@ -5,9 +5,9 @@ import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/native-ui";
 import { BottomSheetBackgroundContext } from "LLM/contexts/BottomSheetBackgroundContext";
-import useQueuedDrawerBottomSheet from "./useQueuedDrawerBottomSheet";
+import useQueuedBottomSheet from "./useQueuedBottomSheet";
 
-export type QueuedDrawerBottomSheetProps = {
+export type QueuedBottomSheetProps = {
   /** Whether this drawer is requesting to be opened (queued). */
   isRequestingToBeOpened?: boolean;
   /** Whether this drawer should force-open (clears queue). */
@@ -55,7 +55,7 @@ export type QueuedDrawerBottomSheetProps = {
   children: React.ReactNode;
 };
 
-const QueuedDrawerBottomSheet = ({
+const QueuedBottomSheet = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
@@ -75,7 +75,7 @@ const QueuedDrawerBottomSheet = ({
   enableHandlePanningGesture,
   maxDynamicContentSize,
   testID,
-}: QueuedDrawerBottomSheetProps) => {
+}: QueuedBottomSheetProps) => {
   const {
     bottomSheetRef,
     areDrawersLocked,
@@ -87,7 +87,7 @@ const QueuedDrawerBottomSheet = ({
     enablePanDownToClose: computedEnablePanDownToClose,
     backgroundContextValue,
     backgroundComponent,
-  } = useQueuedDrawerBottomSheet({
+  } = useQueuedBottomSheet({
     isRequestingToBeOpened,
     isForcingToBeOpened,
     onClose,
@@ -131,4 +131,4 @@ const OnscreenNavigationSafeArea = () => {
   return <Box height={Platform.OS === "android" ? insets.bottom : 0} />;
 };
 
-export default React.memo(QueuedDrawerBottomSheet);
+export default React.memo(QueuedBottomSheet);

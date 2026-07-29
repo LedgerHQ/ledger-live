@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { BottomSheetFlatList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import CryptoAddressesListItem from "LLM/features/CryptoAddresses/screens/CryptoAddressesScreen/components/CryptoAddressesListItem";
 import useCryptoAddressesViewModel from "LLM/features/CryptoAddresses/screens/CryptoAddressesScreen/useCryptoAddressesViewModel";
 import { ScreenName } from "~/const";
@@ -54,7 +54,7 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
   const headerTitle = useMemo(() => t("assetDetail.addresses.title"), [t]);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={ASSET_DETAIL_TEST_IDS.allAddressesDrawer}
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
@@ -68,7 +68,7 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

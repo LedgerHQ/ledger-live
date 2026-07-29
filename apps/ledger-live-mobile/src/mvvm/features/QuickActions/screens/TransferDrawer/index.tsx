@@ -1,6 +1,6 @@
 import React from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { TransferDrawerView } from "./TransferDrawerView";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
 
@@ -23,8 +23,8 @@ export const TransferDrawer = ({ currency, ledgerIds }: Props = {}) => {
     ledgerIds,
   });
   return (
-    <QueuedDrawerBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
+    <QueuedBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
       <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 };

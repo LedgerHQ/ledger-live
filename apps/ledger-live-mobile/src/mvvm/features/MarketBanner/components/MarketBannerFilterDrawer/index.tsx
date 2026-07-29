@@ -11,7 +11,7 @@ import {
   OptionListItemText,
 } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import type { MarketBannerRanking } from "~/reducers/types";
 import { MARKET_BANNER_TEST_IDS } from "../../constants";
 import type { MarketBannerFilterController } from "../../hooks/useMarketBannerFilter";
@@ -36,7 +36,7 @@ export function MarketBannerFilterDrawer({ controller }: MarketBannerFilterDrawe
   );
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={MARKET_BANNER_TEST_IDS.filterDrawer}
       isRequestingToBeOpened={controller.isOpen}
       enableDynamicSizing
@@ -70,6 +70,6 @@ export function MarketBannerFilterDrawer({ controller }: MarketBannerFilterDrawe
           />
         </OptionList>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

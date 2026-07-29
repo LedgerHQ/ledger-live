@@ -2,7 +2,7 @@ import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { StyleSheet } from "react-native";
 import { FeatureIntroLayout } from "LLM/components/FeatureIntroLayout";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
 import { CarouselLayout } from "./CarouselLayout";
 import { PromptLayout } from "./PromptLayout";
@@ -42,7 +42,7 @@ export function GenericAwarenessModalDrawerView({
     data.layout === GenericAwarenessModalLayout.Prompt;
 
   const renderContent = () => {
-    // QueuedDrawerBottomSheet renders children even when closed
+    // QueuedBottomSheet renders children even when closed
     if (!isOpen) return null;
 
     if (data.layout === GenericAwarenessModalLayout.Carousel && carouselViewModel) {
@@ -61,7 +61,7 @@ export function GenericAwarenessModalDrawerView({
   };
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       key={data.id} // force show the bottom sheet when the user retriggers the generic awareness modal
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
@@ -79,7 +79,7 @@ export function GenericAwarenessModalDrawerView({
         <BottomSheetHeader />
         {renderContent()}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

@@ -4,7 +4,7 @@ import {
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import React from "react";
 import { Platform, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -89,7 +89,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   );
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={wrappedProps.enabled}
       onClose={wrappedProps.onUserCancel}
       onHeaderClosePressed={onHeaderClosePressed}
@@ -113,6 +113,6 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
           </BottomSheetScrollView>
         </DeviceIntentExecutorHeaderContext.Provider>
       </DeviceIntentTrackingProvider>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

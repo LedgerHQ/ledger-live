@@ -10,7 +10,7 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { getProductName } from "LLM/utils/getProductName";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceAction from "~/components/DeviceAction";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { PartialNullable } from "~/types/helpers";
 import type { PerpsSignViewModel } from "./usePerpsSignViewModel";
 
@@ -105,7 +105,7 @@ export function PerpsSignView({
           autoSelectLastConnectedDevice
         />
       </Box>
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={drawerOpen}
         onClose={handleDrawerClose}
         onModalHide={handleDrawerHidden}
@@ -129,7 +129,7 @@ export function PerpsSignView({
           )}
           {selectedDevice && <SyncSkipUnderPriority priority={100} />}
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </SafeAreaView>
   );
 }

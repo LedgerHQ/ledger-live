@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { renderHook, act } from "@tests/test-renderer";
-import useQueuedDrawerBottomSheet from "../useQueuedDrawerBottomSheet";
+import useQueuedBottomSheet from "../useQueuedBottomSheet";
 
 const mockPresent = jest.fn();
 const mockDismiss = jest.fn();
@@ -47,7 +47,7 @@ function setupDrawerStateCapture() {
   };
 }
 
-describe("useQueuedDrawerBottomSheet", () => {
+describe("useQueuedBottomSheet", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -56,7 +56,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -72,7 +72,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -88,7 +88,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -109,7 +109,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -126,7 +126,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onModalHide,
       }),
@@ -145,7 +145,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -158,7 +158,7 @@ describe("useQueuedDrawerBottomSheet", () => {
 
   it("does not call dismiss() if already closed", () => {
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: false,
       }),
     );
@@ -170,7 +170,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -192,7 +192,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -217,9 +217,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
     let isRequestingToBeOpened = true;
 
-    const { result, rerender } = renderHook(() =>
-      useQueuedDrawerBottomSheet({ isRequestingToBeOpened }),
-    );
+    const { result, rerender } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened }));
 
     signal(true);
     expect(mockPresent).toHaveBeenCalledTimes(1);
@@ -242,7 +240,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -257,7 +255,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { unmount } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -274,7 +272,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -291,7 +289,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -315,7 +313,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -337,7 +335,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     let onModalHide = jest.fn();
 
     const { result, rerender } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onModalHide,
       }),
@@ -359,7 +357,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     let onModalHide = firstOnModalHide;
 
     const { result, rerender } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onModalHide,
       }),
@@ -382,7 +380,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -410,7 +408,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
         onHeaderClosePressed,
@@ -440,7 +438,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
         onClose,
       }),
@@ -460,7 +458,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
 
     const { result } = renderHook(() =>
-      useQueuedDrawerBottomSheet({
+      useQueuedBottomSheet({
         isRequestingToBeOpened: true,
       }),
     );
@@ -492,7 +490,7 @@ describe("useQueuedDrawerBottomSheet", () => {
 
     const { result } = renderHook(() => {
       const [isOpen, setIsOpen] = useState(true);
-      return useQueuedDrawerBottomSheet({
+      return useQueuedBottomSheet({
         isRequestingToBeOpened: isOpen,
         onClose: () => setIsOpen(false),
       });
@@ -517,9 +515,7 @@ describe("useQueuedDrawerBottomSheet", () => {
     const { signal } = setupDrawerStateCapture();
     let isRequestingToBeOpened = true;
 
-    const { result, rerender } = renderHook(() =>
-      useQueuedDrawerBottomSheet({ isRequestingToBeOpened }),
-    );
+    const { result, rerender } = renderHook(() => useQueuedBottomSheet({ isRequestingToBeOpened }));
 
     signal(true);
     expect(mockAddDrawerToQueue).toHaveBeenCalledTimes(1);

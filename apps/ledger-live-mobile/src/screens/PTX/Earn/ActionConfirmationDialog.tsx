@@ -10,7 +10,7 @@ import {
 import { useSelector } from "~/context/hooks";
 import { earnActionDialogSelector } from "~/reducers/earn";
 import { resolveActionDialog } from "~/components/WebPTXPlayer/actionDialogStore";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 const SPOT_APPEARANCE = {
   info: "info",
@@ -58,15 +58,11 @@ export function ActionConfirmationDialog() {
 
   if (!dialog) {
     return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={false}
-        onClose={handleClose}
-        enableDynamicSizing
-      >
+      <QueuedBottomSheet isRequestingToBeOpened={false} onClose={handleClose} enableDynamicSizing>
         <BottomSheetView>
           <BottomSheetHeader />
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     );
   }
 
@@ -74,7 +70,7 @@ export function ActionConfirmationDialog() {
   const spotAppearance = SPOT_APPEARANCE[icon ?? "info"] ?? "info";
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={handleClose}
       enableDynamicSizing
@@ -98,6 +94,6 @@ export function ActionConfirmationDialog() {
           </Box>
         </Box>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
