@@ -50,7 +50,7 @@ import { useTheme } from "styled-components/native";
 import { getEnv } from "@ledgerhq/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
+import { LNUpsellBanner } from "LLM/features/LNUpsell";
 
 type Props = {
   state: State;
@@ -232,7 +232,7 @@ const AppsScreen = ({
           {!showAppUpdate && !showFwUpdateBanner ? (
             <Flex m={6} mb={0}>
               <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
-              <LNSUpsellBanner location="manager" />
+              <LNUpsellBanner location="manager" />
             </Flex>
           ) : null}
         </DeviceCard>

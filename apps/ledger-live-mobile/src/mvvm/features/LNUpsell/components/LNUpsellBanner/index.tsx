@@ -3,15 +3,15 @@ import { Box, NewBannerCard } from "@ledgerhq/native-ui";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useTranslation } from "~/context/Locale";
 import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import { LNSUpsellMediaBanner } from "./LNSUpsellMediaBanner";
-import { useLNSUpsellBannerModel } from "./useLNSUpsellBannerModel";
-import type { LNSBannerLocation, LNSBannerModel } from "../../types";
+import { LNUpsellMediaBanner } from "./LNUpsellMediaBanner";
+import { useLNUpsellBannerModel } from "./useLNUpsellBannerModel";
+import type { LNBannerLocation, LNBannerModel } from "../../types";
 
-type Props = BaseStyledProps & Readonly<{ location: LNSBannerLocation }>;
+type Props = BaseStyledProps & Readonly<{ location: LNBannerLocation }>;
 
-export function LNSUpsellBanner({ location, ...styledProps }: Props) {
+export function LNUpsellBanner({ location, ...styledProps }: Props) {
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
-  const model = useLNSUpsellBannerModel(location);
+  const model = useLNUpsellBannerModel(location);
   return (
     <View {...styledProps} {...model} shouldUseLumenMediaBanner={shouldDisplayBrazePlacement} />
   );
@@ -26,7 +26,7 @@ function View({
   shouldUseLumenMediaBanner,
   ...styledProps
 }: BaseStyledProps &
-  LNSBannerModel & {
+  LNBannerModel & {
     shouldUseLumenMediaBanner: boolean;
   }) {
   const { t } = useTranslation();
@@ -40,7 +40,7 @@ function View({
   if (shouldUseLumenMediaBanner) {
     return (
       <Box {...styledProps}>
-        <LNSUpsellMediaBanner
+        <LNUpsellMediaBanner
           title={title}
           description={description}
           imageUrl={imageUrl}

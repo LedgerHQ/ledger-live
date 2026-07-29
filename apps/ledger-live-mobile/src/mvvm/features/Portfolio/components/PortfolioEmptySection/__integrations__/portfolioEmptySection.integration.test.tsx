@@ -63,7 +63,7 @@ describe("PortfolioEmptySection", () => {
 
   describe("when user has no accounts (NoAccountsContent)", () => {
     it("should render an add account button", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -71,7 +71,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render quick actions CTAs", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -80,7 +80,7 @@ describe("PortfolioEmptySection", () => {
 
     it("should open the add account drawer when pressing the add button", async () => {
       const { user } = renderWithReactQuery(
-        <PortfolioEmptySection isLNSUpsellBannerShown={false} />,
+        <PortfolioEmptySection isLNUpsellBannerShown={false} />,
         {
           overrideInitialState: emptyAccountState,
         },
@@ -93,7 +93,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should not display the cryptos section", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: emptyAccountState,
       });
 
@@ -101,7 +101,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render portfolio banners section", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: overrideInitialStateWithOnboardingWidgetVisible,
       });
 
@@ -111,7 +111,7 @@ describe("PortfolioEmptySection", () => {
 
   describe("when user has accounts (NoSignerContent)", () => {
     it("should render the cryptos section with assets", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -119,7 +119,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render the read-only coins fallback when assetSection flag is off", async () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: overrideInitialStateWithAssetSection(false),
       });
 
@@ -127,7 +127,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should render quick actions CTAs", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      render(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -135,7 +135,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should not display the add account button", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      render(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: createAccountState,
       });
 
@@ -143,7 +143,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should display the portfolio banners section", () => {
-      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNUpsellBannerShown={false} />, {
         overrideInitialState: state =>
           overrideInitialStateWithOnboardingWidgetVisible(createAccountState(state)),
       });

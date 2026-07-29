@@ -4,20 +4,17 @@ import { PortfolioNoSignerContent } from "./PortfolioNoSignerContent";
 import PortfolioNoAccountsContent from "./PortfolioNoAccountsContent";
 
 interface PortfolioEmptySectionProps {
-  readonly isLNSUpsellBannerShown: boolean;
+  readonly isLNUpsellBannerShown: boolean;
 }
 
-export const PortfolioEmptySection = ({ isLNSUpsellBannerShown }: PortfolioEmptySectionProps) => {
+export const PortfolioEmptySection = ({ isLNUpsellBannerShown }: PortfolioEmptySectionProps) => {
   const { hasAccounts } = usePortfolioEmptySectionViewModel();
 
   if (!hasAccounts) {
-    return <PortfolioNoAccountsContent isLNSUpsellBannerShown={isLNSUpsellBannerShown} />;
+    return <PortfolioNoAccountsContent isLNUpsellBannerShown={isLNUpsellBannerShown} />;
   }
 
   return (
-    <PortfolioNoSignerContent
-      isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-      variant="emptyState"
-    />
+    <PortfolioNoSignerContent isLNUpsellBannerShown={isLNUpsellBannerShown} variant="emptyState" />
   );
 };
