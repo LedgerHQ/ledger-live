@@ -21,6 +21,7 @@ const createDefaultResult = (overrides?: Partial<AddressSearchResult>): AddressS
     matchedAccounts: [],
     bridgeErrors: undefined,
     bridgeWarnings: undefined,
+    hasBridgeValidationResult: false,
     ...overrides,
   }) as AddressSearchResult;
 
@@ -80,6 +81,52 @@ describe("useRecipientSearchState", () => {
     );
 
     expect(result.current.isAddressComplete).toBe(true);
+  });
+
+  it("should set isAddressValid only after bridge validation succeeds", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "0xvalid",
+        result: createDefaultResult({
+          status: "valid",
+          hasBridgeValidationResult: true,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(true);
+  });
+
+  it("should not set isAddressValid before bridge validation returns", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "invalid",
+        result: createDefaultResult({
+          status: "valid",
+          hasBridgeValidationResult: false,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(false);
+  });
+
+  it("should not set isAddressValid when bridge validation returns a recipient error", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "invalid",
+        result: createDefaultResult({
+          status: "valid",
+          bridgeErrors: { recipient: new InvalidAddress() },
+          hasBridgeValidationResult: true,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(false);
   });
 
   it("should set isAddressComplete for ens_resolved status", () => {

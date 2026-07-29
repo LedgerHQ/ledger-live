@@ -314,6 +314,7 @@ export function useAddressValidation({
       bridgeErrors: filteredBridgeErrors,
       bridgeWarnings: bridgeValidation.warnings,
       isBridgeLoading: bridgeValidation.isLoading && bridgeValidation.status === null,
+      hasBridgeValidationResult: bridgeValidation.status !== null,
     };
   }, [
     validationState,

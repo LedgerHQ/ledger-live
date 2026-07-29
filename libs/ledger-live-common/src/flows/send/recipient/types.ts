@@ -56,4 +56,5 @@ export type AddressSearchResult = Readonly<{
   bridgeErrors: BridgeValidationErrors | undefined;
   bridgeWarnings: BridgeValidationWarnings | undefined;
   isBridgeLoading?: boolean;
+  hasBridgeValidationResult: boolean;
 }>;
