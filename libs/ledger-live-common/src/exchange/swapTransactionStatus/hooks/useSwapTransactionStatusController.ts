@@ -24,6 +24,7 @@ const STATUS_POLL_INTERVAL_MS = 60_000;
 // stuck on skeletons. Retry quickly so it fills in within seconds of the
 // operation being synced, instead of waiting a full STATUS_POLL_INTERVAL_MS.
 const UNRESOLVED_STATUS_POLL_INTERVAL_MS = 3_000;
+const UNRESOLVED_ACCOUNT_SYNC_INTERVAL_MS = 10_000;
 const STATUS_QUERY_KEY = "swap-transaction-status";
 
 export type SwapTransactionStatusControllerViewModel = {
@@ -132,6 +133,13 @@ export function useSwapTransactionStatusController({
     },
   });
 
+  useUnresolvedSwapOperationSync({
+    accounts,
+    swapId: params.swapId,
+    isResolved: isSwapOperationResolved(details),
+    enabled: state.phase !== "settled_visible",
+  });
+
   useEffect(() => {
     const handle = setTimeout(
       () => {
@@ -187,6 +195,65 @@ function getNextStatusPollDelay(response: GetTransactionStatusResponse | undefin
   return isSwapOperationResolved(response)
     ? STATUS_POLL_INTERVAL_MS
     : UNRESOLVED_STATUS_POLL_INTERVAL_MS;
+}
+
+/**
+ * Asks the bridge to sync the account holding this swap until its on-chain operation
+ * shows up in local history.
+ *
+ * `getCompleteSwapHistory` drops any swap whose operation is not yet in `operations` /
+ * `pendingOperations`, which leaves the status UI on skeletons (and the swap missing
+ * from the history list) until some unrelated sync happens to run. The confirmation
+ * signal below cannot cover this: it is keyed on `operationHash`, which is only known
+ * once the operation has already been found.
+ *
+ * Only the account that already holds the swap in `swapHistory` is synced — without
+ * such an entry syncing cannot resolve the swap anyway, since the history mapper only
+ * walks `swapHistory`, so we stay idle rather than sync accounts for nothing.
+ */
+function useUnresolvedSwapOperationSync({
+  accounts,
+  swapId,
+  isResolved,
+  enabled,
+}: {
+  accounts: AccountLike[];
+  swapId: string;
+  isResolved: boolean;
+  enabled: boolean;
+}): void {
+  const sync = useBridgeSync();
+  const flattenedAccounts = useMemo(() => flattenAccounts(accounts), [accounts]);
+  const syncAccountId = useMemo(
+    () =>
+      resolveSyncAccountId(flattenedAccounts, findSwapHistoryAccountId(flattenedAccounts, swapId)),
+    [flattenedAccounts, swapId],
+  );
+
+  useEffect(() => {
+    if (!enabled || isResolved || !syncAccountId) return;
+
+    const requestSync = () =>
+      sync({
+        type: "SYNC_SOME_ACCOUNTS",
+        accountIds: [syncAccountId],
+        priority: 100,
+        reason: STATUS_QUERY_KEY,
+      });
+
+    // Sync straight away so a just-broadcast swap resolves in one round trip instead of
+    // waiting out the first interval, then keep retrying until it resolves.
+    requestSync();
+    const handle = setInterval(requestSync, UNRESOLVED_ACCOUNT_SYNC_INTERVAL_MS);
+    return () => clearInterval(handle);
+  }, [enabled, isResolved, sync, syncAccountId]);
+}
+
+/** Id of the account whose `swapHistory` holds `swapId`, if any. */
+function findSwapHistoryAccountId(accounts: AccountLike[], swapId: string): string | undefined {
+  return accounts.find(account =>
+    account.swapHistory?.some(swapOperation => swapOperation.swapId === swapId),
+  )?.id;
 }
 
 function useOnChainConfirmationSignal({
