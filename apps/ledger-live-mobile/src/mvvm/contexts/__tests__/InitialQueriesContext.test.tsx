@@ -3,13 +3,14 @@ import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/native";
 import { waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
+import { getEnv } from "@shared/env";
 import type { State } from "~/reducers/types";
 import { InitialQueriesContext, InitialQueriesProvider } from "../InitialQueriesContext";
 
 const contextSpy = jest.fn();
 const ofacResponse = jest.fn();
 
-const SUPPORTED_FIATS_URL = "https://countervalues.live.ledger.com/v3/supported/fiat";
+const SUPPORTED_FIATS_URL = `${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`;
 
 const withCounterValue = (counterValue: string) => (state: State) => ({
   ...state,
@@ -55,8 +56,6 @@ describe("InitialQueriesContext", () => {
   });
 
   it("keeps an uncommon persisted counterValue (AMD) once CVS confirms it is supported", async () => {
-    // Regression for LIVE-35110: AMD is a valid CVS fiat but absent from the offline
-    // fallback list, so it must survive a restart instead of being reset to USD.
     ofacResponse.mockResolvedValueOnce(HttpResponse.json({}));
     server.use(http.get(SUPPORTED_FIATS_URL, () => HttpResponse.json(["USD", "EUR", "AMD"])));
 
@@ -85,6 +84,23 @@ describe("InitialQueriesContext", () => {
     );
 
     await waitFor(() => expect(store.getState().settings.counterValue).toBe("USD"));
+  });
+
+  it("keeps the persisted counterValue when the CVS supported-fiats query fails", async () => {
+    ofacResponse.mockResolvedValueOnce(HttpResponse.json({}));
+    server.use(http.get(SUPPORTED_FIATS_URL, () => HttpResponse.json({ not: "an array" })));
+
+    const { store } = render(
+      <InitialQueriesProvider>
+        <ContextSpy />
+      </InitialQueriesProvider>,
+      { overrideInitialState: withCounterValue("AMD") },
+    );
+
+    await waitFor(() =>
+      expect(contextSpy).toHaveBeenLastCalledWith(expect.objectContaining({ fiatsReady: true })),
+    );
+    expect(store.getState().settings.counterValue).toBe("AMD");
   });
 
   it("reports firebaseIsReady=false while remote flags have not settled", async () => {

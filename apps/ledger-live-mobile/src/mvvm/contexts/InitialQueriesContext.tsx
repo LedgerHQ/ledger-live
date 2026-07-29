@@ -21,7 +21,7 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
   // OFAC Geo Blocking
   const ofacQueryResult = ofacGeoBlockApi.useCheckQuery();
   // Boot-time fiat fetch: onQueryStarted → setFiats populates the supportedFiats slice
-  useGetSupportedFiatsQuery();
+  const { isSuccess: fiatsResolvedFromCvs } = useGetSupportedFiatsQuery();
 
   const fiatsReady = useSelector(selectSupportedFiatsReady);
 
@@ -29,13 +29,16 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
   const fiats = useSelector(selectSupportedFiats);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   useEffect(() => {
-    // Gate on fiatsReady so we act on the authoritative CVS list, not the boot-time
-    // fallback — resetting against the fallback would wipe valid but uncommon fiats.
     if (!fiatsReady) return;
     const supportedCounterValues = buildSupportedCounterValues(fiats);
     dispatch(setSupportedCounterValues(supportedCounterValues));
 
-    // Safety net: if the persisted counterValue is no longer supported by CVS, fall back to USD.
+    // Reset an unsupported persisted counterValue to USD, but only once CVS actually returned
+    // its list: fiatsReady also flips true on a CVS error/timeout (setFiatsReady runs in a
+    // finally), and then `fiats` is just the offline fallback — resetting there would wipe a
+    // valid uncommon fiat (e.g. AMD) and persist USD. A delisted fiat is corrected on the next
+    // successful load.
+    if (!fiatsResolvedFromCvs) return;
     const currentId = counterValueIdOf(counterValueCurrency);
     const isSupported = supportedCounterValues.some(
       ({ currency }) => counterValueIdOf(currency) === currentId,
@@ -43,7 +46,7 @@ export function InitialQueriesProvider({ children }: React.PropsWithChildren) {
     if (!isSupported) {
       dispatch(setCountervalue("USD"));
     }
-  }, [dispatch, fiats, fiatsReady, counterValueCurrency]);
+  }, [dispatch, fiats, fiatsReady, fiatsResolvedFromCvs, counterValueCurrency]);
   const ofacResult = useMemo(
     () => ({ blocked: ofacQueryResult.data ?? false, isLoading: ofacQueryResult.isLoading }),
     [ofacQueryResult.data, ofacQueryResult.isLoading],

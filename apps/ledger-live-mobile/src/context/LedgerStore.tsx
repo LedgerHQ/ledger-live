@@ -330,11 +330,9 @@ async function hydrateCurrencies() {
   });
 }
 
-// Seeds supportedCounterValues from the offline fallback fiats so the UI has a
-// list before the CVS query settles. The "reset unsupported counterValue to USD"
-// safety net intentionally lives in InitialQueriesProvider, gated on fiatsReady:
-// at boot only the fallback list is known, so resetting here would wrongly wipe
-// any valid CVS fiat absent from the fallback (e.g. AMD) on every restart.
+// Seeds supportedCounterValues from the offline fallback fiats before the CVS query settles.
+// The "reset unsupported counterValue to USD" safety net lives in InitialQueriesProvider so it
+// runs against the authoritative CVS list, not the fallback.
 function updateSupportedCountervalues(store: Store) {
   const supportedFiats = selectSupportedFiats(store.getState());
   store.dispatch(setSupportedCounterValues(buildSupportedCounterValues(supportedFiats)));
