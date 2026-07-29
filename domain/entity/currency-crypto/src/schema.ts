@@ -15,6 +15,8 @@ export const ExplorerViewSchema = z.object({
   token: z.string().optional(),
   /** Stake pool detail URL. */
   stakePool: z.string().optional(),
+  /** Delegated Representative detail URL. */
+  dRep: z.string().optional(),
 });
 
 /** EVM chain metadata, inferred from {@link EthereumLikeInfoSchema}. */

@@ -30,6 +30,7 @@ export const cardano_testnet = currency({
       tx: "https://preprod.cardanoscan.io/transaction/$hash",
       address: "https://preprod.cardanoscan.io/address/$address",
       stakePool: "https://preprod.cardanoscan.io/pool/$poolId",
+      dRep: "https://preprod.cardanoscan.io/drep/$hex",
     },
   ],
 });
