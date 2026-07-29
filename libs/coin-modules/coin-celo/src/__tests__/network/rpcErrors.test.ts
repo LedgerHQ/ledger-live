@@ -42,14 +42,12 @@ describe("isEpochBlockRevert", () => {
     expect(isEpochBlockRevert(new Error(message))).toBe(true);
   });
 
-  it.each([
-    "execution reverted",
-    "vote cap exceeded",
-    "Group not eligible",
-    "request timed out",
-  ])("does not classify unrelated failure %p as an epoch block", message => {
-    expect(isEpochBlockRevert(new Error(message))).toBe(false);
-  });
+  it.each(["execution reverted", "vote cap exceeded", "Group not eligible", "request timed out"])(
+    "does not classify unrelated failure %p as an epoch block",
+    message => {
+      expect(isEpochBlockRevert(new Error(message))).toBe(false);
+    },
+  );
 
   it("handles non-Error values", () => {
     expect(isEpochBlockRevert("contract is blocked from performing this action")).toBe(true);
