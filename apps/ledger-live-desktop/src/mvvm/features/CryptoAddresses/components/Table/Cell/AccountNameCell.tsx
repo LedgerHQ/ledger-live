@@ -1,5 +1,10 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import {
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+  TableCellContentDescription,
+} from "@ledgerhq/lumen-ui-react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -12,10 +17,12 @@ type AccountNameCellProps = {
 export function AccountNameCell({ account, displayName }: AccountNameCellProps) {
   const currency = getAccountCurrency(account);
   return (
-    <TableCellContent
-      leadingContent={<CryptoCurrencyIcon currency={currency} size={32} />}
-      title={displayName}
-      description={currency.ticker}
-    />
+    <TableCellItem>
+      <CryptoCurrencyIcon currency={currency} size={32} />
+      <TableCellContent>
+        <TableCellContentTitle>{displayName}</TableCellContentTitle>
+        <TableCellContentDescription>{currency.ticker}</TableCellContentDescription>
+      </TableCellContent>
+    </TableCellItem>
   );
 }

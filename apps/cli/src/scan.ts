@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import {
   encodeAccountId,
   decodeAccountId,

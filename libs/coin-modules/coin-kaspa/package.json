@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -77,6 +77,11 @@
       "@ledgerhq/source": "./src/transaction/*.ts",
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

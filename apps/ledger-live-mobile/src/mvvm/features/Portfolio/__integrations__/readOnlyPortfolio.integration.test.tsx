@@ -1,20 +1,18 @@
 import React from "react";
-import { renderWithReactQuery, screen, withFlagOverrides } from "@tests/test-renderer";
-import { ReadOnlyPortfolioTest, overrideInitialStateWithFeatureFlag } from "./shared";
+import { renderWithReactQuery, screen } from "@tests/test-renderer";
+import { ReadOnlyPortfolioTest } from "./shared";
 import { withConsentDrawerState } from "LLM/features/AnalyticsConsentDrawer/__tests__/helpers";
 
 describe("ReadOnly Portfolio Screen", () => {
   it("should render ReadOnly Portfolio", async () => {
-    renderWithReactQuery(<ReadOnlyPortfolioTest />, {
-      overrideInitialState: overrideInitialStateWithFeatureFlag,
-    });
+    renderWithReactQuery(<ReadOnlyPortfolioTest />);
 
     expect(await screen.findByTestId("PortfolioReadOnlyItems")).toBeVisible();
   });
 
   it("should show the reconfirm consent drawer on the read-only portfolio", async () => {
     renderWithReactQuery(<ReadOnlyPortfolioTest />, {
-      overrideInitialState: withFlagOverrides({ lwmWallet40: { enabled: true } }, state =>
+      overrideInitialState: state =>
         withConsentDrawerState({
           hasCompletedOnboarding: true,
           analyticsOptInEnabled: true,
@@ -32,7 +30,6 @@ describe("ReadOnly Portfolio Screen", () => {
             readOnlyModeEnabled: true,
           },
         }),
-      ),
     });
 
     await screen.findByTestId("PortfolioReadOnlyItems");

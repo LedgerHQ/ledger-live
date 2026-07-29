@@ -11,7 +11,8 @@ import Logo from "~/renderer/icons/Logo";
 import * as S from "./ActivateValidatorGroupRow.styles";
 import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { Unit } from "@domain/entity-currency-unit";
 
 type Props = {
   currency: CryptoCurrency;

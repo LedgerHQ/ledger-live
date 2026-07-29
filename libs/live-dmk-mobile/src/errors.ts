@@ -1,3 +1,19 @@
+export class PairingFailed extends Error {
+  override name = "PairingFailed";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "PairingFailed");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class PeerRemovedPairing extends Error {
+  override name = "PeerRemovedPairing";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "PeerRemovedPairing");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
 import {
   DeviceBusyError,
   DeviceDisconnectedWhileSendingError,

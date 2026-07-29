@@ -27,6 +27,7 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
   return {
     saplingBalance: info.saplingBalance.toString(),
     orchardBalance: info.orchardBalance.toString(),
+    ironwoodBalance: info.ironwoodBalance.toString(),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState,
@@ -34,12 +35,20 @@ export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoR
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
+    transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
-      fee: tx.fee.toString(),
+      fee: fee.toString(),
+      // Written out only when known: a transaction scanned before the scanner
+      // reported the transparent bundle has no value to state, and "0" would
+      // read as one. `hasTransparentInputs` needs no conversion and rides the
+      // spread, absent or not.
+      ...(transparentOut !== undefined && { transparentOut: transparentOut.toString() }),
       decryptedData: {
-        orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
-        sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
+        orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(mapDecryptedOutput),
+        sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(mapDecryptedOutput),
+        ...(decryptedData?.ironwood_outputs && {
+          ironwood_outputs: decryptedData.ironwood_outputs.map(mapDecryptedOutput),
+        }),
       },
     })),
   };
@@ -49,6 +58,8 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
   return {
     saplingBalance: new BigNumber(info.saplingBalance),
     orchardBalance: new BigNumber(info.orchardBalance),
+    // Guard accounts persisted before Ironwood support was added.
+    ironwoodBalance: new BigNumber(info.ironwoodBalance ?? "0"),
     lastSyncTimestamp: info.lastSyncTimestamp,
     ufvk: info.ufvk,
     syncState: info.syncState as ZcashSyncState,
@@ -56,12 +67,19 @@ export function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivate
     estimatedTimeRemaining: info.estimatedTimeRemaining,
     birthday: info.birthday,
     lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
+    transactions: info.transactions.map(({ fee, transparentOut, decryptedData, ...tx }) => ({
       ...tx,
-      fee: new BigNumber(tx.fee),
+      fee: new BigNumber(fee),
+      // Read back only what was written: an account persisted before the
+      // scanner reported the transparent bundle states nothing about it, and
+      // zero would state something.
+      ...(transparentOut !== undefined && { transparentOut: new BigNumber(transparentOut) }),
       decryptedData: {
-        orchard_outputs: (tx.decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
-        sapling_outputs: (tx.decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
+        orchard_outputs: (decryptedData?.orchard_outputs ?? []).map(rehydrateOutput),
+        sapling_outputs: (decryptedData?.sapling_outputs ?? []).map(rehydrateOutput),
+        ...(decryptedData?.ironwood_outputs && {
+          ironwood_outputs: decryptedData.ironwood_outputs.map(rehydrateOutput),
+        }),
       },
     })),
   };

@@ -1,12 +1,16 @@
-import { DisabledTransactionBroadcastError, MissingSwapPayloadParamaters } from "@ledgerhq/errors";
+import {
+  DisabledTransactionBroadcastError,
+  MissingSwapPayloadParamaters,
+} from "@ledgerhq/live-common/errors";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Exchange } from "@ledgerhq/live-common/exchange/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
-import { getEnv } from "@ledgerhq/live-env";
-import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@shared/env";
+import { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";

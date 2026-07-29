@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js", "@ledgerhq/disable-network-setup"],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",

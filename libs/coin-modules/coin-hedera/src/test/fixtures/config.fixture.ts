@@ -1,6 +1,6 @@
 import type { HederaCoinConfig } from "../../config";
 
-export const getMockedConfig = (): HederaCoinConfig => {
+export const getMockedConfig = (overrides?: Partial<HederaCoinConfig>): HederaCoinConfig => {
   return {
     status: { type: "active" },
     useNetworkTimestamp: false,
@@ -9,5 +9,6 @@ export const getMockedConfig = (): HederaCoinConfig => {
       hgraph: "https://hedera-indexer-mainnet.coin.ledger.com/v1/graphql",
       mirrorNode: "https://hedera.coin.ledger.com",
     },
+    ...overrides,
   };
 };

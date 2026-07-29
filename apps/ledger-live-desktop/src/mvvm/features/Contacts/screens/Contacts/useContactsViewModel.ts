@@ -1,23 +1,32 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import type { ContactId } from "@domain/entity-contact";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
   createContactsSearchViewModel,
   resolveContactsLedgerSyncIntroductionOpen,
+  useAddAddressCurrencySelectionViewModel,
+  useAddAddressFlowViewModel,
   useContacts,
   useContactsFeatureIntroductionState,
   useContactsMeContact,
+  type AddAddressFlowState,
+  type ContactAddressDetailDialogProps,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
   type ContactsListViewProps,
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
+import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
+import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
+    addAddressFlowState: AddAddressFlowState;
+    addressDetailDialog: ContactAddressDetailDialogProps;
     onClearSearch: () => void;
   }>;
 
@@ -27,6 +36,34 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
+  const currencySelection = useContactsCurrencySelectionAdapter();
+  const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
+    platform: "desktop",
+    currencySelection,
+  });
+  const {
+    state: addAddressFlowState,
+    start: startAddAddress,
+    completeCurrencySelection,
+    close: closeAddAddress,
+  } = useAddAddressFlowViewModel();
+  const onAddAddress = useCallback(
+    (contactId: ContactId) => {
+      startAddAddress(contactId);
+      void selectCurrency()
+        .then(result => {
+          if (result.status === "selected") {
+            completeCurrencySelection(contactId, result.currencyId);
+          } else if (result.status === "cancelled" || result.status === "unavailable") {
+            closeAddAddress();
+          }
+        })
+        .catch(closeAddAddress);
+    },
+    [closeAddAddress, completeCurrencySelection, selectCurrency, startAddAddress],
+  );
+  const { detail, addressDetailDialog, onOpenMe, onOpenContact } =
+    useContactDetailPaneAdapter(onAddAddress);
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -40,7 +77,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchPlaceholder: t("contacts.searchPlaceholder"),
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
-      formatAddressCount: count => t("contacts.me.addressCount", { count }),
+      formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
   );
@@ -64,11 +101,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     setSearchQuery(event.target.value);
   }, []);
   const onClearSearch = useCallback(() => setSearchQuery(""), []);
-  const onOpenMe = useCallback<ContactsListViewProps["onOpenMe"]>(_contactId => undefined, []);
-  const onOpenContact = useCallback<ContactsListViewProps["onOpenContact"]>(
-    _contactId => undefined,
-    [],
-  );
   const onDismissLedgerSyncIntroduction = useCallback(
     () => setIsLedgerSyncIntroductionDismissed(true),
     [],
@@ -93,6 +125,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
   }, [navigate]);
 
   return {
+    addAddressFlowState,
+    addressDetailDialog,
     viewModel,
     labels,
     searchQuery,
@@ -101,6 +135,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     onClearSearch,
     onOpenMe,
     onOpenContact,
+    detail,
     ledgerSyncStatus,
     featureIntroduction: {
       isOpen: featureIntroductionState.isRequested,

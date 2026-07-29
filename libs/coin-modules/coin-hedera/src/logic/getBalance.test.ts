@@ -145,21 +145,22 @@ describe("getBalance", () => {
       nodeId: mockMirrorAccount.staked_node_id,
     });
     expect(apiClient.getNodes).not.toHaveBeenCalled();
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
-      asset: { type: "native" },
-      value: BigInt(mockMirrorAccount.balance.balance),
-      stake: {
-        uid: address,
-        address,
+    expect(result).toMatchObject([
+      {
         asset: { type: "native" },
-        state: "active",
-        amount: BigInt(mockMirrorAccount.balance.balance + mockMirrorAccount.pending_reward),
-        amountDeposited: BigInt(mockMirrorAccount.balance.balance),
-        amountRewarded: BigInt(mockMirrorAccount.pending_reward),
-        delegate: mockMirrorNode.node_account_id,
+        value: BigInt(mockMirrorAccount.balance.balance),
+        stake: {
+          uid: address,
+          address,
+          asset: { type: "native" },
+          state: "active",
+          amount: BigInt(mockMirrorAccount.balance.balance + mockMirrorAccount.pending_reward),
+          amountDeposited: BigInt(mockMirrorAccount.balance.balance),
+          amountRewarded: BigInt(mockMirrorAccount.pending_reward),
+          delegate: mockMirrorNode.node_account_id,
+        },
       },
-    });
+    ]);
   });
 
   it("should return all token balances without CAL filtering", async () => {

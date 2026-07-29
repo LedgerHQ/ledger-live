@@ -1,7 +1,7 @@
 import * as currencies from "./currencies";
 import {
   FIAT_CURRENCIES_REGISTRY,
-  FIAT_CURRENCIES_IDS,
+  FIAT_CURRENCIES_TICKERS,
   FIAT_CURRENCIES_BY_TICKER,
 } from "./constants";
 
@@ -10,32 +10,32 @@ describe("FIAT_CURRENCIES_REGISTRY", () => {
     expect(Object.keys(FIAT_CURRENCIES_REGISTRY).length).toBeGreaterThan(0);
   });
 
-  it("has no duplicate ids across currency files", () => {
+  it("has no duplicate tickers across currency files", () => {
     const seen = new Map<string, string>();
     for (const [varName, currency] of Object.entries(currencies)) {
-      const existing = seen.get(currency.id);
+      const existing = seen.get(currency.ticker);
       expect(existing).toBeUndefined();
-      seen.set(currency.id, varName);
+      seen.set(currency.ticker, varName);
     }
   });
 
-  it("every entry is keyed by its own id", () => {
+  it("every entry is keyed by its own ticker", () => {
     for (const [key, currency] of Object.entries(FIAT_CURRENCIES_REGISTRY)) {
-      expect(currency.id).toBe(key);
+      expect(currency.ticker).toBe(key);
     }
   });
 
-  it("every entry has type FiatCurrency and a non-empty id", () => {
+  it("every entry has type FiatCurrency and a non-empty ticker", () => {
     for (const currency of Object.values(FIAT_CURRENCIES_REGISTRY)) {
       expect(currency.type).toBe("FiatCurrency");
-      expect(currency.id.length).toBeGreaterThan(0);
+      expect(currency.ticker.length).toBeGreaterThan(0);
     }
   });
 });
 
-describe("FIAT_CURRENCIES_IDS", () => {
+describe("FIAT_CURRENCIES_TICKERS", () => {
   it("length matches registry", () => {
-    expect(FIAT_CURRENCIES_IDS.length).toBe(Object.keys(FIAT_CURRENCIES_REGISTRY).length);
+    expect(FIAT_CURRENCIES_TICKERS.length).toBe(Object.keys(FIAT_CURRENCIES_REGISTRY).length);
   });
 });
 

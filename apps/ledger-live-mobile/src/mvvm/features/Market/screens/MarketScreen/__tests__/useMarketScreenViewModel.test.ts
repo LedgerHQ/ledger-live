@@ -50,7 +50,7 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
 function withAssetDiscoverability(enabled: boolean, baseTransform?: (state: State) => State) {
   return {
     overrideInitialState: withFlagOverrides(
-      { lwmWallet40: { enabled: true, params: { assetDiscoverability: enabled } } },
+      { lwmWallet40: { params: { assetDiscoverability: enabled } } },
       baseTransform,
     ),
   };

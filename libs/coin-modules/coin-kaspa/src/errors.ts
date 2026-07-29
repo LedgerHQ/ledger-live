@@ -14,3 +14,11 @@ export class MissingCoinConfig extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class DustLimit extends Error {
+  override name = "DustLimit";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "DustLimit");
+    if (fields) Object.assign(this, fields);
+  }
+}

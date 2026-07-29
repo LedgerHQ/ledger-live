@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { DEFAULT_OPTION, getCALDomain, type ServiceOption } from "./common";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 // https://github.com/LedgerHQ/crypto-assets-service/blob/master/modules/api/src/main/scala/co/ledger/cal/api/assets/v1/model/asset/Currency.scala#L95
 const OUTPUT_FILTER =

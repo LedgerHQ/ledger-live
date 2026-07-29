@@ -5,7 +5,7 @@ import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types"
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv, getEnv } from "@ledgerhq/live-env";
+import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import {
@@ -14,11 +14,12 @@ import {
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
+  CryptoCurrencyIdSchema,
+  type CryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import pkg from "../package.json" with { type: "json" };
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -101,9 +102,9 @@ const walletCliLoaders: CoinModuleLoader[] = [
 ];
 
 export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId[] = [
-  "bitcoin",
-  "ethereum",
-  "solana",
+  CryptoCurrencyIdSchema.parse("bitcoin"),
+  CryptoCurrencyIdSchema.parse("ethereum"),
+  CryptoCurrencyIdSchema.parse("solana"),
 ];
 
 setCurrenciesResolver({

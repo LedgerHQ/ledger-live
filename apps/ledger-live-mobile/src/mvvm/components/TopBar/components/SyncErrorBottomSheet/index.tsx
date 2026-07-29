@@ -1,7 +1,7 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import {
   SyncErrorBottomSheetContent,
   type SyncErrorBottomSheetContentProps,
@@ -22,7 +22,7 @@ export function SyncErrorBottomSheet({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <BottomSheetHeader density="compact" />
         <SyncErrorBottomSheetContent
@@ -31,6 +31,6 @@ export function SyncErrorBottomSheet({
           onTryRefresh={onTryRefresh}
         />
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

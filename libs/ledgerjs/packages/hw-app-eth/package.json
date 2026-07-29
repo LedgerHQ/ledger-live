@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-eth",
-  "version": "7.8.10",
+  "version": "7.8.11",
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
     "Ledger",
@@ -30,7 +30,6 @@
     "@ethersproject/rlp": "^5.7.0",
     "@ethersproject/transactions": "^5.7.0",
     "@ledgerhq/domain-service": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",

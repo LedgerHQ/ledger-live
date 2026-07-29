@@ -6,7 +6,7 @@ import {
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 export function ContactsAddContactDrawerSheet({
   isOpen,
@@ -22,7 +22,7 @@ export function ContactsAddContactDrawerSheet({
     : 0;
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       testID="contacts-add-contact-drawer"
@@ -35,6 +35,6 @@ export function ContactsAddContactDrawerSheet({
         keyboardInset={keyboardInset}
         {...drawerProps}
       />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

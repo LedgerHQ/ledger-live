@@ -1,5 +1,5 @@
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SendFlowLayout } from "LLM/features/Send/components/SendFlowLayout";
@@ -54,6 +54,7 @@ export const RecipientScreenView = ({
     bridgeRecipientWarning,
     handleAddressSelect,
     isAddressComplete,
+    isAddressValid,
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
@@ -86,7 +87,7 @@ export const RecipientScreenView = ({
   }, [track, onMemoProceed, trackingProperties]);
 
   const resolvedAddress = result?.resolvedAddress ?? searchValue;
-  const showMemo = uiConfig.hasMemo && isAddressComplete;
+  const showMemo = uiConfig.hasMemo && isAddressValid;
   const memoVm = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
     onSkip: handleSkipMemo,

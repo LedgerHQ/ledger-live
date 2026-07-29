@@ -28,7 +28,7 @@ describe("preload-data", () => {
       setHederaPreloadData(testData, hedera);
 
       expect(getCurrentHederaPreloadData(hedera).validators).toHaveLength(1);
-      expect(getCurrentHederaPreloadData(hederaTestnet).validators).toHaveLength(0);
+      expect(getCurrentHederaPreloadData(hederaTestnet).validators).toEqual([]);
     });
 
     it("should throw for unsupported currency", () => {

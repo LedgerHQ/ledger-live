@@ -31,10 +31,23 @@ export interface ZCashClient {
   estimatedSyncTime(totalBlocks: number): Promise<(processedBlocks: number) => SyncEstimatedTime>;
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
   buildTransaction?(args: Omit<BuildTransactionArgs, "requestId">): Promise<BuildTransactionResult>;
+  buildIronwoodTransaction?(
+    args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+  ): Promise<BuildIronwoodTransactionResult>;
   finalizeTransaction?(
     args: Omit<FinalizeTransactionArgs, "requestId">,
   ): Promise<FinalizeTransactionResult>;
   broadcastTransaction?(grpcUrl: string, txHex: string): Promise<string>;
+  /**
+   * What each transaction actually did, read from its raw bytes rather than
+   * from what an explorer can see of it. Results come back in request order.
+   *
+   * `ufvk` unlocks the shielded payees; without it only fees are recovered.
+   */
+  transactionDetails?(
+    requests: TransactionDetailsRequest[],
+    ufvk?: string,
+  ): Promise<TransactionDetailsResult[]>;
 }
 
 /** Common constructor args shared by both ZCash client factories. */
@@ -79,6 +92,7 @@ export type SpendableNote = Required<SpendingFields> & {
 export type DecryptedTransaction = {
   orchard_outputs: DecryptedOutput[];
   sapling_outputs: DecryptedOutput[];
+  ironwood_outputs?: DecryptedOutput[];
 };
 
 export type ShieldedTransaction = {
@@ -88,12 +102,24 @@ export type ShieldedTransaction = {
   blockHash: string;
   timestamp: number;
   fee: BigNumber; // zatoshis
+  /**
+   * Sum of the transparent outputs, in zatoshis. Carries the value of a
+   * shielded→transparent send, which leaves no decrypted note behind to account
+   * for it. Absent for transactions scanned before the scanner reported it.
+   */
+  transparentOut?: BigNumber;
+  /**
+   * Whether the transaction spends transparent inputs, in which case those
+   * inputs — rather than the shielded pools — may be paying `transparentOut`.
+   */
+  hasTransparentInputs?: boolean;
   decryptedData?: DecryptedTransaction;
 };
 
 export type ZcashPrivateInfo = {
   saplingBalance: BigNumber;
   orchardBalance: BigNumber;
+  ironwoodBalance: BigNumber;
   syncState: ZcashSyncState;
   progress: number;
   estimatedTimeRemaining: SyncEstimatedTime;
@@ -107,6 +133,7 @@ export type ZcashPrivateInfo = {
 export type ZcashPrivateInfoRaw = {
   orchardBalance: string;
   saplingBalance: string;
+  ironwoodBalance: string;
   syncState: string;
   progress: number;
   estimatedTimeRemaining: SyncEstimatedTime;
@@ -124,9 +151,13 @@ export type ShieldedTransactionRaw = {
   blockHash: string;
   timestamp: number;
   fee: string; // zatoshis
+  /** Absent on accounts persisted before the scanner reported the transparent bundle. */
+  transparentOut?: string; // zatoshis
+  hasTransparentInputs?: boolean;
   decryptedData?: {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
+    ironwood_outputs?: DecryptedOutputRaw[];
   };
 };
 
@@ -160,9 +191,17 @@ export type SyncEstimatedTime = {
   minutes: number;
 };
 
-export const ZCASH_SHIELDED_TX_IN_TYPES = ["SHIELDED_TX_SAPLING_IN", "SHIELDED_TX_ORCHARD_IN"];
+export const ZCASH_SHIELDED_TX_IN_TYPES = [
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_IRONWOOD_IN",
+];
 
-export const ZCASH_SHIELDED_TX_OUT_TYPES = ["SHIELDED_TX_SAPLING_OUT", "SHIELDED_TX_ORCHARD_OUT"];
+export const ZCASH_SHIELDED_TX_OUT_TYPES = [
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_OUT",
+  "SHIELDED_TX_IRONWOOD_OUT",
+];
 
 export const ZCASH_SHIELDED_TX_TYPES = [
   ...ZCASH_SHIELDED_TX_IN_TYPES,
@@ -188,7 +227,9 @@ export type ZcashTransferType =
   | "transparent"
   | "transparent-to-shielded"
   | "shielded-to-transparent"
-  | "shielded";
+  | "shielded"
+  | "ironwood"
+  | "ironwood-to-transparent";
 
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
@@ -288,8 +329,78 @@ export type FinalizeTransactionResult = {
   txid: string;
 };
 
+export type BuildIronwoodTransactionArgs = {
+  requestId: string;
+  grpcUrl: string;
+  ufvk: string;
+  network?: string;
+  seedFingerprint: string;
+  accountIndex: number;
+  feeZat: string;
+  spends: Array<{
+    recipient: string;
+    valueZat: string;
+    rho: string;
+    rseed: string;
+    cmx: string;
+    position: string;
+  }>;
+  transparentInputs: BuildTransactionArgs["transparentInputs"];
+  outputs: BuildTransactionArgs["outputs"];
+  anchorHeight?: number;
+};
+
+export type BuildIronwoodTransactionResult = {
+  /** Hex-encoded canonical PCZT bytes — passed unchanged to finalizeTransaction. */
+  pcztHex: string;
+  /**
+   * Adapter-applied output of parsePczt(); ready for signPcztTransaction.
+   * parsePczt runs in the UtilityProcess (engine.ts) so Uint8Array + bigint
+   * values are structuredClone-safe across the IPC boundary.
+   */
+  pcztTransaction: PcztTransaction;
+  feeZat: string;
+  anchorHeight: number;
+  nActionsIronwood: number;
+  nTransparentInputs: number;
+  nTransparentOutputs: number;
+};
+
 export type BroadcastTransactionArgs = {
   requestId: string;
   grpcUrl: string;
   txHex: string;
+};
+
+/** Value of a transparent output being spent, needed to price its transaction. */
+export type TransparentPrevout = {
+  /** Txid of the transaction that created the output, big-endian display order. */
+  txid: string;
+  index: number;
+  /** Zatoshis, as a decimal string. */
+  value: string;
+};
+
+export type TransactionDetailsRequest = {
+  txid: string;
+  /** Block containing the transaction — selects the consensus branch to parse against. */
+  height: number;
+  /** Every transparent input of the transaction. An incomplete set yields a `null` fee. */
+  prevouts: TransparentPrevout[];
+};
+
+export type TransactionDetailsResult = {
+  txid: string;
+  /** Zatoshis as a decimal string, or `null` when the fee could not be established. */
+  fee: string | null;
+  /** Addresses paid by shielded outputs of ours. Empty without a viewing key. */
+  payees: string[];
+};
+
+export type TransactionDetailsArgs = {
+  requestId: string;
+  grpcUrl: string;
+  network: string;
+  requests: TransactionDetailsRequest[];
+  ufvk?: string;
 };

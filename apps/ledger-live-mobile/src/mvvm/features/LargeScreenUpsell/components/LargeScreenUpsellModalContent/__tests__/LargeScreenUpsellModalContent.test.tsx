@@ -25,6 +25,7 @@ const content: GenericAwarenessModalFeatureIntro = {
 
 const renderLargeScreenUpsellModalContent = (
   contentOverrides?: Partial<GenericAwarenessModalFeatureIntro>,
+  heroHeight = 473,
 ) => {
   const onPrimaryPress = jest.fn();
   const viewModel: FeatureIntroViewModel = {
@@ -37,7 +38,7 @@ const renderLargeScreenUpsellModalContent = (
   };
 
   return {
-    ...render(<LargeScreenUpsellModalContent viewModel={viewModel} />),
+    ...render(<LargeScreenUpsellModalContent viewModel={viewModel} heroHeight={heroHeight} />),
     onPrimaryPress,
   };
 };
@@ -67,6 +68,24 @@ describe("LargeScreenUpsellModalContent", () => {
 
     expect(screen.getByTestId("large-screen-upsell-modal-primary-button")).toBeOnTheScreen();
     expect(screen.getByText("Claim offer")).toBeOnTheScreen();
+  });
+
+  it("should use the available height for the hero", () => {
+    renderLargeScreenUpsellModalContent(undefined, 240);
+
+    expect(screen.getByTestId("large-screen-upsell-modal-hero-container")).toHaveStyle({
+      height: 240,
+      aspectRatio: 343 / 473,
+    });
+  });
+
+  it("should hide the hero when the themed image is unavailable", () => {
+    renderLargeScreenUpsellModalContent({
+      imageUrlLight: "",
+      imageUrlDark: "",
+    });
+
+    expect(screen.queryByTestId("large-screen-upsell-modal-hero-container")).not.toBeOnTheScreen();
   });
 
   it("should open the primary CTA link", async () => {

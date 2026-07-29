@@ -4,7 +4,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import type { OptionalFeatureMap } from "@shared/feature-flags";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
@@ -44,7 +44,6 @@ type TestFixtures = {
   theme: "light" | "dark" | "no-preference" | undefined;
   speculosApp: AppInfos;
   userdata?: string;
-  extraUserdataFiles?: Record<string, string>;
   settings: Record<string, unknown>;
   userdataDestinationPath: string;
   userdataOriginalFile?: string;
@@ -90,7 +89,6 @@ export const test = base.extend<TestFixtures>({
   speculosApp: undefined,
   cliCommands: [],
   cliCommandsOnApp: [],
-  extraUserdataFiles: undefined,
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
@@ -101,7 +99,7 @@ export const test = base.extend<TestFixtures>({
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, extraUserdataFiles, localManifestOverride },
+    { userdataOriginalFile, settings, localManifestOverride },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -119,13 +117,6 @@ export const test = base.extend<TestFixtures>({
       userData.data.discover.localLiveApp = localManifestOverride;
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
-    if (extraUserdataFiles) {
-      await Promise.all(
-        Object.entries(extraUserdataFiles).map(([name, contents]) =>
-          writeFile(path.join(userdataDestinationPath, name), contents),
-        ),
-      );
-    }
     await use(userdataDestinationPath);
   },
   userdataOriginalFile: async ({ userdata }, use) => {

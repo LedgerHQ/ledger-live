@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { Trans } from "react-i18next";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";

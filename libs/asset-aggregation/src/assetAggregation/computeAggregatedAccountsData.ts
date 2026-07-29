@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 
 export type CalculateCountervalue = (
   from: Currency,

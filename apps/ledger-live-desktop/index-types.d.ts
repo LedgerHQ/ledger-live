@@ -2,7 +2,6 @@
 /// <reference types="jest-dom" />
 
 declare const INDEX_URL: string;
-declare const __SENTRY_URL__: string;
 declare const __DATADOG_APPLICATION_ID__: string | null;
 declare const __DATADOG_CLIENT_TOKEN__: string | null;
 declare const __DATADOG_SITE__: string | null;
@@ -37,7 +36,7 @@ type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
 type FeatureId = import("@shared/feature-flags").FeatureId;
 type Feature = import("@shared/feature-flags").Feature;
-type EnvName = import("@ledgerhq/live-env").EnvName;
+type EnvName = import("@shared/env").EnvName;
 
 interface RawEvents {
   [key: string]: unknown;

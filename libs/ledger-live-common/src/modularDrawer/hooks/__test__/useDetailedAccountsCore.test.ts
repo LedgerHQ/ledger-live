@@ -4,7 +4,7 @@
 import { renderHook } from "@testing-library/react";
 import { useDetailedAccountsCore } from "../useDetailedAccountsCore";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 

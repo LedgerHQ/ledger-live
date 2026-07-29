@@ -7,10 +7,9 @@ import { useTranslation } from "~/context/Locale";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
@@ -83,9 +82,8 @@ export default function useScanDeviceAccountsViewModel({
     () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
-  const cryptoCurrency = isTokenCurrency(currency)
-    ? getCryptoCurrencyById(currency.parentCurrencyId)
-    : currency;
+  const cryptoCurrency =
+    currency.type === "TokenCurrency" ? getCryptoCurrencyById(currency.parentCurrencyId) : currency;
   const currencyBridge = useCurrencyBridge(cryptoCurrency);
   const startSubscription = useCallback(() => {
     const syncConfig = {
@@ -222,7 +220,7 @@ export default function useScanDeviceAccountsViewModel({
       }
     }
 
-    if (isCryptoCurrency(currency) && currency.family === "concordium") {
+    if (currency.type === "CryptoCurrency" && currency.family === "concordium") {
       const accountsNeedingOnboarding = accountsToAdd.filter(account => {
         if (isConcordiumAccount(account)) {
           return !account.concordiumResources.isOnboarded;

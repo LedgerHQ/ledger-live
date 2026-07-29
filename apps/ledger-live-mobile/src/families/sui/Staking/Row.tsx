@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { MappedStake } from "@ledgerhq/live-common/families/sui/types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 

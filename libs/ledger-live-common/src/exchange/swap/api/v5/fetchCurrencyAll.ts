@@ -6,7 +6,7 @@ import { ResponseData as ResponseDataTo } from "./fetchCurrencyTo";
 import { ResponseData as ResponseDataFrom } from "./fetchCurrencyFrom";
 import { flattenV5CurrenciesAll } from "../../utils/flattenV5CurrenciesAll";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 type Props = {
   baseUrl?: string;

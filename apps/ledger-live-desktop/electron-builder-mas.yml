@@ -23,7 +23,7 @@ mac:
         - universal
   extendInfo:
     # Auto-clears App Store export compliance (only exempt encryption); mirrors mobile.
-#    ITSAppUsesNonExemptEncryption: false
+    ITSAppUsesNonExemptEncryption: false
 
 mas:
   type: distribution

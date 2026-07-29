@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   usePortfolio as usePortfolioRaw,
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueRaw,

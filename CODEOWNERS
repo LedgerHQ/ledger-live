@@ -56,6 +56,10 @@ libs/promise/                                            @ledgerhq/platform
 libs/ledger-key-ring-protocol/                           @ledgerhq/platform
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/platform
 libs/ledger-live-common/src/featureFlags/                @ledgerhq/platform
+libs/disable-network-setup/                              @ledgerhq/platform
+libs/feature-flag-module/                                @ledgerhq/platform
+libs/ledger-auth/                                        @ledgerhq/platform
+libs/oxc-live-libs/                                      @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -145,8 +149,6 @@ apps/ledger-live-mobile/src/screens/SignRawTransaction/             @ledgerhq/co
 apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/coin-integration
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
-libs/ledgerjs/packages/cryptoassets                      @ledgerhq/wallet-xp
-libs/ledgerjs/packages/cryptoassets/src/currencies.ts    @ledgerhq/coin-integration
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
@@ -162,9 +164,14 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
 libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
+libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
+libs/ledgerjs/packages/keyring-eth/                      @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
+libs/ethereum-provider/                                  @ledgerhq/coin-integration
+libs/wallet-btc/                                         @ledgerhq/coin-integration
+libs/wallet-framework-test-setup/                        @ledgerhq/coin-integration
 tools/actions/composites/run-coin-tester/                @ledgerhq/coin-integration
 tools/actions/composites/setup-coin-tester-env/          @ledgerhq/coin-integration
 tools/actions/composites/monitor/                        @ledgerhq/coin-integration
@@ -208,6 +215,7 @@ libs/coin-modules/coin-concordium/                                       @ledger
 libs/coin-modules/coin-tezos/                                            @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-cardano/                                          @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-celo/                                             @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
@@ -303,6 +311,7 @@ libs/ledger-live-common/src/customImage/                            @ledgerhq/li
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceIntentExecutor/     @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/components/DeviceActionContent/   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/WalletApiSignature/ @ledgerhq/live-devices @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/ @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/DeviceActionContent/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
@@ -346,6 +355,14 @@ libs/live-dmk-desktop/                                             @ledgerhq/liv
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
 libs/live-signer-solana/                                           @ledgerhq/live-devices
+libs/live-signer-aleo/                                             @ledgerhq/live-devices
+libs/live-signer-canton/                                           @ledgerhq/live-devices
+libs/live-signer-concordium/                                       @ledgerhq/live-devices
+libs/live-signer-zcash/                                            @ledgerhq/live-devices
+libs/live-signer-celo/                                             @ledgerhq/live-devices
+libs/live-signer-cosmos/                                           @ledgerhq/live-devices
+libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
+libs/ledgerjs/packages/hw-transport/                               @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 
@@ -494,6 +511,7 @@ libs/ui/packages/native/src/components/Layout/Slides/                           
 apps/ledger-live-desktop/tests/                                             @ledgerhq/wallet-xp
 e2e/                                                                        @ledgerhq/qaa
 libs/ledger-live-common/src/e2e/                                            @ledgerhq/qaa
+libs/live-e2e-shared/                                                       @ledgerhq/qaa
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
 

@@ -2,6 +2,23 @@ name: "[Desktop] - Build - Called"
 
 on:
   workflow_call:
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      GH_BOT_CLIENT_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
+      NX_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -21,12 +38,13 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   build-desktop-app:
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -50,6 +68,7 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
 
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
@@ -66,6 +85,12 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        if: ${{ matrix.config.name == 'Linux' }}
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Build desktop
         id: build-desktop
@@ -100,6 +125,9 @@ jobs:
 
   report:
     name: "Build Desktop > Report"
+    permissions:
+      pull-requests: write
+      contents: read
     needs: build-desktop-app
     runs-on: ubuntu-22.04
     timeout-minutes: 5

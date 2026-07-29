@@ -3,7 +3,7 @@ import URL from "url";
 import Transport from "@ledgerhq/hw-transport";
 import type { FinalFirmware, OsuFirmware, DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { catchError, filter, map } from "rxjs/operators";

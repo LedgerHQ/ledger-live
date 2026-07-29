@@ -7,7 +7,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import { buildTransaction, txToMessages } from "./buildTransaction";
+import { buildTransaction, messageParamsFromTransaction, txToMessages } from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { CosmosAPI } from "./network/Cosmos";
 import { CosmosAccount, RETURN_CODES, Transaction } from "./types";
@@ -28,7 +28,10 @@ export const buildSignOperation =
           account.freshAddress,
         );
         o.next({ type: "device-signature-requested" });
-        const { aminoMsgs, protoMsgs } = txToMessages(account, transaction, chainInstance);
+        const { aminoMsgs, protoMsgs } = txToMessages(
+          messageParamsFromTransaction(account, transaction),
+          chainInstance,
+        );
         if (!BigNumber.isBigNumber(transaction.fees) || !BigNumber.isBigNumber(transaction.gas)) {
           throw new Error("Transaction misses gas information");
         }

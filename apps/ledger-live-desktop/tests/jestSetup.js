@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
@@ -73,14 +73,6 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
-jest.mock("src/sentry/install", () => ({
-  init: jest.fn(),
-  setUser: jest.fn(),
-  captureException: jest.fn(),
-  addBreadcrumb: jest.fn(),
-  setTags: jest.fn(),
-}));
-
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
@@ -136,12 +128,6 @@ jest.mock("src/renderer/analytics/segment", () => ({
 jest.mock("src/renderer/analytics/originFlow", () => ({
   getOriginFlow: jest.fn(() => ""),
   setOriginFlow: jest.fn(),
-}));
-
-jest.mock("src/sentry/renderer", () => ({
-  captureException: jest.fn(),
-  captureBreadcrumb: jest.fn(),
-  setTags: jest.fn(),
 }));
 
 if (!globalThis.Buffer) {

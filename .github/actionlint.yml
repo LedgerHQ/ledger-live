@@ -1,0 +1,16 @@
+self-hosted-runner:
+  labels:
+    - ledger-live-medium
+    - ledger-live-4xlarge
+    - ledger-live-linux-8CPU-32RAM
+    - ledger-live-linux-16CPU-64RAM
+    - ledger-live-linux-e2e-speculos-32CPU-128RAM
+    - ledger-live-linux-e2e-8CPU-32RAM
+    - performance-pool
+    - general-pool
+    - qaa
+    - public-ledgerhq-shared-small
+  paths:
+    .github/workflows/*.yml: ~
+    tools/actions/**/*.yml: ~
+    tools/actions/composites/**/*.yml: ~

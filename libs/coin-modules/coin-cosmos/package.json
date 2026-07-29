@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-cosmos",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "Ledger Cosmos Coin integration",
   "keywords": [
     "Ledger",
@@ -77,6 +77,7 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },

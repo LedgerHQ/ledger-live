@@ -5,7 +5,12 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  isSendDisabledForFamily,
+  isReceiveDisabledForFamily,
+} from "@ledgerhq/live-common/account/index";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -96,23 +101,38 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const quickActionsList = useMemo(() => {
     const isLegacyRebornFlow = readOnlyModeEnabled && !shouldUseLazyOnboarding;
 
+    // Some families expose no Send/Receive on Ledger Wallet (e.g. HyperCore).
+    const parentCurrencyId =
+      currency && (currency.type === "TokenCurrency" ? currency.parentCurrencyId : currency.id);
+    const family = parentCurrencyId ? getFamilyByCurrencyId(parentCurrencyId) : undefined;
+    const sendDisabled = !!family && isSendDisabledForFamily(family);
+    const receiveDisabled = !!family && isReceiveDisabledForFamily(family);
+
     const list: Partial<Record<Actions, QuickAction>> = {
-      SEND: {
-        disabled: readOnlyModeEnabled || !hasCurrency,
-        route: [
-          NavigatorName.SendFunds,
-          {
-            screen: ScreenName.SendCoin,
-            params: { selectedCurrency: currency },
-          },
-        ],
-        icon: IconsLegacy.ArrowTopMedium,
-      },
-      RECEIVE: {
-        disabled: isLegacyRebornFlow,
-        customHandler: handleOpenReceiveDrawer,
-        icon: IconsLegacy.ArrowBottomMedium,
-      },
+      ...(sendDisabled
+        ? {}
+        : {
+            SEND: {
+              disabled: readOnlyModeEnabled || !hasCurrency,
+              route: [
+                NavigatorName.SendFunds,
+                {
+                  screen: ScreenName.SendCoin,
+                  params: { selectedCurrency: currency },
+                },
+              ],
+              icon: IconsLegacy.ArrowTopMedium,
+            },
+          }),
+      ...(receiveDisabled
+        ? {}
+        : {
+            RECEIVE: {
+              disabled: isLegacyRebornFlow,
+              customHandler: handleOpenReceiveDrawer,
+              icon: IconsLegacy.ArrowBottomMedium,
+            },
+          }),
       SWAP: {
         disabled: isPtxServiceCtaExchangeDrawerDisabled || isLegacyRebornFlow || !hasFunds,
         customHandler: handleOpenSwap,

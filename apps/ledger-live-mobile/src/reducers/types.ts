@@ -3,7 +3,8 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { Unit } from "@domain/entity-currency-unit";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
@@ -299,7 +300,6 @@ export type SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: boolean;
   };
-  userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;

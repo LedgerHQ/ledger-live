@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "LLD/hooks/redux";
@@ -26,5 +26,11 @@ export function AggregatedAccountValueCell({
     discreet,
   });
 
-  return <TableCellContent align="end" title={formattedValue} />;
+  return (
+    <TableCellItem align="end">
+      <TableCellContent>
+        <TableCellContentTitle>{formattedValue}</TableCellContentTitle>
+      </TableCellContent>
+    </TableCellItem>
+  );
 }

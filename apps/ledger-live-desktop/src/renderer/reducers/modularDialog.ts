@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { State } from ".";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 
 export interface ModularDialogParams {
   currencies?: string[];
+  networkIds?: readonly string[];
   dialogConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   uiUseCase?: string;
@@ -51,7 +52,10 @@ const modularDialogSlice = createSlice({
       state.source = action.payload;
     },
     openDialog: (state, action: PayloadAction<ModularDialogParams>) => {
-      state.dialogParams = action.payload;
+      state.dialogParams = {
+        ...action.payload,
+        networkIds: action.payload.networkIds ? [...action.payload.networkIds] : undefined,
+      };
       state.isOpen = true;
     },
     closeDialog: state => {
@@ -75,6 +79,8 @@ export const modularDialogConfigurationSelector = (state: State) =>
   state.modularDialog.dialogParams?.dialogConfiguration;
 export const modularDialogCurrenciesSelector = (state: State) =>
   state.modularDialog.dialogParams?.currencies;
+export const modularDialogNetworkIdsSelector = (state: State) =>
+  state.modularDialog.dialogParams?.networkIds;
 export const modularDialogUseCaseSelector = (state: State) =>
   state.modularDialog.dialogParams?.useCase;
 export const modularDialogUiUseCaseSelector = (state: State) =>

@@ -6,6 +6,8 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
+import TransactionSignatureDrawer from "LLM/features/WalletApiSignature/components/TransactionSignatureDrawer";
+import MessageSignatureDrawer from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@features/platform-feature-flags";
@@ -47,6 +49,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewCacheOptions,
       noAccounts,
       isLoadingAccounts,
+      deviceIntentSignRequest,
+      clearDeviceIntentSignRequest,
+      deviceIntentSignMessageRequest,
+      clearDeviceIntentSignMessageRequest,
       publicKeyUnavailableError,
       clearPublicKeyUnavailableError,
     } = useWebView(
@@ -139,6 +145,18 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           {...webviewProps}
           {...webviewCacheOptions}
         />
+        {deviceIntentSignRequest && (
+          <TransactionSignatureDrawer
+            request={deviceIntentSignRequest}
+            onClose={clearDeviceIntentSignRequest}
+          />
+        )}
+        {deviceIntentSignMessageRequest && (
+          <MessageSignatureDrawer
+            request={deviceIntentSignMessageRequest}
+            onClose={clearDeviceIntentSignMessageRequest}
+          />
+        )}
         <GenericErrorBottomModal
           error={publicKeyUnavailableError}
           onClose={clearPublicKeyUnavailableError}

@@ -3,14 +3,12 @@ import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-li
 import {
   assetsTransferMock,
   buyCryptoMock,
-  customImageMock,
   syncAccountsMock,
   recoverMock,
   discoverWalletMock,
 } from "./mockActions";
 import {
   assetsTransferAction,
-  customImageAction,
   buyCryptoAction,
   syncAccountsAction,
   recoverAction,
@@ -23,11 +21,9 @@ import {
 const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
   assetsTransferMock,
   buyCryptoMock,
-  customImageMock,
   syncAccountsMock,
   recoverMock,
   discoverWalletMock,
-  customImage: customImageAction,
   assetsTransfer: assetsTransferAction,
   buyCrypto: buyCryptoAction,
   syncAccounts: syncAccountsAction,
@@ -42,7 +38,6 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
   discoverWalletMock,
-  customImageMock,
   recoverMock,
 ];
 
@@ -50,7 +45,6 @@ const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
   discoverWalletAction,
-  customImageAction,
   recoverAction,
 ];
 
@@ -61,7 +55,6 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
   discoverWalletMock,
-  customImageMock,
   recoverMock,
 ];
 
@@ -69,7 +62,6 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
   discoverWalletAction,
-  customImageAction,
   recoverAction,
 ];
 
@@ -80,7 +72,6 @@ const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   syncAccountsMock,
   discoverWalletMock,
-  customImageMock,
   recoverMock,
 ];
 
@@ -88,7 +79,6 @@ const apexPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   syncAccountsAction,
   discoverWalletAction,
-  customImageAction,
   recoverAction,
 ];
 
@@ -109,13 +99,11 @@ export function getPostOnboardingActionsForDevice(
 ): PostOnboardingAction[] {
   switch (deviceModelId) {
     case DeviceModelId.nanoS:
-      // Post-onboarding actions for Nano S (no custom lock screen or sync step).
+      // Post-onboarding actions for Nano S (no sync step).
       return [assetsTransferAction, discoverWalletAction];
     case DeviceModelId.nanoSP:
-      // Post-onboarding actions for Nano S Plus (no custom lock screen step).
       return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
     case DeviceModelId.nanoX:
-      // Post-onboarding actions for Nano X (no custom lock screen step).
       return [assetsTransferAction, syncAccountsAction, discoverWalletAction];
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;

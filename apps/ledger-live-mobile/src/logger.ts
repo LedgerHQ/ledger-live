@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import Config from "react-native-config"; // for now we have the bare minimum
 import { Log } from "@ledgerhq/logs";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv, setEnvUnsafe } from "@shared/env";
 
 export default {
   critical: (e: Error) => {

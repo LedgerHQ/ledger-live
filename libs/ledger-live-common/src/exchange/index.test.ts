@@ -1,7 +1,7 @@
 /* eslint-env jest */
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import calService from "@ledgerhq/ledger-cal-service";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getCurrencyExchangeConfig } from ".";
 
 jest.mock("@ledgerhq/ledger-cal-service", () => ({
@@ -9,8 +9,8 @@ jest.mock("@ledgerhq/ledger-cal-service", () => ({
   default: { findCurrencyData: jest.fn() },
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
-  ...jest.requireActual("@ledgerhq/live-env"),
+jest.mock("@shared/env", () => ({
+  ...jest.requireActual("@shared/env"),
   getEnv: jest.fn(),
 }));
 

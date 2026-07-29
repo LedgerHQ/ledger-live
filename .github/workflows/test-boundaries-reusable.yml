@@ -2,6 +2,19 @@ name: "[Module Boundaries] - Test - Called"
 
 on:
   workflow_call:
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       ref:

@@ -52,9 +52,10 @@ import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/
 import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recoverState";
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
 import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import { cvsApiExtra } from "@domain/api-currency-fiat";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { llmRtkApiInitialStates, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
@@ -142,6 +143,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
           immutableCheck: false,
           thunk: {
             extraArgument: {
+              ...cvsApiExtra({ countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API") }),
               ...marketSentimentApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
               ...altcoinsSentimentApiExtra({ coinMarketCapApiUrl: getEnv("CMC_API_URL") }),
             },

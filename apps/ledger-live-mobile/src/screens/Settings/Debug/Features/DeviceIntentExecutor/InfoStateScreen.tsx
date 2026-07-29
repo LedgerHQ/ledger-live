@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { InfoState } from "LLM/components/InfoState";
 import type { InfoStatePreset, InfoStateProps } from "LLM/components/InfoState/types";
 
@@ -138,7 +138,7 @@ export default function DebugInfoStateScreen() {
         </Box>
       </ScrollView>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
         hideHandle
@@ -175,9 +175,9 @@ export default function DebugInfoStateScreen() {
               : undefined,
           })}
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isCyclePreviewOpen}
         onClose={() => setIsCyclePreviewOpen(false)}
         hideHandle
@@ -192,7 +192,7 @@ export default function DebugInfoStateScreen() {
             onNext: () => setCycleIndex(index => (index + 1) % cyclePresets.length),
           })}
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </>
   );
 }

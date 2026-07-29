@@ -1,5 +1,5 @@
 import { getDeviceNameSync } from "react-native-device-info";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Platform } from "react-native";
 
 const platformMap: Record<string, string | undefined> = {

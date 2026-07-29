@@ -40,9 +40,13 @@ import {
 import type {
   BuildTransactionArgs,
   BuildTransactionResult,
+  BuildIronwoodTransactionArgs,
+  BuildIronwoodTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
   BroadcastTransactionArgs,
+  TransactionDetailsArgs,
+  TransactionDetailsResult,
 } from "../types";
 import { OneShotResolver } from "./one-shot-router";
 
@@ -148,8 +152,10 @@ type HostState = {
     chainTip: OneShotResolver<number>;
     blockHeight: OneShotResolver<number>;
     buildTx: OneShotResolver<BuildTransactionResult>;
+    buildIronwoodTx: OneShotResolver<BuildIronwoodTransactionResult>;
     finalizeTx: OneShotResolver<FinalizeTransactionResult>;
     broadcastTx: OneShotResolver<string>;
+    transactionDetails: OneShotResolver<TransactionDetailsResult[]>;
   };
 };
 
@@ -161,8 +167,12 @@ const state: HostState = {
     chainTip: new OneShotResolver<number>("chain-tip"),
     blockHeight: new OneShotResolver<number>("block-height"),
     buildTx: new OneShotResolver<BuildTransactionResult>("build-transaction"),
+    buildIronwoodTx: new OneShotResolver<BuildIronwoodTransactionResult>(
+      "build-ironwood-transaction",
+    ),
     finalizeTx: new OneShotResolver<FinalizeTransactionResult>("finalize-transaction"),
     broadcastTx: new OneShotResolver<string>("broadcast-transaction"),
+    transactionDetails: new OneShotResolver<TransactionDetailsResult[]>("transaction-details"),
   },
 };
 
@@ -275,7 +285,15 @@ function handleStreamMessage(event: StreamEvent): void {
 }
 
 function handleUtilityMessage(msg: UtilityOutboundMessage): void {
-  const { chainTip, blockHeight, buildTx, finalizeTx, broadcastTx } = state.resolvers;
+  const {
+    chainTip,
+    blockHeight,
+    buildTx,
+    buildIronwoodTx,
+    finalizeTx,
+    broadcastTx,
+    transactionDetails,
+  } = state.resolvers;
   switch (msg.type) {
     case "chain-tip":
       return resolveOneShot(chainTip, msg.requestId, msg.height, "chain-tip reply");
@@ -291,6 +309,20 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
       return resolveOneShot(buildTx, msg.requestId, msg.result, "build-transaction-result");
     case "build-transaction-error":
       return rejectOneShot(buildTx, msg.requestId, msg.message, "build-transaction-error");
+    case "build-ironwood-transaction-result":
+      return resolveOneShot(
+        buildIronwoodTx,
+        msg.requestId,
+        msg.result,
+        "build-ironwood-transaction-result",
+      );
+    case "build-ironwood-transaction-error":
+      return rejectOneShot(
+        buildIronwoodTx,
+        msg.requestId,
+        msg.message,
+        "build-ironwood-transaction-error",
+      );
     case "finalize-transaction-result":
       return resolveOneShot(finalizeTx, msg.requestId, msg.result, "finalize-transaction-result");
     case "finalize-transaction-error":
@@ -299,6 +331,20 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
       return resolveOneShot(broadcastTx, msg.requestId, msg.txid, "broadcast-transaction-result");
     case "broadcast-transaction-error":
       return rejectOneShot(broadcastTx, msg.requestId, msg.message, "broadcast-transaction-error");
+    case "transaction-details-result":
+      return resolveOneShot(
+        transactionDetails,
+        msg.requestId,
+        msg.results,
+        "transaction-details-result",
+      );
+    case "transaction-details-error":
+      return rejectOneShot(
+        transactionDetails,
+        msg.requestId,
+        msg.message,
+        "transaction-details-error",
+      );
     default: {
       const exhaustive: never = msg;
       log(LOG_TYPE, "unknown utility message", { msg: exhaustive });
@@ -380,6 +426,14 @@ function registerHandlers(): void {
       ),
   );
 
+  ipcMain.handle<BuildIronwoodTransactionArgs, BuildIronwoodTransactionResult>(
+    ZCASH_IPC.buildIronwoodTransaction,
+    (_event, args): Promise<BuildIronwoodTransactionResult> =>
+      state.resolvers.buildIronwoodTx.register(args.requestId, () =>
+        postToUtility({ type: "build-ironwood-transaction", args }),
+      ),
+  );
+
   ipcMain.handle<FinalizeTransactionArgs, FinalizeTransactionResult>(
     ZCASH_IPC.finalizeTransaction,
     (_event, args): Promise<FinalizeTransactionResult> =>
@@ -393,6 +447,14 @@ function registerHandlers(): void {
     (_event, args): Promise<string> =>
       state.resolvers.broadcastTx.register(args.requestId, () =>
         postToUtility({ type: "broadcast-transaction", args }),
+      ),
+  );
+
+  ipcMain.handle<TransactionDetailsArgs, TransactionDetailsResult[]>(
+    ZCASH_IPC.transactionDetails,
+    (_event, args): Promise<TransactionDetailsResult[]> =>
+      state.resolvers.transactionDetails.register(args.requestId, () =>
+        postToUtility({ type: "transaction-details", args }),
       ),
   );
 }

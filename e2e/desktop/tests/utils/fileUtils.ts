@@ -29,6 +29,21 @@ export class FileUtils {
     return false;
   }
 
+  @step("Wait for file to be removed")
+  static async waitForFileToBeRemoved(filePath: string, timeout: number): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeout) {
+      try {
+        await access(filePath);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   @step("Wait for file to exist and move to target path")
   static async waitForFileAndMove(
     sourcePath: string,

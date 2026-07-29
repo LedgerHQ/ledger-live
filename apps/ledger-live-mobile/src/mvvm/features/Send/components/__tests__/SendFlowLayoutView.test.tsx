@@ -5,6 +5,10 @@ import { render, screen } from "@testing-library/react-native";
 
 import { SendFlowLayoutView } from "../SendFlowLayoutView";
 
+jest.mock("~/screens/Settings/Experimental/ExperimentalHeader", () => ({
+  useIsExperimentalHeaderVisible: jest.fn(() => false),
+}));
+
 jest.mock("react-native-safe-area-context", () => {
   const RN = jest.requireActual<typeof import("react-native")>("react-native");
 
@@ -79,5 +83,20 @@ describe("SendFlowLayoutView", () => {
     );
 
     expect(screen.getByText("Right action")).toBeOnTheScreen();
+  });
+
+  it("should omit the top safe area when the experimental header is visible", () => {
+    const { useIsExperimentalHeaderVisible } = jest.requireMock(
+      "~/screens/Settings/Experimental/ExperimentalHeader",
+    );
+    useIsExperimentalHeaderVisible.mockReturnValue(true);
+
+    render(
+      <SendFlowLayoutView>
+        <View testID="page-content" />
+      </SendFlowLayoutView>,
+    );
+
+    expect(screen.getByTestId("page-content")).toBeOnTheScreen();
   });
 });

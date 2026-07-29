@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "Ledger Live countervalues module",
   "keywords": [
     "Ledger"
@@ -22,7 +22,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",

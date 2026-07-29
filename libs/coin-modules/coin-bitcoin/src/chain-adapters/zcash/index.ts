@@ -12,7 +12,7 @@ import {
   patchOperationWithHash,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { ChainAdapter } from "../types";
+import type { ChainAdapter, ResolvedTransactions } from "../types";
 import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../../signer";
 import type {
   Transaction,
@@ -49,7 +49,7 @@ import {
 import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
-import { collectSpendableNotes } from "./operations";
+import { collectSpendableNotes, collectIronwoodSpendableNotes } from "./operations";
 import {
   selectNotes,
   estimateMaxSpendableAmount,
@@ -60,7 +60,9 @@ import {
 import { composeXpub } from "./xpub";
 import { computeZcashBalance } from "./balance";
 import { getWalletAccount } from "../../getWalletAccount";
+import type { TX } from "@ledgerhq/wallet-btc/index";
 import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
+import { resolveTransactionDetails } from "./transaction-details";
 
 // ── Lazy module import (renderer-safe) ────────────────────────────────────
 //
@@ -129,6 +131,71 @@ const isTransparentInputTransfer = (transferType: ZcashTransferType): boolean =>
 function resolveTransparentUtxos(account: ZcashAccount, tx: ZcashTransaction): BitcoinOutput[] {
   if (!TRANSPARENT_INPUT_TRANSFER_TYPES.has(tx.transferType)) return [];
   return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
+}
+
+// Note-selection flows (Ironwood + Orchard-shielded). Ironwood spends Ironwood
+// notes ("ironwood" / "ironwood-to-transparent"), shielded spends Orchard notes
+// ("shielded" / "shielded-to-transparent").
+const IRONWOOD_TRANSFER_TYPES = new Set<ZcashTransferType>(["ironwood", "ironwood-to-transparent"]);
+const SHIELDED_TRANSFER_TYPES = new Set<ZcashTransferType>(["shielded", "shielded-to-transparent"]);
+
+// Strip any stale fee/change from a prior prepare and reset the amount so the UI
+// never shows a spendable amount without a matching fee.
+function resetPreparedTransaction(tx: ZcashTransaction, amount: BigNumber): ZcashTransaction {
+  const { zcashFee: _, changeAmount: __, ...rest } = tx;
+  return {
+    ...rest,
+    amount,
+    selectedNotes: [],
+  } as ZcashTransaction;
+}
+
+// Prepare a transparent-input flow (Public→*): ZIP-317 fee/change resolution over
+// transparent UTXOs, with no Orchard note selection.
+function prepareTransparentTransaction(
+  zcashAccount: ZcashAccount,
+  tx: ZcashTransaction,
+): ZcashTransaction {
+  const utxoValues = resolveTransparentUtxos(zcashAccount, tx).map(utxo => utxo.value);
+  // When useAllAmount is set, the effective amount is the max spendable over the
+  // current UTXO set — recomputed here so it stays coherent even if a prior
+  // prepare mutated tx.amount and the UTXOs have since changed.
+  const effectiveAmount = tx.useAllAmount
+    ? estimateMaxSpendableTransparent(utxoValues, tx.transferType)
+    : tx.amount;
+  const result = selectTransparentInputs(
+    utxoValues,
+    effectiveAmount,
+    !!tx.useAllAmount,
+    tx.transferType,
+  );
+  if (!result) return resetPreparedTransaction(tx, effectiveAmount);
+  return {
+    ...tx,
+    amount: effectiveAmount,
+    selectedNotes: [], // transparent inputs — no Orchard note spends
+    zcashFee: result.fee,
+    changeAmount: result.changeAmount,
+  } as ZcashTransaction;
+}
+
+// Prepare a note-selection flow (Ironwood or Orchard-shielded). Both share the
+// same pipeline; only the collected note set differs.
+function prepareNoteTransaction(notes: SpendableNote[], tx: ZcashTransaction): ZcashTransaction {
+  // When useAllAmount is set, compute the effective amount from max spendable.
+  const effectiveAmount = tx.useAllAmount
+    ? estimateMaxSpendableAmount(notes, tx.transferType)
+    : tx.amount;
+  if (effectiveAmount.lte(0)) return resetPreparedTransaction(tx, effectiveAmount);
+  const result = selectNotes(notes, effectiveAmount, tx.transferType);
+  if (!result) return resetPreparedTransaction(tx, effectiveAmount);
+  return {
+    ...tx,
+    amount: effectiveAmount,
+    selectedNotes: result.selectedNotes,
+    zcashFee: result.fee,
+    changeAmount: result.changeAmount,
+  } as ZcashTransaction;
 }
 
 /**
@@ -398,9 +465,45 @@ const zcashChainAdapter: ChainAdapter = {
   buildExtraSyncObservable,
 
   computeAccountBalance(account: BitcoinAccount | undefined, transparentBalance: BigNumber) {
+    // Flag OFF ⇒ every send falls back to the legacy transparent Bitcoin path,
+    // so the shielded (Orchard/Sapling) pools are NOT spendable. Counting them in
+    // the balance would make the account show more than the transparent max
+    // spendable — the displayed balance and the send flow's "maximum estimated
+    // amount" could never agree, and toggling "Send max" could not reach the
+    // shown balance. Report the transparent balance only until the feature is on.
+    if (!isZcashShieldedEnabled()) return transparentBalance;
     return computeZcashBalance(
       transparentBalance,
       (account as ZcashAccount | undefined)?.privateInfo,
+    );
+  },
+
+  async resolveTransactionDetails(
+    transactions: TX[],
+    account: BitcoinAccount | undefined,
+  ): Promise<ResolvedTransactions> {
+    const asReported = { transactions, payeesByTxId: new Map<string, string[]>() };
+    if (!isZcashShieldedEnabled()) return asReported;
+
+    const { grpcUrl, network } = getZainoEndpoint();
+    const { createZCashClient } = await getZCashModule();
+    const client = createZCashClient({ grpcUrl, network });
+
+    // Optional on ZCashClient: the React Native stub omits it. The capability is
+    // settled for the whole platform, so it is asked about here rather than per
+    // batch — nothing is left half-asked, and no sync builds a request nobody
+    // can answer. The explorer's view stands, as it did before this hook.
+    const transactionDetails = client.transactionDetails;
+    if (!transactionDetails) return asReported;
+
+    // Without the viewing key the fees are still recoverable; only the shielded
+    // payees are not, since they are encrypted to it.
+    const ufvk = (account as ZcashAccount | undefined)?.privateInfo?.ufvk ?? undefined;
+
+    return resolveTransactionDetails(
+      transactions,
+      requests => transactionDetails(requests, ufvk),
+      ufvk,
     );
   },
 
@@ -445,7 +548,12 @@ const zcashChainAdapter: ChainAdapter = {
     if (!isZcashShieldedEnabled()) {
       if (isZcashTransaction(transaction)) {
         const { transferType } = transaction;
-        if (transferType === "shielded" || transferType === "shielded-to-transparent") {
+        if (
+          transferType === "shielded" ||
+          transferType === "shielded-to-transparent" ||
+          transferType === "ironwood" ||
+          transferType === "ironwood-to-transparent"
+        ) {
           return new Observable(sub =>
             sub.error(
               new Error(
@@ -464,6 +572,22 @@ const zcashChainAdapter: ChainAdapter = {
     // below would throw. Fall back to the legacy PSBT path so partial/legacy
     // flows aren't broken while the flag is enabled.
     if (!isZcashTransaction(transaction)) return undefined;
+
+    // Ironwood signing is not yet available — finalizeIronwoodTransaction has not
+    // shipped in @ledgerhq/zcash-utils. Reject immediately with a clear message so
+    // the UI surfaces a user-visible error rather than hanging during proving.
+    if (
+      transaction.transferType === "ironwood" ||
+      transaction.transferType === "ironwood-to-transparent"
+    ) {
+      return new Observable(sub =>
+        sub.error(
+          new Error(
+            `Zcash ${transaction.transferType} signing is not yet supported — requires finalizeIronwoodTransaction`,
+          ),
+        ),
+      );
+    }
 
     const zcashAccount = account as ZcashAccount;
     const tx = transaction;
@@ -655,9 +779,14 @@ const zcashChainAdapter: ChainAdapter = {
       return getTransparentInputStatus(zcashAccount, tx, account.currency.name);
     }
 
-    // Remaining flows with shielded inputs (Orchard note selection): "shielded"
-    // (private -> private) and "shielded-to-transparent" (private -> public).
-    if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
+    // Remaining flows with shielded inputs: Orchard ("shielded",
+    // "shielded-to-transparent") and Ironwood ("ironwood", "ironwood-to-transparent").
+    if (
+      tx.transferType !== "shielded" &&
+      tx.transferType !== "shielded-to-transparent" &&
+      tx.transferType !== "ironwood" &&
+      tx.transferType !== "ironwood-to-transparent"
+    )
       return undefined;
 
     const errors: Record<string, Error> = {};
@@ -676,14 +805,18 @@ const zcashChainAdapter: ChainAdapter = {
       } satisfies TransactionStatus);
     }
 
-    const orchardBalance = privateInfo.orchardBalance;
+    // Validate against the pool balance that will be spent.
+    const poolBalance =
+      tx.transferType === "ironwood" || tx.transferType === "ironwood-to-transparent"
+        ? privateInfo.ironwoodBalance
+        : privateInfo.orchardBalance;
     const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
     const totalSpent = tx.amount.plus(fee);
 
     const recipientError = computeRecipientError(tx.recipient, account.currency.name);
     if (recipientError) errors.recipient = recipientError;
 
-    const amountError = computeAmountError(tx, totalSpent, orchardBalance);
+    const amountError = computeAmountError(tx, totalSpent, poolBalance);
     if (amountError) errors.amount = amountError;
 
     return Promise.resolve({
@@ -717,10 +850,19 @@ const zcashChainAdapter: ChainAdapter = {
     }
 
     const transferType = tx?.transferType ?? "transparent";
-    // Max spendable from Orchard notes only applies to shielded-input flows.
-    if (transferType !== "shielded" && transferType !== "shielded-to-transparent") return undefined;
+    // Max spendable from note-based pools (Orchard or Ironwood).
+    if (
+      transferType !== "shielded" &&
+      transferType !== "shielded-to-transparent" &&
+      transferType !== "ironwood" &&
+      transferType !== "ironwood-to-transparent"
+    )
+      return undefined;
 
-    const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
+    const notes =
+      transferType === "ironwood" || transferType === "ironwood-to-transparent"
+        ? collectIronwoodSpendableNotes(zcashAccount.privateInfo?.transactions ?? [])
+        : collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
     return Promise.resolve(estimateMaxSpendableAmount(notes, transferType));
   },
 
@@ -738,77 +880,24 @@ const zcashChainAdapter: ChainAdapter = {
     // Covers Public→Private ("transparent-to-shielded", Orchard output) and,
     // with the flag on, Public→Public ("transparent", transparent output).
     if (isTransparentInputTransfer(tx.transferType)) {
-      const utxoValues = resolveTransparentUtxos(zcashAccount, tx).map(utxo => utxo.value);
-      // When useAllAmount is set, the effective amount is the max spendable over
-      // the current UTXO set — recomputed here so it stays coherent even if a
-      // prior prepare mutated tx.amount and the UTXOs have since changed.
-      const effectiveAmount = tx.useAllAmount
-        ? estimateMaxSpendableTransparent(utxoValues, tx.transferType)
-        : tx.amount;
-      const result = selectTransparentInputs(
-        utxoValues,
-        effectiveAmount,
-        !!tx.useAllAmount,
-        tx.transferType,
+      return Promise.resolve(prepareTransparentTransaction(zcashAccount, tx));
+    }
+
+    // Note-selection flows: Ironwood ("ironwood" / "ironwood-to-transparent") and
+    // Orchard-shielded ("shielded" / "shielded-to-transparent"). Both run the same
+    // pipeline; only the collected note set differs.
+    const transactions = zcashAccount.privateInfo?.transactions ?? [];
+    if (IRONWOOD_TRANSFER_TYPES.has(tx.transferType)) {
+      return Promise.resolve(
+        prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx),
       );
-      if (!result) {
-        // Insufficient balance: strip any stale fee/change from a prior prepare
-        // and reset amount to the current effective value so the UI never shows a
-        // spendable amount without a matching fee.
-        const { zcashFee: _, changeAmount: __, ...rest } = tx;
-        return Promise.resolve({
-          ...rest,
-          amount: effectiveAmount,
-          selectedNotes: [],
-        } as ZcashTransaction);
-      }
-      return Promise.resolve({
-        ...tx,
-        amount: effectiveAmount,
-        selectedNotes: [], // transparent inputs — no Orchard note spends
-        zcashFee: result.fee,
-        changeAmount: result.changeAmount,
-      } as ZcashTransaction);
+    }
+    if (SHIELDED_TRANSFER_TYPES.has(tx.transferType)) {
+      return Promise.resolve(prepareNoteTransaction(collectSpendableNotes(transactions), tx));
     }
 
-    // Only handle remaining flows with shielded inputs (Orchard note selection).
-    if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
-      return undefined;
-
-    const notes = collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
-
-    // When useAllAmount is set, compute the effective amount from max spendable
-    const effectiveAmount = tx.useAllAmount
-      ? estimateMaxSpendableAmount(notes, tx.transferType)
-      : tx.amount;
-
-    if (effectiveAmount.lte(0)) {
-      const { zcashFee: _, changeAmount: __, ...rest } = tx;
-      return Promise.resolve({
-        ...rest,
-        amount: effectiveAmount,
-        selectedNotes: [],
-      } as ZcashTransaction);
-    }
-
-    const result = selectNotes(notes, effectiveAmount, tx.transferType);
-    if (!result) {
-      // Destructure to strip stale zcashFee/changeAmount from a prior prepare
-      const { zcashFee: _, changeAmount: __, ...rest } = tx;
-      return Promise.resolve({
-        ...rest,
-        amount: effectiveAmount,
-        selectedNotes: [],
-      } as ZcashTransaction);
-    }
-
-    return Promise.resolve({
-      ...tx,
-      amount: effectiveAmount,
-      selectedNotes: result.selectedNotes,
-      zcashFee: result.fee,
-      changeAmount: result.changeAmount,
-    } as ZcashTransaction);
+    // Any other transfer type ⇒ legacy Bitcoin preparation.
+    return undefined;
   },
 
   getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {

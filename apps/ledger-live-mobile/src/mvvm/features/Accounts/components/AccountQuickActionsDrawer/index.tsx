@@ -5,7 +5,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 
 import useAccountQuickActionDrawerViewModel from "./useAccountQuickActionDrawerViewModel";
 import TransferButton from "~/components/TransferButton";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";

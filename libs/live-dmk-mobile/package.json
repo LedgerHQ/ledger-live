@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.28.1",
+  "version": "0.29.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -38,10 +38,10 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-dmk-shared": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "purify-ts": "^2.1.0"
+    "purify-ts": "^2.1.0",
+    "@shared/env": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/device-transport-kit-react-native-hid": "catalog:",

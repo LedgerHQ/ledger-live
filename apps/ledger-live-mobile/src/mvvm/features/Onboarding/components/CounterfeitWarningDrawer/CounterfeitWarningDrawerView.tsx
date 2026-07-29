@@ -8,7 +8,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Trans } from "~/context/Locale";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import type { CounterfeitWarningDrawerViewProps } from "./useCounterfeitWarningDrawerViewModel";
 
 type BodyLinkProps = Readonly<{
@@ -38,7 +38,7 @@ const CounterfeitWarningDrawerView = ({
   onResellerLink,
   onDismiss,
 }: CounterfeitWarningDrawerViewProps) => (
-  <QueuedDrawerBottomSheet
+  <QueuedBottomSheet
     isRequestingToBeOpened={isOpen}
     onClose={onDismiss}
     enableDynamicSizing
@@ -83,7 +83,7 @@ const CounterfeitWarningDrawerView = ({
         </Box>
       </Box>
     </BottomSheetView>
-  </QueuedDrawerBottomSheet>
+  </QueuedBottomSheet>
 );
 
 export default CounterfeitWarningDrawerView;

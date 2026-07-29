@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { retryUntilTimeout } from "../../utils/retry";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -25,9 +26,7 @@ export default class SwapPage extends CommonPage {
   topBarSwapHistoryButton = "topbar-swap-history";
   exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
-  swapFormTabId = "swap-form-tab";
 
-  swapFormTab = () => getElementById(this.swapFormTabId);
   operationRows = () => getElementById(this.operationRow.rowRegexp);
   getSpecificOperation = (swapId: string) =>
     getElementById(`${this.operationRow.rowBaseId}${swapId}`);
@@ -40,19 +39,17 @@ export default class SwapPage extends CommonPage {
   specificOperationAmountToId = (swapId: string) => `${this.operationRow.baseToAmount}${swapId}`;
 
   @Step("Open swap via deeplink")
-  async openViaDeeplink() {
-    await openDeeplink(this.baseLink);
-    await waitForElementById(app.common.walletApiWebview);
+  async openViaDeeplink(params?: string) {
+    const deeplinkPath = params ? `${this.baseLink}?${params}` : this.baseLink;
+    await openDeeplink(deeplinkPath);
+    // checkVisibility: false — an ambiguous token can open an account-picker drawer
+    // that covers the webview first; callers already check visibility themselves.
+    await waitForElementById(app.common.walletApiWebview, undefined, { checkVisibility: false });
   }
 
   @Step("Expect swap page")
   async expectSwapPage() {
-    if (await IsIdVisible(this.swapFormTabId, 5000)) {
-      await detoxExpect(this.swapFormTab()).toBeVisible();
-    } else {
-      // Wallet 4.0 swap screen does not expose `swap-form-tab`; rely on shared webview readiness.
-      await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
-    }
+    await detoxExpect(getElementById(app.common.walletApiWebview)).toBeVisible();
   }
 
   @Step("Go to swap history")
@@ -148,6 +145,24 @@ export default class SwapPage extends CommonPage {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);
+  }
+
+  @Step("Wait for swap success and close")
+  async waitForSuccessAndClose() {
+    await waitForElementById(this.swapSuccessTitleId, 120000, {
+      errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
+    });
+    let tapped = false;
+    await retryUntilTimeout(async () => {
+      if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, 500))) {
+        return; // already dismissed by a previous tap — nothing left to do
+      }
+      await app.common.closePage();
+      tapped = true;
+      if (await IsIdVisible(this.swapSuccessTitleId, 1000)) {
+        throw new Error("swap-success-title still visible after close tap");
+      }
+    }, 60000);
   }
 
   @Step("Selected provider: $0")

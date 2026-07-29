@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useAleoViewKeyApproval } from "@ledgerhq/live-common/families/aleo/react";
 import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";

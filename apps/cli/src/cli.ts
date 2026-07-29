@@ -1,3 +1,4 @@
+import "@shared/env";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";

@@ -33,6 +33,43 @@ on:
         type: string
         default: "true"
 
+    secrets:
+      ALLURE_LEDGER_LIVE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PASSWORD:
+        required: false
+      ANDROID_KEYSTORE_PATH:
+        required: false
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      GH_BOT_APP_ID:
+        required: false
+      GH_BOT_CLIENT_ID:
+        required: false
+      GH_BOT_PRIVATE_KEY:
+        required: false
+      NX_KEY:
+        required: false
+      R2_ACCESS_KEY_ID:
+        required: false
+      R2_ENDPOINT:
+        required: false
+      R2_SECRET_ACCESS_KEY:
+        required: false
+      S3_DIRECTCONNECT_ENDPOINT:
+        required: false
+      SEED_QAA_B2C:
+        required: false
+      SPECULINHO_URL:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -68,7 +105,6 @@ on:
         default: "true"
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -96,6 +132,9 @@ env:
 jobs:
   determine-builds:
     name: "Determine Builds"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [ubuntu-22.04]
     outputs:
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
@@ -170,7 +209,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: apps/ledger-live-mobile/e2e
-          test_filter: ${{ inputs.test_filter || '' }}
           event_name: ${{ github.event_name }}
           ref: ${{ inputs.ref || github.ref_name }}
           ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
@@ -263,6 +301,9 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
@@ -277,6 +318,9 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    permissions:
+      id-token: write
+      contents: read
     with:
       ref: ${{ inputs.ref || github.sha }}
       disable-nx-cache: ${{ inputs.disable-nx-cache || false }}
@@ -308,7 +352,7 @@ jobs:
         if: ${{ !inputs.skip-bundle-size-reporting }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          baseBranch: ${{ inputs.base_ref || 'develop' }}
+          baseBranch: ${{ 'develop' }}
           prNumber: ${{ github.event.number}}
           mode: mobile
       - name: Upload mobile metafile
@@ -320,6 +364,9 @@ jobs:
 
   detox-ui-e2e-android:
     name: "Android UI E2E Smoke Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-android, determine-builds]
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
@@ -606,6 +653,9 @@ jobs:
 
   detox-ui-e2e-ios:
     name: "iOS UI E2E Smoke Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: [build-ios, determine-builds]
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     timeout-minutes: 80
@@ -802,6 +852,9 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
+    permissions:
+      id-token: write
+      contents: read
     runs-on: [macOS, ARM64]
     needs: [determine-builds]
     if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true'

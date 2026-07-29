@@ -28,7 +28,7 @@ export function SlideItem({ index }: SlideItemProps) {
         <LottieView
           key={`${lottieSrc}-${index}-animation`}
           autoPlay
-          loop={false}
+          loop
           style={styles.lottie}
           source={source}
         />

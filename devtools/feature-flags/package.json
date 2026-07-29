@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -51,7 +51,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-utils-shared": "0.1.7",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
     "expo-file-system": "catalog:",
     "expo-modules-core": "catalog:",
     "expo-document-picker": "catalog:",

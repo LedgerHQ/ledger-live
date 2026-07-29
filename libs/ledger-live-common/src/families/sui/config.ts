@@ -1,5 +1,5 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 // `features.graphql` is intentionally NOT defaulted here — it's an app-level
 // runtime concern owned by the `suiGraphqlTransport` feature flag and

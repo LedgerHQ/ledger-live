@@ -1,4 +1,3 @@
-import { CoinType } from "@ledgerhq/types-cryptoassets";
 import type { SupportedRegistries, DomainServiceResolution } from "@ledgerhq/types-live/domain";
 
 export type Registry = {
@@ -15,7 +14,7 @@ export type Registry = {
     forward: RegExp;
     reverse: RegExp;
   };
-  coinTypes: CoinType[];
+  coinTypes: number[];
 };
 
 interface PromiseResolution<T> {

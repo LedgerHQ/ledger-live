@@ -7,6 +7,7 @@ import {
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
+import type BigNumber from "bignumber.js";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
@@ -17,7 +18,7 @@ import {
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import CosmosBase, { StakingMessageType } from "./chain/cosmosBase";
-import { Transaction } from "./types";
+import { CosmosDelegationInfo, CosmosOperationMode, Transaction } from "./types";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -29,9 +30,26 @@ type AminoMsg = {
   readonly value: any;
 };
 
+/**
+ * Framework-neutral inputs the amino/proto builders read — no dependency on `@types/live`
+ * `Account` / `Transaction`. The Alpaca logic layer builds this straight from a `TransactionIntent`
+ * (`intentToMessageParams`); the bridge derives it from its account/transaction
+ * (`messageParamsFromTransaction`). `memo` is carried for fee estimation; `txToMessages` ignores it.
+ */
+export type CosmosTransactionParams = {
+  mode: CosmosOperationMode;
+  senderAddress: string;
+  currencyId: string;
+  denom: string;
+  recipient: string;
+  amount: BigNumber;
+  memo: string;
+  validators: CosmosDelegationInfo[];
+  sourceValidator?: string;
+};
+
 export const txToMessages = (
-  account: Account,
-  transaction: Transaction,
+  params: CosmosTransactionParams,
   chain: CosmosBase,
 ): { aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] } => {
   const aminoMsgs: Array<AminoMsg> = [];
@@ -57,18 +75,18 @@ export const txToMessages = (
     });
   };
 
-  switch (transaction.mode) {
+  switch (params.mode) {
     case "send":
-      if (transaction.recipient && transaction.amount.gt(0)) {
+      if (params.recipient && params.amount.gt(0)) {
         const aminoMsg: AminoMsgSend = {
           type: "cosmos-sdk/MsgSend",
           value: {
-            from_address: account.freshAddress,
-            to_address: transaction.recipient,
+            from_address: params.senderAddress,
+            to_address: params.recipient,
             amount: [
               {
-                denom: account.currency.units[1].code,
-                amount: transaction.amount.toFixed(),
+                denom: params.denom,
+                amount: params.amount.toFixed(),
               },
             ],
           },
@@ -79,12 +97,12 @@ export const txToMessages = (
         protoMsgs.push({
           typeUrl: "/cosmos.bank.v1beta1.MsgSend",
           value: MsgSend.encode({
-            fromAddress: account.freshAddress,
-            toAddress: transaction.recipient,
+            fromAddress: params.senderAddress,
+            toAddress: params.recipient,
             amount: [
               {
-                denom: account.currency.units[1].code,
-                amount: transaction.amount.toFixed(),
+                denom: params.denom,
+                amount: params.amount.toFixed(),
               },
             ],
           }).finish(),
@@ -92,22 +110,22 @@ export const txToMessages = (
       }
       break;
     case "delegate":
-      if (transaction.validators && transaction.validators.length > 0) {
-        const validator = transaction.validators[0];
-        if (validator && validator.address && transaction.amount.gt(0)) {
+      if (params.validators && params.validators.length > 0) {
+        const validator = params.validators[0];
+        if (validator?.address && params.amount.gt(0)) {
           const amount = {
-            denom: account.currency.units[1].code,
-            amount: transaction.amount.toFixed(),
+            denom: params.denom,
+            amount: params.amount.toFixed(),
           };
           pushStakingMsg(
             stakingMessages.delegate,
             {
-              delegator_address: account.freshAddress,
+              delegator_address: params.senderAddress,
               validator_address: validator.address,
               amount,
             },
             {
-              delegatorAddress: account.freshAddress,
+              delegatorAddress: params.senderAddress,
               validatorAddress: validator.address,
               amount,
             },
@@ -120,28 +138,28 @@ export const txToMessages = (
 
     case "redelegate":
       if (
-        transaction.sourceValidator &&
-        transaction.validators &&
-        transaction.validators.length > 0 &&
-        transaction.validators[0].address &&
-        transaction.validators[0].amount.gt(0)
+        params.sourceValidator &&
+        params.validators &&
+        params.validators.length > 0 &&
+        params.validators[0].address &&
+        params.validators[0].amount.gt(0)
       ) {
-        const validator = transaction.validators[0];
+        const validator = params.validators[0];
         const amount = {
-          denom: account.currency.units[1].code,
+          denom: params.denom,
           amount: validator.amount.toFixed(),
         };
         pushStakingMsg(
           stakingMessages.beginRedelegate,
           {
-            delegator_address: account.freshAddress,
-            validator_src_address: transaction.sourceValidator,
+            delegator_address: params.senderAddress,
+            validator_src_address: params.sourceValidator,
             validator_dst_address: validator.address,
             amount,
           },
           {
-            delegatorAddress: account.freshAddress,
-            validatorSrcAddress: transaction.sourceValidator,
+            delegatorAddress: params.senderAddress,
+            validatorSrcAddress: params.sourceValidator,
             validatorDstAddress: validator.address,
             amount,
           },
@@ -152,22 +170,22 @@ export const txToMessages = (
       break;
 
     case "undelegate":
-      if (transaction.validators && transaction.validators.length > 0) {
-        const validator = transaction.validators[0];
+      if (params.validators && params.validators.length > 0) {
+        const validator = params.validators[0];
         if (validator && validator.address && validator.amount.gt(0)) {
           const amount = {
-            denom: account.currency.units[1].code,
+            denom: params.denom,
             amount: validator.amount.toFixed(),
           };
           pushStakingMsg(
             stakingMessages.undelegate,
             {
-              delegator_address: account.freshAddress,
+              delegator_address: params.senderAddress,
               validator_address: validator.address,
               amount,
             },
             {
-              delegatorAddress: account.freshAddress,
+              delegatorAddress: params.senderAddress,
               validatorAddress: validator.address,
               amount,
             },
@@ -178,16 +196,12 @@ export const txToMessages = (
       }
       break;
     case "claimReward":
-      if (
-        transaction.validators &&
-        transaction.validators.length > 0 &&
-        transaction.validators[0].address
-      ) {
-        const validator = transaction.validators[0];
+      if (params.validators && params.validators.length > 0 && params.validators[0].address) {
+        const validator = params.validators[0];
         const aminoMsg: AminoMsgWithdrawDelegatorReward = {
           type: "cosmos-sdk/MsgWithdrawDelegationReward",
           value: {
-            delegator_address: account.freshAddress,
+            delegator_address: params.senderAddress,
             validator_address: validator.address,
           },
         };
@@ -197,7 +211,7 @@ export const txToMessages = (
         protoMsgs.push({
           typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
           value: MsgWithdrawDelegatorReward.encode({
-            delegatorAddress: account.freshAddress,
+            delegatorAddress: params.senderAddress,
             validatorAddress: validator.address,
           }).finish(),
         });
@@ -205,32 +219,32 @@ export const txToMessages = (
       break;
     case "claimRewardCompound":
       if (
-        transaction.validators &&
-        transaction.validators.length > 0 &&
-        transaction.validators[0].address &&
-        transaction.validators[0].amount.gt(0)
+        params.validators &&
+        params.validators.length > 0 &&
+        params.validators[0].address &&
+        params.validators[0].amount.gt(0)
       ) {
-        const validator = transaction.validators[0];
+        const validator = params.validators[0];
         if (stakingMessages.wrapped) {
           // compound's embedded delegate isn't epoching-wrapped yet (LIVE-33994); fail fast on
           // wrapped/epoching chains rather than sign a bare cosmos-sdk delegate the chain rejects.
-          throw new Error(`claimRewardCompound is not supported on ${account.currency.id}`);
+          throw new Error(`claimRewardCompound is not supported on ${params.currencyId}`);
         }
         // AMINO MESSAGES
         const aminoWithdrawRewardMsg: AminoMsgWithdrawDelegatorReward = {
           type: "cosmos-sdk/MsgWithdrawDelegationReward",
           value: {
-            delegator_address: account.freshAddress,
+            delegator_address: params.senderAddress,
             validator_address: validator.address,
           },
         };
         const aminoDelegateMsg: AminoMsg = {
           type: stakingMessages.delegate.aminoType,
           value: {
-            delegator_address: account.freshAddress,
+            delegator_address: params.senderAddress,
             validator_address: validator.address,
             amount: {
-              denom: account.currency.units[1].code,
+              denom: params.denom,
               amount: validator.amount.toFixed(),
             },
           },
@@ -241,17 +255,17 @@ export const txToMessages = (
         protoMsgs.push({
           typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
           value: MsgWithdrawDelegatorReward.encode({
-            delegatorAddress: account.freshAddress,
+            delegatorAddress: params.senderAddress,
             validatorAddress: validator.address,
           }).finish(),
         });
         protoMsgs.push({
           typeUrl: stakingMessages.delegate.protoTypeUrl,
           value: MsgDelegate.encode({
-            delegatorAddress: account.freshAddress,
+            delegatorAddress: params.senderAddress,
             validatorAddress: validator.address,
             amount: {
-              denom: account.currency.units[1].code,
+              denom: params.denom,
               amount: validator.amount.toFixed(),
             },
           }).finish(),
@@ -261,6 +275,28 @@ export const txToMessages = (
   }
   return { aminoMsgs, protoMsgs };
 };
+
+/**
+ * Account/transaction-bridge adapter: derive {@link CosmosTransactionParams} from the `@types/live`
+ * account/transaction the bridge holds, so `signOperation` / `prepareTransaction` keep feeding the
+ * shared builders without leaking those types into the Alpaca logic layer.
+ */
+export function messageParamsFromTransaction(
+  account: Account,
+  transaction: Transaction,
+): CosmosTransactionParams {
+  return {
+    mode: transaction.mode,
+    senderAddress: account.freshAddress,
+    currencyId: account.currency.id,
+    denom: account.currency.units[1].code,
+    recipient: transaction.recipient,
+    amount: transaction.amount,
+    memo: transaction.memo || "",
+    validators: transaction.validators,
+    ...(transaction.sourceValidator ? { sourceValidator: transaction.sourceValidator } : {}),
+  };
+}
 
 export const buildTransaction = ({
   protoMsgs,

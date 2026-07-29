@@ -19,7 +19,7 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { track } from "~/renderer/analytics/segment";
 import getCleanVersion from "../screens/manager/FirmwareUpdate/getCleanVersion";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
 
 type BannerContentProps = {

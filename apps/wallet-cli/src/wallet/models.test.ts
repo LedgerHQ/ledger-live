@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { parseShortAccountDescriptor, parseAccountDescriptor, toTokenInfo } from "./models";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
@@ -58,7 +59,7 @@ describe("parseAccountDescriptor", () => {
 describe("toTokenInfo", () => {
   const usdtFixture: TokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usd_tether__erc20_",
+    id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
     name: "Tether USD",
     ticker: "USDT",
     contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -67,7 +68,7 @@ describe("toTokenInfo", () => {
       { name: "USDT", code: "USDT", magnitude: 6 },
       { name: "micro USDT", code: "uUSDT", magnitude: 0 },
     ],
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   };
 
   it("maps id, ticker, name, contract, tokenType verbatim", () => {

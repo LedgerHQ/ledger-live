@@ -1,5 +1,5 @@
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 
 export interface SellNavigationState {

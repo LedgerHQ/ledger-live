@@ -10,9 +10,9 @@ import { existsSync } from "fs";
 import path from "path";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import axios from "axios";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
@@ -71,6 +71,10 @@ const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
+const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+  SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
+);
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -968,11 +972,14 @@ export async function signSendTransaction(tx: Transaction) {
   }
 }
 
-export async function getSendEvents(tx: Transaction): Promise<string[]> {
+export async function getSendEvents(
+  tx: Transaction,
+  verifyMaxAttempts: number = SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS,
+): Promise<string[]> {
   const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
     tx.accountToDebit.currency.speculosApp,
   );
-  await waitFor(sendVerifyLabel);
+  await waitFor(sendVerifyLabel, verifyMaxAttempts);
   return await pressUntilTextFound(sendConfirmLabel);
 }
 

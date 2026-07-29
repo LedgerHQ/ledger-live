@@ -36,6 +36,26 @@ describe("rehydrateTransaction", () => {
     expect(result.fee.toFixed()).toBe("10000");
   });
 
+  // A transaction persisted before the scanner reported the transparent bundle
+  // has nothing to say about it. Reading that silence as zero would state that
+  // the transaction moved nothing out of the pools, which is a claim about the
+  // transaction rather than about what we know of it.
+  it("omits the transparent bundle when the raw transaction says nothing about it", () => {
+    const result = rehydrateTransaction(makeRawTx());
+
+    expect(result).not.toHaveProperty("transparentOut");
+    expect(result).not.toHaveProperty("hasTransparentInputs");
+  });
+
+  it("rehydrates the transparent bundle when the raw transaction carries it", () => {
+    const result = rehydrateTransaction(
+      makeRawTx({ transparentOut: "500000", hasTransparentInputs: false }),
+    );
+
+    expect(result.transparentOut?.toFixed()).toBe("500000");
+    expect(result.hasTransparentInputs).toBe(false);
+  });
+
   it("omits decryptedData when absent from raw", () => {
     const raw = makeRawTx();
     const result = rehydrateTransaction(raw);
@@ -79,6 +99,68 @@ describe("rehydrateTransaction", () => {
     const result = rehydrateTransaction(raw);
 
     expect(result.decryptedData).toEqual({ orchard_outputs: [], sapling_outputs: [] });
+  });
+
+  it("rehydrates ironwood_outputs when present", () => {
+    const raw = makeRawTx({
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          {
+            amount: "700000",
+            memo: "iw-memo",
+            transfer_type: "incoming",
+            nullifier: "nf-iw",
+            rho: "rho-iw",
+            rseed: "rseed-iw",
+            cmx: "cmx-iw",
+            position: "99",
+          },
+        ],
+      },
+    });
+
+    const result = rehydrateTransaction(raw);
+
+    expect(result.decryptedData).toHaveProperty("ironwood_outputs");
+    expect(result.decryptedData!.ironwood_outputs).toHaveLength(1);
+    const iwOut = result.decryptedData!.ironwood_outputs![0];
+    expect(iwOut.amount).toBeInstanceOf(BigNumber);
+    expect(iwOut.amount.toFixed()).toBe("700000");
+    expect(iwOut.memo).toBe("iw-memo");
+    expect(iwOut.transfer_type).toBe("incoming");
+    expect(iwOut.nullifier).toBe("nf-iw");
+  });
+
+  it("omits ironwood_outputs key when absent from raw (backward compat)", () => {
+    const raw = makeRawTx({
+      decryptedData: {
+        orchard_outputs: [{ amount: "100", memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+        // no ironwood_outputs
+      },
+    });
+
+    const result = rehydrateTransaction(raw);
+
+    expect(result.decryptedData).not.toHaveProperty("ironwood_outputs");
+  });
+
+  it("rehydrates all three pool outputs together", () => {
+    const raw = makeRawTx({
+      decryptedData: {
+        orchard_outputs: [{ amount: "1000", memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [{ amount: "2000", memo: "", transfer_type: "outgoing" }],
+        ironwood_outputs: [{ amount: "3000", memo: "", transfer_type: "internal" }],
+      },
+    });
+
+    const result = rehydrateTransaction(raw);
+
+    expect(result.decryptedData!.orchard_outputs[0].amount.toFixed()).toBe("1000");
+    expect(result.decryptedData!.sapling_outputs[0].amount.toFixed()).toBe("2000");
+    expect(result.decryptedData!.ironwood_outputs![0].amount.toFixed()).toBe("3000");
   });
 
   it("handles a zero fee", () => {

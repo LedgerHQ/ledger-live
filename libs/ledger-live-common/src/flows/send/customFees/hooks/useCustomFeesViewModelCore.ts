@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { Currency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Currency } from "@domain/entity-currency";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   getAccountCurrency,
@@ -87,7 +87,10 @@ export type UseCustomFeesViewModelCoreParams = Readonly<{
   discreet: boolean;
   counterValueCurrency: Currency;
   /** Reactive countervalue calculator (e.g. from useCalculateCountervalueCallback). */
-  calculateCountervalue: (from: Currency, value: BigNumber) => BigNumber | null | undefined;
+  calculateCountervalue: (
+    from: CryptoOrTokenCurrency,
+    value: BigNumber,
+  ) => BigNumber | null | undefined;
   labels: CustomFeesViewModelLabels;
 }>;
 

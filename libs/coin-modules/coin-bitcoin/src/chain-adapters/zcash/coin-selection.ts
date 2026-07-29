@@ -76,10 +76,10 @@ export function computeShieldedSpendFee(
   transferType: ZcashTransferType,
 ): BigNumber {
   const changeOutputs = hasChange ? 1 : 0;
-  return transferType === "shielded-to-transparent"
-    ? // transparent recipient (1 t-out) + optional shielded change (Orchard out)
+  return transferType === "shielded-to-transparent" || transferType === "ironwood-to-transparent"
+    ? // transparent recipient (1 t-out) + optional shielded change (Ironwood/Orchard out)
       computeZip317Fee(spendCount, changeOutputs, 0, 1)
-    : // recipient + optional change, both Orchard outputs
+    : // recipient + optional change, both shielded outputs
       computeZip317Fee(spendCount, 1 + changeOutputs, 0, 0);
 }
 

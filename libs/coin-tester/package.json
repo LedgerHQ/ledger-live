@@ -22,16 +22,15 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "typescript": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "oxfmt": "catalog:"
+    "typescript": "catalog:"
   },
   "typesVersions": {
     "*": {

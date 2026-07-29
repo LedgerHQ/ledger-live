@@ -409,10 +409,11 @@ export default class SwapLiveAppPage {
   @Step("Check currency to swap from matches account $0")
   async checkAssetFromMatchesAccount(account: Account) {
     const selectedAccountText: string = await getWebElementText(this.fromSelector);
+    const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
     jestExpect(selectedAccountText).toContain(account.currency.ticker);
     await waitWebElementByTestId(this.fromAccountAccountNameTag);
     const accountNameText: string = await getWebElementText(this.fromAccountAccountNameTag);
-    jestExpect(accountNameText).toContain(account.accountName);
+    jestExpect(accountNameText).toContain(expectedAccountName);
   }
 
   @Step("Check currency to swap to is $0 with amount $1")
@@ -446,6 +447,14 @@ export default class SwapLiveAppPage {
 
     jestExpect(selectedAccountTicker).toContain(account.currency.ticker);
     jestExpect(selectedAccountNameTag).toContain(expectedAccountName);
+  }
+
+  @Step("Clear swap account selection from localStorage")
+  async clearSwapState() {
+    await this.swapMainContainerWebElement.runScript(() => {
+      localStorage.removeItem("from-account");
+      localStorage.removeItem("to-account");
+    });
   }
 
   @Step("Check Ledger Nano S not supported banner for $0")

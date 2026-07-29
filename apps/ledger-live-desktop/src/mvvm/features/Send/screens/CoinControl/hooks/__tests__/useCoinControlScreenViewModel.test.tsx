@@ -31,12 +31,12 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
     feesRowValue: "--",
     feesRowStrategyLabel: "Medium",
     showNetworkFees: true,
-    showFeePresets: false,
     selectedFeeStrategy: null,
-    onSelectFeeStrategy: jest.fn(),
-    feePresetOptions: [],
-    fiatByPreset: {},
-    legendByPreset: {},
+    feeSelector: {
+      options: [],
+      selectedId: "",
+      canOpen: false,
+    },
   }),
 }));
 jest.mock("../../../Recipient/hooks/useTranslatedBridgeError", () => ({

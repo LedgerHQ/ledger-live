@@ -17,8 +17,12 @@ import type {
   ShieldedTransactionRaw,
   BuildTransactionArgs,
   BuildTransactionResult,
+  BuildIronwoodTransactionArgs,
+  BuildIronwoodTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
+  TransactionDetailsRequest,
+  TransactionDetailsResult,
 } from "../types";
 import type { PcztTransaction } from "@ledgerhq/live-signer-zcash";
 
@@ -48,6 +52,7 @@ type NativePcztTransaction = ReturnType<NativeModule["parsePczt"]>;
 const PCZT_METHODS = [
   "parsePczt",
   "buildTransaction",
+  "buildIronwoodTransaction",
   "finalizeTransaction",
   "broadcastTransaction",
 ] as const;
@@ -186,6 +191,31 @@ export async function buildTransactionJob(
 }
 
 /**
+ * Builds a PCZT for an Ironwood send, then immediately parses it back into the
+ * structured `PcztTransaction` the device signer expects.
+ *
+ * Note: `finalizeIronwoodTransaction` is not yet in the shipped NAPI — finalization
+ * for Ironwood PCZTs is pending a future NAPI update. This job covers the build
+ * path only.
+ */
+export async function buildIronwoodTransactionJob(
+  args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+): Promise<BuildIronwoodTransactionResult> {
+  const native = await getPcztModule();
+  const built = await native.buildIronwoodTransaction(args);
+  const rawPczt = native.parsePczt(built.pcztHex); // synchronous NAPI call — no await
+  return {
+    pcztHex: built.pcztHex,
+    pcztTransaction: adaptPcztForSigner(rawPczt),
+    feeZat: built.feeZat,
+    anchorHeight: built.anchorHeight,
+    nActionsIronwood: built.nActionsIronwood,
+    nTransparentInputs: built.nTransparentInputs,
+    nTransparentOutputs: built.nTransparentOutputs,
+  };
+}
+
+/**
  * Injects device signatures into the PCZT and extracts the final signed V5
  * transaction. CPU-bound; dispatched to spawn_blocking in the Rust layer.
  */
@@ -203,6 +233,28 @@ export async function finalizeTransactionJob(
 export async function broadcastTransactionJob(grpcUrl: string, txHex: string): Promise<string> {
   const native = await getPcztModule();
   return native.broadcastTransaction(grpcUrl, txHex);
+}
+
+/**
+ * Fee actually paid by each transaction, fetched from the gRPC endpoint and
+ * computed from the raw transaction bytes.
+ *
+ * An explorer derives a Zcash fee from the transparent bundle alone, so value
+ * entering or leaving a shielded pool lands in the fee it reports. Recomputing
+ * from the raw transaction takes the pools' value balances into account.
+ *
+ * Transactions that cannot be priced come back with a `null` fee rather than
+ * failing the batch — a fee we cannot establish must not masquerade as zero.
+ */
+export async function transactionDetailsJob(
+  grpcUrl: string,
+  requests: TransactionDetailsRequest[],
+  network: string,
+  ufvk?: string,
+): Promise<TransactionDetailsResult[]> {
+  const native = await getNativeModule();
+  const results = await native.transactionDetails(grpcUrl, requests, network, ufvk);
+  return results.map(({ txid, fee, payees }) => ({ txid, fee: fee ?? null, payees }));
 }
 
 /**
@@ -249,7 +301,14 @@ export async function startSyncJob(
 
   if (startBlockHeight > endHeight) {
     log(ZCASH_LOG_TYPE, "already at tip, nothing to scan");
-    onChunk({ processedBlocks: 0, remainingBlocks: 0, transactions: [] });
+    // Report the cursor even though nothing was scanned: a chunk without one
+    // reads as "no progress known" downstream and would clear the stored cursor.
+    onChunk({
+      processedBlocks: 0,
+      remainingBlocks: 0,
+      lastProcessedBlock: startBlockHeight - 1,
+      transactions: [],
+    });
     return;
   }
 
@@ -291,9 +350,14 @@ export async function startSyncJob(
     processedBlocks += blocksScanned;
     for (const tx of transactions) {
       allTransactions.push(mapNativeTx(tx));
-      // Collect nullifiers from incoming/internal Orchard notes discovered
-      // in this chunk so the next chunk can detect them as spent.
+      // Collect nullifiers from incoming/internal Orchard and Ironwood notes
+      // discovered in this chunk so the next chunk can detect them as spent.
       for (const note of tx.orchardNotes ?? []) {
+        if (note.nullifier && note.transferType !== "outgoing") {
+          accumulatedNullifiers.add(note.nullifier);
+        }
+      }
+      for (const note of tx.ironwoodNotes ?? []) {
         if (note.nullifier && note.transferType !== "outgoing") {
           accumulatedNullifiers.add(note.nullifier);
         }
@@ -321,6 +385,7 @@ export async function startSyncJob(
           fee: tx.fee,
           orchardNotesCount: tx.orchardNotes?.length ?? 0,
           saplingNotesCount: tx.saplingNotes?.length ?? 0,
+          ironwoodNotesCount: tx.ironwoodNotes?.length ?? 0,
         })),
       );
     }
@@ -366,7 +431,7 @@ async function syncChunk(
     startHeight: chunkStart,
     endHeight: chunkEnd,
     network,
-    orchardOnly: true, // Ledger only supports Orchard
+    orchardOnly: false, // scan Orchard and Ironwood shielded pools
     maxRetries: 3, // network retry delegated to Rust
     ...(knownNullifiers && knownNullifiers.length > 0 && { knownNullifiers }),
   });
@@ -416,6 +481,25 @@ async function syncChunk(
 }
 
 /**
+ * Maps a native shielded note (Orchard or Ironwood) to its IPC-safe output shape.
+ * Both pools share the same nullifier-bearing note layout.
+ */
+function mapShieldedNote(n: NativeTx["orchardNotes"][number]) {
+  return {
+    amount: String(n.amount),
+    memo: n.memo,
+    transfer_type: n.transferType,
+    ...(n.nullifier !== undefined && { nullifier: n.nullifier }),
+    ...(n.rho !== undefined && { rho: n.rho }),
+    ...(n.rseed !== undefined && { rseed: n.rseed }),
+    ...(n.cmx !== undefined && { cmx: n.cmx }),
+    ...(n.position !== undefined && { position: n.position }),
+    ...(n.recipient !== undefined && { recipient: n.recipient }),
+    ...(n.isSpent !== undefined && { is_spent: n.isSpent }),
+  };
+}
+
+/**
  * Converts a native (Rust-side) transaction to the IPC-safe `ShieldedTransactionRaw`.
  *
  * `BigNumber` reconstruction happens client-side, after the value has crossed IPC --
@@ -429,24 +513,19 @@ function mapNativeTx(tx: NativeTx): ShieldedTransactionRaw {
     blockHash: tx.blockHash,
     timestamp: tx.blockTime,
     fee: String(tx.fee),
+    transparentOut: String(tx.transparentOut),
+    hasTransparentInputs: tx.hasTransparentInputs,
     decryptedData: {
-      orchard_outputs: tx.orchardNotes.map(n => ({
-        amount: String(n.amount),
-        memo: n.memo,
-        transfer_type: n.transferType,
-        ...(n.nullifier !== undefined && { nullifier: n.nullifier }),
-        ...(n.rho !== undefined && { rho: n.rho }),
-        ...(n.rseed !== undefined && { rseed: n.rseed }),
-        ...(n.cmx !== undefined && { cmx: n.cmx }),
-        ...(n.position !== undefined && { position: n.position }),
-        ...(n.recipient !== undefined && { recipient: n.recipient }),
-        ...(n.isSpent !== undefined && { is_spent: n.isSpent }),
-      })),
+      orchard_outputs: tx.orchardNotes.map(mapShieldedNote),
       sapling_outputs: tx.saplingNotes.map(n => ({
         amount: String(n.amount),
         memo: n.memo,
         transfer_type: n.transferType,
       })),
+      ...(tx.ironwoodNotes &&
+        tx.ironwoodNotes.length > 0 && {
+          ironwood_outputs: tx.ironwoodNotes.map(mapShieldedNote),
+        }),
     },
   };
 }

@@ -36,6 +36,7 @@ export const fees: FeeDescriptor = {
       const normalizedFees =
         feesVal.isNaN() || feesVal.isNegative() ? new BigNumber(0) : feesVal.integerValue();
       return {
+        feesStrategy: "custom",
         fees: normalizedFees,
         customFees: {
           parameters: {
@@ -44,5 +45,12 @@ export const fees: FeeDescriptor = {
         },
       };
     },
+  },
+  defaultStrategy: {
+    buildTransactionPatch: () => ({
+      feesStrategy: undefined,
+      fees: undefined,
+      customFees: undefined,
+    }),
   },
 };

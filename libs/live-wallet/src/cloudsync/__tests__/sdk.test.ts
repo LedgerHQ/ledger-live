@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { CloudSyncSDK, UpdateEvent } from "../sdk";
 import { MockSDK } from "@ledgerhq/ledger-key-ring-protocol/mockSdk";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { TrustchainOutdated } from "@ledgerhq/ledger-key-ring-protocol/errors";
 

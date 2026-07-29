@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -68,6 +68,11 @@
       "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

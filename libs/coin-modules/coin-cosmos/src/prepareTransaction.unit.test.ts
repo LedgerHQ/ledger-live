@@ -2,6 +2,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
+import { messageParamsFromTransaction } from "./buildTransaction";
 import cosmosCoinConfig, { cosmosConfig } from "./config";
 import { calculateFees, getEstimatedFees } from "./prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
@@ -43,7 +44,9 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { gasWanted } = await getEstimatedFees(account, transaction);
+    const { gasWanted } = await getEstimatedFees(
+      messageParamsFromTransaction(account, transaction),
+    );
     expect(gasWanted.gt(new BigNumber(gasSimulationMock))).toEqual(true);
   });
 
@@ -56,7 +59,9 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { gasWantedFees, gasWanted } = await getEstimatedFees(account, transaction);
+    const { gasWantedFees, gasWanted } = await getEstimatedFees(
+      messageParamsFromTransaction(account, transaction),
+    );
     expect(gasWantedFees.gt(0)).toEqual(true);
     expect(gasWanted.gt(0)).toEqual(true);
   });

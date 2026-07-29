@@ -386,6 +386,68 @@ describe("getBalance", () => {
       ]);
     });
 
+    it("returns the baker's own balance, self-stake and unstake positions for a delegate account (LIVE-34256)", async () => {
+      // tzkt reports a registered baker with type "delegate" (not "user"). Before the fix this
+      // fell through to a 0 native balance and no stakes; the account appeared empty in Ledger Live.
+      // A delegate has no `delegate` field (it is its own baker), so there is no delegation position —
+      // only its self-stake and any unstake requests. The unstakedBalance > 0 exercises the
+      // delegate → fetchUnstakeRequests path.
+      mockServer.use(
+        http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
+          HttpResponse.json({
+            type: "delegate",
+            balance: 100,
+            stakedBalance: 30,
+            unstakedBalance: 10,
+          }),
+        ),
+        http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+        http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
+          HttpResponse.json([
+            {
+              id: 77,
+              cycle: 100,
+              baker: { address },
+              staker: { address },
+              firstTime: "2026-05-01T00:00:00Z",
+              status: "pending",
+              actualAmount: 10,
+            },
+          ]),
+        ),
+      );
+
+      expect(await getBalance(address)).toEqual([
+        { value: 100n, asset: { type: "native" }, locked: 40n },
+        {
+          value: 30n,
+          asset: { type: "native" },
+          stake: {
+            uid: `stake-${address}`,
+            address,
+            state: "active",
+            asset: { type: "native" },
+            amount: 30n,
+            actions: [],
+          },
+        },
+        {
+          value: 10n,
+          asset: { type: "native" },
+          stake: {
+            uid: "unstaking-77",
+            address,
+            delegate: address,
+            state: "deactivating",
+            createdAt: new Date("2026-05-01T00:00:00Z"),
+            asset: { type: "native" },
+            amount: 10n,
+            actions: [],
+          },
+        },
+      ]);
+    });
+
     it("returns only the primary native Balance when no staking activity", async () => {
       mockAccount({ balance: 50 });
 

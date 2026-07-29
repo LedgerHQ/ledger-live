@@ -3,7 +3,7 @@ import { BottomSheetView, Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { DeviceIllustration } from "~/components/DeviceIllustration";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 
@@ -19,7 +19,7 @@ export function DeviceRemoveDrawer({ device, isOpen, onClose, onRemove }: Device
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
       <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
         <Box lx={{ padding: "s16", gap: "s24" }}>
           {device ? (
@@ -32,6 +32,6 @@ export function DeviceRemoveDrawer({ device, isOpen, onClose, onRemove }: Device
           </Button>
         </Box>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

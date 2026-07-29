@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export const MAX_ACCOUNT_NAME_LENGTH = 50;

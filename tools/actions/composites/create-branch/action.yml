@@ -27,24 +27,29 @@ runs:
   using: "composite"
   steps:
     - name: "Create branch ${{ inputs.branch-name }} from ${{ inputs.base-branch }}"
-      uses: actions/github-script@v8
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       id: create-branch
+      env:
+        BASE_BRANCH: ${{ inputs.base-branch }}
+        BRANCH_NAME: ${{ inputs.branch-name }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
+          const baseBranch = process.env.BASE_BRANCH;
+          const branchName = process.env.BRANCH_NAME;
           try {
             // First get the SHA of the base branch
             const baseRef = await github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `${{ inputs.base-branch }}`
+              ref: `${baseBranch}`
             });
 
             // Create the new branch using the base branch's SHA
             const output = await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `refs/heads/${{ inputs.branch-name }}`,
+              ref: `refs/heads/${branchName}`,
               sha: baseRef.data.object.sha
             });
 

@@ -10,7 +10,7 @@ import {
   ListItemTitle,
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import type { OperationsHistoryDustFilterOption } from "../useOperationsListViewModel";
 
 type Props = Readonly<{
@@ -32,7 +32,7 @@ export function OperationsHistoryOptionsSheet({
   const { Icon, title, description } = dustFilterOption;
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID="operations-history-options-sheet"
       isRequestingToBeOpened={isOpen}
       enableDynamicSizing
@@ -50,6 +50,6 @@ export function OperationsHistoryOptionsSheet({
           </ListItemLeading>
         </ListItem>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

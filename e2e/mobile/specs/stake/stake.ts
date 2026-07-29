@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";

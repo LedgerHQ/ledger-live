@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
@@ -28,8 +28,7 @@ const e2eDelegationAccounts = [
     transactionType: "Staked",
   },
   {
-    // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
-    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.INJ_1, "0.0000001", "Ledger by Bitwise"),
     xrayTicket: "B2CQA-3021",
     transactionType: "Delegated",
     requiresExpertMode: true,
@@ -295,7 +294,6 @@ test.describe("e2e delegation - Celo", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["NAPPS-1128"]);
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -327,7 +325,6 @@ test.describe("e2e delegation - Celo", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await addBugLink(["NAPPS-1128"]);
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
@@ -404,8 +401,7 @@ for (const validator of validators) {
 }
 
 test.describe("Staking flow from different entry point", () => {
-  // on-chain validator moniker still reads "Ledger by Chorus One"; flip back to "Ledger by Bitwise" once renamed on-chain
-  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Chorus One");
+  const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",

@@ -23,13 +23,7 @@ async function getFileCreationDate(filePath, firstParent) {
 }
 
 async function listCommits(filePath, sinceDateIsoString) {
-  const args = [
-    "log",
-    "--first-parent",
-    mainBranchName,
-    "--pretty=format:%aI %H %s",
-    filePath,
-  ];
+  const args = ["log", "--first-parent", mainBranchName, "--pretty=format:%aI %H %s", filePath];
   if (sinceDateIsoString) args.splice(3, 0, `--since=${sinceDateIsoString}`);
   LOG_COMMANDS && console.log("listCommits args:", args);
   const rawResult = await executeAsync(GIT_PATH, args);

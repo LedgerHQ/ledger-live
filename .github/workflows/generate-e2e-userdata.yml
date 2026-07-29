@@ -26,7 +26,6 @@ on:
         default: ""
 
 permissions:
-  id-token: write
   contents: read
 
 concurrency:
@@ -44,6 +43,9 @@ jobs:
     name: "Generate desktop userdata (app.json)"
     if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'desktop' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 60
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -70,6 +72,10 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
       - name: Install dependencies
         run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts
 
@@ -172,6 +178,9 @@ jobs:
     name: "Generate mobile userdata (app.json)"
     if: ${{ github.event_name == 'schedule' || inputs.platform == 'both' || inputs.platform == 'mobile' }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 60
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -197,6 +206,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="live-cli..." --filter="ledger-live-desktop-e2e-tests..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm --ignore-scripts

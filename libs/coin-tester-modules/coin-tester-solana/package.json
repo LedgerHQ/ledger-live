@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-solana",
-  "version": "1.23.0",
+  "version": "1.23.2",
   "private": true,
   "description": "Ledger Solana Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -57,13 +57,13 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/coin-solana": "workspace:^",
-    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@shared/env": "workspace:*",
     "@solana/spl-token": "catalog:",
     "@solana/web3.js": "catalog:",
     "bignumber.js": "^9",

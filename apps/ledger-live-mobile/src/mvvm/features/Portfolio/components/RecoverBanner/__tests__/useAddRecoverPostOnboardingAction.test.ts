@@ -25,7 +25,6 @@ const assetsTransferAction = makeAction(PostOnboardingActionId.assetsTransfer);
 const recoverAction = makeAction(PostOnboardingActionId.recover);
 
 const withPostOnboardingWidgetEnabled = withFlagOverrides({
-  lwmWallet40: { enabled: true },
   onboardingWidget: { enabled: true },
 });
 
@@ -160,7 +159,6 @@ describe("useAddRecoverPostOnboardingAction", () => {
       overrideInitialState: withPostOnboardingActions(
         { [PostOnboardingActionId.assetsTransfer]: false },
         withFlagOverrides({
-          lwmWallet40: { enabled: true },
           onboardingWidget: { enabled: false },
         }),
       ),

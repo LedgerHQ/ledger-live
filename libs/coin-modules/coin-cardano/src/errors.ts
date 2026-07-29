@@ -73,3 +73,19 @@ export class CardanoMemoExceededSizeError extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class AccountAwaitingSendPendingOperations extends Error {
+  override name = "AccountAwaitingSendPendingOperations";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "AccountAwaitingSendPendingOperations");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ValAddressRequired extends Error {
+  override name = "ValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message ?? "ValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues-react",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "description": "Ledger Live countervalues React module",
   "keywords": [
     "Ledger"
@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@ledgerhq/types-live": "workspace:*",
-    "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",

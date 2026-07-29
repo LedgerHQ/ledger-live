@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import {
   DeviceActionContent,
   type DeviceActionAnimationTheme,
@@ -143,7 +143,7 @@ export default function DebugDeviceActionContentScreen() {
         </Box>
       </ScrollView>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
         enableDynamicSizing
@@ -174,7 +174,7 @@ export default function DebugDeviceActionContentScreen() {
             testID="device-action-content-preview"
           />
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </>
   );
 }

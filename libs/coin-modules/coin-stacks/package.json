@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -75,6 +75,11 @@
       "@ledgerhq/source": "./src/types/index.ts",
       "require": "./lib/types/index.js",
       "default": "./lib-es/types/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

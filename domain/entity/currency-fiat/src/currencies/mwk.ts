@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const mwk = fiat({
   type: "FiatCurrency",
-  id: "mwk",
   ticker: "MWK",
   name: "Malawian Kwacha",
   symbol: "MK",

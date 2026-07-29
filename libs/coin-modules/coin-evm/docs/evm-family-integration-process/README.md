@@ -28,7 +28,7 @@ Here is an example PR of an EVM currency integration: https://github.com/LedgerH
 
 _Common steps for all new EVM currency integration_
 
-1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](../../../../../libs/ledgerjs/packages/cryptoassets/src/currencies.ts) (the `CryptoCurrencyId` type is auto-generated)
+1. Add a new config entry for the new currency in the `@domain/entity-currency-crypto` registry
 2. Nothing to do for the fee-estimation dummy recipient: `getEvmDummyAddress` in [`libs/coin-modules/coin-evm/src/constants.ts`](../../constants.ts) returns the dead address for every EVM currency (only zkSync differs)
 3. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](../../../../../apps/cli/src/live-common-setup-base.ts), [LLD](../../../../../apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](../../../../../apps/ledger-live-mobile/src/live-common-setup.ts), [LLC test environment](../../../../../libs/ledger-live-common/src/__tests__/test-helpers/environment.ts), [web-tools](../../../../../apps/web-tools/src/live-common-setup.ts) and [account-migration tests](../../../../../libs/ledger-live-common/src/__tests__/migration/account-migration.ts))
 4. Add a new feature flag config for this currency:
@@ -57,7 +57,7 @@ _Optional / extra steps that might be needed on a case-by-case basis depending o
 Here are the steps to handle the new currencies (ERC20) tokens, if relevant:
 
 - add the new tokens config to the [CAL](https://github.com/LedgerHQ/crypto-assets) (historically handled by @adrienlacombe-ledger)
-- after this update of the CAL, check that the tokens are present on the CDN, replacing `{chainId}` with the actual currency chain ID, specified under `ethereumLikeInfo.chainId` in the currency config (under [libs/ledgerjs/packages/cryptoassets/src/currencies.ts](../../../../../libs/ledgerjs/packages/cryptoassets/src/currencies.ts)) which would be `1` for ethereum mainnet for example, using https://cdn.live.ledger.com/cryptoassets/evm/{chainId}/erc20.json
+- after this update of the CAL, check that the tokens are present on the CDN, replacing `{chainId}` with the actual currency chain ID, specified under `ethereumLikeInfo.chainId` in the currency config (in the `@domain/entity-currency-crypto` registry) which would be `1` for ethereum mainnet for example, using https://cdn.live.ledger.com/cryptoassets/evm/{chainId}/erc20.json
 
 No change should be needed on Ledger Live side since token data is consumed from
 CAL/CDN during the release flow.

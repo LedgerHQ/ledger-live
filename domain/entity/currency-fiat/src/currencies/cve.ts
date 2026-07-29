@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const cve = fiat({
   type: "FiatCurrency",
-  id: "cve",
   ticker: "CVE",
   name: "Cape Verdean Escudo",
   symbol: "$",

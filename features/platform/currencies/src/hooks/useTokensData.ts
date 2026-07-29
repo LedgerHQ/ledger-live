@@ -9,8 +9,8 @@ import {
  * Paginated CAL token list. Joins the RTK-Query infinite-query pages into a single
  * `{ tokens, pagination }` and exposes a `loadNext` when more pages are available.
  *
- * Relocated from `@ledgerhq/cryptoassets/cal-client/hooks`; wraps the `@domain/api-currency-token`
- * infinite query (this hook lives in `@features/platform-currencies`).
+ * Wraps the `@domain/api-currency-token` infinite query (this hook lives in
+ * `@features/platform-currencies`).
  */
 export function useTokensData(params: GetTokensDataParams) {
   const {

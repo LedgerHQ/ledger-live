@@ -1,13 +1,13 @@
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import WarningBannerStatus from "./WarningBannerStatus";
 
 describe("WarningBannerStatus", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "fantom",
+    id: CryptoCurrencyIdSchema.parse("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",

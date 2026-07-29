@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const jpy = fiat({
   type: "FiatCurrency",
-  id: "jpy",
   ticker: "JPY",
   name: "Japanese Yen",
   symbol: "¥",

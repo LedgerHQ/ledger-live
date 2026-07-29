@@ -1,3 +1,11 @@
+# 4.13.1
+
+This release includes a bug fix for Solana.
+
+# 4.13.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.11.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

@@ -1,6 +1,6 @@
 import { buildBeforeSend, getDatadogBuildConfig, rewriteAsarUrls } from "./config";
 
-jest.mock("~/sentry/anonymizer", () => ({
+jest.mock("~/datadog/anonymizer", () => ({
   __esModule: true,
   default: {
     filepathRecursiveReplacer: jest.fn((obj: Record<string, unknown>) => {
@@ -85,7 +85,7 @@ describe("datadog config", () => {
     });
 
     it("should call anonymizer and return true for sendable event", () => {
-      const anonymizer = jest.requireMock("~/sentry/anonymizer").default;
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
       const shouldSend = jest.fn().mockReturnValue(true);
       const beforeSend = buildBeforeSend(shouldSend);
       const event: Record<string, unknown> = { message: "Some error" };
@@ -95,7 +95,7 @@ describe("datadog config", () => {
     });
 
     it("should return false when anonymizer throws (drops event for PII safety)", () => {
-      const anonymizer = jest.requireMock("~/sentry/anonymizer").default;
+      const anonymizer = jest.requireMock("~/datadog/anonymizer").default;
       jest.mocked(anonymizer.filepathRecursiveReplacer).mockImplementationOnce(() => {
         throw new Error("anonymizer failed");
       });

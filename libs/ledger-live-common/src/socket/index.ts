@@ -3,16 +3,18 @@ import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
 import {
-  WebsocketConnectionError,
-  DeviceSocketFail,
   DisconnectedDeviceDuringOperation,
   TransportStatusError,
+  StatusCodes,
+} from "@ledgerhq/hw-transport/errors";
+import {
+  WebsocketConnectionError,
+  DeviceSocketFail,
   UserRefusedAllowManager,
   ManagerDeviceLockedError,
-  StatusCodes,
-} from "@ledgerhq/errors";
+} from "../errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { SocketEvent } from "@ledgerhq/types-live";
 import { sha3_256 } from "@noble/hashes/sha3";
 import { DeviceId } from "@domain/entity-client-identity";

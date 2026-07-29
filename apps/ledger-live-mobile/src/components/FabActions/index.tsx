@@ -1,6 +1,7 @@
 import React, { ComponentType, ReactElement, ReactNode, useCallback, useState } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { Box } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation, useRoute } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";

@@ -54,19 +54,19 @@ runs:
       id: aggregate
       shell: bash
       run: |
-        totalShards="${{ inputs.total_shards }}"
-        status_1="${{ inputs.status_1 }}"
-        status_2="${{ inputs.status_2 }}"
-        status_3="${{ inputs.status_3 }}"
-        status_4="${{ inputs.status_4 }}"
-        status_5="${{ inputs.status_5 }}"
-        status_6="${{ inputs.status_6 }}"
-        status_7="${{ inputs.status_7 }}"
-        status_8="${{ inputs.status_8 }}"
-        status_9="${{ inputs.status_9 }}"
-        status_10="${{ inputs.status_10 }}"
-        status_11="${{ inputs.status_11 }}"
-        status_12="${{ inputs.status_12 }}"
+        totalShards="${INPUTS_TOTAL_SHARDS}"
+        status_1="${INPUTS_STATUS_1}"
+        status_2="${INPUTS_STATUS_2}"
+        status_3="${INPUTS_STATUS_3}"
+        status_4="${INPUTS_STATUS_4}"
+        status_5="${INPUTS_STATUS_5}"
+        status_6="${INPUTS_STATUS_6}"
+        status_7="${INPUTS_STATUS_7}"
+        status_8="${INPUTS_STATUS_8}"
+        status_9="${INPUTS_STATUS_9}"
+        status_10="${INPUTS_STATUS_10}"
+        status_11="${INPUTS_STATUS_11}"
+        status_12="${INPUTS_STATUS_12}"
 
         # Build statuses array dynamically up to totalShards
         statuses=()
@@ -94,3 +94,17 @@ runs:
           missingShardsList=$(printf "%s, " "${missingShards[@]}")
           echo "missingShards=${missingShardsList%, }" >> "$GITHUB_OUTPUT"
         fi
+      env:
+        INPUTS_TOTAL_SHARDS: ${{ inputs.total_shards }}
+        INPUTS_STATUS_1: ${{ inputs.status_1 }}
+        INPUTS_STATUS_2: ${{ inputs.status_2 }}
+        INPUTS_STATUS_3: ${{ inputs.status_3 }}
+        INPUTS_STATUS_4: ${{ inputs.status_4 }}
+        INPUTS_STATUS_5: ${{ inputs.status_5 }}
+        INPUTS_STATUS_6: ${{ inputs.status_6 }}
+        INPUTS_STATUS_7: ${{ inputs.status_7 }}
+        INPUTS_STATUS_8: ${{ inputs.status_8 }}
+        INPUTS_STATUS_9: ${{ inputs.status_9 }}
+        INPUTS_STATUS_10: ${{ inputs.status_10 }}
+        INPUTS_STATUS_11: ${{ inputs.status_11 }}
+        INPUTS_STATUS_12: ${{ inputs.status_12 }}

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aptos",
-  "version": "3.23.0",
+  "version": "3.24.0",
   "description": "Ledger Aptos Coin integration",
   "keywords": [
     "Ledger",
@@ -79,6 +79,11 @@
       "@ledgerhq/source": "./src/utils/index.ts",
       "require": "./lib/utils/index.js",
       "default": "./lib-es/utils/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

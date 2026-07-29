@@ -1,7 +1,11 @@
 import React from "react";
-import { PopoverTrigger } from "@ledgerhq/lumen-ui-react";
+import { PopoverTrigger, type PopoverTriggerProps } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { UserAvatar } from "./UserAvatar";
+
+type TriggerRenderProps = Parameters<
+  Extract<PopoverTriggerProps["render"], (...args: never[]) => unknown>
+>[0];
 
 export function ContextMenuTrigger() {
   const { t } = useTranslation();
@@ -9,13 +13,9 @@ export function ContextMenuTrigger() {
 
   return (
     <PopoverTrigger
-      render={
-        <button aria-label={label} className="cursor-pointer items-center justify-center">
-          <span className="inline-flex">
-            <UserAvatar showNotification size="sm" />
-          </span>
-        </button>
-      }
+      render={(props: TriggerRenderProps) => (
+        <UserAvatar interactive showNotification size="sm" aria-label={label} {...props} />
+      )}
     />
   );
 }

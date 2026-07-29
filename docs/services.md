@@ -87,7 +87,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Casper | `casper.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/casper/config.ts) | prod |
 | Concordium | `ccd-node-mainnet.coin.ledger.com`, `ccd-wallet-proxy-mainnet.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/concordium/config.ts) | prod |
 | XRP node | `xrp.coin.ledger.com` | [code](/libs/ledger-live-common/src/families/xrp/config.ts) | prod |
-| Zcash (Zaino) | `zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com`<br>_⚠️ only staging found; prod status unknown_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | staging |
+| Zcash (Zaino) | `zec-indexer.coin.ledger-test.com`<br>_⚠️ only staging found; prod status unknown_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | staging |
 | Cosmos LCDs (Ledger-hosted) | `axelar`, `cosmoshub4`, `dydx`, `osmo`, `coreum`, `injective`, `babylon` `.coin.ledger.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | **PTX** | | | |
 | Buy API | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -97,6 +97,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Ramp catalog | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Partner signatures (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |
 | Buy/Sell limits | `buy.api.aws.prd.ldg-tech.com`<br>_E2E only_ | [code](/libs/ledger-live-common/src/e2e/buySell.ts) | test |
+| Borrow API (partner loans) | `global.api.stg.ledger-test.com`<br>_path: `/borrow`; staging only, E2E tooling_ | [code](/libs/live-e2e-shared/src/borrow/borrowApi.ts) | test |
 | Live app — Swap | `swap-live-app.ledger.com`<br>_manifest [`swap-live-app-aws`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Buy / Sell | `buy-sell.live.ledger.com`<br>_manifest [`buy-sell`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
 | Live app — Earn | `earn.live.ledger.com`<br>_manifest [`earn`](https://live-app-catalog.ledger.com/api/v1/apps)_ | feature-flag | prod |
@@ -148,6 +149,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | Sui testnet | `fullnode.testnet.sui.io`, `graphql.testnet.sui.io` | [env](/libs/env/src/env.ts) | testnet |
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
+| Zcash testnet (lightwalletd) | `testnet.zec.rocks`<br>_public community endpoint; no Ledger-hosted Zcash testnet_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | testnet |
 | Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
@@ -161,7 +163,6 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | **Platform** | | | |
 | Status page | `ledger.statuspage.io`<br>_Atlassian-hosted_ | [env](/libs/env/src/env.ts) | prod |
 | Datadog RUM / Logs | `browser-intake-datadoghq.eu`<br>_[@datadog/browser-rum](https://www.npmjs.com/package/@datadog/browser-rum) / [mobile-react-native](https://www.npmjs.com/package/@datadog/mobile-react-native)_ | [build](/apps/ledger-live-desktop/src/datadog/config.ts) | prod |
-| Sentry | `*.ingest.sentry.io`<br>_[@sentry/electron](https://www.npmjs.com/package/@sentry/electron); LLD only_ | [build](/apps/ledger-live-desktop/src/sentry/install.ts) | prod |
 | LLD prerelease update feed | `lw-prerelease-sigs.s3.eu-west-1.amazonaws.com`<br>_Electron auto-updater; only when `UPDATE_CHECK_FEED` env is set (prerelease / dev builds)_ | [code](/apps/ledger-live-desktop/src/main/updater/init.ts) | dev |
 | **Wallet XP** | | | |
 | WalletConnect | `relay.walletconnect.org`<br>_[@walletconnect/sign-client](https://www.npmjs.com/package/@walletconnect/sign-client); also verify/echo/pulse_ | [SDK](https://www.npmjs.com/package/@walletconnect/sign-client) | prod |

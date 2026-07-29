@@ -27,7 +27,6 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingDeviceSelection]: undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
-  [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };
   [ScreenName.OnboardingSetupDeviceInformation]: undefined;
   [ScreenName.OnboardingModalSetupSecureRecovery]: undefined;

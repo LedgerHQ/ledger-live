@@ -2,6 +2,7 @@ export * from "./steps/List";
 export * from "./steps/List/native";
 export * from "./steps/AddContact";
 export * from "./steps/AddContact/native";
+export * from "./steps/AddAddress";
 export * from "./steps/Introduction";
 export * from "./steps/Introduction/native";
 export * from "./steps/Detail";

@@ -2,7 +2,7 @@ import type { CantonCurrencyBridge, CantonOnboardResult } from "@ledgerhq/coin-c
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";

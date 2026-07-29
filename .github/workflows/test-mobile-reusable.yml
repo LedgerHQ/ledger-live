@@ -6,6 +6,19 @@ on:
       coverage_generated:
         value: ${{ jobs.unit-tests.outputs.coverage_generated }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: true
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: true
+      AWS_CACHE_REGION:
+        required: true
+      AWS_CACHE_ROLE_NAME:
+        required: true
+      NX_KEY:
+        required: true
   workflow_dispatch:
     inputs:
       ref:
@@ -25,13 +38,14 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   codecheck:
     name: "Mobile Code Check"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -81,6 +95,9 @@ jobs:
 
   unit-tests:
     name: "Mobile Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -106,6 +123,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --unsafe-perm

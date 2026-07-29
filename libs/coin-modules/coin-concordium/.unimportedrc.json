@@ -19,6 +19,7 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
+    "src/errors.ts",
     "src/test/concordiumTestUtils.ts",
     "src/test/fixtures.ts",
     "src/test/testHelpers.ts",

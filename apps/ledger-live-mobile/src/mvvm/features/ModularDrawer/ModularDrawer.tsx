@@ -3,14 +3,13 @@ import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 import { AccountLike } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useSelector } from "~/context/hooks";
 import {
+  modularDrawerCompletionModeSelector,
   modularDrawerEnableAccountSelectionSelector,
   modularDrawerSearchValueSelector,
 } from "~/reducers/modularDrawer";
@@ -40,6 +39,8 @@ export type ModularDrawerProps = {
   // Account selection
   /** Callback fired when an account is selected */
   readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
+  /** Callback fired after the final asset and network are resolved in currency mode */
+  readonly onCurrencySelected?: (currency: CryptoOrTokenCurrency) => void;
 
   /** The use case identifier for the drawer (sent to API as transaction param) */
   readonly useCase?: string;
@@ -60,12 +61,11 @@ export function ModularDrawer({
   assetsConfiguration,
   networksConfiguration,
   onAccountSelected,
+  onCurrencySelected,
   useCase,
   uiUseCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
-
   const {
     assetsConfiguration: assetsConfigurationSanitized,
     networkConfiguration: networkConfigurationSanitized,
@@ -76,9 +76,11 @@ export function ModularDrawer({
 
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const completionMode = useSelector(modularDrawerCompletionModeSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
     {
-      currencyIds: currencies,
+      currencyIds: completionMode === "currency" ? undefined : currencies,
+      networkIds: completionMode === "currency" ? currencies : undefined,
       searchedValue: searchValue,
       useCase,
       areCurrenciesFiltered,
@@ -97,15 +99,15 @@ export function ModularDrawer({
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
-    currencyIds: currencies ?? [],
+    currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
     hasSearchedValue: searchValue.length > 0,
     onAccountSelected,
+    onCurrencySelected,
   });
 
   const flowManagerProps = {
-    useLumenBottomSheet: isEnabled,
     assetsViewModel: {
       availableAssets: sortedCryptoCurrencies,
       onAssetSelected: handleAsset,
@@ -130,24 +132,8 @@ export function ModularDrawer({
     },
   };
 
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
-        onClose={handleCloseButton}
-        enableBlurKeyboardOnGesture={true}
-        snapPoints={SNAP_POINTS}
-        hasBackButton={shouldShowBackButton}
-        onBack={handleBackButton}
-        enablePanDownToClose
-      >
-        <ModularDrawerFlowManager {...flowManagerProps} />
-      </QueuedDrawerBottomSheet>
-    );
-  }
-
   return (
-    <QueuedDrawerGorhom
+    <QueuedBottomSheet
       isRequestingToBeOpened={(!hasOneCurrency || enableAccountSelection) && isOpen}
       onClose={handleCloseButton}
       enableBlurKeyboardOnGesture={true}
@@ -155,9 +141,8 @@ export function ModularDrawer({
       hasBackButton={shouldShowBackButton}
       onBack={handleBackButton}
       enablePanDownToClose
-      keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager {...flowManagerProps} />
-    </QueuedDrawerGorhom>
+    </QueuedBottomSheet>
   );
 }

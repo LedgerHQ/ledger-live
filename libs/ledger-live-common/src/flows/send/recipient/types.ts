@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account } from "@ledgerhq/types-live";
 
 export type RecentAddress = Readonly<{
@@ -55,4 +55,6 @@ export type AddressSearchResult = Readonly<{
   matchedAccounts: MatchedAccount[];
   bridgeErrors: BridgeValidationErrors | undefined;
   bridgeWarnings: BridgeValidationWarnings | undefined;
+  isBridgeLoading?: boolean;
+  hasBridgeValidationResult: boolean;
 }>;

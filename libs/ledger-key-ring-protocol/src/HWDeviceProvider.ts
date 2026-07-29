@@ -1,5 +1,5 @@
 import { from, lastValueFrom } from "rxjs";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { ApduDevice } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
 import { StatusCodes } from "@ledgerhq/hw-transport";
 import { crypto, device } from "@ledgerhq/hw-ledger-key-ring-protocol";

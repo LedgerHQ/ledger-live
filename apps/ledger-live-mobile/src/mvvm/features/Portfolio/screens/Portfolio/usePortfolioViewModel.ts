@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

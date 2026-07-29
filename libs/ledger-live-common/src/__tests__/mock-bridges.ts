@@ -4,11 +4,10 @@ import groupBy from "lodash/groupBy";
 import { reduce, filter, map } from "rxjs/operators";
 import "./test-helpers/setup";
 import { getAccountBridge, getCurrencyBridge } from "../bridge";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(120000);
 
@@ -25,7 +24,8 @@ afterAll(() => {
   setTimeoutSpy.mockRestore();
 });
 
-const mockedCoins: CryptoCurrencyId[] = [
+const mockedCoins: string[] = [
+  // TO BE REPLACED soon by branded id
   "bitcoin",
   "zcash",
   "ethereum",

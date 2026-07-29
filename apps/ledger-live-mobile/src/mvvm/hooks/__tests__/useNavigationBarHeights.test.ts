@@ -1,4 +1,4 @@
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { Platform } from "react-native";
 import { useNavigationBarHeights } from "../useNavigationBarHeights";
 import { State } from "~/reducers/types";
@@ -10,23 +10,15 @@ jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => mockInsets,
 }));
 
-const withFeatureFlag = (enabled: boolean) =>
-  withFlagOverrides(
-    {
-      lwmWallet40: {
-        enabled,
-      },
-    },
-    (state: State) => ({
-      ...state,
-      settings: {
-        ...SETTINGS_INITIAL_STATE,
-      },
-    }),
-  );
+const withDefaultSettings = (state: State) => ({
+  ...state,
+  settings: {
+    ...SETTINGS_INITIAL_STATE,
+  },
+});
 
 const withTabBarVisibility = (isVisible: boolean) => (state: State) => ({
-  ...withFeatureFlag(true)(state),
+  ...withDefaultSettings(state),
   appstate: {
     ...state.appstate,
     isMainNavigatorVisible: isVisible,

@@ -93,7 +93,7 @@ function withViewModelState({
       : { buyDeviceFromLive: { enabled: buyDeviceFromLiveEnabled } }),
     ...(myWalletEnabled === undefined
       ? {}
-      : { lwmWallet40: { enabled: myWalletEnabled, params: { myWallet: myWalletEnabled } } }),
+      : { lwmWallet40: { params: { myWallet: myWalletEnabled } } }),
   };
 
   return {

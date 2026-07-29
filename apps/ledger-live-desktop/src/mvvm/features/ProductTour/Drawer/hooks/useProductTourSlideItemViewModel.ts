@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 import { PRODUCT_TOUR_LAST_SLIDE_INDEX, PRODUCT_TOUR_SLIDES } from "../const";
 import { SLIDE_LOTTIES } from "../lotties";

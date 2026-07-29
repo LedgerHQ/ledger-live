@@ -292,6 +292,7 @@
   "fees": {
     "advanced": "Advanced",
     "custom": "Custom",
+    "defaultNetworkFee": "Default network fee",
     "fast": "Fast",
     "networkFees": "Network fees",
     "high": "High",
@@ -540,7 +541,9 @@
       "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
       "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "aleo_title": "Ledger Nano S™ does not support swapping Aleo",
-      "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "aleo_tokens_title": "Ledger Nano S™ does not support swapping Aleo tokens",
+      "aleo_tokens_description": "To swap Aleo tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1387,10 +1390,6 @@
         "syncAccounts": {
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
-        },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
         },
         "discoverWallet": {
           "title": "Discover what your wallet can do",
@@ -5492,11 +5491,6 @@
           "description": "Test all animations used in Ledger Wallet",
           "longDesc": "This is a tool provided as-is for the team to validate lottie animations used in the app."
         },
-        "testStories": {
-          "title": "Test Storyly stories",
-          "description": "Test all stories used in Ledger Wallet",
-          "longDesc": "This is a tool provided as-is for the team to validate storyly stories used in the app."
-        },
         "testStaxPostonboarding": {
           "title": "Test Stax Post Onboarding",
           "description": "Test all stax post onboarding features"
@@ -8319,11 +8313,6 @@
         "doThisLater": "Maybe later"
       }
     },
-    "postOnboarding": {
-      "title": "Customize the lock screen",
-      "description": "Display your favorite digital art or photo as your device’s lock screen.",
-      "actionCompletedPopupLabel": "Device personalized"
-    },
     "customImageSet": "Lock screen customized",
     "finishCTA": "Close"
   },
@@ -9115,10 +9104,10 @@
       }
     },
     "selfTransfer": {
-      "headerAction": "Self transfer",
+      "headerAction": "Convert",
       "headerActionTooltip": "You don't have any funds to perform a self transfer",
       "modal": {
-        "title": "Self transfer",
+        "title": "Convert",
         "stepRecipient": {
           "selectLabel": "Transfer from"
         }
@@ -9372,6 +9361,7 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
@@ -9379,11 +9369,27 @@
     },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
+    "addressCount_zero": "0 address",
+    "addressCount_one": "{{count}} address",
+    "addressCount_other": "{{count}} addresses",
     "me": {
-      "name": "Me",
-      "addressCount_zero": "0 address",
-      "addressCount_one": "{{count}} address",
-      "addressCount_other": "{{count}} addresses"
+      "name": "Me"
+    },
+    "detail": {
+      "emptyState": {
+        "meTitle": "No saved addresses for you",
+        "contactTitle": "No saved addresses for {{name}}",
+        "meDescription": "Save your wallet addresses to receive crypto by name next time.",
+        "contactDescription": "Save their wallet addresses to send to them by name next time."
+      }
+    },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copied": "Copied",
+      "edit": "Edit",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",

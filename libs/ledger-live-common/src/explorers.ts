@@ -1,4 +1,4 @@
-import type { CryptoCurrency, ExplorerView } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, ExplorerView } from "@domain/entity-currency-crypto";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 
 export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined => {

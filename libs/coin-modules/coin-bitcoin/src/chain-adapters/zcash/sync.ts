@@ -15,7 +15,11 @@ import type { ZCashClient } from "./types";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
 import type { ZcashAccount } from "./types";
-import { convertShieldedTransactionsToOperations, computeBalanceFromNotes } from "./operations";
+import {
+  convertShieldedTransactionsToOperations,
+  computeBalanceFromNotes,
+  computeIronwoodBalanceFromNotes,
+} from "./operations";
 import { computeZcashBalance, getTransparentBalance } from "./balance";
 
 // ─── Zcash native sync (formerly familyConfig.ts) ───────────────────────────
@@ -66,9 +70,10 @@ export const zcashSyncShielded = (
 
     // Collect nullifiers of unspent notes from previous syncs so the engine
     // can detect when previously-received notes are spent in this scan range.
+    // The NAPI uses a unified knownNullifiers field for all pools.
     const knownNullifiers: string[] = [
-      ...new Set(
-        (transactions ?? []).flatMap(tx =>
+      ...new Set([
+        ...(transactions ?? []).flatMap(tx =>
           (tx.decryptedData?.orchard_outputs ?? [])
             .filter(
               n =>
@@ -78,7 +83,17 @@ export const zcashSyncShielded = (
             )
             .map(n => n.nullifier!),
         ),
-      ),
+        ...(transactions ?? []).flatMap(tx =>
+          (tx.decryptedData?.ironwood_outputs ?? [])
+            .filter(
+              n =>
+                n.isSpent !== true &&
+                n.nullifier !== undefined &&
+                (n.transfer_type === "incoming" || n.transfer_type === "internal"),
+            )
+            .map(n => n.nullifier!),
+        ),
+      ]),
     ];
 
     return from(getNativeModule()).pipe(
@@ -108,6 +123,51 @@ type ShieldedScanAccumulated = {
   accountUpdate: Partial<ZcashAccount>;
 };
 
+/**
+ * Resolve the scan cursor to persist, given what the chunk reported.
+ *
+ * A chunk that scanned nothing — an account already at the chain tip, the
+ * steady state of any synced account — carries no `lastProcessedBlock`. Writing
+ * that absence straight back as `null` clears the cursor, and the next sync
+ * restarts from the account birthday and rescans the entire shielded history.
+ * The cursor only ever moves forward.
+ */
+function advanceScanCursor(
+  previous: number | null | undefined,
+  fromChunk: number | undefined,
+): number | null {
+  if (fromChunk === undefined) return previous ?? null;
+  if (previous === null || previous === undefined) return fromChunk;
+  return Math.max(previous, fromChunk);
+}
+
+/**
+ * Return `tx` with its orchard/ironwood notes marked spent when their nullifier
+ * appears in `spentSet`. Returns the original reference untouched when nothing
+ * matches, preserving immutability of the accumulated state.
+ */
+function markSpentNotes(tx: ShieldedTransaction, spentSet: Set<string>): ShieldedTransaction {
+  const orchardOutputs = tx.decryptedData?.orchard_outputs;
+  const ironwoodOutputs = tx.decryptedData?.ironwood_outputs;
+  const orchardHit = orchardOutputs?.some(n => n.nullifier && spentSet.has(n.nullifier));
+  const ironwoodHit = ironwoodOutputs?.some(n => n.nullifier && spentSet.has(n.nullifier));
+  if (!orchardHit && !ironwoodHit) return tx;
+  return {
+    ...tx,
+    decryptedData: {
+      orchard_outputs: (orchardOutputs ?? []).map(n =>
+        n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+      ),
+      sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
+      ...(ironwoodOutputs && {
+        ironwood_outputs: ironwoodOutputs.map(n =>
+          n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
+        ),
+      }),
+    },
+  };
+}
+
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
@@ -125,49 +185,60 @@ export function reduceShieldedSyncResult(
   // so we can recompute the transparent + private total here without double-counting.
   const transparentBalance = getTransparentBalance(info.initialAccount?.bitcoinResources?.utxos);
 
+  const lastProcessedBlock = advanceScanCursor(
+    existingPrivateInfo.lastProcessedBlock,
+    result.lastProcessedBlock,
+  );
+
   if (newTransactions.length === 0) {
     const totalBlocks = result.processedBlocks + result.remainingBlocks;
     // Even without new transactions, spentKnownNullifiers may mark existing notes as spent.
+    // The NAPI uses a unified spentKnownNullifiers list for all pools.
     const spentNfs = result.spentKnownNullifiers ?? [];
     let updatedTransactions = existingPrivateInfo.transactions;
     if (spentNfs.length > 0) {
       const spentSet = new Set(spentNfs);
-      updatedTransactions = updatedTransactions.map(tx => {
-        const outputs = tx.decryptedData?.orchard_outputs;
-        if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) return tx;
-        return {
-          ...tx,
-          decryptedData: {
-            orchard_outputs: outputs.map(n =>
-              n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
-            ),
-            sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
-          },
-        };
-      });
+      updatedTransactions = updatedTransactions.map(tx => markSpentNotes(tx, spentSet));
     }
     const orchardBalance =
       spentNfs.length > 0
         ? computeBalanceFromNotes(updatedTransactions)
         : existingPrivateInfo.orchardBalance;
+    const ironwoodBalance =
+      spentNfs.length > 0
+        ? computeIronwoodBalanceFromNotes(updatedTransactions)
+        : existingPrivateInfo.ironwoodBalance;
+
+    const balance = computeZcashBalance(transparentBalance, {
+      orchardBalance,
+      saplingBalance: existingPrivateInfo.saplingBalance,
+      ironwoodBalance,
+    });
+
+    log("bitcoin/reduceShieldedSyncResult", "No new shielded transactions", {
+      accountId,
+      balance: balance.toString(),
+      spentKnownNullifiers: spentNfs.length,
+      lastProcessedBlock,
+    });
+
     return {
       ...accumulated,
       accountUpdate: {
         ...accumulated.accountUpdate,
-        balance: computeZcashBalance(transparentBalance, {
-          orchardBalance,
-          saplingBalance: existingPrivateInfo.saplingBalance,
-        }),
-        blockHeight: result.lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
+        balance,
+        spendableBalance: balance,
+        blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
         privateInfo: {
           ...existingPrivateInfo,
           syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
           progress:
             totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-          lastProcessedBlock: result.lastProcessedBlock ?? null,
+          lastProcessedBlock,
           lastSyncTimestamp: Date.now(),
           transactions: updatedTransactions,
           orchardBalance,
+          ironwoodBalance,
         },
       },
     };
@@ -191,42 +262,40 @@ export function reduceShieldedSyncResult(
   // Mark previously-stored notes as spent using Rust's cross-scan detection.
   // Clone transactions that need mutation to preserve immutability of the
   // accumulated state (allShieldedTx contains refs to existing objects).
+  // The NAPI uses a unified spentKnownNullifiers list for all pools.
   const spentNfs = result.spentKnownNullifiers ?? [];
   if (spentNfs.length > 0) {
     const spentSet = new Set(spentNfs);
+    // markSpentNotes returns the same reference when nothing matches.
     for (let i = 0; i < allShieldedTx.length; i++) {
-      const tx = allShieldedTx[i];
-      const outputs = tx.decryptedData?.orchard_outputs;
-      if (!outputs?.some(n => n.nullifier && spentSet.has(n.nullifier))) continue;
-      // Clone only txs that need mutation
-      allShieldedTx[i] = {
-        ...tx,
-        decryptedData: {
-          orchard_outputs: outputs.map(n =>
-            n.nullifier && spentSet.has(n.nullifier) ? { ...n, isSpent: true } : n,
-          ),
-          sapling_outputs: tx.decryptedData?.sapling_outputs ?? [],
-        },
-      };
+      allShieldedTx[i] = markSpentNotes(allShieldedTx[i], spentSet);
     }
   }
 
   const orchardBalance = computeBalanceFromNotes(allShieldedTx);
+  const ironwoodBalance = computeIronwoodBalanceFromNotes(allShieldedTx);
   const saplingBalance = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
 
   const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance,
     orchardBalance,
+    ironwoodBalance,
     syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
     progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
     estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
     lastSyncTimestamp: Date.now(),
-    lastProcessedBlock: result.lastProcessedBlock ?? null,
+    lastProcessedBlock,
     transactions: allShieldedTx,
   };
+
+  const balance = computeZcashBalance(transparentBalance, {
+    orchardBalance,
+    saplingBalance,
+    ironwoodBalance,
+  });
 
   log(
     "bitcoin/reduceShieldedSyncResult",
@@ -234,9 +303,8 @@ export function reduceShieldedSyncResult(
     {
       accountId,
       totalOperations: operations.length,
-      lastProcessedBlock: result.lastProcessedBlock ?? 0,
-      orchardBalance: orchardBalance.toString(),
-      previousOperations: currentOperations.length,
+      lastProcessedBlock,
+      balance: balance.toString(),
     },
   );
 
@@ -249,10 +317,11 @@ export function reduceShieldedSyncResult(
     processedOperations: [...result.transactions],
     accountUpdate: {
       ...accumulated.accountUpdate,
-      balance: computeZcashBalance(transparentBalance, { orchardBalance, saplingBalance }),
+      balance,
+      spendableBalance: balance,
       operations,
       operationsCount: missingOpsCount + operations.length,
-      blockHeight: result.lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
+      blockHeight: lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
       privateInfo,
     },
   };

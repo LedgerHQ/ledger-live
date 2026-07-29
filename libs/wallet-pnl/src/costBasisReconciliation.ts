@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { CostBasisState, Reconciliation } from "./types";

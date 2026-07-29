@@ -1,11 +1,7 @@
 import React, { memo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom, {
-  BottomSheetView as GorhomBottomSheetView,
-} from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 type Props = Readonly<{
   title: string;
@@ -17,7 +13,6 @@ type Props = Readonly<{
 
 function MarketInsightDefinitionSheet({ title, description, disclaimer, isOpen, onClose }: Props) {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
 
   const content = (
     <>
@@ -35,27 +30,13 @@ function MarketInsightDefinitionSheet({ title, description, disclaimer, isOpen, 
     </>
   );
 
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={isOpen}
-        onClose={onClose}
-        enableDynamicSizing
-      >
-        <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-          <BottomSheetHeader />
-          {content}
-        </BottomSheetView>
-      </QueuedDrawerBottomSheet>
-    );
-  }
-
   return (
-    <QueuedDrawerGorhom isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
-      <GorhomBottomSheetView style={{ paddingBottom: bottomInset + 24, paddingTop: 32 }}>
+    <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <BottomSheetHeader />
         {content}
-      </GorhomBottomSheetView>
-    </QueuedDrawerGorhom>
+      </BottomSheetView>
+    </QueuedBottomSheet>
   );
 }
 

@@ -1,4 +1,4 @@
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
 

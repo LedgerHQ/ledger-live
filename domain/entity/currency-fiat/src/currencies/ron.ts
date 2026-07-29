@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const ron = fiat({
   type: "FiatCurrency",
-  id: "ron",
   ticker: "RON",
   name: "Romanian Leu",
   symbol: "L",

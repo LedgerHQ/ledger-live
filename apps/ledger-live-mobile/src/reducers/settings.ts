@@ -1,12 +1,13 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Currency } from "@domain/entity-currency";
+import { type CryptoCurrency, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { Unit } from "@domain/entity-currency-unit";
 import { getFiatCurrencyByTicker, findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State, Theme } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
@@ -28,7 +29,6 @@ import type {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
@@ -56,7 +56,6 @@ import type {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
@@ -161,7 +160,6 @@ export const INITIAL_STATE: SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: false,
   },
-  userNps: null,
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
@@ -463,11 +461,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     languageIsSetByUser: true,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
-    ...state,
-    locale: (action as Action<SettingsSetLocalePayload>).payload,
-  }),
-
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
     const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
     return {
@@ -583,10 +576,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
-  }),
-  [SettingsActionTypes.SET_USER_NPS]: (state, action) => ({
-    ...state,
-    userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
   [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
     ...state,
@@ -953,7 +942,6 @@ export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
   state.settings.hasBeenRedirectedToPostOnboarding;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
-export const userNpsSelector = (state: State) => state.settings.userNps;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>

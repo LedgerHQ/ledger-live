@@ -6,6 +6,21 @@ on:
       coverage_generated:
         value: ${{ jobs.unit-tests.outputs.coverage_generated }}
 
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+      NX_KEY:
+        required: false
+      SLACK_LIVE_CI_BOT_TOKEN:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -29,7 +44,6 @@ on:
         required: false
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -39,6 +53,9 @@ env:
 jobs:
   codechecks:
     name: "Desktop Code Check"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -85,6 +102,9 @@ jobs:
 
   unit-tests:
     name: "Desktop Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     timeout-minutes: 10
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
@@ -111,6 +131,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"

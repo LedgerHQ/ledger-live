@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 type QaConsoleDetailSheetProps = Readonly<{
   title: string;
@@ -19,7 +19,7 @@ export function QaConsoleDetailSheet({
   scrollResetKey,
 }: QaConsoleDetailSheetProps) {
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       snapPoints={"full"}
@@ -29,7 +29,7 @@ export function QaConsoleDetailSheet({
       <BottomSheetScrollView key={scrollResetKey} contentContainerStyle={styles.content}>
         {children}
       </BottomSheetScrollView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
 

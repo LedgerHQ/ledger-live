@@ -49,7 +49,7 @@ const appConfig: Record<string, ConfigInfo> = {
   config_nanoapp_cardano_ada: {
     type: "object",
     default: {
-      minVersion: "8.0.4",
+      minVersion: "4.1.0",
     },
   },
   config_nanoapp_zcash: {

@@ -4,17 +4,19 @@
 
 ### Minor Changes
 
-- [#19598](https://github.com/LedgerHQ/ledger-live/pull/19598) [`9dc6491`](https://github.com/LedgerHQ/ledger-live/commit/9dc6491192f071285315c4b48340e1a02688dae9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix: add missing provider field to swap_completed analytics event
-
 - [#19159](https://github.com/LedgerHQ/ledger-live/pull/19159) [`7096cea`](https://github.com/LedgerHQ/ledger-live/commit/7096cea26156431db96ff5ab977cfb04885211e7) Thanks [@Justkant](https://github.com/Justkant)! - Add a `skill` command group (`list`, `retrieve`, `install`) that ships the Ledger wallet-cli agent skill embedded inside the compiled binary, so `wallet-cli skill install` works with zero prior setup. Installs into the right location for most agents via `--agent` (`claude`, `cursor`, `codex`, or the generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides.
 
-## 2.1.0-next.0
+- [#19160](https://github.com/LedgerHQ/ledger-live/pull/19160) [`d56837e`](https://github.com/LedgerHQ/ledger-live/commit/d56837e6a6063120931595f5c775fdb1521b79ac) Thanks [@Justkant](https://github.com/Justkant)! - Add `wallet-cli skill doctor` to detect drift between installed agent skills and the skills shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`), with a conservative `--fix` self-heal that reinstalls outdated/missing skills and only overwrites locally modified ones under `--force`. Skills are now version-locked via a `.wallet-cli-skill.json` provenance sidecar written on install, and the `skill install` JSON envelope surfaces the wallet-cli version and per-skill content hashes.
 
-### Minor Changes
+- [#19161](https://github.com/LedgerHQ/ledger-live/pull/19161) [`4d5b3fb`](https://github.com/LedgerHQ/ledger-live/commit/4d5b3fbdf65100d34027d2140eff5478c97b3ac2) Thanks [@Justkant](https://github.com/Justkant)! - Add a one-time, agent-aware first-run nudge that prints a tailored hint to stderr (e.g. `wallet-cli skill install --agent claude`) on the first real command, so agents discover the embedded skill. It is shown at most once per user (persisted via an XDG state marker), silent under `--output json` and for `skill *` commands, opt-out via `WALLET_CLI_NO_NUDGE=1`, and fully best-effort (never throws or changes exit codes). Agent detection is centralized in a new `agent-detection` helper that `isAgentEnvironment()` now delegates to.
+
+- [#19773](https://github.com/LedgerHQ/ledger-live/pull/19773) [`2a532b7`](https://github.com/LedgerHQ/ledger-live/commit/2a532b7a27f2536ae64b2e6e35829b91046ad968) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - `swap execute` now reports `amountExpectedTo` in display units (e.g. `1.2345` ETH) instead of atomic units, both in the human output and the JSON envelope, and sends the same display-unit value as the `toAmount` analytics property. The atomic value is still available under the new `amountExpectedToAtomic` field for scripts that relied on the previous behaviour. `magnitudeAwareRate` is unchanged and stays an atomic-to over atomic-from ratio, matching live-common's convention.
 
 - [#19598](https://github.com/LedgerHQ/ledger-live/pull/19598) [`9dc6491`](https://github.com/LedgerHQ/ledger-live/commit/9dc6491192f071285315c4b48340e1a02688dae9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix: add missing provider field to swap_completed analytics event
 
-- [#19159](https://github.com/LedgerHQ/ledger-live/pull/19159) [`7096cea`](https://github.com/LedgerHQ/ledger-live/commit/7096cea26156431db96ff5ab977cfb04885211e7) Thanks [@Justkant](https://github.com/Justkant)! - Add a `skill` command group (`list`, `retrieve`, `install`) that ships the Ledger wallet-cli agent skill embedded inside the compiled binary, so `wallet-cli skill install` works with zero prior setup. Installs into the right location for most agents via `--agent` (`claude`, `cursor`, `codex`, or the generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides.
+- [#19871](https://github.com/LedgerHQ/ledger-live/pull/19871) [`d243bd0`](https://github.com/LedgerHQ/ledger-live/commit/d243bd0cd2489a836961a724e60f6049a27f74d6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): consume `validateAddress` through `CoinModuleApi` instance
+
+- [#19797](https://github.com/LedgerHQ/ledger-live/pull/19797) [`93c54da`](https://github.com/LedgerHQ/ledger-live/commit/93c54daf4076e1163a9b7db86107ab2765b81b5d) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint remaining @ledgerhq/cryptoassets value-barrel imports to @domain/entity-currency-crypto and @domain/entity-currency-fiat; inline ApiAsset wire-type into the dada-client entities module; drop @ledgerhq/cryptoassets from wallet-cli devDependencies
 
 ## 2.0.1
 

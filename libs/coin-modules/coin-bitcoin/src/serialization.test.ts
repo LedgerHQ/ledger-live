@@ -21,6 +21,7 @@ import {
 const privateInfoMock: ZcashPrivateInfo = {
   saplingBalance: new BigNumber("2"),
   orchardBalance: new BigNumber("4"),
+  ironwoodBalance: new BigNumber("0"),
   ufvk: "uview123...",
   syncState: "running",
   birthday: "",
@@ -34,6 +35,7 @@ const privateInfoMock: ZcashPrivateInfo = {
 const privateInfoRawMock: ZcashPrivateInfoRaw = {
   saplingBalance: "2",
   orchardBalance: "4",
+  ironwoodBalance: "0",
   ufvk: "uview123...",
   syncState: "running",
   birthday: "",
@@ -51,6 +53,8 @@ const shieldedTransactionMock: ShieldedTransaction = {
   blockHash: "",
   timestamp: 1,
   fee: new BigNumber("2"),
+  transparentOut: new BigNumber("3"),
+  hasTransparentInputs: false,
   decryptedData: {
     orchard_outputs: [],
     sapling_outputs: [],
@@ -64,6 +68,8 @@ const shieldedTransactionRawMock: ShieldedTransactionRaw = {
   blockHash: "",
   timestamp: 1,
   fee: "2",
+  transparentOut: "3",
+  hasTransparentInputs: false,
   decryptedData: {
     orchard_outputs: [],
     sapling_outputs: [],
@@ -190,6 +196,24 @@ describe("assignToAccountRaw", () => {
         ...privateInfoRawMock,
         transactions: [shieldedTransactionRawMock],
       });
+    });
+
+    // A transaction scanned before the scanner reported the transparent bundle
+    // has no value to state; writing "0" would read as one.
+    it("should leave the transparent bundle out when the transaction has none", () => {
+      const {
+        transparentOut: _out,
+        hasTransparentInputs: _in,
+        ...withoutBundle
+      } = shieldedTransactionMock;
+      accountZcashMock.privateInfo = { ...privateInfoMock, transactions: [withoutBundle] };
+
+      assignToAccountRaw(accountZcashMock, accountZcashRawMock);
+
+      const [raw] = (accountZcashRawMock.privateInfo?.transactions ??
+        []) as ShieldedTransactionRaw[];
+      expect(raw).not.toHaveProperty("transparentOut");
+      expect(raw).not.toHaveProperty("hasTransparentInputs");
     });
 
     it("should include decrypted actions, when present", () => {
@@ -324,6 +348,24 @@ describe("assignFromAccountRaw", () => {
         ...privateInfoMock,
         transactions: [shieldedTransactionMock],
       });
+    });
+
+    // An account persisted before the scanner reported the transparent bundle
+    // says nothing about it, and must keep saying nothing: read back as zero it
+    // would claim a transaction moved no transparent value.
+    it("should leave the transparent bundle out when it was never persisted", () => {
+      const {
+        transparentOut: _out,
+        hasTransparentInputs: _in,
+        ...withoutBundle
+      } = shieldedTransactionRawMock;
+      accountZcashRawMock.privateInfo = { ...privateInfoRawMock, transactions: [withoutBundle] };
+
+      assignFromAccountRaw(accountZcashRawMock, accountZcashMock);
+
+      const [tx] = accountZcashMock.privateInfo?.transactions ?? [];
+      expect(tx).not.toHaveProperty("transparentOut");
+      expect(tx).not.toHaveProperty("hasTransparentInputs");
     });
 
     it("should include decrypted actions, when present", () => {

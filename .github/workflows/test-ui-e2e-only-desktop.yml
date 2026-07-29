@@ -136,7 +136,6 @@ on:
         type: number
 
 permissions:
-  id-token: write
   contents: read
 
 env:
@@ -191,6 +190,9 @@ jobs:
     name: "Desktop E2E (${{ matrix.device }})"
     needs: [prepare-devices]
     runs-on: [ledger-live-linux-e2e-speculos-32CPU-128RAM]
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
@@ -258,6 +260,11 @@ jobs:
       - name: Pull Speculos docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
