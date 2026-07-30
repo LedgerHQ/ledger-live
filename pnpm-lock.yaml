@@ -4321,6 +4321,37 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  features/flow/analytics-consent:
+    dependencies:
+      '@domain/entity-analytics-consent':
+        specifier: workspace:*
+        version: link:../../../domain/entity/analytics-consent
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../platform/feature-flags
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/flow/card:
     dependencies:
       '@domain/api-pay-card':
@@ -41385,6 +41416,13 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-private-methods@7.27.1':
+    dependencies:
+      '@babel/helper-create-class-features-plugin': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/plugin-transform-private-methods@7.27.1':
     dependencies:
