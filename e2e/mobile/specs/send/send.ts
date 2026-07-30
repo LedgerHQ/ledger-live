@@ -9,7 +9,7 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "../../utils/initUtil";
 
-export const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano"]);
+export const BST_SEND_CURRENCIES = new Set(["aptos", "sui", "cardano", "zcash"]);
 const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera"]);
 
 export type SendTestOptions = {
