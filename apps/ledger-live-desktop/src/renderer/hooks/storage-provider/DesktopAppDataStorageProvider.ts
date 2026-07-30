@@ -19,7 +19,7 @@ export class DesktopAppDataStorageProvider implements AppDataStorageProvider<App
    * @throws Error if the retrieved data cannot be parsed or is not of type AppStorageType.
    */
   getItem(key: AppStorageKey): Promise<AppStorageType | null> {
-    const data: string | null = global.localStorage.getItem(key);
+    const data: string | null = window.localStorage.getItem(key);
     if (!data) {
       return Promise.resolve(null);
     }
@@ -45,7 +45,7 @@ export class DesktopAppDataStorageProvider implements AppDataStorageProvider<App
   setItem(key: AppStorageKey, value: AppStorageType): Promise<void> {
     try {
       const data = JSON.stringify(value);
-      return Promise.resolve(global.localStorage.setItem(key, data));
+      return Promise.resolve(window.localStorage.setItem(key, data));
     } catch {
       throw new BackupAppDataError("Cannot stringify the data(TypeError).");
     }
@@ -58,6 +58,6 @@ export class DesktopAppDataStorageProvider implements AppDataStorageProvider<App
    * @returns A promise that resolves when the value is successfully removed.
    */
   removeItem(key: AppStorageKey): Promise<void> {
-    return Promise.resolve(global.localStorage.removeItem(key));
+    return Promise.resolve(window.localStorage.removeItem(key));
   }
 }

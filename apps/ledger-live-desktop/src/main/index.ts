@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, session, type BrowserWindow, dialog, protocol } from "electron";
+import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import {
@@ -122,14 +122,6 @@ app.on("ready", async () => {
   // for it (see @ledgerhq/coin-zcash/network/ipc/main-host).
   setupZcashNativeHost();
 
-  /**
-   * Clears the session’s HTTP cache
-   * Used to remove third party cached auth tokens, among other things
-   */
-  ipcMain.handle("clearStorageData", () => {
-    const defaultSession = session.defaultSession;
-    return defaultSession.clearStorageData();
-  });
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
     return db.getKey(ns, keyPath, defaultValue);
   });

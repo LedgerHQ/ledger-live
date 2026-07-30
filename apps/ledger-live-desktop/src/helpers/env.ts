@@ -1,14 +1,8 @@
-import { ipcRenderer } from "electron";
 import { setEnvUnsafe } from "@shared/env";
 
-export const setEnvOnAllThreads = (name: string, value: unknown): boolean => {
-  if (setEnvUnsafe(name, value)) {
-    const env = {
-      name,
-      value,
-    };
-    ipcRenderer.send("setEnv", env);
-    return true;
-  }
-  return false;
-};
+/**
+ * Sets an env variable for the renderer thread only. Main seeds its own from `process.env`
+ * (src/main/setup.ts); the two are populated independently, not kept in sync.
+ */
+export const setEnvOnAllThreads = (name: string, value: unknown): boolean =>
+  setEnvUnsafe(name, value);

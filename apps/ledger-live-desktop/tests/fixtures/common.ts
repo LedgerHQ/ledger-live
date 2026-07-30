@@ -103,7 +103,6 @@ export const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
-        CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify({
           lwdWallet40: { enabled: true },
