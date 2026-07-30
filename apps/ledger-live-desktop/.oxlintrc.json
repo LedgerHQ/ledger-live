@@ -64,6 +64,30 @@
             "name": "react-redux",
             "importNames": ["useSelector", "useDispatch", "useStore"],
             "message": "Import typed hooks from 'LLD/hooks/redux' instead of 'react-redux' to ensure proper TypeScript typing."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
           }
         ],
         "patterns": [
