@@ -156,7 +156,6 @@
   "dependencies": {
     "@0no-co/graphql.web": "^1.0.11",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-sui": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -169,7 +168,8 @@
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
     "lodash": "4.17.21",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@gql.tada/internal": "1.0.9",

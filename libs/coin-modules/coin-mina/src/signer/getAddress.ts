@@ -1,4 +1,4 @@
-import { UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";

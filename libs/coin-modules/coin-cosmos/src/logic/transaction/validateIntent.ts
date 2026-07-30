@@ -14,11 +14,13 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import cryptoFactory from "../../chain/chain";
+import {
+  ClaimRewardsFeesWarning,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
-} from "@ledgerhq/errors";
-import cryptoFactory from "../../chain/chain";
-import { ClaimRewardsFeesWarning } from "../../errors";
+} from "../../errors";
 import { validateAddress } from "../validateAddress";
 
 function clampPositive(value: bigint): bigint {

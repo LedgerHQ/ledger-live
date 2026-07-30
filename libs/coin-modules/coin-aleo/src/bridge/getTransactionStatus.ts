@@ -5,7 +5,7 @@ import {
   NotEnoughBalance,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type {

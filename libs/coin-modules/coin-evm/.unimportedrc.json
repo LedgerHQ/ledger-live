@@ -38,5 +38,8 @@
     "lru-cache",
     "@ledgerhq/types-cryptoassets",
     "@ledgerhq/types-live"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
   ]
 }

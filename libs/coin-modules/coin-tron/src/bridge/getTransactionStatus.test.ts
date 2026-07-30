@@ -3,8 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -19,6 +18,7 @@ import {
 import { STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { NetworkInfo, Transaction, TronAccount } from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronNoFrozenForBandwidth,

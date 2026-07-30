@@ -113,7 +113,6 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
@@ -128,7 +127,8 @@
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
-    "viem": "^2.27.0"
+    "viem": "^2.27.0",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",

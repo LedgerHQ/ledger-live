@@ -10,7 +10,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { isRecipientValidForTokenTransfer, validateAddress } from "../network/addresses";
 
 function validateRecipient(

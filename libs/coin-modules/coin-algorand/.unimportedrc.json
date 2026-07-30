@@ -35,6 +35,7 @@
     "src/test/bridge.dataset.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/live-env"
+    "@ledgerhq/live-env",
+    "@ledgerhq/errors"
   ]
 }

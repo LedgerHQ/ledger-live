@@ -1,4 +1,8 @@
-import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  InvalidAddress,
+  NotEnoughBalance,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";

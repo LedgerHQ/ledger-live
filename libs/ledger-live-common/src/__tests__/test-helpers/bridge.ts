@@ -2,7 +2,6 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { reduce, filter, map } from "rxjs/operators";
 import omit from "lodash/omit";
-import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -666,7 +665,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 feePerByte: new BigNumber(0.0001),
               };
               const status = await bridge.getTransactionStatus(account, t);
-              expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
+              expect(status.errors.recipient).toMatchObject({ name: "RecipientRequired" });
             });
             makeTest("invalid recipient have a recipientError", async () => {
               const bridge = await getBridge();
@@ -677,7 +676,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 recipient: "invalidADDRESS",
               };
               const status = await bridge.getTransactionStatus(account, t);
-              expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
+              expect(status.errors.recipient).toMatchObject({ name: "InvalidAddress" });
             });
             makeTest("Default empty amount has an amount error", async () => {
               const bridge = await getBridge();
@@ -687,7 +686,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 feePerByte: new BigNumber(0.0001),
               });
               const status = await bridge.getTransactionStatus(account, t);
-              expect(status.errors.amount).toBeInstanceOf(AmountRequired);
+              expect(status.errors.amount).toMatchObject({ name: "AmountRequired" });
             });
 
             const accountDataTest = accountData.test;

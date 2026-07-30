@@ -1,5 +1,4 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { TESTNET_COIN_CONFIG, VALID_ADDRESS } from "../test/fixtures";
 import { createApi } from ".";
 
@@ -82,7 +81,7 @@ describe("api/index", () => {
       const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 

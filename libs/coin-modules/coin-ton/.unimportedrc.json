@@ -1,5 +1,9 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
   "entry": [
     "src/bridge/js.ts",
     "src/errors.ts",
@@ -14,5 +18,10 @@
     "src/test/bridge.dataset.ts",
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env"]
+  "ignoreUnused": [
+    "msw",
+    "@ledgerhq/types-cryptoassets",
+    "@ledgerhq/live-env",
+    "@ledgerhq/errors"
+  ]
 }

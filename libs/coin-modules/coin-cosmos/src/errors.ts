@@ -69,3 +69,19 @@ export class RecommendUndelegation extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class ValAddressRequired extends Error {
+  override name = "ValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class RedelegateDstValAddressRequired extends Error {
+  override name = "RedelegateDstValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "RedelegateDstValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
