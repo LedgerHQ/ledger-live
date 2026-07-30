@@ -5,4 +5,6 @@ export {
   getBufferFromString,
   normalizeEpochTimestamp,
   getRandomTransferID,
+  reassignOperationType,
 } from "./utils";
+export * from "./neuron";

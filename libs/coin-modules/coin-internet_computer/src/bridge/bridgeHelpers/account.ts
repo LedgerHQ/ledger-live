@@ -7,11 +7,17 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
-import { normalizeEpochTimestamp } from "../../common-logic/utils";
+import { normalizeEpochTimestamp, reassignOperationType } from "../../common-logic/utils";
 import { ICP_FEES } from "../../consts";
 import { deriveAddressFromPubkey } from "../../logic/crypto";
 import { hashTransaction } from "../../logic/hashTransaction";
-import { InternetComputerOperation } from "../../types";
+import {
+  ICPAccount,
+  ICPNeuron,
+  InternetComputerOperation,
+  InternetComputerOperationExtra,
+} from "../../types";
+import { NeuronsData } from "../../types/neuron";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
@@ -40,17 +46,36 @@ export const getAccountShape: GetAccountShape = async info => {
     initialAccount ? BigInt(initialAccount.blockHeight.toString()) : undefined,
   );
 
-  const result: Partial<Account> = {
+  // Neurons aren't fetched during background sync (that needs device signing). They're refreshed by
+  // the device-signed list_neurons operation, whose result rides in operation.extra.neurons. Apply
+  // the newest such snapshot onto the account; otherwise carry the previous one across resyncs.
+  const latestSnapshot = [
+    ...(initialAccount?.pendingOperations ?? []),
+    ...(initialAccount?.operations ?? []),
+  ].reduce<{ neurons: ICPNeuron[]; date: Date } | undefined>((latest, op) => {
+    const snapshot = (op.extra as InternetComputerOperationExtra | undefined)?.neurons;
+    return snapshot && (!latest || op.date > latest.date)
+      ? { neurons: snapshot, date: op.date }
+      : latest;
+  }, undefined);
+  const neurons = latestSnapshot
+    ? new NeuronsData(latestSnapshot.neurons, latestSnapshot.date.getTime())
+    : ((initialAccount as ICPAccount | undefined)?.neurons ?? NeuronsData.empty());
+
+  const neuronAddresses = neurons.fullNeurons.map(n => n.accountIdentifier);
+
+  const result: Partial<ICPAccount> = {
     id: accountId,
     balance,
     spendableBalance: balance,
-    operations: flatMap<TransactionWithId, InternetComputerOperation>(
-      txns,
-      mapTxToOps(accountId, address),
+    operations: reassignOperationType(
+      flatMap<TransactionWithId, InternetComputerOperation>(txns, mapTxToOps(accountId, address)),
+      neuronAddresses,
     ),
     blockHeight: blockHeight.toNumber(),
     operationsCount: (initialAccount?.operations.length ?? 0) + txns.length,
     xpub: publicKey,
+    neurons,
   };
 
   return result;
