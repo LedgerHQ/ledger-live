@@ -16,7 +16,7 @@
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/hw-transport/errors";
 import { PolkadotGenericApp } from "@zondax/ledger-substrate";
 
 const INS = {
