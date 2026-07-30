@@ -1,5 +1,5 @@
 import React from "react";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { useSwapTransactionStatusViewModel } from "../hooks/useSwapTransactionStatusViewModel";

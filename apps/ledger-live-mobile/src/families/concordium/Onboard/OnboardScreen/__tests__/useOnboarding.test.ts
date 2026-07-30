@@ -5,7 +5,7 @@ import {
   ConcordiumSessionExpiredError,
 } from "@ledgerhq/coin-concordium/types";
 import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOnboarding";
 

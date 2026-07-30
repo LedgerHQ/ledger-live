@@ -5,7 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useSelector } from "~/context/hooks";
 import { createMockAccount } from "../../../Recipient/hooks/__tests__/accounts";
 import { useCustomFeesViewModel } from "../useCustomFeesViewModel";

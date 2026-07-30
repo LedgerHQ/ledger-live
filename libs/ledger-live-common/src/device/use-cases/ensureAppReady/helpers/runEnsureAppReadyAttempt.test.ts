@@ -10,7 +10,7 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { Subject } from "rxjs";
-import { getCryptoCurrencyById } from "../../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import getAddress from "../../../../hw/getAddress";
 import { runEnsureAppReadyAttempt } from "./runEnsureAppReadyAttempt";
 
@@ -41,7 +41,8 @@ jest.mock("@ledgerhq/live-dmk-shared", () => {
   };
 });
 
-jest.mock("../../../../currencies", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getCryptoCurrencyById: jest.fn((id: string) => ({ id })),
 }));
 

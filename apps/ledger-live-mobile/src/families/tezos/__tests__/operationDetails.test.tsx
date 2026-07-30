@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { render, screen } from "@tests/test-renderer";
 import type { Operation } from "@ledgerhq/types-live";
 import operationDetails from "../operationDetails";

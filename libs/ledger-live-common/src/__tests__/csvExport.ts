@@ -1,7 +1,8 @@
 import "./test-helpers/staticTime";
 import { setEnv } from "@shared/env";
 import { genAccount } from "../mock/account";
-import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";

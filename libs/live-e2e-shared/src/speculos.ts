@@ -13,7 +13,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import axios from "axios";
 import { getEnv } from "@shared/env";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";

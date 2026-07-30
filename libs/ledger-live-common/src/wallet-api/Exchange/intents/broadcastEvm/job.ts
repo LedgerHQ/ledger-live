@@ -2,7 +2,7 @@ import { Observable, of, concat } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
 import type { Job } from "@ledgerhq/device-intent";
-import { getCryptoCurrencyById } from "../../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";
 
 const POLL_INTERVAL_MS = 3000;

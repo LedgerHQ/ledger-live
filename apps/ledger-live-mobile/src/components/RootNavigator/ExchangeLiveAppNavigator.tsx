@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useFeature } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
