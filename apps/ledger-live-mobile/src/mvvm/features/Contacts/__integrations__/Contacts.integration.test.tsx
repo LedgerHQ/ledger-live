@@ -578,6 +578,22 @@ describe("Contacts integration", () => {
     );
   });
 
+  it("should not start Add Address when no production network is eligible", async () => {
+    const { user } = render(<ContactDetailViewModelTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: {
+          enabled: true,
+          params: { newBadge: false, eligibleAddressFamilies: ["unknown"] },
+        },
+      }),
+    });
+
+    await user.press(screen.getByTestId("contacts-start-add-address"));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+  });
+
   it("should expose the Add Address session started for a saved contact", async () => {
     const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailViewModelTestApp />, {

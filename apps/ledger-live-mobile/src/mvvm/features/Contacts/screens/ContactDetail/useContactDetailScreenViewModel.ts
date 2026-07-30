@@ -62,9 +62,9 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
   });
   const onAddAddress = useCallback(() => {
-    if (!contact) return;
+    if (!contact || eligibleNetworkIds.length === 0) return;
     startAddAddress(contact.id);
-  }, [contact, startAddAddress]);
+  }, [contact, eligibleNetworkIds.length, startAddAddress]);
   const onCurrencySelected = useCallback<ContactsAddAddressFlowDrawerProps["onCurrencySelected"]>(
     currencyId => {
       if (addAddressFlowState.status === "selectingCurrency") {

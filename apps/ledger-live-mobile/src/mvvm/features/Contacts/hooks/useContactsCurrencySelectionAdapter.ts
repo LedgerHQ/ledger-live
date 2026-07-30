@@ -34,6 +34,7 @@ export function useContactsCurrencySelectionAdapter({
   onSelectionCancelled,
 }: UseContactsCurrencySelectionAdapterOptions): ContactsCurrencySelectionAdapter {
   const selectionStartedRef = useRef(false);
+  const closeDrawerRef = useRef<() => void>(() => undefined);
   const {
     areCurrenciesFiltered,
     assetsConfiguration,
@@ -57,6 +58,20 @@ export function useContactsCurrencySelectionAdapter({
       }
     },
     [onCurrencySelected, onSelectionCancelled],
+  );
+
+  useEffect(() => {
+    closeDrawerRef.current = closeDrawer;
+  }, [closeDrawer]);
+
+  useEffect(
+    () => () => {
+      if (selectionStartedRef.current) {
+        selectionStartedRef.current = false;
+        closeDrawerRef.current();
+      }
+    },
+    [],
   );
 
   useEffect(() => {
