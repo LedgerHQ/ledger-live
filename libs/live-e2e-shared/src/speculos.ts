@@ -62,6 +62,7 @@ import { getDeviceCoordinates } from "./deviceCoordinates";
 import { sendInternetComputer } from "./families/internet_computer";
 import { sleep } from "./index";
 import { delegateMina } from "./families/mina";
+import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
@@ -966,6 +967,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.CCD_TESTNET.id:
       await sendConcordium(tx);
+      break;
+    case Currency.ALEO.id:
+      await sendAleo(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
