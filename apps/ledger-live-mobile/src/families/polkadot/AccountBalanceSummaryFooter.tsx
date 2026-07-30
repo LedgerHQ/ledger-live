@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import type { ModalInfo } from "~/modals/Info";

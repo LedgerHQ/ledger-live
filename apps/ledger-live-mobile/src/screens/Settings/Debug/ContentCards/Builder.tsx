@@ -8,7 +8,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import type * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import {
   ContentCardLocation,
   ContentCardsLayout,

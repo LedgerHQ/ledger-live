@@ -2,7 +2,7 @@ import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { useWithdrawableBalance } from "@ledgerhq/live-common/families/canton/react";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
