@@ -1,4 +1,5 @@
 import anonymizer from "~/datadog/anonymizer";
+import { scrubResourceUrl, scrubViewUrlHash, scrubActionTargetName } from "./scrubRum";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
 
 export type ShouldSendCallback = () => boolean;
@@ -65,6 +66,22 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
       rewriteAsarUrlsRecursive(ev, new Set());
     } catch (e) {
       console.warn("Datadog: asar URL rewrite failed (best-effort):", e);
+    }
+
+    const resource = ev.resource as Record<string, unknown> | undefined;
+    if (resource && typeof resource.url === "string") {
+      resource.url = scrubResourceUrl(resource.url);
+    }
+
+    const action = ev.action as Record<string, unknown> | undefined;
+    const target = action?.target as Record<string, unknown> | undefined;
+    if (target && typeof target.name === "string") {
+      target.name = scrubActionTargetName(target.name);
+    }
+
+    const view = ev.view as Record<string, unknown> | undefined;
+    if (view && typeof view.url_hash === "string") {
+      view.url_hash = scrubViewUrlHash(view.url_hash);
     }
 
     return true;

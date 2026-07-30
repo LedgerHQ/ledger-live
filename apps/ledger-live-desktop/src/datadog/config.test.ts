@@ -124,6 +124,48 @@ describe("datadog config", () => {
       expect(stack).toContain("https://app.asar/.webpack/renderer.bundle.js:1447:337795");
       expect(stack).not.toContain("file://");
     });
+
+    it("scrubs wallet address from resource.url", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        resource: {
+          url: "https://api.ledger.com/blockchain/v4/eth/address/0x9aa99c23f67c81701c772b106b4f83f6e858dd2e/txs",
+        },
+      };
+      beforeSend(event, undefined);
+      expect((event.resource as Record<string, unknown>).url).toBe(
+        "https://api.ledger.com/blockchain/v4/eth/address/[redacted]/txs",
+      );
+    });
+
+    it("scrubs wallet address from action.target.name", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        action: {
+          target: {
+            name: 'click on { "xpub": "xpub6C8aARQ2jRGKeZsDxLWMZfS8oVnrFGw1b61Pzeiub4H98DRSXdBJ65ctCYoJ1vUjLvFzcFvt2znVZvASmxm9M", "index": 0 }',
+          },
+        },
+      };
+      beforeSend(event, undefined);
+      expect(
+        ((event.action as Record<string, unknown>).target as Record<string, unknown>).name,
+      ).toBe('click on { "xpub": "[redacted]", "index": 0 }');
+    });
+
+    it("scrubs account ID from view.url_hash", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const event = {
+        view: {
+          url_hash:
+            "/account/js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:segwit",
+        },
+      };
+      beforeSend(event, undefined);
+      expect((event.view as Record<string, unknown>).url_hash).toBe(
+        "/account/js:2:bitcoin:[redacted]:segwit",
+      );
+    });
   });
 
   describe("rewriteAsarUrls", () => {
