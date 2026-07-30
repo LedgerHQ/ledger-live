@@ -97,6 +97,26 @@ const teamPlatform = {
     parser: stringParser,
     desc: "Trustchain API Prod",
   },
+  LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING: {
+    def: "https://keycloak.api.live.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "Keycloak base URL for Ledger authenticated APIs (staging)",
+  },
+  LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD: {
+    def: "https://global.api.prd.ledger.com/keycloak",
+    parser: stringParser,
+    desc: "Keycloak base URL for Ledger authenticated APIs (production)",
+  },
+  LEDGER_AUTH_KEYCLOAK_REALM: {
+    def: "ledger-bc-customers",
+    parser: stringParser,
+    desc: "Keycloak realm for Ledger authenticated APIs",
+  },
+  LEDGER_AUTH_CLIENT_ID: {
+    def: "ledger-keycloak",
+    parser: stringParser,
+    desc: "Keycloak client ID for Ledger authenticated APIs",
+  },
 };
 
 export default teamPlatform;

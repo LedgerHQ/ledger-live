@@ -217,6 +217,9 @@
     "./shared/schema-primitives": {
       "entry": ["src/index.ts"]
     },
+    "./shared/auth": {
+      "entry": ["src/index.ts"]
+    },
     "./shared/feature-flags": {
       "entry": ["src/index.ts"]
     },

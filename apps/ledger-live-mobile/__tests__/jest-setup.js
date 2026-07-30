@@ -40,6 +40,13 @@ import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/asy
 import mockLocalize from "react-native-localize/mock";
 import { EventEmitter } from "events";
 
+jest.mock("expo-crypto", () => ({
+  CryptoDigestAlgorithm: { SHA256: "SHA-256" },
+  CryptoEncoding: { BASE64: "base64" },
+  getRandomBytesAsync: jest.fn(() => Promise.resolve(new Uint8Array(32))),
+  digestStringAsync: jest.fn(() => Promise.resolve("Y29kZS1jaGFsbGVuZ2U=")),
+}));
+
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
 

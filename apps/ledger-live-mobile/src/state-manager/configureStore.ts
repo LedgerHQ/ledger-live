@@ -1,6 +1,9 @@
 import Config from "react-native-config";
-import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
+import { configureStore, createListenerMiddleware, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { authApiExtra } from "@shared/auth";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
+import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import NetInfo from "@react-native-community/netinfo";
 import { Platform } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -21,6 +24,11 @@ import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
+import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
+
+// This listenerMiddleware is cross-scope as it is preferable to have one instance per store
+// Source: https://github.com/reduxjs/redux-toolkit/discussions/3665
+const listenerMiddleware = createListenerMiddleware<State>();
 
 export const store = configureStore({
   reducer: reducers,
@@ -53,9 +61,28 @@ export const store = configureStore({
               // LIVE-33829: force mocks until Pay Card API base URL is wired.
               payCardApiMocksEnabled: true,
             }),
+            ...authApiExtra({
+              authFeatureId: "lwmAuth",
+              startListening: listenerMiddleware.startListening,
+              providerParams: {
+                identityProvider: new LkrpIdentityProvider<State>({
+                  startListening: listenerMiddleware.startListening,
+                }),
+              },
+              createAuthProvider: (environment, { identityProvider }) =>
+                new AuthSDK(
+                  {
+                    clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                    keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
+                    keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                    disablePkce: true,
+                  },
+                  { provider: identityProvider, createPkcePair: createPkcePairWithExpoCrypto },
+                ),
+            }),
           },
         },
-      }),
+      }).prepend(listenerMiddleware.middleware),
     )
       .concat(rebootMiddleware)
       .concat(
