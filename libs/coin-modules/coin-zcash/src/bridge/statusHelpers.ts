@@ -8,8 +8,8 @@ import { classifyZcashRecipient } from "../logic/address";
 // shielded send ("shielded" / "shielded-to-transparent") spends Orchard notes
 // only and must never pull in the account's transparent UTXOs -- so only
 // these types resolve to a non-empty transparent input set. "transparent"
-// (Public→Public t→t) is included: coin-zcash builds it as a V5 PCZT that
-// spends transparent UTXOs into a transparent output, sharing the same
+// (Public→Public t→t) is included: coin-zcash builds it as a PCZT that spends
+// transparent UTXOs into a transparent output, sharing the same
 // transparent-input machinery as "transparent-to-shielded".
 export const TRANSPARENT_INPUT_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
   "transparent-to-shielded",

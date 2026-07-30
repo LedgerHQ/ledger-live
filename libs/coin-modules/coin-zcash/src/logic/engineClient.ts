@@ -36,7 +36,12 @@ export async function getZCashClient(args: {
  */
 export async function assertCanSend(): Promise<void> {
   const client = await getZCashClient(getZainoEndpoint());
-  if (!client.buildTransaction || !client.finalizeTransaction || !client.broadcastTransaction) {
+  if (
+    !client.buildTransaction ||
+    !client.buildIronwoodTransaction ||
+    !client.finalizeTransaction ||
+    !client.broadcastTransaction
+  ) {
     throw new Error("Shielded Zcash transactions are not supported in this environment");
   }
 }

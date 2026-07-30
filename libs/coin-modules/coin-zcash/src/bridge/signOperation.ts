@@ -11,19 +11,41 @@ import type { Transaction, ZcashAccount, BtcInputRef, ZcashOperationExtra } from
 import type { SignerContext } from "../types/signer";
 import { ZcashSignerNotSupported, ZcashSigningCancelled } from "../types/errors";
 import { assertCanSend } from "../logic/engineClient";
-import { craftTransaction } from "../logic/transaction/craftTransaction";
+import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
 import { mapOutputs, mapSpends, mapTransparentInputs } from "./mapping";
 import { getWalletAccount } from "./getWalletAccount";
 import { resolveTransparentUtxos } from "./statusHelpers";
 
+// The V6 builder mirrors zcash-utils' own precondition: the transaction must carry
+// an Ironwood bundle, which an Ironwood spend or an Ironwood output creates. Those
+// are the flows below -- a shielded recipient resolves to the Ironwood pool there,
+// which is where NU6.3 sends newly shielded funds.
+//
+// The other flows stay on the V5 builder: t→t has no shielded bundle at all, and
+// the Orchard flows spend Orchard notes, which the V6 builder cannot take (its
+// `spends` read each note's `position` from the Ironwood commitment tree).
+const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
+  "ironwood",
+  "ironwood-to-transparent",
+  "transparent-to-shielded",
+]);
+
 /**
  * The only bespoke residue of this bridge (kaspa-style): builds the PCZT
- * (`logic.craftTransaction`), signs it via the device
- * (`signerContext(...).signPcztTransaction`), and finalizes it
- * (`logic.combine`) into a broadcastable V5 tx. Every Zcash flow --
- * including transparent t→t -- goes through this single PCZT path; there is
- * no legacy PSBT fallback in coin-zcash.
+ * (`logic.craftTransaction` / `craftIronwoodTransaction`), signs it via the
+ * device (`signerContext(...).signPcztTransaction`), and finalizes it
+ * (`logic.combine`) into a broadcastable tx. Every Zcash flow -- including
+ * transparent t→t -- goes through this single PCZT path; there is no legacy
+ * PSBT fallback in coin-zcash.
+ *
+ * `logic.combine` still finalizes through the V5 path: @ledgerhq/zcash-utils
+ * exposes no V6 counterpart, so a V6 PCZT gets as far as device signing.
+ *
+ * One flow has no builder at all past NU6.3: a shielded send to a third party
+ * (z→z). It would need Orchard spends alongside an Ironwood output, and the V6
+ * builder only takes Ironwood spends — NU6.3 makes the Orchard pool spendable but
+ * no longer creditable.
  */
 export const buildSignOperation =
   (signerContext: SignerContext): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>
@@ -40,18 +62,6 @@ export const buildSignOperation =
       };
 
       (async () => {
-        // Ironwood signing is not yet available — finalizeIronwoodTransaction has
-        // not shipped in @ledgerhq/zcash-utils. Fail before reaching the device so
-        // the UI surfaces a user-visible error rather than hanging during proving.
-        if (
-          transaction.transferType === "ironwood" ||
-          transaction.transferType === "ironwood-to-transparent"
-        ) {
-          throw new Error(
-            `Zcash ${transaction.transferType} signing is not yet supported — requires finalizeIronwoodTransaction`,
-          );
-        }
-
         const ufvk = account.privateInfo?.ufvk;
         if (!ufvk) throw new Error("Missing UFVK -- account not yet synced");
         if (!transaction.selectedNotes)
@@ -66,14 +76,17 @@ export const buildSignOperation =
         const transparentInputs = await mapTransparentInputs(account, transparentUtxos);
         if (bailIfCancelled()) return;
 
-        const buildResult = await craftTransaction({
+        const plan = {
           ufvk,
           accountIndex,
           feeZat: transaction.zcashFee.toFixed(0),
           spends: mapSpends(transaction.selectedNotes),
           transparentInputs,
           outputs: mapOutputs(transaction),
-        });
+        };
+        const buildResult = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(transaction.transferType)
+          ? await craftIronwoodTransaction(plan)
+          : await craftTransaction(plan);
 
         if (bailIfCancelled()) return;
 

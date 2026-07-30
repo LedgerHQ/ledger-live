@@ -477,6 +477,36 @@ describe("createZCashIPCClient", () => {
     });
   });
 
+  // -- buildIronwoodTransaction -------------------------------------------
+
+  describe("buildIronwoodTransaction", () => {
+    it("invokes ipc with the buildIronwoodTransaction channel, forwards args and adds a requestId", async () => {
+      const ipc = makeIpcRenderer();
+      const buildResult = { pcztHex: "deadbeef", nActionsIronwood: 1 };
+      ipc.invoke.mockResolvedValueOnce(buildResult);
+      const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+
+      const args = {
+        grpcUrl: GRPC_URL,
+        ufvk: "uview1test",
+        seedFingerprint: "00",
+        accountIndex: 0,
+        feeZat: "10000",
+        spends: [],
+        transparentInputs: [],
+        outputs: [{ address: "u1recipient", valueZat: "50000" }],
+      };
+      const result = await client.buildIronwoodTransaction!(args);
+
+      expect(result).toBe(buildResult);
+      expect(ipc.invoke).toHaveBeenCalledTimes(1);
+      const [channel, payload] = ipc.invoke.mock.calls[0];
+      expect(channel).toBe(ZCASH_IPC.buildIronwoodTransaction);
+      expect(payload).toMatchObject(args);
+      expect((payload as { requestId: string }).requestId).toMatch(ZCASH_REQUEST_ID_PATTERN);
+    });
+  });
+
   // -- finalizeTransaction ------------------------------------------------
 
   describe("finalizeTransaction", () => {

@@ -9,7 +9,7 @@ import { lastValueFrom, toArray } from "rxjs";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { buildSignOperation } from "./signOperation";
-import { craftTransaction } from "../logic/transaction/craftTransaction";
+import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction/craftTransaction";
 import { combine } from "../logic/transaction/combine";
 import { assertCanSend } from "../logic/engineClient";
 import { getWalletAccount } from "./getWalletAccount";
@@ -23,6 +23,9 @@ jest.mock("../logic/engineClient");
 jest.mock("./getWalletAccount");
 
 const mockCraftTransaction = craftTransaction as jest.MockedFunction<typeof craftTransaction>;
+const mockCraftIronwoodTransaction = craftIronwoodTransaction as jest.MockedFunction<
+  typeof craftIronwoodTransaction
+>;
 const mockCombine = combine as jest.MockedFunction<typeof combine>;
 const mockGetWalletAccount = getWalletAccount as jest.MockedFunction<typeof getWalletAccount>;
 const mockAssertCanSend = assertCanSend as jest.MockedFunction<typeof assertCanSend>;
@@ -32,6 +35,9 @@ const currency = getCryptoCurrencyById("zcash");
 const MOCK_TXID = "aa".repeat(32);
 const MOCK_TX_HEX = "05" + "00".repeat(63);
 const MOCK_PCZT_HEX = "pczt" + "00".repeat(30);
+// Distinct from the v1 PCZT so the tests can tell which builder's output reached
+// the device and the finalizer.
+const MOCK_PCZT_V2_HEX = "pczt" + "02".repeat(30);
 const MOCK_UFVK = "uview1testkey";
 
 const defaultBuildResult = {
@@ -56,6 +62,16 @@ const defaultBuildResult = {
   nTransparentInputs: 0,
   nTransparentOutputs: 0,
 } as Awaited<ReturnType<typeof craftTransaction>>;
+
+const defaultIronwoodBuildResult = {
+  ...defaultBuildResult,
+  pcztHex: MOCK_PCZT_V2_HEX,
+  pcztTransaction: {
+    ...defaultBuildResult.pcztTransaction,
+    global: { ...defaultBuildResult.pcztTransaction.global, txVersion: 6 },
+  },
+  nActionsIronwood: 2,
+} as Awaited<ReturnType<typeof craftIronwoodTransaction>>;
 
 const defaultFinalizeResult = { txHex: MOCK_TX_HEX, txid: MOCK_TXID };
 
@@ -156,6 +172,7 @@ describe("bridge/signOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCraftTransaction.mockResolvedValue(defaultBuildResult);
+    mockCraftIronwoodTransaction.mockResolvedValue(defaultIronwoodBuildResult);
     mockCombine.mockResolvedValue(defaultFinalizeResult);
     mockAssertCanSend.mockResolvedValue(undefined);
     mockGetWalletAccount.mockReturnValue({
@@ -163,14 +180,18 @@ describe("bridge/signOperation", () => {
     } as unknown as ReturnType<typeof getWalletAccount>);
   });
 
+  // An Ironwood spend or an Ironwood output carries the bundle the V6 builder
+  // requires; every other flow goes through the v1/V5 builder.
   it.each([
-    ["shielded", "z→z"],
-    ["shielded-to-transparent", "z→t"],
-    ["transparent-to-shielded", "t→z"],
-    ["transparent", "t→t"],
+    ["shielded", "z→z", "v1"],
+    ["shielded-to-transparent", "z→t", "v1"],
+    ["transparent-to-shielded", "t→z", "v6"],
+    ["transparent", "t→t", "v1"],
+    ["ironwood", "iw→iw", "v6"],
+    ["ironwood-to-transparent", "iw→t", "v6"],
   ] as const)(
-    "crafts, signs, finalizes and emits a signed operation (%s / %s)",
-    async (transferType, _label) => {
+    "crafts, signs, finalizes and emits a signed operation (%s / %s, PCZT %s)",
+    async (transferType, _label, encoding) => {
       const account = makeAccount();
       const tx = makeTx(transferType);
       const signerContext = makeSignerContext();
@@ -187,11 +208,16 @@ describe("bridge/signOperation", () => {
         "device-signature-granted",
         "signed",
       ]);
-      expect(mockCraftTransaction).toHaveBeenCalledWith(
+      const [expectedCraft, unusedCraft, expectedPczt] =
+        encoding === "v1"
+          ? [mockCraftTransaction, mockCraftIronwoodTransaction, MOCK_PCZT_HEX]
+          : [mockCraftIronwoodTransaction, mockCraftTransaction, MOCK_PCZT_V2_HEX];
+      expect(expectedCraft).toHaveBeenCalledWith(
         expect.objectContaining({ ufvk: MOCK_UFVK, feeZat: "5000" }),
       );
+      expect(unusedCraft).not.toHaveBeenCalled();
       expect(mockCombine).toHaveBeenCalledWith({
-        pczt: MOCK_PCZT_HEX,
+        pczt: expectedPczt,
         orchardSignatures: [
           Buffer.from(defaultSigResult.orchard[0].spendAuthSig).toString("hex"),
           Buffer.from(defaultSigResult.orchard[1].spendAuthSig).toString("hex"),
@@ -228,6 +254,7 @@ describe("bridge/signOperation", () => {
 
     expect(signerContext).not.toHaveBeenCalled();
     expect(mockCraftTransaction).not.toHaveBeenCalled();
+    expect(mockCraftIronwoodTransaction).not.toHaveBeenCalled();
   });
 
   it("errors when the account has no UFVK yet (not synced)", async () => {
@@ -256,12 +283,29 @@ describe("bridge/signOperation", () => {
   it("propagates a craftTransaction (engine) failure", async () => {
     mockCraftTransaction.mockRejectedValue(new Error("engine unavailable"));
     const account = makeAccount();
-    const tx = makeTx("transparent");
+    const tx = makeTx("shielded");
     const signOp = buildSignOperation(makeSignerContext());
 
     await expect(
       lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
     ).rejects.toThrow("engine unavailable");
+  });
+
+  it("propagates a V6 craft failure, such as an engine without the Ironwood builder", async () => {
+    mockCraftIronwoodTransaction.mockRejectedValue(
+      new Error("Zcash V6 (Ironwood) transactions are not supported in this environment"),
+    );
+    const signOp = buildSignOperation(makeSignerContext());
+
+    await expect(
+      lastValueFrom(
+        signOp({
+          account: makeAccount(),
+          deviceId: "device-1",
+          transaction: makeTx("ironwood"),
+        } as never),
+      ),
+    ).rejects.toThrow("V6 (Ironwood)");
   });
 
   it("rejects when the signer does not expose signPcztTransaction", async () => {

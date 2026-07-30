@@ -40,6 +40,8 @@ import type {
   ZCashClientArgs,
   BuildTransactionArgs,
   BuildTransactionResult,
+  BuildIronwoodTransactionArgs,
+  BuildIronwoodTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
   TransactionDetailsRequest,
@@ -140,6 +142,16 @@ export function createZCashIPCClient(
         ...args,
         requestId,
       })) as BuildTransactionResult;
+    },
+
+    async buildIronwoodTransaction(
+      args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+    ): Promise<BuildIronwoodTransactionResult> {
+      const requestId = nextRequestId();
+      return (await ipcRenderer.invoke(ZCASH_IPC.buildIronwoodTransaction, {
+        ...args,
+        requestId,
+      })) as BuildIronwoodTransactionResult;
     },
 
     async finalizeTransaction(
