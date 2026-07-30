@@ -171,6 +171,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
 };
 
 const DEFAULT_COUNTERVALUE_TICKER = "USD";
+const OFAC_CURRENCIES_SET = new Set(OFAC_CURRENCIES);
 
 export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
@@ -668,7 +669,7 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
-  if (OFAC_CURRENCIES.includes(state.counterValue)) {
+  if (OFAC_CURRENCIES_SET.has(state.counterValue)) {
     return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   }
   return (

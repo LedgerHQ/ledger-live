@@ -15,8 +15,8 @@ export function WaitForAppReady({
   logStartupEvent("WaitForAppReady render");
 
   const { isLoading: ofacLoading } = ofacGeoBlockApi.useCheckQuery();
-  const firebaseIsReady = useSelector(selectRemoteFlagsReady);
-  const isLoaded = currencyInitialized && !ofacLoading && firebaseIsReady;
+  const remoteFlagsReady = useSelector(selectRemoteFlagsReady);
+  const isLoaded = currencyInitialized && !ofacLoading && remoteFlagsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
 

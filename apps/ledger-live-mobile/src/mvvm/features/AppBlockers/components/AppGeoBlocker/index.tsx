@@ -5,11 +5,11 @@ import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import AppBlocker from "../AppBlocker";
+import { useAppGeoBlockerViewModel } from "./useAppGeoBlockerViewModel";
 
 export default function AppGeoBlocker({ children }: { children: React.ReactNode }) {
-  const { data: blocked = false } = ofacGeoBlockApi.useCheckQuery();
+  const { blocked } = useAppGeoBlockerViewModel();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const localizedUrl = useLocalizedUrl(urls.geoBlock.learnMore);
