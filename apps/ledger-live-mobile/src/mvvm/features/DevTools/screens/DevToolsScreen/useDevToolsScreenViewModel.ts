@@ -5,22 +5,19 @@ import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { getStackNavigationConfigV4 } from "LLM/components/Navigation";
 import { useFeatureFlagsToolProps } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
+import { useDevToolsRelay } from "./useDevToolsRelay";
 
-export function useDevToolsScreenViewModel(): {
-  config: DevToolsConfig;
-  screenOptions: NativeStackNavigationOptions;
-} {
+export function useDevToolsScreenViewModel() {
   const featureFlagsProps = useFeatureFlagsToolProps();
   const { theme } = useTheme();
   const { bottom } = useSafeAreaInsets();
+  const { wire, wireState } = useDevToolsRelay();
 
   const config: DevToolsConfig = useMemo(
     () => [{ id: "feature-flags", config: featureFlagsProps }],
     [featureFlagsProps],
   );
 
-  // DevTools renders its own stack; reuse the app's config and add the bottom
-  // safe-area inset since DevTools only provides body content.
   const screenOptions: NativeStackNavigationOptions = useMemo(() => {
     const navConfig = getStackNavigationConfigV4(theme);
     return {
@@ -29,5 +26,12 @@ export function useDevToolsScreenViewModel(): {
     };
   }, [theme, bottom]);
 
-  return { config, screenOptions };
+  return {
+    config,
+    screenOptions,
+    transport: wire.transport,
+    hubUrl: wireState.hubUrl,
+    setHubUrl: wire.setHubUrl,
+    role: wireState.role,
+  };
 }

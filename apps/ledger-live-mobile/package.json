@@ -87,6 +87,8 @@
     "@datadog/mobile-react-navigation": "2.8.2",
     "@devtools/bindings": "workspace:^",
     "@devtools/shell": "workspace:^",
+    "@devtools/transport-panel": "workspace:*",
+    "@devtools/wire": "workspace:*",
     "@domain/api-altcoins-sentiment": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/api-currency-token": "workspace:^",

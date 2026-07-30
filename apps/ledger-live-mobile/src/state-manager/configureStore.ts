@@ -24,6 +24,7 @@ import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
+import { sleepingListener } from "./sleepingListener";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 // This listenerMiddleware is cross-scope as it is preferable to have one instance per store
@@ -102,7 +103,8 @@ export const store = configureStore({
           fetchRemoteFlags,
           getAppLanguage: languageSelector,
         }),
-      ),
+      )
+      .concat(sleepingListener.middleware),
 
   enhancers: getDefaultEnhancers => {
     const enhancers = getDefaultEnhancers();
