@@ -623,5 +623,14 @@ export function runSwapDiscreetModeTest(
       await app.modularDrawer.checkSelectAssetPage();
       await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
+
+    it("Checks if the balance is hidden in the swap main form", async () => {
+      for (const account of accounts) {
+        await app.swapLiveApp.tapFromCurrency();
+        await app.modularDrawer.selectAsset(account);
+        await app.swapLiveApp.checkAssetFromContains(account.currency.ticker);
+        await app.swapLiveApp.checkFromAccountBalanceIsDiscreet(account.currency.ticker);
+      }
+    });
   });
 }

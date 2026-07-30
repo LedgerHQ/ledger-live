@@ -35,6 +35,7 @@ export default class SwapLiveAppPage {
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
   fromAccountAccountNameTag = "from-account-account-name-tag";
+  fromAccountBalance = "from-account-balance";
   toAccountAccountNameTag = "to-account-account-name-tag";
   incompatibilityBannerPartnerId = "incompatibility-banner-partner";
   swapMainContainerCssSelector = "main";
@@ -404,6 +405,13 @@ export default class SwapLiveAppPage {
   async checkAssetFromContains(expectedAssetText: string) {
     const fromAccount: string = await getWebElementText(this.fromSelector);
     jestExpect(fromAccount).toContain(expectedAssetText);
+  }
+
+  @Step("Check from-account balance is masked in discreet mode for $0")
+  async checkFromAccountBalanceIsDiscreet(ticker: string) {
+    await waitWebElementByTestId(this.fromAccountBalance);
+    const text = await getWebElementText(this.fromAccountBalance);
+    jestExpect(text).toMatch(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
   }
 
   @Step("Check currency to swap from matches account $0")

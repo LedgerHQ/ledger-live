@@ -76,7 +76,34 @@ test.describe("Swap Discreet mode", () => {
         await app.modularDialog.selectNetwork(account.currency);
         await app.modularDialog.selectAccountByName(account);
         await app.swap.checkAssetFromContains(account.currency.ticker);
-        await app.swap.checkWidgetBalanceIsDiscreet(account.currency.ticker);
+        await app.swap.checkFromAccountBalanceIsDiscreet(account.currency.ticker);
+      }
+    },
+  );
+
+  test(
+    "Balance should not be visible in the swap main form",
+    {
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
+      annotation: [
+        {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      ],
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
+      for (const account of fundedAssetsAccounts) {
+        await app.swap.selectFromAccountCoinSelector();
+        await app.modularDialog.selectAsset(account.currency);
+        await app.modularDialog.selectNetwork(account.currency);
+        await app.modularDialog.selectAccountByName(account);
+        await app.swap.checkAssetFromContains(account.currency.ticker);
+        await app.swap.checkFromAccountBalanceIsDiscreet(account.currency.ticker);
       }
     },
   );
