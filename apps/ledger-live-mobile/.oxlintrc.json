@@ -64,6 +64,30 @@
             "name": "react-i18next",
             "importNames": ["useTranslation", "Trans"],
             "message": "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
           }
         ],
         "patterns": [
@@ -154,7 +178,33 @@
         "eslint/no-restricted-imports": [
           "error",
           {
-            "paths": ["lodash"],
+            "paths": [
+              "lodash",
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/types",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              },
+              {
+                "name": "@ledgerhq/ledger-wallet-framework/api",
+                "importNames": [
+                  "CryptoCurrency",
+                  "TokenCurrency",
+                  "Currency",
+                  "Unit",
+                  "FiatCurrency",
+                  "ExplorerView"
+                ],
+                "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+              }
+            ],
             "patterns": [
               {
                 "group": [
