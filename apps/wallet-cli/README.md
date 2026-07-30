@@ -105,6 +105,15 @@ pnpm start -- <command> [args]
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
 
+## Regression testing
+
+Before a release, work through the [regression plan](docs/regression/README.md). Cases that
+need no device are automated (`./scripts/regression/run.sh`); the rest need a Ledger on USB
+and a person to confirm on-screen. Per-release focus lives in
+[`docs/regression/releases/`](docs/regression/releases/).
+
+Adding or changing a command? Update the matching case table in the same PR.
+
 ## Relation to `ledger-live` CLI
 
 This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cli`](../cli)), which is now an internal, Speculos-only tool used by the monorepo's e2e suites and CI. For human/manual hardware-wallet flows, use this `wallet-cli` (or the Ledger Live desktop/mobile app).
