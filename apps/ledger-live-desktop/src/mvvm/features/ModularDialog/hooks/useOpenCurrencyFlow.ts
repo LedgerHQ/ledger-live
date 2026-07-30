@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useDispatch, useStore } from "LLD/hooks/redux";
-import { closeDialog, openDialog } from "~/renderer/reducers/modularDialog";
+import {
+  closeDialog,
+  openDialog,
+  type ModularDialogPresentation,
+} from "~/renderer/reducers/modularDialog";
 
 type SettleCurrencySelection = (currency: CryptoOrTokenCurrency | null) => boolean;
 
@@ -14,6 +18,9 @@ type PendingCurrencySelection = Readonly<{
 
 export type OpenCurrencyFlow = (
   networkIds: readonly CryptoCurrency["id"][],
+  options?: Readonly<{
+    presentation?: ModularDialogPresentation;
+  }>,
 ) => Promise<CryptoOrTokenCurrency | null>;
 
 export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrencyFlow }> {
@@ -22,7 +29,7 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
   const pendingSelectionRef = useRef<PendingCurrencySelection | undefined>(undefined);
 
   const openCurrencyFlow = useCallback<OpenCurrencyFlow>(
-    networkIds => {
+    (networkIds, options) => {
       pendingSelectionRef.current?.settle(null);
 
       return new Promise(resolve => {
@@ -50,6 +57,7 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
         dispatch(
           openDialog({
             networkIds: [...networkIds],
+            presentation: options?.presentation,
             onAssetSelected,
             onClose: () => {
               if (settle(null)) {

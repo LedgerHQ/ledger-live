@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export type AssetType = {
   name: string;
@@ -29,3 +29,19 @@ export type ModularDialogStep = (typeof MODULAR_DIALOG_STEP)[keyof typeof MODULA
 export type ModularDialogFlowManagerProps = {
   onClose?: () => void;
 };
+
+export type ModularDialogFlowRenderProps = Readonly<{
+  content: ReactNode;
+  currentStep: ModularDialogStep;
+  description?: string;
+  hasBackButton: boolean;
+  isOpen: boolean;
+  navigationDirection: NavigationDirection;
+  onBack?: () => void;
+  onClose: () => void;
+}>;
+
+export type ModularDialogFlowProps = Readonly<{
+  children: (props: ModularDialogFlowRenderProps) => ReactNode;
+  onClose?: () => void;
+}>;
