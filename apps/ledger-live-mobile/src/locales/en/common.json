@@ -1548,10 +1548,6 @@
     }
   },
   "graph": {
-    "week": "1W",
-    "month": "1M",
-    "year": "1Y",
-    "all": "ALL",
     "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
@@ -1697,10 +1693,8 @@
     "cta": "Buy your Ledger now",
     "footer": "I already have a Ledger, set it up",
     "bannerTitle": "Top-notch security for your crypto and NFTs",
-    "bannerTitle2": "You will need a Ledger to be able to trade",
     "bannerSubtitle": "with a Ledger Flex",
     "bannerButtonTitle": "Discover the Flex",
-    "bannerButtonTitle2": "Buy a Ledger",
     "setupCta": "I already have a Ledger, set it up"
   },
   "rebornBuyDevice": {
@@ -2829,44 +2823,18 @@
       "skipCTA": "Maybe later"
     }
   },
-  "tabs": {
-    "accounts": "Accounts",
-    "transfer": "Transfer",
-    "manager": "My Ledger",
-    "myWallet": "My wallet",
-    "settings": "Settings",
-    "platform": "Live Apps",
-    "discover": "Discover",
-    "nanoX": "Nano X",
-    "market": "Market",
-    "earn": "Earn",
-    "card": "Card",
-    "swap": "Swap"
-  },
   "portfolio": {
     "totalBalance": "Total balance",
-    "syncError": "Sync error",
-    "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
     "emptyState": {
-      "noAppsTitle": "Install an app on my device",
-      "noAppsDesc": "Install apps on your device before adding accounts in Ledger Wallet. Go to My Ledger to install apps.",
-      "noAccountsTitle": "You don't have any accounts…",
-      "noAccountsDesc": "Please add accounts to your Portfolio.",
       "buttons": {
         "import": "Add asset",
-        "buy": "Buy",
         "manager": "Install apps",
         "managerSecondary": "Install apps on my device"
-      },
-      "addAccounts": {
-        "addAccounts": "Add asset",
-        "title": "Get started",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
       }
     },
     "noOpState": {
@@ -2887,14 +2855,6 @@
       "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
-    "recommended": {
-      "title": "Recommended"
-    },
-    "topGainers": {
-      "title": "Market gainers (24H)",
-      "seeMarket": "See all"
-    },
-    "walletBalance": "Wallet balance",
     "balance": {
       "noSigner": "Your secure\ncrypto wallet",
       "noAccounts": "Start by funding\nyour wallet"
@@ -2927,8 +2887,7 @@
       "sell": "Sell",
       "swap": "Swap",
       "send": "Send",
-      "deposit": "Receive",
-      "stake": "Stake"
+      "deposit": "Receive"
     },
     "quickActionsCtas": {
       "transfer": "Transfer",
@@ -3866,8 +3825,7 @@
       "learnMore": "Learn more about Tag/Memo"
     },
     "send": {
-      "title": "Send",
-      "description": "Send crypto to another wallet."
+      "title": "Send"
     },
     "fees": {
       "title": "Edit fees"
@@ -4000,21 +3958,12 @@
       "title": "Buy",
       "description": "Buy crypto securely with cash."
     },
-    "sell": {
-      "title": "Sell",
-      "description": "Sell crypto securely for cash."
-    },
     "exchange": {
       "title": "Buy / Sell",
       "connectingTo": "Connecting you to {{provider}}"
     },
-    "stake": {
-      "title": "Stake",
-      "description": "Get rewards on your crypto."
-    },
     "swap": {
       "title": "Swap",
-      "description": "Exchange crypto to crypto.",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
@@ -4494,11 +4443,6 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
-    },
-    "recover": {
-      "title": "Ledger Recover",
-      "description": "Wallet recovery made easy",
-      "tag": "One month free"
     }
   },
   "signMessage": {
