@@ -31,7 +31,7 @@ describe("Market banner", () => {
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
-  it("Market banner elements, interactions and navigation", async () => {
+  it(`[${CURRENCY.testLabel}] - Market banner elements, interactions and navigation`, async () => {
     await app.portfolio.expectMarketBannerVisible();
 
     await app.portfolio.expectFearAndGreedCardVisible();

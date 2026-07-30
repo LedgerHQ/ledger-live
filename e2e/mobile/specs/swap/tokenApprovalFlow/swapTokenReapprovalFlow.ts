@@ -53,7 +53,7 @@ export function runSwapTokenReapprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Swap token reapproval flow", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`, async () => {
       const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);

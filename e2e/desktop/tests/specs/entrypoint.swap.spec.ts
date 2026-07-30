@@ -52,7 +52,7 @@ test.describe("Swap - entry points", () => {
   });
 
   test(
-    "Swap entry point from asset allocation",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from asset allocation`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -76,7 +76,7 @@ test.describe("Swap - entry points", () => {
   );
 
   test(
-    "Swap entry point from market page",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -98,7 +98,7 @@ test.describe("Swap - entry points", () => {
   );
 
   test(
-    "Swap entry point from market page with several accounts",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page with several accounts`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -125,7 +125,7 @@ test.describe("Swap - entry points", () => {
   );
 
   test(
-    "Swap entry point from account page",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from account page`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -148,7 +148,7 @@ test.describe("Swap - entry points", () => {
   );
 
   test(
-    "Swap entry point from left menu",
+    `[${accountToDebit.currency.testLabel}] - Swap entry point from left menu`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -300,7 +300,7 @@ test.describe("Swap - history", () => {
   });
 
   test(
-    "Export swap history operations",
+    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Export swap history operations`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-604" },
@@ -326,7 +326,7 @@ test.describe("Swap - history", () => {
   );
 
   test(
-    "Swap history is visible from the swap history page",
+    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Swap history is visible from the swap history page`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-602" },

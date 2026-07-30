@@ -55,7 +55,7 @@ test.describe("Swap - feedback link", () => {
     ],
   });
   test(
-    "Swap feedback link from success drawer",
+    `[${kycFromAccount.currency.testLabel}-${kycToAccount.currency.testLabel}] - Swap feedback link from success drawer`,
     {
       tag: swapUiTags,
       annotation: {

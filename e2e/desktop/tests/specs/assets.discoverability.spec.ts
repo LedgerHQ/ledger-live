@@ -6,6 +6,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("Asset discoverability", () => {
@@ -48,7 +49,7 @@ test.describe("Asset discoverability", () => {
   });
 
   test(
-    "Open the stocks assets page from the stocks category",
+    `[${Account.ETH_1.currency.testLabel}] - Open the stocks assets page from the stocks category`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -104,7 +105,7 @@ test.describe("Asset discoverability", () => {
   );
 
   test(
-    "Match the typed ticker to the top search result",
+    `[${Currency.BTC.testLabel}-${Currency.ETH.testLabel}] - Match the typed ticker to the top search result`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {

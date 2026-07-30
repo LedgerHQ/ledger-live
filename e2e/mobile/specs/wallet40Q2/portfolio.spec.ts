@@ -41,7 +41,7 @@ describe("Portfolio", () => {
     await app.portfolio.checkNoBalanceTitleVisibility();
   });
 
-  it("Portfolio with a zero-balance account shows balance and analytics", async () => {
+  it(`[${ACCOUNT.currency.testLabel}] - Portfolio with a zero-balance account shows balance and analytics`, async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.performSearchByTicker(TICKER);

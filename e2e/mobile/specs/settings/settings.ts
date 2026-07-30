@@ -138,7 +138,7 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Unlock the app with the correct password", async () => {
+    it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password`, async () => {
       await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
       await app.passwordEntry.login();
       await app.passwordEntry.expectNoLock();

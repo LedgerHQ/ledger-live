@@ -60,7 +60,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
     });
 
     test(
-      `Swap DEX native flow with ${provider.uiName}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap DEX native flow with ${provider.uiName}`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [
@@ -127,7 +127,7 @@ test.describe("Swap - landing page", () => {
   });
 
   test(
-    "Swap landing page and best offer",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-2918, B2CQA-2327" },

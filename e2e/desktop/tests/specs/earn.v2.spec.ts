@@ -56,7 +56,7 @@ test.describe("Earn v2", () => {
 
     const xrayTicket = "B2CQA-4639";
     test(
-      "Earn v2 ice cold start page displays correctly",
+      `[${account.currency.testLabel}] - Earn v2 ice cold start page displays correctly`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -220,7 +220,7 @@ test.describe("Earn v2", () => {
     });
 
     test(
-      "Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled",
+      `[${account.currency.testLabel}] - Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },

@@ -36,6 +36,9 @@ export function runSwapWithoutAccountTest(
   event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo",
   tags: string[],
 ) {
+  const debitCurrency = (event === "noAccountFrom" ? asset2 : asset1).currency;
+  const creditCurrency = (event === "noAccountFrom" ? asset1 : asset2).currency;
+
   describe("Swap - account not present", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
@@ -56,7 +59,7 @@ export function runSwapWithoutAccountTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${testTitle}`, async () => {
+    it(`[${debitCurrency.testLabel}-${creditCurrency.testLabel}] - ${testTitle}`, async () => {
       const debitAsset = event === "noAccountFrom" ? asset2 : asset1;
       const creditAsset = event === "noAccountFrom" ? asset1 : asset2;
 
@@ -145,7 +148,7 @@ export function runSwapLandingPageTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Swap landing page and best offer", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -342,7 +345,7 @@ export function runSwapHistoryOperationsTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Swap history is visible from the swap history page", async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap history is visible from the swap history page`, async () => {
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
@@ -488,7 +491,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Switch you send and you receive currency", async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`, async () => {
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -525,7 +528,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Swap entry points", async () => {
+    it(`[${account.currency.testLabel}] - Swap entry points`, async () => {
       await openSwapFromPortfolioEntryPoint();
       await validateSwapAssetsPage(account.currency.ticker, "");
 

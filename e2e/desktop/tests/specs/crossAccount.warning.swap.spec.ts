@@ -43,13 +43,13 @@ test.describe("Swap - cross account warning", () => {
 
   for (const provider of dexProviders) {
     test(
-      `Swap cross account warning with ${provider.uiName}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning with ${provider.uiName}`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [
           {
             type: "TMS",
-            description: "LIVE-19543",
+            description: "LIVE-19543", // to change
           },
         ],
       },

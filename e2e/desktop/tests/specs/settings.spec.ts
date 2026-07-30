@@ -18,7 +18,7 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Hide empty token accounts hides a zero-balance ERC20 token",
+    `[${TokenAccount.ETH_USDT_1.currency.testLabel}] - Hide empty token accounts hides a zero-balance ERC20 token`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
@@ -53,7 +53,7 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Unlock the app with the correct password",
+    `[${account.currency.testLabel}] - Unlock the app with the correct password`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: {
@@ -95,7 +95,7 @@ test.describe("Settings", () => {
   });
 
   test(
-    "Select a counter value to display amounts",
+    `[${account.currency.testLabel}] - Select a counter value to display amounts`,
     {
       tag: [...DEVICE_TAGS, "@bitcoin", "@family-bitcoin"],
       annotation: {

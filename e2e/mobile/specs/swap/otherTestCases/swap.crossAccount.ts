@@ -40,7 +40,7 @@ export function runSwapCrossAccountTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Swap cross account warning", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning`, async () => {
       const provider = await pickRotatingProvider(providers, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount, [

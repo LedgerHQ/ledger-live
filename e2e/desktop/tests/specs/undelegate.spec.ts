@@ -21,7 +21,7 @@ test.describe("Undelegate", () => {
     `[${account.account.currency.testLabel}] - Undelegate`,
     {
       tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
-      annotation: { type: "TMS", description: "B2CQA-387-2" },
+      annotation: { type: "TMS", description: "B2CQA-387-2" }, // to change
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));

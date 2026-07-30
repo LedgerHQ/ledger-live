@@ -108,7 +108,7 @@ test.describe("Swap - quick amount buttons", () => {
   );
 
   test(
-    "Swap percentage buttons show the correct tooltip",
+    `[${swapMaxBalancePairs[0].fromAccount.currency.testLabel}-${swapMaxBalancePairs[0].toAccount.currency.testLabel}] - Swap percentage buttons show the correct tooltip`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -176,7 +176,7 @@ test.describe("Swap - quick amount buttons", () => {
   });
 
   test(
-    "Swap max is disabled while percentage buttons stay enabled",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max is disabled while percentage buttons stay enabled`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -222,7 +222,7 @@ test.describe("Swap - quick amount buttons", () => {
   });
 
   test(
-    "Swap max and percentage buttons are disabled on a zero-balance token account",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max and percentage buttons are disabled on a zero-balance token account`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },

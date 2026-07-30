@@ -118,6 +118,8 @@ test.describe("Portfolio", () => {
       },
     },
     async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.portfolio.checkNoDeviceTitleVisibility();
       await app.portfolio.checkConnectButtonVisibility();
       await app.portfolio.checkBuyALedgerButtonVisibility();
@@ -134,7 +136,7 @@ test.describe("Portfolio", () => {
   });
 
   test(
-    "Portfolio adds a funded account and updates balance and quick actions",
+    `[${currency.testLabel}] - Portfolio adds a funded account and updates balance and quick actions`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {

@@ -105,7 +105,7 @@ describe("Asset aggregation", () => {
 
   $TmsLink("B2CQA-5519");
   $TmsLink("B2CQA-5520");
-  it("Aggregated assets show one row per asset and list holding addresses", async () => {
+  it(`[${Currency.POL_DAI.testLabel}] - Aggregated assets show one row per asset and list holding addresses`, async () => {
     await app.portfolio.openStablecoinsListW40();
     await app.portfolio.checkAggregatedAssetRowVisible(
       DAI_ASSET_NAME,
@@ -140,7 +140,7 @@ describe("Asset aggregation", () => {
 
   $TmsLink("B2CQA-5523");
   $TmsLink("B2CQA-5526");
-  it("Asset detail shows market info, balances, addresses and transaction history", async () => {
+  it(`[${Currency.POL_DAI.testLabel}] - Asset detail shows market info, balances, addresses and transaction history`, async () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.expectMarketDataVisible();
     await app.assetDetail.expectTotalBalanceCryptoForTicker(DAI_TICKER);
@@ -158,7 +158,7 @@ describe("Asset aggregation", () => {
   });
 
   $TmsLink("B2CQA-5535");
-  it("Opening a holding address shows the address detail page", async () => {
+  it(`[${Currency.POL_DAI.testLabel}] - Opening a holding address shows the address detail page`, async () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
@@ -178,7 +178,7 @@ describe("Asset aggregation", () => {
 
   $TmsLink("B2CQA-5532");
   $TmsLink("B2CQA-5533");
-  it("Star an asset and filter the market list by starred", async () => {
+  it(`[${Currency.ETH_USDT.testLabel}] - Star an asset and filter the market list by starred`, async () => {
     // DAI is intentionally not used here because its Asset Detail favorite flow is currently broken.
     await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
     await app.assetDetail.addToFavorites();

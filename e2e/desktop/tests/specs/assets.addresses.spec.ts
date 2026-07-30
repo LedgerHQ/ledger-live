@@ -48,7 +48,7 @@ test.describe("Wallet assets", () => {
     });
 
     test(
-      "Wallet assets empty state shows placeholders and add account CTA",
+      `[${Currency.BTC.testLabel}] - Wallet assets empty state shows placeholders and add account CTA`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -119,7 +119,7 @@ test.describe("Wallet assets", () => {
     });
 
     test(
-      "Wallet assets section with fewer than 6 cryptos and stablecoins",
+      `[${EXPECTED_CRYPTOS.map(c => c.testLabel).join("-")}] - Wallet assets section with fewer than 6 cryptos and stablecoins`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {

@@ -74,7 +74,7 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Earn v2 ice cold start page displays correctly", async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 ice cold start page displays correctly`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyIceColdStartPage();
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();

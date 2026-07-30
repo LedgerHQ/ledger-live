@@ -52,7 +52,7 @@ describe("Asset discoverability", () => {
   $TmsLink("B2CQA-5956");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("Open the stocks assets page from the stocks category", async () => {
+  it(`[${Account.ETH_1.currency.testLabel}] - Open the stocks assets page from the stocks category`, async () => {
     await app.portfolio.checkStocksHoldingsSectionVisible();
 
     await app.portfolio.tapStocksSectionTitle();
@@ -100,7 +100,7 @@ describe("Asset discoverability", () => {
   $TmsLink("B2CQA-5958");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("Match the typed ticker to the top search result", async () => {
+  it(`[${Currency.BTC.testLabel}-${Currency.ETH.testLabel}] - Match the typed ticker to the top search result`, async () => {
     await app.topBarSearch.open();
 
     await app.topBarSearch.searchFor(Currency.BTC.ticker.toLowerCase());

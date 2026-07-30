@@ -269,7 +269,7 @@ test.describe("Swap - account not present", () => {
   });
 
   test(
-    "Swap from account present to account not present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account present to account not present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -332,7 +332,7 @@ test.describe("Swap - account not present", () => {
   });
 
   test(
-    "Swap from account not present to account present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account not present to account present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -386,7 +386,7 @@ test.describe("Swap - account not present", () => {
   });
 
   test(
-    "Swap from account not present to account not present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account not present to account not present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bsc"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -445,7 +445,7 @@ test.describe("Swap - switch currencies", () => {
   });
 
   test(
-    "Switch you send and you receive currency",
+    `[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {

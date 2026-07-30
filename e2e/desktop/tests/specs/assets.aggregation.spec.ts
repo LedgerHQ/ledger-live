@@ -26,7 +26,7 @@ test.describe("Asset aggregation", () => {
     });
 
     test(
-      "Aggregated assets show one row per asset and list holding addresses",
+      `[${Currency.ETH_USDC.testLabel}] - Aggregated assets show one row per asset and list holding addresses`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -63,7 +63,7 @@ test.describe("Asset aggregation", () => {
     });
 
     test(
-      "Asset detail shows market info, balances, addresses and transaction history",
+      `[${Currency.BTC.testLabel}] - Asset detail shows market info, balances, addresses and transaction history`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -110,7 +110,7 @@ test.describe("Asset aggregation", () => {
     });
 
     test(
-      "Star an asset and filter the market list by starred",
+      `[${Currency.BTC.testLabel}] - Star an asset and filter the market list by starred`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -164,7 +164,7 @@ test.describe("Asset aggregation", () => {
     });
 
     test(
-      "Opening a holding address shows the address detail page",
+      `[${Currency.ETH.testLabel}] - Opening a holding address shows the address detail page`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {

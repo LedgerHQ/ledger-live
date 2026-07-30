@@ -55,7 +55,7 @@ test.describe("Swap - token approval", () => {
   });
 
   test(
-    "Swap token approval flow",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [

@@ -73,7 +73,7 @@ test.describe("Borrow", () => {
   });
 
   test(
-    "Borrow entry point from portfolio shows the crypto loan modal",
+    `[${coldStartAccount.currency.testLabel}] - Borrow entry point from portfolio shows the crypto loan modal`,
     {
       tag: coldStartTags,
       annotation: { type: "TMS", description: "B2CQA-6062" },
@@ -112,7 +112,7 @@ test.describe("Borrow", () => {
   });
 
   test(
-    "Borrow simulates a loan and completes the open-loan execution",
+    `[${openLoanAccount.currency.testLabel}] - Borrow simulates a loan and completes the open-loan execution`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6065" },

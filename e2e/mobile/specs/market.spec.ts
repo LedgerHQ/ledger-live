@@ -28,7 +28,7 @@ describe("Market", () => {
   setTeamOwner(Team.WALLET_XP);
   $TmsLink("B2CQA-1879");
   tags.forEach(tag => $Tag(tag));
-  it("Market filters behavior", async () => {
+  it(`[${currency.testLabel}] - Market filters behavior`, async () => {
     await app.portfolio.tapMarketBannerTitle();
     await app.market.searchAsset(currency.ticker);
     await app.market.expectMarketRowTitle(currency);

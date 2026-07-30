@@ -34,14 +34,14 @@ describe("Wallet assets", () => {
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("Wallet assets empty state shows placeholders and add account CTA", async () => {
+  it(`[${currency.testLabel}] - Wallet assets empty state shows placeholders and add account CTA`, async () => {
     await app.portfolio.checkCryptosListSectionVisible(true);
     await app.portfolio.checkStablecoinsListSectionVisible(true);
     await app.portfolio.checkTotalAssetItemCount(6);
     await app.portfolio.checkAddAccountCtaVisible();
   });
 
-  it("Selecting an asset redirects to its market page", async () => {
+  it(`[${currency.testLabel}] - Selecting an asset redirects to its market page`, async () => {
     await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectAssetPageVisible();
     await app.market.leaveAssetPage();
@@ -66,7 +66,7 @@ describe("Wallet assets", () => {
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("Wallet assets section with fewer than 6 cryptos and stablecoins", async () => {
+  it(`[${Currency.BTC.testLabel}] - Wallet assets section with fewer than 6 cryptos and stablecoins`, async () => {
     await app.portfolio.checkCryptosListSectionVisible();
     await app.portfolio.checkStablecoinsListSectionVisible();
     await app.portfolio.checkTotalAssetItemCount(6);

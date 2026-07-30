@@ -38,7 +38,7 @@ export function runSwapDexNativeFlow(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap DEX native flow with ${provider.uiName}`, async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap DEX native flow with ${provider.uiName}`, async () => {
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
