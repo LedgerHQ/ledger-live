@@ -150,7 +150,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
 | Zcash testnet (lightwalletd) | `testnet.zec.rocks`<br>_public community endpoint; no Ledger-hosted Zcash testnet_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | testnet |
-| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
+| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com`, `zenrock.api.m.anode.team` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | ICP gateway | `ic0.app` | [code](/libs/coin-modules/coin-internet_computer/src/consts.ts) | prod |
