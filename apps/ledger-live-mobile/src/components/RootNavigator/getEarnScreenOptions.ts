@@ -61,3 +61,20 @@ export const getEarnScreenOptions = (
 
   return { headerShown: false };
 };
+
+/** Whether the Earn V2 webview shell should use the live-app canvas background. */
+export const shouldDisplayEarnBackgroundCanvas = (
+  intent: string | undefined,
+  isSwapToEarnEnabled: boolean,
+): boolean => (isSwapToEarnEnabled && intent === "deposit") || intent === "simulate";
+
+type EarnScreenRouteParams = { intent?: string } | undefined;
+
+/** Resolves Base-stack options from nested Earn navigator route params. */
+export const getEarnScreenOptionsFromRouteParams = (
+  routeParams: EarnScreenRouteParams,
+  t: TFunction,
+  canvasColor: string,
+  isSwapToEarnEnabled: boolean,
+): EarnScreenOptions =>
+  getEarnScreenOptions(routeParams?.intent, t, canvasColor, isSwapToEarnEnabled);

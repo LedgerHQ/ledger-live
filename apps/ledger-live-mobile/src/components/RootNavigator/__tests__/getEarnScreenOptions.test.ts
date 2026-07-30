@@ -1,5 +1,9 @@
 import type { TFunction } from "i18next";
-import { getEarnScreenOptions } from "../getEarnScreenOptions";
+import {
+  getEarnScreenOptions,
+  getEarnScreenOptionsFromRouteParams,
+  shouldDisplayEarnBackgroundCanvas,
+} from "../getEarnScreenOptions";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased", () => ({
   getStakeLabelLocaleBased: () => "account.earn",
@@ -68,5 +72,28 @@ describe("getEarnScreenOptions", () => {
 
   it("hides the header for an unknown intent", () => {
     expect(getEarnScreenOptions("something-else", t, CANVAS)).toEqual({ headerShown: false });
+  });
+});
+
+describe("shouldDisplayEarnBackgroundCanvas", () => {
+  it.each([
+    { intent: "simulate", isSwapToEarnEnabled: false, expected: true },
+    { intent: "deposit", isSwapToEarnEnabled: true, expected: true },
+    { intent: "deposit", isSwapToEarnEnabled: false, expected: false },
+    { intent: "withdraw", isSwapToEarnEnabled: true, expected: false },
+  ])(
+    "returns $expected for intent=$intent and swapToEarn=$isSwapToEarnEnabled",
+    ({ intent, isSwapToEarnEnabled, expected }) => {
+      expect(shouldDisplayEarnBackgroundCanvas(intent, isSwapToEarnEnabled)).toBe(expected);
+    },
+  );
+});
+
+describe("getEarnScreenOptionsFromRouteParams", () => {
+  it("forwards nested route params to getEarnScreenOptions", () => {
+    const options = getEarnScreenOptionsFromRouteParams({ intent: "deposit" }, t, CANVAS, true);
+
+    expect(options.headerStyle).toEqual({ backgroundColor: CANVAS });
+    expect(options.contentStyle).toEqual({ backgroundColor: CANVAS });
   });
 });

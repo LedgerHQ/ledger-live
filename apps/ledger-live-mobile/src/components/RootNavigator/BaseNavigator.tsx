@@ -104,7 +104,7 @@ import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
-import { getEarnScreenOptions } from "./getEarnScreenOptions";
+import { getEarnScreenOptions, getEarnScreenOptionsFromRouteParams } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
@@ -598,8 +598,8 @@ export default function BaseNavigator() {
           // `useEarnIntentFlowPresentation` becomes the live owner and overrides this imperatively
           // via `getParent(BASE_NAVIGATOR_ID).setOptions` as the webview route changes.
           options={props =>
-            getEarnScreenOptions(
-              props.route?.params?.params?.intent,
+            getEarnScreenOptionsFromRouteParams(
+              props.route?.params?.params,
               t,
               liveAppCanvasColor,
               isSwapToEarnEnabled,

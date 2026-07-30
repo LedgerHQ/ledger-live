@@ -16,6 +16,7 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import type { WebviewState } from "~/components/Web3AppWebview/types";
 import { useEarnIntentFlowPresentation } from "../useEarnIntentFlowPresentation";
+import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -87,7 +88,7 @@ export const EarnV2Webview = ({
 
   const displayBackgroundCanvas =
     shouldDisplayBackgroundCanvas ??
-    ((isSwapToEarnEnabled && inputs?.intent === "deposit") || inputs?.intent === "simulate");
+    shouldDisplayEarnBackgroundCanvas(inputs?.intent, isSwapToEarnEnabled);
 
   const webviewInputs = {
     ...inputs,

@@ -29,6 +29,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { EarnV2Webview } from "./EarnV2Webview";
+import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -95,8 +96,7 @@ function Earn({ route }: Props) {
   );
 
   const shouldDisplayBackgroundCanvas = useMemo(
-    () =>
-      (swapToEarnFlag?.enabled && params?.intent === "deposit") || params?.intent === "simulate",
+    () => shouldDisplayEarnBackgroundCanvas(params?.intent, swapToEarnFlag?.enabled ?? false),
     [swapToEarnFlag, params?.intent],
   );
 
