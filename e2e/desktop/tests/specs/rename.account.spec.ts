@@ -10,7 +10,7 @@ import { buildTags } from "tests/utils/tagsUtils";
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 
 for (const account of accounts) {
-  test.describe("Rename Account", () => {
+  test.describe("Rename account", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -20,7 +20,7 @@ for (const account of accounts) {
     });
 
     test(
-      `[${account.account.currency.name}] Rename Account`,
+      `[${account.account.currency.testLabel}] - Rename account and persist after restart`,
       {
         tag: buildTags({ currencyId: account.account.currency.id }),
         annotation: {

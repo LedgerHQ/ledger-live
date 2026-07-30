@@ -16,7 +16,7 @@ afterEach(async () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Asset discoverability - Stocks empty discovery state", () => {
+describe("Asset discoverability", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
@@ -28,7 +28,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Stocks empty discovery state",
   $TmsLink("B2CQA-5955");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should explore the stocks market from the empty stocks category", async () => {
+  it("Explore the stocks market from the empty stocks category", async () => {
     await app.portfolio.checkStocksDiscoverySectionVisible();
 
     await app.portfolio.tapStocksExploreAll();
@@ -38,7 +38,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Stocks empty discovery state",
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Asset discoverability - Stocks holdings", () => {
+describe("Asset discoverability", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -52,7 +52,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Stocks holdings", () => {
   $TmsLink("B2CQA-5956");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should open the stocks assets page from the stocks category title", async () => {
+  it("Open the stocks assets page from the stocks category", async () => {
     await app.portfolio.checkStocksHoldingsSectionVisible();
 
     await app.portfolio.tapStocksSectionTitle();
@@ -62,7 +62,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Stocks holdings", () => {
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Asset discoverability - Global search categories", () => {
+describe("Asset discoverability", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -74,7 +74,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Global search categories", () 
   $TmsLink("B2CQA-5957");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should navigate to the markets from the search categories", async () => {
+  it("Navigate to markets from the search categories", async () => {
     await app.topBarSearch.open();
     await app.topBarSearch.expectCategoriesVisible();
     await app.topBarSearch.selectCryptosCategory();
@@ -88,7 +88,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Global search categories", () 
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Asset discoverability - Global search ranking", () => {
+describe("Asset discoverability", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding-with-last-seen-device",
@@ -100,7 +100,7 @@ describe("Wallet 4.0 Q2 - Asset discoverability - Global search ranking", () => 
   $TmsLink("B2CQA-5958");
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should match the typed ticker to the top search result", async () => {
+  it("Match the typed ticker to the top search result", async () => {
     await app.topBarSearch.open();
 
     await app.topBarSearch.searchFor(Currency.BTC.ticker.toLowerCase());

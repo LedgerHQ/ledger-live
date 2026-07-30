@@ -17,7 +17,7 @@ const fundedAssetsAccounts: AccountType[] = [
 // Masking is currency-agnostic, so a single account covers the balance-masking checks below.
 const balanceCheckAccount = Account.ETH_1;
 
-test.describe("Swap Discreet mode", () => {
+test.describe("Swap - discreet mode", () => {
   setupEnv();
 
   test.use({
@@ -40,7 +40,7 @@ test.describe("Swap Discreet mode", () => {
   });
 
   test(
-    "No amount should be visible in the asset drawer",
+    "Swap amount is hidden in the asset drawer in discreet mode",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: [
@@ -60,7 +60,7 @@ test.describe("Swap Discreet mode", () => {
   );
 
   test(
-    "Balance should not be visible in the swap widget",
+    "Swap balance is hidden in the swap widget in discreet mode",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [

@@ -16,7 +16,7 @@ export function runDeleteAccountTest(account: AccountType, tmsLinks: string[], t
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Perform a delete account - ${account.accountName}`, async () => {
+    it(`[${account.currency.testLabel}] - Delete account`, async () => {
       await app.account.openViaDeeplink();
       await app.account.expectAccountName(account.accountName);
       await app.account.goToAccountByName(account.accountName);

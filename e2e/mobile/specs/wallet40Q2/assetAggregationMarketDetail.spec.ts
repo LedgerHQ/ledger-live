@@ -90,7 +90,7 @@ const ensureDaiAssetDetail = async () => {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
+describe("Asset aggregation", () => {
   beforeAll(async () => {
     await app.init({
       userdata: WALLET_40_STABLECOINS_FIXTURE,
@@ -105,7 +105,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
 
   $TmsLink("B2CQA-5519");
   $TmsLink("B2CQA-5520");
-  it("aggregates the same asset across networks and lists holding addresses", async () => {
+  it("Aggregated assets show one row per asset and list holding addresses", async () => {
     await app.portfolio.openStablecoinsListW40();
     await app.portfolio.checkAggregatedAssetRowVisible(
       DAI_ASSET_NAME,
@@ -140,7 +140,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
 
   $TmsLink("B2CQA-5523");
   $TmsLink("B2CQA-5526");
-  it("shows asset detail market data, balances and transaction details", async () => {
+  it("Asset detail shows market info, balances, addresses and transaction history", async () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.expectMarketDataVisible();
     await app.assetDetail.expectTotalBalanceCryptoForTicker(DAI_TICKER);
@@ -158,7 +158,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
   });
 
   $TmsLink("B2CQA-5535");
-  it("opens an address detail page with balances, actions, assets and transactions", async () => {
+  it("Opening a holding address shows the address detail page", async () => {
     await ensureDaiAssetDetail();
     await app.assetDetail.openHoldingAddress(POLYGON_ACCOUNT_ID);
 
@@ -178,7 +178,7 @@ describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
 
   $TmsLink("B2CQA-5532");
   $TmsLink("B2CQA-5533");
-  it("stars an asset and finds it in the starred market list", async () => {
+  it("Star an asset and filter the market list by starred", async () => {
     // DAI is intentionally not used here because its Asset Detail favorite flow is currently broken.
     await openStablecoinAssetDetail(USDT_ASSET_NAME, USDT_TICKER);
     await app.assetDetail.addToFavorites();

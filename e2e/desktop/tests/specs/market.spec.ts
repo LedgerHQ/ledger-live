@@ -12,7 +12,7 @@ test.describe("Market", () => {
   });
 
   test(
-    "Filters behavior",
+    "Market filters behavior",
     {
       tag: [...DEVICE_TAGS],
       annotation: {

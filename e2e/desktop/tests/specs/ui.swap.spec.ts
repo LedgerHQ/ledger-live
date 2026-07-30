@@ -53,7 +53,7 @@ test.describe("Swap - feedback link", () => {
     ],
   });
   test(
-    "displays feedback link from success drawer",
+    "Swap feedback link from success drawer",
     {
       tag: swapUiTags,
       annotation: {

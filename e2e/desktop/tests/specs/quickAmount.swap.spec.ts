@@ -57,7 +57,7 @@ const swapMaxBalancePairs = [
   },
 ];
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
   const uniqueAccounts = [Account.ETH_3, Account.BTC_NATIVE_SEGWIT_2, TokenAccount.ETH_USDT_1];
@@ -83,7 +83,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   });
 
   test(
-    "Balance is visible and Max/percentage buttons are enabled with correct Max tooltip",
+    "Swap balance is visible and max/percentage buttons are enabled",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -108,7 +108,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 
   test(
-    "Percentage buttons show the correct tooltip text",
+    "Swap percentage buttons show the correct tooltip",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -126,7 +126,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 
   test(
-    "Percentage buttons fill the correct proportional amount of the balance",
+    "Swap percentage buttons fill the proportional amount of the balance",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -148,7 +148,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 });
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native balance", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
   const fromAccount = Account.ETH_2;
@@ -176,7 +176,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native 
   });
 
   test(
-    "Max is disabled with correct tooltip while percentage buttons stay enabled",
+    "Swap max is disabled while percentage buttons stay enabled",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -194,7 +194,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native 
   );
 });
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - zero balance", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
   const fromAccount = TokenAccount.ETH_USDC_2;
@@ -222,7 +222,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - zero balance", () =>
   });
 
   test(
-    "Max and percentage buttons are disabled for a zero-balance token account",
+    "Swap max and percentage buttons are disabled on a zero-balance token account",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },

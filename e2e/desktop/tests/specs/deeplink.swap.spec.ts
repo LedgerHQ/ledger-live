@@ -37,7 +37,7 @@ const TAGS = [
   "@family-evm",
 ];
 
-test.describe("Swap deeplinks", () => {
+test.describe("Swap - deeplinks", () => {
   setupEnv(true);
 
   const btcAccount = Account.BTC_NATIVE_SEGWIT_2;
@@ -62,7 +62,7 @@ test.describe("Swap deeplinks", () => {
   });
 
   test(
-    "Swap deeplinks — all scenarios",
+    "Swap deeplinks - all scenarios",
     { tag: TAGS, annotation: { type: "TMS", description: TMS } },
     async ({ app }) => {
       await addTmsLink([TMS]);

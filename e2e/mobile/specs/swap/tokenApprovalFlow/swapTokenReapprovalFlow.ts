@@ -29,7 +29,7 @@ export function runSwapTokenReapprovalFlow(
         : "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
   }
-  (runHere ? describe : describe.skip)("Token reapproval - flow", () => {
+  (runHere ? describe : describe.skip)("Swap - token reapproval", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -53,7 +53,7 @@ export function runSwapTokenReapprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Swap - token reapproval flow", async () => {
+    it("Swap token reapproval flow", async () => {
       const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);

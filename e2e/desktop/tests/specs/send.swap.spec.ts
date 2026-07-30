@@ -172,7 +172,7 @@ const swaps = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
-  test.describe("Swap - Accepted (without tx broadcast)", () => {
+  test.describe("Swap - accepted", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -208,7 +208,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
     });
 
     test(
-      `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap`,
       {
         tag: tag,
         annotation: {

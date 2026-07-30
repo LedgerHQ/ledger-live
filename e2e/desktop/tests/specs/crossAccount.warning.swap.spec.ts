@@ -19,7 +19,7 @@ const dexProviders = [
 const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_3;
 
-test.describe("Swap cross account warning", () => {
+test.describe("Swap - cross account warning", () => {
   setupEnv();
 
   test.use({
@@ -43,7 +43,7 @@ test.describe("Swap cross account warning", () => {
 
   for (const provider of dexProviders) {
     test(
-      `A warning should be visible for a cross account swap with ${provider.uiName}`,
+      `Swap cross account warning with ${provider.uiName}`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
         annotation: [

@@ -18,7 +18,7 @@ export function runUserClearApplicationCacheTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User clear application cache", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initApp({
         userdata: "skip-onboarding",
@@ -31,7 +31,7 @@ export function runUserClearApplicationCacheTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    test("The user can clear application cache", async () => {
+    test("Clear the application cache", async () => {
       await app.portfolio.tapTabSelector("Accounts");
       const countBeforeClearingCache = await app.portfolio.countAccounts();
       await app.mainNavigation.navigateToSettings();
@@ -47,7 +47,7 @@ export function runUserClearApplicationCacheTest(
 }
 
 export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
-  describe("User can export logs", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initApp({ userdata: "skip-onboarding" });
     });
@@ -56,7 +56,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    test("Verify that user can export logs", async () => {
+    test("Export logs", async () => {
       await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.clickOnExportLogsRow();
@@ -66,7 +66,7 @@ export function runUserCanExportLogsTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: string[]) {
-  describe("User can access Ledger Support (Web Link)", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initApp({ userdata: "skip-onboarding" });
     });
@@ -74,7 +74,7 @@ export function runUserCanAccessLedgerSupportTest(tmsLinks: string[], tags: stri
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test("Verify that user can access Ledger Support (Web Link)", async () => {
+    test("Access Ledger Support web link", async () => {
       await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToHelpSettings();
       await app.settingsHelp.expectLedgerSupportUrlToBeCorrect();
@@ -87,7 +87,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("User can select counter value to display amount in Ledger Live", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initApp({
         userdata: "skip-onboarding",
@@ -99,7 +99,7 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test("Verify that user can select counter value to display amount in Ledger Live", async () => {
+    test("Select a counter value to display amounts", async () => {
       await app.mainNavigation.navigateToSettings();
       await app.settings.navigateToGeneralSettings();
       await app.settingsGeneral.changeCounterValue("Euro - EUR");
@@ -126,7 +126,7 @@ async function initPasswordTest() {
 export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
   const CORRECT_PASSWORD = "passWORD$123!";
 
-  describe("Password Lock Screen - Unlock with correct password", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initPasswordTest();
       await app.mainNavigation.navigateToSettings();
@@ -138,7 +138,7 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("should unlock with correct password", async () => {
+    it("Unlock the app with the correct password", async () => {
       await app.passwordEntry.enterPassword(CORRECT_PASSWORD);
       await app.passwordEntry.login();
       await app.passwordEntry.expectNoLock();
@@ -150,7 +150,7 @@ export function runPasswordUnlockTest(tmsLinks: string[], tags: string[]) {
 export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
   const CORRECT_PASSWORD = "passWORD$123!";
 
-  describe("Password Lock Screen - Stay locked with incorrect password", () => {
+  describe("Settings", () => {
     beforeAll(async () => {
       await initPasswordTest();
       await app.mainNavigation.navigateToSettings();
@@ -162,7 +162,7 @@ export function runPasswordIncorrectTest(tmsLinks: string[], tags: string[]) {
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("should stay locked with incorrect password", async () => {
+    it("App stays locked with an incorrect password", async () => {
       await app.passwordEntry.enterPassword("INCORRECT_PASSWORD");
       await app.passwordEntry.login();
       await app.passwordEntry.expectLock();

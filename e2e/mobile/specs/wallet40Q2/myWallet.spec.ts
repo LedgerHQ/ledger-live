@@ -8,7 +8,7 @@ const testConfig = {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2- MyWallet", () => {
+describe("My Wallet", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "speculos-x-other-account",
@@ -24,7 +24,7 @@ describe("Wallet 4.0 Q2- MyWallet", () => {
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
-  it("should open My Wallet from Portfolio and from Earn", async () => {
+  it("Open My Wallet from portfolio and earn", async () => {
     await app.mainNavigation.expectPortfolioPageVisible();
     await app.myWallet.openFromTopBar();
     await app.myWallet.tapHeaderBack();
@@ -36,14 +36,14 @@ describe("Wallet 4.0 Q2- MyWallet", () => {
     await app.myWallet.openFromTopBar();
   });
 
-  it("should access Help from My Wallet", async () => {
+  it("Access help from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.myWallet.openFromTopBar();
     await app.myWallet.tapHelp();
     await app.myWallet.expectHelpScreenVisible();
   });
 
-  it("should access Settings from My Wallet", async () => {
+  it("Access settings from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.myWallet.openFromTopBar();
     await app.myWallet.tapHeaderSettings();

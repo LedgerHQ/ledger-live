@@ -1,4 +1,3 @@
-import { test } from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
@@ -144,10 +143,5 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   },
 ];
 
-test.describe("New Send Flow - Native Send", () => {
-  registerNewSendFlowTests(nativeSendTransactions);
-});
-
-test.describe("New Send Flow - Memo field", () => {
-  registerNewSendFlowTests(memoSendTransactions);
-});
+registerNewSendFlowTests(nativeSendTransactions);
+registerNewSendFlowTests(memoSendTransactions);

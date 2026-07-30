@@ -6,14 +6,14 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 
-test.describe("Market Banner", () => {
+test.describe("Market banner", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-tests-app",
   });
 
   test(
-    "Validate Market Banner elements, interactions and navigation",
+    "Market banner elements, interactions and navigation",
     {
       tag: [...DEVICE_TAGS],
       annotation: {

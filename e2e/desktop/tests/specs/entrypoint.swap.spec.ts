@@ -26,7 +26,7 @@ const swapEntryPoint = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006"),
 };
 
-test.describe("Swap flow from different entry point", () => {
+test.describe("Swap - entry points", () => {
   setupEnv(true);
 
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
@@ -52,7 +52,7 @@ test.describe("Swap flow from different entry point", () => {
   });
 
   test(
-    "Entry Point - Asset Allocation",
+    "Swap entry point from asset allocation",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -76,7 +76,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Market page - Click on swap for any coin",
+    "Swap entry point from market page",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -98,7 +98,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Market page - More than one account for an asset",
+    "Swap entry point from market page with several accounts",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -125,7 +125,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - Account page",
+    "Swap entry point from account page",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -148,7 +148,7 @@ test.describe("Swap flow from different entry point", () => {
   );
 
   test(
-    "Entry Point - left menu",
+    "Swap entry point from left menu",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -181,7 +181,7 @@ const swapMax = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
-  test.describe("Swap - Send Max", () => {
+  test.describe("Swap - send max", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -217,7 +217,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     });
 
     test(
-      `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
         annotation: {
@@ -265,7 +265,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
   });
 }
 
-test.describe("Swap history", () => {
+test.describe("Swap - history", () => {
   const swapHistory = {
     swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
     xrayTicket: "B2CQA-604",
@@ -300,7 +300,7 @@ test.describe("Swap history", () => {
   });
 
   test(
-    `User can export all history operations`,
+    "Export swap history operations",
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-604" },
@@ -326,7 +326,7 @@ test.describe("Swap history", () => {
   );
 
   test(
-    `User should be able to see their swap history from the swap history page`,
+    "Swap history is visible from the swap history page",
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-602" },
@@ -347,7 +347,7 @@ test.describe("Swap history", () => {
   );
 });
 
-test.describe("Swap - Block blacklisted addresses", () => {
+test.describe("Swap - blacklisted address", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -380,7 +380,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   });
 
   test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap blocked for a blacklisted address`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {

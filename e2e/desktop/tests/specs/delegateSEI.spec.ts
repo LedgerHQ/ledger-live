@@ -23,9 +23,9 @@ test.use({
   },
 });
 
-test.describe("SEI EVM Native Staking - Delegate flow", () => {
+test.describe("Delegate", () => {
   test(
-    `[${delegation.account.currency.name}] Delegate: start delegate, validator selected, confirm transaction`,
+    `[${delegation.account.currency.testLabel}] - Delegate`,
     {
       tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
       annotation: {

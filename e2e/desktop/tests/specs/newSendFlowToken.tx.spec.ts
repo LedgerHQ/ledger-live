@@ -1,4 +1,3 @@
-import { test } from "tests/fixtures/common";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
@@ -34,6 +33,4 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   },
 ];
 
-test.describe("New Send Flow - Token Send", () => {
-  registerNewSendFlowTests(tokenSendTransactions);
-});
+registerNewSendFlowTests(tokenSendTransactions);
