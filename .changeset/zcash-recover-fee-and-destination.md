@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-bitcoin": minor
 ---
 
 Report what a Zcash transaction actually did, rather than what an explorer can infer from its transparent bundle. An explorer that sees only the transparent side is wrong about two things whenever value crosses a shielded boundary:

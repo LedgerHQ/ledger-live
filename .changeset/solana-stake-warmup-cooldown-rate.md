@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-solana": minor
 ---
 
 fix(coin-solana): drop warmupCooldownRate from stake schema

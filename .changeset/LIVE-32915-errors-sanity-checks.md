@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-common": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-common": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Migrate `checkLibs` and its two callers off `@ledgerhq/errors` as part of the errors sunset (LIVE-32915).

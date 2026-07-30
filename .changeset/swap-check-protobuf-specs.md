@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/hw-app-exchange": minor
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 feat(swap): enrich the device's generic payload deserialization error with the exact Exchange app protobuf field that exceeds its limit

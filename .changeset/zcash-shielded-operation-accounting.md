@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-bitcoin": minor
 ---
 
 Fix how a Zcash account holding shielded funds accounts for its own history. The account is described by two syncs that see different things — the transparent one reads an explorer, the shielded one scans compact blocks with the viewing key — and where they meet, five things were wrong:

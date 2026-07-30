@@ -1,18 +1,18 @@
 ---
-"@ledgerhq/coin-internet_computer": patch
-"@ledgerhq/coin-kaspa": patch
-"@ledgerhq/coin-mina": patch
-"@ledgerhq/coin-module-boilerplate": patch
-"@ledgerhq/coin-multiversx": patch
-"@ledgerhq/coin-near": patch
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-solana": patch
-"@ledgerhq/coin-stacks": patch
-"@ledgerhq/coin-sui": patch
-"@ledgerhq/coin-tezos": patch
-"@ledgerhq/coin-ton": patch
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/coin-vechain": patch
+"@ledgerhq/coin-internet_computer": minor
+"@ledgerhq/coin-kaspa": minor
+"@ledgerhq/coin-mina": minor
+"@ledgerhq/coin-module-boilerplate": minor
+"@ledgerhq/coin-multiversx": minor
+"@ledgerhq/coin-near": minor
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/coin-stacks": minor
+"@ledgerhq/coin-sui": minor
+"@ledgerhq/coin-tezos": minor
+"@ledgerhq/coin-ton": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-vechain": minor
 ---
 
 Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
