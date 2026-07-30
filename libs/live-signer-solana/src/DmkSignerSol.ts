@@ -20,6 +20,8 @@ import {
   DeviceActionStatus,
   DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
+import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
+import { getEnv } from "@ledgerhq/live-env";
 import bs58 from "bs58";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 
@@ -49,11 +51,20 @@ export class DmkSignerSol implements SolanaSigner {
   constructor(dmk: DeviceManagementKit, sessionId: string) {
     const originToken =
       "1e55ba3959f4543af24809d9066a2120bd2ac9246e626e26a1ff77eb109ca0e5"; // gitleaks:allow
+    const calUrl = getEnv("CAL_SERVICE_URL");
+    const calMode = calUrl.includes("ledger-test") || calUrl.includes(".stg.") ? "test" : "prod";
+    const contextModule = new ContextModuleBuilder({ originToken })
+      .setAppSource("ledger-wallet")
+      .setChain(ContextModuleChainID.Solana)
+      .setCalConfig({ url: `${calUrl}/v1`, mode: calMode, branch: "main" })
+      .build();
     this.dmkSigner = new SignerSolanaBuilder({
       dmk,
       sessionId,
       originToken,
-    }).build();
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
