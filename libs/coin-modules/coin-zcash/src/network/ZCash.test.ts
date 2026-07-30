@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable, toArray } from "rxjs";
 import type {
   BuildTransactionArgs,
   BuildTransactionResult,
@@ -272,12 +272,13 @@ describe("createZCashClientWith", () => {
     // ── Completion ────────────────────────────────────────────────
 
     describe("completion", () => {
-      it("completes after startSyncJob resolves", done => {
+      it("completes after startSyncJob resolves, having emitted nothing", async () => {
         const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
-        client.syncShielded(makeSyncArgs()).subscribe({
-          complete: () => done(),
-          error: err => done.fail(`unexpected error: ${err}`),
-        });
+
+        // `toArray` only emits once the source completes, so this covers both.
+        await expect(
+          firstValueFrom(client.syncShielded(makeSyncArgs()).pipe(toArray())),
+        ).resolves.toEqual([]);
       });
     });
 
@@ -460,7 +461,7 @@ describe("createZCashClientWith", () => {
 
     it("is omitted when buildTransactionJob dep is absent", () => {
       const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
-      expect(client.buildTransaction).toBeUndefined();
+      expect(client).not.toHaveProperty("buildTransaction");
     });
 
     it("delegates to buildTransactionJob and returns its result when the dep is present", async () => {
@@ -488,7 +489,7 @@ describe("createZCashClientWith", () => {
 
     it("is omitted when finalizeTransactionJob dep is absent", () => {
       const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
-      expect(client.finalizeTransaction).toBeUndefined();
+      expect(client).not.toHaveProperty("finalizeTransaction");
     });
 
     it("delegates to finalizeTransactionJob and returns its result when the dep is present", async () => {
@@ -509,7 +510,7 @@ describe("createZCashClientWith", () => {
   describe("broadcastTransaction()", () => {
     it("is omitted when broadcastTransactionJob dep is absent", () => {
       const client = createZCashClientWith(makeDeps(), { grpcUrl: GRPC_URL });
-      expect(client.broadcastTransaction).toBeUndefined();
+      expect(client).not.toHaveProperty("broadcastTransaction");
     });
 
     it("delegates to broadcastTransactionJob and returns the txid when the dep is present", async () => {

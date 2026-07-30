@@ -599,11 +599,10 @@ describe("startSyncJob", () => {
     const onChunk = jest.fn();
     await startSyncJob(args, onChunk, { isCancelled: () => false });
 
-    // Chunk 2 should NOT receive the outgoing nullifier
+    // The first chunk found nothing of ours, so the second one has no nullifier
+    // to watch for -- least of all the outgoing note's.
     const chunk2Args = mockStartSync.mock.calls[1][0];
-    if (chunk2Args.knownNullifiers) {
-      expect(chunk2Args.knownNullifiers).not.toContain("ff".repeat(32));
-    }
+    expect(chunk2Args.knownNullifiers ?? []).toEqual([]);
   });
 
   it("combines caller-provided knownNullifiers with discovered ones across chunks", async () => {

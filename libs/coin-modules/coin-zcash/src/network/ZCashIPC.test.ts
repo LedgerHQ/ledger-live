@@ -259,21 +259,22 @@ describe("createZCashIPCClient", () => {
     // -- Completion -------------------------------------------------------
 
     describe("completion", () => {
-      it("completes the subscriber on a complete event", done => {
+      it("completes the subscriber on a complete event", () => {
         const ipc = makeIpcRenderer();
         const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+        const complete = jest.fn();
+        const error = jest.fn();
 
-        client.syncShielded(validArgs).subscribe({
-          next: jest.fn(),
-          error: () => done.fail("should not error"),
-          complete: () => done(),
-        });
+        client.syncShielded(validArgs).subscribe({ next: jest.fn(), error, complete });
 
         const { requestId } = getStartPayload(ipc);
         const listener = getStreamListener(ipc);
 
         const completeEvent: StreamEvent = { kind: "complete", requestId };
         listener(null, completeEvent);
+
+        expect(complete).toHaveBeenCalledTimes(1);
+        expect(error).not.toHaveBeenCalled();
       });
     });
 

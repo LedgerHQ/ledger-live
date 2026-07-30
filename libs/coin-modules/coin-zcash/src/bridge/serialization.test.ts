@@ -172,6 +172,6 @@ describe("bridge/serialization", () => {
 
     assignFromAccountRaw(raw, account);
 
-    expect((account as unknown as ZcashAccount).privateInfo).toBeUndefined();
+    expect(account).not.toHaveProperty("privateInfo");
   });
 });

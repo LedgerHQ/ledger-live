@@ -228,10 +228,10 @@ describe("bridge/signOperation", () => {
       const signedEvent = events.find(
         (e): e is Extract<SignOperationEvent, { type: "signed" }> => e.type === "signed",
       );
-      expect(signedEvent).not.toBeUndefined();
-      expect(signedEvent!.signedOperation.signature).toBe(MOCK_TX_HEX);
-      expect(signedEvent!.signedOperation.operation.hash).toBe(MOCK_TXID);
-      expect(signedEvent!.signedOperation.operation.extra).toMatchObject({ zcashShielded: true });
+      expect(signedEvent?.signedOperation).toMatchObject({
+        signature: MOCK_TX_HEX,
+        operation: { hash: MOCK_TXID, extra: { zcashShielded: true } },
+      });
     },
   );
 

@@ -130,12 +130,12 @@ describe("selectNotes", () => {
     const notes = [makeNote({ amount: new BigNumber(5_000) })];
     const result = selectNotes(notes, new BigNumber(100_000), "shielded");
 
-    expect(result).toBeUndefined();
+    expect(result).toBe(undefined);
   });
 
   it("returns undefined when no notes provided", () => {
     const result = selectNotes([], new BigNumber(1_000), "shielded");
-    expect(result).toBeUndefined();
+    expect(result).toBe(undefined);
   });
 
   it("handles exact amount matching (no change) — single note covers amount + fee exactly", () => {
@@ -214,7 +214,7 @@ describe("selectNotes", () => {
 
   it("returns undefined for ironwood when balance is insufficient", () => {
     const notes = [makeNote({ amount: new BigNumber(5_000) })];
-    expect(selectNotes(notes, new BigNumber(100_000), "ironwood")).toBeUndefined();
+    expect(selectNotes(notes, new BigNumber(100_000), "ironwood")).toBe(undefined);
   });
 });
 
@@ -240,7 +240,7 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
   it("returns undefined when there are no UTXOs", () => {
     expect(
       selectTransparentInputs([], new BigNumber(1_000), false, "transparent-to-shielded"),
-    ).toBeUndefined();
+    ).toBe(undefined);
   });
 
   it("computes fee (with change) and change for a single UTXO", () => {
@@ -268,7 +268,7 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
         false,
         "transparent-to-shielded",
       ),
-    ).toBeUndefined();
+    ).toBe(undefined);
   });
 
   it("absorbs dust change into the fee", () => {
@@ -291,7 +291,7 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
         false,
         "transparent-to-shielded",
       ),
-    ).toBeUndefined();
+    ).toBe(undefined);
   });
 
   it("computes useAllAmount fee with a single recipient output and no change", () => {
@@ -316,7 +316,7 @@ describe("selectTransparentInputs (transparent-to-shielded)", () => {
         true,
         "transparent-to-shielded",
       ),
-    ).toBeUndefined();
+    ).toBe(undefined);
   });
 });
 

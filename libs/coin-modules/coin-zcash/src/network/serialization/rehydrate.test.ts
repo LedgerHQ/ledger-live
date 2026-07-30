@@ -40,8 +40,7 @@ describe("rehydrateTransaction", () => {
     const raw = makeRawTx();
     const result = rehydrateTransaction(raw);
 
-    expect(result.decryptedData).toBeUndefined();
-    expect(Object.prototype.hasOwnProperty.call(result, "decryptedData")).toBe(false);
+    expect(result).not.toHaveProperty("decryptedData");
   });
 
   it("rehydrates decryptedData with orchard and sapling outputs", () => {
@@ -228,8 +227,7 @@ describe("rehydrateSyncResult", () => {
 
     const result = rehydrateSyncResult(raw);
 
-    expect(result.lastProcessedBlock).toBeUndefined();
-    expect(Object.prototype.hasOwnProperty.call(result, "lastProcessedBlock")).toBe(false);
+    expect(result).not.toHaveProperty("lastProcessedBlock");
   });
 
   it("includes lastProcessedBlock when value is 0 (falsy but defined)", () => {
@@ -284,7 +282,7 @@ describe("rehydrateSyncResult", () => {
     expect(result.transactions[0].id).toBe("tx1");
     expect(result.transactions[0].fee).toBeInstanceOf(BigNumber);
     expect(result.transactions[0].fee.toFixed()).toBe("1000");
-    expect(result.transactions[0].decryptedData).toBeUndefined();
+    expect(result.transactions[0]).not.toHaveProperty("decryptedData");
 
     // Second transaction: with decryptedData
     expect(result.transactions[1].id).toBe("tx2");

@@ -44,7 +44,7 @@ describe("assertTransparentInputsUnspent", () => {
         inputRefs: [{ hash: PREVOUT_HASH, outputIndex: 0 }],
         fetchUtxoTx: explorer({ [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: null }] }),
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toBe(undefined);
   });
 
   it("refuses an outpoint spent at a confirmed height", async () => {
@@ -66,7 +66,7 @@ describe("assertTransparentInputsUnspent", () => {
           [PREVOUT_HASH]: [{ output_index: 0, spent_at_height: 3_000_100 }, { output_index: 1 }],
         }),
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toBe(undefined);
   });
 
   it("refuses when the source transaction cannot be fetched", async () => {
