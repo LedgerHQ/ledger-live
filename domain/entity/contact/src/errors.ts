@@ -19,7 +19,7 @@ export class InvalidContactAddressLabelError extends ContactError {
   override name = "InvalidContactAddressLabelError";
 
   constructor() {
-    super("Expected letters, numbers, punctuation, or spaces");
+    super("Expected at least one letter or number; punctuation and spaces are also allowed");
   }
 }
 

@@ -20,7 +20,7 @@ export const ContactNameSchema = NonEmptyStringSchema.regex(
 
 export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(
   ContactAddressLabelPattern,
-  "Expected letters, numbers, punctuation, or spaces",
+  "Expected at least one letter or number; punctuation and spaces are also allowed",
 );
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;

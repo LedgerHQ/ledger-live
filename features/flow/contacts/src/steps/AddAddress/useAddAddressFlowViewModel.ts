@@ -68,7 +68,7 @@ function createAddressLabelState(
   return {
     status: "valid",
     value,
-    label: parseContactAddressLabel(value),
+    label: parseContactAddressLabel(value, existingAddressLabels),
     validationError: null,
   };
 }

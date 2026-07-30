@@ -16,10 +16,10 @@ This package describes what Contacts flows manipulate:
 
 `currencyId` is the id of the `CryptoOrTokenCurrency` selected by MAD. `address` is intentionally stored as a generic non-empty string because address parsing and currency-specific validation belong to later flow or integration adapters. Asset names, tickers, icons, and network display data are also resolved later by those adapters.
 
-Address labels accept letters, numbers, punctuation, and spaces without a maximum length. The
-domain validation helpers treat a blank draft as incomplete without surfacing an error and can
-reject labels already used by the same contact. Duplicate comparison trims surrounding spaces,
-normalizes Unicode, and ignores casing.
+Address labels must contain at least one letter or number, and may also include punctuation and
+spaces, without a maximum length. The domain validation helpers treat a blank draft as incomplete
+without surfacing an error and can reject labels already used by the same contact. Duplicate
+comparison trims surrounding spaces, normalizes Unicode, and ignores casing.
 
 It does not implement persistence, WalletSync, Ledger Sync, device actions, signer payloads, routing, or UI.
 
