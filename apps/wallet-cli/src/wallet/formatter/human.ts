@@ -1,8 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import { findCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { CryptoAssetsStore, OperationType } from "@ledgerhq/types-live";
 import { colors } from "../../shared/ui";
+import { formatCliCurrencyUnit } from "./currency";
 import type {
   AccountDescriptor,
   Balance,
@@ -36,7 +37,7 @@ export class HumanFormatter {
 
   async formatAmount(rawDecimal: string, assetId: string): Promise<string> {
     const unit = await this.resolveUnit(assetId);
-    return formatCurrencyUnit(unit, new BigNumber(rawDecimal), { showCode: true });
+    return formatCliCurrencyUnit(unit, new BigNumber(rawDecimal), { showCode: true });
   }
 
   /** @deprecated Use formatDiscoveredAccount — kept for any internal callers during migration. */
@@ -89,8 +90,8 @@ export class HumanFormatter {
       this.resolveUnit(op.assetId),
       this.resolveUnit(nativeCurrencyId),
     ]);
-    const value = formatCurrencyUnit(valueUnit, new BigNumber(op.value), { showCode: true });
-    const fee = formatCurrencyUnit(feeUnit, new BigNumber(op.fee), { showCode: true });
+    const value = formatCliCurrencyUnit(valueUnit, new BigNumber(op.value), { showCode: true });
+    const fee = formatCliCurrencyUnit(feeUnit, new BigNumber(op.fee), { showCode: true });
     const date = colors.dim(formatDate(new Date(op.date)));
     const block =
       op.blockHeight == null ? colors.yellow("pending") : colors.dim(`#${op.blockHeight}`);

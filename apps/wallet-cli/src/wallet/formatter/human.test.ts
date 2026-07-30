@@ -9,6 +9,8 @@ import { USDT_TOKEN_INFO } from "../../test/helpers/cal-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
 
+const NBSP = "\u00A0";
+
 const btcDiscovered: DiscoveredAccount = {
   descriptor: {
     purpose: "account",
@@ -179,6 +181,12 @@ describe("HumanFormatter.formatAmount", () => {
     expect(result).toContain("ETH");
   });
 
+  it("separates the value from the ticker with U+0020 so the output survives grep/awk/cut", async () => {
+    const result = await formatter.formatAmount("1000000000000000000", "ethereum");
+    expect(result).not.toContain(NBSP);
+    expect(result.split(" ")).toEqual(["1", "ETH"]);
+  });
+
   it("throws for unknown assetId", async () => {
     const storeWithNoToken = {
       findTokenById: async () => undefined,
@@ -219,6 +227,13 @@ describe("HumanFormatter.formatBalance", () => {
     );
     expect(result).toContain("ETH");
   });
+
+  it("renders the amount with an ASCII space", async () => {
+    const result = await formatter.formatBalance(
+      BalanceSchema.parse({ assetId: "ethereum", balance: "1000000000000000000" }),
+    );
+    expect(result).not.toContain(NBSP);
+  });
 });
 
 describe("HumanFormatter.formatOperation", () => {
@@ -257,6 +272,12 @@ describe("HumanFormatter.formatOperation", () => {
   it("formats an IN operation", async () => {
     const result = await formatter.formatOperation({ ...op, type: "IN" }, "ethereum");
     expect(result).toContain("IN");
+  });
+
+  it("renders the value and the fee with ASCII spaces", async () => {
+    const result = await formatter.formatOperation(op, "ethereum");
+    expect(result).not.toContain(NBSP);
+    expect(result).toContain("0.5 ETH");
   });
 });
 

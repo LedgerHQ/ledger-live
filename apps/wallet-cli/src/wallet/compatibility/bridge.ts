@@ -3,7 +3,7 @@
 import { Observable, firstValueFrom, lastValueFrom } from "rxjs";
 import type { Subscriber, Subscription } from "rxjs";
 import { filter, map, reduce } from "rxjs/operators";
-import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
@@ -20,6 +20,7 @@ import type { AccountDescriptor, Balance, Operation, SendEvent } from "../models
 import type { EarnSolanaStake } from "../earn/types";
 import type { TransactionIntent } from "../intents";
 import { parseAmountWithTicker } from "../intents/parse-amount";
+import { formatCliCurrencyUnit } from "../formatter/currency";
 
 type SendOptions = { deviceId: string; deviceModelId: DeviceModelId };
 
@@ -310,8 +311,8 @@ export class BridgeAdapter {
     return {
       // formatted summary (used by prepareSend and the "prepared" event in send)
       recipient: intent.recipient,
-      amount: formatCurrencyUnit(amountUnit, status.amount, { showCode: true }),
-      fees: formatCurrencyUnit(nativeUnit, status.estimatedFees, { showCode: true }),
+      amount: formatCliCurrencyUnit(amountUnit, status.amount, { showCode: true }),
+      fees: formatCliCurrencyUnit(nativeUnit, status.estimatedFees, { showCode: true }),
       // raw objects needed by send to proceed to signing
       bridge,
       tx,

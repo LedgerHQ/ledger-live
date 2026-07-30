@@ -17,13 +17,18 @@ wallet/
   models.ts          ← serializable types + Zod schemas
   index.ts           ← WalletAdapter (routing)
   intents/           ← TransactionIntent schemas (bitcoin, evm, solana)
-  formatter/         ← HumanFormatter and JsonFormatter
+  formatter/         ← HumanFormatter, JsonFormatter, and currency.ts
   compatibility/
     bridge.ts        ← BridgeAdapter (full sync via live-common bridge)
     coinframework.ts ← CoinFrameworkAdapter (direct Coin Module API — currently unused for ops)
 ```
 
 `compatibility/` is an internal implementation detail — do not import it directly from outside `wallet/`.
+
+Every amount string goes through `formatter/currency.ts`, never through live-common's
+`formatCurrencyUnit` directly: the shared helper separates the value from its code with a
+non-breaking space, which is invisible in a terminal but breaks `grep`, `awk`, `cut` and anything
+consuming `--output json`.
 
 ## Integration
 
