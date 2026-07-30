@@ -39,7 +39,6 @@ import type { ReduxStore, AppDispatch } from "~/state-manager/configureStore";
 import createStore from "~/state-manager/configureStore";
 import { bootstrapCardSession } from "./bootstrapCardSession";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import events from "~/renderer/events";
 import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
@@ -128,7 +127,7 @@ async function init() {
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
     each(spectronData.localStorage, (value, key) => {
-      global.localStorage.setItem(key, value);
+      window.localStorage.setItem(key, value);
     });
     const envs = getLocalStorageEnvs();
     for (const k in envs) setEnvOnAllThreads(k, envs[k]);
@@ -397,9 +396,6 @@ async function init() {
   const matcher = window.matchMedia("(prefers-color-scheme: dark)");
   const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
   matcher.addEventListener("change", updateOSTheme);
-  events({
-    store,
-  });
   window.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Tab") {
       if (!isGlobalTabEnabled()) enableGlobalTab();

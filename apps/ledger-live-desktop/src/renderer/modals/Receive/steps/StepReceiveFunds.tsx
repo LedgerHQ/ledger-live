@@ -261,7 +261,7 @@ const StepReceiveFunds = (props: StepProps) => {
 
   const onFinishReceiveFlow = useCallback(() => {
     const dismissModal =
-      global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
+      window.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
       !receiveTokenMode &&
