@@ -185,11 +185,11 @@ describe("DebugContentCards", () => {
 
     const topWalletCategory = store.getState().dynamicContent.localCategoriesCards.at(-1);
     expect(topWalletCategory?.location).toBe(ContentCardLocation.TopWallet);
-    expect(screen.getByText("Portfolio banner")).toBeOnTheScreen();
+    expect(screen.getByText("Ledger Stax")).toBeOnTheScreen();
     expect(screen.getByText("Local")).toBeOnTheScreen();
 
     await user.press(screen.getByText("Wallet"));
-    expect(screen.queryByText("Portfolio banner")).not.toBeOnTheScreen();
+    expect(screen.queryByText("Ledger Stax")).not.toBeOnTheScreen();
   });
 
   it("should keep representative builder controls constrained to valid placement options", async () => {
@@ -373,7 +373,7 @@ describe("DebugContentCards", () => {
     await user.press(screen.getByText("Top wallet"));
     await user.press(lastText("Create a local card"));
     await user.press(screen.getByText("Create card"));
-    await user.press(screen.getByText("Portfolio banner"));
+    await user.press(screen.getByText("Ledger Stax"));
     await user.press(lastText("Open expected screen"));
 
     expect(openURLSpy).toHaveBeenCalledWith("ledgerlive://portfolio");

@@ -45,7 +45,9 @@ function landingPageChipLabel(useCase: LandingPageUseCase): string {
 export type BuilderPreset = Parameters<typeof buildPresetCardBuilderValues>[0];
 
 const BUILDER_PRESET_LABELS: Record<BuilderPreset, string> = {
-  topWalletHero: "Portfolio hero",
+  topWalletHero: "Portfolio hero (single card)",
+  topWalletHardwareCarousel: "Small card carousel",
+  topWalletHeroCarousel: "Hero carousel (legacy debug)",
   topWalletAction: "Portfolio action carousel",
   walletCarousel: "Bottom carousel",
   asset: "Asset card",
@@ -56,6 +58,8 @@ const BUILDER_PRESET_LABELS: Record<BuilderPreset, string> = {
 };
 const BUILDER_PRESET_SHAPE: Record<BuilderPreset, CardShape> = {
   topWalletHero: "categoryChild",
+  topWalletHardwareCarousel: "categoryChild",
+  topWalletHeroCarousel: "categoryChild",
   topWalletAction: "categoryChild",
   walletCarousel: "direct",
   asset: "direct",
@@ -75,6 +79,8 @@ export type BuilderCategory =
 
 export const PRESET_CATEGORY: Record<BuilderPreset, BuilderCategory> = {
   topWalletHero: "topWallet",
+  topWalletHardwareCarousel: "topWallet",
+  topWalletHeroCarousel: "topWallet",
   topWalletAction: "topWallet",
   walletCarousel: "wallet",
   asset: "asset",
@@ -100,9 +106,16 @@ export const BUILDER_CATEGORY_TITLES: Record<BuilderCategory, string> = {
   landingPageStickyCta: "Build a Landing sticky CTA card",
 };
 
-const TOPWALLET_PRESETS = ["topWalletHero", "topWalletAction"] as const;
-export const ALL_BUILDER_PRESETS: BuilderPreset[] = [
+const TOPWALLET_PRESETS = [
+  "topWalletHardwareCarousel",
   "topWalletHero",
+  "topWalletHeroCarousel",
+  "topWalletAction",
+] as const;
+export const ALL_BUILDER_PRESETS: BuilderPreset[] = [
+  "topWalletHardwareCarousel",
+  "topWalletHero",
+  "topWalletHeroCarousel",
   "topWalletAction",
   "walletCarousel",
   "asset",
@@ -270,6 +283,8 @@ function TopWalletFields({
   onChangeExtraField: OnChangeExtraField;
 }>) {
   const isAction = values.type === ContentCardsType.action;
+  const isHardwareCarousel =
+    values.layout === ContentCardsLayout.carousel && values.type === ContentCardsType.smallSquare;
   const actionVisual =
     isAction && values.extras.image_background?.trim() ? "imageBackground" : "icon";
   return (
@@ -283,8 +298,15 @@ function TopWalletFields({
           editable here.
         </Text>
       </Box>
+      {isHardwareCarousel ? (
+        <GenericAwarenessModalField
+          label="Section title (category header, e.g. Touchscreen offers)"
+          value={values.categoryTitle}
+          onChangeText={value => onChange("categoryTitle", value)}
+        />
+      ) : null}
       <GenericAwarenessModalField
-        label="Title"
+        label={isHardwareCarousel ? "Product title (child card)" : "Title"}
         value={values.title}
         onChangeText={value => onChange("title", value)}
       />
