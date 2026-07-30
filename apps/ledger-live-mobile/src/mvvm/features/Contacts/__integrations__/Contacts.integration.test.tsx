@@ -778,8 +778,7 @@ describe("Contacts integration", () => {
 
     expect(await screen.findByTestId("contacts-address-detail-dialog")).toBeVisible();
     await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-network-tag")).toHaveProp(
-        "label",
+      expect(screen.getByTestId("contacts-address-detail-network-tag")).toHaveTextContent(
         "Ethereum Network",
       );
       expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(

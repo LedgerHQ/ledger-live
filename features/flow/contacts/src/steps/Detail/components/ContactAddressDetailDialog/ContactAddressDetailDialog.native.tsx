@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAddressDetailActions } from "./ContactAddressDetailActions.native";
 import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.native";
+import { useContactAddressDetailDialogViewModel } from "./useContactAddressDetailDialogViewModel.native";
 import type { ContactAddressDetailDialogNativeProps } from "./types";
-
-const COPY_FEEDBACK_MS = 3000;
 
 export type { ContactAddressDetailDialogNativeProps };
 
@@ -17,38 +16,16 @@ export function ContactAddressDetailDialog({
   bottomInset = 0,
   onCopyAddress,
 }: ContactAddressDetailDialogNativeProps): React.JSX.Element {
-  const [hasCopied, setHasCopied] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setHasCopied(false);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!hasCopied) {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => setHasCopied(false), COPY_FEEDBACK_MS);
-
-    return () => clearTimeout(timeoutId);
-  }, [hasCopied]);
-
-  const handleCopy = () => {
-    if (row === undefined) {
-      return;
-    }
-
-    onCopyAddress?.(row.address);
-    setHasCopied(true);
-  };
-
-  const hasSelection = isOpen && row !== undefined && network !== undefined;
+  const { hasSelection, hasCopied, onCopy } = useContactAddressDetailDialogViewModel({
+    isOpen,
+    row,
+    network,
+    onCopyAddress,
+  });
 
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-      {hasSelection ? (
+      {hasSelection && row !== undefined && network !== undefined ? (
         <>
           <BottomSheetHeader title={contactName} />
           <Box
@@ -63,7 +40,7 @@ export function ContactAddressDetailDialog({
             <ContactAddressDetailActions
               labels={labels}
               hasCopied={hasCopied}
-              onCopy={handleCopy}
+              onCopy={onCopy}
             />
           </Box>
         </>

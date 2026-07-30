@@ -28,7 +28,7 @@
     "@ledgerhq/crypto-icons": "catalog:",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
-    "qrcode": "catalog:"
+    "@shared/qr-code": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -75,7 +75,6 @@
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
-    "@types/qrcode": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "class-variance-authority": "catalog:",

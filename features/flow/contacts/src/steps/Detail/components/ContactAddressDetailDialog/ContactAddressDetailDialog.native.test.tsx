@@ -54,6 +54,7 @@ function createProps(
       formatNetworkTag: name => `${name} Network`,
     },
     onClose: jest.fn(),
+    onCopyAddress: jest.fn(),
     ...overrides,
   };
 }

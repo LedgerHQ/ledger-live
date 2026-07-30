@@ -25,11 +25,11 @@ export function ContactAddressDetailDialogSheet({
       enableDynamicSizing
     >
       <ContactAddressDetailDialog
+        {...dialogProps}
         isOpen={isOpen}
         onClose={onClose}
         bottomInset={bottomInset}
         onCopyAddress={onCopyAddress}
-        {...dialogProps}
       />
     </QueuedBottomSheet>
   );
