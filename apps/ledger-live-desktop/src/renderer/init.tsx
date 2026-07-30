@@ -1,7 +1,7 @@
-import { getEnv } from "@shared/env";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
+import { getEnv } from "@shared/env";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";

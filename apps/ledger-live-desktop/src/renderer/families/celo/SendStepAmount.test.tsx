@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
-import { FeeNotLoaded, NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { FeeNotLoaded, NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import SendStepAmount, { FEES_BANNER_TESTID } from "./SendStepAmount";
