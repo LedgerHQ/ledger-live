@@ -57,7 +57,7 @@ implementing the `TrustchainSDK` interface ([`src/types.ts`](../../libs/ledger-k
 | `addMember(trustchain, creds, member)` | — | Add a member (no hardware — uses a `SoftwareDevice`). |
 | `removeMember(deviceId, trustchain, creds, member, …)` | ✅ | Remove a member → **triggers key rotation**. Returns the new `Trustchain`. |
 | `destroyTrustchain(trustchain, creds)` | — | Delete the whole trustchain (all applications). |
-| `destroyApplication(trustchain, creds)` *(upcoming — [PR #18568](https://github.com/LedgerHQ/ledger-live/pull/18568))* | — | Close **only this application's** stream; destroy the whole trustchain only if it was the last open application. Returns `{ trustchainDestroyed }`. See [deactivation](#deactivating-ledger-sync-per-application-close). |
+| `destroyApplication(trustchain, creds)` | — | Close **only this application's** stream; destroy the whole trustchain only if it was the last open application. Returns `{ trustchainDestroyed }`. See [deactivation](#deactivating-ledger-sync-per-application-close). |
 | `encryptUserData(trustchain, bytes)` / `decryptUserData(trustchain, bytes)` | — | Symmetric encrypt/decrypt with `walletSyncEncryptionKey`. Used by [CloudSyncSDK](./04-cloud-sync-sdk.md). |
 | `invalidateJwt()` | — | Drop the cached JWT, forcing re-auth on the next call. |
 
@@ -166,8 +166,7 @@ it re-fetches the tree and re-derives `walletSyncEncryptionKey` at the current p
 ## Deactivating Ledger Sync (per-application close)
 
 > [!IMPORTANT]
-> **Upcoming — [PR #18568](https://github.com/LedgerHQ/ledger-live/pull/18568).** A single
-> Trustchain root is shared by several applications, each on its own
+> A single Trustchain root is shared by several applications, each on its own
 > [`m/0'/{applicationId}'/…` branch](./01-hardware-lkrp.md#the-derivation-tree--the-application-path)
 > (Ledger Sync = `16`, wallet-cli ring = `17`).
 
@@ -175,10 +174,10 @@ Today both Ledger Sync and the wallet-cli ring deactivate via `destroyTrustchain
 `DELETE /trustchain/{rootId}`, which destroys the **whole root**. So "Delete Sync" would also
 wipe the ring, and `ring destroy` would wipe Ledger Sync.
 
-PR #18568 introduces a `destroyApplication(trustchain, creds) → { trustchainDestroyed }`
-primitive that **closes only the current application's stream** — signed with the member's
-*software* key (no hardware device, matching today's UX) — and destroys the whole trustchain
-only when it was the **last open application**.
+The `destroyApplication(trustchain, creds) → { trustchainDestroyed }` primitive **closes only
+the current application's stream** — signed with the member's *software* key (no hardware
+device, matching today's UX) — and destroys the whole trustchain only when it was the **last
+open application**.
 
 ```mermaid
 flowchart TB
