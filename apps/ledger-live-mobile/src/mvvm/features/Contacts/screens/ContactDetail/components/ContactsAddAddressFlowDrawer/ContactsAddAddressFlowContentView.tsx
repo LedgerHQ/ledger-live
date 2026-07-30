@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import {
   ContactsAddAddressEntry,
+  ContactsAddAddressName,
   ContactsAddAddressPlaceholderView,
 } from "@features/flow-contacts";
 import {
@@ -37,13 +38,13 @@ function ContactsAddAddressStepFrame({ children }: React.PropsWithChildren): Rea
 
 export function ContactsAddAddressFlowContentView({
   addressEntryProps,
+  addressNameProps,
   currencyShell,
   currentStep,
   isOpen,
   labels,
   onBack,
   onClose,
-  onContinueFromName,
   onContinueFromReview,
   onFinish,
 }: ContactsAddAddressFlowContentViewModel): React.JSX.Element {
@@ -64,16 +65,11 @@ export function ContactsAddAddressFlowContentView({
       options: LOCKED_STEP_OPTIONS,
     },
     name: {
-      content: (
+      content: addressNameProps ? (
         <ContactsAddAddressStepFrame>
-          <ContactsAddAddressPlaceholderView
-            title={labels.name}
-            buttonLabel={labels.continue}
-            testID="contacts-add-address-name-screen"
-            onContinue={onContinueFromName}
-          />
+          <ContactsAddAddressName {...addressNameProps} />
         </ContactsAddAddressStepFrame>
-      ),
+      ) : null,
       options: LOCKED_STEP_OPTIONS,
     },
     review: {

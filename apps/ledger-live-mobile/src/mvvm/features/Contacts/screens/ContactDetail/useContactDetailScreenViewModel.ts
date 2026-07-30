@@ -52,6 +52,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     start: startAddAddress,
     completeCurrencySelection,
     updateAddress,
+    updateAddressLabel,
     confirmAddress,
     continueFromName,
     continueFromReview,
@@ -86,6 +87,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       void updateAddress(value, inputMethod);
     },
     [updateAddress],
+  );
+  const onAddressNameChange = useCallback(
+    (value: string) => {
+      updateAddressLabel(value);
+    },
+    [updateAddressLabel],
   );
   const onQrCodeClick = useCallback(() => {
     navigation.navigate(ScreenName.ScanRecipient, {
@@ -131,6 +138,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       state: addAddressFlowState,
       eligibleNetworkIds,
       onAddressChange,
+      onAddressNameChange,
       onAddressConfirm: confirmAddress,
       onBack: goBackAddAddress,
       onClose: closeAddAddress,

@@ -645,7 +645,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should keep one Add Address drawer through QR, placeholders and success", async () => {
+  it("should keep one Add Address drawer through QR, naming and success", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
       overrideInitialState: withContactsPageReadyState({
@@ -682,9 +682,21 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-add-address-confirm"));
-    expect(await screen.findByTestId("contacts-add-address-name-screen-continue")).toBeVisible();
+    const addressNameInput = await screen.findByTestId("contacts-add-address-name-input");
+    expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
+    expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Name address");
+    expect(
+      screen.getByText(
+        "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
 
-    await user.press(screen.getByTestId("contacts-add-address-name-screen-continue"));
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Exchange");
+    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveProp("value", "Exchange");
+
+    await user.press(screen.getByTestId("contacts-add-address-name-continue"));
     expect(await screen.findByTestId("contacts-add-address-review-screen-continue")).toBeVisible();
 
     await user.press(screen.getByTestId("contacts-add-address-review-screen-continue"));

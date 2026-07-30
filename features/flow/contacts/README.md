@@ -38,10 +38,10 @@ asynchronous validation state, resolved-address storage, and stale-result protec
 apps adapt coin bridges, domain services, token stores, and other app-owned or platform-specific
 integrations.
 
-The native Add Address views render the shared address-entry states and temporary Name, Validation,
-and Success steps as composable Lumen bottom-sheet content. The Flow owns their order, back
-transitions, resolved-address session and valid-only confirmation. Mobile owns the single queued
-bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
+The native Add Address views render the shared address-entry and address-name states plus temporary
+Validation and Success steps as composable Lumen bottom-sheet content. The Flow owns their order,
+back transitions, resolved-address session and valid-only confirmation. Mobile owns the single
+queued bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
 routing and safe-area inset. Native paste events are classified without reading the clipboard
 proactively, while manual validation can be debounced without delaying paste or QR validation.
 

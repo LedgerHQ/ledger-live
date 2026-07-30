@@ -26,6 +26,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
   state,
   eligibleNetworkIds,
   onAddressChange,
+  onAddressNameChange,
   onAddressConfirm,
   onBack,
   onClose,
@@ -71,18 +72,33 @@ export function useContactsAddAddressFlowDrawerViewModel({
             onQrCodeClick,
           }
         : null,
+    addressNameProps:
+      state.status === "namingAddress"
+        ? {
+            addressLabel: state.addressLabel,
+            labels: {
+              title: t("contacts.addAddressName.title"),
+              inputLabel: t("contacts.addAddressName.inputLabel"),
+              namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
+              continueToReview: t("contacts.addAddressName.continueToReview"),
+              invalidLabel: t("contacts.addAddressName.invalidLabel"),
+              duplicateLabel: t("contacts.addAddressName.duplicateLabel"),
+            },
+            bottomOffset,
+            onChangeText: onAddressNameChange,
+            onContinue: onContinueFromName,
+          }
+        : null,
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
     isOpen: state.status !== "closed",
     labels: {
-      name: t("contacts.addAddressFlow.name"),
       review: t("contacts.addAddressFlow.review"),
       success: t("contacts.addAddressFlow.success"),
       continue: t("common.continue"),
       done: t("common.done"),
     },
     onBack,
-    onContinueFromName,
     onContinueFromReview,
     onFinish: onClose,
   } as const;
