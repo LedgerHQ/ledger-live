@@ -272,9 +272,9 @@ apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/p
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
 
 # wallet-cli
-apps/wallet-cli/                                                              @Justkant
-apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @Justkant
-apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @Justkant
+apps/wallet-cli/                                                              @ledgerhq/agentic-core
+apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @ledgerhq/agentic-core
+apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @ledgerhq/agentic-core
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -546,7 +546,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Platform — Agent files
 .agents/                           @ledgerhq/platform
-.agents/skills/ledger-wallet-cli/                                             @Justkant
+.agents/skills/ledger-wallet-cli/                                             @ledgerhq/agentic-core
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
 .cursor/                           @ledgerhq/platform
