@@ -16,7 +16,7 @@ import Label from "~/renderer/components/Label";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
-type Sender = "public" | "private";
+type Sender = "public" | "ironwood";
 
 type Props = {
   account: Account;
@@ -66,12 +66,6 @@ const CardAmount = styled(Text).attrs(() => ({
   color: "neutral.c80",
 }))``;
 
-const Unavailable = styled(Text).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 2,
-  color: "warning.c70",
-}))``;
-
 const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) => {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const isZcash = account.type === "Account" && account.currency.id === "zcash";
@@ -92,7 +86,7 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   if (!active) return null;
 
-  const sender: Sender = tx.sender ?? "public";
+  const sender: Sender = tx.sender === "ironwood" ? "ironwood" : "public";
 
   const privateInfo = (account as ZcashAccount).privateInfo;
   const fvkAvailable = Boolean(privateInfo?.ufvk);
@@ -101,24 +95,13 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   const ironwoodBalance = privateInfo?.ironwoodBalance ?? BigNumber(0);
 
   const totalBalance = account.balance ?? BigNumber(0);
-  // Full private holdings, used only to back out the transparent (public) balance
-  // so the Public card and the account total stay correct. Not all of it is
-  // spendable from the Private option today.
-  const privateHoldings = orchardBalance.plus(saplingBalance).plus(ironwoodBalance);
-  const transparentBalance = totalBalance.minus(privateHoldings);
-
-  // Amount the "Private" send path can actually spend. It builds a "shielded"
-  // transfer that spends Orchard notes only — Ledger is Orchard-only, so the
-  // Sapling pool is never spendable, and the Ironwood pool has no send/sign path
-  // yet (deriveZcashTransferType never emits an "ironwood" type and signOperation
-  // rejects it). Only Orchard is counted here so the card never offers to send
-  // funds the flow cannot spend; Ironwood is surfaced separately below.
-  const privateSendable = orchardBalance;
-  const hasIronwood = ironwoodBalance.gt(0);
+  const transparentBalance = totalBalance
+    .minus(orchardBalance)
+    .minus(saplingBalance)
+    .minus(ironwoodBalance);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
-  const privateLabel = formatCurrencyUnit(unit, privateSendable, formatConfig);
   const ironwoodLabel = formatCurrencyUnit(unit, ironwoodBalance, formatConfig);
 
   const select = (next: Sender) => {
@@ -154,33 +137,21 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
         <Card
           as="button"
           type="button"
-          $active={sender === "private"}
-          aria-pressed={sender === "private"}
+          $active={sender === "ironwood"}
+          aria-pressed={sender === "ironwood"}
           disabled={!fvkAvailable}
-          onClick={() => select("private")}
-          data-testid="transfer-from-private"
+          onClick={() => select("ironwood")}
+          data-testid="transfer-from-ironwood"
         >
           <CardTitle>
-            <Trans i18nKey="zcash.shielded.send.transferFrom.private.title" />
+            <Trans i18nKey="zcash.shielded.send.transferFrom.ironwood.title" />
           </CardTitle>
           <CardSubtitle>
-            <Trans i18nKey="zcash.shielded.send.transferFrom.private.subtitle" />
+            <Trans i18nKey="zcash.shielded.send.transferFrom.ironwood.subtitle" />
           </CardSubtitle>
           <CardAmount>
-            <Discreet>{privateLabel}</Discreet>
+            <Discreet>{ironwoodLabel}</Discreet>
           </CardAmount>
-          {!fvkAvailable ? (
-            <Unavailable data-testid="transfer-from-private-unavailable">
-              <Trans i18nKey="zcash.shielded.send.transferFrom.private.unavailable" />
-            </Unavailable>
-          ) : hasIronwood ? (
-            <Unavailable data-testid="transfer-from-private-ironwood-unavailable">
-              <Trans
-                i18nKey="zcash.shielded.send.transferFrom.private.ironwoodUnavailable"
-                values={{ amount: ironwoodLabel }}
-              />
-            </Unavailable>
-          ) : null}
         </Card>
       </Box>
     </Box>

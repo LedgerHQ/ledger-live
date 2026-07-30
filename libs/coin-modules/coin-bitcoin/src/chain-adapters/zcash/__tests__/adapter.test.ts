@@ -158,6 +158,8 @@ describe("zcash chain adapter — transaction routing", () => {
         "transparent-to-shielded",
         "shielded-to-transparent",
         "shielded",
+        "ironwood",
+        "ironwood-to-transparent",
       ])("returns an Observable (PCZT) for %s transfers", transferType => {
         const result = adapter.signOperation!(
           makeZcashAccount({ ufvk: "testufvk" }),
@@ -213,24 +215,6 @@ describe("zcash chain adapter — transaction routing", () => {
           expect(result).toBeInstanceOf(Observable);
           await expect(firstValueFrom(result as Observable<unknown>)).rejects.toThrow(
             "require the zcashShielded feature to be enabled",
-          );
-        },
-      );
-    });
-
-    describe("zcashShielded flag ON — Ironwood signing stub", () => {
-      it.each<ZcashTransferType>(["ironwood", "ironwood-to-transparent"])(
-        "returns an error Observable for %s transfers (finalizeIronwoodTransaction not yet available)",
-        async transferType => {
-          const result = adapter.signOperation!(
-            makeZcashAccount({ ufvk: "testufvk" }),
-            "device",
-            makeTx(transferType),
-            mockSignerContext,
-          );
-          expect(result).toBeInstanceOf(Observable);
-          await expect(firstValueFrom(result as Observable<unknown>)).rejects.toThrow(
-            "requires finalizeIronwoodTransaction",
           );
         },
       );

@@ -234,7 +234,7 @@ export type ZcashTransferType =
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
   /** Source balance pool selected on the Recipient step. */
-  sender?: "public" | "private";
+  sender?: "public" | "private" | "ironwood";
   /** Recipient privacy class derived from the address. */
   recipientType?: "public" | "private";
   /** Optional 512-byte memo field for shielded outputs. */
