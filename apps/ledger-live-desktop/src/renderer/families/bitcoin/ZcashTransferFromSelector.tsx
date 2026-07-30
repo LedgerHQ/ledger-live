@@ -98,14 +98,28 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
   const fvkAvailable = Boolean(privateInfo?.ufvk);
   const orchardBalance = privateInfo?.orchardBalance ?? BigNumber(0);
   const saplingBalance = privateInfo?.saplingBalance ?? BigNumber(0);
+  const ironwoodBalance = privateInfo?.ironwoodBalance ?? BigNumber(0);
 
   const totalBalance = account.balance ?? BigNumber(0);
-  const privateBalance = orchardBalance.plus(saplingBalance);
-  const transparentBalance = totalBalance.minus(privateBalance);
+  // Full private holdings, used only to back out the transparent (public) balance
+  // so the Public card and the account total stay correct. Not all of it is
+  // spendable from the Private option today.
+  const privateHoldings = orchardBalance.plus(saplingBalance).plus(ironwoodBalance);
+  const transparentBalance = totalBalance.minus(privateHoldings);
+
+  // Amount the "Private" send path can actually spend. It builds a "shielded"
+  // transfer that spends Orchard notes only — Ledger is Orchard-only, so the
+  // Sapling pool is never spendable, and the Ironwood pool has no send/sign path
+  // yet (deriveZcashTransferType never emits an "ironwood" type and signOperation
+  // rejects it). Only Orchard is counted here so the card never offers to send
+  // funds the flow cannot spend; Ironwood is surfaced separately below.
+  const privateSendable = orchardBalance;
+  const hasIronwood = ironwoodBalance.gt(0);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
-  const privateLabel = formatCurrencyUnit(unit, privateBalance, formatConfig);
+  const privateLabel = formatCurrencyUnit(unit, privateSendable, formatConfig);
+  const ironwoodLabel = formatCurrencyUnit(unit, ironwoodBalance, formatConfig);
 
   const select = (next: Sender) => {
     if (next === sender) return;
@@ -158,6 +172,13 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
           {!fvkAvailable ? (
             <Unavailable data-testid="transfer-from-private-unavailable">
               <Trans i18nKey="zcash.shielded.send.transferFrom.private.unavailable" />
+            </Unavailable>
+          ) : hasIronwood ? (
+            <Unavailable data-testid="transfer-from-private-ironwood-unavailable">
+              <Trans
+                i18nKey="zcash.shielded.send.transferFrom.private.ironwoodUnavailable"
+                values={{ amount: ironwoodLabel }}
+              />
             </Unavailable>
           ) : null}
         </Card>
