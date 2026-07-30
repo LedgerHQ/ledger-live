@@ -9,20 +9,6 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsAddAddressNameProps } from "./ContactsAddAddressName.types";
 
-function getValidationMessage({
-  addressLabel,
-  labels,
-}: Pick<ContactsAddAddressNameProps, "addressLabel" | "labels">): string | undefined {
-  switch (addressLabel.validationError) {
-    case "InvalidContactAddressLabelError":
-      return labels.invalidLabel;
-    case "DuplicateContactAddressLabelError":
-      return labels.duplicateLabel;
-    case null:
-      return undefined;
-  }
-}
-
 export function ContactsAddAddressName({
   addressLabel,
   labels,
@@ -30,7 +16,9 @@ export function ContactsAddAddressName({
   onChangeText,
   onContinue,
 }: ContactsAddAddressNameProps): React.JSX.Element {
-  const validationMessage = getValidationMessage({ addressLabel, labels });
+  const validationMessage = addressLabel.validationError
+    ? labels.validationErrors[addressLabel.validationError]
+    : undefined;
 
   return (
     <BottomSheetView

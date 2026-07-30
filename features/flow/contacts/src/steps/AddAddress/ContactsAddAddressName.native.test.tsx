@@ -1,6 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { ContactAddressLabelSchema } from "@domain/entity-contact";
+import {
+  ContactAddressLabelSchema,
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+} from "@domain/entity-contact";
 import type { AddAddressLabelState, AddAddressNameLabels } from "./types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName.native";
 
@@ -9,8 +13,11 @@ const labels: AddAddressNameLabels = {
   inputLabel: "Address name",
   namingDisclaimer: "Only you can see this name.",
   continueToReview: "Continue to review",
-  invalidLabel: "Special characters are not allowed.",
-  duplicateLabel: "This address name is already used for this contact.",
+  validationErrors: {
+    [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
+    [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
+      "This address name is already used for this contact.",
+  },
 };
 
 describe("ContactsAddAddressName", () => {
@@ -56,7 +63,7 @@ describe("ContactsAddAddressName", () => {
         status: "invalid",
         value: "Ethereum 💎",
         label: null,
-        validationError: "InvalidContactAddressLabelError",
+        validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
       helperText: "Special characters are not allowed.",
     },
@@ -66,7 +73,7 @@ describe("ContactsAddAddressName", () => {
         status: "invalid",
         value: "Ethereum",
         label: null,
-        validationError: "DuplicateContactAddressLabelError",
+        validationError: DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
       helperText: "This address name is already used for this contact.",
     },

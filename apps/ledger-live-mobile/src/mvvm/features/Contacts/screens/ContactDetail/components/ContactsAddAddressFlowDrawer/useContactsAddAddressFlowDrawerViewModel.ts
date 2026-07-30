@@ -1,4 +1,8 @@
 import { Platform } from "react-native";
+import {
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+} from "@domain/entity-contact";
 import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useContactsCurrencySelectionAdapter } from "../../../../hooks/useContactsCurrencySelectionAdapter";
@@ -81,8 +85,14 @@ export function useContactsAddAddressFlowDrawerViewModel({
               inputLabel: t("contacts.addAddressName.inputLabel"),
               namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
               continueToReview: t("contacts.addAddressName.continueToReview"),
-              invalidLabel: t("contacts.addAddressName.invalidLabel"),
-              duplicateLabel: t("contacts.addAddressName.duplicateLabel"),
+              validationErrors: {
+                [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
+                  "contacts.addAddressName.invalidLabel",
+                ),
+                [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
+                  "contacts.addAddressName.duplicateLabel",
+                ),
+              },
             },
             bottomOffset,
             onChangeText: onAddressNameChange,

@@ -132,8 +132,7 @@ export type AddAddressNameLabels = Readonly<{
   inputLabel: string;
   namingDisclaimer: string;
   continueToReview: string;
-  invalidLabel: string;
-  duplicateLabel: string;
+  validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
 }>;
 
 export type AddAddressPlaceholderViewProps = Readonly<{
