@@ -25,6 +25,7 @@ jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 // ── Mock: ZCash client module (lazy import in index.ts) ────────────────────
 
 const mockBuildTransaction = jest.fn();
+const mockBuildIronwoodTransaction = jest.fn();
 const mockFinalizeTransaction = jest.fn();
 const mockBroadcastTransaction = jest.fn();
 
@@ -36,6 +37,7 @@ const mockClient = {
   estimatedSyncTime: jest.fn(),
   syncShielded: jest.fn(),
   buildTransaction: mockBuildTransaction,
+  buildIronwoodTransaction: mockBuildIronwoodTransaction,
   finalizeTransaction: mockFinalizeTransaction,
   broadcastTransaction: mockBroadcastTransaction,
 };
@@ -113,6 +115,29 @@ const defaultBuildResult = {
   nTransparentOutputs: 0,
 };
 
+const defaultIronwoodBuildResult = {
+  pcztHex: MOCK_PCZT_HEX,
+  pcztTransaction: {
+    global: {
+      txVersion: 6,
+      versionGroupId: 0,
+      consensusBranchId: 0,
+      fallbackLockTime: null,
+      expiryHeight: 0,
+      coinType: 133,
+      txModifiable: 0,
+    },
+    transparentInputs: [] as unknown[],
+    transparentOutputs: [] as unknown[],
+    orchardBundle: null,
+  },
+  feeZat: "5000",
+  anchorHeight: 3000000,
+  nActionsIronwood: 2,
+  nTransparentInputs: 0,
+  nTransparentOutputs: 0,
+};
+
 const defaultFinalizeResult = { txHex: MOCK_TX_HEX, txid: MOCK_TXID };
 
 // Explicitly typed to allow non-empty Uint8Array[] in per-test overrides.
@@ -175,6 +200,7 @@ function makeAccount(overrides: Partial<ZcashAccount> = {}): ZcashAccount {
     privateInfo: {
       saplingBalance: new BigNumber(0),
       orchardBalance: new BigNumber(1_000_000),
+      ironwoodBalance: new BigNumber(0),
       syncState: "complete",
       progress: 100,
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
@@ -252,6 +278,7 @@ beforeEach(() => {
   // PCZT path, so enable the flag. Reset in afterEach so it never leaks.
   setZcashShieldedEnabled(true);
   mockBuildTransaction.mockResolvedValue(defaultBuildResult);
+  mockBuildIronwoodTransaction.mockResolvedValue(defaultIronwoodBuildResult);
   mockFinalizeTransaction.mockResolvedValue(defaultFinalizeResult);
   mockBroadcastTransaction.mockResolvedValue(MOCK_TXID);
   mockCreateZCashClient.mockReturnValue(mockClient);
@@ -289,13 +316,18 @@ describe("signOperation — orchestration flow", () => {
   });
 
   it("returns an error Observable for shielded-input types when the flag is OFF", async () => {
-    // The legacy transparent path cannot represent Orchard note spends: it would
+    // The legacy transparent path cannot represent note spends at all: it would
     // strip the shielded bundle, compute a wrong ZIP-244 txid, and the network
     // would reject with "Missing inputs". Fail early with a clear error.
     setZcashShieldedEnabled(false);
     const account = makeAccount();
     const signerContext = makeSignerContext();
-    for (const transferType of ["shielded", "shielded-to-transparent"] as const) {
+    for (const transferType of [
+      "shielded",
+      "shielded-to-transparent",
+      "ironwood",
+      "ironwood-to-transparent",
+    ] as const) {
       const obs = callSignOperation(account, makeTx(transferType), signerContext);
       expect(obs).toBeInstanceOf(Observable);
       await expect(lastValueFrom(obs!)).rejects.toThrow(
@@ -423,6 +455,81 @@ describe("signOperation — orchestration flow", () => {
 
     expect(mockSignPczt).toHaveBeenCalledTimes(1);
     expect(mockSignPczt).toHaveBeenCalledWith(defaultBuildResult.pcztTransaction);
+  });
+
+  it("Ironwood→*: routes to buildIronwoodTransaction, not buildTransaction", async () => {
+    const account = makeAccount({
+      privateInfo: {
+        saplingBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(0),
+        ironwoodBalance: new BigNumber(1_000_000),
+        syncState: "complete",
+        progress: 100,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        ufvk: MOCK_UFVK,
+        birthday: "2024-01-01",
+        lastSyncTimestamp: Date.now(),
+        lastProcessedBlock: 3_000_000,
+        transactions: [],
+      },
+    });
+    for (const transferType of ["ironwood", "ironwood-to-transparent"] as const) {
+      jest.clearAllMocks();
+      mockBuildIronwoodTransaction.mockResolvedValue(defaultIronwoodBuildResult);
+      mockFinalizeTransaction.mockResolvedValue(defaultFinalizeResult);
+      mockCreateZCashClient.mockReturnValue(mockClient);
+
+      const tx = makeTx(transferType, { recipient: "t1transparentrecipient" });
+      const signerContext = makeSignerContext();
+
+      const events = await collectEvents(account, tx, signerContext);
+      expect(events.map(e => e.type)).toEqual([
+        "device-signature-requested",
+        "device-signature-granted",
+        "signed",
+      ]);
+      expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
+      expect(mockBuildTransaction).not.toHaveBeenCalled();
+    }
+  });
+
+  it("Ironwood→*: buildIronwoodTransaction receives correct args (spends, fee, outputs)", async () => {
+    const note = makeSpendableNote({ amount: new BigNumber(300_000) });
+    const account = makeAccount({
+      privateInfo: {
+        saplingBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(0),
+        ironwoodBalance: new BigNumber(1_000_000),
+        syncState: "complete",
+        progress: 100,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        ufvk: MOCK_UFVK,
+        birthday: "2024-01-01",
+        lastSyncTimestamp: Date.now(),
+        lastProcessedBlock: 3_000_000,
+        transactions: [],
+      },
+    });
+    const tx = makeTx("ironwood", {
+      selectedNotes: [note],
+      zcashFee: new BigNumber(10_000),
+      amount: new BigNumber(290_000),
+    });
+    const signerContext = makeSignerContext();
+
+    await collectEvents(account, tx, signerContext);
+
+    expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
+    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
+    expect(args.ufvk).toBe(MOCK_UFVK);
+    expect(args.feeZat).toBe("10000");
+    expect(args.network).toBe("mainnet");
+    expect(args.accountIndex).toBe(MOCK_ACCOUNT_INDEX);
+    expect(args.seedFingerprint).toBe("00".repeat(32));
+    expect(args.spends).toHaveLength(1);
+    expect(args.spends[0].valueZat).toBe("300000");
+    expect(args.outputs[0].address).toBe("u1recipientaddress");
+    expect(args.outputs[0].valueZat).toBe("290000");
   });
 });
 
