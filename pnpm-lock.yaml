@@ -9453,6 +9453,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../../shared/auth
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env

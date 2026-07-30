@@ -1,92 +1,105 @@
-import axios from "axios";
-
-import { getSwapAPIBaseURL } from "../../../../exchange/swap";
+import { makeQuotesInput } from "../fixtures/quotesInput";
+import { swapQuotesApi } from "../state-manager/api";
+import { getSwapQuotesDispatch } from "../state-manager/store";
 import { ProviderErrorCodes } from "../types";
 import { fetchQuotes } from "./fetchQuotes";
 
-jest.mock("axios");
-
-jest.mock("../../../../exchange/swap", () => ({
-  getSwapAPIBaseURL: jest.fn(),
+jest.mock("../state-manager/store", () => ({
+  getSwapQuotesDispatch: jest.fn(),
 }));
 
-const axiosGetMock = jest.mocked(axios.get);
-const axiosIsAxiosErrorMock = jest.mocked(axios.isAxiosError);
-const axiosIsCancelMock = jest.mocked(axios.isCancel);
-const getSwapAPIBaseURLMock = jest.mocked(getSwapAPIBaseURL);
+jest.mock("../state-manager/api", () => ({
+  swapQuotesApi: {
+    endpoints: {
+      fetchQuotes: {
+        initiate: jest.fn(),
+      },
+    },
+  },
+}));
+
+const getSwapQuotesDispatchMock = jest.mocked(getSwapQuotesDispatch);
+const initiateMock = jest.mocked(swapQuotesApi.endpoints.fetchQuotes.initiate);
+
+const DISPATCH_OPTIONS = { forceRefetch: true };
 
 function makeArgs(): Parameters<typeof fetchQuotes>[0] {
   return {
     providers: ["lifi", "okx"],
-    data: {
-      amount: "100000000",
-      sendAccountId: "send-account",
-      receiveAccountId: "receive-account",
-      sendAddress: "0xfrom",
-      receiveAddress: "0xto",
-      sendCurrencyId: "bitcoin",
-      receiveCurrencyId: "ethereum",
-    },
+    data: makeQuotesInput(),
   };
 }
 
 describe("fetchQuotes", () => {
+  let unsubscribe: jest.Mock;
+
+  /**
+   * `fetchQuotes` awaits the dispatched query promise and unsubscribes it once
+   * settled, so the mocked dispatch has to return a promise carrying
+   * `unsubscribe`.
+   */
+  function mockResult(result: unknown) {
+    getSwapQuotesDispatchMock.mockReturnValue(
+      // A stub can't structurally satisfy ThunkDispatch's overloads.
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      jest.fn(() => Object.assign(Promise.resolve(result), { unsubscribe })) as never,
+    );
+  }
+
   beforeEach(() => {
     jest.clearAllMocks();
-    getSwapAPIBaseURLMock.mockReturnValue("https://swap.test");
-    axiosIsAxiosErrorMock.mockReturnValue(false);
-    axiosIsCancelMock.mockReturnValue(false);
+    unsubscribe = jest.fn();
+    // The thunk returned by `initiate` is opaque to `fetchQuotes`; only the
+    // dispatched result matters, so return a marker we can assert against.
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    initiateMock.mockImplementation(((arg: unknown) => ({ arg })) as never);
   });
 
-  it("splits successful quote rows from provider error rows", async () => {
-    const rawQuote = {
-      provider: "lifi",
-      providerType: "DEX",
-      amountFrom: 1,
-      amountTo: 0.99,
-      exchangeRate: 0.99,
-      slippage: 1,
-      type: "float",
-      networkFees: { currency: "ethereum" },
-      tags: { isRegistrationRequired: false, isTokenApprovalRequired: false },
-      key: "lifi-key",
-      liquiditySource: "AMM",
-    };
-    const providerError = {
-      code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
-      type: "float",
-      provider: "okx",
-      message: "amount out of range",
-      parameter: { minAmount: "200000000" },
-    };
-    axiosGetMock.mockResolvedValue({ data: [rawQuote, providerError] });
+  it("returns the quotes split by the endpoint", async () => {
+    const rawQuotes = [{ provider: "lifi", key: "lifi-key" }];
+    const providerErrors = [
+      {
+        code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
+        provider: "okx",
+        message: "amount out of range",
+      },
+    ];
+    mockResult({ data: { rawQuotes, providerErrors } });
 
     const result = await fetchQuotes(makeArgs(), "usd");
 
-    expect(result).toEqual({
-      rawQuotes: [rawQuote],
-      providerErrors: [providerError],
-    });
-    expect(axiosGetMock).toHaveBeenCalledWith(
-      "https://swap.test/quote",
+    expect(result).toEqual({ rawQuotes, providerErrors });
+    expect(initiateMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        headers: expect.objectContaining({ Accept: "application/json" }),
-        params: expect.any(URLSearchParams),
+        providers: ["lifi", "okx"],
+        counterValueCurrency: "usd",
+        quotesInput: expect.objectContaining({
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+        }),
       }),
+      DISPATCH_OPTIONS,
     );
-    const requestParams = axiosGetMock.mock.calls[0][1]?.params;
-    expect(requestParams).toBeInstanceOf(URLSearchParams);
-    if (!(requestParams instanceof URLSearchParams)) {
-      throw new Error("Expected request params to be URLSearchParams");
-    }
-    expect(requestParams.get("from")).toBe("bitcoin");
-    expect(requestParams.get("to")).toBe("ethereum");
   });
 
-  it("returns an empty result when the quote HTTP response is not OK", async () => {
-    const httpError = { response: { status: 500 } };
-    axiosGetMock.mockRejectedValue(httpError);
-    axiosIsAxiosErrorMock.mockImplementation(error => error === httpError);
+  it("releases the cache subscription once the request settles", async () => {
+    mockResult({ data: { rawQuotes: [], providerErrors: [] } });
+
+    await fetchQuotes(makeArgs(), "usd");
+
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it("releases the cache subscription even when the request fails", async () => {
+    mockResult({ error: { status: "FETCH_ERROR", error: "network down" } });
+
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBeDefined();
+
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns an empty result when the endpoint yields no data", async () => {
+    mockResult({});
 
     await expect(fetchQuotes(makeArgs(), "usd")).resolves.toEqual({
       rawQuotes: [],
@@ -94,19 +107,42 @@ describe("fetchQuotes", () => {
     });
   });
 
-  it("rethrows cancelled requests", async () => {
-    const cancelError = { message: "cancelled" };
-    axiosGetMock.mockRejectedValue(cancelError);
-    axiosIsCancelMock.mockImplementation(error => error === cancelError);
+  it.each([
+    ["a numeric HTTP status", { status: 502, data: "<html>502</html>" }],
+    [
+      "a parsing error carrying the original status",
+      { status: "PARSING_ERROR", originalStatus: 500 },
+    ],
+  ])("returns an empty result on %s", async (_label, error) => {
+    mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBe(cancelError);
+    await expect(fetchQuotes(makeArgs(), "usd")).resolves.toEqual({
+      rawQuotes: [],
+      providerErrors: [],
+    });
   });
 
-  it("rethrows network failures without an HTTP response", async () => {
-    const networkError = { request: {} };
-    axiosGetMock.mockRejectedValue(networkError);
-    axiosIsAxiosErrorMock.mockImplementation(error => error === networkError);
+  it.each([
+    ["FETCH_ERROR", { status: "FETCH_ERROR", error: "network down" }],
+    ["TIMEOUT_ERROR", { status: "TIMEOUT_ERROR", error: "timed out" }],
+  ])("rethrows %s, which never reached the aggregator", async (_label, error) => {
+    mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBe(networkError);
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBe(error);
+  });
+
+  it("flattens caller-supplied headers before dispatching", async () => {
+    mockResult({ data: { rawQuotes: [], providerErrors: [] } });
+    const args: Parameters<typeof fetchQuotes>[0] = {
+      ...makeArgs(),
+      headers: [["x-foo", "bar"]],
+    };
+
+    await fetchQuotes(args, "usd");
+
+    expect(initiateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ customHeaders: { "x-foo": "bar" } }),
+      DISPATCH_OPTIONS,
+    );
   });
 });

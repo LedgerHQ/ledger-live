@@ -10,6 +10,7 @@ import { altcoinsSentimentApi } from "@domain/api-altcoins-sentiment";
 import { payCardApi } from "@domain/api-pay-card";
 import { pushDevicesApi } from "@domain/api-push-devices";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
+import { swapQuotesApi } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/api";
 // Add new RTK Query API here:
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
@@ -23,6 +24,7 @@ const APIs = {
   [payCardApi.reducerPath]: payCardApi,
   [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
   [pushDevicesApi.reducerPath]: pushDevicesApi,
+  [swapQuotesApi.reducerPath]: swapQuotesApi,
 };
 
 /*

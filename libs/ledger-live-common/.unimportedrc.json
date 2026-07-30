@@ -324,6 +324,7 @@
     "src/wallet-api/CustomDeeplink/isUrlSafe.ts",
     "src/wallet-api/CustomDeeplink/server.ts",
     "src/wallet-api/Exchange/intents/index.ts",
+    "src/wallet-api/Exchange/quotes/state-manager/standaloneStore.ts",
     "src/wallet-api/Exchange/server.ts",
     "src/wallet-api/Exchange/swapFlow/index.ts",
     "src/wallet-api/LiveAppModal/registry.ts",
