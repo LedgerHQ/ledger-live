@@ -8,12 +8,6 @@ import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
 
-/**
- * Sets env variables for the main process.
- *
- * The renderer process will also set some env variables via the `setEnv` IPC channel
- * but we might need some envs before the renderer process is spawned.
- */
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
 }
