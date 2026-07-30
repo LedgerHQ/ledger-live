@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { useTranslation } from "react-i18next";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
 import { closeModal } from "~/renderer/actions/modals";
@@ -10,7 +10,7 @@ import InputPassword from "~/renderer/components/InputPassword";
 import Label from "~/renderer/components/Label";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { setHasPassword } from "~/renderer/actions/application";
-type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
+type MaybePasswordIncorrectError = PasswordIncorrectError | undefined | null;
 const DisablePasswordModal = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();

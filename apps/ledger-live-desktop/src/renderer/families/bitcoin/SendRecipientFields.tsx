@@ -1,4 +1,4 @@
-import { PendingOperation } from "@ledgerhq/errors";
+import { PendingOperation } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   BitcoinAccount,

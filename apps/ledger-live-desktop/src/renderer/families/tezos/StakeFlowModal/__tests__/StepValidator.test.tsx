@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { act, fireEvent, render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { StepProps } from "../types";
 
