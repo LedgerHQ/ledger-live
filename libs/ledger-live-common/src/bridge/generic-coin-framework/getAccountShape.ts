@@ -13,6 +13,7 @@ import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/
 import type { OperationCommon } from "./types";
 import type {
   Account,
+  AccountReadiness,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
@@ -358,10 +359,20 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           .catch(() => [])
       : Promise.resolve([]);
 
-    const [blockInfo, balanceRes, validators] = await Promise.all([
+    const readinessPromise: Promise<AccountReadiness | undefined> = bridgeApi.getAccountReadiness
+      ? bridgeApi.getAccountReadiness(currency, address).catch(e => {
+          log("generic-coin-framework", "getAccountReadiness failed, leaving readiness undefined", {
+            error: e instanceof Error ? e.message : String(e),
+          });
+          return undefined;
+        })
+      : Promise.resolve(undefined);
+
+    const [blockInfo, balanceRes, validators, readiness] = await Promise.all([
       coinModuleApi.lastBlock(),
       coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
       validatorsPromise,
+      readinessPromise,
     ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
@@ -557,6 +568,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
+      // readiness lookup retains the last persisted value instead of clearing it.
+      ...(readiness !== undefined ? { readiness } : {}),
       ...stakingShape,
     };
     return res;
