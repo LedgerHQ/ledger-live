@@ -23,7 +23,7 @@ type Props = {
   isLwm40Enabled?: boolean;
   hideMainNavigator?: boolean;
   appManifestNotFoundError: Error;
-  shouldDisplayBackgroundCanvas: boolean;
+  shouldDisplayBackgroundCanvas?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -85,6 +85,10 @@ export const EarnV2Webview = ({
   const inIntentFlow = !!hideMainNavigator && intentFlowState !== false;
   const showsBackground = isPtxUiMinV2 && !inIntentFlow;
 
+  const displayBackgroundCanvas =
+    shouldDisplayBackgroundCanvas ??
+    ((isSwapToEarnEnabled && inputs?.intent === "deposit") || inputs?.intent === "simulate");
+
   const webviewInputs = {
     ...inputs,
     safeAreaTop: insets.top.toString(),
@@ -100,7 +104,7 @@ export const EarnV2Webview = ({
   return (
     <View
       testID="earn-screen"
-      style={[styles.container, shouldDisplayBackgroundCanvas && { backgroundColor: canvasColor }]}
+      style={[styles.container, displayBackgroundCanvas && { backgroundColor: canvasColor }]}
     >
       {showsBackground && <LiveAppBackground type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">
