@@ -26,17 +26,18 @@ export function useModularDialogData() {
 
   const currencyIds = useSelector(modularDialogCurrenciesSelector);
   const networkIds = useSelector(modularDialogNetworkIdsSelector);
+  const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;
   const useCase = useSelector(modularDialogUseCaseSelector);
   const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
-    currencyIds: networkIds === undefined ? currencyIds : undefined,
-    networkIds,
+    currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
+    networkIds: resolvedNetworkIds,
     product: "lld",
     version: __APP_VERSION__,
     useCase,
-    areCurrenciesFiltered: networkIds === undefined ? areCurrenciesFiltered : false,
+    areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
     includeTestNetworks: devMode,
   });
@@ -46,10 +47,10 @@ export function useModularDialogData() {
       data
         ? buildAssetsSorted(data, {
             includeMetaCurrencyId: true,
-            networkIds,
+            networkIds: resolvedNetworkIds,
           })
         : undefined,
-    [data, networkIds],
+    [data, resolvedNetworkIds],
   );
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });

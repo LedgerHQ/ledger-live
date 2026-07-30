@@ -101,4 +101,39 @@ describe("useAssets", () => {
       expect.objectContaining({ networkIds: ["ethereum", "tron"] }),
     );
   });
+
+  it("preserves the exact currency filter when network ids are empty", () => {
+    mockedUseAssetsData.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetchingNextPage: false,
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+      errorInfo: {
+        hasError: false,
+        isNetworkError: false,
+        isApiError: false,
+        apiStatus: undefined,
+      },
+      loadNext: undefined,
+      refetch: jest.fn(),
+    });
+
+    renderHook(() =>
+      useAssets({
+        currencyIds: ["bitcoin"],
+        networkIds: [],
+        areCurrenciesFiltered: true,
+      }),
+    );
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currencyIds: ["bitcoin"],
+        networkIds: undefined,
+        areCurrenciesFiltered: true,
+      }),
+    );
+  });
 });

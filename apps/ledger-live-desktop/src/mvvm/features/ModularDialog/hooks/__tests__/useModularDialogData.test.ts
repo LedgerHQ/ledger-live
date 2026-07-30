@@ -142,4 +142,31 @@ describe("useModularDialogData filters", () => {
       }),
     );
   });
+
+  it("should preserve the exact currency filter when network ids are empty", () => {
+    renderHook(() => useModularDialogData(), {
+      initialState: {
+        modularDialog: {
+          searchedValue: undefined,
+          isDebuggingDuplicates: false,
+          flow: "",
+          source: "",
+          isOpen: true,
+          dialogParams: {
+            networkIds: [],
+            currencies: ["bitcoin"],
+            areCurrenciesFiltered: true,
+          },
+        },
+      },
+    });
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currencyIds: ["bitcoin"],
+        networkIds: undefined,
+        areCurrenciesFiltered: true,
+      }),
+    );
+  });
 });
