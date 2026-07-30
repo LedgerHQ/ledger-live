@@ -1,11 +1,9 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
 import { getCurrencyManagerApp } from "../../models/currencies";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
-
-const BST_DELEGATE_CURRENCIES = new Set(["cardano", "near"]);
 
 const beforeAllFunction = async (delegation: DelegateType) => {
   await app.init({
@@ -17,9 +15,7 @@ const beforeAllFunction = async (delegation: DelegateType) => {
 };
 
 export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(
-    BST_DELEGATE_CURRENCIES.has(delegation.account.currency.id) ? Team.BST : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
@@ -68,7 +64,7 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
 }
 
 export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Delegate", () => {
@@ -99,7 +95,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
 }
 
 export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Undelegate", () => {
@@ -127,7 +123,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
 }
 
 export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe(`Lock flow on CELO`, () => {
@@ -159,7 +155,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 }
 
 export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe(`Vote flow on CELO`, () => {
@@ -196,7 +192,7 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
 export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  setTeamOwner(Team.BST);
+  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
