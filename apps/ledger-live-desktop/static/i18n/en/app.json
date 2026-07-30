@@ -9362,6 +9362,17 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
+    "addAddressEntry": {
+      "title": "Enter address",
+      "addressPlaceholder": "Address or ENS",
+      "confirmAddress": "Continue to review",
+      "validatingAddress": "Validating address",
+      "validAddress": "Valid address",
+      "invalidAddress": "Invalid address",
+      "domainNotFound": "Domain not found",
+      "validationUnavailable": "Address validation is temporarily unavailable.",
+      "ensDisclaimer": "This ENS name resolves to the address shown above."
+    },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",

@@ -130,6 +130,22 @@ describe("useAddAddressFlowViewModel", () => {
     expect(result.current.state).toEqual({ status: "closed" });
   });
 
+  it("should return to currency selection from address entry", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactId));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_CURRENCY_ID));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.goBack());
+
+    expect(result.current.state).toEqual({
+      status: "selectingCurrency",
+      selectedContactId: contactId,
+    });
+  });
+
   it("should remain closed when closed repeatedly", () => {
     const { result } = renderHook(() => useAddAddressFlowViewModel());
 

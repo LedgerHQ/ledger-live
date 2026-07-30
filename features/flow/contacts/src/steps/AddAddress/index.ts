@@ -4,6 +4,7 @@ export type {
   ContactsCurrencySelectionPort,
 } from "./model/ports";
 export {
+  createContactsAddressValidationDependencies,
   createContactsAddressValidationService,
   type ContactsAddressValidationDependencies,
   type ContactsAddressValidationInput,

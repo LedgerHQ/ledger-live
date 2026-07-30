@@ -260,7 +260,6 @@ export function useAddAddressFlowViewModel({
     cancelAddressValidation();
     setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
   }, [cancelAddressValidation]);
-
   useEffect(() => () => cancelAddressValidation(), [cancelAddressValidation]);
 
   return {

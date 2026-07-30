@@ -19,12 +19,22 @@ function createCurrencySelectionPort(
 ): ContactsCurrencySelectionPort {
   return {
     selectCurrency: async networkIds =>
-      resolveContactCurrencyId(await openCurrencyFlow(networkIds)),
+      resolveContactCurrencyId(await openCurrencyFlow(networkIds, { presentation: "embedded" })),
   };
 }
 
-export function useContactsCurrencySelectionAdapter(): ContactsCurrencySelectionPort {
-  const { openCurrencyFlow } = useOpenCurrencyFlow();
+export type ContactsCurrencySelectionAdapter = ContactsCurrencySelectionPort &
+  Readonly<{
+    cancelCurrencySelection: () => void;
+  }>;
 
-  return useMemo(() => createCurrencySelectionPort(openCurrencyFlow), [openCurrencyFlow]);
+export function useContactsCurrencySelectionAdapter(): ContactsCurrencySelectionAdapter {
+  const { openCurrencyFlow, cancelCurrencyFlow } = useOpenCurrencyFlow();
+
+  const currencySelection = useMemo(
+    () => createCurrencySelectionPort(openCurrencyFlow),
+    [openCurrencyFlow],
+  );
+
+  return { ...currencySelection, cancelCurrencySelection: cancelCurrencyFlow };
 }

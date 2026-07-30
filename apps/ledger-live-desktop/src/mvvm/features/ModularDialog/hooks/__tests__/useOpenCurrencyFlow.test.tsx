@@ -39,6 +39,18 @@ describe("useOpenCurrencyFlow", () => {
     expect(store.getState().modularDialog.dialogParams).toBeNull();
   });
 
+  it("should cancel an embedded selection and reset the dialog", async () => {
+    const { result, store } = renderHook(() => useOpenCurrencyFlow());
+    const selection = result.current.openCurrencyFlow([ethereum.id], {
+      presentation: "embedded",
+    });
+
+    act(() => result.current.cancelCurrencyFlow());
+
+    await expect(selection).resolves.toBeNull();
+    expect(store.getState().modularDialog.dialogParams).toBeNull();
+  });
+
   it("should resolve the selected currency and close the dialog once", async () => {
     const onResolved = jest.fn();
     const { result, store } = renderHook(() => useOpenCurrencyFlow());
