@@ -24,6 +24,7 @@ const weeklyIntegrationTests = [
   "src/families/cosmos/datasets/stargaze.integration.test.ts",
   "src/families/cosmos/datasets/quicksilver.integration.test.ts",
   "src/families/cosmos/datasets/xion.integration.test.ts",
+  "src/families/cosmos/datasets/zenrock.integration.test.ts",
   "src/families/mina/bridge.integration.test.ts",
 ];
 
