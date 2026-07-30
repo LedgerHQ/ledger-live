@@ -404,6 +404,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-vechain/account").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-vechain/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/vechain/bridgeExtensions").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/vechain/coinModuleApi").then(m => m.createLocalVechainApi),
+    loadBridgeApi: () => import("../families/vechain/bridge/api").then(m => m.default),
   },
   {
     family: "xrp",
