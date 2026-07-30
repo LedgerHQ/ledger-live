@@ -125,10 +125,24 @@ describe("fetchQuotes", () => {
   it.each([
     ["FETCH_ERROR", { status: "FETCH_ERROR", error: "network down" }],
     ["TIMEOUT_ERROR", { status: "TIMEOUT_ERROR", error: "timed out" }],
-  ])("rethrows %s, which never reached the aggregator", async (_label, error) => {
+  ])("throws a named Error for %s, which never reached the aggregator", async (_label, error) => {
     mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBe(error);
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toMatchObject({
+      name: "SwapQuotesRequestFailed",
+      cause: error,
+    });
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBeInstanceOf(Error);
+  });
+
+  it("folds the transport detail into the message", async () => {
+    mockResult({ error: { status: "FETCH_ERROR", error: "network down" } });
+
+    // `cause` is non-enumerable and does not survive `serializeError`, so the
+    // message is what actually reaches the live app and monitoring.
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(
+      "swap /quote request failed: FETCH_ERROR: network down",
+    );
   });
 
   it("flattens caller-supplied headers before dispatching", async () => {

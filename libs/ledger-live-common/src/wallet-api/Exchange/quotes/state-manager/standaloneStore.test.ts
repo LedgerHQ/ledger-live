@@ -15,18 +15,12 @@ describe("setupStandaloneSwapQuotesStore", () => {
 
   beforeAll(() => server.listen());
   beforeEach(() => {
-    // The dispatch lives on globalThis, which persists across test files in a
-    // Jest worker. Reset it before each test so the "throws before setup"
-    // assertion isn't order-dependent on any other suite that set it.
+    // Reset so the "throws before setup" assertion doesn't depend on the order
+    // of the tests in this file.
     globalThis.__ledgerSwapQuotesDispatch = undefined;
   });
   afterEach(() => server.resetHandlers());
-  afterAll(() => {
-    server.close();
-    // Clear the global dispatch registered during the tests so it doesn't leak
-    // into other suites sharing the worker.
-    globalThis.__ledgerSwapQuotesDispatch = undefined;
-  });
+  afterAll(() => server.close());
 
   it("registers the store dispatch for getSwapQuotesDispatch", () => {
     expect(() => getSwapQuotesDispatch()).toThrow(/Swap quotes store is not set/);

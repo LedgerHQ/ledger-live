@@ -1,6 +1,7 @@
 import type { SerializedError } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
+import { SwapQuotesRequestFailed } from "../../../../errors";
 import { swapQuotesApi } from "../state-manager/api";
 import { getSwapQuotesDispatch } from "../state-manager/store";
 
@@ -8,7 +9,9 @@ import type { GetQuotesArgs } from "../types";
 import type { ResolvedQuotesInput } from "../resolveQuotesInput";
 import type { FetchQuotesResult } from "./types";
 
-type FetchQuotesArgs = Omit<GetQuotesArgs, "data"> & {
+// `signal` is omitted because RTK Query owns the request lifecycle: accepting
+// one would be a silent no-op.
+type FetchQuotesArgs = Omit<GetQuotesArgs, "data" | "signal"> & {
   data: ResolvedQuotesInput;
 };
 
@@ -28,6 +31,13 @@ function getHttpStatus(error: FetchBaseQueryError | SerializedError): number | u
   if (typeof error.status === "number") return error.status;
   if (error.status === "PARSING_ERROR") return error.originalStatus;
   return undefined;
+}
+
+// `cause` is non-enumerable and so does not survive `serializeError` at the RPC
+// boundary; fold the detail into the message instead.
+function describeError(error: FetchBaseQueryError | SerializedError): string {
+  if (!("status" in error)) return error.message ?? error.name ?? "unknown error";
+  return "error" in error && error.error ? `${error.status}: ${error.error}` : String(error.status);
 }
 
 /**
@@ -85,7 +95,10 @@ export async function fetchQuotes(
       // the caller surfaces the same `noQuotes` global as the legacy UI. Only
       // transport failures (FETCH_ERROR / TIMEOUT_ERROR) reject.
       if (getHttpStatus(result.error) === undefined) {
-        throw result.error;
+        throw new SwapQuotesRequestFailed(
+          `swap /quote request failed: ${describeError(result.error)}`,
+          result.error,
+        );
       }
       return emptyResult();
     }

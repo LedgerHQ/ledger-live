@@ -5,22 +5,21 @@
  * not from a React component, so it cannot use the generated query hook.
  * Instead each app injects its store's `dispatch` once at startup via
  * {@link setSwapQuotesStore}, and `fetchQuotes` retrieves it with
- * {@link getSwapQuotesDispatch} to imperatively run the endpoint. This
- * mirrors the `cryptoAssetsApi` / `setCryptoAssetsStore` (CAL client)
- * pattern.
+ * {@link getSwapQuotesDispatch} to imperatively run the endpoint.
  *
  * The reference is kept on `globalThis` to guarantee a single shared
  * dispatch across all module instances, even when live-common is resolved
- * to separate copies by lazy-loaded bundles.
+ * to separate copies by lazy-loaded bundles. `registerTransportModule` in
+ * `src/hw/index.ts` uses the same approach for the same reason.
  */
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export type SwapQuotesDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
 
 declare global {
-  interface GlobalThis {
-    __ledgerSwapQuotesDispatch?: SwapQuotesDispatch;
-  }
+  // `var` is required: TypeScript builds `typeof globalThis` from global `var`
+  // declarations, so an `interface GlobalThis` would augment nothing.
+  var __ledgerSwapQuotesDispatch: SwapQuotesDispatch | undefined;
 }
 
 /**

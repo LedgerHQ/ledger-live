@@ -1,6 +1,7 @@
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
+import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { fetchQuotes } from "../service/fetchQuotes";
@@ -141,6 +142,69 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     expect(url.searchParams.get("providers-whitelist")).toBe("lifi,okx");
     expect(url.searchParams.get("fiatForCounterValue")).toBe("usd");
     expect(seen!.headers.get("accept")).toBe("application/json");
+  });
+
+  it("sends X-Ledger-Client-Version when the env is set", async () => {
+    let seen: Request | undefined;
+    server.use(
+      http.get("https://swap.test/quote", ({ request }) => {
+        seen = request;
+        return HttpResponse.json([]);
+      }),
+    );
+    const previous = getEnv("LEDGER_CLIENT_VERSION");
+    setEnv("LEDGER_CLIENT_VERSION", "test-3.2.1");
+
+    try {
+      await initiate();
+    } finally {
+      setEnv("LEDGER_CLIENT_VERSION", previous);
+    }
+
+    expect(seen!.headers.get("X-Ledger-Client-Version")).toBe("test-3.2.1");
+  });
+
+  it("omits X-Ledger-Client-Version when the env is unset", async () => {
+    let seen: Request | undefined;
+    server.use(
+      http.get("https://swap.test/quote", ({ request }) => {
+        seen = request;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await initiate();
+
+    expect(seen!.headers.has("X-Ledger-Client-Version")).toBe(false);
+  });
+
+  it("keeps customHeaders out of the cache key", async () => {
+    server.use(http.get("https://swap.test/quote", () => HttpResponse.json([])));
+
+    const base = {
+      providers: ["lifi"],
+      quotesInput: makeQuotesInput(),
+      counterValueCurrency: "usd",
+    };
+    await store.dispatch(
+      swapQuotesApi.endpoints.fetchQuotes.initiate(
+        { ...base, customHeaders: { "x-token": "secret-one" } },
+        { forceRefetch: true },
+      ),
+    );
+    await store.dispatch(
+      swapQuotesApi.endpoints.fetchQuotes.initiate(
+        { ...base, customHeaders: { "x-token": "secret-two" } },
+        { forceRefetch: true },
+      ),
+    );
+
+    // Two different tokens collapse to a single cache entry, and neither
+    // appears in its key.
+    const keys = Object.keys(store.getState().swapQuotesApi.queries);
+    expect(keys).toHaveLength(1);
+    expect(keys[0]).not.toContain("x-token");
+    expect(keys[0]).not.toContain("secret");
   });
 
   it("lets caller-supplied headers override the defaults", async () => {
@@ -301,9 +365,12 @@ describe("fetchQuotes against a live store", () => {
     });
   });
 
-  it("rejects when the request never reaches the aggregator", async () => {
+  it("rejects with a named Error when the request never reaches the aggregator", async () => {
     server.use(http.get("https://swap.test/quote", () => HttpResponse.error()));
 
-    await expect(fetchQuotes(args(), "usd")).rejects.toMatchObject({ status: "FETCH_ERROR" });
+    await expect(fetchQuotes(args(), "usd")).rejects.toMatchObject({
+      name: "SwapQuotesRequestFailed",
+      cause: { status: "FETCH_ERROR" },
+    });
   });
 });

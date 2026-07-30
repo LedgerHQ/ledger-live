@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query";
 import { createAuthenticatedBaseQuery } from "@shared/auth";
+import { getEnv } from "@shared/env";
 
 import { getSwapAPIBaseURL } from "../../../../exchange/swap";
 
@@ -8,8 +9,7 @@ import type { FetchQuotesResult, RawQuote, RawQuoteError } from "../service/type
 
 /**
  * Serializable arguments for the {@link swapQuotesApi} `fetchQuotes`
- * endpoint. Mirrors the inputs the legacy `fetchQuotes` axios helper
- * consumed, flattened into a single object so RTK Query can use it as a
+ * endpoint, flattened into a single object so RTK Query can use it as a
  * cache key.
  */
 export type FetchQuotesQueryArgs = {
@@ -17,7 +17,12 @@ export type FetchQuotesQueryArgs = {
   quotesInput: ResolvedQuotesInput;
   /** Fiat ticker (e.g. `"USD"`) the aggregator should use for quote countervalues. */
   counterValueCurrency: string;
-  /** Optional caller-supplied headers, already flattened to a plain object. */
+  /**
+   * Optional caller-supplied headers, already flattened to a plain object.
+   * `serializeQueryArgs` keeps them out of the cache key so a live-app token
+   * cannot widen it. This is a cache-key guarantee only: RTK Query still
+   * records the unstripped args as `originalArgs` on the cache entry.
+   */
   customHeaders?: Record<string, string>;
 };
 
@@ -79,6 +84,13 @@ export function transformFetchQuotesResponse(response: unknown): FetchQuotesResu
   return splitQuotes(Array.isArray(response) ? (response as Array<RawQuote | RawQuoteError>) : []);
 }
 
+// `fetch` inherits none of the axios default headers the legacy helper got from
+// `@ledgerhq/live-network`, so set this one from the same env value.
+function clientVersionHeader(): Record<string, string> {
+  const version = getEnv("LEDGER_CLIENT_VERSION");
+  return version ? { "X-Ledger-Client-Version": version } : {};
+}
+
 /**
  * RTK Query API for the swap quotes aggregator. Exposed as a single
  * `fetchQuotes` query that replaces the legacy axios `fetchQuotes` helper.
@@ -107,9 +119,16 @@ export const swapQuotesApi = createApi({
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
         headers: {
           Accept: "application/json",
+          ...clientVersionHeader(),
           ...(customHeaders ?? {}),
         },
       }),
+      // Concurrent requests differing only by `customHeaders` therefore share
+      // one in-flight call, since RTK Query de-duplicates on the cache key.
+      serializeQueryArgs: ({ queryArgs }) => {
+        const { customHeaders: _omitted, ...cacheable } = queryArgs;
+        return cacheable;
+      },
       transformResponse: transformFetchQuotesResponse,
       // Quotes are time-sensitive: never retain them between requests.
       keepUnusedDataFor: 0,
