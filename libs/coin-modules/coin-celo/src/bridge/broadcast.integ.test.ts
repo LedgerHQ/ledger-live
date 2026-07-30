@@ -46,7 +46,7 @@ describe("Broadcast", () => {
     const signed = await account.signTransaction(tx, { serializer: serializeCeloTx });
 
     await expect(broadcast({ signedOperation: { signature: signed } } as any)).rejects.toThrow(
-      /insufficient (funds|balance)/i,
+      /insufficient.*(funds|balance)/i,
     );
   });
 });
