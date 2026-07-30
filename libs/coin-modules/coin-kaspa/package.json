@@ -95,7 +95,6 @@
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -110,7 +109,8 @@
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
     "prando": "^6.0.1",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

@@ -1,4 +1,4 @@
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import BigNumber from "bignumber.js";
 import hederaCoinConfig from "../config";
 import { HederaAddAccountError } from "../errors";

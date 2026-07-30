@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { DatasetTest } from "@ledgerhq/types-live";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
 import { fromTransactionRaw } from "../bridge/transaction";
 import { Transaction } from "../types";
 

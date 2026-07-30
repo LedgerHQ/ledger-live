@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 
 import { bitcoinPickingStrategy } from "../../types";
 import wallet, { TransactionInfo } from "@ledgerhq/wallet-btc/index";

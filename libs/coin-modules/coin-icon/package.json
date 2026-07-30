@@ -46,7 +46,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -56,7 +55,8 @@
     "bignumber.js": "^9.1.2",
     "icon-sdk-js": "1.5.2",
     "prando": "^6.0.1",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

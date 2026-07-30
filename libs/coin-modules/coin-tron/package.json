@@ -87,6 +87,11 @@
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
+    "./types/*": {
+      "@ledgerhq/source": "./src/types/*.ts",
+      "require": "./lib/types/*.js",
+      "default": "./lib-es/types/*.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -98,7 +103,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
@@ -109,7 +113,8 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
-    "tronweb": "6.2.0"
+    "tronweb": "6.2.0",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

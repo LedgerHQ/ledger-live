@@ -1,4 +1,4 @@
-import { InvalidTransactionError } from "@ledgerhq/errors";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   BlockhashWithExpiryBlockHeight,
   TransactionError,

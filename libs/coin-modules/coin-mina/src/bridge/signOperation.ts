@@ -1,4 +1,4 @@
-import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type {

@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "@ledgerhq/types-live";
-import { DustLimit } from "@ledgerhq/errors";
+import { DustLimit } from "../errors";
 
 import type { BitcoinAccountRaw, NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";

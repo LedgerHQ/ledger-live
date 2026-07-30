@@ -1,7 +1,7 @@
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { IterateResultBuilder } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { runDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "@ledgerhq/ledger-wallet-framework/errors";
 
 /**
  * The signer's "can't authorize this path" signal. The signer owns the

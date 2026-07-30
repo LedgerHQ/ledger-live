@@ -99,7 +99,6 @@
     "@dfinity/principal": "2.4.1",
     "@dfinity/utils": "2.14.0",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -108,7 +107,8 @@
     "cbor": "10.0.11",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

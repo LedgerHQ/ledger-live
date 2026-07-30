@@ -65,7 +65,6 @@
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -77,7 +76,8 @@
     "eip55": "^2.1.1",
     "ethers": "catalog:",
     "invariant": "^2.2.2",
-    "react-native-get-random-values": "^1.8.0"
+    "react-native-get-random-values": "^1.8.0",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

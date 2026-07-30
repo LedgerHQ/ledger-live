@@ -16,7 +16,8 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
+    "jest-util"
+  ],
   "ignoreUnimported": [
     "src/network/node/apiPromise.ts",
     "src/network/node/constants.ts",
@@ -31,6 +32,7 @@
   "ignoreUnused": [
     "@polkadot/api",
     "@polkadot/api-augment",
-    "@polkadot/api-derive"
+    "@polkadot/api-derive",
+    "@ledgerhq/errors"
   ]
 }

@@ -8,7 +8,8 @@
     "proxy-from-env"
   ],
   "ignoreUnused": [
-    "@ledgerhq/devices"
+    "@ledgerhq/devices",
+    "@ledgerhq/errors"
   ],
   "ignoreUnimported": [
     "src/bridge/deviceTransactionConfig.ts",

@@ -1,4 +1,4 @@
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { lastValueFrom, toArray } from "rxjs";
 import type { CeloSigner } from "../../signer/signer";

@@ -3,7 +3,6 @@ import {
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import coinConfig, { TronConfig } from "../config";
 import {
@@ -123,7 +122,7 @@ describe("createApi", () => {
       const api = createApi(mockTronConfig);
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 });

@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { getEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";

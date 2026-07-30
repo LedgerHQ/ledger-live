@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/ledger-wallet-framework/types";

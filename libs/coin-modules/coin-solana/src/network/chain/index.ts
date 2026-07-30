@@ -1,4 +1,4 @@
-import { NetworkError } from "@ledgerhq/errors";
+import { NetworkError } from "../../errors";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   TOKEN_2022_PROGRAM_ID,
@@ -123,7 +123,7 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
 const remapErrors = (e: unknown) => {
-  if ((e as { name?: string })?.name === "NetworkError") {
+  if (e instanceof NetworkError) {
     throw e;
   }
 

@@ -22,7 +22,7 @@ const mockCurrency = createMockCantonCurrency();
 /**
  * Party lookup can lag behind a successful onboarding submit on the gateway (CI / replication).
  * Duck-type 4xx errors: do not use `instanceof LedgerAPI4xx` — Jest can load a duplicate
- * `@ledgerhq/errors` module from live-network, which breaks instanceof and disables retries.
+ * `@ledgerhq/live-network/errors` module, which breaks instanceof and disables retries.
  */
 function readErr(error: object): { name?: string; status?: number; message: string } {
   const rec = error as Record<string, unknown>;

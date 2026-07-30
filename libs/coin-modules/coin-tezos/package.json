@@ -53,13 +53,14 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
     "@taquito/rpc": "^23.0.0-RC.0",
     "@taquito/taquito": "^23.0.0-RC.0",
-    "@taquito/utils": "^23.0.0-RC.0"
+    "@taquito/utils": "^23.0.0-RC.0",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

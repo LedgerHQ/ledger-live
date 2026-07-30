@@ -23,7 +23,9 @@
     "jest-message-util",
     "@ledgerhq/types-cryptoassets"
   ],
-  "ignoreUnused": [],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
+  ],
   "ignoreUnimported": [
     "src/hw-signMessage.ts",
     "src/supportedFeatures.ts"

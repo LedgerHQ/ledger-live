@@ -5,6 +5,7 @@ import BigNumber from "bignumber.js";
 import {
   FetchRequest,
   JsonRpcProvider,
+  Network,
   Transaction,
   TransactionReceipt,
   TransactionResponse,
@@ -18,6 +19,7 @@ import {
   createNodeApi,
   DEFAULT_RETRIES_RPC_METHODS,
   withApi,
+  destroyAllRpcProviders,
   parseERC20TransfersFromLogs,
 } from "./rpc.common";
 
@@ -53,8 +55,15 @@ jest.mock("@ledgerhq/live-promise");
 );
 
 describe("EVM Family", () => {
+  afterEach(() => {
+    destroyAllRpcProviders();
+  });
+
   beforeEach(() => {
     jest.resetAllMocks();
+    jest
+      .spyOn(JsonRpcProvider.prototype as any, "_detectNetwork")
+      .mockResolvedValue(Network.from(1));
 
     mockGetConfig.mockImplementation((): any => {
       return {

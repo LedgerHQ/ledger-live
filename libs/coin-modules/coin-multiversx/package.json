@@ -51,7 +51,6 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -66,7 +65,8 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "protobufjs": "^7.2.6",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

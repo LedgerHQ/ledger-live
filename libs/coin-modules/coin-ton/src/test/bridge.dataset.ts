@@ -1,4 +1,4 @@
-import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TonCommentInvalid } from "../errors";
