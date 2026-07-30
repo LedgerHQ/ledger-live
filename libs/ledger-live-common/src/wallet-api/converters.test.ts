@@ -1,11 +1,12 @@
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 import type { Transaction } from "../coin-modules/transaction-types";
+import { getCryptoCurrencyById } from "../currencies";
 import { getAccountBridge } from "../bridge";
 import {
   accountToWalletAPIAccount,
@@ -14,40 +15,13 @@ import {
 } from "./converters";
 import type { WalletAPITransaction } from "./types";
 
-// Minimal hermetic fixtures — only the fields accountToWalletAPIAccount reads, so the
-// test needs no genAccount/currencies-resolver bootstrap.
-const currency = {
-  id: "ethereum",
-  name: "Ethereum",
-} as unknown as CryptoCurrency;
+const makeMainAccount = (id: string, readiness?: Account["readiness"]): Account => ({
+  ...(genAccount(id, { currency: getCryptoCurrencyById("ethereum") }) as Account),
+  readiness,
+});
 
-const makeMainAccount = (id: string, readiness?: Account["readiness"]): Account =>
-  ({
-    type: "Account",
-    id,
-    index: 0,
-    currency,
-    freshAddress: "0x0000000000000000000000000000000000000001",
-    balance: new BigNumber(1),
-    spendableBalance: new BigNumber(1),
-    blockHeight: 1,
-    lastSyncDate: new Date(0),
-    readiness,
-  }) as Account;
-
-const makeTokenAccount = (id: string, parentId: string): TokenAccount =>
-  ({
-    type: "TokenAccount",
-    id,
-    parentId,
-    token: {
-      id: "ethereum/erc20/mtk",
-      name: "Mock Token",
-      ticker: "MTK",
-    } as unknown as TokenCurrency,
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
-  }) as TokenAccount;
+const makeTokenAccount = (parentAccount: Account): TokenAccount =>
+  genTokenAccount(0, parentAccount, mockTokenCurrency()) as TokenAccount;
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
@@ -220,7 +194,7 @@ describe("accountToWalletAPIAccount", () => {
       ready: false,
       reason: "unrevealed",
     });
-    const tokenAccount = makeTokenAccount(`${parentAccount.id}|0`, parentAccount.id);
+    const tokenAccount = makeTokenAccount(parentAccount);
 
     const walletApiAccount = accountToWalletAPIAccount(walletState, tokenAccount, parentAccount);
 
