@@ -3,7 +3,7 @@
  * engine client is mocked: what matters is which outpoints are checked against
  * the explorer, and when the submission is refused.
  */
-import { InvalidTransactionError } from "@ledgerhq/errors";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { broadcast, assertTransparentInputsUnspent, type TransparentInputs } from "./broadcast";
 import { getZCashClient } from "../engineClient";
 

@@ -1,6 +1,6 @@
-// The 4 Zcash error classes (Option D -- self-contained, no @ledgerhq/errors
-// custom-class factory dependency so this package has no coin-bitcoin tie-in).
-// Plain `class extends Error`, per docs/new-library.md's `src/errors.ts` guidance.
+// Zcash-specific error classes. Plain `class extends Error`, per
+// docs/new-library.md's `src/errors.ts` guidance. Errors that already exist for
+// every coin come from @ledgerhq/ledger-wallet-framework/errors instead.
 
 export class ZcashSaplingRecipientNotSupported extends Error {
   constructor(message = "Sapling recipients are not supported") {

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { BitcoinOutput, ZcashAccount, Transaction } from "../types/bridge";
 import { ZcashSaplingRecipientNotSupported } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";

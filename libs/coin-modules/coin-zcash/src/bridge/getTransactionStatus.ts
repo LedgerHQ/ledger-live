@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
 import { ZIP317_MINIMUM_FEE } from "../logic/coin-selection";
