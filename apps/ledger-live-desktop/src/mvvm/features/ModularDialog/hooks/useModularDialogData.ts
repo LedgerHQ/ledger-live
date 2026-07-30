@@ -32,6 +32,7 @@ export function useModularDialogData() {
   const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds: networkIds === undefined ? currencyIds : undefined,
+    networkIds,
     product: "lld",
     version: __APP_VERSION__,
     useCase,

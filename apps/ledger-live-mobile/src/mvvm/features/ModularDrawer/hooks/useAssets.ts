@@ -35,6 +35,7 @@ export function useAssets({
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds: networkIds === undefined ? currencyIds : undefined,
+    networkIds,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,

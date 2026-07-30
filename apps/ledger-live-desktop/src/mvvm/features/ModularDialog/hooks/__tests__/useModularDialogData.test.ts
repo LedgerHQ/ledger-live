@@ -91,7 +91,7 @@ describe("useModularDialogData filters", () => {
     mockedUseAssetsData.mockImplementation(actualUseAssetsData);
   });
 
-  it("should not forward network ids as exact DADA currency ids", () => {
+  it("should forward network ids without treating them as exact currency ids", () => {
     renderHook(() => useModularDialogData(), {
       initialState: {
         modularDialog: {
@@ -112,6 +112,7 @@ describe("useModularDialogData filters", () => {
     expect(mockedUseAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({
         currencyIds: undefined,
+        networkIds: ["ethereum"],
         areCurrenciesFiltered: false,
       }),
     );

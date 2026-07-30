@@ -7,6 +7,7 @@ import { mergeAssetsDataPages } from "../utils/mergeAssetsDataPages";
 export function useAssetsData({
   search,
   currencyIds,
+  networkIds,
   useCase,
   areCurrenciesFiltered,
   product,
@@ -37,6 +38,7 @@ export function useAssetsData({
       search,
       useCase,
       currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
+      networkIds: networkIds?.length ? networkIds : undefined,
       product,
       version,
       isStaging,

@@ -1,7 +1,24 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { useAssets } from "../useAssets";
+import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => {
+  const actual = jest.requireActual<
+    typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
+  >("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
+
+  return {
+    ...actual,
+    useAssetsData: jest.fn(actual.useAssetsData),
+  };
+});
+
+const mockedUseAssetsData = jest.mocked(useAssetsData);
+const actualUseAssetsData = jest.requireActual<
+  typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
+>("@ledgerhq/live-common/dada-client/hooks/useAssetsData").useAssetsData;
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
   ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
@@ -11,6 +28,10 @@ jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
 describe("useAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    mockedUseAssetsData.mockImplementation(actualUseAssetsData);
   });
 
   it("transforms data into assetsSorted and sortedCryptoCurrencies", async () => {
@@ -54,5 +75,30 @@ describe("useAssets", () => {
         ),
       ),
     ).toBe(true);
+  });
+
+  it("forwards network ids to DADA", () => {
+    mockedUseAssetsData.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetchingNextPage: false,
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+      errorInfo: {
+        hasError: false,
+        isNetworkError: false,
+        isApiError: false,
+        apiStatus: undefined,
+      },
+      loadNext: undefined,
+      refetch: jest.fn(),
+    });
+
+    renderHook(() => useAssets({ networkIds: ["ethereum", "tron"] }));
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({ networkIds: ["ethereum", "tron"] }),
+    );
   });
 });
