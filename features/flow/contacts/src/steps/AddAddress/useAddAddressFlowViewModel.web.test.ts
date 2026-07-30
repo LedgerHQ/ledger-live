@@ -162,14 +162,15 @@ describe("useAddAddressFlowViewModel", () => {
     const addressValidation = createValidationPort();
     const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
 
-    act(() => result.current.start(contactId));
-    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_CURRENCY_ID));
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
     await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
     act(() => result.current.goBack());
 
     expect(result.current.state).toEqual({
       status: "selectingCurrency",
       selectedContactId: contactId,
+      existingAddressLabels: [],
     });
   });
 
