@@ -1,7 +1,7 @@
 import { EditType } from "@ledgerhq/coin-evm/types/editTransaction";
 import { Transaction as EvmTransaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { isOldestPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
