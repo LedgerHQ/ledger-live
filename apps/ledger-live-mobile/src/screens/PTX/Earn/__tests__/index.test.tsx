@@ -7,6 +7,7 @@ import {
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
+import { ScreenName } from "~/const";
 import { EarnScreen } from "../index";
 import type { EarnV2Webview } from "../EarnV2Webview";
 
@@ -62,8 +63,8 @@ const STUB_MANIFEST: LiveAppManifest = {
 const makeProps = (intent: "deposit" | "simulate") =>
   ({
     navigation: {} as never,
-    route: { params: { intent } },
-  }) as React.ComponentProps<typeof EarnScreen>;
+    route: { key: "earn", name: ScreenName.Earn, params: { intent } },
+  }) as unknown as React.ComponentProps<typeof EarnScreen>;
 
 const renderEarnScreen = (
   intent: "deposit" | "simulate",
