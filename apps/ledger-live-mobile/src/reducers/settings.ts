@@ -35,6 +35,7 @@ import type {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
+  SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
@@ -87,9 +88,9 @@ import type {
 } from "../actions/types";
 import { SettingsActionTypes } from "../actions/types";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 
 const DEFAULT_COUNTERVALUE_TICKER = "USD";
 
@@ -469,6 +470,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     languageIsSetByUser: true,
   }),
 
+  [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
+    ...state,
+    locale: (action as Action<SettingsSetLocalePayload>).payload,
+  }),
+
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
     const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
     return {
@@ -799,14 +805,11 @@ export const trackingEnabledSelector = (state: State) => {
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
   const analyticsOptInEnabled = analyticsOptIn?.enabled ?? false;
   if (analyticsOptInEnabled) {
-    const { consentDate } = settings.analyticsConsentInfo;
-
-    if (consentDate == null) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(consentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      settings.analyticsConsentInfo,
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }

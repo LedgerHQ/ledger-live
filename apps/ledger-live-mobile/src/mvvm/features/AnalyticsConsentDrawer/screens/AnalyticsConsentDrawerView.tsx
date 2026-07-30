@@ -1,12 +1,11 @@
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsent/index";
+import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";
 import { DescriptionWithPreferencesLink } from "../components/DescriptionWithPreferencesLink";
 import { PrivacyUpdateSheet } from "../components/PrivacyUpdateSheet";
 import { TwoCtaConsentSheet } from "../components/TwoCtaConsentSheet";
@@ -34,11 +33,8 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
   } = props;
   const { t } = useTranslation();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.en);
-  const { bottom: bottomInset } = useSafeAreaInsets();
 
   if (!isDrawerOpen) return null;
-
-  const paddingBottom = bottomInset + 24;
 
   let sheetBody: React.ReactNode = null;
   if (phase === "consentReconfirm") {
@@ -88,7 +84,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
   );
 
   return (
-    <QueuedBottomSheet
+    <QueuedDrawerBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
       onClose={handleCloseDrawer}
       enableDynamicSizing
@@ -97,7 +93,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
       noCloseButton
       testID={ANALYTICS_CONSENT_DRAWER_TEST_IDS.drawer}
     >
-      <BottomSheetView style={{ paddingHorizontal: 0, paddingBottom }}>
+      <BottomSheetView style={{ paddingHorizontal: 0 }}>
         <>
           <TrackScreen
             key={phase}
@@ -111,6 +107,6 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
           {sheetChrome}
         </>
       </BottomSheetView>
-    </QueuedBottomSheet>
+    </QueuedDrawerBottomSheet>
   );
 }
