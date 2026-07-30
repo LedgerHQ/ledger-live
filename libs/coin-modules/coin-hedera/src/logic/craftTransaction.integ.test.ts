@@ -2,12 +2,17 @@ import * as sdk from "@hashgraph/sdk";
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { rpcClient } from "../network/rpc";
 import { getMockedConfig } from "../test/fixtures/config.fixture";
 import type { HederaMemo, HederaTxData } from "../types";
 import { craftTransaction } from "./craftTransaction";
 
 describe("craftTransaction", () => {
   const defaultConfig = getMockedConfig();
+
+  afterAll(async () => {
+    await rpcClient._resetInstance();
+  });
 
   it("should accept account id or long zero EVM address when crafting ERC20 token transfer transaction", async () => {
     // recipient account has no EVM alias, long-zero EVM address is used
