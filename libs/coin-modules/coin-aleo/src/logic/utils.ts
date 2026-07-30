@@ -815,6 +815,7 @@ function resolveDecryptedAmountRecordsFromCommitments({
 function buildTransactionIntentBase(
   account: AleoAccount,
   transaction: Transaction,
+  tokenAccount: AleoTokenAccount | undefined,
 ): Pick<
   AleoTransactionIntent,
   "intentType" | "amount" | "asset" | "recipient" | "sender" | "type" | "useAllAmount"
@@ -822,22 +823,19 @@ function buildTransactionIntentBase(
   return {
     intentType: "transaction",
     amount: BigInt(transaction.amount.toString()),
-    asset: { type: "native" },
+    asset: tokenAccount
+      ? {
+          type: tokenAccount.token.tokenType,
+          assetReference: tokenAccount.token.contractAddress,
+          name: tokenAccount.token.name,
+          unit: tokenAccount.token.units[0],
+        }
+      : { type: "native" },
     recipient: transaction.recipient,
     sender: account.freshAddress,
     type: transaction.mode,
     ...(transaction.useAllAmount && { useAllAmount: true }),
   };
-}
-
-function getRequiredTokenProgramId(
-  account: AleoAccount,
-  subAccountId: string | null | undefined,
-): string {
-  const tokenAccount = getAleoSubAccount(account, subAccountId);
-  invariant(tokenAccount, `aleo: token account is missing (${subAccountId})`);
-
-  return tokenAccount.token.contractAddress;
 }
 
 export function createTransactionIntent({
@@ -847,7 +845,10 @@ export function createTransactionIntent({
   account: AleoAccount;
   transaction: Transaction;
 }): AleoTransactionIntent {
-  const base = buildTransactionIntentBase(account, transaction);
+  const tokenAccount = isTokenTransaction(transaction)
+    ? getAleoSubAccount(account, transaction.subAccountId)
+    : undefined;
+  const base = buildTransactionIntentBase(account, transaction, tokenAccount);
 
   switch (transaction.mode) {
     case TRANSACTION_TYPE.TRANSFER_PUBLIC:
@@ -871,17 +872,18 @@ export function createTransactionIntent({
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC:
     case TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE:
+      invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
+
       return {
         ...base,
         data: {
           type: transaction.mode,
-          programId: getRequiredTokenProgramId(account, transaction.subAccountId),
+          programId: tokenAccount.token.contractAddress,
         },
       };
 
     case TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE:
     case TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC: {
-      const tokenAccount = getAleoSubAccount(account, transaction.subAccountId);
       invariant(tokenAccount, `aleo: token account is missing (${transaction.subAccountId})`);
 
       return {
