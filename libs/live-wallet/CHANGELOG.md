@@ -1,5 +1,18 @@
 # @ledgerhq/live-wallet
 
+## 0.30.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @domain/entity-currency-token@0.3.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.2-next.0
+  - @shared/env@0.1.1-next.0
+
 ## 0.30.0
 
 ### Minor Changes

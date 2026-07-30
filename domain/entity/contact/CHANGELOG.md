@@ -1,5 +1,11 @@
 # @domain/entity-contact
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#20065](https://github.com/LedgerHQ/ledger-live/pull/20065) [`91da072`](https://github.com/LedgerHQ/ledger-live/commit/91da072ea17f564824d6c04d13934ec88d86d348) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared contact address detail view model with selected address payload, QR payload string, and not-found state.
+
 ## 0.3.0
 
 ### Minor Changes

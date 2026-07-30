@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.32.0-next.0
+
+### Minor Changes
+
+- [#19828](https://github.com/LedgerHQ/ledger-live/pull/19828) [`f08cad1`](https://github.com/LedgerHQ/ledger-live/commit/f08cad15e523a210054d9a10f0bbb69bf42a963a) Thanks [@henri-ly](https://github.com/henri-ly)! - new send flow e2e mobile native send
+
 ## 0.31.0
 
 ### Minor Changes

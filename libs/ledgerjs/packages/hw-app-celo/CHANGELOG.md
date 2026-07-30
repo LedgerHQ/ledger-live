@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-polkadot
 
+## 7.1.9-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @ledgerhq/hw-app-eth@7.8.12-next.0
+
 ## 7.1.8
 
 ### Patch Changes

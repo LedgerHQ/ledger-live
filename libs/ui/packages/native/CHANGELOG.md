@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.65.0-next.0
+
+### Minor Changes
+
+- [#20122](https://github.com/LedgerHQ/ledger-live/pull/20122) [`8677d5c`](https://github.com/LedgerHQ/ledger-live/commit/8677d5c5a789c257cb02c0f757d883b9a9be328b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Migrate the mobile Modular Drawer to Lumen components (BottomSheet, ListItem, SearchInput, Banner, CardButton, Trend, Tag, Box/Text) and drop the legacy `native-ui` primitives and the `pre-ldls` composites it used. Removes the now-unused `pre-ldls` staging components (AssetItem, NetworkItem, AccountItem, Address, Tag, Input, Search, AssetTypeList, NetworkList, MarketPriceIndicator, MarketPercentIndicator) and the orphaned `useDebouncedCallback` hook from `@ledgerhq/native-ui` (CryptoIcon and AddAccountButton are kept). Adds the empty-account state (header description + "Add account" CardButton) on the account step.
+
 ## 0.64.0
 
 ### Minor Changes

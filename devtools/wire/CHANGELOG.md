@@ -1,5 +1,13 @@
 # @devtools/wire
 
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`112b63f`](https://github.com/LedgerHQ/ledger-live/commit/112b63f8d33a8e26b316ce4542ef23460ae54937)]:
+  - @devtools/transport@0.3.0-next.0
+  - @devtools/protocols@0.2.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.20.0-next.0
+
+### Minor Changes
+
+- [#19993](https://github.com/LedgerHQ/ledger-live/pull/19993) [`67e84f1`](https://github.com/LedgerHQ/ledger-live/commit/67e84f1a74f3353734c18e47f2d2641552370605) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-testers): add MSW guards and homogenize error message
+
+### Patch Changes
+
+- Updated dependencies [[`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/coin-polkadot@6.32.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+
 ## 1.19.0
 
 ### Minor Changes

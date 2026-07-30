@@ -1,5 +1,22 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#19976](https://github.com/LedgerHQ/ledger-live/pull/19976) [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert internal error classes from createCustomErrorClass to native extends Error.
+
+- [#20114](https://github.com/LedgerHQ/ledger-live/pull/20114) [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa) Thanks [@semeano](https://github.com/semeano)! - Add Ironwood support to Zcash
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/live-currency-format@0.14.1-next.0
+
 ## 2.5.0
 
 ### Minor Changes

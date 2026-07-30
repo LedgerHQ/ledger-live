@@ -1,5 +1,17 @@
 # @domain/entity-currency
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#20075](https://github.com/LedgerHQ/ledger-live/pull/20075) [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the specialized re-exports from `@domain/entity-currency`; it now exposes only the cross-package unions (`Currency`/`CurrencySchema`, `CryptoOrTokenCurrency`/`CryptoOrTokenCurrencySchema`). Import specialized types (`CryptoCurrency`, `TokenCurrency`, `FiatCurrency`, `Unit`) directly from their own `@domain/entity-currency-*` package.
+
+### Patch Changes
+
+- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @domain/entity-currency-token@0.3.0-next.0
+
 ## 0.2.2
 
 ### Patch Changes

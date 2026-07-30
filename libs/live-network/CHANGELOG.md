@@ -1,5 +1,11 @@
 # @ledgerhq/live-network
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#19977](https://github.com/LedgerHQ/ledger-live/pull/19977) [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Define `LedgerAPI4xx`, `LedgerAPI5xx`, and `NetworkDown` as native error classes in `@ledgerhq/live-network` instead of importing them from `@ledgerhq/errors`. All three are now exported from the package's public index for downstream migrations.
+
 ## 2.7.0
 
 ### Minor Changes

@@ -1,5 +1,125 @@
 # @ledgerhq/live-common
 
+## 37.0.0-next.0
+
+### Major Changes
+
+- [#19670](https://github.com/LedgerHQ/ledger-live/pull/19670) [`008228e`](https://github.com/LedgerHQ/ledger-live/commit/008228ee22ba86b8aabe50c50d9c2e5e63771add) Thanks [@jcchevalier-ledger](https://github.com/jcchevalier-ledger)! - Replace transaction alert address updates with account reconciliation
+
+### Minor Changes
+
+- [#20129](https://github.com/LedgerHQ/ledger-live/pull/20129) [`ba20e39`](https://github.com/LedgerHQ/ledger-live/commit/ba20e3926e52284c04c9bc4e4b17b7c5e34b3cb5) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate `checkLibs` and its two callers off `@ledgerhq/errors` as part of the errors sunset (LIVE-32915).
+
+  `checkLibs` detects duplicated npm packages by comparing class identity, so `sanityChecks.ts` and both app entrypoints must import `NotEnoughBalance` from the same module. All three now use `@ledgerhq/ledger-wallet-framework/errors`. The duplicate-package warning also names `@ledgerhq/ledger-wallet-framework` so the `pnpm why` hint points at the package actually being checked.
+
+- [#20099](https://github.com/LedgerHQ/ledger-live/pull/20099) [`37dac39`](https://github.com/LedgerHQ/ledger-live/commit/37dac39463de1a44bdb5bc4b1b6b37b0cff68922) Thanks [@deepyjr](https://github.com/deepyjr)! - Add contact address asset and network selection through the Modular Dialog, with shared asset
+  filtering across Desktop and Mobile.
+
+- [#20139](https://github.com/LedgerHQ/ledger-live/pull/20139) [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(evm): keep legacy custom fees on non-EIP-1559 chains like Ethereum Classic
+
+- [#20009](https://github.com/LedgerHQ/ledger-live/pull/20009) [`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Revert Cardano firmware app v8.0.4 support (hw-app-cardano bump to 8.0.0)
+
+- [#19805](https://github.com/LedgerHQ/ledger-live/pull/19805) [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e) Thanks [@ishaba](https://github.com/ishaba)! - feat(send): add default-fee strategy to the new send flow
+
+- [#20180](https://github.com/LedgerHQ/ledger-live/pull/20180) [`dd7758b`](https://github.com/LedgerHQ/ledger-live/commit/dd7758bfa16c6b73b60da072a50c22f3b132c1a2) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Show 8 characters on each side of the ellipsis when truncating the recipient address in the new send flow, consistently across mobile and desktop
+
+- [#19996](https://github.com/LedgerHQ/ledger-live/pull/19996) [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): changes bottomsheet to sheet info and minor fixes on lwm
+
+- [#20127](https://github.com/LedgerHQ/ledger-live/pull/20127) [`e7b8ddc`](https://github.com/LedgerHQ/ledger-live/commit/e7b8ddc239b88c1fbf0751c468218d9263f56859) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: aleo tokens swap incompatibility warning
+
+- [#19690](https://github.com/LedgerHQ/ledger-live/pull/19690) [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c) Thanks [@CremaFR](https://github.com/CremaFR)! - feat(swap): enrich the device's generic payload deserialization error with the exact Exchange app protobuf field that exceeds its limit
+
+  When the Exchange device app rejects a swap `NewTransactionResponse` with the generic `DESERIALIZATION_FAILED` (0x6a81) status, we now decode the payload locally and, if a field is larger than the device's protobuf `max_size` (mirrored from app-exchange `protocol.options`), surface a precise `SwapPayloadFieldExceedsLimit` carrying the field name, limit and actual size (e.g. an oversized `payin_extra_id`).
+
+  The device remains the source of truth: this check only runs **after** the device has already rejected the payload, never gates the flow, and silently falls back to the device's error if our hardcoded limits ever drift from the app. The user-facing flow and step (`PROCESS_TRANSACTION`) are unchanged; the added precision is only meant to speed up investigations.
+
+- [#19215](https://github.com/LedgerHQ/ledger-live/pull/19215) [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd) Thanks [@CremaFR](https://github.com/CremaFR)! - Add a Device Intent Executor based signing path for Wallet API `transaction.sign` and `message.sign` on Ledger Wallet Mobile, gated behind the new `llmWalletApiDeviceIntentSign` feature flag (per-manifest allow-list, off by default). Introduces the `signMessageIntent` module in live-common.
+
+- [#20190](https://github.com/LedgerHQ/ledger-live/pull/20190) [`a8d6e25`](https://github.com/LedgerHQ/ledger-live/commit/a8d6e25c0467572fbbc0cd3b35f90d355542b1f7) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(lwdm): new send flow wait for valid address to display memo
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004), [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`f5e4e87`](https://github.com/LedgerHQ/ledger-live/commit/f5e4e87a114ca8336f310a4b5e39bff650fc0750), [`6ac54ab`](https://github.com/LedgerHQ/ledger-live/commit/6ac54abe700847501356adc11231f8437d4a5817), [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0), [`8ab9e50`](https://github.com/LedgerHQ/ledger-live/commit/8ab9e504a5b004e28f5e80f490b837b3c2526f44), [`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c), [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`4ce5257`](https://github.com/LedgerHQ/ledger-live/commit/4ce52570577d471d4af0609058ac6b9b03ad1949), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`44798f3`](https://github.com/LedgerHQ/ledger-live/commit/44798f392deb662a5f60123651ece2b320fbf946), [`d7600fb`](https://github.com/LedgerHQ/ledger-live/commit/d7600fb21e73581fbfb20019a78109b9a5c9abff), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`d08f2bc`](https://github.com/LedgerHQ/ledger-live/commit/d08f2bccae5f94a339206ec703c8d16139f6cbc9), [`9fe07f0`](https://github.com/LedgerHQ/ledger-live/commit/9fe07f0f618e6cde963c922f271ad5d7b29dbce7), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa), [`51e7153`](https://github.com/LedgerHQ/ledger-live/commit/51e715314f2f89fbe76db1b69d878b4b250872e1), [`fb0f177`](https://github.com/LedgerHQ/ledger-live/commit/fb0f17772d553ebe985fd59240b24d9fdbf0e0db), [`6e72b5a`](https://github.com/LedgerHQ/ledger-live/commit/6e72b5a2532eae19e6cc54405acab4c28f4f2f20), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd), [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb), [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb), [`f8b5b51`](https://github.com/LedgerHQ/ledger-live/commit/f8b5b51856c57c68ca50d13b00d124d261c26504)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/coin-aleo@1.20.0-next.0
+  - @ledgerhq/coin-algorand@1.11.0-next.0
+  - @ledgerhq/coin-aptos@3.25.0-next.0
+  - @ledgerhq/coin-bitcoin@0.49.0-next.0
+  - @ledgerhq/coin-canton@0.31.0-next.0
+  - @ledgerhq/coin-cardano@0.32.0-next.0
+  - @ledgerhq/coin-casper@2.17.0-next.0
+  - @ledgerhq/coin-celo@2.11.0-next.0
+  - @ledgerhq/coin-concordium@0.18.0-next.0
+  - @ledgerhq/coin-cosmos@0.41.0-next.0
+  - @ledgerhq/coin-evm@4.8.0-next.0
+  - @ledgerhq/coin-filecoin@1.30.0-next.0
+  - @ledgerhq/coin-hedera@1.40.0-next.0
+  - @ledgerhq/coin-icon@0.27.0-next.0
+  - @ledgerhq/coin-internet_computer@1.27.0-next.0
+  - @ledgerhq/coin-kaspa@1.21.0-next.0
+  - @ledgerhq/coin-mina@1.19.0-next.0
+  - @ledgerhq/coin-multiversx@0.22.0-next.0
+  - @ledgerhq/coin-near@0.29.0-next.0
+  - @ledgerhq/coin-polkadot@6.32.0-next.0
+  - @ledgerhq/coin-solana@0.60.0-next.0
+  - @ledgerhq/coin-stacks@0.26.0-next.0
+  - @ledgerhq/coin-sui@0.42.0-next.0
+  - @ledgerhq/coin-tezos@7.11.0-next.0
+  - @ledgerhq/coin-ton@0.34.0-next.0
+  - @ledgerhq/coin-tron@6.8.0-next.0
+  - @ledgerhq/coin-vechain@2.27.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/ledger-cal-service@1.19.0-next.0
+  - @domain/entity-currency-crypto@0.8.0-next.0
+  - @domain/entity-currency-token@0.3.0-next.0
+  - @domain/entity-currency@0.3.0-next.0
+  - @ledgerhq/wallet-btc@0.3.0-next.0
+  - @ledgerhq/live-countervalues@0.24.0-next.0
+  - @shared/feature-flags@0.16.0-next.0
+  - @ledgerhq/live-signer-evm@0.22.0-next.0
+  - @ledgerhq/hw-app-exchange@0.24.0-next.0
+  - @ledgerhq/live-signer-celo@1.2.0-next.0
+  - @ledgerhq/device-core@0.11.9-next.0
+  - @ledgerhq/domain-service@1.8.12-next.0
+  - @ledgerhq/hw-app-algorand@6.35.7-next.0
+  - @ledgerhq/hw-app-aptos@6.38.7-next.0
+  - @ledgerhq/hw-app-hedera@1.6.7-next.0
+  - @ledgerhq/hw-app-icon@1.7.7-next.0
+  - @ledgerhq/hw-app-kaspa@1.7.7-next.0
+  - @ledgerhq/hw-app-polkadot@6.38.7-next.0
+  - @ledgerhq/hw-app-vet@0.13.3-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+  - @ledgerhq/live-signer-aleo@0.19.4-next.0
+  - @ledgerhq/live-signer-canton@0.9.13-next.0
+  - @ledgerhq/live-signer-concordium@0.6.3-next.0
+  - @ledgerhq/live-signer-cosmos@0.4.3-next.0
+  - @ledgerhq/live-signer-hyperliquid@1.3.2-next.0
+  - @ledgerhq/live-signer-solana@0.18.2-next.0
+  - @ledgerhq/live-countervalues-react@0.16.4-next.0
+  - @ledgerhq/live-wallet@0.30.1-next.0
+  - @ledgerhq/ledger-trust-service@0.8.11-next.0
+  - @domain/api-currency-token@0.2.3-next.0
+  - @ledgerhq/asset-aggregation@0.12.1-next.0
+  - @ledgerhq/live-currency-format@0.14.1-next.0
+  - @features/platform-feature-flags@0.6.3-next.0
+  - @ledgerhq/evm-tools@1.13.2-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/hw-app-eth@7.8.12-next.0
+  - @ledgerhq/hw-app-btc@11.3.1-next.0
+  - @ledgerhq/hw-app-multiversx@6.30.7-next.0
+  - @ledgerhq/hw-app-near@6.35.7-next.0
+  - @ledgerhq/hw-app-str@7.7.7-next.0
+  - @ledgerhq/hw-app-tezos@6.36.7-next.0
+  - @ledgerhq/hw-app-trx@6.36.6-next.0
+  - @ledgerhq/hw-app-xrp@6.37.7-next.0
+  - @ledgerhq/hw-bolos@6.36.7-next.0
+  - @ledgerhq/hw-transport-mocker@6.34.7-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+  - @ledgerhq/speculos-transport@0.10.9-next.0
+  - @features/platform-env@0.1.1-next.0
+  - @ledgerhq/hw-app-sui@1.11.4
+
 ## 36.6.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@shared/env",
-  "version": "0.1.0",
+  "version": "0.1.1-next.0",
   "private": true,
   "description": "Shared live-env definitions organized by team",
   "main": "src/index.ts",
@@ -9,7 +9,9 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "sideEffects": ["./src/index.ts"],
+  "sideEffects": [
+    "./src/index.ts"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "jest",

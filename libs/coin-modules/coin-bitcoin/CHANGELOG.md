@@ -1,5 +1,45 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.49.0-next.0
+
+### Minor Changes
+
+- [#19980](https://github.com/LedgerHQ/ledger-live/pull/19980) [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert error classes from createCustomErrorClass factory to native extends Error (LIVE-32915 tier 1a)
+
+- [#20070](https://github.com/LedgerHQ/ledger-live/pull/20070) [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the now-dead `@ledgerhq/cryptoassets` currency/fiat store injection from the app bootstraps. Nothing reads the legacy currency/fiat accessors anymore (the runtime source of truth is the domain-backed wallet-framework currency resolver), so `setCryptoCurrenciesStore` / `setFiatCurrenciesStore` injected a store no consumer queried. Drop the calls, drop the `@ledgerhq/cryptoassets` dependency from the apps, and remove the remaining stale references to the package in comments.
+
+- [#20114](https://github.com/LedgerHQ/ledger-live/pull/20114) [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa) Thanks [@semeano](https://github.com/semeano)! - Add Ironwood support to Zcash
+
+- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report what a Zcash transaction actually did, rather than what an explorer can infer from its transparent bundle. An explorer that sees only the transparent side is wrong about two things whenever value crosses a shielded boundary:
+
+  - **The fee**, derived as `Σ transparent inputs − Σ transparent outputs`, swallows any value that entered a shielded pool: a transparent-to-shielded send of 0.1 ZEC paying 0.00055 in fees was reported as having paid 0.10055.
+  - **The destination**, since the payee lives in an encrypted output, fell back to the transparent change address — which pays the sender back rather than the payee.
+
+  Both are now recovered from the raw transaction in a single fetch, through a `transactionDetails` method on the ZCash client (native and IPC) backed by `@ledgerhq/zcash-utils`: the fee from the value balance of every pool, the payee by trial-decrypting our own outputs with the account's viewing key.
+
+  A new `resolveTransactionDetails` chain-adapter hook applies fees to transactions before operations are derived, so a transaction's sender and recipient agree on its cost, and supersedes the change address with the recovered payee while keeping any genuine transparent recipient. When an optimistic operation is reconciled with its confirmed counterpart, the address the user actually entered is preferred over the recovered one, which is the same destination but not necessarily the same string. A transaction that cannot be resolved keeps the fee and recipients the explorer reported.
+
+- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix how a Zcash account holding shielded funds accounts for its own history. The account is described by two syncs that see different things — the transparent one reads an explorer, the shielded one scans compact blocks with the viewing key — and where they meet, five things were wrong:
+
+  - **A shielded-to-transparent send looked like an internal transfer of 0 ZEC.** Classification only looked at the shielded pools, where such a send nets out; the value that left had gone to a transparent output nobody was reading. It is now classified on what left the pools _and_ what reached the transparent bundle, using the transparent totals the native scanner reports.
+  - **An outgoing shielded operation reported an amount excluding the fee**, unlike every other outgoing operation and unlike the optimistic operation shown before confirmation — so the displayed amount changed once the transaction confirmed. The fee is now counted in the amount.
+  - **Spendable balance dropped to the transparent balance** each time a transparent sync landed, then recovered on the next shielded sync. The chain now states its balance once and it serves as both balance and spendable balance.
+  - **The shielded scan cursor could move backwards**, notably to zero when the scanner was already at the tip, triggering a full rescan on the next sync. The cursor now only ever advances.
+  - **The optimistic operation was never reconciled**, since a confirmed shielded operation carries a different identifier than the pending one it replaces, leaving the send listed twice. Pending operations are now matched by transaction hash.
+
+- [#20188](https://github.com/LedgerHQ/ledger-live/pull/20188) [`f8b5b51`](https://github.com/LedgerHQ/ledger-live/commit/f8b5b51856c57c68ca50d13b00d124d261c26504) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash fee pricing calculations and max estimation.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa), [`0afef49`](https://github.com/LedgerHQ/ledger-live/commit/0afef49b60283afb44172de65891e435c2f0d637)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/wallet-btc@0.3.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/live-signer-zcash@0.7.0-next.0
+
 ## 0.48.0
 
 ### Minor Changes

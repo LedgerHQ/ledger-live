@@ -1,5 +1,21 @@
 # @ledgerhq/coin-tester-bitcoin
 
+## 1.12.0-next.0
+
+### Minor Changes
+
+- [#19993](https://github.com/LedgerHQ/ledger-live/pull/19993) [`67e84f1`](https://github.com/LedgerHQ/ledger-live/commit/67e84f1a74f3353734c18e47f2d2641552370605) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-testers): add MSW guards and homogenize error message
+
+### Patch Changes
+
+- Updated dependencies [[`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa), [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb), [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb), [`f8b5b51`](https://github.com/LedgerHQ/ledger-live/commit/f8b5b51856c57c68ca50d13b00d124d261c26504)]:
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/coin-bitcoin@0.49.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+  - @ledgerhq/coin-tester@0.20.0
+  - @ledgerhq/hw-app-btc@11.3.1-next.0
+
 ## 1.11.1
 
 ### Patch Changes

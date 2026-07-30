@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport-http
 
+## 6.36.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.35.7-next.0
+
 ## 6.36.6
 
 ### Patch Changes
