@@ -1,7 +1,6 @@
 {
   "name": "@ledgerhq/coin-zcash",
   "version": "0.1.0",
-  "private": true,
   "description": "Ledger Zcash Coin integration (standalone coin-module)",
   "keywords": [
     "Ledger",
@@ -108,6 +107,9 @@
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",

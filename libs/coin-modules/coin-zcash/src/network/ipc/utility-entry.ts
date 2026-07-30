@@ -101,7 +101,7 @@ async function handleStartSync(port: ParentPort, args: StartSyncArgs): Promise<v
         viewingKey: args.viewingKey,
         startBlockHeight: args.startBlockHeight,
         maxBatchSize: args.maxBatchSize,
-        ...(args.knownNullifiers?.length && { knownNullifiers: args.knownNullifiers }),
+        ...(args.knownNullifiers?.length ? { knownNullifiers: args.knownNullifiers } : {}),
       },
       chunk => {
         send(port, {
