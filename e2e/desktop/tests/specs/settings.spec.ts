@@ -259,12 +259,18 @@ test.describe("Language change", () => {
 
         await app.mainNavigation.openSettings();
         await app.settings.changeLanguage(l10n.lang);
+        if (l10n.lang === "日本語") {
+          await app.settings.expectLanguageSelected("Hard Expect before");
+        }
         await app.settings.expectLanguageSelected(l10n.lang);
-        await app.settings.expectGeneralTabLabel(l10n.generalTabLabel);
-        await app.settings.expectCounterValueRowCharacterSet(l10n.characterSet);
-        await app.settings.expectLanguageRowTranslation(l10n.languageLabel);
+        await app.settings.expectGeneralTabLabel("Failing Tab");
+        await app.settings.expectCounterValueRowCharacterSet(/^Failing Counter$/);
+        await app.settings.expectLanguageRowTranslation("Failing Language Row");
         await app.settings.expectCounterValueRowTranslation(l10n.counterValueLabel);
         await app.settings.expectThemeRowTranslation(l10n.themeLabel);
+        if (l10n.lang === "Français") {
+          await app.settings.expectLanguageSelected("Hard Expect after");
+        }
       },
     );
   }
