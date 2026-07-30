@@ -578,22 +578,6 @@ const zcashChainAdapter: ChainAdapter = {
     // flows aren't broken while the flag is enabled.
     if (!isZcashTransaction(transaction)) return undefined;
 
-    // Ironwood signing is not yet available — finalizeIronwoodTransaction has not
-    // shipped in @ledgerhq/zcash-utils. Reject immediately with a clear message so
-    // the UI surfaces a user-visible error rather than hanging during proving.
-    if (
-      transaction.transferType === "ironwood" ||
-      transaction.transferType === "ironwood-to-transparent"
-    ) {
-      return new Observable(sub =>
-        sub.error(
-          new Error(
-            `Zcash ${transaction.transferType} signing is not yet supported — requires finalizeIronwoodTransaction`,
-          ),
-        ),
-      );
-    }
-
     const zcashAccount = account as ZcashAccount;
     const tx = transaction;
 
@@ -636,8 +620,10 @@ const zcashChainAdapter: ChainAdapter = {
         // React Native stub omits them entirely. Fail with a clear message
         // rather than a cryptic "client.buildTransaction is not a function"
         // TypeError if a client without shielded-signing support is resolved.
+        const isIronwoodFlow = IRONWOOD_TRANSFER_TYPES.has(tx.transferType);
         if (
-          !client.buildTransaction ||
+          (!isIronwoodFlow && !client.buildTransaction) ||
+          (isIronwoodFlow && !client.buildIronwoodTransaction) ||
           !client.finalizeTransaction ||
           !client.broadcastTransaction
         ) {
@@ -657,7 +643,9 @@ const zcashChainAdapter: ChainAdapter = {
         if (bailIfCancelled()) return;
 
         // ── Step 4: build PCZT (Halo 2 proving + parsePczt in UtilityProcess) ─
-        const buildResult = await client.buildTransaction!({
+        // Common args for both builders; the only difference is which pool
+        // the `spends` are read from (Ironwood commitment tree vs Orchard).
+        const buildArgs = {
           grpcUrl,
           ufvk,
           network,
@@ -679,7 +667,10 @@ const zcashChainAdapter: ChainAdapter = {
           spends: mapSpends(tx.selectedNotes!),
           transparentInputs,
           outputs: mapOutputs(tx),
-        });
+        };
+        const buildResult = isIronwoodFlow
+          ? await client.buildIronwoodTransaction!(buildArgs)
+          : await client.buildTransaction!(buildArgs);
 
         if (bailIfCancelled()) return;
 
