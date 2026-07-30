@@ -4,8 +4,19 @@ import { track } from "~/analytics";
 import type { LNBannerLocation, LNBannerModel } from "../../types";
 import { useLNUpsellBannerState } from "../../hooks/useLNUpsellBannerState";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const lnUpsellImageUri = Image.resolveAssetSource(require("~/images/lns-upsell-banner.webp")).uri;
+/* eslint-disable @typescript-eslint/no-require-imports */
+// Accounts reuses the Notification Center illustration (same audience, no dedicated asset).
+const lnsUpsellNotificationCenterImageUri = Image.resolveAssetSource(
+  require("~/images/lns-upsell-banner-notification-center.webp"),
+).uri;
+
+const lnUpsellImageByLocation: Record<LNBannerLocation, string> = {
+  wallet: Image.resolveAssetSource(require("~/images/lns-upsell-banner-wallet.webp")).uri,
+  manager: Image.resolveAssetSource(require("~/images/lns-upsell-banner-manager.webp")).uri,
+  notification_center: lnsUpsellNotificationCenterImageUri,
+  accounts: lnsUpsellNotificationCenterImageUri,
+};
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerModel {
   const { isShown, ctaLink, discount, deviceModelId, tracking } = useLNUpsellBannerState(location);
@@ -32,7 +43,7 @@ export function useLNUpsellBannerModel(location: LNBannerLocation): LNBannerMode
     discount,
     tracking,
     handleCTAPress,
-    imageUrl: lnUpsellImageUri,
+    imageUrl: lnUpsellImageByLocation[location],
   };
 }
 

@@ -9558,13 +9558,13 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "Get an exclusive 20% off on the latest Ledger signers.",
+      "title": "See more. Sign safer",
+      "description": "Upgrade to any touchscreen signer and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
+      "title": "More security. More control",
+      "description": "Learn more about advanced security features.",
       "cta": "Learn more"
     }
   },
