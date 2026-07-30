@@ -33,6 +33,7 @@ export type ModularDialogFlowManagerProps = {
 export type ModularDialogFlowRenderProps = Readonly<{
   content: ReactNode;
   currentStep: ModularDialogStep;
+  title: string;
   description?: string;
   hasBackButton: boolean;
   isOpen: boolean;

@@ -23,14 +23,23 @@ export type OpenCurrencyFlow = (
   }>,
 ) => Promise<CryptoOrTokenCurrency | null>;
 
-export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrencyFlow }> {
+export function useOpenCurrencyFlow(): Readonly<{
+  openCurrencyFlow: OpenCurrencyFlow;
+  cancelCurrencyFlow: () => void;
+}> {
   const dispatch = useDispatch();
   const store = useStore();
   const pendingSelectionRef = useRef<PendingCurrencySelection | undefined>(undefined);
 
+  const cancelCurrencyFlow = useCallback(() => {
+    if (pendingSelectionRef.current?.settle(null)) {
+      dispatch(closeDialog());
+    }
+  }, [dispatch]);
+
   const openCurrencyFlow = useCallback<OpenCurrencyFlow>(
     (networkIds, options) => {
-      pendingSelectionRef.current?.settle(null);
+      cancelCurrencyFlow();
 
       return new Promise(resolve => {
         let isSettled = false;
@@ -68,7 +77,7 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
         );
       });
     },
-    [dispatch],
+    [cancelCurrencyFlow, dispatch],
   );
 
   useEffect(
@@ -87,5 +96,5 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
     [dispatch, store],
   );
 
-  return { openCurrencyFlow };
+  return { openCurrencyFlow, cancelCurrencyFlow };
 }

@@ -13,6 +13,7 @@ import {
   useContactsFeatureIntroductionState,
   useContactsMeContact,
   type AddAddressFlowState,
+  type ContactsAddAddressEntryLabels,
   type ContactAddressDetailDialogProps,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
@@ -21,11 +22,14 @@ import {
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsFeatureIntroductionPreference } from "../../hooks/useContactsFeatureIntroductionPreference";
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
+import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
     addAddressFlowState: AddAddressFlowState;
+    addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
     onClearSearch: () => void;
   }>;
@@ -37,6 +41,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const meContact = useContactsMeContact();
   const contacts = useContacts();
   const currencySelection = useContactsCurrencySelectionAdapter();
+  const { cancelCurrencySelection } = currencySelection;
+  const addressValidation = useContactsAddressValidationAdapter();
   const { selectCurrency } = useAddAddressCurrencySelectionViewModel({
     platform: "desktop",
     currencySelection,
@@ -45,11 +51,12 @@ export function useContactsViewModel(): ContactsPageViewModel {
     state: addAddressFlowState,
     start: startAddAddress,
     completeCurrencySelection,
+    goBack: goBackAddAddress,
+    updateAddress,
     close: closeAddAddress,
-  } = useAddAddressFlowViewModel();
-  const onAddAddress = useCallback(
+  } = useAddAddressFlowViewModel({ addressValidation });
+  const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
-      startAddAddress(contactId);
       void selectCurrency()
         .then(result => {
           if (result.status === "selected") {
@@ -60,7 +67,59 @@ export function useContactsViewModel(): ContactsPageViewModel {
         })
         .catch(closeAddAddress);
     },
-    [closeAddAddress, completeCurrencySelection, selectCurrency, startAddAddress],
+    [closeAddAddress, completeCurrencySelection, selectCurrency],
+  );
+  const onAddAddress = useCallback(
+    (contactId: ContactId) => {
+      startAddAddress(contactId);
+      selectCurrencyForContact(contactId);
+    },
+    [selectCurrencyForContact, startAddAddress],
+  );
+  const onCloseAddAddress = useCallback(() => {
+    cancelCurrencySelection();
+    closeAddAddress();
+  }, [cancelCurrencySelection, closeAddAddress]);
+  const onBackAddAddress = useCallback(() => {
+    if (addAddressFlowState.status !== "enteringAddress") {
+      return;
+    }
+
+    const { selectedContactId } = addAddressFlowState;
+    goBackAddAddress();
+    selectCurrencyForContact(selectedContactId);
+  }, [addAddressFlowState, goBackAddAddress, selectCurrencyForContact]);
+  const addAddressEntryLabels = useMemo<ContactsAddAddressEntryLabels>(
+    () => ({
+      title: t("contacts.addAddressEntry.title"),
+      addressPlaceholder: t("contacts.addAddressEntry.addressPlaceholder"),
+      confirmAddress: t("contacts.addAddressEntry.confirmAddress"),
+      validatingAddress: t("contacts.addAddressEntry.validatingAddress"),
+      validAddress: t("contacts.addAddressEntry.validAddress"),
+      invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
+      domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+      validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
+      ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+    }),
+    [t],
+  );
+  const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
+    () => ({
+      state: addAddressFlowState,
+      labels: addAddressEntryLabels,
+      onAddressChange: (address, inputMethod) => {
+        void updateAddress(address, inputMethod);
+      },
+      onBack: onBackAddAddress,
+      onClose: onCloseAddAddress,
+    }),
+    [
+      addAddressEntryLabels,
+      addAddressFlowState,
+      onBackAddAddress,
+      onCloseAddAddress,
+      updateAddress,
+    ],
   );
   const { detail, addressDetailDialog, onOpenMe, onOpenContact } =
     useContactDetailPaneAdapter(onAddAddress);
@@ -126,6 +185,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
 
   return {
     addAddressFlowState,
+    addAddressFlowDialog,
     addressDetailDialog,
     viewModel,
     labels,

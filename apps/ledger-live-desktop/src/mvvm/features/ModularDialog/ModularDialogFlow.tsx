@@ -21,6 +21,12 @@ import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
 import { MODULAR_DIALOG_STEP, type ModularDialogFlowProps, type ModularDialogStep } from "./types";
 
+const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
+  [MODULAR_DIALOG_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
+  [MODULAR_DIALOG_STEP.NETWORK_SELECTION]: "modularAssetDrawer.selectNetwork",
+  [MODULAR_DIALOG_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
+};
+
 export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -136,6 +142,7 @@ export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps)
       {children({
         content,
         currentStep,
+        title: t(TRANSLATION_KEYS[currentStep]),
         description,
         hasBackButton: Boolean(handleBack),
         isOpen,

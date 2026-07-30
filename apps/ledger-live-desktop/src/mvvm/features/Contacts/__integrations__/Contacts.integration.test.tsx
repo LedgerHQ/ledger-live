@@ -449,7 +449,43 @@ describe("Contacts integration", () => {
     expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual(
       resolveEligibleAddressCurrencyIds(["evm"]),
     );
+    expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");
     expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();
+  });
+
+  it("should keep one Contacts dialog mounted from currency selection to address entry", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeVisible();
+
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
+    });
+    expect(screen.getByRole("dialog")).toBe(dialog);
+    const confirmationButton = screen.getByTestId("contacts-add-address-confirm");
+    expect(confirmationButton).toBeDisabled();
+    expect(confirmationButton.querySelector("svg")).not.toBeNull();
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
   });
 
   it("should expose the Add Address session started for Me", async () => {

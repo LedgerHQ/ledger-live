@@ -3,6 +3,7 @@ export * from "./steps/List/web";
 export * from "./steps/AddContact";
 export * from "./steps/AddContact/web";
 export * from "./steps/AddAddress";
+export * from "./steps/AddAddress/web";
 export * from "./steps/Introduction";
 export * from "./steps/Introduction/web";
 export * from "./steps/Detail";
