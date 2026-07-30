@@ -32,7 +32,6 @@ export function runSwapTest(
   tmsLinks: string[],
   tags: string[],
   fee: Fee = Fee.MEDIUM,
-  hardcodedAmount?: string,
 ) {
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
   const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
@@ -46,13 +45,8 @@ export function runSwapTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
-      let swapAmount: string;
-      if (hardcodedAmount) {
-        swapAmount = hardcodedAmount;
-      } else {
-        const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
-        swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
-      }
+      const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
+      const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       swap.amount = swapAmount;
 
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);

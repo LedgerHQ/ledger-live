@@ -145,9 +145,6 @@ const swaps = [
     toAccount: Account.XRP_1,
     xrayTicket: "B2CQA-3753",
     tag: [...deviceTagsWithoutLNS(), "@hedera", "@ripple", "@family-xrp", "@family-hedera"],
-    // TODO(LIVE-33611): remove hardcoded amount once the swap "min amount for quotes" bug is fixed
-    // https://ledgerhq.atlassian.net/browse/LIVE-33611
-    amount: "500",
   },
   {
     fromAccount: TokenAccount.SUI_USDC_1,
@@ -174,7 +171,7 @@ const swaps = [
   // },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
+for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
   test.describe("Swap - Accepted (without tx broadcast)", () => {
     setupEnv(true);
 
@@ -222,7 +219,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
       async ({ app, speculos }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        const minAmount = amount ?? (await app.swap.getMinimumAmount(fromAccount, toAccount));
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
