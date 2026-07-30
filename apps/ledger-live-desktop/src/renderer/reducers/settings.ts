@@ -170,9 +170,11 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
+const DEFAULT_COUNTERVALUE_TICKER = "USD";
+
 export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
-  counterValue: "USD",
+  counterValue: DEFAULT_COUNTERVALUE_TICKER,
   ...getInitialLanguageAndLocale(),
   theme: "dark",
   region: null,
@@ -667,12 +669,12 @@ export const lastSeenCustomImageSelector = (state: State) => state.settings.last
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
   if (OFAC_CURRENCIES.includes(state.counterValue)) {
-    return getFiatCurrencyByTicker("USD");
+    return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
     findCryptoCurrencyById(state.counterValue) ||
-    getFiatCurrencyByTicker("USD")
+    getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER)
   );
 };
 

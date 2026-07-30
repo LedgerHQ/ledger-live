@@ -91,8 +91,10 @@ import {
   resolveAnalyticsOptInParams,
 } from "@ledgerhq/live-common/analyticsConsent/index";
 
+const DEFAULT_COUNTERVALUE_TICKER = "USD";
+
 export const INITIAL_STATE: SettingsState = {
-  counterValue: "USD",
+  counterValue: DEFAULT_COUNTERVALUE_TICKER,
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
@@ -716,11 +718,12 @@ export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly str
   );
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
-  if (OFAC_FIAT_TICKERS.has(state.counterValue)) return getFiatCurrencyByTicker("USD");
+  if (OFAC_FIAT_TICKERS.has(state.counterValue))
+    return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
     findCryptoCurrencyById(state.counterValue) ||
-    getFiatCurrencyByTicker("USD")
+    getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER)
   );
 };
 
