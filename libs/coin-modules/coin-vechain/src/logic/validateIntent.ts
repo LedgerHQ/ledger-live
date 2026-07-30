@@ -11,7 +11,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { parseAddress } from "../common-logic";
 import { NotEnoughVTHO } from "../errors";
 
