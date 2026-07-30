@@ -27,6 +27,7 @@ export function TransportStateIndicator<M extends MessageMap>({
   const { bg, dot, text } = STATUS_COLOR[transportState.status];
   return (
     <Box
+      testID="transport-state-indicator"
       lx={{
         flexDirection: "row",
         alignItems: "center",

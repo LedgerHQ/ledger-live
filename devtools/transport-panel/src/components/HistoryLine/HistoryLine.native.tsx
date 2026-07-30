@@ -15,7 +15,11 @@ export function HistoryLine<M extends MessageMap>({ envelope, localOrigin }: His
   );
 
   return (
-    <TouchableOpacity onPress={() => setIsExpanded(prev => !prev)} activeOpacity={0.7}>
+    <TouchableOpacity
+      onPress={() => setIsExpanded(prev => !prev)}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+    >
       <Box lx={{ flexDirection: "row", alignItems: "flex-start", gap: "s8", padding: "s4" }}>
         <Text typography="body4" lx={{ color: isSent ? "active" : "muted" }}>
           {isSent ? "↑" : "↓"}
