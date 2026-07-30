@@ -411,7 +411,7 @@ export default class SwapLiveAppPage {
   async checkFromAccountBalanceIsDiscreet(ticker: string) {
     await waitWebElementByTestId(this.fromAccountBalance);
     const text = await getWebElementText(this.fromAccountBalance);
-    jestExpect(text).toMatch(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+    jestExpect(text).toMatch(new RegExp(String.raw`\*\*\*\s+${escapeRegExp(ticker)}`, "i"));
   }
 
   @Step("Check currency to swap from matches account $0")
