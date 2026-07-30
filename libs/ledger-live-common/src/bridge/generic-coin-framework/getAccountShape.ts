@@ -568,6 +568,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
+      // key omitted rather than set to undefined: jsHelpers merges `{ ...a, ...shape }`, so a failed
+      // readiness lookup retains the last persisted value instead of clearing it.
       ...(readiness !== undefined ? { readiness } : {}),
       ...stakingShape,
     };
