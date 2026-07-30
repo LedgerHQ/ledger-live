@@ -20,10 +20,9 @@ function AddressDisclaimerComponent() {
           aria-label={t("newSendFlow.addressDisclaimer.accessibilityLabel")}
         />
       </TooltipTrigger>
-      <TooltipContent>
+      <TooltipContent side="bottom">
         <div className="max-w-256 text-center">
-          <div className="font-semibold">{t("newSendFlow.addressDisclaimer.title")}</div>
-          <div>{t("newSendFlow.addressDisclaimer.description")}</div>
+          {t("newSendFlow.addressDisclaimer.description")}
         </div>
       </TooltipContent>
     </Tooltip>

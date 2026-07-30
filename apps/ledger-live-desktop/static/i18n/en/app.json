@@ -2532,7 +2532,6 @@
     "to": "To:",
     "addressDisclaimer": {
       "accessibilityLabel": "About the recipient address",
-      "title": "Verify address on your Ledger device",
       "description": "Your Ledger device will securely display the full address. Make sure it matches the address from the original source."
     },
     "placeholder": "Enter address or ENS",
