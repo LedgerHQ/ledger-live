@@ -313,12 +313,6 @@ export type Features = CurrencyFeatures & {
   onboardingWidget: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
-  /**
-   * Serves Zcash accounts with the standalone @ledgerhq/coin-zcash coin-module
-   * (ON), where every send -- transparent t→t included -- is built and signed
-   * as a PCZT. OFF (default) keeps @ledgerhq/coin-bitcoin's Zcash chain-adapter
-   * on its legacy transparent path.
-   */
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lifiSolana: DefaultFeature;

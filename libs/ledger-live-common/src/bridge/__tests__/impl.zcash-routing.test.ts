@@ -3,13 +3,22 @@ import { setZcashShieldedEnabled } from "../zcashRouting";
 import { genAccount } from "../../mock/account";
 import { coinModuleLoaders } from "../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
-import { clearBridgeCache, getAccountBridge, getCurrencyBridge, resolveFamily } from "../impl";
+import {
+  clearBridgeCache,
+  getAccountBridge,
+  getAccountBridgeByFamily,
+  getCurrencyBridge,
+} from "../impl";
 
 const ZCASH = getCryptoCurrencyById("zcash");
 const BITCOIN = getCryptoCurrencyById("bitcoin");
 
 const loadersFor = (...families: string[]) =>
   coinModuleLoaders.filter(l => families.includes(l.family));
+
+// Same modules the loaders import, so the bridges compare by identity.
+const coinZcash = () => import("../../families/zcash/setup");
+const coinBitcoin = () => import("../../families/bitcoin/setup");
 
 // The host app resolves the flag itself -- remote config, env override and the
 // developer drawer's override all folded in -- and mirrors that resolution here
@@ -25,60 +34,58 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
 
   afterAll(() => setZcashShieldedEnabled(false));
 
-  it("resolveFamily returns 'zcash' when the flag is on", () => {
+  it("serves the zcash currency bridge from coin-zcash when the flag is on", async () => {
     setZcashShieldedEnabled(true);
-    expect(resolveFamily(ZCASH)).toBe("zcash");
+
+    expect(await getCurrencyBridge(ZCASH)).toBe((await coinZcash()).bridge.currencyBridge);
   });
 
-  it("resolveFamily returns 'bitcoin' when the flag is off", () => {
-    expect(resolveFamily(ZCASH)).toBe("bitcoin");
+  it("leaves zcash on coin-bitcoin's currency bridge when the flag is off", async () => {
+    expect(await getCurrencyBridge(ZCASH)).toBe((await coinBitcoin()).bridge.currencyBridge);
   });
 
-  it("resolveFamily follows a flip within the session", () => {
+  it("shares the bitcoin family entry when the flag is off, as an unrouted currency would", () => {
+    expect(getCurrencyBridge(ZCASH)).toBe(getCurrencyBridge(BITCOIN));
+  });
+
+  it("never moves another currency of the bitcoin family", async () => {
     setZcashShieldedEnabled(true);
-    expect(resolveFamily(ZCASH)).toBe("zcash");
-    setZcashShieldedEnabled(false);
-    expect(resolveFamily(ZCASH)).toBe("bitcoin");
+
+    expect(await getCurrencyBridge(BITCOIN)).toBe((await coinBitcoin()).bridge.currencyBridge);
   });
 
-  it("resolveFamily never touches any other currency's family", () => {
-    setZcashShieldedEnabled(true);
-    expect(resolveFamily(BITCOIN)).toBe("bitcoin");
-  });
-
-  it("getCurrencyBridge resolves the coin-zcash currencyBridge when the flag is ON", async () => {
-    setZcashShieldedEnabled(true);
-    const bridge = await getCurrencyBridge(ZCASH);
-    expect(bridge).toBeDefined();
-    expect(typeof bridge.scanAccounts).toBe("function");
-  });
-
-  it("getCurrencyBridge resolves the coin-bitcoin currencyBridge when the flag is OFF", async () => {
-    const bridge = await getCurrencyBridge(ZCASH);
-    expect(bridge).toBeDefined();
-    expect(typeof bridge.scanAccounts).toBe("function");
-  });
-
-  it("getAccountBridge routes a zcash account to the right family bridge in both flag states, with no cache leak", async () => {
+  it("routes a zcash account to the module the flag names", async () => {
     const account = genAccount("zcash-routing-test", { currency: ZCASH });
 
     setZcashShieldedEnabled(true);
     const onBridge = await getAccountBridge(account);
-    expect(onBridge).toBeDefined();
-
     setZcashShieldedEnabled(false);
     const offBridge = await getAccountBridge(account);
-    expect(offBridge).toBeDefined();
 
-    // Distinct family caches (bitcoin vs zcash) -- flipping the flag back must
-    // resolve the ON bridge again rather than staying stuck on the OFF one.
-    setZcashShieldedEnabled(true);
-    const onBridgeAgain = await getAccountBridge(account);
-    expect(onBridgeAgain).toBe(onBridge);
-    expect(onBridgeAgain).not.toBe(offBridge);
+    // getAccountBridge wraps the module's bridge (sanction checks, extensions),
+    // so the wrapper is new but the methods it spreads come from the module.
+    expect(onBridge.createTransaction).toBe(
+      (await coinZcash()).bridge.accountBridge.createTransaction,
+    );
+    // Flag off, the account is served the bitcoin family bridge itself — the
+    // very entry every other bitcoin-family currency gets, as on develop.
+    expect(offBridge).toBe(await getAccountBridgeByFamily("bitcoin", account.id));
+    expect(offBridge.createTransaction).not.toBe(onBridge.createTransaction);
   });
 
-  it("clearBridgeCache('zcash') evicts the zcash entry despite its composite key", async () => {
+  it("resolves the coin-zcash bridge again when the flag flips back", async () => {
+    const account = genAccount("zcash-flip-test", { currency: ZCASH });
+
+    setZcashShieldedEnabled(true);
+    const onBridge = await getAccountBridge(account);
+    setZcashShieldedEnabled(false);
+    await getAccountBridge(account);
+    setZcashShieldedEnabled(true);
+
+    expect(await getAccountBridge(account)).toBe(onBridge);
+  });
+
+  it("evicts the zcash entry on clearBridgeCache('zcash')", async () => {
     setZcashShieldedEnabled(true);
     const account = genAccount("zcash-cache-eviction-test", { currency: ZCASH });
     const first = getAccountBridge(account);

@@ -27,24 +27,14 @@ import {
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 import { isZcashShieldedEnabled } from "./zcashRouting";
 
-// Resolves the family owning a currency's bridge: `currency.family`, except
-// zcash, which `zcashShielded` routes to the standalone "zcash" family
-// (@ledgerhq/coin-zcash) rather than coin-bitcoin's chain-adapter. The flag is
+// The family owning a currency's bridge is `currency.family`, except zcash:
+// `zcashShielded` routes it to the standalone "zcash" family
+// (@ledgerhq/coin-zcash) instead of coin-bitcoin's chain-adapter. The flag is
 // read from the mirror the host app feeds (`setZcashShieldedEnabled`), so a
-// developer-drawer override routes too; nothing persists `currency.family`, so
-// it may flip freely between sessions.
-export function resolveFamily(currency: CryptoCurrency): string {
-  if (currency.id === "zcash" && isZcashShieldedEnabled()) {
-    return "zcash";
-  }
-  return currency.family;
-}
-
-// Cache key for the bridge caches below: the resolved family, plus the
-// currencyId for zcash, the one family whose resolution can flip mid-session.
-function bridgeCacheKey(currency: CryptoCurrency): string {
-  const family = resolveFamily(currency);
-  return currency.id === "zcash" ? `${family}:${currency.id}` : family;
+// developer-drawer override moves the routing with it; the two families keep
+// separate cache entries, so a flip mid-session resolves the other bridge.
+function resolveFamily(currency: CryptoCurrency): string {
+  return currency.id === "zcash" && isZcashShieldedEnabled() ? "zcash" : currency.family;
 }
 
 // Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
@@ -76,18 +66,9 @@ export function clearBridgeCache(family?: string): void {
       delete unsupportedBridgePromiseCache[k];
     return;
   }
-  // Keys are the resolved family, except zcash's composite `<family>:zcash`
-  // (see bridgeCacheKey), so match that prefix too or the entry survives.
-  const composite = `${family}:`;
-  const purge = (cache: Record<string, unknown>) => {
-    delete cache[family];
-    for (const k of Object.keys(cache)) {
-      if (k.startsWith(composite)) delete cache[k];
-    }
-  };
-  purge(currencyBridgePromiseCache);
-  purge(accountBridgePromiseCache);
-  purge(mockBridgePromiseCache);
+  delete currencyBridgePromiseCache[family];
+  delete accountBridgePromiseCache[family];
+  delete mockBridgePromiseCache[family];
   const prefix = `${family}|`;
   for (const k of Object.keys(unsupportedBridgePromiseCache)) {
     if (k.startsWith(prefix)) delete unsupportedBridgePromiseCache[k];
@@ -123,11 +104,11 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
 }
 
 export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBridge> => {
-  const key = bridgeCacheKey(currency);
-  if (!currencyBridgePromiseCache[key]) {
-    currencyBridgePromiseCache[key] = annotatePromise(buildCurrencyBridge(currency));
+  const family = resolveFamily(currency);
+  if (!currencyBridgePromiseCache[family]) {
+    currencyBridgePromiseCache[family] = annotatePromise(buildCurrencyBridge(currency));
   }
-  return currencyBridgePromiseCache[key];
+  return currencyBridgePromiseCache[family];
 };
 
 async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAccountBridge<any>> {
