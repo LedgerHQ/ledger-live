@@ -58,35 +58,35 @@ describe("ZcashTransferFromSelector", () => {
     mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
   });
 
-  it("renders both cards with Public active by default and persists the default to the transaction", () => {
+  it("renders Public and Ironwood cards with Public active by default and persists the default to the transaction", () => {
     const onChange = renderSelector(buildAccount(), {});
 
     expect(screen.getByTestId("zcash-transfer-from-selector")).toBeVisible();
     expect(screen.getByTestId("transfer-from-public")).toBeVisible();
-    expect(screen.getByTestId("transfer-from-private")).toBeVisible();
+    expect(screen.getByTestId("transfer-from-ironwood")).toBeVisible();
+    expect(screen.queryByTestId("transfer-from-private")).not.toBeInTheDocument();
 
-    // Public default is written to the transaction state once on mount.
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
   it("does not rewrite the default when a sender is already set", () => {
-    const onChange = renderSelector(buildAccount(), { sender: "private" } as Partial<Transaction>);
+    const onChange = renderSelector(buildAccount(), { sender: "ironwood" } as Partial<Transaction>);
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("selects Private when the Private card is clicked", () => {
+  it("selects Ironwood when the Ironwood card is clicked", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {});
-    onChange.mockClear(); // ignore the on-mount default write
+    onChange.mockClear();
 
-    fireEvent.click(screen.getByTestId("transfer-from-private"));
+    fireEvent.click(screen.getByTestId("transfer-from-ironwood"));
 
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "private" }));
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "ironwood" }));
   });
 
-  it("selects Public when the Public card is clicked from a Private selection", () => {
+  it("selects Public when the Public card is clicked from an Ironwood selection", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {
-      sender: "private",
+      sender: "ironwood",
     } as Partial<Transaction>);
 
     fireEvent.click(screen.getByTestId("transfer-from-public"));
@@ -94,40 +94,19 @@ describe("ZcashTransferFromSelector", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
-  it("keeps the Private card clickable in every sync state (never disabled)", () => {
-    const onChange = renderSelector(buildAccount({ syncState: "disabled", ufvk: "uview-test" }), {
-      sender: "public",
-    } as Partial<Transaction>);
-    onChange.mockClear();
-
-    fireEvent.click(screen.getByTestId("transfer-from-private"));
-
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "private" }));
-  });
-
-  it("shows the unavailable hint on the Private card when no FVK is available", () => {
+  it("disables the Ironwood card when no FVK is available", () => {
     renderSelector(buildAccount({ ufvk: null }), { sender: "public" } as Partial<Transaction>);
-    expect(screen.getByTestId("transfer-from-private-unavailable")).toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-ironwood")).toBeDisabled();
   });
 
-  it("hides the unavailable hint when an FVK is available", () => {
+  it("enables the Ironwood card when an FVK is available", () => {
     renderSelector(buildAccount({ ufvk: "uview-test" }), {
       sender: "public",
     } as Partial<Transaction>);
-    expect(screen.queryByTestId("transfer-from-private-unavailable")).not.toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-ironwood")).not.toBeDisabled();
   });
 
-  it("renders nothing when the zcashShielded feature flag is off", () => {
-    renderSelector(buildAccount(), {}, jest.fn(), false);
-    expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
-  });
-
-  it("renders nothing for a non-Zcash account", () => {
-    renderSelector(buildAccount({}, false), {});
-    expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
-  });
-
-  it("surfaces ironwoodBalance as not-yet-sendable rather than as spendable private balance", () => {
+  it("shows the correct ironwood balance on the Ironwood card", () => {
     renderSelector(
       buildAccount({
         ironwoodBalance: new BigNumber(50_000_000),
@@ -138,32 +117,10 @@ describe("ZcashTransferFromSelector", () => {
       {},
     );
 
-    // The Ironwood pool has no send/sign path yet, so it is shown as a
-    // "not yet available" hint carrying the amount, not as the spendable amount.
-    const ironwoodHint = screen.getByTestId("transfer-from-private-ironwood-unavailable");
-    expect(ironwoodHint).toHaveTextContent(/0\.5 ZEC/);
-    // The spendable (Orchard) balance is 0, so the card's headline amount is 0.
-    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0 ZEC/);
+    expect(screen.getByTestId("transfer-from-ironwood")).toHaveTextContent(/0\.5 ZEC/);
   });
 
-  it("excludes the sapling balance from the spendable private amount", () => {
-    renderSelector(
-      buildAccount({
-        orchardBalance: new BigNumber(30_000_000),
-        saplingBalance: new BigNumber(50_000_000),
-        ironwoodBalance: new BigNumber(0),
-        ufvk: "uview-test",
-      }),
-      {},
-    );
-
-    // Only Orchard (0.3 ZEC) is spendable; Sapling (0.5 ZEC) is not counted.
-    const privateCard = screen.getByTestId("transfer-from-private");
-    expect(privateCard).toHaveTextContent(/0\.3 ZEC/);
-    expect(privateCard).not.toHaveTextContent(/0\.8 ZEC/);
-  });
-
-  it("does not show the ironwood hint when there is no ironwood balance", () => {
+  it("shows 0 ZEC on the Ironwood card when ironwoodBalance is 0", () => {
     renderSelector(
       buildAccount({
         ironwoodBalance: new BigNumber(0),
@@ -174,9 +131,31 @@ describe("ZcashTransferFromSelector", () => {
       {},
     );
 
-    expect(
-      screen.queryByTestId("transfer-from-private-ironwood-unavailable"),
-    ).not.toBeInTheDocument();
-    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
+    expect(screen.getByTestId("transfer-from-ironwood")).toHaveTextContent(/0 ZEC/);
+  });
+
+  it("excludes shielded holdings from the transparent (Public) balance", () => {
+    renderSelector(
+      buildAccount({
+        orchardBalance: new BigNumber(30_000_000),
+        saplingBalance: new BigNumber(20_000_000),
+        ironwoodBalance: new BigNumber(10_000_000),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    // total = 1 ZEC, shielded = 0.6 ZEC → transparent = 0.4 ZEC
+    expect(screen.getByTestId("transfer-from-public")).toHaveTextContent(/0\.4 ZEC/);
+  });
+
+  it("renders nothing when the zcashShielded feature flag is off", () => {
+    renderSelector(buildAccount(), {}, jest.fn(), false);
+    expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
+  });
+
+  it("renders nothing for a non-Zcash account", () => {
+    renderSelector(buildAccount({}, false), {});
+    expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
   });
 });

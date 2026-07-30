@@ -8915,11 +8915,9 @@
             "title": "Public balance",
             "subtitle": "Transparent"
           },
-          "private": {
-            "title": "Private balance",
-            "subtitle": "Shielded",
-            "unavailable": "Private balance unavailable",
-            "ironwoodUnavailable": "{{amount}} in Ironwood is not yet available to send"
+          "ironwood": {
+            "title": "Ironwood balance",
+            "subtitle": "Ironwood"
           }
         },
         "memo": {

@@ -369,9 +369,13 @@ export function classifyZcashRecipient(address: string): ZcashRecipientClass {
  * | undef   | public/undef  | transparent             |
  */
 export function deriveZcashTransferType(
-  sender: "public" | "private" | undefined,
+  sender: "public" | "private" | "ironwood" | undefined,
   recipientType: "public" | "private" | undefined,
 ): ZcashTransferType {
+  if (sender === "ironwood") {
+    if (recipientType === "public") return "ironwood-to-transparent";
+    return "ironwood";
+  }
   if (sender === "private") {
     if (recipientType === "public") return "shielded-to-transparent";
     return "shielded";
