@@ -23,7 +23,7 @@ describe("resolveAnalyticsOptInParams", () => {
     });
   });
 
-  it("ignores params the mobile decision no longer reads", () => {
+  it("ignores unknown params (e.g. legacy consentValidityDays)", () => {
     expect(
       resolveAnalyticsOptInParams({ params: { policyVersion: 2, consentValidityDays: 730 } }),
     ).toEqual({ currentPolicyVersion: { major: 2, minor: 0, normalized: "2.0" } });

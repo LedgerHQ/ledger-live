@@ -658,8 +658,6 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           params: {
             ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
             policyVersion: "1.1",
-            consentValidityDays:
-              FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
           },
         },
       },
@@ -671,8 +669,6 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           params: {
             ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
             policyVersion: "1.1",
-            consentValidityDays:
-              FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
           },
         },
       },

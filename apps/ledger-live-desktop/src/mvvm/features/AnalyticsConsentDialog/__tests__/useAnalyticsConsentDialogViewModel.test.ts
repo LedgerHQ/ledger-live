@@ -56,8 +56,6 @@ const featureFlagsWithMinorBump = {
       params: {
         ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
         policyVersion: "1.1",
-        consentValidityDays:
-          FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
       },
     },
   },
@@ -69,8 +67,6 @@ const featureFlagsWithMinorBump = {
       params: {
         ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
         policyVersion: "1.1",
-        consentValidityDays:
-          FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
       },
     },
   },
@@ -179,8 +175,6 @@ describe("useAnalyticsConsentDialogViewModel", () => {
             params: {
               ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
               policyVersion: "2.0",
-              consentValidityDays:
-                FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
             },
           },
         },
@@ -192,8 +186,6 @@ describe("useAnalyticsConsentDialogViewModel", () => {
             params: {
               ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
               policyVersion: "2.0",
-              consentValidityDays:
-                FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
             },
           },
         },
