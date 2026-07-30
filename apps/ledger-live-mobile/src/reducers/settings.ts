@@ -35,7 +35,6 @@ import type {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
@@ -468,11 +467,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     language: (action as Action<SettingsSetLanguagePayload>).payload,
     languageIsSetByUser: true,
-  }),
-
-  [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
-    ...state,
-    locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
   [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
