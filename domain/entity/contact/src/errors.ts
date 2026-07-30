@@ -17,18 +17,10 @@ export const INVALID_CONTACT_NAME_ERROR_NAME =
 
 export class InvalidContactAddressLabelError extends ContactError {
   override name = "InvalidContactAddressLabelError";
-
-  constructor() {
-    super("Expected at least one letter or number; punctuation and spaces are also allowed");
-  }
 }
 
 export class DuplicateContactAddressLabelError extends ContactError {
   override name = "DuplicateContactAddressLabelError";
-
-  constructor() {
-    super("Expected a unique address label for the contact");
-  }
 }
 
 export type ContactAddressLabelValidationErrorName =
