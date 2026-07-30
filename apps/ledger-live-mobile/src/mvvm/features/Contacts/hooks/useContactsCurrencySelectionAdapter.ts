@@ -1,11 +1,24 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ContactCurrencyIdSchema, type ContactAddress } from "@domain/entity-contact";
-import type { ContactsCurrencySelectionPort } from "@features/flow-contacts";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ScreenName } from "~/const";
-import { useModularDrawerController } from "LLM/features/ModularDrawer";
+import {
+  type ModularDrawerFlowProps,
+  useModularDrawerController,
+} from "LLM/features/ModularDrawer";
 
-type OpenModularDrawer = ReturnType<typeof useModularDrawerController>["openDrawer"];
+const FLOW = "contacts_add_address";
+
+type UseContactsCurrencySelectionAdapterOptions = Readonly<{
+  isOpen: boolean;
+  networkIds: readonly string[];
+  onCurrencySelected: (currencyId: ContactAddress["currencyId"]) => void;
+  onSelectionCancelled: () => void;
+}>;
+
+export type ContactsCurrencySelectionAdapter = Readonly<{
+  flowProps: Omit<ModularDrawerFlowProps, "children">;
+}>;
 
 function resolveContactCurrencyId(
   currency: CryptoOrTokenCurrency | null,
@@ -14,35 +27,101 @@ function resolveContactCurrencyId(
   return parsedCurrencyId.success ? parsedCurrencyId.data : null;
 }
 
-function selectCurrency(
-  openDrawer: OpenModularDrawer,
-  networkIds: Parameters<ContactsCurrencySelectionPort["selectCurrency"]>[0],
-): Promise<ContactAddress["currencyId"] | null> {
-  return new Promise(resolve => {
-    const onCurrencySelected = (currency: CryptoOrTokenCurrency | null) => {
-      resolve(resolveContactCurrencyId(currency));
-    };
+export function useContactsCurrencySelectionAdapter({
+  isOpen,
+  networkIds,
+  onCurrencySelected,
+  onSelectionCancelled,
+}: UseContactsCurrencySelectionAdapterOptions): ContactsCurrencySelectionAdapter {
+  const selectionStartedRef = useRef(false);
+  const closeDrawerRef = useRef<() => void>(() => undefined);
+  const {
+    areCurrenciesFiltered,
+    assetsConfiguration,
+    closeDrawer,
+    handleAccountSelected,
+    handleCurrencySelected,
+    isOpen: isModularDrawerOpen,
+    networksConfiguration,
+    openDrawer,
+    preselectedCurrencies,
+    uiUseCase,
+    useCase,
+  } = useModularDrawerController();
+  const completeSelection = useCallback(
+    (currency: CryptoOrTokenCurrency | null) => {
+      const currencyId = resolveContactCurrencyId(currency);
+      if (currencyId) {
+        onCurrencySelected(currencyId);
+      } else {
+        onSelectionCancelled();
+      }
+    },
+    [onCurrencySelected, onSelectionCancelled],
+  );
 
+  useEffect(() => {
+    closeDrawerRef.current = closeDrawer;
+  }, [closeDrawer]);
+
+  useEffect(
+    () => () => {
+      if (selectionStartedRef.current) {
+        selectionStartedRef.current = false;
+        closeDrawerRef.current();
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!isOpen) {
+      selectionStartedRef.current = false;
+      return;
+    }
+    if (selectionStartedRef.current) {
+      return;
+    }
+
+    selectionStartedRef.current = true;
     openDrawer({
       currencies: [...networkIds],
       areCurrenciesFiltered: true,
       completionMode: "currency",
       enableAccountSelection: false,
-      flow: "contacts_add_address",
+      flow: FLOW,
+      presentation: "embedded",
       source: ScreenName.MyWalletContactDetail,
-      onCurrencySelected,
+      onCurrencySelected: completeSelection,
     });
-  });
-}
+  }, [completeSelection, isOpen, networkIds, openDrawer]);
 
-function createCurrencySelectionPort(openDrawer: OpenModularDrawer): ContactsCurrencySelectionPort {
-  return {
-    selectCurrency: networkIds => selectCurrency(openDrawer, networkIds),
-  };
-}
+  const flowProps = useMemo<Omit<ModularDrawerFlowProps, "children">>(
+    () => ({
+      areCurrenciesFiltered,
+      assetsConfiguration,
+      currencies: preselectedCurrencies,
+      isOpen: isModularDrawerOpen,
+      networksConfiguration,
+      onAccountSelected: handleAccountSelected,
+      onClose: closeDrawer,
+      onCurrencySelected: handleCurrencySelected,
+      uiUseCase,
+      useCase,
+    }),
+    [
+      areCurrenciesFiltered,
+      assetsConfiguration,
+      closeDrawer,
+      handleAccountSelected,
+      handleCurrencySelected,
+      isModularDrawerOpen,
+      networksConfiguration,
+      preselectedCurrencies,
+      uiUseCase,
+      useCase,
+    ],
+  );
 
-export function useContactsCurrencySelectionAdapter(): ContactsCurrencySelectionPort {
-  const { openDrawer } = useModularDrawerController();
-
-  return useMemo(() => createCurrencySelectionPort(openDrawer), [openDrawer]);
+  return { flowProps };
 }

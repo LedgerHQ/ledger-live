@@ -36,18 +36,29 @@ export type AddAddressEntryState =
       inputMethod: AddAddressInputSource;
     }>;
 
+export type ValidAddAddressEntryState = Extract<AddAddressEntryState, { status: "valid" }>;
+
+type AddAddressSession = Readonly<{
+  selectedContactId: ContactId;
+  selectedCurrencyId: ContactAddress["currencyId"];
+  addressEntry: AddAddressEntryState;
+}>;
+
+type ConfirmedAddAddressSession = Omit<AddAddressSession, "addressEntry"> &
+  Readonly<{
+    addressEntry: ValidAddAddressEntryState;
+  }>;
+
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
       status: "selectingCurrency";
       selectedContactId: ContactId;
     }>
-  | Readonly<{
-      status: "enteringAddress";
-      selectedContactId: ContactId;
-      selectedCurrencyId: ContactAddress["currencyId"];
-      addressEntry: AddAddressEntryState;
-    }>;
+  | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
+  | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
+  | (ConfirmedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
+  | (ConfirmedAddAddressSession & Readonly<{ status: "success" }>);
 
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
@@ -57,5 +68,28 @@ export type AddAddressFlowViewModel = Readonly<{
     currencyId: ContactAddress["currencyId"],
   ) => void;
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
+  confirmAddress: () => void;
+  continueFromName: () => void;
+  continueFromReview: () => void;
+  goBack: () => void;
   close: () => void;
+}>;
+
+export type AddAddressEntryLabels = Readonly<{
+  title: string;
+  addressPlaceholder: string;
+  confirmAddress: string;
+  validatingAddress: string;
+  validAddress: string;
+  invalidAddress: string;
+  domainNotFound: string;
+  validationUnavailable: string;
+  ensDisclaimer: string;
+}>;
+
+export type AddAddressPlaceholderViewProps = Readonly<{
+  title: string;
+  buttonLabel: string;
+  testID: string;
+  onContinue: () => void;
 }>;

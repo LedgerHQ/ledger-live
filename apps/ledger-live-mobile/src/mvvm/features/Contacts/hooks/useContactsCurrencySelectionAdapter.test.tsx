@@ -7,66 +7,194 @@ import { ScreenName } from "~/const";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useContactsCurrencySelectionAdapter } from "./useContactsCurrencySelectionAdapter";
 
-const mockOpenDrawer = jest.fn();
-
 jest.mock("LLM/features/ModularDrawer", () => ({
   useModularDrawerController: jest.fn(),
 }));
 
+const openDrawer = jest.fn();
+const closeDrawer = jest.fn();
+const handleAccountSelected = jest.fn();
+const handleCurrencySelected = jest.fn();
 const mockedUseModularDrawerController = jest.mocked(useModularDrawerController);
+
+function mockModularDrawerController(
+  overrides: Partial<ReturnType<typeof useModularDrawerController>> = {},
+) {
+  mockedUseModularDrawerController.mockReturnValue({
+    areCurrenciesFiltered: true,
+    assetsConfiguration: undefined,
+    closeDrawer,
+    completionMode: "currency",
+    enableAccountSelection: false,
+    handleAccountSelected,
+    handleCurrencySelected,
+    isOpen: true,
+    networksConfiguration: undefined,
+    openDrawer,
+    presentation: "embedded",
+    preselectedCurrencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
+    uiUseCase: undefined,
+    useCase: undefined,
+    ...overrides,
+  });
+}
 
 describe("useContactsCurrencySelectionAdapter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseModularDrawerController.mockReturnValue({
-      openDrawer: mockOpenDrawer,
-    } as unknown as ReturnType<typeof useModularDrawerController>);
+    mockModularDrawerController();
   });
 
-  it("opens MAD in currency mode with the exact eligible network ids", () => {
-    const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
+  it("should open the existing MAD in embedded currency mode", () => {
+    const networkIds = [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id];
 
-    void result.current.selectCurrency([mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id]);
-
-    expect(mockOpenDrawer).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
-        areCurrenciesFiltered: true,
-        completionMode: "currency",
-        enableAccountSelection: false,
-        flow: "contacts_add_address",
-        source: ScreenName.MyWalletContactDetail,
+    renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds,
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
       }),
     );
+
+    expect(openDrawer).toHaveBeenCalledWith({
+      currencies: networkIds,
+      areCurrenciesFiltered: true,
+      completionMode: "currency",
+      enableAccountSelection: false,
+      flow: "contacts_add_address",
+      presentation: "embedded",
+      source: ScreenName.MyWalletContactDetail,
+      onCurrencySelected: expect.any(Function),
+    });
   });
 
-  it("returns only the selected currency id", async () => {
-    const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
-    const selection = result.current.selectCurrency([mockEthCryptoCurrency.id]);
-    const onCurrencySelected = mockOpenDrawer.mock.calls[0][0].onCurrencySelected;
-
-    await act(async () => onCurrencySelected?.(mockEthCryptoCurrency));
-
-    await expect(selection).resolves.toBe(mockEthCryptoCurrency.id);
-  });
-
-  it("returns null on cancellation or an invalid MAD result", async () => {
-    const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
-    const cancelledSelection = result.current.selectCurrency([mockEthCryptoCurrency.id]);
-    const cancel = mockOpenDrawer.mock.calls[0][0].onCurrencySelected;
-
-    await act(async () => cancel?.(null));
-    await expect(cancelledSelection).resolves.toBeNull();
-
-    const invalidSelection = result.current.selectCurrency([mockEthCryptoCurrency.id]);
-    const selectInvalidCurrency = mockOpenDrawer.mock.calls[1][0].onCurrencySelected;
-
-    await act(async () =>
-      selectInvalidCurrency?.({
-        ...mockEthCryptoCurrency,
-        id: "",
-      } as typeof mockEthCryptoCurrency),
+  it("should return a valid selected currency id", () => {
+    const onCurrencySelected = jest.fn();
+    renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected,
+        onSelectionCancelled: jest.fn(),
+      }),
     );
-    await expect(invalidSelection).resolves.toBeNull();
+
+    const onMadCurrencySelected = openDrawer.mock.calls[0]?.[0].onCurrencySelected;
+    act(() => onMadCurrencySelected(mockEthCryptoCurrency));
+
+    expect(onCurrencySelected).toHaveBeenCalledWith(mockEthCryptoCurrency.id);
+  });
+
+  it.each([null, { ...mockEthCryptoCurrency, id: "" }])(
+    "should cancel when MAD does not return a valid currency",
+    currency => {
+      const onSelectionCancelled = jest.fn();
+      renderHook(() =>
+        useContactsCurrencySelectionAdapter({
+          isOpen: true,
+          networkIds: [mockEthCryptoCurrency.id],
+          onCurrencySelected: jest.fn(),
+          onSelectionCancelled,
+        }),
+      );
+
+      const onMadCurrencySelected = openDrawer.mock.calls[0]?.[0].onCurrencySelected;
+      act(() => onMadCurrencySelected(currency));
+
+      expect(onSelectionCancelled).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it("should expose the controller wiring to ModularDrawerFlow", () => {
+    const { result } = renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+
+    expect(result.current.flowProps).toMatchObject({
+      areCurrenciesFiltered: true,
+      currencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
+      isOpen: true,
+      onAccountSelected: handleAccountSelected,
+      onClose: closeDrawer,
+      onCurrencySelected: handleCurrencySelected,
+    });
+  });
+
+  it("should not open MAD outside the currency selection step", () => {
+    renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: false,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+
+    expect(openDrawer).not.toHaveBeenCalled();
+  });
+
+  it("should open MAD only once per currency selection session", () => {
+    let isOpen = true;
+    const { rerender } = renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+
+    rerender(undefined);
+    expect(openDrawer).toHaveBeenCalledTimes(1);
+
+    isOpen = false;
+    rerender(undefined);
+    isOpen = true;
+    rerender(undefined);
+
+    expect(openDrawer).toHaveBeenCalledTimes(2);
+  });
+
+  it("should close MAD when unmounted during currency selection", () => {
+    const { unmount } = renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+
+    unmount();
+
+    expect(closeDrawer).toHaveBeenCalledTimes(1);
+  });
+
+  it("should use the latest close handler without closing MAD during a rerender", () => {
+    const updatedCloseDrawer = jest.fn();
+    const { rerender, unmount } = renderHook(() =>
+      useContactsCurrencySelectionAdapter({
+        isOpen: true,
+        networkIds: [mockEthCryptoCurrency.id],
+        onCurrencySelected: jest.fn(),
+        onSelectionCancelled: jest.fn(),
+      }),
+    );
+
+    mockModularDrawerController({ closeDrawer: updatedCloseDrawer });
+    rerender(undefined);
+
+    expect(closeDrawer).not.toHaveBeenCalled();
+    expect(updatedCloseDrawer).not.toHaveBeenCalled();
+
+    unmount();
+
+    expect(updatedCloseDrawer).toHaveBeenCalledTimes(1);
   });
 });

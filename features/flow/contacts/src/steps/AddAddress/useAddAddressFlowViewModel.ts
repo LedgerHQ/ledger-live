@@ -25,7 +25,12 @@ const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
 
 export type UseAddAddressFlowViewModelOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
+  manualValidationDebounceMs?: number;
 }>;
+
+function wait(delayMs: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, delayMs));
+}
 
 function resolveAddressEntryState(
   value: string,
@@ -106,6 +111,7 @@ function applyAddressEntryState(
 
 export function useAddAddressFlowViewModel({
   addressValidation = UNAVAILABLE_ADDRESS_VALIDATION,
+  manualValidationDebounceMs = 0,
 }: UseAddAddressFlowViewModelOptions = {}): AddAddressFlowViewModel {
   const [state, setState] = useState<AddAddressFlowState>(CLOSED_ADD_ADDRESS_FLOW_STATE);
   const validationRequestId = useRef(0);
@@ -168,6 +174,13 @@ export function useAddAddressFlowViewModel({
         ),
       );
 
+      if (inputMethod === "manual" && manualValidationDebounceMs > 0) {
+        await wait(manualValidationDebounceMs);
+        if (validationRequestId.current !== requestId) {
+          return;
+        }
+      }
+
       const validationResult = await requestAddressValidation(
         addressValidation,
         selectedCurrencyId,
@@ -187,8 +200,62 @@ export function useAddAddressFlowViewModel({
         ),
       );
     },
-    [addressValidation, state],
+    [addressValidation, manualValidationDebounceMs, state],
   );
+  const confirmAddress = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      if (
+        currentState.status !== "enteringAddress" ||
+        currentState.addressEntry.status !== "valid"
+      ) {
+        return currentState;
+      }
+
+      return {
+        status: "namingAddress",
+        selectedContactId: currentState.selectedContactId,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+      };
+    });
+  }, [cancelAddressValidation]);
+  const continueFromName = useCallback(() => {
+    setState(currentState =>
+      currentState.status === "namingAddress"
+        ? { ...currentState, status: "reviewingAddress" }
+        : currentState,
+    );
+  }, []);
+  const continueFromReview = useCallback(() => {
+    setState(currentState =>
+      currentState.status === "reviewingAddress"
+        ? { ...currentState, status: "success" }
+        : currentState,
+    );
+  }, []);
+  const goBack = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      switch (currentState.status) {
+        case "closed":
+          return currentState;
+        case "selectingCurrency":
+          return CLOSED_ADD_ADDRESS_FLOW_STATE;
+        case "enteringAddress":
+          return {
+            status: "selectingCurrency",
+            selectedContactId: currentState.selectedContactId,
+          };
+        case "namingAddress":
+          return { ...currentState, status: "enteringAddress" };
+        case "reviewingAddress":
+          return { ...currentState, status: "namingAddress" };
+        case "success":
+          return currentState;
+      }
+    });
+  }, [cancelAddressValidation]);
   const close = useCallback(() => {
     cancelAddressValidation();
     setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
@@ -201,6 +268,10 @@ export function useAddAddressFlowViewModel({
     start,
     completeCurrencySelection,
     updateAddress,
+    confirmAddress,
+    continueFromName,
+    continueFromReview,
+    goBack,
     close,
   };
 }
