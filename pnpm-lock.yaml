@@ -854,6 +854,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-analytics-consent':
+        specifier: workspace:*
+        version: link:../../domain/entity/analytics-consent
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../domain/entity/client-identity
@@ -887,6 +890,9 @@ importers:
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
+      '@features/flow-analytics-consent':
+        specifier: workspace:*
+        version: link:../../features/flow/analytics-consent
       '@features/flow-card':
         specifier: workspace:^
         version: link:../../features/flow/card

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DialogFooter } from "@ledgerhq/lumen-ui-react";
-import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsent/index";
+import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";
 
 export type AnalyticsConsentDialogFooterActionsProps = Readonly<{
   phase: AnalyticsConsentPhase;

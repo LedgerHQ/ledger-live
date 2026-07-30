@@ -4,6 +4,11 @@ import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  getAnalyticsConsentDecision,
+  resolveAnalyticsConsentPhase,
+  resolveAnalyticsOptInParams,
+} from "@features/flow-analytics-consent";
 import Box from "~/renderer/components/Box";
 import {
   analyticsConsentInfoSelector,
@@ -14,23 +19,18 @@ import {
   DANGEROUSLY_resetAnalyticsOptInStateForQa,
   DANGEROUSLY_setAnalyticsConsentInfoForQa,
 } from "~/renderer/actions/settings";
-import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
-  resolveAnalyticsConsentPhase,
-  resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
 
 const COPY = {
   back: "Back",
   title: "Analytics opt-in consent — QA",
   readSection: "Current settings (read-only)",
   currentPrivacyVersion: (version: string) => `App current privacy policy version: ${version}`,
-  currentConsentValidityDays: (days: number) => `App current consent validity (days): ${days}`,
+  currentConsentValidityDays: (days: string) => `App current consent validity (days): ${days}`,
   storedPrivacyVersion: (version: string) => `Stored privacy policy version: ${version}`,
   consentDate: (value: string) => `Consent date (raw): ${value}`,
-  outdatePrivacyVersion: "Outdate version",
-  consentOneYearAgo: "Set to one year ago",
+  decision: (value: string) => `Shared decision: ${value}`,
+  outdatePrivacyVersion: "Outdate version (major - 1)",
+  clearConsentDate: "Clear consent date (force renewal)",
   resetForConsentFresh:
     "Reset for consent fresh (clear consent data, turn off analytics & personalization)",
   modalSection: "Expected modal on portfolio (home)",
@@ -41,11 +41,11 @@ const COPY = {
     noModalFeatureOff: "No modal. The analytics opt-in feature flag is off.",
     noModalOnboarding: "No modal. Onboarding is not complete yet.",
     fresh:
-      "First-time consent modal (consent fresh). Consent renewal is required (missing or invalid consent date) and Share analytics is off — e.g. no stored privacy ack / no consent date with analytics disabled.",
+      "First-time consent modal (consent fresh). Full analytics reconsent is required and Share analytics is off.",
     reconfirm:
-      "Reconfirm consent modal. Consent renewal is required and Share analytics is on — user gets the reconfirm / continue-or-stop flow instead of first-time copy.",
+      "Reconfirm consent modal. Full analytics reconsent is required and Share analytics is on.",
     privacy:
-      "Privacy update modal. Stored privacy policy version is outdated (lower than the app), and consent renewal is not blocking — user sees the privacy-policy update step first.",
+      "Privacy update modal. Minor policyVersion bump with otherwise valid analytics consent.",
   },
 } as const;
 
@@ -55,6 +55,13 @@ const formatConsentDate = (value: string | null) => {
   return value;
 };
 
+function readConsentValidityDays(feature: { params?: unknown } | null | undefined): string {
+  const params = feature?.params;
+  if (!params || typeof params !== "object") return "n/a";
+  const days = (params as { consentValidityDays?: unknown }).consentValidityDays;
+  return days == null ? "n/a" : String(days);
+}
+
 export function AnalyticsConsentOptInDevScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -62,21 +69,14 @@ export function AnalyticsConsentOptInDevScreen() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const analyticsOptInFeature = useFeature("analyticsOptIn");
-  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptInFeature);
+  const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
+  const decision = getAnalyticsConsentDecision(consentInfo, { currentPolicyVersion });
+  const consentValidityDays = readConsentValidityDays(analyticsOptInFeature);
 
-  const needsPrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
+  const shouldOfferModal =
+    Boolean(analyticsOptInFeature?.enabled) && hasCompletedOnboarding && decision.kind !== "none";
 
-  const shouldOfferModal = Boolean(
-    analyticsOptInFeature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsRenewal),
-  );
-
-  const modalPhaseIfOffered = resolveAnalyticsConsentPhase(
-    "closed",
-    needsRenewal,
-    needsPrivacy,
-    shareAnalytics,
-  );
+  const modalPhaseIfOffered = resolveAnalyticsConsentPhase("closed", decision, shareAnalytics);
 
   const modalPreview = (() => {
     if (!hasCompletedOnboarding) {
@@ -105,21 +105,18 @@ export function AnalyticsConsentOptInDevScreen() {
   };
 
   const onPrivacyOutdated = () => {
+    const major = Math.max(1, (currentPolicyVersion?.major ?? 1) - 1);
     dispatch(
       DANGEROUSLY_setAnalyticsConsentInfoForQa({
-        privacyPolicyVersion: Math.max(0, policyVersion - 1),
+        privacyPolicyVersion: `${major}.0`,
       }),
     );
   };
 
-  const onSetConsentOneYearAgo = () => {
-    const raw = consentInfo.consentDate;
-    const base = raw ? new Date(raw) : new Date();
-    const d = Number.isNaN(base.getTime()) ? new Date() : base;
-    d.setUTCFullYear(d.getUTCFullYear() - 1);
+  const onClearConsentDate = () => {
     dispatch(
       DANGEROUSLY_setAnalyticsConsentInfoForQa({
-        consentDate: d.toISOString(),
+        consentDate: null,
         privacyPolicyVersion: consentInfo.privacyPolicyVersion,
       }),
     );
@@ -148,15 +145,18 @@ export function AnalyticsConsentOptInDevScreen() {
           <h2 className="body-2-semi-bold text-muted">{COPY.readSection}</h2>
           <div className="flex flex-col gap-8">
             <p className="body-2 leading-relaxed text-muted">
-              {COPY.currentPrivacyVersion(String(policyVersion))}
+              {COPY.currentPrivacyVersion(currentPolicyVersion?.normalized ?? "null")}
             </p>
             <p className="body-2 leading-relaxed text-muted">
               {COPY.currentConsentValidityDays(consentValidityDays)}
             </p>
+            <p className="body-2 leading-relaxed text-muted">
+              {COPY.decision(`${decision.kind} (${decision.reason})`)}
+            </p>
             <div className="flex flex-row flex-wrap items-center justify-between gap-10">
               <span
                 className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
-                  needsPrivacy ? "text-error" : "text-success"
+                  decision.kind !== "none" ? "text-error" : "text-success"
                 }`}
               >
                 {COPY.storedPrivacyVersion(
@@ -177,7 +177,7 @@ export function AnalyticsConsentOptInDevScreen() {
             <div className="flex flex-row flex-wrap items-center justify-between gap-10">
               <span
                 className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
-                  needsRenewal ? "text-error" : "text-success"
+                  decision.kind === "renewal" ? "text-error" : "text-success"
                 }`}
               >
                 {COPY.consentDate(formatConsentDate(consentInfo.consentDate))}
@@ -186,9 +186,9 @@ export function AnalyticsConsentOptInDevScreen() {
                 className="shrink-0 self-center"
                 size="sm"
                 appearance="accent"
-                onClick={onSetConsentOneYearAgo}
+                onClick={onClearConsentDate}
               >
-                {COPY.consentOneYearAgo}
+                {COPY.clearConsentDate}
               </Button>
             </div>
           </div>

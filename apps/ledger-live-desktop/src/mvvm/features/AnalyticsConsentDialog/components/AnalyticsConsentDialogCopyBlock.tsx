@@ -1,7 +1,7 @@
 import React from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
-import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsent/index";
+import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";
 import { DescriptionWithPreferencesLink } from "./DescriptionWithPreferencesLink";
 import { PrivacyDescription } from "./PrivacyDescription";
 

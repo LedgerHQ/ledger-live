@@ -10,7 +10,6 @@ import {
 
 const mockUseMatch = jest.fn();
 
-/** Frozen clock; consent offsets align with `needsConsentRenewal` in live-common (`analyticsConsentUtils`). */
 const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
 
 jest.mock("react-router", () => ({
@@ -36,6 +35,7 @@ type SettingsOverrides = Partial<SettingsState> & {
 const analyticsOptInOverrides = {
   ...FEATURE_FLAGS_INITIAL_STATE.overrides,
   analyticsOptIn: {
+    ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn,
     ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
     enabled: true,
   },
@@ -45,6 +45,35 @@ const featureFlagsWithAnalyticsOptIn = {
   overrides: analyticsOptInOverrides,
   // Mirror slice resolution so hooks reading from `resolved` see the override.
   resolved: { ...FEATURE_FLAGS_DEFAULTS, ...analyticsOptInOverrides },
+};
+
+const featureFlagsWithMinorBump = {
+  ...featureFlagsWithAnalyticsOptIn,
+  overrides: {
+    ...analyticsOptInOverrides,
+    analyticsOptIn: {
+      ...analyticsOptInOverrides.analyticsOptIn,
+      params: {
+        ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+        policyVersion: "1.1",
+        consentValidityDays:
+          FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+      },
+    },
+  },
+  resolved: {
+    ...FEATURE_FLAGS_DEFAULTS,
+    ...analyticsOptInOverrides,
+    analyticsOptIn: {
+      ...analyticsOptInOverrides.analyticsOptIn,
+      params: {
+        ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+        policyVersion: "1.1",
+        consentValidityDays:
+          FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+      },
+    },
+  },
 };
 
 const defaultSettings: SettingsState = {
@@ -64,10 +93,13 @@ const flushEffects = async () => {
   });
 };
 
-const renderViewModel = (settings: SettingsOverrides = {}) =>
+const renderViewModel = (
+  settings: SettingsOverrides = {},
+  featureFlags = featureFlagsWithAnalyticsOptIn,
+) =>
   renderHook(() => useAnalyticsConsentDialogViewModel(), {
     initialState: {
-      featureFlags: featureFlagsWithAnalyticsOptIn,
+      featureFlags,
       settings: {
         ...defaultSettings,
         ...settings,
@@ -90,12 +122,6 @@ const expectConsentReconfirm = (viewModel: ViewModel) => {
 };
 
 const renderReconfirmViewModel = () => renderViewModel();
-
-const createStaleConsentDate = () => {
-  const staleConsentDate = new Date(FIXED_NOW);
-  staleConsentDate.setUTCDate(staleConsentDate.getUTCDate() - 366);
-  return staleConsentDate.toISOString();
-};
 
 describe("useAnalyticsConsentDialogViewModel", () => {
   beforeEach(() => {
@@ -123,20 +149,59 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expectConsentReconfirm(result.current);
   });
 
-  it("keeps modal closed when consent is still within the renewal window", () => {
-    const consentWithinWindow = new Date(FIXED_NOW);
-    consentWithinWindow.setUTCDate(consentWithinWindow.getUTCDate() - 300);
-
+  it("keeps modal closed when consent is up to date", () => {
     const { result } = renderViewModel({
       shareAnalytics: false,
       sharePersonalizedRecommandations: false,
       analyticsConsentInfo: {
-        consentDate: consentWithinWindow.toISOString(),
+        consentDate: FIXED_NOW.toISOString(),
         privacyPolicyVersion: 1,
       },
     });
 
     expectClosed(result.current);
+  });
+
+  it("opens consentReconfirm on a major policyVersion bump", async () => {
+    const { result } = renderViewModel(
+      {
+        analyticsConsentInfo: {
+          consentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: "1.0",
+        },
+      },
+      {
+        ...featureFlagsWithAnalyticsOptIn,
+        overrides: {
+          ...analyticsOptInOverrides,
+          analyticsOptIn: {
+            ...analyticsOptInOverrides.analyticsOptIn,
+            params: {
+              ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+              policyVersion: "2.0",
+              consentValidityDays:
+                FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+            },
+          },
+        },
+        resolved: {
+          ...FEATURE_FLAGS_DEFAULTS,
+          ...analyticsOptInOverrides,
+          analyticsOptIn: {
+            ...analyticsOptInOverrides.analyticsOptIn,
+            params: {
+              ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+              policyVersion: "2.0",
+              consentValidityDays:
+                FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+            },
+          },
+        },
+      },
+    );
+
+    await flushEffects();
+    expectConsentReconfirm(result.current);
   });
 
   it("dispatches opt-in and closes modal", async () => {
@@ -153,7 +218,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expect(settings.shareAnalytics).toBe(true);
     expect(settings.sharePersonalizedRecommandations).toBe(true);
     expect(settings.analyticsConsentInfo.consentDate).not.toBeNull();
-    expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+    expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe("1.0");
     expectClosed(result.current);
   });
 
@@ -162,7 +227,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       shareAnalytics: false,
       sharePersonalizedRecommandations: false,
       analyticsConsentInfo: {
-        consentDate: createStaleConsentDate(),
+        consentDate: null,
         privacyPolicyVersion: 1,
       },
     });
@@ -179,19 +244,23 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       {
         button: "analytics_consent_opt_out",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: 1,
+        privacyPolicyVersion: "1.0",
       },
       true,
     );
   });
 
-  it("tracks privacy acknowledgement as mandatory", async () => {
-    const { result } = renderViewModel({
-      analyticsConsentInfo: {
-        consentDate: FIXED_NOW.toISOString(),
-        privacyPolicyVersion: 0,
+  it("tracks privacy acknowledgement as mandatory and preserves consentDate", async () => {
+    const consentDate = FIXED_NOW.toISOString();
+    const { result, store } = renderViewModel(
+      {
+        analyticsConsentInfo: {
+          consentDate,
+          privacyPolicyVersion: "1.0",
+        },
       },
-    });
+      featureFlagsWithMinorBump,
+    );
 
     await flushEffects();
     expect(result.current.phase).toBe("privacy");
@@ -205,10 +274,12 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       {
         button: "analytics_consent_privacy_got_it",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: 1,
+        privacyPolicyVersion: "1.1",
       },
       true,
     );
+    expect(store.getState().settings.analyticsConsentInfo.consentDate).toBe(consentDate);
+    expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe("1.1");
   });
 
   it("tracks preferences confirmation as mandatory", async () => {
@@ -230,7 +301,7 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       {
         button: "analytics_consent_preferences_confirm",
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
-        privacyPolicyVersion: 1,
+        privacyPolicyVersion: "1.0",
       },
       true,
     );
