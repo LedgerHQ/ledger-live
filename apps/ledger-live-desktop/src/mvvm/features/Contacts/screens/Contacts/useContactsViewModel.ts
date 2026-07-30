@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import type { ContactId } from "@domain/entity-contact";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
@@ -12,6 +11,7 @@ import {
   useContacts,
   useContactsFeatureIntroductionState,
   useContactsMeContact,
+  type AddAddressContact,
   type AddAddressFlowState,
   type ContactsAddAddressEntryLabels,
   type ContactAddressDetailDialogProps,
@@ -60,7 +60,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       void selectCurrency()
         .then(result => {
           if (result.status === "selected") {
-            completeCurrencySelection(contactId, result.currencyId);
+            completeCurrencySelection(contactId, result.selection);
           } else if (result.status === "cancelled" || result.status === "unavailable") {
             closeAddAddress();
           }
@@ -70,9 +70,9 @@ export function useContactsViewModel(): ContactsPageViewModel {
     [closeAddAddress, completeCurrencySelection, selectCurrency],
   );
   const onAddAddress = useCallback(
-    (contactId: ContactId) => {
-      startAddAddress(contactId);
-      selectCurrencyForContact(contactId);
+    (contact: AddAddressContact) => {
+      startAddAddress(contact);
+      selectCurrencyForContact(contact.id);
     },
     [selectCurrencyForContact, startAddAddress],
   );

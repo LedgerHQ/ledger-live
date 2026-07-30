@@ -20,14 +20,18 @@ export {
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";
 export type {
+  AddAddressContact,
+  AddAddressCurrencySelection,
   AddAddressEntryLabels,
   AddAddressEntryState,
   AddAddressFlowState,
   AddAddressFlowViewModel,
   AddAddressInputMethod,
   AddAddressInputSource,
+  AddAddressLabelState,
   AddAddressPlaceholderViewProps,
   ValidAddAddressEntryState,
+  ValidAddAddressLabelState,
 } from "./types";
 export {
   useAddAddressFlowViewModel,

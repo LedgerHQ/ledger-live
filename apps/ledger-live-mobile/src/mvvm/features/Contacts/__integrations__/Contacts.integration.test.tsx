@@ -196,7 +196,10 @@ function ContactDetailViewModelProbe() {
           <Pressable
             testID="contacts-select-currency"
             onPress={() =>
-              viewModel.addAddressFlowProps.onCurrencySelected(mockEthCryptoCurrency.id)
+              viewModel.addAddressFlowProps.onCurrencySelected({
+                currencyId: mockEthCryptoCurrency.id,
+                assetDisplayName: mockEthCryptoCurrency.name,
+              })
             }
           >
             <Text>Select currency</Text>

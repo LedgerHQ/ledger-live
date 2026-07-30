@@ -14,3 +14,29 @@ export type ContactNameValidationErrorName = "InvalidContactNameError";
 
 export const INVALID_CONTACT_NAME_ERROR_NAME =
   "InvalidContactNameError" satisfies ContactNameValidationErrorName;
+
+export class InvalidContactAddressLabelError extends ContactError {
+  override name = "InvalidContactAddressLabelError";
+
+  constructor() {
+    super("Expected letters, numbers, punctuation, or spaces");
+  }
+}
+
+export class DuplicateContactAddressLabelError extends ContactError {
+  override name = "DuplicateContactAddressLabelError";
+
+  constructor() {
+    super("Expected a unique address label for the contact");
+  }
+}
+
+export type ContactAddressLabelValidationErrorName =
+  | "InvalidContactAddressLabelError"
+  | "DuplicateContactAddressLabelError";
+
+export const INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME =
+  "InvalidContactAddressLabelError" satisfies ContactAddressLabelValidationErrorName;
+
+export const DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME =
+  "DuplicateContactAddressLabelError" satisfies ContactAddressLabelValidationErrorName;

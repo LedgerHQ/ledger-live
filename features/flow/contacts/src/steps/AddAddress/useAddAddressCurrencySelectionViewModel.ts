@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { ContactAddress } from "@domain/entity-contact";
 import { useContactsFeature, type ContactsFeaturePlatform } from "../../featureFlags";
 import type { ContactsCurrencySelectionPort } from "./model/ports";
 import { resolveEligibleAddressCurrencyIds } from "./model/resolveEligibleAddressCurrencyIds";
+import type { AddAddressCurrencySelection } from "./types";
 
 export type UseAddAddressCurrencySelectionViewModelOptions = Readonly<{
   platform: ContactsFeaturePlatform;
@@ -12,14 +12,14 @@ export type UseAddAddressCurrencySelectionViewModelOptions = Readonly<{
 export type AddAddressCurrencySelectionResult =
   | Readonly<{
       status: "selected";
-      currencyId: ContactAddress["currencyId"];
+      selection: AddAddressCurrencySelection;
     }>
   | Readonly<{ status: "cancelled" }>
   | Readonly<{ status: "unavailable" }>
   | Readonly<{ status: "busy" }>;
 
 export type AddAddressCurrencySelectionViewModel = Readonly<{
-  selectedCurrencyId: ContactAddress["currencyId"] | null;
+  selectedCurrency: AddAddressCurrencySelection | null;
   selectCurrency: () => Promise<AddAddressCurrencySelectionResult>;
 }>;
 
@@ -33,7 +33,7 @@ export function useAddAddressCurrencySelectionViewModel({
     [eligibleAddressFamilies],
   );
   const isSelectingRef = useRef(false);
-  const [selectedCurrencyId, setSelectedCurrencyId] = useState<ContactAddress["currencyId"] | null>(
+  const [selectedCurrency, setSelectedCurrency] = useState<AddAddressCurrencySelection | null>(
     null,
   );
   const selectCurrency = useCallback(async () => {
@@ -47,14 +47,14 @@ export function useAddAddressCurrencySelectionViewModel({
     isSelectingRef.current = true;
 
     try {
-      const currencyId = await currencySelection.selectCurrency(eligibleNetworkIds);
+      const selection = await currencySelection.selectCurrency(eligibleNetworkIds);
 
-      if (currencyId === null) {
+      if (selection === null) {
         return { status: "cancelled" } as const;
       }
 
-      setSelectedCurrencyId(currencyId);
-      return { status: "selected", currencyId } as const;
+      setSelectedCurrency(selection);
+      return { status: "selected", selection } as const;
     } catch {
       return { status: "cancelled" } as const;
     } finally {
@@ -63,7 +63,7 @@ export function useAddAddressCurrencySelectionViewModel({
   }, [currencySelection, eligibleNetworkIds]);
 
   return {
-    selectedCurrencyId,
+    selectedCurrency,
     selectCurrency,
   };
 }

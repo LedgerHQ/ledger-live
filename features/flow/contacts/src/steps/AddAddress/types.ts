@@ -1,7 +1,20 @@
-import type { ContactAddress, ContactId } from "@domain/entity-contact";
+import type {
+  Contact,
+  ContactAddress,
+  ContactAddressLabel,
+  ContactAddressLabelValidationErrorName,
+  ContactId,
+} from "@domain/entity-contact";
 
 export type AddAddressInputMethod = "manual" | "paste" | "qr_code" | "ens";
 export type AddAddressInputSource = Exclude<AddAddressInputMethod, "ens">;
+
+export type AddAddressContact = Pick<Contact, "id" | "addresses">;
+
+export type AddAddressCurrencySelection = Readonly<{
+  currencyId: ContactAddress["currencyId"];
+  assetDisplayName: string;
+}>;
 
 export type AddAddressEntryState =
   | Readonly<{
@@ -36,12 +49,35 @@ export type AddAddressEntryState =
       inputMethod: AddAddressInputSource;
     }>;
 
+export type AddAddressLabelState =
+  | Readonly<{
+      status: "empty";
+      value: string;
+      label: null;
+      validationError: null;
+    }>
+  | Readonly<{
+      status: "invalid";
+      value: string;
+      label: null;
+      validationError: ContactAddressLabelValidationErrorName;
+    }>
+  | Readonly<{
+      status: "valid";
+      value: string;
+      label: ContactAddressLabel;
+      validationError: null;
+    }>;
+
 export type ValidAddAddressEntryState = Extract<AddAddressEntryState, { status: "valid" }>;
+export type ValidAddAddressLabelState = Extract<AddAddressLabelState, { status: "valid" }>;
 
 type AddAddressSession = Readonly<{
   selectedContactId: ContactId;
+  existingAddressLabels: readonly ContactAddress["label"][];
   selectedCurrencyId: ContactAddress["currencyId"];
   addressEntry: AddAddressEntryState;
+  addressLabel: AddAddressLabelState;
 }>;
 
 type ConfirmedAddAddressSession = Omit<AddAddressSession, "addressEntry"> &
@@ -49,25 +85,29 @@ type ConfirmedAddAddressSession = Omit<AddAddressSession, "addressEntry"> &
     addressEntry: ValidAddAddressEntryState;
   }>;
 
+type NamedAddAddressSession = Omit<ConfirmedAddAddressSession, "addressLabel"> &
+  Readonly<{
+    addressLabel: ValidAddAddressLabelState;
+  }>;
+
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
       status: "selectingCurrency";
       selectedContactId: ContactId;
+      existingAddressLabels: readonly ContactAddress["label"][];
     }>
   | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
   | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
-  | (ConfirmedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
-  | (ConfirmedAddAddressSession & Readonly<{ status: "success" }>);
+  | (NamedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
+  | (NamedAddAddressSession & Readonly<{ status: "success" }>);
 
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
-  start: (contactId: ContactId) => void;
-  completeCurrencySelection: (
-    contactId: ContactId,
-    currencyId: ContactAddress["currencyId"],
-  ) => void;
+  start: (contact: AddAddressContact) => void;
+  completeCurrencySelection: (contactId: ContactId, selection: AddAddressCurrencySelection) => void;
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
+  updateAddressLabel: (label: string) => void;
   confirmAddress: () => void;
   continueFromName: () => void;
   continueFromReview: () => void;

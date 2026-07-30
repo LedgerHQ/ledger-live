@@ -1,5 +1,8 @@
-import type { AddAddressFlowState, AddAddressInputSource } from "@features/flow-contacts";
-import type { ContactAddress } from "@domain/entity-contact";
+import type {
+  AddAddressCurrencySelection,
+  AddAddressFlowState,
+  AddAddressInputSource,
+} from "@features/flow-contacts";
 
 export type ContactsAddAddressFlowDrawerProps = Readonly<{
   state: AddAddressFlowState;
@@ -10,7 +13,7 @@ export type ContactsAddAddressFlowDrawerProps = Readonly<{
   onClose: () => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
-  onCurrencySelected: (currencyId: ContactAddress["currencyId"]) => void;
+  onCurrencySelected: (selection: AddAddressCurrencySelection) => void;
   onQrCodeClick: () => void;
 }>;
 

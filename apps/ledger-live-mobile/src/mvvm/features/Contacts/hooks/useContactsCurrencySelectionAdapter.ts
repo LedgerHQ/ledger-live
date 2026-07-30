@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { ContactCurrencyIdSchema, type ContactAddress } from "@domain/entity-contact";
+import { ContactCurrencyIdSchema } from "@domain/entity-contact";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AddAddressCurrencySelection } from "@features/flow-contacts";
 import { ScreenName } from "~/const";
 import {
   type ModularDrawerFlowProps,
@@ -12,7 +13,7 @@ const FLOW = "contacts_add_address";
 type UseContactsCurrencySelectionAdapterOptions = Readonly<{
   isOpen: boolean;
   networkIds: readonly string[];
-  onCurrencySelected: (currencyId: ContactAddress["currencyId"]) => void;
+  onCurrencySelected: (selection: AddAddressCurrencySelection) => void;
   onSelectionCancelled: () => void;
 }>;
 
@@ -20,11 +21,16 @@ export type ContactsCurrencySelectionAdapter = Readonly<{
   flowProps: Omit<ModularDrawerFlowProps, "children">;
 }>;
 
-function resolveContactCurrencyId(
+function resolveContactCurrencySelection(
   currency: CryptoOrTokenCurrency | null,
-): ContactAddress["currencyId"] | null {
+): AddAddressCurrencySelection | null {
   const parsedCurrencyId = ContactCurrencyIdSchema.safeParse(currency?.id);
-  return parsedCurrencyId.success ? parsedCurrencyId.data : null;
+  return parsedCurrencyId.success && currency
+    ? {
+        currencyId: parsedCurrencyId.data,
+        assetDisplayName: currency.name,
+      }
+    : null;
 }
 
 export function useContactsCurrencySelectionAdapter({
@@ -50,9 +56,9 @@ export function useContactsCurrencySelectionAdapter({
   } = useModularDrawerController();
   const completeSelection = useCallback(
     (currency: CryptoOrTokenCurrency | null) => {
-      const currencyId = resolveContactCurrencyId(currency);
-      if (currencyId) {
-        onCurrencySelected(currencyId);
+      const selection = resolveContactCurrencySelection(currency);
+      if (selection) {
+        onCurrencySelected(selection);
       } else {
         onSelectionCancelled();
       }
