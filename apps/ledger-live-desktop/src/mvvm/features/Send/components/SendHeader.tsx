@@ -15,6 +15,7 @@ import {
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
+import { AddressDisclaimer } from "./AddressDisclaimer";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
@@ -108,10 +109,12 @@ export function SendHeader() {
               value={addressInputValue}
               hideClearButton
               prefix={t("newSendFlow.to")}
+              suffix={<AddressDisclaimer />}
             />
+            {/* Stops short of the trailing info icon so the disclaimer stays hoverable. */}
             <button
               type="button"
-              className="absolute inset-0"
+              className="absolute inset-y-0 left-0 right-56"
               aria-label="Edit recipient"
               data-testid="send-edit-recipient-button"
               onClick={handleRecipientInputClick}
