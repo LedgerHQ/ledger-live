@@ -21,9 +21,7 @@ function AddressDisclaimerComponent() {
         />
       </TooltipTrigger>
       <TooltipContent side="bottom">
-        <div className="max-w-256 text-center">
-          {t("newSendFlow.addressDisclaimer.description")}
-        </div>
+        <div className="max-w-256">{t("newSendFlow.addressDisclaimer.description")}</div>
       </TooltipContent>
     </Tooltip>
   );
