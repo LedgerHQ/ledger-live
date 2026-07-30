@@ -23,6 +23,7 @@ type Props = {
   isLwm40Enabled?: boolean;
   hideMainNavigator?: boolean;
   appManifestNotFoundError: Error;
+  shouldDisplayBackgroundCanvas: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -36,15 +37,17 @@ export const EarnV2Webview = ({
   isLwm40Enabled,
   hideMainNavigator,
   appManifestNotFoundError,
+  shouldDisplayBackgroundCanvas,
 }: Props) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
   const { theme: lumenTheme } = useLumenTheme();
   const canvasColor = lumenTheme.colors.bg.canvas;
-  const isSimulateIntent = inputs?.intent === "simulate";
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
   const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
     useWalletFeaturesConfig("mobile");
+
+  const isSwapToEarnEnabled = useFeature("swapToEarn")?.enabled ?? false;
 
   const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
 
@@ -76,6 +79,7 @@ export const EarnV2Webview = ({
     webviewUrl,
     webviewUrlRef,
     canvasColor,
+    isSwapToEarnEnabled,
   });
 
   const inIntentFlow = !!hideMainNavigator && intentFlowState !== false;
@@ -96,7 +100,7 @@ export const EarnV2Webview = ({
   return (
     <View
       testID="earn-screen"
-      style={[styles.container, isSimulateIntent && { backgroundColor: canvasColor }]}
+      style={[styles.container, shouldDisplayBackgroundCanvas && { backgroundColor: canvasColor }]}
     >
       {showsBackground && <LiveAppBackground type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">

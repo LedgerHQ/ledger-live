@@ -6,9 +6,19 @@ export type EarnScreenOptions = Partial<NativeStackNavigationOptions> & { closab
 
 const renderNullHeaderRight = () => null;
 
+const liveAppCanvasScreenStyles = (
+  canvasColor: string,
+): Pick<EarnScreenOptions, "headerStyle" | "headerShadowVisible" | "contentStyle"> => ({
+  headerStyle: { backgroundColor: canvasColor },
+  headerShadowVisible: false,
+  contentStyle: { backgroundColor: canvasColor },
+});
+
 /**
  * Resolves the Base-stack screen options for the Earn live-app screen from the deeplink intent:
- * - `deposit` / `withdraw`: native header titled with the locale-based stake label.
+ * - `deposit`: native header titled with the locale-based stake label; when `swapToEarn` is enabled,
+ *   header and content use the live-app canvas (same as the webview shell).
+ * - `withdraw`: native header titled with the locale-based stake label (default stack styling).
  * - `simulate`: full-screen Rewards simulator painted on the live-app canvas (no header shadow,
  *   canvas background on both the header and the content so there is no gray flash before the
  *   webview paints).
@@ -18,8 +28,19 @@ export const getEarnScreenOptions = (
   intent: string | undefined,
   t: TFunction,
   canvasColor: string,
+  isSwapToEarnEnabled = false,
 ): EarnScreenOptions => {
-  if (intent === "deposit" || intent === "withdraw") {
+  if (intent === "deposit") {
+    return {
+      headerShown: true,
+      closable: false,
+      headerTitle: t(getStakeLabelLocaleBased()),
+      headerRight: renderNullHeaderRight,
+      ...(isSwapToEarnEnabled ? liveAppCanvasScreenStyles(canvasColor) : {}),
+    };
+  }
+
+  if (intent === "withdraw") {
     return {
       headerShown: true,
       closable: false,
@@ -34,9 +55,7 @@ export const getEarnScreenOptions = (
       closable: false,
       headerTitle: t("earn.simulator.title"),
       headerRight: renderNullHeaderRight,
-      headerStyle: { backgroundColor: canvasColor },
-      headerShadowVisible: false,
-      contentStyle: { backgroundColor: canvasColor },
+      ...liveAppCanvasScreenStyles(canvasColor),
     };
   }
 

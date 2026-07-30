@@ -94,6 +94,12 @@ function Earn({ route }: Props) {
     [swapToEarnFlag],
   );
 
+  const shouldDisplayBackgroundCanvas = useMemo(
+    () =>
+      (swapToEarnFlag?.enabled && params?.intent === "deposit") || params?.intent === "simulate",
+    [swapToEarnFlag, params?.intent],
+  );
+
   if (!remoteLiveAppState.isLoading && !manifest) {
     console.error(appManifestNotFoundError);
   }
@@ -155,6 +161,7 @@ function Earn({ route }: Props) {
         isLwm40Enabled={isLwm40Enabled}
         hideMainNavigator={hideMainNavigator}
         appManifestNotFoundError={appManifestNotFoundError}
+        shouldDisplayBackgroundCanvas={shouldDisplayBackgroundCanvas}
       />
     );
   }

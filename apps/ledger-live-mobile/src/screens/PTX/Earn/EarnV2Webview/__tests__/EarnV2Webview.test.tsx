@@ -295,6 +295,7 @@ describe("EarnV2Webview", () => {
         manifest={STUB_MANIFEST}
         appManifestNotFoundError={ERROR}
         inputs={{ intent: "simulate" }}
+        shouldDisplayBackgroundCanvas
       />,
       {
         overrideInitialState: withFlagOverrides({
@@ -313,6 +314,7 @@ describe("EarnV2Webview", () => {
         manifest={STUB_MANIFEST}
         appManifestNotFoundError={ERROR}
         inputs={{ intent: "deposit" }}
+        shouldDisplayBackgroundCanvas={false}
       />,
       {
         overrideInitialState: withFlagOverrides({

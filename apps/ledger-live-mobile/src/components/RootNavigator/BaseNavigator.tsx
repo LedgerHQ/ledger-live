@@ -192,6 +192,8 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const swapToEarnFlag = useFeature("swapToEarn");
+  const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
   return (
     <>
@@ -596,7 +598,12 @@ export default function BaseNavigator() {
           // `useEarnIntentFlowPresentation` becomes the live owner and overrides this imperatively
           // via `getParent(BASE_NAVIGATOR_ID).setOptions` as the webview route changes.
           options={props =>
-            getEarnScreenOptions(props.route?.params?.params?.intent, t, liveAppCanvasColor)
+            getEarnScreenOptions(
+              props.route?.params?.params?.intent,
+              t,
+              liveAppCanvasColor,
+              isSwapToEarnEnabled,
+            )
           }
         />
         <Stack.Screen
