@@ -1,15 +1,19 @@
 // Currency types owned locally by types-live. They cannot be sourced from the wallet
 // framework's copy: the framework already depends on this package, which would be a cycle.
-// New code should prefer the @domain/entity-currency-* packages.
+//
+// These are INTERNAL to types-live. Only the names the sibling modules need are exported,
+// and the `./currency` subpath is blocked in package.json#exports, so they cannot be
+// reached from outside the package. Consumers use `@domain/entity-currency-*`.
 
 /**
  * @deprecated Opaque Ledger-explorer endpoint id, kept only for backward compatibility.
  * Loosened from a fixed union to `string`; the explorer-id concept is being phased out.
  */
-export type LedgerExplorerId = string;
+type LedgerExplorerId = string;
 
 /**
- *
+ * @deprecated Temporary local copy. Kept only until the types that carry it move to
+ * `@domain/entity-currency-*`. Use `@domain/entity-currency-unit` instead.
  */
 export type Unit = {
   // display name of a given unit (example: satoshi)
@@ -49,7 +53,8 @@ type CurrencyCommon = {
 };
 
 /**
- *
+ * @deprecated Temporary local copy. Kept only until the types that carry it move to
+ * `@domain/entity-currency-*`. Use `@domain/entity-currency-token` instead.
  */
 export type TokenCurrency = CurrencyCommon & {
   type: "TokenCurrency";
@@ -65,25 +70,26 @@ export type TokenCurrency = CurrencyCommon & {
 /**
  *
  */
-export type ExplorerView = {
+type ExplorerView = {
   tx?: string;
   address?: string;
   token?: string;
   stakePool?: string;
 };
 
-export type EthereumLikeInfo = {
+type EthereumLikeInfo = {
   chainId: number;
 };
 
-export type BitcoinLikeInfo = {
+type BitcoinLikeInfo = {
   P2PKH: number;
   P2SH: number;
   XPUBVersion?: number;
 };
 
 /**
- *
+ * @deprecated Temporary local copy. Kept only until the types that carry it move to
+ * `@domain/entity-currency-*`. Use `@domain/entity-currency-crypto` instead.
  */
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
@@ -119,10 +125,14 @@ export type CryptoCurrency = CurrencyCommon & {
   tokenTypes?: string[];
 };
 
+/**
+ * @deprecated Temporary local copy. Kept only until the types that carry it move to
+ * `@domain/entity-currency-*`. Use `@domain/entity-currency` instead.
+ */
 export type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
 
 // As defined here: https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-export enum CoinType {
+enum CoinType {
   AE = 457,
   AION = 425,
   AKA = 200625,

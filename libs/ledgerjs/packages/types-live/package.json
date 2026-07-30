@@ -55,6 +55,9 @@
       "require": "./lib/index.js",
       "default": "./lib/index.js"
     },
+    "./currency": null,
+    "./lib/currency": null,
+    "./lib-es/currency": null,
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",
     "./*": {
