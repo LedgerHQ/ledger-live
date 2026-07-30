@@ -15,7 +15,8 @@ import type { SyncEstimatedTime } from "./types";
  * @returns a function that, given the number of blocks processed so far,
  *          extrapolates the remaining time. Returns `{ hours: 0, minutes: 0 }`
  *          when `processedBlocks <= 0` because we don't have throughput data
- *          yet.
+ *          yet, and when the count has caught up with `totalBlocks` — the tip
+ *          moves while a scan runs, so the two can cross.
  */
 export function createSyncTimeEstimator(
   totalBlocks: number,
@@ -26,7 +27,7 @@ export function createSyncTimeEstimator(
     if (processedBlocks <= 0) return { hours: 0, minutes: 0 };
     const elapsedSeconds = (Date.now() - start) / 1000;
     const secondsPerBlock = elapsedSeconds / processedBlocks;
-    const remainingBlocks = totalBlocks - processedBlocks;
+    const remainingBlocks = Math.max(0, totalBlocks - processedBlocks);
     const remainingSeconds = secondsPerBlock * remainingBlocks;
 
     const totalMinutes = Math.floor(remainingSeconds / 60);

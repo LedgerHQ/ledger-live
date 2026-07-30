@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { setZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";
+import { setZcashShieldedEnabled } from "../zcashRouting";
 import { genAccount } from "../../mock/account";
 import { coinModuleLoaders } from "../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../coin-modules/registry";
@@ -12,9 +12,9 @@ const loadersFor = (...families: string[]) =>
   coinModuleLoaders.filter(l => families.includes(l.family));
 
 // The host app resolves the flag itself -- remote config, env override and the
-// developer drawer's override all folded in -- and mirrors that resolution into
-// the coin module (`setZcashShieldedEnabled`). The router reads that same mirror,
-// so a flag flipped from the drawer moves the routing with it.
+// developer drawer's override all folded in -- and mirrors that resolution here
+// (`setZcashShieldedEnabled`). The router reads that same mirror, so a flag
+// flipped from the drawer moves the routing with it.
 describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
   beforeEach(() => {
     resetCoinModulesForTests();
@@ -76,5 +76,22 @@ describe("bridge/impl -- zcash routing (zcashShielded flag)", () => {
     const onBridgeAgain = await getAccountBridge(account);
     expect(onBridgeAgain).toBe(onBridge);
     expect(onBridgeAgain).not.toBe(offBridge);
+  });
+
+  it("clearBridgeCache('zcash') evicts the zcash entry despite its composite key", async () => {
+    setZcashShieldedEnabled(true);
+    const account = genAccount("zcash-cache-eviction-test", { currency: ZCASH });
+    const first = getAccountBridge(account);
+    await first;
+
+    expect(getAccountBridge(account)).toBe(first);
+
+    clearBridgeCache("zcash");
+
+    // A fresh Promise, which is what lets a caller retry a bridge whose load
+    // rejected -- rejections stay cached until something evicts them.
+    const afterClear = getAccountBridge(account);
+    expect(afterClear).not.toBe(first);
+    await afterClear;
   });
 });

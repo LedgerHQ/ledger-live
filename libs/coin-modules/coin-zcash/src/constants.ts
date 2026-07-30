@@ -50,25 +50,10 @@ export const getZainoEndpoint = (): { grpcUrl: string; network: ZcashNetwork } =
   network: getZainoNetwork(),
 });
 
-// ── Routing toggle ─────────────────────────────────────────────────────────
-//
-// The host app resolves the `zcashShielded` feature flag itself -- remote config,
-// env override and the developer drawer's override folded in -- and mirrors it
-// here, the same way `setZainoGrpcUrl` overrides the endpoint. The bridge router
-// reads it to decide whether a Zcash account is served by this module or by
-// coin-bitcoin's Zcash chain-adapter (see live-common `bridge/impl.ts`). This
-// module never has to ask: it is only ever reached when the answer is yes.
-// Defaults to `false` so an unconfigured environment stays on the adapter.
-
-let shieldedEnabled = false;
-
-/** Mirror the resolved `zcashShielded` feature flag (see above). */
-export const setZcashShieldedEnabled = (enabled: boolean): void => {
-  shieldedEnabled = enabled;
-};
-
-/** Whether Zcash accounts are served by this module. */
-export const isZcashShieldedEnabled = (): boolean => shieldedEnabled;
+// Whether a Zcash account is served by this module or by coin-bitcoin's Zcash
+// chain-adapter is decided upstream, by the `zcashShielded` feature flag the host
+// app mirrors into live-common (`bridge/zcashRouting.ts`). This module never has
+// to ask: it is only ever reached when the answer is yes.
 
 // NU5 activation, the earliest block a Ledger-created shielded account can hold
 // a note -- and so the default birthday a scan starts from.

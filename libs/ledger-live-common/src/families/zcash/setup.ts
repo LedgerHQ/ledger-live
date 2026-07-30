@@ -47,9 +47,8 @@ const resolver = createResolver(createSigner, zcashAddressResolver);
 // signing (see @ledgerhq/coin-zcash/types/signer BitcoinSigner surface).
 export { bridge, resolver, signerContext };
 
-// Re-exported so the host apps can mirror the `zcashShielded` feature flag into
-// the coin module (via `useFeature` → `setZcashShieldedEnabled`), the same way
-// `setSuiGraphqlEnabled` / `setCosmosLdmkEnabled` are wired. A coin module cannot
-// read React feature flags directly, and the bridge router reads that same mirror
-// to decide which module serves a Zcash account.
-export { setZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";
+// Re-exported so the host apps can mirror the `zcashShielded` feature flag (via
+// `useFeature` → `setZcashShieldedEnabled`) from the same setup module they
+// already import. The bridge router reads that mirror to decide which module
+// serves a Zcash account -- see `bridge/zcashRouting.ts`.
+export { setZcashShieldedEnabled } from "../../bridge/zcashRouting";

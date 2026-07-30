@@ -159,7 +159,7 @@ describe("createZCashClientWith", () => {
     // ── Validation error ──────────────────────────────────────────
 
     describe("validation error", () => {
-      it("errors immediately when validateStartSyncArgs returns a string", done => {
+      it("errors immediately with an Error when validateStartSyncArgs returns a message", done => {
         const validationMsg = "error: invalid negative arg startBlockHeight";
         const deps = makeDeps({
           validateStartSyncArgs: jest.fn().mockReturnValue(validationMsg),
@@ -169,7 +169,8 @@ describe("createZCashClientWith", () => {
         client.syncShielded(makeSyncArgs({ startBlockHeight: -1 })).subscribe({
           next: () => done.fail("should not emit"),
           error: err => {
-            expect(err).toBe(validationMsg);
+            expect(err).toBeInstanceOf(Error);
+            expect(err.message).toBe(validationMsg);
             expect(deps.startSyncJob).not.toHaveBeenCalled();
             done();
           },

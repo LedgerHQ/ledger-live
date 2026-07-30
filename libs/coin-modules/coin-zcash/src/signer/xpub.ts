@@ -1,15 +1,10 @@
 /**
- * NOTE:
- * THIS CODE SHOULD BE MOVED INTO THE DMK AND IDEALLY KEPT LOCAL TO THE DMK SIGNER KIT TO BE SHARED WITH OTHER SIGNERS.
- * WHEN ZCASH SIGNER EXPOSES A NATIVE XPUB COMMAND, THIS CODE SHOULD BE REMOVED.
- * IT IS ONLY USED AS A TEMPORARY MEASURE TO ENABLE ZCASH SUPPORT WITH THE DMK SIGNER KIT.
- * IT WILL BE REMOVED IN A FUTURE RELEASE.
- *
  * Compose a BIP32 extended public key (xpub) string from raw key material.
  *
  * Mirrors the algorithm used by `hw-app-btc` `BtcOld.getWalletXpub`, kept local
- * to the zcash adapter because the new `DmkSignerZcash` (DMK signer kit) only
- * exposes `getAddress` and not a native xpub command.
+ * because the `DmkSignerZcash` signer kit only exposes `getAddress` and not a
+ * native xpub command. TODO: delete this in favour of that command once the DMK
+ * exposes it, where the logic belongs and can be shared with other signers.
  *
  * Both `publicKey` arguments accept either uncompressed (65 bytes, 0x04 prefix)
  * or already-compressed (33 bytes) SECP256K1 keys. Inputs are hex strings.

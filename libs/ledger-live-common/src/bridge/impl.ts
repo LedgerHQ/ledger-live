@@ -25,7 +25,7 @@ import {
   loadBridgeExtensionsForFamily,
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
-import { isZcashShieldedEnabled } from "@ledgerhq/coin-zcash/constants";
+import { isZcashShieldedEnabled } from "./zcashRouting";
 
 // Resolves the family owning a currency's bridge: `currency.family`, except
 // zcash, which `zcashShielded` routes to the standalone "zcash" family
@@ -76,9 +76,18 @@ export function clearBridgeCache(family?: string): void {
       delete unsupportedBridgePromiseCache[k];
     return;
   }
-  delete currencyBridgePromiseCache[family];
-  delete accountBridgePromiseCache[family];
-  delete mockBridgePromiseCache[family];
+  // Keys are the resolved family, except zcash's composite `<family>:zcash`
+  // (see bridgeCacheKey), so match that prefix too or the entry survives.
+  const composite = `${family}:`;
+  const purge = (cache: Record<string, unknown>) => {
+    delete cache[family];
+    for (const k of Object.keys(cache)) {
+      if (k.startsWith(composite)) delete cache[k];
+    }
+  };
+  purge(currencyBridgePromiseCache);
+  purge(accountBridgePromiseCache);
+  purge(mockBridgePromiseCache);
   const prefix = `${family}|`;
   for (const k of Object.keys(unsupportedBridgePromiseCache)) {
     if (k.startsWith(prefix)) delete unsupportedBridgePromiseCache[k];

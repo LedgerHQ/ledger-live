@@ -5,7 +5,7 @@ import type {
   AccountShapeInfo,
   GetAccountShapeStream,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { mergeOps, pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId, decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -33,7 +33,7 @@ import {
 import type { BitcoinOutput, BtcOperation, ZcashAccount } from "../types/bridge";
 import type { BitcoinXPub, SignerContext } from "../types/signer";
 import type { ShieldedSyncResult, ShieldedTransaction, ZcashPrivateInfo } from "../network/types";
-import { toWalletBtcCurrency } from "../network/walletBtcCurrency";
+import { toWalletBtcCurrency } from "../walletBtcCurrency";
 import { computeZcashBalance, getTransparentBalance } from "../logic/account/balance";
 import { explorerFee, spentOutpoints, txDate } from "../logic/history/transparentTx";
 import {
@@ -467,13 +467,12 @@ async function generateXpubIfNeeded(
 
   // coin-zcash always composes the xpub locally (see signer/xpub.ts) -- the
   // DMK Zcash signer kit only exposes getAddress, not a native xpub command.
-  const accountPathElements = accountPath.split("/").filter(Boolean);
+  const accountPathElements = pathStringToArray(accountPath);
   if (accountPathElements.length === 0) {
     throw new Error(`Cannot derive xpub from empty path "${accountPath}"`);
   }
   const parentPath = accountPath.split("/").slice(0, -1).join("/");
-  const lastElement = accountPathElements[accountPathElements.length - 1];
-  const childNumber = parseInt(lastElement.replace("'", ""), 10);
+  const childNumber = accountPathElements[accountPathElements.length - 1];
 
   // Both keys come from a single device session: two concurrent signerContext
   // acquisitions on the same deviceId contend for the transport.

@@ -161,7 +161,9 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
       return new Observable<ShieldedSyncResult>(subscriber => {
         const validationError = deps.validateStartSyncArgs(syncArgs);
         if (validationError) {
-          subscriber.error(validationError);
+          // Wrapped: the validator reports a plain message, while every consumer
+          // of this stream reads `name` / stack off an Error.
+          subscriber.error(new Error(validationError));
           return;
         }
 

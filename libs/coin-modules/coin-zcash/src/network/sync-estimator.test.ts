@@ -107,19 +107,14 @@ describe("createSyncTimeEstimator", () => {
       expect(estimator(100)).toEqual({ hours: 0, minutes: 0 });
     });
 
-    it("returns negative-time-safe result when processedBlocks exceeds totalBlocks", () => {
-      // start at t=0, call at t=60s with processedBlocks > totalBlocks
-      // remaining = -10 blocks => negative remainingSeconds => Math.floor goes negative
-      // This is an edge case showing the function doesn't clamp
+    it("reports no time left when processedBlocks exceeds totalBlocks", () => {
+      // The tip moves while a scan runs, so the count can pass the total it
+      // started from. Clamped, otherwise the UI would show negative time.
       dateNowSpy.mockReturnValue(0);
       const estimator = createSyncTimeEstimator(100);
 
       dateNowSpy.mockReturnValue(60_000);
-      const result = estimator(110);
-      // rate = 60/110 s/block, remaining = -10 => negative seconds
-      // Math.floor of negative totalMinutes, hours & minutes will be negative or -0
-      expect(result).toHaveProperty("hours");
-      expect(result).toHaveProperty("minutes");
+      expect(estimator(110)).toEqual({ hours: 0, minutes: 0 });
     });
 
     it("handles very large block counts", () => {
@@ -133,15 +128,12 @@ describe("createSyncTimeEstimator", () => {
     });
 
     it("handles totalBlocks of 0 with processedBlocks > 0", () => {
-      // totalBlocks = 0, processedBlocks = 5 at t=10s
-      // remaining = 0 - 5 = -5 blocks => negative remaining
+      // totalBlocks = 0, processedBlocks = 5 at t=10s: nothing left to scan.
       dateNowSpy.mockReturnValue(0);
       const estimator = createSyncTimeEstimator(0);
 
       dateNowSpy.mockReturnValue(10_000);
-      const result = estimator(5);
-      expect(result).toHaveProperty("hours");
-      expect(result).toHaveProperty("minutes");
+      expect(estimator(5)).toEqual({ hours: 0, minutes: 0 });
     });
 
     it("handles very small elapsed time (1ms)", () => {
