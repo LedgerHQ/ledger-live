@@ -2,7 +2,11 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import { findCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  type TokenCurrency,
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import type {
   Account,
   AccountLike,
@@ -90,8 +94,14 @@ export function patchAccountWithViewKey(account: Account, viewKey: string): Acco
 
   // Single source of truth for old → new sub-account IDs.
   const subAccountIdMap = new Map<string, string>(
-    account.subAccounts?.map(sub => [sub.id, encodeTokenAccountId(updatedAccountId, sub.token)]) ??
-      [],
+    account.subAccounts?.map(sub => [
+      sub.id,
+      encodeTokenAccountId(updatedAccountId, {
+        ...sub.token,
+        id: TokenCurrencyIdSchema.parse(sub.token.id),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse(sub.token.parentCurrencyId),
+      }),
+    ]) ?? [],
   );
 
   const updateOps = (ops: Operation[], targetAccountId: string): Operation[] =>

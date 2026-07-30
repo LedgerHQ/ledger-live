@@ -9934,6 +9934,9 @@ importers:
       uuid:
         specifier: 11.1.0
         version: 11.1.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@domain/entity-currency-crypto':
         specifier: workspace:^

@@ -30,6 +30,7 @@ import { computeDustAmount } from "@ledgerhq/wallet-btc/utils";
 import { classifyZcashRecipient } from "./chain-adapters/zcash/address";
 import { Currency } from "@ledgerhq/wallet-btc/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { getChainAdapter } from "./chain-adapters/registry";
 
@@ -93,8 +94,12 @@ async function validateRecipientAndChange(
   errors: ErrorMap,
   warnings: ErrorMap,
 ): Promise<boolean> {
+  const brandedCurrency = {
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  };
   const { recipientError, recipientWarning, changeAddressError, changeAddressWarning } =
-    await validateRecipient(account.currency, transaction.recipient, transaction?.changeAddress);
+    await validateRecipient(brandedCurrency, transaction.recipient, transaction?.changeAddress);
 
   if (recipientError) errors.recipient = recipientError;
   if (recipientWarning) warnings.recipient = recipientWarning;
@@ -121,9 +126,13 @@ async function applyTaprootSafeguard(
     account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT;
   if (!applies) return;
 
-  const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
+  const brandedCurrency = {
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  };
+  const isTaproot = await isTaprootRecipient(brandedCurrency, transaction.recipient);
   const changeAddressIsTaproot = transaction.changeAddress
-    ? await isTaprootRecipient(account.currency, transaction.changeAddress)
+    ? await isTaprootRecipient(brandedCurrency, transaction.changeAddress)
     : false;
 
   if (isTaproot) errors.recipient = new TaprootNotActivated();
@@ -188,8 +197,12 @@ async function collectSanctionedInputs(
   txInputs: BitcoinInput[],
 ): Promise<string[]> {
   const sanctionedAddresses: string[] = [];
+  const brandedCurrency = {
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  };
   for (const input of txInputs) {
-    if (input.address && (await isAddressSanctioned(account.currency, input.address))) {
+    if (input.address && (await isAddressSanctioned(brandedCurrency, input.address))) {
       sanctionedAddresses.push(input.address);
     }
   }

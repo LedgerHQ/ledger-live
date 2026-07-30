@@ -29,6 +29,7 @@ import type {
   PcztTransaction,
   SignPcztTransactionResult,
 } from "@ledgerhq/live-signer-zcash";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { registerChainAdapter } from "../registry";
 import type {
   BuildTransactionArgs,
@@ -690,7 +691,7 @@ const zcashChainAdapter: ChainAdapter = {
         subscriber.next({ type: "device-signature-requested" });
         const sigResult = await signerContext(
           deviceId,
-          account.currency,
+          { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
           async (signer: BitcoinSigner) => {
             const zcashSigner = signer as unknown as {
               signPcztTransaction?: (pczt: PcztTransaction) => Promise<SignPcztTransactionResult>;

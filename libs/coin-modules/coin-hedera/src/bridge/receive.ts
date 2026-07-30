@@ -1,6 +1,7 @@
 import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { isSegwitDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, AccountBridge, DerivationMode } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { Transaction } from "../types";
@@ -20,7 +21,10 @@ export const receive =
         try {
           const r = await getAddress(deviceId, {
             derivationMode: account.derivationMode as DerivationMode,
-            currency: account.currency,
+            currency: {
+              ...account.currency,
+              id: CryptoCurrencyIdSchema.parse(account.currency.id),
+            },
             path: account.freshAddressPath,
             segwit: isSegwitDerivationMode(account.derivationMode as DerivationMode),
           });

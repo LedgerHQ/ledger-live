@@ -5,7 +5,7 @@ import type {
   SendTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { GasEstimationError } from "../errors";
@@ -392,7 +392,11 @@ describe("estimateFees", () => {
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
-      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("optimism"),
+        ethereumLikeInfo: { chainId: 10 },
+      },
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -430,7 +434,11 @@ describe("estimateFees", () => {
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
-      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("optimism"),
+        ethereumLikeInfo: { chainId: 10 },
+      },
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -477,7 +485,11 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("sei_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       tokenIntent,
     );
     expect(result).toEqual({
@@ -514,7 +526,11 @@ describe("estimateFees", () => {
       useAllAmount: true,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("sei_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       delegateMaxIntent,
     );
     expect(result.parameters).toMatchObject({
@@ -535,7 +551,11 @@ describe("estimateFees", () => {
     };
 
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("sei_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       redelegateNoDst,
     );
 
@@ -565,7 +585,11 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("sei_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       tokenIntent,
     );
     expect(result).toEqual({

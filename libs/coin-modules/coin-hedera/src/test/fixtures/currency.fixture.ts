@@ -1,10 +1,14 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import invariant from "invariant";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
   return {
     type: "CryptoCurrency",
-    id: "hedera",
+    id: CryptoCurrencyIdSchema.parse("hedera"),
     managerAppName: "Hedera",
     coinType: 3030,
     scheme: "hedera",
@@ -32,9 +36,9 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
 const HARDCODED_HEDERA_TOKENS: TokenCurrency[] = [
   {
     type: "TokenCurrency",
-    id: "hedera/hts/usd_coin_0.0.456858",
+    id: TokenCurrencyIdSchema.parse("hedera/hts/usd_coin_0.0.456858"),
     contractAddress: "0.0.456858",
-    parentCurrencyId: "hedera",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "hts",
     name: "USD Coin",
     ticker: "USDC",
@@ -50,9 +54,9 @@ const HARDCODED_HEDERA_TOKENS: TokenCurrency[] = [
   },
   {
     type: "TokenCurrency",
-    id: "hedera/hts/xpack_0.0.7243470",
+    id: TokenCurrencyIdSchema.parse("hedera/hts/xpack_0.0.7243470"),
     contractAddress: "0.0.7243470",
-    parentCurrencyId: "hedera",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "hts",
     name: "xPACK",
     ticker: "XPACK",
@@ -68,9 +72,9 @@ const HARDCODED_HEDERA_TOKENS: TokenCurrency[] = [
   },
   {
     type: "TokenCurrency",
-    id: "hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
+    id: TokenCurrencyIdSchema.parse("hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1"),
     contractAddress: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
-    parentCurrencyId: "hedera",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "erc20",
     name: "AUDD",
     ticker: "AUDD",
@@ -119,9 +123,9 @@ export const getTokenCurrencyFromCALByType = (
 
 export const getMockedHTSTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
   return {
-    id: "hedera/hts/test1_0.0.1234567",
+    id: TokenCurrencyIdSchema.parse("hedera/hts/test1_0.0.1234567"),
     contractAddress: "0.0.1001",
-    parentCurrencyId: "hedera",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "hts",
     name: "Test HTS token",
     ticker: "TEST1",
@@ -139,9 +143,9 @@ export const getMockedHTSTokenCurrency = (overrides?: Partial<TokenCurrency>): T
 
 export const getMockedERC20TokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
   return {
-    id: "hedera/erc20/_0x915fe7c00730c08708581e30e27d9c0605be40bd",
+    id: TokenCurrencyIdSchema.parse("hedera/erc20/_0x915fe7c00730c08708581e30e27d9c0605be40bd"),
     contractAddress: "0x915fe7c00730c08708581e30e27d9c0605be40bd",
-    parentCurrencyId: "hedera",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "erc20",
     name: "Test ERC20 token",
     ticker: "TEST2",

@@ -1,4 +1,8 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Builder, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
@@ -154,10 +158,12 @@ describe("Transaction functions", () => {
             address.includes("2f956143c461769579baef2e32cc2d7bc18283f40d20bb03e432cd603ac33ffc")
           ) {
             return {
-              id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              id: TokenCurrencyIdSchema.parse(
+                "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+              ),
               type: "TokenCurrency" as const,
               contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
-              parentCurrencyId: "ton",
+              parentCurrencyId: CryptoCurrencyIdSchema.parse("ton"),
               tokenType: "jetton",
               name: "NOT",
               ticker: "NOT",

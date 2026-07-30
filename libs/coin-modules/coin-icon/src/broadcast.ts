@@ -1,4 +1,5 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 
 import { broadcastTransaction } from "./api/node";
@@ -13,6 +14,9 @@ export async function broadcast({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> {
-  const { hash } = await broadcastTransaction(signedOperation, account.currency);
+  const { hash } = await broadcastTransaction(signedOperation, {
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  });
   return patchOperationWithHash(signedOperation.operation, hash);
 }

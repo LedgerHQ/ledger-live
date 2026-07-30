@@ -1,6 +1,7 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, TokenCurrency } from "../types";
+import { CryptoCurrencyIdSchema } from "../types";
 import { getCurrenciesResolver } from "../currencies/resolver";
 import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache } from "../account";
@@ -193,7 +194,11 @@ export function genOperation(
   const date = new Date(
     (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
   );
-  const address = genAddress(superAccount.currency, rng);
+  const superCurrency = {
+    ...superAccount.currency,
+    id: CryptoCurrencyIdSchema.parse(superAccount.currency.id),
+  };
+  const address = genAddress(superCurrency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
   const divider =
     (account.type === "Account" && currencyIdApproxMarketPrice[account.currency.id]) ||
@@ -213,8 +218,8 @@ export function genOperation(
     type,
     value,
     fee: new BigNumber(Math.round(value.toNumber() * 0.01)),
-    senders: [type !== "IN" ? genAddress(superAccount.currency, rng) : address],
-    recipients: [type === "IN" ? genAddress(superAccount.currency, rng) : address],
+    senders: [type !== "IN" ? genAddress(superCurrency, rng) : address],
+    recipients: [type === "IN" ? genAddress(superCurrency, rng) : address],
     blockHash: genHex(64, rng),
     blockHeight: superAccount.blockHeight - Math.floor((Date.now() - (date as any)) / 900000),
     accountId: account.id,

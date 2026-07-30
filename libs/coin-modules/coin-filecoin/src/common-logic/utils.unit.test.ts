@@ -1,3 +1,4 @@
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { DerivationMode } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import * as api from "../network/api";
@@ -27,13 +28,16 @@ jest.mock("../erc20/tokenAccounts");
 
 describe("common-logic/utils", () => {
   describe("mapTxToOps", () => {
-    const createAccountShapeInfo = (address: string) => ({
-      address,
-      currency: createMockAccount().currency,
-      index: 0,
-      derivationPath: "44'/461'/0'/0/0",
-      derivationMode: "" as DerivationMode,
-    });
+    const createAccountShapeInfo = (address: string) => {
+      const mockCurrency = createMockAccount().currency;
+      return {
+        address,
+        currency: { ...mockCurrency, id: CryptoCurrencyIdSchema.parse(mockCurrency.id) },
+        index: 0,
+        derivationPath: "44'/461'/0'/0/0",
+        derivationMode: "" as DerivationMode,
+      };
+    };
 
     it("should convert send transaction to OUT operation", () => {
       const account = createMockAccount({
@@ -260,7 +264,10 @@ describe("common-logic/utils", () => {
 
       const info = {
         address: TEST_ADDRESSES.F1_ADDRESS,
-        currency: mockAccount.currency,
+        currency: {
+          ...mockAccount.currency,
+          id: CryptoCurrencyIdSchema.parse(mockAccount.currency.id),
+        },
         derivationMode: "" as DerivationMode,
         initialAccount: mockAccount,
         index: 0,
@@ -301,7 +308,10 @@ describe("common-logic/utils", () => {
 
       const info = {
         address: TEST_ADDRESSES.F1_ADDRESS,
-        currency: mockAccount.currency,
+        currency: {
+          ...mockAccount.currency,
+          id: CryptoCurrencyIdSchema.parse(mockAccount.currency.id),
+        },
         derivationMode: "" as DerivationMode,
         initialAccount: mockAccount,
         index: 0,
@@ -355,9 +365,13 @@ describe("common-logic/utils", () => {
       mockedFetchTxsWithPages.mockResolvedValue(mockTxs);
       mockedBuildTokenAccounts.mockResolvedValue([]);
 
+      const mockCurrencyForShape = createMockAccount().currency;
       const info = {
         address: TEST_ADDRESSES.F1_ADDRESS,
-        currency: createMockAccount().currency,
+        currency: {
+          ...mockCurrencyForShape,
+          id: CryptoCurrencyIdSchema.parse(mockCurrencyForShape.id),
+        },
         derivationMode: "" as DerivationMode,
         initialAccount: undefined,
         index: 0,

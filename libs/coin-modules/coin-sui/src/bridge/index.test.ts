@@ -1,6 +1,9 @@
 import type { CoinConfig } from "@ledgerhq/coin-module-framework/config";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  type CryptoCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { SuiCoinConfig } from "../config";
@@ -80,7 +83,7 @@ describe("bridge/index", () => {
 
     // Setup mock currency
     mockCurrency = {
-      id: "sui",
+      id: CryptoCurrencyIdSchema.parse("sui"),
       name: "Sui",
       family: "sui",
       units: [],

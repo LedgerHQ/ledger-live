@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrencyIdSchema, CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
@@ -78,7 +78,10 @@ export const getFees = async (
   unsigned: IcxTransaction,
   account: IconAccount,
 ): Promise<BigNumber> => {
-  const debugRpcUrl = getDebugRpcUrl(account.currency);
+  const debugRpcUrl = getDebugRpcUrl({
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  });
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
   const res = await iconService.estimateStep(unsigned).execute();
@@ -89,7 +92,10 @@ export const getFees = async (
  * Get step price from governance contract
  */
 export const getStepPrice = async (account: IconAccount): Promise<BigNumber> => {
-  const rpcURL = getRpcUrl(account.currency);
+  const rpcURL = getRpcUrl({
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  });
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
   const txBuilder = new IconBuilder.CallBuilder();

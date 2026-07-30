@@ -12,6 +12,7 @@ import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
 import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
 import type { CryptoCurrency, TokenCurrency } from "../types";
+import { TokenCurrencyIdSchema } from "../types";
 
 // oxlint-disable-next-line typescript/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
@@ -154,7 +155,7 @@ test("accountWithMandatoryTokens ethereum", () => {
     .fill(null)
     .map((_, i) => ({
       type: "TokenCurrency" as const,
-      id: `${currency.id}/erc20/mock_token_${i}`,
+      id: TokenCurrencyIdSchema.parse(`${currency.id}/erc20/mock_token_${i}`),
       contractAddress: `0x${i.toString(16).padStart(40, "0")}`,
       parentCurrencyId: currency.id,
       tokenType: "erc20" as const,

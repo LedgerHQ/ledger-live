@@ -1,4 +1,5 @@
 import { genAddress, genHex } from "@ledgerhq/ledger-wallet-framework/mocks/helpers";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
@@ -53,7 +54,10 @@ function genBaseOperation(
   index: number,
 ): CosmosOperation {
   const { operations: ops } = account;
-  const address = genAddress(account.currency, rng);
+  const address = genAddress(
+    { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
+    rng,
+  );
   const lastOp = ops[index];
   const date = new Date(
     (lastOp ? lastOp.date.valueOf() : Date.now()) -

@@ -10,6 +10,7 @@ import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framewo
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import type { ExplorerView, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -399,7 +400,10 @@ export const getValidatorFromAccount = (account: HederaAccount): HederaValidator
     return null;
   }
 
-  const validators = getCurrentHederaPreloadData(account.currency);
+  const validators = getCurrentHederaPreloadData({
+    ...account.currency,
+    id: CryptoCurrencyIdSchema.parse(account.currency.id),
+  });
   const validator = validators.validators.find(v => v.nodeId === delegation.nodeId) ?? null;
 
   return validator;

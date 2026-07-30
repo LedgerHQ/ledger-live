@@ -7,6 +7,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
 import { ONE_TRX } from "../logic/constants";
@@ -269,7 +270,10 @@ const getTransactionStatus = async (
       ...(acc?.id ? { account: acc.id } : {}),
     });
     errors.gasLimit = new NotEnoughGas(undefined, {
-      fees: formatCurrencyUnit(getFeesUnit(acc.currency), estimatedFees),
+      fees: formatCurrencyUnit(
+        getFeesUnit({ ...acc.currency, id: CryptoCurrencyIdSchema.parse(acc.currency.id) }),
+        estimatedFees,
+      ),
       ticker: acc.currency.ticker,
       cryptoName: acc.currency.name,
       links: [`ledgerlive://buy?${query.toString()}`],
