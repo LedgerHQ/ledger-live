@@ -29,7 +29,6 @@
   "dependencies": {
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/keccak256": "^5.7.0",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2",

@@ -17,7 +17,7 @@
 
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
-import { StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { bip32asBuffer } from "./bip32";
 
 const MAX_APDU_LEN = 255;

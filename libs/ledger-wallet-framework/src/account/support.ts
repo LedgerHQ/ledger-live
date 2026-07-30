@@ -1,4 +1,4 @@
-import { AccountNotSupported } from "@ledgerhq/errors";
+import { AccountNotSupported } from "../errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import type { CryptoCurrency } from "../types";
