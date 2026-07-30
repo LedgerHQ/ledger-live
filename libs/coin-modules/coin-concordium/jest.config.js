@@ -24,6 +24,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   transformIgnorePatterns: ["node_modules/(?!(@walletconnect)/)"],
   workerThreads: true,
+  coverageProvider: "babel",
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
