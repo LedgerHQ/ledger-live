@@ -24,6 +24,7 @@ import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
 } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+import { getPrivateBalance } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/balance";
 import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
@@ -201,10 +202,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const showPrivateBalanceComponent = useFeature("zcashShielded")?.enabled;
 
   const privateInfo = "privateInfo" in account ? account.privateInfo : null;
-  const { orchardBalance, saplingBalance } = privateInfo ?? {
-    orchardBalance: BigNumber(0),
-    saplingBalance: BigNumber(0),
-  };
   const syncState = privateInfo?.syncState ?? "disabled";
   const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
@@ -309,7 +306,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   };
 
   const _availableBalance = balance ?? BigNumber(0);
-  const _privateBalance = orchardBalance.plus(saplingBalance);
+  const _privateBalance = getPrivateBalance(privateInfo);
   const _transparentBalance = _availableBalance.minus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);

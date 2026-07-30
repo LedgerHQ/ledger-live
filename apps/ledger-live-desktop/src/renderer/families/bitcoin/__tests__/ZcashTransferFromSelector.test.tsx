@@ -126,4 +126,57 @@ describe("ZcashTransferFromSelector", () => {
     renderSelector(buildAccount({}, false), {});
     expect(screen.queryByTestId("zcash-transfer-from-selector")).not.toBeInTheDocument();
   });
+
+  it("surfaces ironwoodBalance as not-yet-sendable rather than as spendable private balance", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(50_000_000),
+        orchardBalance: new BigNumber(0),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    // The Ironwood pool has no send/sign path yet, so it is shown as a
+    // "not yet available" hint carrying the amount, not as the spendable amount.
+    const ironwoodHint = screen.getByTestId("transfer-from-private-ironwood-unavailable");
+    expect(ironwoodHint).toHaveTextContent(/0\.5 ZEC/);
+    // The spendable (Orchard) balance is 0, so the card's headline amount is 0.
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0 ZEC/);
+  });
+
+  it("excludes the sapling balance from the spendable private amount", () => {
+    renderSelector(
+      buildAccount({
+        orchardBalance: new BigNumber(30_000_000),
+        saplingBalance: new BigNumber(50_000_000),
+        ironwoodBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    // Only Orchard (0.3 ZEC) is spendable; Sapling (0.5 ZEC) is not counted.
+    const privateCard = screen.getByTestId("transfer-from-private");
+    expect(privateCard).toHaveTextContent(/0\.3 ZEC/);
+    expect(privateCard).not.toHaveTextContent(/0\.8 ZEC/);
+  });
+
+  it("does not show the ironwood hint when there is no ironwood balance", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(50_000_000),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    expect(
+      screen.queryByTestId("transfer-from-private-ironwood-unavailable"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
+  });
 });
