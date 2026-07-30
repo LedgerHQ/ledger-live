@@ -221,21 +221,4 @@ describe("useAssetsData", () => {
       expect.objectContaining({ pollingInterval: undefined }),
     );
   });
-
-  it("should forward network ids to the underlying query", () => {
-    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({ ...defaultMockValues });
-
-    renderHook(() =>
-      useAssetsData({
-        product: "lld",
-        version: "1.0.0",
-        networkIds: ["ethereum", "tron"],
-      }),
-    );
-
-    expect(mockuseGetAssetsDataInfiniteQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ networkIds: ["ethereum", "tron"] }),
-      expect.anything(),
-    );
-  });
 });

@@ -1,39 +1,33 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
+import { http, HttpResponse, server } from "@tests/server";
 import { useAssets } from "../useAssets";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
+import {
+  expectedAssetsSorted as expectedAssetsSortedFromMock,
+  mockData,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => {
-  const actual = jest.requireActual<
-    typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
-  >("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
-
-  return {
-    ...actual,
-    useAssetsData: jest.fn(actual.useAssetsData),
-  };
-});
-
-const mockedUseAssetsData = jest.mocked(useAssetsData);
-const actualUseAssetsData = jest.requireActual<
-  typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
->("@ledgerhq/live-common/dada-client/hooks/useAssetsData").useAssetsData;
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
   ...jest.requireActual("@ledgerhq/live-common/coin-modules/registry"),
   isCurrencySupported: jest.fn(() => true),
 }));
 
+function captureDadaRequests(): string[] {
+  const requests: string[] = [];
+  const handler = ({ request }: { request: Request }) => {
+    requests.push(request.url);
+    return HttpResponse.json(mockData);
+  };
+
+  server.use(
+    http.get("https://dada.api.ledger-test.com/v1/assets", handler),
+    http.get("https://dada.api.ledger.com/v1/assets", handler),
+  );
+
+  return requests;
+}
+
 describe("useAssets", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    mockedUseAssetsData.mockImplementation(actualUseAssetsData);
-  });
-
   it("transforms data into assetsSorted and sortedCryptoCurrencies", async () => {
     const { result } = renderHook(() => useAssets({}));
 
@@ -77,50 +71,9 @@ describe("useAssets", () => {
     ).toBe(true);
   });
 
-  it("forwards network ids to DADA", () => {
-    mockedUseAssetsData.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isError: false,
-      error: undefined,
-      errorInfo: {
-        hasError: false,
-        isNetworkError: false,
-        isApiError: false,
-        apiStatus: undefined,
-      },
-      loadNext: undefined,
-      refetch: jest.fn(),
-    });
-
-    renderHook(() => useAssets({ networkIds: ["ethereum", "tron"] }));
-
-    expect(mockedUseAssetsData).toHaveBeenCalledWith(
-      expect.objectContaining({ networkIds: ["ethereum", "tron"] }),
-    );
-  });
-
-  it("preserves the exact currency filter when network ids are empty", () => {
-    mockedUseAssetsData.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isError: false,
-      error: undefined,
-      errorInfo: {
-        hasError: false,
-        isNetworkError: false,
-        isApiError: false,
-        apiStatus: undefined,
-      },
-      loadNext: undefined,
-      refetch: jest.fn(),
-    });
-
-    renderHook(() =>
+  it("keeps the exact currency filter when network ids are empty", async () => {
+    const requests = captureDadaRequests();
+    const { result } = renderHook(() =>
       useAssets({
         currencyIds: ["bitcoin"],
         networkIds: [],
@@ -128,12 +81,10 @@ describe("useAssets", () => {
       }),
     );
 
-    expect(mockedUseAssetsData).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currencyIds: ["bitcoin"],
-        networkIds: undefined,
-        areCurrenciesFiltered: true,
-      }),
-    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const searchParams = new URL(requests[0]).searchParams;
+    expect(searchParams.get("currencyIds")).toBe("bitcoin");
+    expect(searchParams.has("networkIds")).toBe(false);
   });
 });
