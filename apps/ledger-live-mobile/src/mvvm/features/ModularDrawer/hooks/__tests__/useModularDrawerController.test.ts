@@ -3,6 +3,8 @@ import { useModularDrawerController } from "../useModularDrawerController";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { AccountLike } from "@ledgerhq/types-live";
 import { mockEthCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { setStep } from "~/reducers/modularDrawer";
+import { ModularDrawerStep } from "../../types";
 
 const mockAccount = genAccount("test_account");
 const mockParentAccount = genAccount("parent_account");
@@ -39,6 +41,7 @@ describe("useModularDrawerController", () => {
     expect(state.source).toBe("test_source");
     expect(state.enableAccountSelection).toBe(true);
     expect(state.preselectedCurrencies).toEqual(["bitcoin"]);
+    expect(state.presentation).toBe("drawer");
   });
 
   it("should close the drawer when closeDrawer is called", () => {
@@ -119,13 +122,75 @@ describe("useModularDrawerController", () => {
   });
 
   describe("currency completion", () => {
-    it("should return the selected currency and close the drawer", () => {
+    it("should store embedded presentation for a currency selection", () => {
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => store.dispatch(setStep(ModularDrawerStep.Account)));
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          presentation: "embedded",
+          enableAccountSelection: true,
+          onCurrencySelected: jest.fn(),
+        });
+      });
+
+      expect(store.getState().modularDrawer.presentation).toBe("embedded");
+      expect(store.getState().modularDrawer.enableAccountSelection).toBe(false);
+      expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
+      expect(result.current.presentation).toBe("embedded");
+    });
+
+    it("should restore drawer presentation when embedded selection is replaced", () => {
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          presentation: "embedded",
+          onCurrencySelected: jest.fn(),
+        });
+      });
+      act(() => result.current.openDrawer({ flow: "add_account" }));
+
+      expect(store.getState().modularDrawer.presentation).toBe("drawer");
+    });
+
+    it("should restore drawer presentation when embedded selection is closed", () => {
       const onCurrencySelected = jest.fn();
       const { result, store } = renderHook(() => useModularDrawerController());
 
       act(() => {
         result.current.openDrawer({
           completionMode: "currency",
+          presentation: "embedded",
+          currencies: ["ethereum"],
+          onCurrencySelected,
+        });
+      });
+      act(() => result.current.closeDrawer());
+
+      expect(onCurrencySelected).toHaveBeenCalledWith(null);
+      expect(onCurrencySelected).toHaveBeenCalledTimes(1);
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: false,
+        preselectedCurrencies: [],
+        callbackId: undefined,
+        completionMode: undefined,
+        presentation: "drawer",
+        step: "Asset",
+      });
+    });
+
+    it("should return the selected currency and reset an embedded drawer", () => {
+      const onCurrencySelected = jest.fn();
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          completionMode: "currency",
+          presentation: "embedded",
+          currencies: ["ethereum"],
           onCurrencySelected,
         });
       });
@@ -133,7 +198,14 @@ describe("useModularDrawerController", () => {
 
       expect(onCurrencySelected).toHaveBeenCalledWith(mockEthCryptoCurrency);
       expect(onCurrencySelected).toHaveBeenCalledTimes(1);
-      expect(store.getState().modularDrawer.isOpen).toBe(false);
+      expect(store.getState().modularDrawer).toMatchObject({
+        isOpen: false,
+        preselectedCurrencies: [],
+        callbackId: undefined,
+        completionMode: undefined,
+        presentation: "drawer",
+        step: "Asset",
+      });
     });
 
     it("should return null once when currency selection is cancelled", () => {

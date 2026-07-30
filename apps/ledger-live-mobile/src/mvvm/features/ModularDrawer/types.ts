@@ -11,6 +11,7 @@ export enum ModularDrawerStep {
 export const MODULAR_DRAWER_KEY = "modularDrawer";
 
 export type ModularDrawerCompletionMode = "currency";
+export type ModularDrawerPresentation = "drawer" | "embedded";
 
 export type DrawerExtras = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -29,12 +30,14 @@ export type DrawerBaseParams = {
 
 type AccountOrDeviceDrawerCompletion = {
   completionMode?: never;
+  presentation?: "drawer";
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   onCurrencySelected?: never;
 };
 
 type CurrencyDrawerCompletion = {
   completionMode: "currency";
+  presentation?: ModularDrawerPresentation;
   onAccountSelected?: never;
   onCurrencySelected: (currency: CryptoOrTokenCurrency | null) => void;
 };
@@ -43,10 +46,21 @@ export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBasePara
   (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) &
   TExtras;
 
-export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
+type AccountOrDeviceDrawerRemoteCompletion = {
   callbackId?: string;
-  completionMode?: ModularDrawerCompletionMode;
-} & TExtras;
+  completionMode?: never;
+  presentation?: "drawer";
+};
+
+type CurrencyDrawerRemoteCompletion = {
+  callbackId?: string;
+  completionMode: "currency";
+  presentation?: ModularDrawerPresentation;
+};
+
+export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
+  (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) &
+  TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (
   params?: DrawerParams<TExtras>,
