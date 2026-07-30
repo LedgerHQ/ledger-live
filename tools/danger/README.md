@@ -21,9 +21,7 @@ In future we may also use it to give PR authors extra information on failing che
 2. **workflow** – [danger.yml](../../.github/workflows/danger.yml) defines how it is run in GitHub
 3. **config** –  [dangerfile.ts](./dangerfile.ts) is the entry point targeted by the workflow
 
-## Testing locally
-
-### Run Danger locally
+## Run Danger locally
 
 If you are making changes to your pull request, or to the dangerfile you can get feedback locally.
 
@@ -37,14 +35,5 @@ cd tools/danger
 pnpm danger pr https://github.com/LedgerHQ/ledger-live/pull/19915 --dangerfile dangerfile.ts
 ```
 
-5. See feedback in the Terminal before pushing your changes
-
-### Run tests locally
-
-Unit tests have been written to explain the validation functions and give reviewers confidence about the regex.
-
-`pnpm --filter @tools/danger test`
-
-Run this from the root of the repo. 
-
-_Notes: these tests are not currently run in the CI_
+1. See feedback in the Terminal before pushing your changes
+2. 

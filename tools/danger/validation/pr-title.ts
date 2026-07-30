@@ -1,31 +1,30 @@
-import { COMMIT_TYPES } from "../../../commitlint.types.js";
+import lint from "@commitlint/lint";
+import config from "../../../commitlint.config.js";
 
-const ALLOWED_TYPES = COMMIT_TYPES.join("|");
+async function validatePrTitle() {
+  const report = await lint(stripPlatformPrefix(danger.github.pr.title), config.rules);
 
-const TITLE_STRUCTURE = new RegExp(`^(${ALLOWED_TYPES})(\\([a-z][a-z-]*[a-z]\\))(!)?:\\s(.+)$`);
+  const { errors, input, valid, warnings } = report;
 
-const TICKET_SUFFIX = /^\s\([A-Z]+-\d+\)$/;
+  errors.forEach(({ message }) => {
+    fail(message);
+  });
 
-export function isValidPrTitle(title: string) {
-  const stripped = stripPlatformPrefix(title);
-  const match = stripped.match(TITLE_STRUCTURE);
-  if (!match) return false;
-  const description = match[4];
-  const maybeTicket = description.match(/\s\(.*\)$/);
-  return !maybeTicket || TICKET_SUFFIX.test(maybeTicket[0]);
-}
+  warnings.forEach(({ message }) => {
+    warn(message);
+  });
 
-function validatePrTitle() {
-  if (!isValidPrTitle(danger.github.pr.title)) {
-    fail(
-      `**PR title does not follow the repository conventions.**\n\n` +
-        `**Got:** \`${danger.github.pr.title}\`\n\n` +
-        `**Expected format:** \`<type>(<scope>): <description>\` or \`<type>(<scope>): <description> (LIVE-XXXX)\`\n\n` +
-        `**Allowed types:** \`${ALLOWED_TYPES.split("|").join("`, `")}\`\n\n` +
-        `**Examples:**\n` +
-        `- \`feat(desktop): add dark mode toggle (LIVE-1234)\`\n` +
-        `- \`fix(mobile): resolve transaction signing issue\`\n` +
-        `- \`chore(automation): harmonize git guidelines (LIVE-27608)\`\n\n` +
+  if (!valid) {
+    markdown(
+      `# PR title does not follow the repository conventions\n\n` +
+        `**Got:** \`${input}\`\n\n` +
+        `**Expected structure:** \n` +
+        `- \`<type>(<scope>): <description>\` or \n` +
+        `- \`<type>(<scope>): <description> (LIVE-XXXX)\`\n\n` +
+        `**Examples:** \n` +
+        `- \`feat(ui): add dark mode toggle (LIVE-1234)\`\n` +
+        `- \`fix(swap): resolve transaction signing issue\`\n` +
+        `- \`ci(lint): harmonize git guidelines (LIVE-27608)\`\n\n` +
         `See [Git conventions](https://github.com/LedgerHQ/ledger-live/blob/develop/docs/contributing/git-conventions.md) ` +
         `and [CONTRIBUTING.md](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) for the full rules.\n\n`,
     );

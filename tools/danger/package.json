@@ -2,15 +2,8 @@
   "name": "@tools/danger",
   "version": "0.0.0",
   "private": true,
-  "scripts": {
-    "test": "jest"
-  },
   "devDependencies": {
-    "@jest/globals": "catalog:",
-    "@swc/core": "catalog:",
-    "@swc/jest": "catalog:",
-    "@types/jest": "catalog:",
-    "danger": "13.0.10",
-    "jest": "catalog:"
+    "@commitlint/lint": "21.2.0",
+    "danger": "13.0.10"
   }
 }
