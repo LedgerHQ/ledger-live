@@ -1,15 +1,14 @@
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
+import { StatusCodes, TransportError, DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import {
   ManagerNotEnoughSpaceError,
-  StatusCodes,
-  TransportError,
-  DisconnectedDevice,
-} from "@ledgerhq/errors";
+  ImageLoadRefusedOnDevice,
+  ImageCommitRefusedOnDevice,
+} from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import getDeviceInfo from "./getDeviceInfo";
-import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";

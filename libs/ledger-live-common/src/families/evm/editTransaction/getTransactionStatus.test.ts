@@ -1,8 +1,5 @@
-import {
-  AmountRequired,
-  RecipientRequired,
-  ReplacementTransactionUnderpriced,
-} from "@ledgerhq/errors";
+import { AmountRequired, RecipientRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ReplacementTransactionUnderpriced } from "../../../errors";
 import BigNumber from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";
 import {

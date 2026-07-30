@@ -1,6 +1,6 @@
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { registerTransportModule, open } from ".";
-import { CantOpenDevice, TransportError } from "@ledgerhq/errors";
+import { CantOpenDevice, TransportError } from "@ledgerhq/hw-transport/errors";
 
 jest.useFakeTimers();
 

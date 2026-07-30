@@ -1,4 +1,5 @@
-import { TransportStatusError, UnexpectedBootloader, StatusCodes } from "@ledgerhq/errors";
+import { TransportStatusError, StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UnexpectedBootloader } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 
 /**

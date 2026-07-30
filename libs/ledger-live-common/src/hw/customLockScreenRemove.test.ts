@@ -1,7 +1,8 @@
-import { StatusCodes, UnexpectedBootloader, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ImageDoesNotExistOnDevice, UnexpectedBootloader } from "../errors";
 import removeImage, { command } from "./customLockScreenRemove";
 import Transport from "@ledgerhq/hw-transport";
-import { ImageDoesNotExistOnDevice } from "../errors";
 import { withDevice } from "./deviceAccess";
 import { from } from "rxjs";
 import getDeviceInfo from "./getDeviceInfo";

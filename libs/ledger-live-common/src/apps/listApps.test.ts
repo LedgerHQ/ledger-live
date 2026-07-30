@@ -1,5 +1,5 @@
 import { from, lastValueFrom } from "rxjs";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "../errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./listApps";
 import ManagerAPI, { ListInstalledAppsEvent } from "../manager/api";

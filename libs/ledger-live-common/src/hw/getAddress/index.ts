@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "@ledgerhq/errors";
+import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "../../errors";
 import { log } from "@ledgerhq/logs";
 import { Resolver } from "./types";
 import { loadSetupForFamily } from "../../coin-modules/registry";
