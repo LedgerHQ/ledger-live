@@ -168,13 +168,16 @@ describe("useContactsDevToolViewModel", () => {
       result.current.handleLoadPopulatedContacts();
     });
 
-    expect(store.getState().contacts.contacts).toHaveLength(4);
+    expect(store.getState().contacts.contacts).toHaveLength(6);
     expect(store.getState().contacts.contacts.map(contact => contact.name)).toEqual([
       "Me",
       "Ada",
       "Ben",
+      "Charlie",
+      "Diana",
       "Olive",
     ]);
+    expect(store.getState().contacts.contacts[0]?.addresses).toHaveLength(3);
   });
 
   it("should reset contacts to the default Me contact", () => {

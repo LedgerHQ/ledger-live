@@ -9293,6 +9293,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
+    "addExternalAddress": "Add external address",
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
@@ -9318,6 +9319,7 @@
       "name": "Me"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
       "emptyState": {
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
