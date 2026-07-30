@@ -435,7 +435,9 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        # TEMPORARY pin: develop's composite still calls the pre-rename script path
+        # (apps/ledger-live-mobile/scripts/shard-tests.mjs). Revert to @develop before merge.
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@ci/e2e-pin-shards-composite
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
