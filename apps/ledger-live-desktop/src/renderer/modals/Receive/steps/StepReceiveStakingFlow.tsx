@@ -68,7 +68,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
 
   const onChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
+    window.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
     track("button_clicked2", {
       button: "not_show",

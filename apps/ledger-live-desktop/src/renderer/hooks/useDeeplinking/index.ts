@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from "react";
-import { ipcRenderer, IpcRendererEvent } from "electron";
+import { ipcRenderer, type IpcRendererEvent } from "electron";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 
