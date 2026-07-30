@@ -777,6 +777,7 @@
     "src/families/multiversx/bridge/api.ts",
     "src/families/multiversx/coinModuleApi.ts",
     "src/families/multiversx/config.ts",
+    "src/families/near/coinModuleApi.ts",
     "src/families/near/config.ts",
     "src/families/polkadot/config.ts",
     "src/families/solana/bridge/api.ts",

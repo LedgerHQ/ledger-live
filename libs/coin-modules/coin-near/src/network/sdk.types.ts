@@ -35,6 +35,13 @@ export type NearTransaction = {
   }[];
 };
 
+export type NearBlockHeader = {
+  height: number;
+  hash: string;
+  /** Block time in nanoseconds since the epoch. */
+  timestamp: number;
+};
+
 export type NearProtocolConfig = {
   runtime_config: {
     storage_amount_per_byte: string;

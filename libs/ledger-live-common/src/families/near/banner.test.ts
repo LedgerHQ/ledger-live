@@ -3,8 +3,11 @@ import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
 
 import { BigNumber } from "bignumber.js";
-import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
-import type { NearStakingPosition } from "@ledgerhq/coin-near/api/sdk.types";
+import type {
+  NearAccount,
+  NearStakingPosition,
+  NearValidatorItem,
+} from "@ledgerhq/coin-near/types";
 
 const ledgerValidator: NearValidatorItem = {
   validatorAddress: "ledgerbyfigment.poolv1.near",

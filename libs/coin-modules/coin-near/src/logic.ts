@@ -29,7 +29,11 @@ export const isImplicitAccount = (address: string): boolean => {
   return !address.includes(".");
 };
 
-export const getStakingGas = (t?: Transaction, multiplier = 5): BigNumber => {
+/** Only the mode and useAllAmount flag drive staking gas, so callers outside the account bridge
+ * (which has no `Transaction`) can pass just those two fields. */
+export type StakingGasInput = { mode?: string; useAllAmount?: boolean };
+
+export const getStakingGas = (t?: StakingGasInput, multiplier = 5): BigNumber => {
   const stakingGasBase = new BigNumber(STAKING_GAS_BASE);
 
   if (t?.mode === "withdraw" && t?.useAllAmount) {
@@ -168,7 +172,7 @@ export const getYoctoThreshold = (): BigNumber => {
  * An estimation for the fee by using the staking gas and scaling accordingly.
  * Buffer added so that the transaction never fails - we'll always overestimate.
  */
-export const getStakingFees = (t: Transaction, gasPrice: BigNumber): BigNumber => {
+export const getStakingFees = (t: StakingGasInput, gasPrice: BigNumber): BigNumber => {
   const stakingGas = getStakingGas(t);
 
   return stakingGas

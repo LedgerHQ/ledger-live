@@ -301,6 +301,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "near",
     supportedCoins: ["near"],
     loadSetup: () => import("../families/near/setup"),
+    loadLocalApi: () => import("../families/near/coinModuleApi").then(m => m.createLocalNearApi),
     loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
