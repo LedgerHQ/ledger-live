@@ -7,8 +7,12 @@ import { getEnv } from "@shared/env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { buildTags } from "tests/utils/tagsUtils";
+import {
+  liveDataCommand,
+  liveDataWithAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -471,3 +475,61 @@ for (const currency of liveApps) {
     );
   });
 }
+
+test.describe("Delegate", () => {
+  const seiDelegationAmount = "1";
+  const seiDelegation = new Delegate(Account.SEI_EVM_1, seiDelegationAmount, "first-available");
+
+  test.use({
+    teamOwner: delegateTeamOwner(seiDelegation.account.currency.id),
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: seiDelegation.account.currency.speculosApp,
+    cliCommands: [liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" })],
+    featureFlags: {
+      evmNativeStaking: {
+        enabled: true,
+        params: { supportedCurrencyIds: ["sei_evm"] },
+      },
+      ...FF_STAKE_PROGRAMS_MODAL,
+    },
+  });
+
+  test(
+    `[${seiDelegation.account.currency.testLabel}] - Delegate`,
+    {
+      tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-5964",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(seiDelegation.account.accountName);
+
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.evmDelegate.continueFromRewardsInfoIfPresent();
+      await app.evmDelegate.expectValidatorListVisible();
+      await app.evmDelegate.selectFirstValidator();
+      await app.evmDelegate.continueValidatorStep();
+      await app.evmDelegate.setAmountAndContinue(seiDelegationAmount);
+
+      await app.speculos.acceptEnableTransactionCheck();
+
+      await app.evmDelegate.expectDeviceValidationScreen();
+      await app.speculos.signEvmContractTransaction();
+      await app.evmDelegate.expectSuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+
+      await app.delegateDrawer.providerIsVisible(seiDelegation);
+      await app.delegateDrawer.amountValueIsVisible(seiDelegation.account.currency.ticker);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
