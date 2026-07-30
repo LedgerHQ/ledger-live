@@ -8,5 +8,5 @@
     "moduleResolution": "Bundler",
     "module": "ESNext"
   },
-  "include": ["src/**/*.ts", "bunli.config.ts"]
+  "include": ["src/**/*.ts", "scripts/regression/*.ts", "bunli.config.ts"]
 }
