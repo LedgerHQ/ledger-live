@@ -25,7 +25,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",

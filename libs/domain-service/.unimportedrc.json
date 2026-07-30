@@ -5,7 +5,5 @@
   "ignoreUnused": [
     "react-dom"
   ],
-  "ignoreUnresolved": [
-    "@ledgerhq/types-cryptoassets"
-  ]
+  "ignoreUnresolved": []
 }

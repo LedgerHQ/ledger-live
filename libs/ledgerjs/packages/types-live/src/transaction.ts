@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "./currency";
 import type { DomainServiceResolution } from "./domain";
 import type { Operation, OperationRaw } from "./operation";
 

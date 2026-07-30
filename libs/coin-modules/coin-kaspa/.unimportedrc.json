@@ -82,7 +82,6 @@
     "@ledgerhq/live-network",
     "@ledgerhq/live-promise",
     "@ledgerhq/logs",
-    "@ledgerhq/types-cryptoassets",
     "bip32",
     "bip32-path",
     "eip55",
