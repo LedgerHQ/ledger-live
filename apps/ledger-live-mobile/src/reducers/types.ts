@@ -300,7 +300,6 @@ export type SettingsState = {
   depositFlow: {
     hasClosedWithdrawBanner: boolean;
   };
-  supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
   dismissedContentCards: { [id: string]: number };
