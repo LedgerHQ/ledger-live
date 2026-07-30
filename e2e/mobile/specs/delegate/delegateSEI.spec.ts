@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { setEnv } from "@shared/env";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
@@ -14,7 +14,7 @@ const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-ava
 const tmsLinks: string[] = ["B2CQA-5740"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sei_evm", "@family-evm"];
 
-setTeamOwner(Team.COIN_INTEGRATION);
+setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
 tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
 tags.forEach(tag => $Tag(tag));
 describe("Delegate", () => {
