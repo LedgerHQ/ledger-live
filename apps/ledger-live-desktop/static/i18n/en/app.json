@@ -100,7 +100,6 @@
     "selectNoResults": "No results found matching \"{{query}}\"",
     "sortBy": "Sort by",
     "save": "Save",
-    "lock": "Lock",
     "showMore": "Show more",
     "backToMatchingURL": "Back to {{appName}}",
     "back": "Back",
@@ -139,11 +138,8 @@
       "syncing": "Synchronizing...",
       "upToDate": "Synchronized",
       "outdated": "Paused",
-      "error": "Synchronization error",
       "refresh": "Refresh",
-      "devTools": "Dev tools",
-      "failingSync_one": "Account failing to sync:",
-      "failingSync_other": "Accounts failing to sync:"
+      "devTools": "Dev tools"
     },
     "exchange": "Exchange",
     "info": "Info",
@@ -306,24 +302,14 @@
   "sidebar": {
     "card": "Card",
     "paytab": "Pay",
-    "menu": "Menu",
-    "stars": "Starred accounts",
     "accounts": "Accounts",
-    "manager": "My Ledger",
-    "earn": "Earn",
-    "exchange": "Buy / Sell",
     "swap": "Swap",
-    "perps": "Perpetuals",
-    "borrow": "Borrow",
     "home": "Home",
     "refer": "Refer a friend",
-    "lend": "Lend",
     "catalog": "Discover",
-    "market": "Market",
     "recover": "[L] Recover"
   },
   "stars": {
-    "placeholder": "Star an account to display it here.",
     "tooltip": "Star account"
   },
   "bridge": {
@@ -1153,18 +1139,9 @@
     }
   },
   "help": {
-    "title": "Help & Support",
-    "gettingStarted": {
-      "title": "Getting started",
-      "desc": "Start here"
-    },
     "status": {
       "title": "Ledger Status",
       "desc": "Check our system status"
-    },
-    "helpCenter": {
-      "title": "Ledger Support",
-      "desc": "Get help"
     },
     "ledgerAcademy": {
       "title": "Ledger Academy",
@@ -1531,7 +1508,6 @@
     "titleAccount": "WalletConnect"
   },
   "dashboard": {
-    "title": "Portfolio",
     "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
@@ -1540,21 +1516,6 @@
     "recentActivity": "Latest operations",
     "totalBalance": "Total balance",
     "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed.",
-    "featuredButtons": {
-      "buySell": {
-        "title": "Buy / Sell",
-        "description": "Buy and sell with our trusted providers"
-      },
-      "swap": {
-        "title": "Swap",
-        "description": "Convert crypto to crypto",
-        "label": "Popular"
-      },
-      "earn": {
-        "title": "Stake",
-        "description": "Get rewards on your crypto"
-      }
-    },
     "recoverBanner": {
       "subscribeDone": {
         "title": "Reminder: Finish subscribing to Ledger Recover",
@@ -1604,25 +1565,6 @@
     "taprootWarning": "Make sure the sender supports taproot",
     "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
     "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid."
-  },
-  "emptyState": {
-    "dashboard": {
-      "title": "Install apps on your device",
-      "desc": "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
-      "buttons": {
-        "installApp": "Go to My Ledger",
-        "help": "Help"
-      }
-    },
-    "accounts": {
-      "title": "Add an account to get started",
-      "desc": "Add an account to start managing your crypto assets. You must have the app for your crypto asset installed on your device.",
-      "buttons": {
-        "addAccount": "Add account",
-        "installApp": "Go to My Ledger to install apps",
-        "help": "Help"
-      }
-    }
   },
   "genuinecheck": {
     "deviceInBootloader": "Device in Bootloader mode. Click on <1>Continue</1> to update it."
@@ -2335,16 +2277,6 @@
     "successTitle": "Address shared securely",
     "connectToNoah": "Connecting you to Noah",
     "steps": {
-      "options": {
-        "fromBank": {
-          "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
-        },
-        "fromCrypto": {
-          "title": "Via crypto address",
-          "description": "Receive crypto from another wallet."
-        }
-      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
@@ -5025,7 +4957,6 @@
   "settings": {
     "title": "Settings",
     "discreet": "Toggle discreet mode",
-    "helpButton": "Help",
     "tabs": {
       "display": "General",
       "currencies": "Crypto assets",
@@ -5694,9 +5625,6 @@
     }
   },
   "informationCenter": {
-    "tooltip": "Information center",
-    "ongoingIncidentsTooltip": "There is {{count}} ongoing incident",
-    "ongoingIncidentsTooltip_other": "There are {{count}} ongoing incidents",
     "tabs": {
       "announcements": "News",
       "announcementsUnseen": "News ({{unseenCount}})",
