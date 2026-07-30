@@ -49,7 +49,33 @@
     "eslint/no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash"],
+        "paths": [
+          "lodash",
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          }
+        ],
         "patterns": [
           {
             "group": [
