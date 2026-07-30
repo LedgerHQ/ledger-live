@@ -7,6 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 const {
   findViolations,
+  findCycles,
   findSourceImportViolations,
   collectLegacyPackageNames,
 } = require("./validate");
@@ -294,6 +295,189 @@ test("missing tags default to empty array (no crash)", () => {
   };
   // neither node carries tags; no rule fires
   assert.deepEqual(findViolations(graph), []);
+});
+
+// --- findCycles ---
+
+const FLOW = ["scope:features", "type:feature-flow"];
+const PLATFORM = ["scope:features", "type:feature-platform"];
+const LIBS = ["scope:libs", "scope:libs-non-ui"];
+
+test("parent flow depending on its sub-flows is acyclic", () => {
+  const graph = buildGraph(
+    [
+      { name: "parent", tags: FLOW },
+      { name: "childA", tags: FLOW },
+      { name: "childB", tags: FLOW },
+    ],
+    [
+      { source: "parent", target: "childA" },
+      { source: "parent", target: "childB" },
+    ],
+  );
+  assert.deepEqual(findCycles(graph), []);
+});
+
+test("sub-flow depending back on its parent is a cycle", () => {
+  const graph = buildGraph(
+    [
+      { name: "parent", tags: FLOW },
+      { name: "child", tags: FLOW },
+    ],
+    [
+      { source: "parent", target: "child" },
+      { source: "child", target: "parent" },
+    ],
+  );
+  const cycles = findCycles(graph);
+  assert.equal(cycles.length, 1);
+  assert.deepEqual(cycles[0], ["parent", "child", "parent"]);
+});
+
+test("cycle spanning three flow packages is reported", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: FLOW },
+      { name: "b", tags: FLOW },
+      { name: "c", tags: FLOW },
+    ],
+    [
+      { source: "a", target: "b" },
+      { source: "b", target: "c" },
+      { source: "c", target: "a" },
+    ],
+  );
+  const cycles = findCycles(graph);
+  assert.equal(cycles.length, 1);
+  assert.deepEqual(cycles[0], ["a", "b", "c", "a"]);
+});
+
+test("cycle across features and domain is reported", () => {
+  const graph = buildGraph(
+    [
+      { name: "flow", tags: FLOW },
+      { name: "entity", tags: ["scope:domain", "type:domain-entity"] },
+    ],
+    [
+      { source: "flow", target: "entity" },
+      { source: "entity", target: "flow" },
+    ],
+  );
+  assert.equal(findCycles(graph).length, 1);
+});
+
+test("diamond (two parents sharing a sub-flow) is not a cycle", () => {
+  const graph = buildGraph(
+    [
+      { name: "parentA", tags: FLOW },
+      { name: "parentB", tags: FLOW },
+      { name: "child", tags: FLOW },
+      { name: "platform", tags: PLATFORM },
+    ],
+    [
+      { source: "parentA", target: "child" },
+      { source: "parentA", target: "platform" },
+      { source: "parentB", target: "child" },
+      { source: "child", target: "platform" },
+    ],
+  );
+  assert.deepEqual(findCycles(graph), []);
+});
+
+test("legacy-only cycle is ignored (libs are unconstrained)", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: LIBS },
+      { name: "b", tags: LIBS },
+    ],
+    [
+      { source: "a", target: "b" },
+      { source: "b", target: "a" },
+    ],
+  );
+  assert.deepEqual(findCycles(graph), []);
+});
+
+test("cycle running through a legacy package is ignored (already a tag violation)", () => {
+  const graph = buildGraph(
+    [
+      { name: "flow", tags: FLOW },
+      { name: "legacy", tags: LIBS },
+    ],
+    [
+      { source: "flow", target: "legacy" },
+      { source: "legacy", target: "flow" },
+    ],
+  );
+  assert.deepEqual(findCycles(graph), []);
+  // the forbidden edge is still caught by the tag rules
+  assert.equal(findViolations(graph).length, 1);
+});
+
+test("a cycle reachable from several entry points is reported once", () => {
+  const graph = buildGraph(
+    [
+      { name: "entryA", tags: FLOW },
+      { name: "entryB", tags: FLOW },
+      { name: "b", tags: FLOW },
+      { name: "c", tags: FLOW },
+    ],
+    [
+      { source: "entryA", target: "b" },
+      { source: "entryB", target: "c" },
+      { source: "b", target: "c" },
+      { source: "c", target: "b" },
+    ],
+  );
+  assert.equal(findCycles(graph).length, 1);
+});
+
+test("independent cycles are all reported", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: FLOW },
+      { name: "b", tags: FLOW },
+      { name: "c", tags: ["scope:shared"] },
+      { name: "d", tags: ["scope:shared"] },
+    ],
+    [
+      { source: "a", target: "b" },
+      { source: "b", target: "a" },
+      { source: "c", target: "d" },
+      { source: "d", target: "c" },
+    ],
+  );
+  assert.equal(findCycles(graph).length, 2);
+});
+
+test("self-dependency is reported as a cycle", () => {
+  const graph = buildGraph([{ name: "a", tags: FLOW }], [{ source: "a", target: "a" }]);
+  const cycles = findCycles(graph);
+  assert.equal(cycles.length, 1);
+  assert.deepEqual(cycles[0], ["a", "a"]);
+});
+
+test("external deps and missing nodes do not crash cycle detection", () => {
+  const graph = {
+    nodes: { a: { data: { tags: FLOW } } },
+    dependencies: { a: [{ target: "npm:react" }, { target: "absent-from-nodes" }] },
+  };
+  assert.deepEqual(findCycles(graph), []);
+});
+
+test("scopes argument narrows which packages are checked", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: FLOW },
+      { name: "b", tags: FLOW },
+    ],
+    [
+      { source: "a", target: "b" },
+      { source: "b", target: "a" },
+    ],
+  );
+  assert.equal(findCycles(graph, ["scope:features"]).length, 1);
+  assert.deepEqual(findCycles(graph, ["scope:shared"]), []);
 });
 
 // --- findSourceImportViolations / collectLegacyPackageNames ---

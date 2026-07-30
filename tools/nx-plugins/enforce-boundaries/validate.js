@@ -1,7 +1,7 @@
 "use strict";
 
 const { createProjectGraphAsync } = require("@nx/devkit");
-const { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS } = require("./constraints");
+const { DEP_CONSTRAINTS, ACYCLIC_SCOPES, BOUNDARY_EXCEPTIONS } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -11,6 +11,7 @@ const path = require("node:path");
  * @typedef {{ nodes: Record<string, GraphNode>, dependencies: Record<string, GraphEdge[]> }} ProjectGraphLike
  * @typedef {{ sourceName: string, sourceTags: string[], target: string, targetTags: string[] }} Violation
  * @typedef {{ file: string, specifier: string }} SourceViolation
+ * @typedef {string[]} Cycle  node names along the cycle, first node repeated last
  */
 
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
@@ -175,6 +176,79 @@ ${edge.target}`;
   return [...byEdge.values()];
 }
 
+/**
+ * Rotation-invariant key for a cycle, so the same cycle reached from different
+ * entry points is reported once. `["b", "c", "b"]` and `["c", "b", "c"]` both
+ * key to `b -> c`.
+ *
+ * @param {Cycle} cycle
+ * @returns {string}
+ */
+function cycleKey(cycle) {
+  const nodes = cycle.slice(0, -1);
+  let start = 0;
+  for (let i = 1; i < nodes.length; i++) {
+    if (nodes[i] < nodes[start]) start = i;
+  }
+  return [...nodes.slice(start), ...nodes.slice(0, start)].join(" -> ");
+}
+
+/**
+ * Find dependency cycles among packages tagged with one of `scopes`. Edges
+ * leaving the scoped subgraph are ignored: a cycle that runs through a legacy
+ * package is already an illegal edge under DEP_CONSTRAINTS, so reporting it
+ * here would only duplicate that error.
+ *
+ * DFS with a gray/black colouring; a gray target is a back-edge, and the path
+ * from that target up the current stack is the cycle. Exported for unit testing
+ * against a synthetic graph.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string[]} scopes
+ * @returns {Cycle[]}
+ */
+function findCycles(graph, scopes = ACYCLIC_SCOPES) {
+  const inScope = name => (graph.nodes[name]?.data?.tags ?? []).some(t => scopes.includes(t));
+
+  const GRAY = 1;
+  const BLACK = 2;
+  /** @type {Map<string, number>} */
+  const color = new Map();
+  /** @type {string[]} */
+  const stack = [];
+  /** @type {Map<string, Cycle>} */
+  const found = new Map();
+
+  /** @param {string} name */
+  function visit(name) {
+    color.set(name, GRAY);
+    stack.push(name);
+
+    for (const edge of graph.dependencies[name] ?? []) {
+      const next = edge.target;
+      if (!graph.nodes[next] || !inScope(next)) continue;
+
+      const state = color.get(next);
+      if (state === GRAY) {
+        const cycle = [...stack.slice(stack.indexOf(next)), next];
+        const key = cycleKey(cycle);
+        if (!found.has(key)) found.set(key, cycle);
+      } else if (state === undefined) {
+        visit(next);
+      }
+    }
+
+    stack.pop();
+    color.set(name, BLACK);
+  }
+
+  for (const name of Object.keys(graph.nodes)) {
+    if (inScope(name) && color.get(name) === undefined) visit(name);
+  }
+
+  return [...found.values()];
+}
+
 async function main() {
   let hasError = false;
 
@@ -190,6 +264,19 @@ async function main() {
     }
     console.error(
       "\nAllowed edges are defined in tools/nx-plugins/enforce-boundaries/constraints.js\n",
+    );
+  }
+
+  const cycles = findCycles(graph, ACYCLIC_SCOPES);
+
+  if (cycles.length > 0) {
+    hasError = true;
+    console.error(`\n✗ ${cycles.length} dependency cycle(s) in shared/, domain/, features/:\n`);
+    for (const cycle of cycles) {
+      console.error(`  ${cycle.join(" → ")}`);
+    }
+    console.error(
+      "\nComposition must flow one way: a parent package may depend on the packages it composes, never the reverse. Move the shared code down a layer (e.g. features/flow → features/platform).\n",
     );
   }
 
@@ -216,7 +303,12 @@ async function main() {
   console.log("✓ module boundaries ok");
 }
 
-module.exports = { findViolations, findSourceImportViolations, collectLegacyPackageNames };
+module.exports = {
+  findViolations,
+  findCycles,
+  findSourceImportViolations,
+  collectLegacyPackageNames,
+};
 
 if (require.main === module) {
   main().catch(err => {

@@ -40,9 +40,18 @@ const DEP_CONSTRAINTS = [
   },
 ];
 
+/**
+ * Scopes whose dependency graph must stay acyclic. A cycle is reported only
+ * when every package in it carries one of these tags: legacy cycles inside
+ * libs/ predate the new architecture and stay unconstrained, same as
+ * DEP_CONSTRAINTS. Composition inside features/ is one-way — a parent flow
+ * depends on its sub-flows, never the reverse.
+ */
+const ACYCLIC_SCOPES = ["scope:shared", "scope:domain", "scope:features"];
+
 /** Per-package exceptions: { sourceRoot, targetRoot, allowedImport }. Remove when @ledgerhq/live-env moves to ts-libs. */
 const BOUNDARY_EXCEPTIONS = [
   { sourceRoot: "shared/env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
 ];
 
-module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS };
+module.exports = { DEP_CONSTRAINTS, ACYCLIC_SCOPES, BOUNDARY_EXCEPTIONS };

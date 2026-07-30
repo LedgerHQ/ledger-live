@@ -85,6 +85,7 @@ More precisely:
 | `apps`              | Any new-architecture layer                                     |
 | `support`           | Development tooling only; consume it through `devDependencies` |
 
+- Keep composition one-way: a parent package may depend on the packages it composes, never the reverse. Dependency cycles between `shared`, `domain`, and `features` packages fail `pnpm lint:boundaries`. When a sub-flow needs something the parent owns, move it down to `features/platform`.
 - Never import internal legacy `libs/*` packages from `shared`, `domain`, or `features`.
 - Let legacy code consume new architecture only as migration glue.
 - Inject private new-architecture packages into published legacy packages at the app composition root.
