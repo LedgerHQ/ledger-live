@@ -12,6 +12,7 @@ Shared Contacts flow package for Desktop and Mobile.
 - Populated contact detail view model (address rows, count, and open-detail intents)
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - Contact address detail view model (selected address payload, QR payload string, and not-found state)
+- Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
 - `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session and address-entry validation state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
@@ -89,8 +90,8 @@ src/
 │   │   ├── internals/useSingleFireDismiss.ts
 │   │   └── index.ts / web.ts / native.ts
 │   └── Detail/                          # Contact detail (web + native)
-│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / types.ts
-│       ├── model/                       # empty + populated + address detail view-model builders
+│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
+│       ├── model/                       # empty + populated + address detail + quick-action builders
 │       ├── components/                  # Header, EmptyState, Avatar (web + native)
 │       └── index.ts / web.ts / native.ts
 ├── components/                          # Cross-step shared UI
