@@ -133,11 +133,16 @@ describe("ContactsPage", () => {
 
     expect(screen.getByTestId("contacts-section-A")).toBeVisible();
     expect(screen.getByTestId("contacts-section-B")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-C")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
     expect(contactsList).toHaveTextContent("Ada");
     expect(contactsList).toHaveTextContent("0 address");
     expect(contactsList).toHaveTextContent("Ben");
     expect(contactsList).toHaveTextContent("2 address");
+    expect(contactsList).toHaveTextContent("Charlie");
+    expect(contactsList).toHaveTextContent("1 address");
+    expect(contactsList).toHaveTextContent("Diana");
     expect(contactsList).toHaveTextContent("Olive");
     expect(screen.getByTestId("contacts-saved-avatar-contact-ada")).toHaveTextContent("A");
     expect(contactsList).toHaveTextContent("Add contact");
