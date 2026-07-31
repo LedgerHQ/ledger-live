@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
 import { useSendFlowData } from "../context/SendFlowContext";
+import { RecipientScannerProvider } from "../context/RecipientScannerContext";
 import { FLOW_STATUS } from "@ledgerhq/live-common/flows/wizard/types";
 import {
   type SendFlowStep,
@@ -61,30 +62,32 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
             })}
           />
         )}
-        {shouldAnimateHeight ? (
-          <AnimatedHeight>
-            <div className="flex flex-col">
+        <RecipientScannerProvider>
+          {shouldAnimateHeight ? (
+            <AnimatedHeight>
+              <div className="flex flex-col">
+                <SendHeader />
+                {StepComponent && (
+                  <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                    <StepComponent />
+                  </div>
+                )}
+              </div>
+            </AnimatedHeight>
+          ) : (
+            <>
               <SendHeader />
               {StepComponent && (
-                <div key={wizard.currentStep} className="flex animate-fade-in flex-col">
+                <div
+                  key={wizard.currentStep}
+                  className="flex min-h-0 flex-1 animate-fade-in flex-col"
+                >
                   <StepComponent />
                 </div>
               )}
-            </div>
-          </AnimatedHeight>
-        ) : (
-          <>
-            <SendHeader />
-            {StepComponent && (
-              <div
-                key={wizard.currentStep}
-                className="flex min-h-0 flex-1 animate-fade-in flex-col"
-              >
-                <StepComponent />
-              </div>
-            )}
-          </>
-        )}
+            </>
+          )}
+        </RecipientScannerProvider>
       </DialogContent>
     </Dialog>
   );
