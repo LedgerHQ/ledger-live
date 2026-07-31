@@ -22,7 +22,6 @@ yarn upgrade-interactive -i --latest
 | @ethereumjs/common                          | Ethereum coin integration                                         | monthly                                                              |
 | @ethereumjs/tx                              | Ethereum coin integration                                         | monthly                                                              |
 | @ledgerhq/devices                           | devices data                                                      | weekly                                                               |
-| @ledgerhq/errors                            | errors defintion                                                  | weekly                                                               |
 | @ledgerhq/hw-app-btc                        | Bitcoin coin integration                                          | weekly                                                               |
 | @ledgerhq/hw-app-cosmos                     | Cosmos coin integration                                           | weekly                                                               |
 | @ledgerhq/hw-app-eth                        | Ethereum coin integration                                         | weekly                                                               |

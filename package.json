@@ -277,6 +277,7 @@
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
+      "@ledgerhq/errors": "workspace:*",
       "@ledgerhq/hw-transport": "workspace:*",
       "@ledgerhq/context-module": "catalog:",
       "tslib": "2.6.2",
@@ -330,6 +331,26 @@
       "detox": {
         "dependencies": {
           "expect": "*"
+        }
+      },
+      "@ledgerhq/coin-module-framework": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-stellar": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-xrp": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-hypercore": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
         }
       }
     },

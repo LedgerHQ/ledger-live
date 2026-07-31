@@ -14,8 +14,7 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "invariant",
-    "got",
-    "@ledgerhq/errors"
+    "got"
   ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",

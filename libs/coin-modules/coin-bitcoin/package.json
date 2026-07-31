@@ -71,8 +71,7 @@
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "catalog:",
-    "utility-types": "^3.10.0",
-    "@ledgerhq/errors": "workspace:^"
+    "utility-types": "^3.10.0"
   },
   "devDependencies": {
     "@bitcoinerlab/secp256k1": "1.2.0",

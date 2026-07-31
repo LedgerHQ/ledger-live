@@ -29,7 +29,7 @@ Tests: `*.unit.test.ts` (co-located), `*.test.ts` (integration, no network), `*.
 Prefer native dependencies from the blockchain foundation and well-established open-source libraries.  
 **Avoid** proprietary third-party SDKs or closed-source vendor packages.
 
-In `api/`, `logic/`, and `network/`, the only permitted `@ledgerhq/*` imports are `@ledgerhq/errors`, `@ledgerhq/logs`, `@ledgerhq/live-network`, and `@ledgerhq/coin-module-framework` (enforced by `eslint/no-restricted-imports` in `libs/coin-modules/.oxlintrc.json`). Other directories (`bridge/`, `signer/`, `types/`) have no such restriction.
+In `api/`, `logic/`, and `network/`, the only permitted `@ledgerhq/*` imports are `@ledgerhq/logs`, `@ledgerhq/live-network`, `@ledgerhq/coin-module-framework`, and `@ledgerhq/ledger-wallet-framework` (enforced by `eslint/no-restricted-imports` in `libs/coin-modules/.oxlintrc.json`). Other directories (`bridge/`, `signer/`, `types/`) have no such restriction.
 
 ## Integration Paths
 

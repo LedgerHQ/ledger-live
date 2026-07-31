@@ -66,8 +66,7 @@
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",

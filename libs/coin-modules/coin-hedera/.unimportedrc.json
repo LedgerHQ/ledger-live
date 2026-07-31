@@ -29,7 +29,6 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "lodash",
-    "rxjs",
-    "@ledgerhq/errors"
+    "rxjs"
   ]
 }
