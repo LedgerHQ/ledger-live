@@ -28,7 +28,7 @@ runs:
     - name: Attest all tarballs
       uses: LedgerHQ/actions-security/actions/attest-for-npmsjs-com@c92cff0840fbb28663c0061698e5e8ac5228dcce # actions/attest-for-npmsjs-com-0.1.2
       with:
-        subject-path: '${{ runner.temp }}/pack-attest-publish/*.tgz'
+        subject-path: '${{ runner.temp }}/pack-attest-publish'
 
     - name: Publish packages
       shell: bash
