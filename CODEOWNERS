@@ -591,7 +591,6 @@ apps/ledger-live-mobile/src/locales/
 apps/ledger-live-mobile/src/components/RootNavigator/
 apps/ledger-live-mobile/src/const/navigation.ts
 apps/**/package.json
-libs/ledgerjs/packages/errors/src/index.ts
 libs/ledger-live-common/src/config/sharedConfig.ts
 libs/ledger-live-common/package.json
 **/generated/
