@@ -312,11 +312,6 @@ jobs:
 
             ${statuses.tests.pass ? "All tests are fine" : "Some tests failed"}
               - ${statuses.tests.pass ? "✅" : "❌"} **Test Libs** ended with status \`${statuses.tests.status}\`
-
-            ### Common Tools
-
-            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools tests failed"}
-              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* tests* ended with status \`${statuses.tool.status}\`
             `;
 
             const actions = [];
