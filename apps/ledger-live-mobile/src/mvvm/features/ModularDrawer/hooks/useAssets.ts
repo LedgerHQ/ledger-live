@@ -26,6 +26,7 @@ export function useAssets({
   const isAcceptedCurrency = useAcceptedCurrency();
   const modularDrawerFeature = useFeature("llmModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
+  const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -34,18 +35,19 @@ export function useAssets({
 
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
-    currencyIds: networkIds === undefined ? currencyIds : undefined,
+    currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
+    networkIds: resolvedNetworkIds,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,
-    areCurrenciesFiltered: networkIds === undefined ? areCurrenciesFiltered : false,
+    areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
     includeTestNetworks: devMode,
   });
 
   const assetsSorted = useMemo(
-    () => (data ? buildAssetsSorted(data, { networkIds }) : undefined),
-    [data, networkIds],
+    () => (data ? buildAssetsSorted(data, { networkIds: resolvedNetworkIds }) : undefined),
+    [data, resolvedNetworkIds],
   );
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });

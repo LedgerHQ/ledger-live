@@ -119,6 +119,10 @@ export function buildAssetsQueryParams(
       queryArg.currencyIds.length > 0 && {
         currencyIds: queryArg.currencyIds,
       }),
+    ...(queryArg.networkIds &&
+      queryArg.networkIds.length > 0 && {
+        networkIds: queryArg.networkIds.join(","),
+      }),
     ...(queryArg.categories &&
       queryArg.categories.length > 0 && {
         categories: queryArg.categories.join(","),
