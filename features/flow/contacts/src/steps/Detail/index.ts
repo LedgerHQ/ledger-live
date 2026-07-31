@@ -2,6 +2,9 @@ export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
+export { createContactDetailActionsPorts } from "./createContactDetailActionsPorts";
+export { useContactDetailEditDeleteFlowBindings } from "./useContactDetailEditDeleteFlowBindings";
+export type { UseContactDetailEditDeleteFlowBindingsOptions } from "./useContactDetailEditDeleteFlowBindings";
 export { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 export type {
   ContactDetailEditUiState,

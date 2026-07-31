@@ -824,4 +824,76 @@ describe("Contacts integration", () => {
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
     });
   });
+
+  it("should hide delete from the Me contact actions menu", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-me-item"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-detail-edit-action")).toBeVisible();
+      expect(screen.queryByTestId("contacts-detail-delete-action")).toBeNull();
+    });
+  });
+
+  it("should rename a saved contact from the actions menu", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-edit-action"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
+    });
+
+    await user.clear(screen.getByTestId("contacts-add-contact-name-input"));
+    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Alice");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeEnabled();
+    });
+
+    await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-contact-confirm")).toBeNull();
+      expect(screen.getByText("Alice")).toBeVisible();
+    });
+  });
+
+  it("should delete a saved contact and navigate back to the contacts list", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+    await user.press(await screen.findByTestId("contacts-delete-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-detail-screen")).toBeNull();
+      expect(screen.getByTestId("contacts-screen")).toBeVisible();
+      expect(screen.queryByTestId("contacts-saved-contact-contact-ada")).toBeNull();
+    });
+  });
 });
