@@ -100,6 +100,11 @@ on:
         required: false
         type: string
         default: ""
+      e2e_worker_count:
+        description: "Parallel Detox workers (boots N simulators/emulators; Jest maxWorkers=N). Max 3."
+        required: false
+        type: number
+        default: 3
 
   workflow_call:
     inputs:
@@ -238,6 +243,7 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
+  E2E_WORKER_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.e2e_worker_count || 3 }}
 
 jobs:
   determine-builds:
@@ -374,6 +380,7 @@ jobs:
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
           echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
+          echo "- **E2E worker count:** $E2E_WORKER_COUNT"
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Validate feature flags JSON input
@@ -657,7 +664,7 @@ jobs:
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
         with:
-          worker_count: 3
+          worker_count: ${{ env.E2E_WORKER_COUNT }}
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install
