@@ -95,6 +95,7 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
+    "@ledgerhq/coin-zcash": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
     "@domain/entity-pay-card": "workspace:^",

@@ -48,7 +48,9 @@ const Fields: Props = ({
   const strategies = useFeesStrategy(account, transaction);
   const onCoinControlOpen = useCallback(() => setCoinControlOpened(true), []);
   const onCoinControlClose = useCallback(() => setCoinControlOpened(false), []);
-  const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
+  // Hooks run before the `hideFeeSelection` return below, so this is reached even
+  // for zcash, whose coin-zcash transaction carries no utxo strategy.
+  const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy?.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
   const onFeeStrategyClick = useCallback(
