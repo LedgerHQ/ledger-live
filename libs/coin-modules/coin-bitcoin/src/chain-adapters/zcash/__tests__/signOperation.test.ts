@@ -322,12 +322,7 @@ describe("signOperation — orchestration flow", () => {
     setZcashShieldedEnabled(false);
     const account = makeAccount();
     const signerContext = makeSignerContext();
-    for (const transferType of [
-      "shielded",
-      "shielded-to-transparent",
-      "ironwood",
-      "ironwood-to-transparent",
-    ] as const) {
+    for (const transferType of ["shielded", "shielded-to-transparent"] as const) {
       const obs = callSignOperation(account, makeTx(transferType), signerContext);
       expect(obs).toBeInstanceOf(Observable);
       await expect(lastValueFrom(obs!)).rejects.toThrow(
@@ -411,13 +406,15 @@ describe("signOperation — orchestration flow", () => {
 
     await collectEvents(account, tx, signerContext);
 
-    const buildCall = mockBuildTransaction.mock.calls[0][0];
+    // transparent-to-shielded shields into the Ironwood pool, so it builds via
+    // the V6 buildIronwoodTransaction.
+    const buildCall = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(buildCall.transparentInputs).toHaveLength(1);
     expect(buildCall.transparentInputs[0].txid).toBe(expectedLEtxid);
     expect(buildCall.transparentInputs[0].vout).toBe(0);
   });
 
-  it("buildTransaction is called with the correct spends, fee, and network", async () => {
+  it("buildIronwoodTransaction is called with the correct spends, fee, and network", async () => {
     const account = makeAccount();
     const note = makeSpendableNote({ amount: new BigNumber(300_000) });
     const tx = makeTx("shielded", {
@@ -429,8 +426,10 @@ describe("signOperation — orchestration flow", () => {
 
     await collectEvents(account, tx, signerContext);
 
-    expect(mockBuildTransaction).toHaveBeenCalledTimes(1);
-    const args = mockBuildTransaction.mock.calls[0][0];
+    // Shielded sends spend the Ironwood pool ⇒ V6 builder.
+    expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
+    expect(mockBuildTransaction).not.toHaveBeenCalled();
+    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(args.ufvk).toBe(MOCK_UFVK);
     expect(args.feeZat).toBe("10000");
     expect(args.network).toBe("mainnet");
@@ -454,31 +453,21 @@ describe("signOperation — orchestration flow", () => {
     await collectEvents(account, tx, signerContext as unknown as jest.Mock);
 
     expect(mockSignPczt).toHaveBeenCalledTimes(1);
-    expect(mockSignPczt).toHaveBeenCalledWith(defaultBuildResult.pcztTransaction);
+    // Shielded flow ⇒ the Ironwood (V6) builder's PCZT reaches the device.
+    expect(mockSignPczt).toHaveBeenCalledWith(defaultIronwoodBuildResult.pcztTransaction);
   });
 
-  it("Ironwood→*: routes to buildIronwoodTransaction, not buildTransaction", async () => {
-    const account = makeAccount({
-      privateInfo: {
-        saplingBalance: new BigNumber(0),
-        orchardBalance: new BigNumber(0),
-        ironwoodBalance: new BigNumber(1_000_000),
-        syncState: "complete",
-        progress: 100,
-        estimatedTimeRemaining: { hours: 0, minutes: 0 },
-        ufvk: MOCK_UFVK,
-        birthday: "2024-01-01",
-        lastSyncTimestamp: Date.now(),
-        lastProcessedBlock: 3_000_000,
-        transactions: [],
-      },
-    });
-    for (const transferType of ["ironwood", "ironwood-to-transparent"] as const) {
-      jest.clearAllMocks();
-      mockBuildIronwoodTransaction.mockResolvedValue(defaultIronwoodBuildResult);
-      mockFinalizeTransaction.mockResolvedValue(defaultFinalizeResult);
-      mockCreateZCashClient.mockReturnValue(mockClient);
-
+  // Shielded spends and shielded outputs carry the Ironwood bundle the V6 builder
+  // requires; only transparent t→t stays on the V5 buildTransaction.
+  it.each([
+    ["shielded", true],
+    ["shielded-to-transparent", true],
+    ["transparent-to-shielded", true],
+    ["transparent", false],
+  ] as const)(
+    "routes %s through the correct PCZT builder",
+    async (transferType, usesIronwoodBuilder) => {
+      const account = makeAccount();
       const tx = makeTx(transferType, { recipient: "t1transparentrecipient" });
       const signerContext = makeSignerContext();
 
@@ -488,49 +477,15 @@ describe("signOperation — orchestration flow", () => {
         "device-signature-granted",
         "signed",
       ]);
-      expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
-      expect(mockBuildTransaction).not.toHaveBeenCalled();
-    }
-  });
-
-  it("Ironwood→*: buildIronwoodTransaction receives correct args (spends, fee, outputs)", async () => {
-    const note = makeSpendableNote({ amount: new BigNumber(300_000) });
-    const account = makeAccount({
-      privateInfo: {
-        saplingBalance: new BigNumber(0),
-        orchardBalance: new BigNumber(0),
-        ironwoodBalance: new BigNumber(1_000_000),
-        syncState: "complete",
-        progress: 100,
-        estimatedTimeRemaining: { hours: 0, minutes: 0 },
-        ufvk: MOCK_UFVK,
-        birthday: "2024-01-01",
-        lastSyncTimestamp: Date.now(),
-        lastProcessedBlock: 3_000_000,
-        transactions: [],
-      },
-    });
-    const tx = makeTx("ironwood", {
-      selectedNotes: [note],
-      zcashFee: new BigNumber(10_000),
-      amount: new BigNumber(290_000),
-    });
-    const signerContext = makeSignerContext();
-
-    await collectEvents(account, tx, signerContext);
-
-    expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
-    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
-    expect(args.ufvk).toBe(MOCK_UFVK);
-    expect(args.feeZat).toBe("10000");
-    expect(args.network).toBe("mainnet");
-    expect(args.accountIndex).toBe(MOCK_ACCOUNT_INDEX);
-    expect(args.seedFingerprint).toBe("00".repeat(32));
-    expect(args.spends).toHaveLength(1);
-    expect(args.spends[0].valueZat).toBe("300000");
-    expect(args.outputs[0].address).toBe("u1recipientaddress");
-    expect(args.outputs[0].valueZat).toBe("290000");
-  });
+      if (usesIronwoodBuilder) {
+        expect(mockBuildIronwoodTransaction).toHaveBeenCalledTimes(1);
+        expect(mockBuildTransaction).not.toHaveBeenCalled();
+      } else {
+        expect(mockBuildTransaction).toHaveBeenCalledTimes(1);
+        expect(mockBuildIronwoodTransaction).not.toHaveBeenCalled();
+      }
+    },
+  );
 });
 
 // ── Suite 2: Signature mapping ─────────────────────────────────────────────
@@ -551,7 +506,7 @@ describe("signOperation — signature mapping", () => {
 
     await collectEvents(account, tx, signerContext);
 
-    const args = mockBuildTransaction.mock.calls[0][0];
+    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(args.spends[0]).toMatchObject({
       recipient: "ee".repeat(43),
       rho: "11".repeat(32),
@@ -573,7 +528,7 @@ describe("signOperation — signature mapping", () => {
 
     await collectEvents(account, tx, signerContext);
 
-    const args = mockBuildTransaction.mock.calls[0][0];
+    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(args.outputs).toHaveLength(1);
     expect(args.outputs[0]).toEqual({
       address: "u1memotest",
@@ -589,7 +544,7 @@ describe("signOperation — signature mapping", () => {
 
     await collectEvents(account, tx, signerContext);
 
-    const args = mockBuildTransaction.mock.calls[0][0];
+    const args = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(args.outputs[0]).not.toHaveProperty("memo");
   });
 
@@ -730,12 +685,12 @@ describe("signOperation — error handling", () => {
     expect(caught).toBe(rejection);
   });
 
-  it("surfaces a network rejection from buildTransaction unchanged and never reaches device signing", async () => {
+  it("surfaces a network rejection from buildIronwoodTransaction unchanged and never reaches device signing", async () => {
     class ZainoNetworkError extends Error {
       override name = "ZainoNetworkError";
     }
     const rejection = new ZainoNetworkError("zaino gRPC endpoint unreachable");
-    mockBuildTransaction.mockRejectedValueOnce(rejection);
+    mockBuildIronwoodTransaction.mockRejectedValueOnce(rejection);
     const signerContext = makeSignerContext();
 
     const caught = await captureObservableError(
@@ -788,7 +743,7 @@ describe("signOperation — error handling", () => {
     expect(caught).toMatchObject({ txid: utxo.hash, vout: 3 });
     expect((caught as Error).message).not.toContain(utxo.hash);
     // Fails before the PCZT is ever built.
-    expect(mockBuildTransaction).not.toHaveBeenCalled();
+    expect(mockBuildIronwoodTransaction).not.toHaveBeenCalled();
   });
 
   it("fails closed with ZcashUtxoNotInAccount when a transparent UTXO address is outside the synced set (gap limit / stale sync)", async () => {
@@ -815,7 +770,7 @@ describe("signOperation — error handling", () => {
     expect(caught).toMatchObject({ txid: utxo.hash, vout: 1 });
     // The raw address must not leak into the user-facing message.
     expect((caught as Error).message).not.toContain("t1outOfGapLimit");
-    expect(mockBuildTransaction).not.toHaveBeenCalled();
+    expect(mockBuildIronwoodTransaction).not.toHaveBeenCalled();
   });
 
   it("does NOT broadcast during signOperation (broadcast happens in the broadcast step)", async () => {
@@ -892,10 +847,11 @@ describe("signOperation — error handling", () => {
     }
   });
 
-  it("does NOT spend the account's transparent UTXOs on an Orchard-only shielded send", async () => {
-    // Regression: a "shielded" (private→private) send must never pull in the
-    // account's transparent UTXOs even when some exist. Only transfer types that
-    // actually spend transparent inputs (transparent-to-shielded) should.
+  it("does NOT spend the account's transparent UTXOs on an Ironwood-only shielded send", async () => {
+    // Regression: a "shielded" (private→private) send spends Ironwood notes and
+    // must never pull in the account's transparent UTXOs even when some exist.
+    // Only transfer types that actually spend transparent inputs
+    // (transparent-to-shielded) should.
     const utxo = {
       hash: "cc".repeat(32),
       outputIndex: 1,
@@ -912,7 +868,7 @@ describe("signOperation — error handling", () => {
     const events = await collectEvents(account, tx, signerContext);
 
     // No transparent inputs mapped into the PCZT builder call...
-    const buildCall = mockBuildTransaction.mock.calls[0][0];
+    const buildCall = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(buildCall.transparentInputs).toHaveLength(0);
 
     // ...and none leaked into the optimistic operation's inputs/inputRefs.
@@ -925,7 +881,7 @@ describe("signOperation — error handling", () => {
   });
 
   it("does NOT spend the account's transparent UTXOs on a shielded-to-transparent send", async () => {
-    // Same guard for private→public sends: inputs are Orchard notes, so the
+    // Same guard for private→public sends: inputs are Ironwood notes, so the
     // account's transparent UTXOs must not be spent.
     const utxo = {
       hash: "dd".repeat(32),
@@ -945,7 +901,7 @@ describe("signOperation — error handling", () => {
 
     const events = await collectEvents(account, tx, signerContext);
 
-    const buildCall = mockBuildTransaction.mock.calls[0][0];
+    const buildCall = mockBuildIronwoodTransaction.mock.calls[0][0];
     expect(buildCall.transparentInputs).toHaveLength(0);
 
     const signedEvent = events.find(e => e.type === "signed")!;
@@ -1028,8 +984,9 @@ describe("signOperation — cancellation", () => {
   const drain = (ms = 20) => new Promise(r => setTimeout(r, ms));
 
   it("cancel while buildTransaction is in-flight ⇒ device signing and finalize are never reached", async () => {
-    let buildResolve!: (v: typeof defaultBuildResult) => void;
-    mockBuildTransaction.mockReturnValueOnce(
+    let buildResolve!: (v: typeof defaultIronwoodBuildResult) => void;
+    // Shielded sends build via the Ironwood (V6) builder; block that promise.
+    mockBuildIronwoodTransaction.mockReturnValueOnce(
       new Promise(res => {
         buildResolve = res;
       }),
@@ -1046,7 +1003,7 @@ describe("signOperation — cancellation", () => {
 
     // Cancel while the PCZT build promise is still pending, then let it resolve.
     sub.unsubscribe();
-    buildResolve(defaultBuildResult);
+    buildResolve(defaultIronwoodBuildResult);
     await drain();
 
     // The guard after buildTransaction stops the flow: the device is never asked

@@ -251,16 +251,4 @@ describe("deriveZcashTransferType — truth table", () => {
     expect(deriveZcashTransferType(undefined, "private")).toBe("transparent-to-shielded");
     expect(deriveZcashTransferType(undefined, undefined)).toBe("transparent");
   });
-
-  it("ironwood sender + public recipient = ironwood-to-transparent", () => {
-    expect(deriveZcashTransferType("ironwood", "public")).toBe("ironwood-to-transparent");
-  });
-
-  it("ironwood sender + private recipient = ironwood", () => {
-    expect(deriveZcashTransferType("ironwood", "private")).toBe("ironwood");
-  });
-
-  it("ironwood sender + undefined recipient = ironwood (safe default)", () => {
-    expect(deriveZcashTransferType("ironwood", undefined)).toBe("ironwood");
-  });
 });

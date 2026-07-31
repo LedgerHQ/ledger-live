@@ -223,18 +223,20 @@ export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
 
 // ── Transaction types ───────────────────────────────────────────────────
 
+// The private (shielded) send flow spends from the Ironwood pool only: post
+// NU6.3 that is the pool newly shielded value lands in, and Sapling/Orchard send
+// flows are deprecated. So "shielded" (z→z) and "shielded-to-transparent" (z→t)
+// both denote Ironwood-pool spends.
 export type ZcashTransferType =
   | "transparent"
   | "transparent-to-shielded"
   | "shielded-to-transparent"
-  | "shielded"
-  | "ironwood"
-  | "ironwood-to-transparent";
+  | "shielded";
 
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
   /** Source balance pool selected on the Recipient step. */
-  sender?: "public" | "private" | "ironwood";
+  sender?: "public" | "private";
   /** Recipient privacy class derived from the address. */
   recipientType?: "public" | "private";
   /** Optional 512-byte memo field for shielded outputs. */
