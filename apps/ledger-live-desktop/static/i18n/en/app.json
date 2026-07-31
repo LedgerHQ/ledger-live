@@ -9335,6 +9335,29 @@
       "delete": "Delete",
       "networkTag": "{{name}} Network"
     },
+    "detailActions": {
+      "editContact": "Edit contact",
+      "deleteContact": "Delete contact"
+    },
+    "editContact": {
+      "title": "Edit contact",
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges": "Apply changes",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "deleteContact": {
+      "title": "Delete contact?",
+      "description": "Deleting this contact will erase all associated addresses.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editSigner": {
+      "title": "Confirm on your device",
+      "description": "Connect and unlock your Ledger device to confirm this change.",
+      "confirm": "Continue",
+      "cancel": "Cancel"
+    },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "dismiss": "Got it"

@@ -2,6 +2,12 @@ export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
+export { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
+export type {
+  ContactDetailEditUiState,
+  UseContactDetailEditDeleteFlowViewModelOptions,
+  UseContactDetailEditDeleteFlowViewModelResult,
+} from "./useContactDetailEditDeleteFlowViewModel";
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
 export { useContactAddressDetail } from "./useContactAddressDetail";
 export { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
@@ -67,6 +73,7 @@ export type {
   ContactDetailEditIntent,
   ContactDetailLabels,
   ContactDetailViewProps,
+  ContactDetailActionsLabels,
   PopulatedContactDetailViewModel,
 } from "./types";
 export type {
