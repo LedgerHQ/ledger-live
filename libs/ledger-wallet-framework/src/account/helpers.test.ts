@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { CryptoCurrencyIdSchema, TokenCurrencyIdSchema } from "../types";
 import type { CryptoCurrency, TokenCurrency } from "../types";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import {
@@ -23,7 +24,10 @@ describe(getAccountCurrency.name, () => {
       mockAccount.type = "Account";
     });
     it("should return the currency", () => {
-      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+      const sampleCurrency = {
+        family: "bitcoin",
+        id: CryptoCurrencyIdSchema.parse("bitcoin"),
+      } as CryptoCurrency;
       mockAccount.currency = sampleCurrency;
       expect(getAccountCurrency(mockAccount)).toEqual(sampleCurrency);
     });
@@ -31,7 +35,11 @@ describe(getAccountCurrency.name, () => {
 
   describe("given a TokenAccount", () => {
     it("should return the token currency", () => {
-      const sampleToken = { id: "tokenId" } as TokenCurrency;
+      const sampleToken = {
+        type: "TokenCurrency",
+        id: TokenCurrencyIdSchema.parse("tokenId"),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
+      } as TokenCurrency;
       tokenAccount.token = sampleToken;
       expect(getAccountCurrency(tokenAccount)).toEqual(sampleToken);
     });
@@ -45,15 +53,25 @@ describe(getFeesCurrency.name, () => {
     });
     describe("without feesCurrency", () => {
       it("should return the account's currency", () => {
-        const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+        const sampleCurrency = {
+          family: "bitcoin",
+          id: CryptoCurrencyIdSchema.parse("bitcoin"),
+        } as CryptoCurrency;
         mockAccount.currency = sampleCurrency;
         expect(getFeesCurrency(mockAccount)).toEqual(sampleCurrency);
       });
     });
     describe("with feesCurrency", () => {
       it("should return the fees currency", () => {
-        const sampleCurrency = { family: "vechain" } as CryptoCurrency;
-        const sampleFeesCurrency = { id: "VTHO" } as TokenCurrency;
+        const sampleCurrency = {
+          family: "vechain",
+          id: CryptoCurrencyIdSchema.parse("vechain"),
+        } as CryptoCurrency;
+        const sampleFeesCurrency = {
+          type: "TokenCurrency",
+          id: TokenCurrencyIdSchema.parse("VTHO"),
+          parentCurrencyId: CryptoCurrencyIdSchema.parse("vechain"),
+        } as TokenCurrency;
         mockAccount.currency = sampleCurrency;
         mockAccount.feesCurrency = sampleFeesCurrency;
         expect(getFeesCurrency(mockAccount)).toEqual(sampleFeesCurrency);
@@ -63,7 +81,11 @@ describe(getFeesCurrency.name, () => {
 
   describe("given a TokenAccount", () => {
     it("should return the token currency", () => {
-      const sampleToken = { id: "tokenId" } as TokenCurrency;
+      const sampleToken = {
+        type: "TokenCurrency",
+        id: TokenCurrencyIdSchema.parse("tokenId"),
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
+      } as TokenCurrency;
       tokenAccount.token = sampleToken;
       expect(getFeesCurrency(tokenAccount)).toEqual(sampleToken);
     });
