@@ -33,61 +33,47 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
   };
 };
 
+const makeHederaToken = (params: {
+  id: string;
+  contractAddress: string;
+  tokenType: "hts" | "erc20";
+  name: string;
+  ticker: string;
+}): TokenCurrency => ({
+  type: "TokenCurrency",
+  id: TokenCurrencyIdSchema.parse(params.id),
+  contractAddress: params.contractAddress,
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
+  tokenType: params.tokenType,
+  name: params.name,
+  ticker: params.ticker,
+  delisted: false,
+  disableCountervalue: false,
+  units: [{ name: params.ticker, code: params.ticker, magnitude: 6 }],
+});
+
 const HARDCODED_HEDERA_TOKENS: TokenCurrency[] = [
-  {
-    type: "TokenCurrency",
-    id: TokenCurrencyIdSchema.parse("hedera/hts/usd_coin_0.0.456858"),
+  makeHederaToken({
+    id: "hedera/hts/usd_coin_0.0.456858",
     contractAddress: "0.0.456858",
-    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "hts",
     name: "USD Coin",
     ticker: "USDC",
-    delisted: false,
-    disableCountervalue: false,
-    units: [
-      {
-        name: "USDC",
-        code: "USDC",
-        magnitude: 6,
-      },
-    ],
-  },
-  {
-    type: "TokenCurrency",
-    id: TokenCurrencyIdSchema.parse("hedera/hts/xpack_0.0.7243470"),
+  }),
+  makeHederaToken({
+    id: "hedera/hts/xpack_0.0.7243470",
     contractAddress: "0.0.7243470",
-    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "hts",
     name: "xPACK",
     ticker: "XPACK",
-    delisted: false,
-    disableCountervalue: false,
-    units: [
-      {
-        name: "XPACK",
-        code: "XPACK",
-        magnitude: 6,
-      },
-    ],
-  },
-  {
-    type: "TokenCurrency",
-    id: TokenCurrencyIdSchema.parse("hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1"),
+  }),
+  makeHederaToken({
+    id: "hedera/erc20/audd_0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
     contractAddress: "0x39ceba2b467fa987546000eb5d1373acf1f3a2e1",
-    parentCurrencyId: CryptoCurrencyIdSchema.parse("hedera"),
     tokenType: "erc20",
     name: "AUDD",
     ticker: "AUDD",
-    delisted: false,
-    disableCountervalue: false,
-    units: [
-      {
-        name: "AUDD",
-        code: "AUDD",
-        magnitude: 6,
-      },
-    ],
-  },
+  }),
 ];
 
 export const getTokenCurrencyFromCAL = (
