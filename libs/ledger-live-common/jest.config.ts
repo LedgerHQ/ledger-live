@@ -12,7 +12,13 @@ const testPathIgnorePatterns = [
   "src/__tests__/(test-helpers/|handlers/|server\\.ts)",
 ];
 
-const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
+// Dependencies shipped as ESM that jest has to transform. Matched against pnpm's store directory
+// name, where a scope separator becomes a `+` (`@scure+base@1.1.0`), hence the escaped `\+`.
+const esmDeps = ["ky@", "@mysten\\+", "@scure\\+", "@noble\\+", "@babel\\+runtime"];
+
+// Some of those deps ship a `sourceMappingURL` comment but no `.map` file (e.g. @scure/base), which
+// makes swc log `failed to read input source map` for every file it transforms.
+const swcOptions = { inputSourceMap: false, jsc: { target: "esnext" } };
 
 // Integration tests that depend on flaky third-party/external nodes and explorers.
 // Excluded from the per-PR and daily integration runs; executed weekly instead
@@ -91,24 +97,16 @@ const defaultConfig = {
   testRegex,
   coverageReporters: ["json", ["lcov", { projectRoot: "../../" }], "json-summary", "text"],
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
+    "^.+\\.(t|j)sx?$": ["@swc/jest", swcOptions],
     [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|jsx|mjs)$`]: [
       "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
+      swcOptions,
     ],
   },
-  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
+  // Only the ESM deps above are transformed. The previous pattern was
+  // `/node_modules/(?!|@babel/runtime/helpers/esm/)`, whose empty first alternative makes the
+  // negative lookahead always fail, so nothing was ignored and swc transformed all of node_modules.
+  transformIgnorePatterns: [`node_modules[\\\\|/]\\.pnpm[\\\\|/](?!(${esmDeps.join("|")}))`],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   moduleNameMapper: {
     "^buffer$": "<rootDir>/jest.buffer-shim.js",
