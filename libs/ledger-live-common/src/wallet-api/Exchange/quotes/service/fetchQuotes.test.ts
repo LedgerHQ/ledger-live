@@ -1,7 +1,8 @@
+import { SwapQuotesRequestFailed } from "../../../../errors";
 import { makeQuotesInput } from "../fixtures/quotesInput";
+import { makeRawQuote, makeRawQuoteError } from "../fixtures/rawQuotes";
 import { swapQuotesApi } from "../state-manager/api";
 import { getSwapQuotesDispatch } from "../state-manager/store";
-import { ProviderErrorCodes } from "../types";
 import { fetchQuotes } from "./fetchQuotes";
 
 jest.mock("../state-manager/store", () => ({
@@ -56,14 +57,8 @@ describe("fetchQuotes", () => {
   });
 
   it("returns the quotes split by the endpoint", async () => {
-    const rawQuotes = [{ provider: "lifi", key: "lifi-key" }];
-    const providerErrors = [
-      {
-        code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
-        provider: "okx",
-        message: "amount out of range",
-      },
-    ];
+    const rawQuotes = [makeRawQuote()];
+    const providerErrors = [makeRawQuoteError()];
     mockResult({ data: { rawQuotes, providerErrors } });
 
     const result = await fetchQuotes(makeArgs(), "usd");
@@ -122,27 +117,31 @@ describe("fetchQuotes", () => {
     });
   });
 
+  // `cause` is non-enumerable and does not survive `serializeError`, so the
+  // message is what actually reaches the live app and monitoring.
   it.each([
-    ["FETCH_ERROR", { status: "FETCH_ERROR", error: "network down" }],
-    ["TIMEOUT_ERROR", { status: "TIMEOUT_ERROR", error: "timed out" }],
-  ])("throws a named Error for %s, which never reached the aggregator", async (_label, error) => {
+    ["FETCH_ERROR", { status: "FETCH_ERROR", error: "network down" }, "FETCH_ERROR: network down"],
+    ["TIMEOUT_ERROR", { status: "TIMEOUT_ERROR", error: "timed out" }, "TIMEOUT_ERROR: timed out"],
+    ["CUSTOM_ERROR without detail", { status: "CUSTOM_ERROR" }, "CUSTOM_ERROR"],
+    ["a SerializedError", { name: "TypeError", message: "boom" }, "boom"],
+    ["an unrecognisable error", {}, "unknown error"],
+  ])(
+    "throws a named Error for %s, which never reached the aggregator",
+    async (_label, error, expectedDetail) => {
+      mockResult({ error });
+
+      await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(
+        `swap /quote request failed: ${expectedDetail}`,
+      );
+    },
+  );
+
+  it("attaches the raw RTK Query error as the cause", async () => {
+    const error = { status: "FETCH_ERROR", error: "network down" };
     mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toMatchObject({
-      name: "SwapQuotesRequestFailed",
-      cause: error,
-    });
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBeInstanceOf(Error);
-  });
-
-  it("folds the transport detail into the message", async () => {
-    mockResult({ error: { status: "FETCH_ERROR", error: "network down" } });
-
-    // `cause` is non-enumerable and does not survive `serializeError`, so the
-    // message is what actually reaches the live app and monitoring.
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(
-      "swap /quote request failed: FETCH_ERROR: network down",
-    );
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(SwapQuotesRequestFailed);
+    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toMatchObject({ cause: error });
   });
 
   it("flattens caller-supplied headers before dispatching", async () => {

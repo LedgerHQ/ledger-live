@@ -2,7 +2,8 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
-import { getSwapQuotesDispatch } from "./store";
+import { makeRawQuote } from "../fixtures/rawQuotes";
+import { getSwapQuotesDispatch, resetSwapQuotesStore } from "./store";
 import { swapQuotesApi } from "./api";
 import { setupStandaloneSwapQuotesStore } from "./standaloneStore";
 
@@ -17,7 +18,7 @@ describe("setupStandaloneSwapQuotesStore", () => {
   beforeEach(() => {
     // Reset so the "throws before setup" assertion doesn't depend on the order
     // of the tests in this file.
-    globalThis.__ledgerSwapQuotesDispatch = undefined;
+    resetSwapQuotesStore();
   });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
@@ -31,7 +32,7 @@ describe("setupStandaloneSwapQuotesStore", () => {
   });
 
   it("wires a working store the fetchQuotes endpoint can run against", async () => {
-    const rawQuote = { provider: "lifi", key: "lifi-key" };
+    const rawQuote = makeRawQuote();
     server.use(http.get("https://swap.test/quote", () => HttpResponse.json([rawQuote])));
 
     setupStandaloneSwapQuotesStore();

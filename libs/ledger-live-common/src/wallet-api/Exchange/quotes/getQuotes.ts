@@ -15,8 +15,8 @@ import { normalizeQuote } from "./normalizer";
 import { sortQuotes } from "./sorting/sortQuotes";
 import {
   QuotesErrorCodes,
-  type GetQuotesArgs,
   type GetQuotesResponse,
+  type GetQuotesWireArgs,
   type QuotesAppPlatform,
 } from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
@@ -79,8 +79,11 @@ function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): 
   return account ? getParentAccount(account, accounts)?.currency.id : undefined;
 }
 
+// `GetQuotesWireArgs`, not `GetQuotesArgs`: RTK Query owns the request
+// lifecycle, so an abort `signal` is not honoured and the type must not offer
+// one. Direct callers (wallet-cli) would otherwise pass it silently into a void.
 export async function getQuotes(
-  args: GetQuotesArgs,
+  args: GetQuotesWireArgs,
   context: GetQuotesContext,
 ): Promise<GetQuotesResponse> {
   const quotesInput = resolveQuotesInput(args.data, context.accounts);

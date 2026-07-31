@@ -31,6 +31,14 @@ export function setSwapQuotesStore(dispatch: SwapQuotesDispatch): void {
 }
 
 /**
+ * Clear the registered dispatch, so tests do not have to reach into the
+ * storage mechanism by name.
+ */
+export function resetSwapQuotesStore(): void {
+  globalThis.__ledgerSwapQuotesDispatch = undefined;
+}
+
+/**
  * Get the registered dispatch.
  * @throws {Error} If {@link setSwapQuotesStore} has not been called yet.
  */
