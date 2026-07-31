@@ -6,6 +6,7 @@ import {
   type ContactAddressLabel,
   type ContactId,
 } from "@domain/entity-contact";
+import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
 import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
 import type {
   AddAddressContact,
@@ -71,6 +72,10 @@ function createAddressLabelState(
     label: parseContactAddressLabel(value, existingAddressLabels),
     validationError: null,
   };
+}
+
+function limitAddressLabelLength(value: string): string {
+  return value.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH);
 }
 
 function resolveAddressEntryState(
@@ -187,7 +192,7 @@ export function useAddAddressFlowViewModel({
           selectedCurrencyId: selection.currencyId,
           addressEntry: EMPTY_ADD_ADDRESS_ENTRY_STATE,
           addressLabel: createAddressLabelState(
-            selection.assetDisplayName,
+            limitAddressLabelLength(selection.assetDisplayName),
             currentState.existingAddressLabels,
           ),
         };
@@ -257,7 +262,10 @@ export function useAddAddressFlowViewModel({
 
       return {
         ...currentState,
-        addressLabel: createAddressLabelState(value, currentState.existingAddressLabels),
+        addressLabel: createAddressLabelState(
+          limitAddressLabelLength(value),
+          currentState.existingAddressLabels,
+        ),
       };
     });
   }, []);

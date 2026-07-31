@@ -32,7 +32,7 @@ After a successful selection, the session retains the selected contact and final
 identifiers and moves to `enteringAddress`. It also retains the selected contact's existing address
 labels so the naming step can reject a duplicate for that contact. Labels are compared after
 trimming, Unicode normalization, and case folding, while the user's casing is preserved for the
-saved value. An empty label has no validation error but cannot continue. The `AddAddress` step owns
+saved value. Native address-label input is limited to 32 characters. An empty label has no validation error but cannot continue. The `AddAddress` step owns
 its injected validation port, currency and token resolution, domain orchestration, input methods,
 asynchronous validation state, resolved-address storage, and stale-result protection. Consuming
 apps adapt coin bridges, domain services, token stores, and other app-owned or platform-specific

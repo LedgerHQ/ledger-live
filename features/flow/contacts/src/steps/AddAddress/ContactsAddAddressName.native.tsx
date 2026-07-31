@@ -5,8 +5,11 @@ import {
   BottomSheetView,
   Box,
   Button,
+  Text,
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
 import type { ContactsAddAddressNameProps } from "./ContactsAddAddressName.types";
 
 export function ContactsAddAddressName({
@@ -28,16 +31,29 @@ export function ContactsAddAddressName({
       <BottomSheetHeader density="expanded" title={labels.title} />
       <Box style={{ flex: 1 }} lx={{ justifyContent: "space-between", gap: "s16" }}>
         <Box lx={{ gap: "s16" }}>
-          <TextInput
-            testID="contacts-add-address-name-input"
-            autoFocus
-            autoCorrect={false}
-            label={labels.inputLabel}
-            value={addressLabel.value}
-            helperText={validationMessage}
-            status={addressLabel.status === "invalid" ? "error" : undefined}
-            onChangeText={onChangeText}
-          />
+          <Box lx={{ gap: "s8" }}>
+            <TextInput
+              testID="contacts-add-address-name-input"
+              autoFocus
+              autoCorrect={false}
+              label={labels.inputLabel}
+              value={addressLabel.value}
+              helperText={validationMessage}
+              maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
+              status={addressLabel.status === "invalid" ? "error" : undefined}
+              onChangeText={onChangeText}
+            />
+            <Box lx={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <Text
+                testID="contacts-add-address-name-count"
+                typography="body3"
+                accessibilityLiveRegion="polite"
+                lx={{ color: "muted" }}
+              >
+                {`${addressLabel.value.length}/${CONTACT_ADDRESS_LABEL_MAX_LENGTH}`}
+              </Text>
+            </Box>
+          </Box>
           <Banner
             testID="contacts-add-address-name-disclaimer"
             appearance="info"
@@ -50,6 +66,7 @@ export function ContactsAddAddressName({
           size="lg"
           isFull
           disabled={addressLabel.status !== "valid"}
+          icon={LedgerLogo}
           onPress={onContinue}
         >
           {labels.continueToReview}
