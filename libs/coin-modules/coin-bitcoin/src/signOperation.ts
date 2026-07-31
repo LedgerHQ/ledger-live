@@ -14,7 +14,6 @@ import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
 import { getChainAdapter } from "./chain-adapters/registry";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 
 type SignOperationObserverEvent =
   | { type: "device-signature-granted" }
@@ -111,36 +110,33 @@ async function executeSignOperation(
   );
   const inputs = inputRefs.map(r => `${r.hash}-${r.outputIndex}`);
 
-  const signature: string = await signerContext(
-    deviceId,
-    { ...currency, id: CryptoCurrencyIdSchema.parse(currency.id) },
-    signer =>
-      signAccountTx({
-        btc: signer,
-        fromAccount: walletAccount,
-        txInfo,
-        lockTime,
-        sigHashType,
-        segwit,
-        additionals,
-        expiryHeight,
-        hasExtraData,
-        onDeviceSignatureGranted: () =>
-          o.next({
-            type: "device-signature-granted",
-          }),
-        onDeviceSignatureRequested: () =>
-          o.next({
-            type: "device-signature-requested",
-          }),
-        onDeviceStreaming: ({ progress, index, total }) =>
-          o.next({
-            type: "device-streaming",
-            progress,
-            index,
-            total,
-          }),
-      }),
+  const signature: string = await signerContext(deviceId, currency, signer =>
+    signAccountTx({
+      btc: signer,
+      fromAccount: walletAccount,
+      txInfo,
+      lockTime,
+      sigHashType,
+      segwit,
+      additionals,
+      expiryHeight,
+      hasExtraData,
+      onDeviceSignatureGranted: () =>
+        o.next({
+          type: "device-signature-granted",
+        }),
+      onDeviceSignatureRequested: () =>
+        o.next({
+          type: "device-signature-requested",
+        }),
+      onDeviceStreaming: ({ progress, index, total }) =>
+        o.next({
+          type: "device-streaming",
+          progress,
+          index,
+          total,
+        }),
+    }),
   );
 
   const operation = buildOptimisticOperation({

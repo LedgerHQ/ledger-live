@@ -10,7 +10,6 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";
@@ -174,7 +173,7 @@ export async function validateTopology(account: CantonAccount): Promise<Error | 
 
   try {
     const isTopologyChangeRequired = await isTopologyChangeRequiredCached(
-      { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
+      account.currency,
       publicKey,
     );
 

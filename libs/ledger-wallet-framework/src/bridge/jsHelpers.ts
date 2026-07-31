@@ -42,7 +42,6 @@ import { shouldShowNewAccount } from "../account/support";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency } from "../types";
-import { CryptoCurrencyIdSchema } from "../types";
 import type {
   Account,
   AccountBridge,
@@ -250,10 +249,6 @@ export const makeSync =
       let cancelled = false;
 
       async function main() {
-        const currency = {
-          ...initial.currency,
-          id: CryptoCurrencyIdSchema.parse(initial.currency.id),
-        };
         const customData = getCustomDataFromAccountId(initial.id);
         const accountId = encodeAccountId({
           type: "js",
@@ -271,13 +266,13 @@ export const makeSync =
 
         try {
           const freshAddressPath = getSeedIdentifierDerivation(
-            currency,
+            initial.currency,
             initial.derivationMode as DerivationMode,
           );
 
           const shapeResult = getAccountShape(
             {
-              currency,
+              currency: initial.currency,
               index: initial.index,
               address: initial.freshAddress,
               derivationPath: freshAddressPath,
@@ -402,9 +397,8 @@ export const makeScanAccounts =
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
   }): CurrencyBridge["scanAccounts"] =>
-  ({ currency: rawCurrency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
+  ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
-      const currency = { ...rawCurrency, id: CryptoCurrencyIdSchema.parse(rawCurrency.id) };
       if (buildIterateResult === undefined) {
         buildIterateResult = defaultIterateResultBuilder(getAddressFn);
       }

@@ -1,5 +1,4 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 
 import { AccountBridge } from "@ledgerhq/types-live";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
@@ -21,10 +20,7 @@ export const prepareTransaction: AccountBridge<
   let patch = {};
 
   if (!transaction.protocolParams) {
-    const networkInfo = await fetchNetworkInfo({
-      ...account.currency,
-      id: CryptoCurrencyIdSchema.parse(account.currency.id),
-    });
+    const networkInfo = await fetchNetworkInfo(account.currency);
     transaction = updateTransaction(transaction, {
       protocolParams: networkInfo.protocolParams,
     });

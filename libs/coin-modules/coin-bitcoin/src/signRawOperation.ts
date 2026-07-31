@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getAddressFormatDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { parsePsbt } from "@ledgerhq/psbtv2";
 import type { Transaction } from "./types";
@@ -74,21 +73,15 @@ export const buildSignRawOperation =
         accountPath,
       );
 
-      const psbtResult = await signPsbtWithDevice(
-        signerContext,
-        deviceId,
-        { ...currency, id: CryptoCurrencyIdSchema.parse(currency.id) },
-        psbtBuffer,
-        {
-          accountPath,
-          addressFormat: getAddressFormatDerivationMode(account.derivationMode),
-          finalizePsbt: broadcast ?? false,
-          knownAddressDerivations,
-          onDeviceSignatureRequested: () => o.next({ type: "device-signature-requested" }),
-          onDeviceSignatureGranted: () => o.next({ type: "device-signature-granted" }),
-          onDeviceStreaming: arg => o.next({ type: "device-streaming", ...arg }),
-        },
-      );
+      const psbtResult = await signPsbtWithDevice(signerContext, deviceId, currency, psbtBuffer, {
+        accountPath,
+        addressFormat: getAddressFormatDerivationMode(account.derivationMode),
+        finalizePsbt: broadcast ?? false,
+        knownAddressDerivations,
+        onDeviceSignatureRequested: () => o.next({ type: "device-signature-requested" }),
+        onDeviceSignatureGranted: () => o.next({ type: "device-signature-granted" }),
+        onDeviceStreaming: arg => o.next({ type: "device-streaming", ...arg }),
+      });
 
       if (!psbtResult) {
         throw new Error(

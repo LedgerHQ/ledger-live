@@ -16,7 +16,6 @@ import { prepareTransaction } from "../prepareTransaction";
 import { updateTransaction } from "../updateTransaction";
 import { createTransaction } from "../createTransaction";
 import { buildSignOperation } from "../signOperation";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { CoinConfig, setCoinConfig } from "../config";
 import { calculateFees } from "./../cache";
 import { SignerContext } from "../signer";
@@ -85,7 +84,7 @@ function buildAccountBridge(signerContext: SignerContext) {
 
   const getFullViewingKeyFromBridge: GetFullViewingKeyFromBridgeFn = (account, options) =>
     getFullViewingKey(options.deviceId, {
-      currency: { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
+      currency: account.currency,
       path: options.path ?? account.freshAddressPath,
     });
 

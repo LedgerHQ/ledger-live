@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import {
   formatTransaction,
   fromTransactionRaw,
@@ -78,10 +77,7 @@ describe("transaction utilities", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetAccountCurrency.mockReturnValue({
-      ...mockAccount.currency,
-      id: CryptoCurrencyIdSchema.parse(mockAccount.currency.id),
-    });
+    mockedGetAccountCurrency.mockReturnValue(mockAccount.currency);
     mockedFormatCurrencyUnit.mockReturnValue("1 VET");
   });
 
@@ -403,10 +399,7 @@ describe("transaction utilities", () => {
         ],
       };
       const customAccount = { ...mockAccount, currency: multiUnitCurrency };
-      mockedGetAccountCurrency.mockReturnValue({
-        ...multiUnitCurrency,
-        id: CryptoCurrencyIdSchema.parse(multiUnitCurrency.id),
-      });
+      mockedGetAccountCurrency.mockReturnValue(multiUnitCurrency);
 
       formatTransaction(mockTransaction, customAccount);
 

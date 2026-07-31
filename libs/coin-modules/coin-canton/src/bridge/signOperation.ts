@@ -2,7 +2,6 @@ import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
@@ -49,7 +48,7 @@ export const buildSignOperation =
             }
 
             const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
-              { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
+              account.currency,
               {
                 address,
               },

@@ -7,7 +7,7 @@ import {
 } from "../errors";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
@@ -38,7 +38,7 @@ export const getTransactionStatus: AccountBridge<
   }
 
   const sanctionedAddressesOnUtxos = await findSanctionedAddressesOnUtxos(
-    { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
+    account.currency,
     account.cardanoResources.utxos,
   );
   if (sanctionedAddressesOnUtxos.length > 0) {

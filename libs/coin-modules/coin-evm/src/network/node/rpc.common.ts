@@ -2,7 +2,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
@@ -329,13 +329,15 @@ async function getGasEstimation(
 }
 
 function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEstimation"] {
-  return (account, transaction) => {
-    const currency = { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) };
-    return withApi(currency, api => getGasEstimation(api, currency, account, transaction), {
-      ...nodeConfig,
-      retries: 0,
-    });
-  };
+  return (account, transaction) =>
+    withApi(
+      account.currency,
+      api => getGasEstimation(api, account.currency, account, transaction),
+      {
+        ...nodeConfig,
+        retries: 0,
+      },
+    );
 }
 
 async function getFeeData(

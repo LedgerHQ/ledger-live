@@ -1,4 +1,3 @@
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import {
   Transaction as TyphonTransaction,
@@ -68,10 +67,7 @@ function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Wi
     bipPath: stakeCredential.path,
   };
 
-  const networkId = isTestnet({
-    ...account.currency,
-    id: CryptoCurrencyIdSchema.parse(account.currency.id),
-  })
+  const networkId = isTestnet(account.currency)
     ? TyphonTypes.NetworkId.TESTNET
     : TyphonTypes.NetworkId.MAINNET;
   const rewardAddress = new TyphonAddress.RewardAddress(networkId, stakeKeyHashCredential);

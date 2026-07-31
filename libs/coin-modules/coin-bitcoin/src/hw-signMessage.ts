@@ -1,5 +1,4 @@
 import { Account, AnyMessage } from "@ledgerhq/types-live";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { BitcoinSignature, SignerContext } from "./signer";
 
 export const signMessage =
@@ -11,10 +10,8 @@ export const signMessage =
 
     const hexMessage = Buffer.from(container.message).toString("hex");
     const path = "path" in container && container.path ? container.path : account.freshAddressPath;
-    const result = (await signerContext(
-      deviceId,
-      { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
-      signer => signer.signMessage(path, hexMessage),
+    const result = (await signerContext(deviceId, account.currency, signer =>
+      signer.signMessage(path, hexMessage),
     )) as BitcoinSignature;
     const v = result["v"] + 27 + 4;
     const signature = `${v.toString(16)}${result["r"]}${result["s"]}`;

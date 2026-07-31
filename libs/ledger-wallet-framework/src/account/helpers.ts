@@ -5,7 +5,6 @@ import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import type { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency, Unit } from "../types";
-import { CryptoCurrencyIdSchema, TokenCurrencyIdSchema } from "../types";
 
 // By convention, a main account is the top level account
 // - in case of an Account is the account itself
@@ -22,26 +21,11 @@ export const getMainAccount = <A extends Account>(
 // Return the currency in which fees are paid for this account
 export const getFeesCurrency = (account?: AccountLike): TokenCurrency | CryptoCurrency => {
   switch (account?.type) {
-    case "Account": {
-      const fc = account.feesCurrency || account.currency;
-      if (fc.type === "TokenCurrency") {
-        return {
-          ...fc,
-          id: TokenCurrencyIdSchema.parse(fc.id),
-          parentCurrencyId: CryptoCurrencyIdSchema.parse(fc.parentCurrencyId),
-        };
-      }
-      return { ...fc, id: CryptoCurrencyIdSchema.parse(fc.id) };
-    }
+    case "Account":
+      return account.feesCurrency || account.currency;
 
-    case "TokenAccount": {
-      const t = account.token;
-      return {
-        ...t,
-        id: TokenCurrencyIdSchema.parse(t.id),
-        parentCurrencyId: CryptoCurrencyIdSchema.parse(t.parentCurrencyId),
-      };
-    }
+    case "TokenAccount":
+      return account.token;
 
     default:
       throw new Error("invalid account.type=" + (account as unknown as { type: string })?.type);
@@ -56,16 +40,10 @@ export const getFeesUnit = (currency: TokenCurrency | CryptoCurrency): Unit => {
 export const getAccountCurrency = (account?: AccountLike): TokenCurrency | CryptoCurrency => {
   switch (account?.type) {
     case "Account":
-      return { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) };
+      return account.currency;
 
-    case "TokenAccount": {
-      const t = account.token;
-      return {
-        ...t,
-        id: TokenCurrencyIdSchema.parse(t.id),
-        parentCurrencyId: CryptoCurrencyIdSchema.parse(t.parentCurrencyId),
-      };
-    }
+    case "TokenAccount":
+      return account.token;
 
     default:
       throw new Error("invalid account.type=" + (account as unknown as { type: string })?.type);

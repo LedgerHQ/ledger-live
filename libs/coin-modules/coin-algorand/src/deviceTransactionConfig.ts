@@ -2,11 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
-import {
-  type TokenCurrency,
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { extractTokenId } from "./tokens";
 import type { AlgorandTransaction, Transaction, TransactionStatus } from "./types";
@@ -52,11 +48,7 @@ const getSendFields = (
     fields.push({
       type: "text",
       label: "Asset ID",
-      value: displayTokenValue({
-        ...account.token,
-        id: TokenCurrencyIdSchema.parse(account.token.id),
-        parentCurrencyId: CryptoCurrencyIdSchema.parse(account.token.parentCurrencyId),
-      }),
+      value: displayTokenValue(account.token),
     });
   }
 

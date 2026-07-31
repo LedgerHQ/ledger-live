@@ -16,10 +16,6 @@ import {
   HederaRedundantStakingNodeIdError,
 } from "../errors";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account";
-import {
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@ledgerhq/ledger-wallet-framework/types";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -80,10 +76,7 @@ async function handleTokenAssociateTransaction(
   const warnings: Warnings = {};
 
   const [usdRate, estimatedFees] = await Promise.all([
-    getCurrencyToUSDRate({
-      ...account.currency,
-      id: CryptoCurrencyIdSchema.parse(account.currency.id),
-    }),
+    getCurrencyToUSDRate(account.currency),
     estimateFees({
       currencyId: account.currency.id,
       operationType: HEDERA_OPERATION_TYPES.TokenAssociate,
@@ -149,11 +142,7 @@ async function handleHTSTokenTransaction(
     try {
       const hasRecipientTokenAssociated = await checkAccountTokenAssociationStatus(
         transaction.recipient,
-        {
-          ...subAccount.token,
-          id: TokenCurrencyIdSchema.parse(subAccount.token.id),
-          parentCurrencyId: CryptoCurrencyIdSchema.parse(subAccount.token.parentCurrencyId),
-        },
+        subAccount.token,
       );
 
       if (!hasRecipientTokenAssociated) {
@@ -293,10 +282,7 @@ async function handleStakingTransaction(account: HederaAccount, transaction: Tra
 
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { validators } = getCurrentHederaPreloadData({
-    ...account.currency,
-    id: CryptoCurrencyIdSchema.parse(account.currency.id),
-  });
+  const { validators } = getCurrentHederaPreloadData(account.currency);
   const estimatedFees = await estimateFees({
     operationType: HEDERA_OPERATION_TYPES.CryptoUpdate,
     currencyId: account.currency.id,

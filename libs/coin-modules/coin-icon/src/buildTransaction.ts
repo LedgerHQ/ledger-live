@@ -1,4 +1,3 @@
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { IcxTransaction } from "icon-sdk-js";
@@ -19,11 +18,7 @@ const buildTransferTransaction = (
     .from(address)
     .to(transaction.recipient)
     .value(IconConverter.toHexNumber(transaction.amount))
-    .nid(
-      IconConverter.toHexNumber(
-        getNid({ ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) }),
-      ),
-    )
+    .nid(IconConverter.toHexNumber(getNid(account.currency)))
     .nonce(IconConverter.toHexNumber(getNonce(account)))
     .timestamp(IconConverter.toHexNumber(new Date().getTime() * 1000))
     .version(IconConverter.toHexNumber(RPC_VERSION));

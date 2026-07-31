@@ -1,4 +1,3 @@
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees } from "../common-logic";
@@ -17,12 +16,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   const amount = transaction.amount || BigNumber(0);
   const fee = BigNumber(
-    (
-      await estimateFees(
-        { ...account.currency, id: CryptoCurrencyIdSchema.parse(account.currency.id) },
-        BigInt(amount.toFixed()),
-      )
-    ).toString(),
+    (await estimateFees(account.currency, BigInt(amount.toFixed()))).toString(),
   );
 
   let tokenId = transaction.tokenId;
@@ -33,10 +27,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         sub.type === "TokenAccount" && sub.id === transaction.subAccountId,
     );
     if (subAccount) {
-      const calTokens = await getCalTokensCached({
-        ...account.currency,
-        id: CryptoCurrencyIdSchema.parse(account.currency.id),
-      });
+      const calTokens = await getCalTokensCached(account.currency);
       tokenId = calTokens.get(subAccount.token.id) || subAccount.token.name;
       instrumentAdmin = subAccount.token.contractAddress;
     }
