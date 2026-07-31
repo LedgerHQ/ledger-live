@@ -340,6 +340,26 @@ describe("getChunkedAssetsData", () => {
       expect(requestedUrl(fetchSpy.mock.calls[0])).toContain("currencyIds=bitcoin%2Cethereum");
     });
 
+    it("forwards networkIds unchunked alongside each chunk of currencyIds", async () => {
+      fetchSpy.mockResolvedValueOnce(okResponse(raw()));
+      fetchSpy.mockResolvedValueOnce(okResponse(raw()));
+      const store = makeStore();
+
+      await store.dispatch(
+        assetsDataApi.endpoints.getChunkedAssetsData.initiate({
+          ...queryArgs,
+          currencyIds: ids(26),
+          networkIds: ["ethereum", "polygon"],
+        }),
+      );
+
+      // currencyIds are split across chunks; networkIds are repeated in full on every request
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      for (const call of fetchSpy.mock.calls) {
+        expect(requestedUrl(call)).toContain("networkIds=ethereum%2Cpolygon");
+      }
+    });
+
     it("does not send a cursor, because it collects one page per chunk", async () => {
       await getChunked(["bitcoin"], [okResponse(raw(), "cursor-2")]);
 
