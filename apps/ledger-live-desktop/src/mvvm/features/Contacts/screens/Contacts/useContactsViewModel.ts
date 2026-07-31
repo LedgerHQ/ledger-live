@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import type { ContactId } from "@domain/entity-contact";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
