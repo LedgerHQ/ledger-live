@@ -1642,9 +1642,15 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+<<<<<<< HEAD
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+=======
+      '@features/flow-lazy-onboarding-banner':
+        specifier: workspace:^
+        version: link:../../features/flow/lazy-onboarding-banner
+>>>>>>> 2a2e650b449 (feat(mobile): implement lazy onboarding portfolio banner)
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
