@@ -57,16 +57,16 @@ describe("Swap - deeplinks", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  // ─── Group A: token params only, no accountIds ────────────────────────────────
+  // ─── Token params only, no accountIds ────────────────────────────────
 
-  it("Swap deeplink A1 - no params, both fields default to the highest-cap asset", async () => {
+  it("Swap deeplink - no params, both fields default to the highest-cap asset", async () => {
     await app.swap.openViaDeeplink();
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
   });
 
-  it("Swap deeplink A2 - fromToken=ETH, toToken=BTC", async () => {
+  it("Swap deeplink - fromToken=ETH, toToken=BTC", async () => {
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
@@ -75,7 +75,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToContains("BTC");
   });
 
-  it("Swap deeplink A3 - fromToken=USDT (ERC20), toToken=ETH", async () => {
+  it("Swap deeplink - fromToken=USDT (ERC20), toToken=ETH", async () => {
     await app.swap.openViaDeeplink(`fromToken=${USDT_TOKEN_ID}&toToken=ethereum`);
     await app.modularDrawer.selectFirstAccount(); // send drawer: USDT/ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: ETH account
@@ -84,7 +84,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToContains("ETH");
   });
 
-  it("Swap deeplink A4 - fromToken=ETH, toToken=USDT (ERC20)", async () => {
+  it("Swap deeplink - fromToken=ETH, toToken=USDT (ERC20)", async () => {
     await app.swap.openViaDeeplink(`fromToken=ethereum&toToken=${USDT_TOKEN_ID}`);
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: USDT/ETH account
@@ -93,9 +93,9 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToContains("USDT");
   });
 
-  // A5 (FDUSD/BSC) is manual-only — no E2E account available.
+  // The FDUSD/BSC case is manual-only — no E2E account available.
 
-  it("Swap deeplink A6 - fromToken=BTC only, receive defaults to the highest-cap asset", async () => {
+  it("Swap deeplink - fromToken=BTC only, receive defaults to the highest-cap asset", async () => {
     await app.swap.openViaDeeplink("fromToken=bitcoin");
     await app.modularDrawer.selectFirstAccount(); // send drawer: BTC account
     await app.swapLiveApp.expectSwapLiveAppForm();
@@ -103,7 +103,7 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
   });
 
-  it("Swap deeplink A7 - toToken=ETH only, send defaults to the highest-cap asset", async () => {
+  it("Swap deeplink - toToken=ETH only, send defaults to the highest-cap asset", async () => {
     await app.swap.openViaDeeplink("toToken=ethereum");
     await app.modularDrawer.selectFirstAccount(); // receive drawer: ETH account
     await app.swapLiveApp.expectSwapLiveAppForm();
@@ -111,9 +111,9 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToContains("ETH");
   });
 
-  // ─── Group B: with amount ─────────────────────────────────────────────────────
+  // ─── With amount ─────────────────────────────────────────────────────
 
-  it("Swap deeplink B1 - ETH to BTC with a valid amountFrom", async () => {
+  it("Swap deeplink - ETH to BTC with a valid amountFrom", async () => {
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin&amountFrom=0.01");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
@@ -123,7 +123,7 @@ describe("Swap - deeplinks", () => {
     jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("0.01");
   });
 
-  it("Swap deeplink B2 - ETH to BTC with an invalid amountFrom leaves the amount empty", async () => {
+  it("Swap deeplink - ETH to BTC with an invalid amountFrom leaves the amount empty", async () => {
     await app.swap.openViaDeeplink("fromToken=ethereum&toToken=bitcoin&amountFrom=abc");
     await app.modularDrawer.selectFirstAccount(); // send drawer: ETH account
     await app.modularDrawer.selectFirstAccount(); // receive drawer: BTC account
@@ -133,9 +133,9 @@ describe("Swap - deeplinks", () => {
     jestExpect(await app.swapLiveApp.getAmountToSend()).toMatch(/^(0\.?0*|)$/);
   });
 
-  // ─── Group C: with accountIds — no drawer expected ────────────────────────────
+  // ─── With accountIds — no drawer expected ────────────────────────────
 
-  it("Swap deeplink C1 - USDT to BTC with both accountIds and an amount, no drawer", async () => {
+  it("Swap deeplink - USDT to BTC with both accountIds and an amount, no drawer", async () => {
     await app.swap.openViaDeeplink(
       `fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
         `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
@@ -146,7 +146,7 @@ describe("Swap - deeplinks", () => {
     jestExpect(await app.swapLiveApp.getAmountToSend()).toBe("20");
   });
 
-  it("Swap deeplink C2 - accountIds only resolve without token params, no drawer", async () => {
+  it("Swap deeplink - accountIds only resolve without token params, no drawer", async () => {
     await app.swap.openViaDeeplink(
       `fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
     );
@@ -155,21 +155,21 @@ describe("Swap - deeplinks", () => {
     await app.swapLiveApp.checkAssetToMatchesAccount(usdtAccount);
   });
 
-  it("Swap deeplink C3 - fromAccountId only, receive defaults, no drawer", async () => {
+  it("Swap deeplink - fromAccountId only, receive defaults, no drawer", async () => {
     await app.swap.openViaDeeplink(`fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`);
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromMatchesAccount(usdtAccount);
     await app.swapLiveApp.checkAssetToContains(DEFAULT_TO);
   });
 
-  it("Swap deeplink C4 - toAccountId only, send defaults, no drawer", async () => {
+  it("Swap deeplink - toAccountId only, send defaults, no drawer", async () => {
     await app.swap.openViaDeeplink(`toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`);
     await app.swapLiveApp.expectSwapLiveAppForm();
     await app.swapLiveApp.checkAssetFromContains(DEFAULT_FROM);
     await app.swapLiveApp.checkAssetToMatchesAccount(ethAccount);
   });
 
-  it("Swap deeplink C5 - accountId wins over a mismatching token param", async () => {
+  it("Swap deeplink - accountId wins over a mismatching token param", async () => {
     await app.swap.openViaDeeplink(
       `fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
         `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,

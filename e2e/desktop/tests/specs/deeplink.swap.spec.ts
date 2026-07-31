@@ -79,16 +79,16 @@ test.describe("Swap - deeplinks", () => {
         await app.mainNavigation.validateTargetFromMainNavigation("home");
       };
 
-      // ─── Group A: token params only, no accountIds ────────────────────────────
+      // ─── Token params only, no accountIds ────────────────────────────
 
-      await test.step("A1: no params — both fields default to highest-cap asset", async () => {
+      await test.step("No params — both fields default to highest-cap asset", async () => {
         await app.swap.openViaDeeplink("ledgerwallet://swap");
         await app.swap.checkAssetFromContains(DEFAULT_FROM);
         await app.swap.checkAssetToContains(DEFAULT_TO);
         await reset();
       });
 
-      await test.step("A2: fromToken=ETH toToken=BTC", async () => {
+      await test.step("fromToken=ETH toToken=BTC", async () => {
         await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin");
         await selectAccountFromDeeplinkDrawer(app, ethAccount);
         await selectAccountFromDeeplinkDrawer(app, btcAccount);
@@ -97,7 +97,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("A3: fromToken=USDT(ERC20) toToken=ETH", async () => {
+      await test.step("fromToken=USDT(ERC20) toToken=ETH", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=ethereum`,
         );
@@ -108,7 +108,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("A4: fromToken=ETH toToken=USDT(ERC20)", async () => {
+      await test.step("fromToken=ETH toToken=USDT(ERC20)", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=ethereum&toToken=${USDT_TOKEN_ID}`,
         );
@@ -119,9 +119,9 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      // A5 (FDUSD/BSC) is manual-only — no E2E account available.
+      // The FDUSD/BSC case is manual-only — no E2E account available.
 
-      await test.step("A6: fromToken=BTC only — receive defaults to highest-cap asset", async () => {
+      await test.step("fromToken=BTC only — receive defaults to highest-cap asset", async () => {
         await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=bitcoin");
         await selectAccountFromDeeplinkDrawer(app, btcAccount);
         await app.swap.checkAssetFromContains("BTC");
@@ -129,7 +129,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("A7: toToken=ETH only — send defaults to highest-cap asset", async () => {
+      await test.step("toToken=ETH only — send defaults to highest-cap asset", async () => {
         await app.swap.openViaDeeplink("ledgerwallet://swap?toToken=ethereum");
         await selectAccountFromDeeplinkDrawer(app, ethAccount);
         await app.swap.checkAssetFromContains(DEFAULT_FROM);
@@ -137,9 +137,9 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      // ─── Group B: with amount ──────────────────────────────────────────────────
+      // ─── With amount ──────────────────────────────────────────────────
 
-      await test.step("B1: ETH→BTC with valid amountFrom=0.01", async () => {
+      await test.step("ETH→BTC with valid amountFrom=0.01", async () => {
         await app.swap.openViaDeeplink(
           "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=0.01",
         );
@@ -152,7 +152,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("B2: ETH→BTC with invalid amountFrom=abc — amount field empty or zero", async () => {
+      await test.step("ETH→BTC with invalid amountFrom=abc — amount field empty or zero", async () => {
         await app.swap.openViaDeeplink(
           "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=abc",
         );
@@ -165,9 +165,9 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      // ─── Group C: with accountIds — no drawer expected ────────────────────────
+      // ─── With accountIds — no drawer expected ────────────────────────
 
-      await test.step("C1: USDT+fromAccountId → BTC+toAccountId + amount=20, no drawer", async () => {
+      await test.step("USDT+fromAccountId → BTC+toAccountId + amount=20, no drawer", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
             `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
@@ -181,7 +181,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("C2: fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer", async () => {
+      await test.step("fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
         );
@@ -192,7 +192,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("C3: USDT+fromAccountId only — receive defaults, no drawer", async () => {
+      await test.step("USDT+fromAccountId only — receive defaults, no drawer", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
         );
@@ -202,7 +202,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("C4: toToken=ETH+toAccountId only — send defaults, no drawer", async () => {
+      await test.step("toToken=ETH+toAccountId only — send defaults, no drawer", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`,
         );
@@ -212,7 +212,7 @@ test.describe("Swap - deeplinks", () => {
         await reset();
       });
 
-      await test.step("C5: mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins", async () => {
+      await test.step("Mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — accountId wins", async () => {
         await app.swap.openViaDeeplink(
           `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
             `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
