@@ -99,11 +99,12 @@ function clientVersionHeader(): Record<string, string> {
  * hook) via `dispatch(swapQuotesApi.endpoints.fetchQuotes.initiate(...))`,
  * mirroring the `cryptoAssetsApi` (CAL client) pattern.
  *
- * Unlike the legacy axios call, `/quote` is authenticated: once `authSDK` is
- * registered on the store's `extra` the request carries an `Authorization`
- * header, and 401/403 trigger the adapter's refresh-and-retry. HTTP status
- * errors are deliberately left as RTK Query errors so that retry can fire;
- * `fetchQuotes` maps them to the legacy empty-result outcome.
+ * Unlike the legacy axios call, `/quote` goes through the authenticated base
+ * query. Both apps already register an auth provider on their store's `extra`,
+ * so the `lwdAuth`/`lwmAuth` feature flags alone decide whether a request
+ * carries an `Authorization` header; they are off by default. HTTP status
+ * errors are deliberately left as RTK Query errors so the adapter's 401/403
+ * refresh-and-retry can fire; `fetchQuotes` maps them to an empty result.
  */
 export const swapQuotesApi = createApi({
   reducerPath: "swapQuotesApi",
@@ -117,8 +118,9 @@ export const swapQuotesApi = createApi({
       query: ({ providers, quotesInput, counterValueCurrency, customHeaders }) => ({
         url: `${getSwapAPIBaseURL()}/quote`,
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
+        // `fetchBaseQuery` sets `Accept: application/json` itself unless a
+        // caller header already provides one.
         headers: {
-          Accept: "application/json",
           ...clientVersionHeader(),
           ...(customHeaders ?? {}),
         },

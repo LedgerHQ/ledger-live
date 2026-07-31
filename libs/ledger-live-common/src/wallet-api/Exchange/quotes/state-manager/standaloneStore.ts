@@ -1,7 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
+import type { AuthProvider } from "@shared/auth";
 
 import { swapQuotesApi } from "./api";
 import { setSwapQuotesStore } from "./store";
+
+// Headless consumers have no Keycloak session. Supplying a provider that yields
+// no token keeps the request unauthenticated without the authenticated base
+// query warning about a missing provider on every call.
+const unauthenticatedProvider: AuthProvider = {
+  withToken: ({ queryFn }) => queryFn(),
+};
 
 /**
  * Create a minimal standalone Redux store for the {@link swapQuotesApi} and
@@ -20,7 +28,10 @@ export function setupStandaloneSwapQuotesStore() {
       [swapQuotesApi.reducerPath]: swapQuotesApi.reducer,
     },
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(swapQuotesApi.middleware),
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: { extraArgument: { authProvider: unauthenticatedProvider } },
+      }).concat(swapQuotesApi.middleware),
   });
 
   setSwapQuotesStore(store.dispatch);

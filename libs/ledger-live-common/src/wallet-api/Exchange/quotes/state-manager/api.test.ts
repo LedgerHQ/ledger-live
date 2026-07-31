@@ -14,6 +14,20 @@ jest.mock("../../../../exchange/swap", () => ({
   getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
 }));
 
+/** Mirrors the apps with `lwdAuth`/`lwmAuth` off: a provider, but no token. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const unauthenticatedProvider = {
+  withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
+} as never;
+
+/** Mirrors the apps with the auth flag on. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const tokenProvider = (accessToken: string) =>
+  ({
+    withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) =>
+      queryFn({ tokenType: "Bearer", accessToken }),
+  }) as never;
+
 describe("buildQuotesParams", () => {
   // `toEqual`, not `toMatchObject`: this pins the exact param set the legacy
   // axios helper sent, so a dropped or added param fails the test.
@@ -105,7 +119,13 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
   afterAll(() => server.close());
 
   beforeEach(() => {
-    store = createTestStore([swapQuotesApi]);
+    // Both apps register an auth provider on the store's `extra`, so the
+    // unauthenticated fallback is not the path production takes. Supplying a
+    // stub keeps these tests on the real path (and silences the adapter's
+    // per-request warning).
+    store = createTestStore([swapQuotesApi], {
+      extra: { authProvider: unauthenticatedProvider },
+    });
   });
 
   function initiate() {
@@ -168,6 +188,42 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     }
 
     expect(seen!.headers.get("X-Ledger-Client-Version")).toBe("test-3.2.1");
+  });
+
+  it("sends no Authorization header while the auth flag is off", async () => {
+    let seen: Request | undefined;
+    server.use(
+      http.get("https://swap.test/quote", ({ request }) => {
+        seen = request;
+        return HttpResponse.json([]);
+      }),
+    );
+
+    await initiate();
+
+    expect(seen!.headers.has("authorization")).toBe(false);
+  });
+
+  it("sends the bearer token once the auth provider yields one", async () => {
+    let seen: Request | undefined;
+    server.use(
+      http.get("https://swap.test/quote", ({ request }) => {
+        seen = request;
+        return HttpResponse.json([]);
+      }),
+    );
+    const authedStore = createTestStore([swapQuotesApi], {
+      extra: { authProvider: tokenProvider("tok-123") },
+    });
+
+    await authedStore.dispatch(
+      swapQuotesApi.endpoints.fetchQuotes.initiate(
+        { providers: ["lifi"], quotesInput: makeQuotesInput(), counterValueCurrency: "usd" },
+        { forceRefetch: true },
+      ),
+    );
+
+    expect(seen!.headers.get("authorization")).toBe("Bearer tok-123");
   });
 
   it("omits X-Ledger-Client-Version when the env is unset", async () => {
@@ -295,7 +351,9 @@ describe("fetchQuotes against a live store", () => {
 
   beforeEach(() => {
     hits = 0;
-    store = createTestStore([swapQuotesApi]);
+    store = createTestStore([swapQuotesApi], {
+      extra: { authProvider: unauthenticatedProvider },
+    });
     setSwapQuotesStore(store.dispatch);
   });
 

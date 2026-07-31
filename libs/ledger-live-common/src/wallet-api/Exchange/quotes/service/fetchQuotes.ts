@@ -58,9 +58,11 @@ function describeError(error: FetchBaseQueryError | SerializedError): string {
  *   (`rawQuotes`) and per-provider rejection rows (`providerErrors`).
  *   Rejection rows carry an aggregator `code` (e.g. `amount_off_limits`)
  *   plus the provider's reason; consumers digest them into globals via
- *   `computeQuotesErrors`. Non-OK HTTP responses become an empty result
- *   so the caller can return the same `noQuotes` global as the legacy UI;
- *   only transport failures (no HTTP response) reject.
+ *   `computeQuotesErrors`. A non-OK HTTP response becomes an empty result, so
+ *   the caller surfaces `noQuotes`. This differs from the axios
+ *   implementation: the shared `@ledgerhq/live-network` interceptor turned
+ *   4xx/5xx into `LedgerAPI4xx`/`LedgerAPI5xx` and the live app saw an error.
+ *   Only transport failures (no HTTP response) reject.
  */
 export async function fetchQuotes(
   args: FetchQuotesArgs,

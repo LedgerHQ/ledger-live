@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-common": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-common": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 "@ledgerhq/wallet-cli": patch
 ---
 
@@ -9,5 +9,5 @@ Migrate the swap `fetchQuotes` helper from axios to an RTK Query endpoint (`swap
 
 Two behaviour changes to be aware of:
 
-- `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. No request carries an `Authorization` header yet: no app registers `authSDK` on its store's `extra`, so the adapter falls back to an unauthenticated request. Once that wiring lands, `/quote` will carry the header and 401/403 will trigger the adapter's refresh-and-retry.
+- `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. Both apps already register an auth provider on their store's `extra`, so whether a request carries an `Authorization` header is controlled entirely by the `lwdAuth`/`lwmAuth` feature flags. They are disabled by default; enabling either one makes `/quote` send the user's bearer token to the aggregator, and makes a 401/403 trigger the adapter's refresh-and-retry.
 - An aggregator HTTP error (4xx/5xx) now resolves to an empty result, so the caller surfaces the `noQuotes` global. Previously the shared axios error interceptor turned these into `LedgerAPI4xx`/`LedgerAPI5xx`, which propagated to the live app as an error. Only transport failures (no HTTP response) still reject, now with a `SwapQuotesRequestFailed` error rather than a bare RTK Query error object.
