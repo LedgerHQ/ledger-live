@@ -13,7 +13,7 @@ import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
 type Props = {
   account: ZcashAccount;
-  sender: "public" | "private" | "ironwood" | undefined;
+  sender: "public" | "private" | undefined;
 };
 
 const ZcashSyncStateBanner = ({ account, sender }: Props) => {

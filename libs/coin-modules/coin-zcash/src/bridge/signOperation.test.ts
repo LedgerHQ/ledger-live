@@ -181,14 +181,14 @@ describe("bridge/signOperation", () => {
   });
 
   // An Ironwood spend or an Ironwood output carries the bundle the V6 builder
-  // requires; every other flow goes through the v1/V5 builder.
+  // requires. Shielded sends spend the Ironwood pool ("shielded" /
+  // "shielded-to-transparent") and shielding ("transparent-to-shielded") credits
+  // it, so all three use the V6 builder; only t→t stays on the v1/V5 builder.
   it.each([
-    ["shielded", "z→z", "v1"],
-    ["shielded-to-transparent", "z→t", "v1"],
+    ["shielded", "z→z", "v6"],
+    ["shielded-to-transparent", "z→t", "v6"],
     ["transparent-to-shielded", "t→z", "v6"],
     ["transparent", "t→t", "v1"],
-    ["ironwood", "iw→iw", "v6"],
-    ["ironwood-to-transparent", "iw→t", "v6"],
   ] as const)(
     "crafts, signs, finalizes and emits a signed operation (%s / %s, PCZT %s)",
     async (transferType, _label, encoding) => {
@@ -302,7 +302,7 @@ describe("bridge/signOperation", () => {
         signOp({
           account: makeAccount(),
           deviceId: "device-1",
-          transaction: makeTx("ironwood"),
+          transaction: makeTx("shielded"),
         } as never),
       ),
     ).rejects.toThrow("V6 (Ironwood)");

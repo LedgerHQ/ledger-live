@@ -58,16 +58,16 @@ export function computeZip317Fee(
 }
 
 /**
- * ZIP-317 fee for a shielded-input send (Orchard spends), per transfer type.
+ * ZIP-317 fee for a shielded-input send (Ironwood spends), per transfer type.
  *
  *   • "shielded" (Private→Private): the recipient and the optional change note
- *     are both Orchard outputs.
+ *     are both shielded (Ironwood) outputs.
  *   • "shielded-to-transparent" (Private→Public): the recipient is a
- *     transparent output; the optional change stays shielded (an Orchard note).
+ *     transparent output; the optional change stays shielded (an Ironwood note).
  *
- * There is always at least one Orchard spend, so the Orchard bundle is present
- * and floored to ORCHARD_MIN_ACTIONS even when its output count is 0 or 1 (e.g.
- * a shielded→transparent send with no shielded change). This is exactly the
+ * There is always at least one shielded spend, so the Orchard-family bundle is
+ * present and floored to ORCHARD_MIN_ACTIONS even when its output count is 0 or 1
+ * (e.g. a shielded→transparent send with no shielded change). This is exactly the
  * floor the collapsed `max(spends, 1)` model dropped.
  */
 export function computeShieldedSpendFee(
@@ -76,8 +76,8 @@ export function computeShieldedSpendFee(
   transferType: ZcashTransferType,
 ): BigNumber {
   const changeOutputs = hasChange ? 1 : 0;
-  return transferType === "shielded-to-transparent" || transferType === "ironwood-to-transparent"
-    ? // transparent recipient (1 t-out) + optional shielded change (Ironwood/Orchard out)
+  return transferType === "shielded-to-transparent"
+    ? // transparent recipient (1 t-out) + optional shielded change (Ironwood out)
       computeZip317Fee(spendCount, changeOutputs, 0, 1)
     : // recipient + optional change, both shielded outputs
       computeZip317Fee(spendCount, 1 + changeOutputs, 0, 0);

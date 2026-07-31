@@ -164,16 +164,13 @@ describe("prepareTransaction, transparent-input flows", () => {
 
 describe("prepareTransaction, note-spending flows", () => {
   // Selection is largest-first, and the fee is resolved iteratively because it
-  // depends on how many notes were selected. Sending 25k out of a 50k pool:
-  //   z→z    one 40k note covers 25k + 10k (2 Orchard actions), 5k comes back
-  //   z→t    the transparent output costs a third action, so 15k and no change
-  //   iw→iw  the 30k/20k pool needs both notes, leaving 15k of change
-  //   iw→t   the same two notes at the 3-action fee, so 10k of change
+  // depends on how many notes were selected. A shielded send spends the Ironwood
+  // pool (30k/20k). Sending 25k out of that 50k pool:
+  //   z→z  both notes are needed; 2 Orchard-family actions (10k fee), 15k change
+  //   z→t  the transparent output costs a third action, so 15k fee and 10k change
   it.each([
-    ["shielded", U_ADDRESS, [40_000], 10_000, 5_000],
-    ["shielded-to-transparent", T_ADDRESS, [40_000], 15_000, 0],
-    ["ironwood", U_ADDRESS, [30_000, 20_000], 10_000, 15_000],
-    ["ironwood-to-transparent", T_ADDRESS, [30_000, 20_000], 15_000, 10_000],
+    ["shielded", U_ADDRESS, [30_000, 20_000], 10_000, 15_000],
+    ["shielded-to-transparent", T_ADDRESS, [30_000, 20_000], 15_000, 10_000],
   ] as [ZcashTransferType, string, number[], number, number][])(
     "selects the notes %s spends, and prices them",
     async (transferType, recipient, selection, fee, change) => {
@@ -195,23 +192,21 @@ describe("prepareTransaction, note-spending flows", () => {
     },
   );
 
-  // The pool being spent bounds the send. NU6.3 makes the Orchard pool
-  // spendable but no longer creditable, so the two are never mixed.
-  it.each([
-    ["an ironwood send", "ironwood", { notes: [1_000_000], ironwoodNotes: [20_000] }],
-    ["a shielded send", "shielded", { notes: [20_000], ironwoodNotes: [1_000_000] }],
-  ] as [string, ZcashTransferType, { notes: number[]; ironwoodNotes: number[] }][])(
-    "never lets %s draw on the other pool",
-    async (_label, transferType, pools) => {
-      const prepared = await prepareTransaction(
-        account(pools),
-        transaction({ transferType, recipient: U_ADDRESS, amount: new BigNumber(500_000) }),
-      );
+  // A shielded send spends the Ironwood pool only. The deprecated Orchard pool is
+  // never drawn on, even when it holds far more than the send needs.
+  it("never lets a shielded send draw on the Orchard pool", async () => {
+    const prepared = await prepareTransaction(
+      account({ notes: [1_000_000], ironwoodNotes: [20_000] }),
+      transaction({
+        transferType: "shielded",
+        recipient: U_ADDRESS,
+        amount: new BigNumber(500_000),
+      }),
+    );
 
-      expect(prepared.selectedNotes).toEqual([]);
-      expect(prepared).not.toHaveProperty("zcashFee");
-    },
-  );
+    expect(prepared.selectedNotes).toEqual([]);
+    expect(prepared).not.toHaveProperty("zcashFee");
+  });
 
   it("spends the whole pool, leaving no change, when everything is being sent", async () => {
     const prepared = await prepareTransaction(
@@ -273,8 +268,6 @@ describe("estimateMaxSpendable", () => {
     ["transparent-to-shielded", 105_000],
     ["shielded", 40_000],
     ["shielded-to-transparent", 35_000],
-    ["ironwood", 40_000],
-    ["ironwood-to-transparent", 35_000],
   ] as [ZcashTransferType, number][])(
     "answers for %s with the pool it spends, minus the fee",
     async (transferType, spendable) => {
@@ -286,16 +279,14 @@ describe("estimateMaxSpendable", () => {
     expect(await max(null)).toEqual(new BigNumber(115_000));
   });
 
-  it.each([
-    "transparent",
-    "transparent-to-shielded",
-    "shielded",
-    "ironwood",
-  ] as ZcashTransferType[])("answers zero for an empty pool (%s)", async transferType => {
-    const empty = account({ utxos: [], notes: [], ironwoodNotes: [] });
+  it.each(["transparent", "transparent-to-shielded", "shielded"] as ZcashTransferType[])(
+    "answers zero for an empty pool (%s)",
+    async transferType => {
+      const empty = account({ utxos: [], notes: [], ironwoodNotes: [] });
 
-    expect(await max(transaction({ transferType }), empty)).toEqual(new BigNumber(0));
-  });
+      expect(await max(transaction({ transferType }), empty)).toEqual(new BigNumber(0));
+    },
+  );
 
   // A balance worth exactly its own fee leaves nothing to send, and the answer
   // has to be zero rather than the negative amount the subtraction gives.
