@@ -70,7 +70,7 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
       - name: build libs
-        run: pnpm exec nx run-many -t build --projects=tag:scope:libs
+        run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-cli
 
       - name: snapshot versioning
         env:
