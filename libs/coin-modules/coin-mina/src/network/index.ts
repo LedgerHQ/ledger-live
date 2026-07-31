@@ -1,15 +1,20 @@
 import network from "@ledgerhq/live-network";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 
 import { getCoinConfig } from "../config";
 import {
   MAINNET_NETWORK_IDENTIFIER,
   MAX_TRANSACTIONS_PER_PAGE,
+  MAX_VALIDATORS_PAGES,
+  MAX_VALIDATORS_PER_PAGE,
   MINA_API_RETRY_COUNT,
   MINA_DECIMALS,
   MINA_ROSETTA_TIMEOUT,
   MINA_SYMBOL,
   MINA_TOKEN_ID,
+  MINA_VALIDATORS_CACHE_TTL_MINUTES,
+  MINA_VALIDATORS_TIMEOUT,
 } from "../consts";
 import { isValidAddress } from "../logic/utils";
 import {
@@ -91,7 +96,7 @@ export const makeNetworkRequest = async <T>({
 }: {
   method: "POST" | "GET";
   url: string;
-  data: any;
+  data?: any;
   timeout?: number;
   retryCount?: number;
 }): Promise<T> => {
@@ -483,22 +488,19 @@ export const getDelegateAccount = async (
 
 // ── Validator API functions ──
 
-export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
+const fetchAllValidatorPages = async (): Promise<ValidatorInfo[]> => {
   const validators: ValidatorInfoFromAPI[] = [];
 
-  let currentPage = 0;
-  let hasMore = true;
-
-  while (hasMore) {
+  for (let currentPage = 0; currentPage < MAX_VALIDATORS_PAGES; currentPage++) {
     const baseUrl = `${getBlockberryUrl()}`;
-    const { data } = await network<GetValidatorsResponse>({
+    const data = await makeNetworkRequest<GetValidatorsResponse>({
       method: "GET",
-      url: `${baseUrl}?page=${currentPage}&size=50&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
+      url: `${baseUrl}?page=${currentPage}&size=${MAX_VALIDATORS_PER_PAGE}&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
+      timeout: MINA_VALIDATORS_TIMEOUT,
     });
 
     validators.push(...data.content);
-    hasMore = !data.last;
-    currentPage++;
+    if (data.last || data.content.length === 0) break;
   }
 
   return validators.map(validator => ({
@@ -515,3 +517,9 @@ export const fetchValidators = async (): Promise<ValidatorInfo[]> => {
     blocksCreated: validator.canonicalBlocksCount,
   }));
 };
+
+export const fetchValidators = makeLRUCache(
+  fetchAllValidatorPages,
+  () => "",
+  minutes(MINA_VALIDATORS_CACHE_TTL_MINUTES, 1),
+);
