@@ -19,7 +19,7 @@ type BitcoinStrategyResult = {
   item: Option | undefined | null;
   options: Array<Option>;
 };
-const useBitcoinPickingStrategy = (strategy: number): BitcoinStrategyResult => {
+const useBitcoinPickingStrategy = (strategy: number | undefined): BitcoinStrategyResult => {
   const [item, setItem] = useState(() => {
     return options.find(o => bitcoinPickingStrategy[o.value] === strategy);
   });

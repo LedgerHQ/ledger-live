@@ -49,7 +49,33 @@
     "eslint/no-restricted-imports": [
       "error",
       {
-        "paths": ["lodash"],
+        "paths": [
+          "lodash",
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/types",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          },
+          {
+            "name": "@ledgerhq/ledger-wallet-framework/api",
+            "importNames": [
+              "CryptoCurrency",
+              "TokenCurrency",
+              "Currency",
+              "Unit",
+              "FiatCurrency",
+              "ExplorerView"
+            ],
+            "message": "Wallet-framework currency types are for coin-modules. Import from @domain/entity-currency-* (unions from @domain/entity-currency)."
+          }
+        ],
         "patterns": [
           {
             "group": [
@@ -57,6 +83,15 @@
               "@ledgerhq/live-common/lib-es/**"
             ],
             "message": "Please remove the /lib import from live-common import."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/currencies",
+              "@ledgerhq/live-common/currencies/index",
+              "@ledgerhq/live-common/currencies/helpers"
+            ],
+            "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+            "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
           }
         ]
       }

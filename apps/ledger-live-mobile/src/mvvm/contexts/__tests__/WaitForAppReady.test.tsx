@@ -1,61 +1,66 @@
 import React from "react";
 import { Text } from "react-native";
-import { render, screen } from "@testing-library/react-native";
-import { InitialQueriesContext } from "../InitialQueriesContext";
+import { render, screen } from "@tests/test-renderer";
+import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
-type RenderParams = Parameters<typeof InitialQueriesContext.Provider>[0]["value"] & {
-  currencyInitialized: boolean;
-};
+jest.mock("@ledgerhq/live-common/api/ofacGeoBlockApi", () => {
+  const actual = jest.requireActual<typeof import("@ledgerhq/live-common/api/ofacGeoBlockApi")>(
+    "@ledgerhq/live-common/api/ofacGeoBlockApi",
+  );
+  return {
+    ...actual,
+    ofacGeoBlockApi: {
+      ...actual.ofacGeoBlockApi,
+      useCheckQuery: jest.fn(() => ({ isLoading: false })),
+    },
+  };
+});
+
+const { ofacGeoBlockApi: mockedOfacApi } = jest.requireMock(
+  "@ledgerhq/live-common/api/ofacGeoBlockApi",
+) as { ofacGeoBlockApi: { useCheckQuery: jest.Mock } };
+
+function renderApp(currencyInitialized: boolean, overrideInitialState?: (state: State) => State) {
+  return render(
+    <WaitForAppReady currencyInitialized={currencyInitialized}>
+      <Text>App is Ready</Text>
+    </WaitForAppReady>,
+    { overrideInitialState },
+  );
+}
 
 describe("WaitForAppReady", () => {
-  it("renders children when app is ready", () => {
-    renderApp({
-      currencyInitialized: true,
-      firebaseIsReady: true,
-      fiatsReady: true,
-      ofacResult: { blocked: false, isLoading: false },
-    });
+  beforeEach(() => {
+    mockedOfacApi.useCheckQuery.mockReturnValue({ isLoading: false });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("renders children when app is fully ready", () => {
+    // Default test state: remoteFlagsReady=true; OFAC not loading; currency initialized
+    renderApp(true);
     expect(screen.getByText("App is Ready")).toBeTruthy();
   });
 
-  it("renders null when firebase is not ready", () => {
-    renderApp({
-      currencyInitialized: true,
-      firebaseIsReady: false,
-      fiatsReady: true,
-      ofacResult: { blocked: false, isLoading: false },
-    });
-    expect(screen.toJSON()).toBeNull();
+  it("hides children while OFAC check is loading", () => {
+    mockedOfacApi.useCheckQuery.mockReturnValue({ isLoading: true });
+    renderApp(true);
+    expect(screen.queryByText("App is Ready")).toBeNull();
   });
 
-  it("renders null when OFAC check is loading", () => {
-    renderApp({
-      currencyInitialized: true,
-      firebaseIsReady: true,
-      fiatsReady: true,
-      ofacResult: { blocked: false, isLoading: true },
-    });
-    expect(screen.toJSON()).toBeNull();
+  it("hides children while remote flags have not settled", () => {
+    renderApp(true, state => ({
+      ...state,
+      featureFlags: { ...state.featureFlags, remoteFlagsReady: false },
+    }));
+    expect(screen.queryByText("App is Ready")).toBeNull();
   });
 
-  it("renders null when currency is not initialized", () => {
-    renderApp({
-      currencyInitialized: false,
-      firebaseIsReady: true,
-      fiatsReady: true,
-      ofacResult: { blocked: false, isLoading: false },
-    });
-    expect(screen.toJSON()).toBeNull();
+  it("hides children while currency is not initialized", () => {
+    renderApp(false);
+    expect(screen.queryByText("App is Ready")).toBeNull();
   });
-
-  function renderApp({ currencyInitialized, ...value }: RenderParams) {
-    return render(
-      <InitialQueriesContext.Provider value={value}>
-        <WaitForAppReady currencyInitialized={currencyInitialized}>
-          <Text>App is Ready</Text>
-        </WaitForAppReady>
-      </InitialQueriesContext.Provider>,
-    );
-  }
 });

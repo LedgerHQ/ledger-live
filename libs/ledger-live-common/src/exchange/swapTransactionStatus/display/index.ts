@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { getAccountCurrency, getMainAccount } from "../../../account/index";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "../../../currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "../../../currencies/index";
 import { getSwapProvider, type AdditionalProviderConfig } from "../../providers/swap";
 import { getProviderName } from "../../swap/utils/index";
 import type { SwapTransactionStatusControllerViewModel } from "../hooks/useSwapTransactionStatusController";

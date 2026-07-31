@@ -1,6 +1,6 @@
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import bs58 from "bs58";
 import coinConfig from "../../config";
 import { signMessage } from "../../hw-signMessage";

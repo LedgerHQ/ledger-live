@@ -47,7 +47,6 @@ import {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
@@ -239,10 +238,6 @@ export const setHasBeenRedirectedToPostOnboarding =
 
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
-);
-
-export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
-  SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
 );
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(

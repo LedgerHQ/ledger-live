@@ -22,6 +22,7 @@ export type MockTransactionStatus = {
 
 let mockBridgeRecipientValidation = { errors: {}, warnings: {}, isLoading: false };
 let mockDeviceActionResult: unknown = null;
+let mockScannedCode = "";
 
 const mockSetTransaction = jest.fn();
 const mockUpdateTransaction = jest.fn();
@@ -134,11 +135,16 @@ export const setMockDeviceActionResult = (result: unknown) => {
   mockDeviceActionResult = result;
 };
 
+export const setMockScannedCode = (code: string) => {
+  mockScannedCode = code;
+};
+
 export const resetSendFlowTestState = (family: SupportedMockFamily = "evm") => {
   jest.clearAllMocks();
   resetBridgeState(family);
   setMockDeviceActionResult(null);
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
+  setMockScannedCode("");
 };
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
@@ -258,6 +264,18 @@ jest.mock("~/renderer/components/DeviceAction", () => {
     return <div>Waiting for device...</div>;
   };
   return { __esModule: true, default: MockDeviceAction };
+});
+
+// jsdom has no camera: stub the scanner panel with a button that emits a scanned code
+jest.mock("../screens/Recipient/components/RecipientQrScanner", () => {
+  const MockRecipientQrScanner = ({ onPick }: { onPick: (code: string) => void }) => (
+    <div data-testid="send-recipient-qr-scanner">
+      <button type="button" data-testid="mock-qrcode-pick" onClick={() => onPick(mockScannedCode)}>
+        camera
+      </button>
+    </div>
+  );
+  return { RecipientQrScanner: MockRecipientQrScanner };
 });
 
 jest.mock("~/renderer/hooks/useConnectAppAction", () => ({

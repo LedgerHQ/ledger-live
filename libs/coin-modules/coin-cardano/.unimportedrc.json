@@ -33,6 +33,9 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util"],
-  "ignoreUnused": []
+    "jest-util"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
+  ]
 }

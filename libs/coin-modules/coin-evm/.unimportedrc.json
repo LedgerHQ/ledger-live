@@ -36,7 +36,9 @@
     "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
     "bn.js",
     "lru-cache",
-    "@ledgerhq/types-cryptoassets",
     "@ledgerhq/types-live"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
   ]
 }

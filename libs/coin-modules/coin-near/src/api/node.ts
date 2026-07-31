@@ -16,6 +16,7 @@ import {
   NearProtocolConfig,
   NearRawValidator,
   NearStakingPosition,
+  NearV3Response,
 } from "./sdk.types";
 
 export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
@@ -100,36 +101,42 @@ export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
   return data.result;
 };
 
-type statsResponseType = {
-  stats: {
-    id: number;
-    total_supply: string;
-    circulating_supply: string;
-    avg_block_time: string;
-    gas_price: string;
-    nodes_online: number;
-    near_price: string;
-    near_btc_price: string;
-    market_cap: string;
-    volume: string;
-    high_24h: string;
-    high_all: string;
-    low_24h: string;
-    low_all: string;
-    change_24: string;
-    total_txns: string;
-    tps: number;
-  }[];
+type NearStats = {
+  gas_price: string | null;
+};
+
+const getGasPriceFromRpc = async (): Promise<string> => {
+  const currencyConfig = getCoinConfig();
+  const { data } = await network<{
+    result?: { gas_price: string };
+    error?: { message: string };
+  }>({
+    method: "POST",
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
+    data: {
+      jsonrpc: "2.0",
+      id: "id",
+      method: "gas_price",
+      params: [null],
+    },
+  });
+
+  if (!data.result?.gas_price) {
+    log("Near", "getGasPrice fallback failed", data.error);
+    throw new Error(data.error?.message || "Near: the node returned no gas price");
+  }
+
+  return data.result.gas_price;
 };
 
 export const getGasPrice = async (): Promise<string> => {
   const currencyConfig = getCoinConfig();
 
-  const response = await liveNetwork<statsResponseType>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/stats`,
+  const response = await liveNetwork<NearV3Response<NearStats>>({
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/stats`,
   });
 
-  return response.data.stats[0].gas_price;
+  return response.data.data?.gas_price || (await getGasPriceFromRpc());
 };
 
 export const getAccessKey = async ({
@@ -236,7 +243,7 @@ export const getStakingPositions = async (
   const stakingThreshold = getYoctoThreshold();
 
   const delegatedValidators = await liveNetwork<{ deposit: string; validator_id: string }[]>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/kitwallet/staking-deposits/${address}`,
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/kitwallet/staking-deposits/${address}`,
   });
 
   const stakingPositions = await Promise.all(
@@ -305,55 +312,57 @@ export const getStakingPositions = async (
   };
 };
 
-type validatorsType = {
-  validatorFullData: {
-    deposit: string;
-    validator_id: string;
-    percent: string;
-    accountId: string;
-    poolInfo: {
-      fee: {
-        numerator: number;
-        denominator: number;
-      };
-      delegatorsCount: number;
-    };
-    cumulativeStake: {
-      accumulatedPercent: string;
-      cumulativePercent: string;
-      ownPercentage: string;
-    };
-    currentEpoch: {
-      stake: string;
-    };
-  }[];
+type NearIndexerValidator = {
+  account_id: string;
+  current_epoch_stake: string | null;
+  fee_numerator: number | null;
+  fee_denominator: number | null;
 };
 
 type NearValidator = NearRawValidator & {
   commission: number;
 };
 
-type fetchValidators = {
-  per_page: number;
-  page: number;
+type FetchValidatorsParams = {
+  total: number;
 };
 
-async function fetchValidators({ per_page, page }: fetchValidators): Promise<NearValidator[]> {
+const VALIDATORS_PAGE_SIZE = 100;
+
+async function fetchValidators({ total }: FetchValidatorsParams): Promise<NearValidator[]> {
   const currencyConfig = getCoinConfig();
+  const collected: NearIndexerValidator[] = [];
+  const maxPages = Math.ceil(total / VALIDATORS_PAGE_SIZE);
+  let next: string | undefined;
 
-  const delegatedValidators = await liveNetwork<validatorsType>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/validators?per_page=${per_page}&page=${page}`,
-  });
+  for (let page = 0; page < maxPages; page++) {
+    const limit = Math.min(VALIDATORS_PAGE_SIZE, total - collected.length);
+    const cursor = next ? `&next=${encodeURIComponent(next)}` : "";
+    const response = await liveNetwork<NearV3Response<NearIndexerValidator[]>>({
+      url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/validators?limit=${limit}${cursor}`,
+    });
 
-  const validators = delegatedValidators.data.validatorFullData.map(
-    ({ accountId, currentEpoch, poolInfo }) => ({
-      account_id: accountId,
-      stake: currentEpoch.stake,
-      commission: Math.round((poolInfo.fee.numerator / poolInfo.fee.denominator) * 100),
-    }),
-  );
+    const validators = response.data.data ?? [];
+    collected.push(...validators);
+    next = response.data.meta?.next_page;
 
-  return validators || [];
+    if (!validators.length || !next || collected.length >= total) {
+      break;
+    }
+  }
+
+  return collected
+    .slice(0, total)
+    .map(({ account_id, current_epoch_stake, fee_numerator, fee_denominator }) => ({
+      account_id,
+      stake: current_epoch_stake ?? "0",
+      commission:
+        fee_numerator !== null && fee_denominator
+          ? Math.round((fee_numerator / fee_denominator) * 100)
+          : 0,
+    }));
 }
 
-export const getValidators = makeLRUCache(fetchValidators, () => "", { ttl: 30 * 60 * 1000 });
+export const getValidators = makeLRUCache(fetchValidators, ({ total }) => String(total), {
+  ttl: 30 * 60 * 1000,
+});

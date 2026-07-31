@@ -3,7 +3,7 @@ import {
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
 import { fromTransactionRaw } from "../transaction";

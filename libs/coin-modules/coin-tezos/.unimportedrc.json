@@ -1,5 +1,9 @@
 {
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "jest-util"
+  ],
   "entry": [
     "src/api/index.ts",
     "src/index.ts",
@@ -15,7 +19,11 @@
     "src/logic/validateAddress.ts",
     "src/logic/positionUid.ts"
   ],
-  "ignoreUnimported": ["src/supportedFeatures.ts"],
+  "ignoreUnimported": [
+    "src/supportedFeatures.ts"
+  ],
   "ignore": [],
-  "ignoreUnused": []
+  "ignoreUnused": [
+    "@ledgerhq/errors"
+  ]
 }

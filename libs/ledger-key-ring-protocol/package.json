@@ -65,6 +65,7 @@
     "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/speculos-transport": "workspace:*",
     "@ledgerhq/types-devices": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
     "base64-js": "1",
     "isomorphic-ws": "catalog:",
     "rxjs": "catalog:",

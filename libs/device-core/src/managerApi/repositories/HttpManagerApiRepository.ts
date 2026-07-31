@@ -1,6 +1,6 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
+import { FirmwareNotRecognized, NetworkDown } from "../../errors";
 import { getUserHashes } from "../use-cases/getUserHashes";
 import URL from "url";
 import { ManagerApiRepository } from "./ManagerApiRepository";

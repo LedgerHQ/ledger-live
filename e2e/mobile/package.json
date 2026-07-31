@@ -28,6 +28,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:^",
     "@jest/reporters": "catalog:",
     "@jest/types": "^30.2.0",
     "@ledgerhq/devices": "workspace:*",
@@ -40,7 +41,6 @@
     "@ledgerhq/live-e2e-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@types/body-parser": "1.19.5",

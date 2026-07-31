@@ -14,15 +14,14 @@ import reducer, {
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
   migrateLegacyStarredMarketCoins,
+  supportedCounterValuesSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   importSettings,
   setAnalyticsConsentInfo,
@@ -699,6 +698,22 @@ describe("counterValueCurrencySelector", () => {
       getFiatCurrencyByTicker("USD"),
     );
   });
+
+  it("falls back to USD for OFAC-restricted tickers (read-time guard)", () => {
+    // RUB is in OFAC_FIAT_TICKERS; a persisted RUB must display as USD at read time
+    // so the user never sees a blocked currency even if they had it stored.
+    expect(counterValueCurrencySelector(buildState("RUB"))).toBe(getFiatCurrencyByTicker("USD"));
+  });
+
+  it("resolves a non-fallback fiat without resetting to USD (regression guard for LIVE-35110)", () => {
+    // AMD (Armenian Dram) is in the domain registry but NOT in the ~36-currency
+    // offline fallback list. Before this fix, booting the app would call
+    // updateSupportedCountervalues against the fallback, causing AMD to be treated
+    // as unsupported and silently reset to USD on every restart.
+    // The selector must resolve AMD directly from the registry regardless of what
+    // the supportedFiats slice currently holds.
+    expect(counterValueCurrencySelector(buildState("AMD"))).toBe(getFiatCurrencyByTicker("AMD"));
+  });
 });
 
 describe("counterValueIdOf", () => {
@@ -739,5 +754,66 @@ describe("migrateLegacyStarredMarketCoins", () => {
     expect(
       migrateLegacyStarredMarketCoins(["bitcoin", "ethereum/erc20/dai_stablecoin_v2_0", "dai"]),
     ).toEqual(["bitcoin", "dai"]);
+  });
+});
+
+describe("supportedCounterValuesSelector", () => {
+  const stateWithFiats = (fiats: ReturnType<typeof getFiatCurrencyByTicker>[]): State =>
+    ({
+      ...({} as State),
+      supportedFiats: { fiats, fiatsReady: true },
+    }) as State;
+
+  it("always includes Bitcoin and Ethereum regardless of fiat list", () => {
+    const result = supportedCounterValuesSelector(stateWithFiats([]));
+    const tickers = result.map(r => r.ticker);
+    expect(tickers).toContain("BTC");
+    expect(tickers).toContain("ETH");
+  });
+
+  it("includes fiats from the supportedFiats slice", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const USD = getFiatCurrencyByTicker("USD");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR, USD]));
+    const tickers = result.map(r => r.ticker);
+    expect(tickers).toContain("EUR");
+    expect(tickers).toContain("USD");
+  });
+
+  it("returns items sorted by currency name", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const USD = getFiatCurrencyByTicker("USD");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR, USD]));
+    const names = result.map(r => r.currency.name);
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+  });
+
+  it("each item carries value, ticker, label and currency", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR]));
+    const eurItem = result.find(r => r.ticker === "EUR");
+    expect(eurItem).toBeDefined();
+    expect(eurItem?.value).toBe("EUR");
+    expect(eurItem?.label).toContain("EUR");
+    expect(eurItem?.currency).toBe(EUR);
+  });
+
+  it("is memoized — returns the same reference when called twice with the same state", () => {
+    const state = stateWithFiats([getFiatCurrencyByTicker("EUR")]);
+    const first = supportedCounterValuesSelector(state);
+    const second = supportedCounterValuesSelector(state);
+    expect(first).toBe(second);
+  });
+});
+
+describe("filterValidSettings strips removed fields (self-healing on upgrade)", () => {
+  it("drops stale supportedCounterValues key from persisted settings", () => {
+    // Before this PR, supportedCounterValues was a persisted SettingsState field.
+    // After removal from INITIAL_STATE it must be auto-stripped on import so old
+    // devices don't silently carry dead data after upgrade.
+    const stale = { counterValue: "EUR", supportedCounterValues: [{ value: "EUR" }] };
+    const filtered = filterValidSettings(stale as unknown as Partial<SettingsState>);
+    expect("supportedCounterValues" in filtered).toBe(false);
+    expect(filtered.counterValue).toBe("EUR");
   });
 });

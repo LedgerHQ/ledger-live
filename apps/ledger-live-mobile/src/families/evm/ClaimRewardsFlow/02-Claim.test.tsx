@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
+import { ClaimRewardsFeesWarning } from "@ledgerhq/coin-evm/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
 import ClaimRewardsClaim from "./02-Claim";

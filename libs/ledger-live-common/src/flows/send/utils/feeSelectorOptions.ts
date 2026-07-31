@@ -1,9 +1,25 @@
+import { joinFeeSublabelValues } from "./networkFeesDisplay";
+
 export type FeeStrategyOption = Readonly<{
   id: string;
   kind: "preset" | "default";
   sublabelFiat: string | null;
+  sublabelCrypto: string | null;
   sublabelLegend: string | null;
 }>;
+
+/**
+ * A preset's sublabel shows what it costs in both fiat and the network's own currency. Coins that
+ * price fees by rate (Bitcoin, Kaspa: `12 sat/vB`) keep that legend instead — the rate is what users
+ * compare presets by there.
+ */
+export function feeStrategySublabel(
+  option: FeeStrategyOption,
+  { preferLegend }: { preferLegend: boolean },
+): string | null {
+  if (preferLegend && option.sublabelLegend) return option.sublabelLegend;
+  return joinFeeSublabelValues(option.sublabelFiat, option.sublabelCrypto);
+}
 
 export type FeeSelectorOptionKind = "preset" | "default" | "custom" | "coinControl";
 

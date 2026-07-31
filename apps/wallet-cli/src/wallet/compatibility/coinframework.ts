@@ -2,7 +2,7 @@
 // Skips full bridge sync — uses direct API calls instead.
 
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
 import evmBridge from "@ledgerhq/live-common/families/evm/bridge/api";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";

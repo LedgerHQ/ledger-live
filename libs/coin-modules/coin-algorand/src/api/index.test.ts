@@ -1,5 +1,4 @@
 import { BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import type { AlgorandCoinConfig } from "../config";
 import * as logic from "../logic";
 import { createApi } from "./index";
@@ -96,7 +95,7 @@ describe("Algorand API", () => {
     it("should throw an exception when options is provided", async () => {
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 

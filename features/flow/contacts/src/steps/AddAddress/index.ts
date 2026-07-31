@@ -4,6 +4,7 @@ export type {
   ContactsCurrencySelectionPort,
 } from "./model/ports";
 export {
+  createContactsAddressValidationDependencies,
   createContactsAddressValidationService,
   type ContactsAddressValidationDependencies,
   type ContactsAddressValidationInput,
@@ -19,11 +20,18 @@ export {
   type UseAddAddressCurrencySelectionViewModelOptions,
 } from "./useAddAddressCurrencySelectionViewModel";
 export type {
+  AddAddressContact,
+  AddAddressCurrencySelection,
+  AddAddressEntryLabels,
   AddAddressEntryState,
   AddAddressFlowState,
   AddAddressFlowViewModel,
   AddAddressInputMethod,
   AddAddressInputSource,
+  AddAddressLabelState,
+  AddAddressPlaceholderViewProps,
+  ValidAddAddressEntryState,
+  ValidAddAddressLabelState,
 } from "./types";
 export {
   useAddAddressFlowViewModel,

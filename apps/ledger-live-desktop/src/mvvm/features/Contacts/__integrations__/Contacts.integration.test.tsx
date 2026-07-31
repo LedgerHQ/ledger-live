@@ -194,7 +194,8 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-page")).toBeVisible();
     expect(screen.getByTestId("contacts-page-header")).toBeVisible();
     expect(screen.getByTestId("contacts-list-pane")).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-pane")).toBeEmptyDOMElement();
+    expect(screen.getByTestId("contacts-detail-pane")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
     expect(screen.queryByTestId("contacts-ledger-sync-list-loading")).not.toBeInTheDocument();
     expect(screen.queryByTestId("contacts-ledger-sync-detail-loading")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -244,11 +245,16 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-contact-header")).toBeVisible();
     expect(screen.getByTestId("contacts-section-A")).toBeVisible();
     expect(screen.getByTestId("contacts-section-B")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-C")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
 
     expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("Me");
+    expect(screen.getByTestId("contacts-me-row")).toHaveTextContent("3 addresses");
     expect(screen.getByTestId("contacts-saved-row-contact-ada")).toHaveTextContent("Ada");
     expect(screen.getByTestId("contacts-saved-row-contact-ben")).toHaveTextContent("Ben");
+    expect(screen.getByTestId("contacts-saved-row-contact-charlie")).toHaveTextContent("Charlie");
+    expect(screen.getByTestId("contacts-saved-row-contact-diana")).toHaveTextContent("Diana");
     expect(screen.getByTestId("contacts-saved-row-contact-olive")).toHaveTextContent("Olive");
   });
 
@@ -381,8 +387,37 @@ describe("Contacts integration", () => {
     expect(store.getState().settings.hasDismissedContactsFeatureIntroduction).toBe(false);
   });
 
-  it("should render the Me empty detail state when Me is selected", async () => {
-    const { user } = render(
+  it("should render populated Me detail on load when populated contacts are persisted", () => {
+    render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          contacts: { contacts: mockPopulatedContacts() },
+        }),
+      },
+    );
+
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    expect(
+      within(screen.getByTestId("contacts-detail-screen")).getByText("3 addresses"),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-network-group-arbitrum")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-network-group-base")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+    expect(
+      screen.getByTestId("contacts-detail-address-row-address-me-arbitrum-usdc"),
+    ).toBeVisible();
+    expect(screen.queryByTestId("contacts-detail-empty-state")).not.toBeInTheDocument();
+  });
+
+  it("should render the default Me detail state on load", () => {
+    render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
           <Route path="/contacts" element={<ContactsScreen />} />
@@ -394,15 +429,35 @@ describe("Contacts integration", () => {
       },
     );
 
-    await user.click(screen.getByTestId("contacts-me-row"));
-
     expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
     expect(screen.getByTestId("contacts-detail-me-avatar")).toBeVisible();
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    expect(screen.getByText("Add external address")).toBeVisible();
     expect(screen.getByText("No saved addresses for you")).toBeVisible();
-    expect(
-      screen.getByText("Save your wallet addresses to receive crypto by name next time."),
-    ).toBeVisible();
-    expect(screen.getByTestId("contacts-detail-add-address")).toBeVisible();
+  });
+
+  it("should render the Me empty detail state when Me is selected after another contact", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({
+          contacts: {
+            contacts: mockPopulatedContacts(),
+          },
+        }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+    await user.click(screen.getByTestId("contacts-me-row"));
+
+    expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    expect(screen.queryByText("No saved addresses for Ada")).not.toBeInTheDocument();
   });
 
   it("should render a saved contact empty detail state when an empty contact is selected", async () => {
@@ -449,7 +504,43 @@ describe("Contacts integration", () => {
     expect(store.getState().modularDialog.dialogParams?.networkIds).toEqual(
       resolveEligibleAddressCurrencyIds(["evm"]),
     );
+    expect(store.getState().modularDialog.dialogParams?.presentation).toBe("embedded");
     expect(store.getState().modularDialog.dialogParams?.onAccountSelected).toBeUndefined();
+  });
+
+  it("should keep one Contacts dialog mounted from currency selection to address entry", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeVisible();
+
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
+    });
+    expect(screen.getByRole("dialog")).toBe(dialog);
+    const confirmationButton = screen.getByTestId("contacts-add-address-confirm");
+    expect(confirmationButton).toBeDisabled();
+    expect(confirmationButton.querySelector("svg")).not.toBeNull();
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
   });
 
   it("should expose the Add Address session started for Me", async () => {

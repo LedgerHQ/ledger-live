@@ -9,6 +9,7 @@ jest.mock("../../ModularDialog/hooks/useOpenCurrencyFlow", () => ({
 }));
 
 const openCurrencyFlow = jest.fn();
+const cancelCurrencyFlow = jest.fn();
 
 describe("useContactsCurrencySelectionAdapter", () => {
   const ethereumId = getCryptoCurrencyById("ethereum").id;
@@ -16,15 +17,29 @@ describe("useContactsCurrencySelectionAdapter", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(useOpenCurrencyFlow).mockReturnValue({ openCurrencyFlow });
+    jest.mocked(useOpenCurrencyFlow).mockReturnValue({ openCurrencyFlow, cancelCurrencyFlow });
   });
 
-  it("should pass the exact network ids and return the selected currency id", async () => {
-    openCurrencyFlow.mockResolvedValue(getCryptoCurrencyById("ethereum"));
+  it("should pass the exact network ids and return the selected currency details", async () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    openCurrencyFlow.mockResolvedValue(ethereum);
     const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
 
-    await expect(result.current.selectCurrency([ethereumId, bitcoinId])).resolves.toBe(ethereumId);
-    expect(openCurrencyFlow).toHaveBeenCalledWith([ethereumId, bitcoinId]);
+    await expect(result.current.selectCurrency([ethereumId, bitcoinId])).resolves.toEqual({
+      currencyId: ethereumId,
+      assetDisplayName: ethereum.name,
+    });
+    expect(openCurrencyFlow).toHaveBeenCalledWith([ethereumId, bitcoinId], {
+      presentation: "embedded",
+    });
+  });
+
+  it("should expose the Modular Dialog cancellation handler", () => {
+    const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
+
+    result.current.cancelCurrencySelection();
+
+    expect(cancelCurrencyFlow).toHaveBeenCalledTimes(1);
   });
 
   it("should return null when the selected currency id is invalid", async () => {

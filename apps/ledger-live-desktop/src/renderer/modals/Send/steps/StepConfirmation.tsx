@@ -1,4 +1,4 @@
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";

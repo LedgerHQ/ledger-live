@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";

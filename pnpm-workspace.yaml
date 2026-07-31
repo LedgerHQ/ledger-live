@@ -42,7 +42,7 @@ catalog:
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.29
   "@ledgerhq/lumen-ui-react-visualization": 0.1.28
   "@ledgerhq/lumen-utils-shared": "0.1.7"
-  "@ledgerhq/zcash-utils": 1.1.0
+  "@ledgerhq/zcash-utils": 1.1.1
   # React Native
   react-native: 0.81.6
   "@react-native/assets-registry": 0.81.6
@@ -182,6 +182,8 @@ catalog:
   tailwind-merge: 3.4.0
   tsx: 4.20.6
   ws: 8.18.3
+  qrcode: 1.5.4
+  "@types/qrcode": 1.5.5
   zod: 4.3.6
   semver: 7.7.3
   "@types/semver": 7.7.1

@@ -33,7 +33,6 @@
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",
     "@features/platform-currencies": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

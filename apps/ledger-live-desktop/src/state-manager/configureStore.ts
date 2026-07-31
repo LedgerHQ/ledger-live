@@ -1,6 +1,14 @@
-import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  createListenerMiddleware,
+  type Middleware,
+  type ThunkDispatch,
+} from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
+import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
+import { authApiExtra } from "@shared/auth";
+import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import { calApiExtra } from "@domain/api-currency-token";
 import { cvsApiExtra } from "@domain/api-currency-fiat";
 import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
@@ -30,6 +38,10 @@ const customCreateStore = ({
   analyticsMiddleware,
   fetchRemoteFlags = defaultFetchRemoteFlags,
 }: Props) => {
+  // This listenerMiddleware is cross-scope as it is preferable to have one instance per store
+  // Source: https://github.com/reduxjs/redux-toolkit/discussions/3665
+  const listenerMiddleware = createListenerMiddleware<State>();
+
   const store = configureStore({
     reducer: reducers,
     preloadedState: state,
@@ -61,9 +73,28 @@ const customCreateStore = ({
                 // LIVE-33829: force mocks until Pay Card API base URL is wired.
                 payCardApiMocksEnabled: true,
               }),
+              ...authApiExtra({
+                authFeatureId: "lwdAuth",
+                startListening: listenerMiddleware.startListening,
+                providerParams: {
+                  identityProvider: new LkrpIdentityProvider<State>({
+                    startListening: listenerMiddleware.startListening,
+                  }),
+                },
+                createAuthProvider: (environment, { identityProvider }) =>
+                  new AuthSDK(
+                    {
+                      clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
+                      keycloakBaseUrl: getEnv(`LEDGER_AUTH_KEYCLOAK_BASE_URL_${environment}`),
+                      keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
+                      disablePkce: true,
+                    },
+                    { provider: identityProvider },
+                  ),
+              }),
             },
           },
-        }),
+        }).prepend(listenerMiddleware.middleware),
       )
         .concat(logger)
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
@@ -71,7 +102,7 @@ const customCreateStore = ({
         .concat(
           createIdentitiesSyncMiddleware({
             pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL").trim(),
-            getIdentitiesState: (state: State) => state.identities,
+            getIdentitiesState: ({ identities }: State) => identities,
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
@@ -88,6 +119,7 @@ const customCreateStore = ({
         ),
     devTools: __DEV__,
   });
+
   return store;
 };
 

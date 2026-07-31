@@ -173,6 +173,20 @@ describe("tzkt network API", () => {
         }),
       );
     });
+
+    it("coalesces concurrent calls for the same address into a single request", async () => {
+      const account = { type: "user", address: "tz1dup", revealed: true } as APIAccount;
+      mockedNetwork.mockReturnValue(networkResponse(account) as ReturnType<typeof network>);
+
+      const [first, second] = await Promise.all([
+        api.getAccountByAddress("tz1dup"),
+        api.getAccountByAddress("tz1dup"),
+      ]);
+
+      expect(first).toEqual(account);
+      expect(second).toBe(first);
+      expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    });
   });
 
   // -------------------------------------------------------------------------

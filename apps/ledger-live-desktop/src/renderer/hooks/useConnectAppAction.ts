@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { catchError, throwError } from "rxjs";
-import { GenuineCheckFailed } from "@ledgerhq/errors";
+import { GenuineCheckFailed } from "@ledgerhq/live-common/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -118,7 +118,7 @@ export function useGenuineCheckAction(): Action<ManagerRequest, ManagerState, Ma
           if (isCounterfeitError(error)) return throwError(() => error);
           if (isDeviceNotOnboardedError(error)) return throwError(() => error);
 
-          return throwError(() => new GenuineCheckFailed("", undefined, { cause: error }));
+          return throwError(() => new GenuineCheckFailed("", { cause: error }));
         }),
       );
     return createManagerAction(task);

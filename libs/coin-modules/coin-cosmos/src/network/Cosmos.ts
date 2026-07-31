@@ -1,4 +1,4 @@
-import { SequenceNumberError } from "@ledgerhq/errors";
+import { SequenceNumberError } from "../errors";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";

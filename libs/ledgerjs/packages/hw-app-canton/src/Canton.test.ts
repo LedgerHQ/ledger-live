@@ -1,5 +1,5 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import Canton from "./Canton";
 
 const PATH = "44'/6767'/0'/0'/0'";

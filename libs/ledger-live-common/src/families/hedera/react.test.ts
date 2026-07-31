@@ -10,7 +10,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook } from "@testing-library/react";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { liveConfig } from "../../config/sharedConfig";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import * as hooks from "./react";
 import type { HederaAccount, HederaDelegation } from "./types";
 

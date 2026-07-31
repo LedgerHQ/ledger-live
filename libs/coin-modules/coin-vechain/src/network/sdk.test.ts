@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import {
   getAccount,
   getBlockRef,
@@ -203,6 +203,21 @@ describe("sdk", () => {
       });
     });
 
+    describe("when the range is inverted (no new block since the last known operation)", () => {
+      test("returns an empty array without querying the network", async () => {
+        mockGetTransferLogs.mockClear();
+        const operations = await getOperations(
+          "my-account-id",
+          "0xmy-address",
+          LAST_BLOCK_COUNT + 1,
+          LAST_BLOCK_COUNT,
+        );
+
+        expect(operations).toEqual([]);
+        expect(mockGetTransferLogs).not.toHaveBeenCalled();
+      });
+    });
+
     describe("when logged operations exceed limit in the given range", () => {
       beforeEach(() => {
         mockGetTransferLogs.mockImplementationOnce(throws403ExceedsLimit);
@@ -277,6 +292,22 @@ describe("sdk", () => {
 
         expect(operations.length > 0).toBe(true);
         expect(operations.length).toBe(1);
+      });
+    });
+
+    describe("when the range is inverted (no new block since the last known operation)", () => {
+      test("returns an empty array without querying the network", async () => {
+        mockGetEventLogs.mockClear();
+        const operations = await getTokenOperations(
+          "my-account-id",
+          "0xmy-address",
+          "0xmy-token-address",
+          LAST_BLOCK_COUNT + 1,
+          LAST_BLOCK_COUNT,
+        );
+
+        expect(operations).toEqual([]);
+        expect(mockGetEventLogs).not.toHaveBeenCalled();
       });
     });
 

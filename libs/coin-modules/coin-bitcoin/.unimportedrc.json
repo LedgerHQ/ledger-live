@@ -55,6 +55,7 @@
     "jest-util"
   ],
   "ignoreUnused": [
-    "@ledgerhq/zcash-utils"
+    "@ledgerhq/zcash-utils",
+    "@ledgerhq/errors"
   ]
 }

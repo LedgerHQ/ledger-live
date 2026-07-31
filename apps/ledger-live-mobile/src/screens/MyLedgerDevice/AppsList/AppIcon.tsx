@@ -5,7 +5,7 @@ import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getValidCryptoIconSizeNative } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 import type { App } from "@ledgerhq/types-live";
 import ManagerAppIcon from "~/images/managerAppIcon.webp";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 
 type Props = {
   app?: App;

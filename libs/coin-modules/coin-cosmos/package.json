@@ -50,7 +50,6 @@
     "@cosmjs/stargate": "^0.37.0",
     "@keplr-wallet/proto-types": "^0.12.300",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
@@ -64,7 +63,8 @@
     "invariant": "^2.2.2",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
-    "semver": "catalog:"
+    "semver": "catalog:",
+    "@ledgerhq/errors": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

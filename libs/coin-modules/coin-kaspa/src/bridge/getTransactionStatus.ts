@@ -1,13 +1,13 @@
 import {
   AmountRequired,
-  DustLimit,
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit } from "../errors";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { BigNumber } from "bignumber.js";
 import {

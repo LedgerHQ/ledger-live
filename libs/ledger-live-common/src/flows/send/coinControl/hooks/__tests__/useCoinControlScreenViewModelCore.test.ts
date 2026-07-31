@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "@testing-library/react";
 import type {
@@ -13,7 +13,7 @@ import { useCoinControlScreenViewModelCore } from "../useCoinControlScreenViewMo
 import type { Transaction, TransactionStatus } from "../../../../../coin-modules/transaction-types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { getCryptoCurrencyById } from "../../../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { bitcoinCoinControlConfig } from "../../../../../families/bitcoin/descriptor/coinControl";
 import { bitcoinPickingStrategy } from "../../../../../families/bitcoin/types";
 

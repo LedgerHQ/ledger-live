@@ -31,13 +31,34 @@ export function resolveFeeDisplayContext(params: {
   };
 }
 
-function formatFeeAmount(unit: Unit, amount: BigNumber, locale?: string): string {
+/**
+ * Rounding is left on: an 18-magnitude fee printed in full (`0.000026052026217 ETH`) wraps onto two
+ * lines and buries the digits that matter. The default dynamic rounding keeps ~8 significant digits,
+ * which is what the designs show and is still far more precision than a fee needs.
+ */
+export function formatFeeCurrencyAmount(unit: Unit, amount: BigNumber, locale?: string): string {
   return formatCurrencyUnit(unit, amount, {
     showCode: true,
-    disableRounding: true,
     ...(locale ? { locale } : {}),
   });
 }
+
+/** Separator between the fiat and native amounts of a fee-preset sublabel (`$0.03 · 0.000329 ETH`). */
+const FEE_SUBLABEL_SEPARATOR = " · ";
+
+export function joinFeeSublabelValues(fiat: string | null, crypto: string | null): string | null {
+  if (fiat && crypto) return `${fiat}${FEE_SUBLABEL_SEPARATOR}${crypto}`;
+  return fiat ?? crypto;
+}
+
+/**
+ * How the fee row renders its amount:
+ * - `"fiat"` / `"crypto"`: a single value, following the amount input's fiat⇄crypto toggle. Only
+ *   reachable for coins whose fees the user can edit.
+ * - `"both"`: fiat plus the native fee-currency amount, for coins whose fees are not editable — the
+ *   row is the only place they can see what the network will actually take.
+ */
+export type FeesValueMode = "fiat" | "crypto" | "both";
 
 export type FormatFeesValueParams = Readonly<{
   estimatedFees: BigNumber;
@@ -45,64 +66,60 @@ export type FormatFeesValueParams = Readonly<{
   fiatUnit: Unit;
   displayUnit: Unit;
   locale?: string;
+  mode: FeesValueMode;
 }>;
 
 export type FormattedFeesValue = Readonly<{
+  /** Main value: fiat in `"fiat"`/`"both"`, the native amount in `"crypto"`, `"-"` when unknown. */
   displayFeesValue: string;
-  formattedEstimatedFeesFiat: string | null;
+  /** Native amount rendered after (and dimmer than) the main value. Only set in `"both"`. */
+  secondaryFeesValue: string | null;
 }>;
 
 /**
- * Default fee row value: fiat when a positive countervalue exists, native amount otherwise, `"-"`
- * when the fee is not a positive finite value (zero, negative, or non-finite).
+ * Fee row value for the requested mode. `"fiat"` prefers fiat and falls back to the native amount
+ * when there is no rate; `"crypto"` always shows the native amount. Both of those single-value modes
+ * render `"-"` when the fee is not a positive finite value (zero, negative, or non-finite).
+ *
+ * `"both"` treats a non-finite/negative estimate as zero and shows `0 fiat` next to `0 <code>`, since
+ * a zero fee is accurate information rather than a missing value. With no rate for a non-zero fee the
+ * native amount takes the main slot alone rather than implying a zero fiat rate.
  */
-export function formatDisplayFeesValue(params: FormatFeesValueParams): FormattedFeesValue {
-  if (!params.estimatedFees.isFinite() || params.estimatedFees.lte(0)) {
-    return { displayFeesValue: "-", formattedEstimatedFeesFiat: null };
+export function formatFeesValue(params: FormatFeesValueParams): FormattedFeesValue {
+  const isZeroFee = !params.estimatedFees.isFinite() || params.estimatedFees.lte(0);
+
+  if (params.mode === "both") {
+    const cryptoAmount = isZeroFee ? new BigNumber(0) : params.estimatedFees;
+    const crypto = formatFeeCurrencyAmount(params.displayUnit, cryptoAmount, params.locale);
+
+    const fiatAmount = isZeroFee
+      ? new BigNumber(0)
+      : new BigNumber(params.estimatedFeesCountervalue ?? 0);
+    if (isZeroFee || fiatAmount.gt(0)) {
+      return {
+        displayFeesValue: formatFeeCurrencyAmount(params.fiatUnit, fiatAmount, params.locale),
+        secondaryFeesValue: crypto,
+      };
+    }
+
+    return { displayFeesValue: crypto, secondaryFeesValue: null };
+  }
+
+  if (isZeroFee) {
+    return { displayFeesValue: "-", secondaryFeesValue: null };
   }
 
   const fiatAmount = new BigNumber(params.estimatedFeesCountervalue ?? 0);
-  if (fiatAmount.gt(0)) {
-    const formattedEstimatedFeesFiat = formatFeeAmount(params.fiatUnit, fiatAmount, params.locale);
-    return { displayFeesValue: formattedEstimatedFeesFiat, formattedEstimatedFeesFiat };
-  }
+  const fiat =
+    params.mode === "fiat" && fiatAmount.gt(0)
+      ? formatFeeCurrencyAmount(params.fiatUnit, fiatAmount, params.locale)
+      : null;
 
-  const displayFeesValue = formatFeeAmount(params.displayUnit, params.estimatedFees, params.locale);
-  return { displayFeesValue, formattedEstimatedFeesFiat: null };
-}
-
-/**
- * Fee row value for coins that opt into `FeeDescriptor.showFeeCurrencyAmount`: the native fee-currency
- * amount shown next to the fiat value (`<fiat> • <amount> <code>`). Fiat is prepended when the fee is
- * zero (0 fiat is accurate) or a positive countervalue exists; with no rate for a non-zero fee the
- * native amount is shown alone rather than implying a zero fiat rate. A non-finite/negative estimate
- * is treated as zero.
- */
-export function formatCombinedFeesValue(params: FormatFeesValueParams): FormattedFeesValue {
-  const isZeroFee = !params.estimatedFees.isFinite() || params.estimatedFees.lte(0);
-  const cryptoAmount = isZeroFee ? new BigNumber(0) : params.estimatedFees;
-  const crypto = formatFeeAmount(params.displayUnit, cryptoAmount, params.locale);
-
-  const fiatAmount = isZeroFee
-    ? new BigNumber(0)
-    : new BigNumber(params.estimatedFeesCountervalue ?? 0);
-  if (isZeroFee || fiatAmount.gt(0)) {
-    const formattedEstimatedFeesFiat = formatFeeAmount(params.fiatUnit, fiatAmount, params.locale);
-    return {
-      displayFeesValue: `${formattedEstimatedFeesFiat} • ${crypto}`,
-      formattedEstimatedFeesFiat,
-    };
-  }
-
-  return { displayFeesValue: crypto, formattedEstimatedFeesFiat: null };
-}
-
-export function getSelectedPresetFiatValue(
-  selectedFeeStrategy: string | null,
-  fiatByPreset: Readonly<Record<string, string | null>>,
-): string | null {
-  if (!selectedFeeStrategy || selectedFeeStrategy === "custom") return null;
-  return fiatByPreset[selectedFeeStrategy] ?? null;
+  return {
+    displayFeesValue:
+      fiat ?? formatFeeCurrencyAmount(params.displayUnit, params.estimatedFees, params.locale),
+    secondaryFeesValue: null,
+  };
 }
 
 export type FeePresetEstimationConfig = Readonly<{

@@ -7,10 +7,12 @@ import {
   counterValueIdOf,
   supportedCounterValuesSelector,
 } from "~/renderer/reducers/settings";
+import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 
 const CounterValueSelectComponent: React.FC = () => {
+  useGetSupportedFiatsQuery();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const supportedCounterValues = useSelector(supportedCounterValuesSelector);
   const dispatch = useDispatch();

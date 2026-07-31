@@ -18,6 +18,11 @@
 #                         deep-link back to the CI run that produced the report
 #   QAA_ALLURE_BRANCH   — when set, sent as multipart `branch` so the portal can
 #                         show/filter which git branch the run came from
+#   QAA_ALLURE_REPORT_ATTACHMENTS — when set to a directory, every file under it
+#                         is sent on the `reportAttachments` field (report-level
+#                         attachments, e.g. runner telemetry CSVs). The sent
+#                         filename is the file's path relative to the directory
+#                         with `/` → `-`, so per-shard subdirs stay distinct.
 #   GITHUB_OUTPUT       — when set, writes report_id / report_url / view_url
 #
 # Exits 0 with a warning when the API key is empty or the path has no files,
@@ -33,6 +38,7 @@ QAA_ALLURE_TAGS="${QAA_ALLURE_TAGS:-}"
 QAA_ALLURE_HISTORY="${QAA_ALLURE_HISTORY:-50}"
 QAA_ALLURE_JOB_URL="${QAA_ALLURE_JOB_URL:-}"
 QAA_ALLURE_BRANCH="${QAA_ALLURE_BRANCH:-}"
+QAA_ALLURE_REPORT_ATTACHMENTS="${QAA_ALLURE_REPORT_ATTACHMENTS:-}"
 
 warn() { echo "::warning title=qaa-allure::$*"; }
 fail() { echo "::error title=qaa-allure::$*"; exit 1; }
@@ -99,6 +105,25 @@ if [ -n "${QAA_ALLURE_JOB_URL}" ]; then
 fi
 if [ -n "${QAA_ALLURE_BRANCH}" ]; then
   curl_args+=(--form-string "branch=${QAA_ALLURE_BRANCH}")
+fi
+
+# Report-level attachments: send every file under the given directory on the
+# `reportAttachments` field. The sent filename is the path relative to the dir
+# with `/` → `-` so files from per-shard subdirs (all basename usage-metrics.csv)
+# stay distinct. `;` and `"` are stripped from the derived name so it can't break
+# out of curl's `-F` form-part syntax. Missing/empty dir is a silent no-op.
+if [ -n "${QAA_ALLURE_REPORT_ATTACHMENTS}" ] && [ -d "${QAA_ALLURE_REPORT_ATTACHMENTS}" ]; then
+  attach_count=0
+  root="${QAA_ALLURE_REPORT_ATTACHMENTS%/}"
+  while IFS= read -r -d '' f; do
+    rel="${f#"${root}/"}"
+    name="${rel//\//-}"
+    name="${name//;/_}"
+    name="${name//\"/_}"
+    curl_args+=(-F "reportAttachments=@${f};filename=${name}")
+    attach_count=$((attach_count + 1))
+  done < <(find "${root}" -type f -print0 | sort -z)
+  echo "Attaching ${attach_count} report-level file(s) from ${root}"
 fi
 
 # Capture body + exit code separately so we can log the body when curl fails

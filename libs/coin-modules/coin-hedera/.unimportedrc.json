@@ -17,8 +17,7 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-util"
   ],
   "ignoreUnimported": [
     "src/index.ts",
@@ -30,6 +29,7 @@
   "ignoreUnused": [
     "@ledgerhq/devices",
     "lodash",
-    "rxjs"
+    "rxjs",
+    "@ledgerhq/errors"
   ]
 }

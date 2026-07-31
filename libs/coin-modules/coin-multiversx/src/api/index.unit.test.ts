@@ -14,7 +14,6 @@ import type {
   Page,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from "./index";
 import coinConfig, { type MultiversXCoinConfig } from "../config";
 import type { MultiversXNetworkApi } from "../network/api";
@@ -168,9 +167,9 @@ describe("createApi", () => {
   it("rejects getBalance when the options parameter is provided", async () => {
     const api = createApi(config, "elrond");
 
-    await expect(api.getBalance("address", {} as unknown as BalanceOptions)).rejects.toThrow(
-      InvalidParameterError,
-    );
+    await expect(api.getBalance("address", {} as unknown as BalanceOptions)).rejects.toMatchObject({
+      name: "InvalidParameterError",
+    });
     expect(getBalance).not.toHaveBeenCalled();
   });
 

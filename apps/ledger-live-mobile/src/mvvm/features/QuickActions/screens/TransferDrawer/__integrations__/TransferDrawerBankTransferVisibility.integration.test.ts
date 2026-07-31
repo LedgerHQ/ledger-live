@@ -8,7 +8,7 @@ import {
 } from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
 import { TokenCurrency } from "@domain/entity-currency-token";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
 
 const USDC_CURRENCY_ID = "ethereum/erc20/usd__coin";

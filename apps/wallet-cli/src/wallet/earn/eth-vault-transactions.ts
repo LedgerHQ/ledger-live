@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { walletCliDebug } from "../../shared/log";
 import { EvmTransactionIntentSchema } from "../intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../sign-and-broadcast";

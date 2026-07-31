@@ -404,6 +404,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-vechain/account").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-vechain/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/vechain/bridgeExtensions").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/vechain/coinModuleApi").then(m => m.createLocalVechainApi),
+    loadBridgeApi: () => import("../families/vechain/bridge/api").then(m => m.default),
   },
   {
     family: "xrp",
@@ -418,5 +421,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/xrp/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/xrp/signer").then(m => m.default),
     loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
+  },
+  {
+    // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
+    // added to genericCoinFrameworkFamilies.json). Routing between this family
+    // and the "bitcoin" family's Zcash chain-adapter is decided in
+    // bridge/impl.ts's resolveFamily, gated on the `zcashShielded` feature
+    // flag -- the "bitcoin" loader's supportedCoins still lists "zcash" so the
+    // flag-OFF path keeps resolving to coin-bitcoin unchanged.
+    family: "zcash",
+    supportedCoins: ["zcash"],
+    loadSetup: () => import("../families/zcash/setup"),
+    loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
   },
 ];

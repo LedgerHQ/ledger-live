@@ -1,4 +1,4 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "../currency";
 
 /**
  * CryptoAssetsStore provides asynchronous access to cryptocurrency and token data.

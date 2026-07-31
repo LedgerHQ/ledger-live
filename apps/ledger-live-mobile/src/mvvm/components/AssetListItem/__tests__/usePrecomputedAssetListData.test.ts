@@ -5,7 +5,8 @@ import {
   getCurrencyPortfolio,
   getCurrentBalanceCountervalueChange,
 } from "@ledgerhq/live-countervalues/portfolio";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { Asset } from "~/types/asset";
 import { usePrecomputedAssetListData } from "../usePrecomputedAssetListData";

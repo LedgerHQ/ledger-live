@@ -1,10 +1,7 @@
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import {
-  ConcordiumPairingExpiredError,
-  ConcordiumSessionExpiredError,
-  LockedDeviceError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { LockedDeviceError } from "../errors";
+import { ConcordiumPairingExpiredError, ConcordiumSessionExpiredError } from "../types/errors";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";

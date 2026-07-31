@@ -1,13 +1,14 @@
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
-import { UnexpectedBootloader } from "@ledgerhq/errors";
+import { UnexpectedBootloader } from "../errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import semver from "semver";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "./types";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
-import { listCryptoCurrencies, currenciesByMarketcap, findCryptoCurrencyById } from "../currencies";
+import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { currenciesByMarketcap } from "../currencies";
 import ManagerAPI from "../manager/api";
 
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";

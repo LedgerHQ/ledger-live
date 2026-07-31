@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import semver from "semver";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import {
@@ -35,6 +35,7 @@ import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
 import PageHeader from "LLD/components/PageHeader";
 import { getWallet40HeaderKey } from "./helpers";
 import Box from "~/renderer/components/Box/Box";
+import { useExchangeBackNavigation } from "LLD/features/Exchange/hooks/useExchangeBackNavigation";
 
 type ExchangeState = { account?: string; returnTo?: string };
 const LiveAppExchange = ({ appId }: { appId: string }) => {
@@ -60,17 +61,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const walletState = useSelector(walletSelector);
 
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  // Persist initial returnTo in a ref so it survives in-webview navigations that push
-  // new React Router locations and overwrite location.state.
-  const returnToRef = useRef<string | null>(null);
-  useEffect(() => {
-    const value = urlParams?.returnTo;
-    if (returnToRef.current === null && value != null && value !== "") {
-      returnToRef.current = value;
-    }
-  }, [urlParams?.returnTo]);
-  const returnTo = returnToRef.current ?? urlParams?.returnTo ?? "/";
+  const navigateBack = useExchangeBackNavigation();
   const providerInterstitialEnabled = useProviderInterstitalEnabled({
     manifest,
   });
@@ -119,9 +110,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 
   return (
     <>
-      {headerKey ? (
-        <PageHeader title={t(headerKey)} onBack={() => navigate(returnTo, { replace: true })} />
-      ) : null}
+      {headerKey ? <PageHeader title={t(headerKey)} onBack={navigateBack} /> : null}
       <Box
         grow
         style={{

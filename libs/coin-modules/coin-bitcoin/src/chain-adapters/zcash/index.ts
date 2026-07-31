@@ -46,7 +46,11 @@ import {
   ZcashSigningCancelled,
   ZcashUtxoNotInAccount,
 } from "../../errors";
-import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 import { collectSpendableNotes, collectIronwoodSpendableNotes } from "./operations";
@@ -63,6 +67,7 @@ import { getWalletAccount } from "../../getWalletAccount";
 import type { TX } from "@ledgerhq/wallet-btc/index";
 import { getZainoEndpoint, isZcashShieldedEnabled } from "./constants";
 import { resolveTransactionDetails } from "./transaction-details";
+import { resolveZcashFeePerByte } from "./transparent-fee-rate";
 
 // ── Lazy module import (renderer-safe) ────────────────────────────────────
 //
@@ -898,6 +903,21 @@ const zcashChainAdapter: ChainAdapter = {
 
     // Any other transfer type ⇒ legacy Bitcoin preparation.
     return undefined;
+  },
+
+  /**
+   * Prices the legacy transparent path — the one every Zcash send takes while the
+   * shielded flag is off, and the only one that goes through wallet-btc's
+   * sat/vByte fee. The PCZT flows above compute their ZIP-317 fee directly in
+   * prepareTransaction and never consult a rate.
+   */
+  resolveFeePerByte(account: Account, transaction: Transaction) {
+    if (isZcashShieldedEnabled()) return undefined;
+    // The prepared rate covers ZIP-317 for any layout (see zcashSafeFeePerByte);
+    // it is the starting point and the fallback of the resolution.
+    const safeFeePerByte = transaction.feePerByte;
+    if (!safeFeePerByte || safeFeePerByte.lte(0)) return undefined;
+    return resolveZcashFeePerByte(account, transaction, safeFeePerByte);
   },
 
   getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {

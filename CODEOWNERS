@@ -42,6 +42,7 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 # Platform — shared
 shared/feature-flags                                     @ledgerhq/platform
 shared/schema-primitives                                 @ledgerhq/platform
+shared/qr-code                                           @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
@@ -154,6 +155,8 @@ libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
 libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 domain/entity/large-screen-upsell-modal/                 @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement
+domain/entity/analytics-consent/                         @ledgerhq/engagement
+features/flow/analytics-consent/                         @ledgerhq/engagement
 
 ### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
 domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
@@ -166,7 +169,6 @@ libs/psbtv2/                                             @ledgerhq/coin-integrat
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/keyring-eth/                      @ledgerhq/coin-integration
-libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
@@ -202,6 +204,7 @@ libs/coin-modules/coin-mina/                                             @ledger
 libs/coin-modules/coin-stacks/                                           @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-ton/                                              @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-kaspa/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-zcash/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 
 ## Blockchain support 2
 libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
@@ -270,9 +273,9 @@ apps/ledger-live-desktop/src/mvvm/features/Borrow/							            @ledgerhq/p
 apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint/       @ledgerhq/ptx
 
 # wallet-cli
-apps/wallet-cli/                                                              @Justkant
-apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @Justkant
-apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @Justkant
+apps/wallet-cli/                                                              @ledgerhq/agentic-core
+apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx @ledgerhq/agentic-core
+apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx @ledgerhq/agentic-core
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
@@ -544,7 +547,7 @@ mise.toml                                             @ledgerhq/platform
 
 # Platform — Agent files
 .agents/                           @ledgerhq/platform
-.agents/skills/ledger-wallet-cli/                                             @Justkant
+.agents/skills/ledger-wallet-cli/                                             @ledgerhq/agentic-core
 .claude/                           @ledgerhq/platform
 .codex                             @ledgerhq/platform
 .cursor/                           @ledgerhq/platform

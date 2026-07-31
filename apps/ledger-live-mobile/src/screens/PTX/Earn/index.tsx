@@ -29,6 +29,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/s
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 import { EarnV2Webview } from "./EarnV2Webview";
+import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 import { buildEarnGoToURL } from "./buildEarnGoToURL";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -94,6 +95,11 @@ function Earn({ route }: Props) {
     [swapToEarnFlag],
   );
 
+  const shouldDisplayBackgroundCanvas = useMemo(
+    () => shouldDisplayEarnBackgroundCanvas(params?.intent, swapToEarnFlag?.enabled ?? false),
+    [swapToEarnFlag, params?.intent],
+  );
+
   if (!remoteLiveAppState.isLoading && !manifest) {
     console.error(appManifestNotFoundError);
   }
@@ -155,6 +161,7 @@ function Earn({ route }: Props) {
         isLwm40Enabled={isLwm40Enabled}
         hideMainNavigator={hideMainNavigator}
         appManifestNotFoundError={appManifestNotFoundError}
+        shouldDisplayBackgroundCanvas={shouldDisplayBackgroundCanvas}
       />
     );
   }

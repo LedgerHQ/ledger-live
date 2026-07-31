@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "@tests/test-renderer";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import DelegationSummary from "../Summary";
 import { ScreenName } from "~/const";
 

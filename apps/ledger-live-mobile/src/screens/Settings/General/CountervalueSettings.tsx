@@ -1,4 +1,6 @@
+import React from "react";
 import { connect } from "react-redux";
+import { useGetSupportedFiatsQuery } from "@domain/api-currency-fiat";
 import { setCountervalue } from "~/actions/settings";
 import {
   counterValueCurrencySelector,
@@ -18,12 +20,20 @@ const mapDispatchToProps = {
     setCountervalue(counterValueIdOf(item.currency)),
 };
 
-const Screen = makeGenericSelectScreen<supportedCountervaluesData>({
-  id: "CounterValueSettingsSelect",
-  itemEventProperties: item => ({ countervalue: item.value }),
-  keyExtractor: item => item.value,
-  formatItem: item => item.label,
-  flatListTestID: "counter-value-settings-flat-list",
-});
+const ConnectedScreen = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(
+  makeGenericSelectScreen<supportedCountervaluesData>({
+    id: "CounterValueSettingsSelect",
+    itemEventProperties: item => ({ countervalue: item.value }),
+    keyExtractor: item => item.value,
+    formatItem: item => item.label,
+    flatListTestID: "counter-value-settings-flat-list",
+  }),
+);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Screen);
+export default function CountervalueSettings(props: React.ComponentProps<typeof ConnectedScreen>) {
+  useGetSupportedFiatsQuery();
+  return <ConnectedScreen {...props} />;
+}

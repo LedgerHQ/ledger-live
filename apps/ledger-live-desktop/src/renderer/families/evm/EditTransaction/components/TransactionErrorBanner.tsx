@@ -1,4 +1,4 @@
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/live-common/errors";
 import React from "react";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 

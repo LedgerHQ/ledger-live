@@ -1,8 +1,11 @@
 import { renderHook, waitFor, act } from "@tests/test-renderer";
 import { Subject } from "rxjs";
-import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import { ConcordiumSessionExpiredError, LockedDeviceError } from "@ledgerhq/errors";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import {
+  AccountOnboardStatus,
+  ConcordiumSessionExpiredError,
+} from "@ledgerhq/coin-concordium/types";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { CreateStatus, getConfirmationCode, useOnboarding } from "../hooks/useOnboarding";
 

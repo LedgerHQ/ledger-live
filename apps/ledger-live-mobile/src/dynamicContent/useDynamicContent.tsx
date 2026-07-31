@@ -43,6 +43,11 @@ const useDynamicContent = () => {
   const localWalletCards = useSelector(localWalletCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
+  const appendDismissedCardIds = useCallback(
+    (cardIds: readonly string[]) => Array.from(new Set([...hiddenCards, ...cardIds])),
+    [hiddenCards],
+  );
+
   const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
     useBrazeContentCard(mobileCards);
 
@@ -82,7 +87,11 @@ const useDynamicContent = () => {
 
   const dismissCard = useCallback(
     (cardId: string) => {
-      dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
+      if (hiddenCards.includes(cardId)) {
+        return;
+      }
+
+      dispatch(setDismissedDynamicCards(appendDismissedCardIds([cardId])));
       const isLocal =
         localMobileCards.some(c => c.id === cardId) || localWalletCards.some(c => c.id === cardId);
       if (isLocal) {
@@ -95,6 +104,48 @@ const useDynamicContent = () => {
     [
       dispatch,
       hiddenCards,
+      appendDismissedCardIds,
+      localMobileCards,
+      localWalletCards,
+      mobileCardsFromBraze,
+      logDismissCard,
+    ],
+  );
+
+  const dismissCards = useCallback(
+    (cardIds: readonly string[]): boolean => {
+      const idsToDismiss = cardIds.filter(cardId => !hiddenCards.includes(cardId));
+      if (idsToDismiss.length === 0) {
+        return false;
+      }
+
+      dispatch(setDismissedDynamicCards(appendDismissedCardIds(idsToDismiss)));
+
+      const localIds = idsToDismiss.filter(
+        cardId =>
+          localMobileCards.some(c => c.id === cardId) ||
+          localWalletCards.some(c => c.id === cardId),
+      );
+      const brazeIds = idsToDismiss.filter(cardId => !localIds.includes(cardId));
+
+      localIds.forEach(cardId => dispatch(removeLocalCard(cardId)));
+
+      if (brazeIds.length > 0) {
+        dispatch(
+          setDynamicContentMobileCards(
+            mobileCardsFromBraze.filter(card => !brazeIds.includes(card.id)),
+          ),
+        );
+      }
+
+      idsToDismiss.forEach(cardId => logDismissCard(cardId));
+
+      return true;
+    },
+    [
+      dispatch,
+      hiddenCards,
+      appendDismissedCardIds,
       localMobileCards,
       localWalletCards,
       mobileCardsFromBraze,
@@ -150,6 +201,7 @@ const useDynamicContent = () => {
     logDismissCard,
     logImpressionCard,
     dismissCard,
+    dismissCards,
     trackContentCardEvent,
     notificationCards,
     refreshDynamicContent,

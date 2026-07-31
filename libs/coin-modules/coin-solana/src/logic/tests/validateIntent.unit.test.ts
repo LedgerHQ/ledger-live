@@ -9,10 +9,9 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
-import { SolanaStakeAccountAmountTooLow } from "../../errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughGas, SolanaStakeAccountAmountTooLow } from "../../errors";
 import type { ChainAPI } from "../../network";
 import { getMaybeTokenMint } from "../../network/chain/web3";
 import { validateIntent as validateIntentRaw } from "../validateIntent";

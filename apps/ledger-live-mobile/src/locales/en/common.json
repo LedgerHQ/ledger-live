@@ -1548,10 +1548,6 @@
     }
   },
   "graph": {
-    "week": "1W",
-    "month": "1M",
-    "year": "1Y",
-    "all": "ALL",
     "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
@@ -1697,10 +1693,8 @@
     "cta": "Buy your Ledger now",
     "footer": "I already have a Ledger, set it up",
     "bannerTitle": "Top-notch security for your crypto and NFTs",
-    "bannerTitle2": "You will need a Ledger to be able to trade",
     "bannerSubtitle": "with a Ledger Flex",
     "bannerButtonTitle": "Discover the Flex",
-    "bannerButtonTitle2": "Buy a Ledger",
     "setupCta": "I already have a Ledger, set it up"
   },
   "rebornBuyDevice": {
@@ -2829,44 +2823,18 @@
       "skipCTA": "Maybe later"
     }
   },
-  "tabs": {
-    "accounts": "Accounts",
-    "transfer": "Transfer",
-    "manager": "My Ledger",
-    "myWallet": "My wallet",
-    "settings": "Settings",
-    "platform": "Live Apps",
-    "discover": "Discover",
-    "nanoX": "Nano X",
-    "market": "Market",
-    "earn": "Earn",
-    "card": "Card",
-    "swap": "Swap"
-  },
   "portfolio": {
     "totalBalance": "Total balance",
-    "syncError": "Sync error",
-    "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
     "emptyState": {
-      "noAppsTitle": "Install an app on my device",
-      "noAppsDesc": "Install apps on your device before adding accounts in Ledger Wallet. Go to My Ledger to install apps.",
-      "noAccountsTitle": "You don't have any accounts…",
-      "noAccountsDesc": "Please add accounts to your Portfolio.",
       "buttons": {
         "import": "Add asset",
-        "buy": "Buy",
         "manager": "Install apps",
         "managerSecondary": "Install apps on my device"
-      },
-      "addAccounts": {
-        "addAccounts": "Add asset",
-        "title": "Get started",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
       }
     },
     "noOpState": {
@@ -2874,7 +2842,8 @@
       "desc": "Simply send crypto assets to your receiving address and wait for the app to sync."
     },
     "carousel": {
-      "title": "For you"
+      "title": "For you",
+      "closeAll": "Close all"
     },
     "perpsEntry": {
       "title": "Perpetuals",
@@ -2886,14 +2855,6 @@
       "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
-    "recommended": {
-      "title": "Recommended"
-    },
-    "topGainers": {
-      "title": "Market gainers (24H)",
-      "seeMarket": "See all"
-    },
-    "walletBalance": "Wallet balance",
     "balance": {
       "noSigner": "Your secure\ncrypto wallet",
       "noAccounts": "Start by funding\nyour wallet"
@@ -2926,8 +2887,7 @@
       "sell": "Sell",
       "swap": "Swap",
       "send": "Send",
-      "deposit": "Receive",
-      "stake": "Stake"
+      "deposit": "Receive"
     },
     "quickActionsCtas": {
       "transfer": "Transfer",
@@ -3865,8 +3825,7 @@
       "learnMore": "Learn more about Tag/Memo"
     },
     "send": {
-      "title": "Send",
-      "description": "Send crypto to another wallet."
+      "title": "Send"
     },
     "fees": {
       "title": "Edit fees"
@@ -3999,21 +3958,12 @@
       "title": "Buy",
       "description": "Buy crypto securely with cash."
     },
-    "sell": {
-      "title": "Sell",
-      "description": "Sell crypto securely for cash."
-    },
     "exchange": {
       "title": "Buy / Sell",
       "connectingTo": "Connecting you to {{provider}}"
     },
-    "stake": {
-      "title": "Stake",
-      "description": "Get rewards on your crypto."
-    },
     "swap": {
       "title": "Swap",
-      "description": "Exchange crypto to crypto.",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
@@ -4493,11 +4443,6 @@
     "walletConnect": {
       "title": "WalletConnect",
       "description": "Connect your wallet to dapps"
-    },
-    "recover": {
-      "title": "Ledger Recover",
-      "description": "Wallet recovery made easy",
-      "tag": "One month free"
     }
   },
   "signMessage": {
@@ -4540,6 +4485,11 @@
       "title": "Send {{currency}}",
       "available": "Available {{amount}}",
       "to": "To:",
+      "addressDisclaimer": {
+        "accessibilityLabel": "About the recipient address",
+        "title": "Verify address on your Ledger device",
+        "description": "Your Ledger device will securely display the full address. Make sure it matches the address from the original source."
+      },
       "placeholder": "Enter address or ENS",
       "placeholderNoENS": "Enter address",
       "pasteFromClipboard": {
@@ -10129,11 +10079,10 @@
         "title": "Set up Aleo private balance",
         "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
         "bullets": [
-          "Read-only access to decrypt your private balance",
-          "Ledger cannot send or spend your funds",
-          "Only you can sign and spend your funds",
-          "Proof generation is handled by third-party prover services to ensure fast processing",
-          "Provers cannot access or spend your funds"
+          "View key enables read-only access to decrypt your private balance inside Ledger Wallet",
+          "Only you can sign and spend your funds via Ledger Device Signer",
+          "Aleo transactions require zero-knowledge proofs, which take significant computing power",
+          "Proof generation is handled by external Aleo Network service to expedite transactions"
         ],
         "cta": {
           "allow": "Allow",
@@ -10246,6 +10195,22 @@
       "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed."
     },
+    "addAddressEntry": {
+      "title": "Enter address",
+      "addressPlaceholder": "Address or ENS",
+      "confirmAddress": "Confirm address",
+      "validatingAddress": "Validating address",
+      "validAddress": "Valid address",
+      "invalidAddress": "Invalid address",
+      "domainNotFound": "No address found for this domain",
+      "validationUnavailable": "Address validation is temporarily unavailable",
+      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
+    },
+    "addAddressFlow": {
+      "name": "Name",
+      "review": "Validation",
+      "success": "Success"
+    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",
@@ -10264,6 +10229,16 @@
         "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save a wallet address to send to {{name}}"
       }
+    },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copyAddress": "Copy address",
+      "copied": "Copied",
+      "edit": "Edit",
+      "share": "Share",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
     },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",

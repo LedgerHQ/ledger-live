@@ -6,7 +6,7 @@ import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/ty
 import { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 
 const onAccountNameChange = jest.fn();

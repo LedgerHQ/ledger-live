@@ -2,11 +2,8 @@ import { defer, from, of, throwError, Observable, timer } from "rxjs";
 import { map, catchError, first, timeout, repeat, switchMap } from "rxjs/operators";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
-import {
-  StatusCodes,
-  DeviceOnboardingStatePollingError,
-  UnexpectedBootloader,
-} from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceOnboardingStatePollingError, UnexpectedBootloader } from "../errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
 import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";

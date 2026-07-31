@@ -9,12 +9,17 @@ export function ModularDrawerWrapper() {
     closeDrawer,
     handleAccountSelected,
     handleCurrencySelected,
+    presentation,
     assetsConfiguration,
     networksConfiguration,
     useCase,
     uiUseCase,
     areCurrenciesFiltered,
   } = useModularDrawerController();
+
+  if (presentation === "embedded") {
+    return null;
+  }
 
   return (
     <ModularDrawer

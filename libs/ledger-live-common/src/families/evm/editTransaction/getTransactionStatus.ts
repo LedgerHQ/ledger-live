@@ -1,4 +1,5 @@
-import { AmountRequired, ReplacementTransactionUnderpriced } from "@ledgerhq/errors";
+import { AmountRequired } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ReplacementTransactionUnderpriced } from "../../../errors";
 import { TransactionStatusCommon } from "@ledgerhq/types-live";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/coin-evm/errors";

@@ -41,16 +41,15 @@ returns this path. The three segments (all *hardened*, hence the `'`):
   branch (and therefore its own encryption key) under the same trustchain:
   - **`16` = Ledger Sync** — used by Ledger Wallet Desktop & Mobile (`useTrustchainSdk` sets
     `applicationId = 16`).
-  - **`17` = wallet-cli** — the incoming wallet-cli integration
-    ([PR #17743](https://github.com/LedgerHQ/ledger-live/pull/17743); see the
-    `ringInitPreservesLedgerSyncMember` scenario which drives `applicationId: 17`).
+  - **`17` = wallet-cli** — the wallet-cli integration; see the
+    `ringInitPreservesLedgerSyncMember` scenario which drives `applicationId: 17`.
 - **`rotationIndex`** — starts at `0` and is incremented by `1` every time the key is rotated
   (see [key rotation](./02-trustchain-sdk.md#key-rotation-on-member-removal)).
 
 > [!NOTE]
 > Because the root is shared across applications, a `CloseStream` can retire **one** application
-> branch without destroying the others. [PR #18568](https://github.com/LedgerHQ/ledger-live/pull/18568)
-> makes a closed stream observable here — `ResolvedCommandStream.isClosed()`, plus
+> branch without destroying the others. A closed stream is observable here —
+> `ResolvedCommandStream.isClosed()`, plus
 > `StreamTree.getApplicationStreams()` / `hasAnotherOpenApplication()` — which powers
 > [per-application deactivation](./02-trustchain-sdk.md#deactivating-ledger-sync-per-application-close).
 

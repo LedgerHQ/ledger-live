@@ -1,4 +1,4 @@
-import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import { mapDryRunError } from "./mapDryRunError";
 
 describe("mapDryRunError", () => {

@@ -39,6 +39,15 @@
               "@ledgerhq/live-common/lib-es/**"
             ],
             "message": "Please remove the /lib import from live-common import."
+          },
+          {
+            "group": [
+              "@ledgerhq/live-common/currencies",
+              "@ledgerhq/live-common/currencies/index",
+              "@ledgerhq/live-common/currencies/helpers"
+            ],
+            "importNamePattern": "^(listCryptoCurrencies|getCryptoCurrencyById|hasCryptoCurrencyId|findCryptoCurrency|findCryptoCurrencyById|findCryptoCurrencyByScheme|findCryptoCurrencyByKeyword|findCryptoCurrencyByTicker|listFiatCurrencies|findFiatCurrencyByTicker|getFiatCurrencyByTicker|hasFiatCurrencyTicker)$",
+            "message": "Currency accessors are owned by the domain layer. Import crypto accessors from @domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat."
           }
         ]
       }

@@ -32,6 +32,6 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/live-env",
-    "@ledgerhq/types-cryptoassets"
+    "@ledgerhq/errors"
   ]
 }

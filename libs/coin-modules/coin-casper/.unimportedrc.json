@@ -20,10 +20,11 @@
     "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
-    "jest-message-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-message-util"
   ],
-  "ignoreUnused": [],
+  "ignoreUnused": [
+    "@ledgerhq/errors"
+  ],
   "ignoreUnimported": [
     "src/hw-signMessage.ts",
     "src/supportedFeatures.ts"

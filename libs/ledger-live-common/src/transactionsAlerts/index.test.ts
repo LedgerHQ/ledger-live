@@ -1,6 +1,6 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, ChainwatchNetwork } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 import {
   getTransactionsAlertsAddresses,
