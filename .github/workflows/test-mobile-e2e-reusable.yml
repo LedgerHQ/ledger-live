@@ -1320,156 +1320,46 @@ jobs:
     needs: [determine-builds, allure-report-android, allure-report-ios]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
-      IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
-      IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
-      IOS_MISSING_SHARDS: ${{ needs.allure-report-ios.outputs.missingShards }}
-      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
-      ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
-      ANDROID_MISSING_SHARDS: ${{ needs.allure-report-android.outputs.missingShards }}
-      TESTS_TYPE: ${{ inputs.tests_type }}
+      REF: ${{ inputs.ref || github.ref_name }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      HEADER_DEVICES: "iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}"
+      # A platform's label is blanked out when tests_type excludes it; the e2e-slack-report
+      # composite then drops that row entirely (and its status stops driving the color).
+      IOS_LABEL: ${{ inputs.tests_type != 'Android Only' && 'iOS' || '' }}
+      ANDROID_LABEL: ${{ inputs.tests_type != 'iOS Only' && 'Android' || '' }}
     steps:
-      - name: format message
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        id: message
-        env:
-          REF_NAME: ${{ inputs.ref || github.ref_name }}
-          IOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
-          ANDROID_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
-          SMOKE_TESTS_SUFFIX: ${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}
-          IOS_SUMMARY: ${{ needs.allure-report-ios.outputs.summary_message || 'No test results' }}
-          ANDROID_SUMMARY: ${{ needs.allure-report-android.outputs.summary_message || 'No test results' }}
-          SERVER_URL: ${{ github.server_url }}
-          REPOSITORY: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
+      - name: Report e2e results to Slack
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
         with:
-          script: |
-            const fs = require("fs");
-            const text = "Ledger Live Mobile E2E tests finished";
-            const header = [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": `:ledger-logo: Ledger Live Mobile E2E tests results on ${process.env.REF_NAME} - iOS:${process.env.IOS_DEVICE} / Android:${process.env.ANDROID_DEVICE}${process.env.SMOKE_TESTS_SUFFIX}`,
-                  "emoji": true
-                }
-              },
-              {
-                "type": "divider"
-              }
-            ];
-
-            const iOSResult = [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `🍏 iOS · FF '${process.env.IOS_FEATURE_FLAGS}' · ${process.env.IOS_DEVICE} : ${process.env.IOS_SUMMARY}`
-                }
-              }
-            ];
-
-            const androidResult = [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `🤖 Android · FF '${process.env.ANDROID_FEATURE_FLAGS}' · ${process.env.ANDROID_DEVICE} : ${process.env.ANDROID_SUMMARY}`
-                }
-              }
-            ];
-
-            const iOSInfo = [
-              {
-                "type": "mrkdwn",
-                "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
-              }
-            ];
-
-            const androidInfo = [
-              {
-                "type": "mrkdwn",
-                "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
-              }
-            ];
-
-            const infoFields = []
-              .concat(process.env.TESTS_TYPE === 'Android Only' ? [] : iOSInfo)
-              .concat(process.env.TESTS_TYPE === 'iOS Only' ? [] : androidInfo)
-              .concat([
-              {
-                "type": "mrkdwn",
-                "text": `*Workflow*\n<${process.env.SERVER_URL}/${process.env.REPOSITORY}/actions/runs/${process.env.RUN_ID}|Workflow run>`
-              }
-            ]);
-
-            const infoBlock = [
-              {
-                "type": "divider"
-              },
-              {
-                "type": "section",
-                "fields": infoFields
-              }
-            ];
-
-            // Warning block for failed shards
-            const warningBlocks = [];
-            if (process.env.IOS_MISSING_SHARDS) {
-              warningBlocks.push({
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `⚠️ *Warning*: iOS - Missing results for shard(s): ${process.env.IOS_MISSING_SHARDS}.`
-                }
-              });
-            }
-            if (process.env.ANDROID_MISSING_SHARDS) {
-              warningBlocks.push({
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `⚠️ *Warning*: Android - Missing results for shard(s): ${process.env.ANDROID_MISSING_SHARDS}.`
-                }
-              });
-            }
-
-            const blocks = []
-              .concat(header)
-              .concat(process.env.TESTS_TYPE === 'Android Only' ? [] : iOSResult)
-              .concat(process.env.TESTS_TYPE === 'iOS Only' ? [] : androidResult)
-              .concat(warningBlocks.length > 0 ? warningBlocks : [])
-              .concat(infoBlock);
-
-            const result = {
-                text: " ",
-                attachments: [
-                  {
-                    color: process.env.ANDROID_STATUS !== 'success' || (process.env.IOS_STATUS !== 'success' && process.env.ANDROID_ONLY == 'false')
-                      ? "#FF333C"
-                      : "#33FF39",
-                    fallback: text,
-                    blocks,
-                  },
-                ],
-              };
-
-            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify({ ...result, channel: "CTMQ0S5SB" }, null, 2));
-            fs.writeFileSync(`./payload-slack-content-alt.json`, JSON.stringify({ ...result, channel: "C05FKJ7DFAP" }, null, 2));
-      - name: post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
-        with:
-          method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          payload-file-path: "./payload-slack-content.json"
-      - name: post to a Slack channel
-        if: ${{ inputs.slack_notif || github.event_name == 'schedule' }}
-        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
-        with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          payload-file-path: "./payload-slack-content-alt.json"
+          channel: CTMQ0S5SB
+          # Second channel only on scheduled runs / opt-in.
+          secondary_channel: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'C05FKJ7DFAP' || '' }}
+          product: "Ledger Live Mobile E2E"
+          ref: ${{ env.REF }}
+          smoke_tests: ${{ inputs.smoke_tests }}
+          header_devices: ${{ env.HEADER_DEVICES }}
+          run_url: ${{ env.RUN_URL }}
+          row1_emoji: "🍏"
+          row1_label: ${{ env.IOS_LABEL }}
+          row1_flags: ${{ env.IOS_FEATURE_FLAGS }}
+          row1_device: ${{ needs.determine-builds.outputs.ios_device }}
+          row1_summary: ${{ needs.allure-report-ios.outputs.summary_message }}
+          row1_report_url: ${{ needs.allure-report-ios.outputs.report-url }}
+          row1_report_title: "Allure Report iOS"
+          row1_report_link_text: "Allure Report iOS"
+          row1_status: ${{ needs.allure-report-ios.outputs.finalStatus }}
+          row1_missing_shards: ${{ needs.allure-report-ios.outputs.missingShards }}
+          row2_emoji: "🤖"
+          row2_label: ${{ env.ANDROID_LABEL }}
+          row2_flags: ${{ env.ANDROID_FEATURE_FLAGS }}
+          row2_device: ${{ needs.determine-builds.outputs.android_device }}
+          row2_summary: ${{ needs.allure-report-android.outputs.summary_message }}
+          row2_report_url: ${{ needs.allure-report-android.outputs.report-url }}
+          row2_report_title: "Allure Report Android"
+          row2_report_link_text: "Allure Report Android"
+          row2_status: ${{ needs.allure-report-android.outputs.finalStatus }}
+          row2_missing_shards: ${{ needs.allure-report-android.outputs.missingShards }}
 
   merge-ios-timings:
     name: Merge iOS Timing Files
