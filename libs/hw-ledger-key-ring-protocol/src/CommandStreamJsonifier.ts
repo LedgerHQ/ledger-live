@@ -11,7 +11,7 @@ import {
 } from "./CommandBlock";
 import { DerivationPath } from "./Crypto";
 import { CommandStreamEncoder } from "./CommandStreamEncoder";
-import { createHash } from "crypto";
+import { sha256 } from "@noble/hashes/sha2";
 
 export default class CommandStreamJsonifier {
   private static jsonifyCommand(command: Command): object {
@@ -66,12 +66,10 @@ export default class CommandStreamJsonifier {
   public static jsonify(stream: CommandBlock[]): object {
     return stream.map(block => {
       const b = CommandStreamEncoder.encode([block]);
-      const h = createHash("sha256");
-      h.update(b);
       return {
         parent: to_hex(block.parent),
         issuer: to_hex(block.issuer),
-        hash: h.digest().toString("hex"),
+        hash: to_hex(sha256(b)),
         command: block.commands.map(command => {
           return CommandStreamJsonifier.jsonifyCommand(command);
         }),
