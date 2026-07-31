@@ -63,12 +63,12 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   });
   const onAddAddress = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
-    startAddAddress(contact.id);
+    startAddAddress(contact);
   }, [contact, eligibleNetworkIds.length, startAddAddress]);
   const onCurrencySelected = useCallback<ContactsAddAddressFlowDrawerProps["onCurrencySelected"]>(
-    currencyId => {
+    selection => {
       if (addAddressFlowState.status === "selectingCurrency") {
-        completeCurrencySelection(addAddressFlowState.selectedContactId, currencyId);
+        completeCurrencySelection(addAddressFlowState.selectedContactId, selection);
       }
     },
     [addAddressFlowState, completeCurrencySelection],

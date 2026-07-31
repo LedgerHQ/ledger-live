@@ -1,17 +1,25 @@
 import { useMemo } from "react";
-import { ContactCurrencyIdSchema, type ContactAddress } from "@domain/entity-contact";
-import type { ContactsCurrencySelectionPort } from "@features/flow-contacts";
+import { ContactCurrencyIdSchema } from "@domain/entity-contact";
+import type {
+  AddAddressCurrencySelection,
+  ContactsCurrencySelectionPort,
+} from "@features/flow-contacts";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import {
   type OpenCurrencyFlow,
   useOpenCurrencyFlow,
 } from "../../ModularDialog/hooks/useOpenCurrencyFlow";
 
-function resolveContactCurrencyId(
+function resolveContactCurrencySelection(
   currency: CryptoOrTokenCurrency | null,
-): ContactAddress["currencyId"] | null {
+): AddAddressCurrencySelection | null {
   const parsedCurrencyId = ContactCurrencyIdSchema.safeParse(currency?.id);
-  return parsedCurrencyId.success ? parsedCurrencyId.data : null;
+  return parsedCurrencyId.success && currency
+    ? {
+        currencyId: parsedCurrencyId.data,
+        assetDisplayName: currency.name,
+      }
+    : null;
 }
 
 function createCurrencySelectionPort(
@@ -19,7 +27,9 @@ function createCurrencySelectionPort(
 ): ContactsCurrencySelectionPort {
   return {
     selectCurrency: async networkIds =>
-      resolveContactCurrencyId(await openCurrencyFlow(networkIds, { presentation: "embedded" })),
+      resolveContactCurrencySelection(
+        await openCurrencyFlow(networkIds, { presentation: "embedded" }),
+      ),
   };
 }
 

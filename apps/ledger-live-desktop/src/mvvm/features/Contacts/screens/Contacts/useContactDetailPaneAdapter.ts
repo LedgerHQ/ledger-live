@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ContactId } from "@domain/entity-contact";
 import {
+  type AddAddressContact,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   useContactAddressDetailDialog,
@@ -15,7 +16,7 @@ import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/User
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 
 export function useContactDetailPaneAdapter(
-  onAddAddress: (contactId: ContactId) => void,
+  onAddAddress: (contact: AddAddressContact) => void,
 ): Readonly<{
   detail: ContactDetailViewProps | undefined;
   addressDetailDialog: ContactAddressDetailDialogProps;
@@ -74,7 +75,7 @@ export function useContactDetailPaneAdapter(
       return {
         ...baseDetail,
         contact: populatedContactDetail.contact,
-        onAddAddress: () => onAddAddress(populatedContactDetail.contact.id),
+        onAddAddress: () => onAddAddress(populatedContactDetail.contact),
         addressGroups: populatedContactDetail.addressGroups,
         onAddressRowPress,
       };
@@ -87,7 +88,7 @@ export function useContactDetailPaneAdapter(
     return {
       ...baseDetail,
       contact: emptyContact,
-      onAddAddress: () => onAddAddress(emptyContact.id),
+      onAddAddress: () => onAddAddress(emptyContact),
     };
   }, [emptyContact, labels, onAddAddress, onAddressRowPress, populatedContactDetail]);
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(

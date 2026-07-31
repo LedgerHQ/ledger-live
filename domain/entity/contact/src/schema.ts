@@ -18,10 +18,7 @@ export const ContactNameSchema = NonEmptyStringSchema.regex(
   "Expected letters, spaces, apostrophes, or hyphens",
 );
 
-export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(
-  ContactAddressLabelPattern,
-  "Expected letters, numbers, punctuation, or spaces",
-);
+export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(ContactAddressLabelPattern);
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;
 
