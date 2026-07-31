@@ -4174,6 +4174,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.1
     devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-crypto
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0
@@ -5010,6 +5013,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../domain/entity/currency
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/asset-aggregation':
         specifier: workspace:*
         version: link:../asset-aggregation

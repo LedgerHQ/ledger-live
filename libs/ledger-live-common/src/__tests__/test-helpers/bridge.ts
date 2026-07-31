@@ -10,7 +10,7 @@ import {
   flattenAccounts,
   isAccountBalanceUnconfirmed,
 } from "../../account";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getOperationAmountNumber } from "../../operation";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";

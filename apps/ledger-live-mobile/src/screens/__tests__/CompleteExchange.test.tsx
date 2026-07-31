@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";

@@ -4,7 +4,7 @@
 
 import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters

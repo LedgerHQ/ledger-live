@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ConcordiumOnboard } from "../index";
 import { ScreenName } from "~/const";
 import type { ConcordiumOnboardAccountParamList } from "./types";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 
 jest.mock("./OnboardScreen", () => {

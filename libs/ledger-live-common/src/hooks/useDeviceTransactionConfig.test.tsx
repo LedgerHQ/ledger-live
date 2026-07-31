@@ -13,7 +13,7 @@ import { getDeviceTransactionConfig } from "../transaction/deviceTransactionConf
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "../currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const mockGetDeviceTransactionConfig = getDeviceTransactionConfig as jest.MockedFunction<
   typeof getDeviceTransactionConfig

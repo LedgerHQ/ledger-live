@@ -1,6 +1,6 @@
 import { renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { Account } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";

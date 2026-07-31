@@ -31,7 +31,7 @@ import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;

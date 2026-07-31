@@ -10,7 +10,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "@shared/env";
 import { getDependencies } from "../apps/polyfill";
-import { findCryptoCurrencyByKeyword } from "../currencies";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 import {
   type SpeculosTransport,

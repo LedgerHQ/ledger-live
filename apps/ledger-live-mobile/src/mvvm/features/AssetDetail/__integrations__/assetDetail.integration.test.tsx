@@ -10,10 +10,7 @@ import {
   withFlagOverrides,
 } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";

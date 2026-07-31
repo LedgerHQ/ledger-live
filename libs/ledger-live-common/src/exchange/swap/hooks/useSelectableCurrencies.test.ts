@@ -4,7 +4,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 
 import { useSelectableCurrencies } from "./useSelectableCurrencies";
-import { getCryptoCurrencyById } from "../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests
