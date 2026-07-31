@@ -1,5 +1,9 @@
 import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+  type LazyOnboardingBannerViewProps,
+  useLazyOnboardingBannerViewModel,
+} from "LLM/features/LazyOnboardingBanner";
 import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayRecoverBanner";
@@ -14,6 +18,7 @@ interface PortfolioBannersSectionViewModelResult {
   readonly hasAssets: boolean;
   readonly hasTopWalletDisplayableCards: boolean;
   readonly shouldShowOnboardingWidget: boolean;
+  readonly lazyOnboardingBanner: LazyOnboardingBannerViewProps;
   readonly shouldDisplayRecover: boolean;
   /** LN upsell exclusive over Recover/onboarding; coexist only with Braze TopWallet cards. */
   readonly canCoexistWithBraze: boolean;
@@ -27,6 +32,7 @@ export const usePortfolioBannersSectionViewModel = ({
 }: PortfolioBannersSectionViewModelParams): PortfolioBannersSectionViewModelResult => {
   const hasTopWalletDisplayableCards = useTopWalletHasDisplayableContentCards();
   const shouldShowOnboardingWidget = useOnboardingWidgetVisibility();
+  const lazyOnboardingBanner = useLazyOnboardingBannerViewModel();
   const shouldDisplayRecover = useShouldDisplayRecoverBanner();
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -55,6 +61,7 @@ export const usePortfolioBannersSectionViewModel = ({
 
   return {
     shouldShowOnboardingWidget,
+    lazyOnboardingBanner,
     contentCardsPaddingTop,
     hasAssets,
     hasTopWalletDisplayableCards,
