@@ -228,12 +228,6 @@ export type FeeDescriptor = {
   hasCustom: boolean;
   hasCustomAssets?: boolean;
   hasCoinControl?: boolean;
-  /**
-   * Opt-in: also display the fee amount in its own fee currency (native) next to the fiat value on
-   * the Amount fee row, and render `0` explicitly instead of the `"-"` sentinel for a zero fee. Off
-   * by default (fiat value, with a native-amount fallback). Independent of `getNetworkFeesInfo`.
-   */
-  showFeeCurrencyAmount?: boolean;
   presets?: {
     /**
      * Optional UI legend for presets (ex: fee rate like `2 sat/vbyte`).
