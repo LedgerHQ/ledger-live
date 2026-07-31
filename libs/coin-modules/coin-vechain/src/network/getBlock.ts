@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { VECHAIN_NODE_URL as BASE_URL } from "../constants";
+import { getNodeUrl } from "../config";
 import type { ApiResponseBlock } from "../types";
 
 // Thor GET /blocks/{revision}. `expanded` returns full clause/output detail (getBlock) vs. tx
@@ -16,7 +16,7 @@ export const getBlock = async (
 
   const { data } = await network<ApiResponseBlock | null>({
     method: "GET",
-    url: `${BASE_URL}/blocks/${revision}?${query}`,
+    url: `${getNodeUrl()}/blocks/${revision}?${query}`,
   });
 
   return data;

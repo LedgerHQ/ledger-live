@@ -2,7 +2,10 @@ import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { VechainCoinConfig } from "../config";
 import { createApi } from "./index";
 
-const config: VechainCoinConfig = () => ({ status: { type: "active" } });
+const config: VechainCoinConfig = () => ({
+  status: { type: "active" },
+  node: { url: "https://vechain.coin.ledger.com" },
+});
 
 // Repo-committed VeChain mainnet address, already used by src/datasets/vechain.ts for bridge
 // integration/dataset testing ("account information is fetched from the blockchain"). Reused

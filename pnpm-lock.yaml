@@ -7562,9 +7562,6 @@ importers:
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -8550,9 +8547,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@shared/env':
-        specifier: workspace:^
-        version: link:../../../shared/env
       '@vechain/sdk-core':
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)

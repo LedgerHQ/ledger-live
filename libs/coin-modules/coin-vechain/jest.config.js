@@ -44,13 +44,14 @@ module.exports = {
       setupFilesAfterEnv: [
         "@ledgerhq/wallet-framework-test-setup",
         "@ledgerhq/disable-network-setup",
+        "./src/test/coinConfig.setup.ts",
       ],
     },
     {
       ...sharedConfig,
       displayName: "msw",
       testMatch: ["**/*.msw.test.ts"],
-      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
+      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/coinConfig.setup.ts"],
     },
   ],
 };

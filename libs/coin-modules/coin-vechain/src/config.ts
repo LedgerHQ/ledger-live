@@ -2,7 +2,16 @@ import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-module-framework/conf
 import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 import { MAINNET_CHAIN_TAG } from "./types";
 
-export type VechainCurrencyConfig = CurrencyConfig & { chainTag?: number };
+/**
+ * `node.url` is the Thor REST endpoint. It is part of the coin config, as in coin-stellar and
+ * coin-xrp, rather than read from `@ledgerhq/live-env` inside the module: a coin module that
+ * resolves its own endpoint drags a wallet-side dependency into environments that have no
+ * `live-env` at all, such as the standalone coin-service.
+ */
+export type VechainCurrencyConfig = CurrencyConfig & {
+  chainTag?: number;
+  node: { url: string };
+};
 
 export type VechainCoinConfig = () => VechainCurrencyConfig;
 
@@ -18,6 +27,17 @@ export function getCoinConfig(): VechainCurrencyConfig {
   }
 
   return coinConfig();
+}
+
+/** Thor REST endpoint, resolved per call so a config change is picked up without a reload. */
+export function getNodeUrl(): string {
+  const { node } = getCoinConfig();
+
+  if (!node?.url) {
+    throw new Error("vechain: node.url is missing from the coin config");
+  }
+
+  return node.url;
 }
 
 export function getChainTag(): number {

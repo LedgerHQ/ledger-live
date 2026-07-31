@@ -11,14 +11,23 @@ const signerContext: SignerContext<VechainSigner> = (_deviceId, fn) =>
 
 describe("createBridges", () => {
   it("sets the coin config so downstream logic (e.g. createTransaction) can read it", () => {
-    createBridges(signerContext, () => ({ status: { type: "active" }, chainTag: 39 }));
+    createBridges(signerContext, () => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+      chainTag: 39,
+    }));
 
-    expect(getCoinConfig()).toEqual({ status: { type: "active" }, chainTag: 39 });
+    expect(getCoinConfig()).toEqual({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+      chainTag: 39,
+    });
   });
 
   it("returns a currencyBridge and an accountBridge", () => {
     const { currencyBridge, accountBridge } = createBridges(signerContext, () => ({
       status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
     }));
 
     expect(currencyBridge.scanAccounts).toBeInstanceOf(Function);

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network";
-import { VECHAIN_NODE_URL as BASE_URL } from "../constants";
+import { getNodeUrl } from "../config";
 
 /**
  * Get fees paid for the transaction
@@ -10,7 +10,7 @@ import { VECHAIN_NODE_URL as BASE_URL } from "../constants";
 export const getFees = async (transactionId: string): Promise<BigNumber> => {
   const { data } = await network<{ paid: string }>({
     method: "GET",
-    url: `${BASE_URL}/transactions/${transactionId}/receipt`,
+    url: `${getNodeUrl()}/transactions/${transactionId}/receipt`,
     params: { id: transactionId },
   });
 

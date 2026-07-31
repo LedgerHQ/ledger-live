@@ -64,9 +64,11 @@ export function buildAccountBridge(
   };
 }
 
+// `coinConfig` is required: the module no longer resolves its own endpoint, so the caller supplies
+// `node.url` instead of a default silently pointing at mainnet.
 export function createBridges(
   signerContext: SignerContext<VechainSigner>,
-  coinConfig: CoinConfig<VechainCurrencyConfig> = () => ({ status: { type: "active" } }),
+  coinConfig: CoinConfig<VechainCurrencyConfig>,
 ) {
   setCoinConfig(coinConfig);
 

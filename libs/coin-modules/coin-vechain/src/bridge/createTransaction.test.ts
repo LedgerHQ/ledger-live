@@ -41,7 +41,10 @@ describe("createTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedGenerateNonce.mockReturnValue("0x1234567890abcdef");
-    setCoinConfig(() => ({ status: { type: "active" } }));
+    setCoinConfig(() => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+    }));
   });
 
   it("should create a transaction with correct default values", () => {
@@ -75,7 +78,10 @@ describe("createTransaction", () => {
   });
 
   it("should fall back to MAINNET_CHAIN_TAG when the config has no chainTag", () => {
-    setCoinConfig(() => ({ status: { type: "active" } }));
+    setCoinConfig(() => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+    }));
 
     const result = createTransaction(mockAccount);
 
@@ -83,7 +89,11 @@ describe("createTransaction", () => {
   });
 
   it("should use the config-provided chainTag when set", () => {
-    setCoinConfig(() => ({ status: { type: "active" }, chainTag: 39 }));
+    setCoinConfig(() => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+      chainTag: 39,
+    }));
 
     const result = createTransaction(mockAccount);
 

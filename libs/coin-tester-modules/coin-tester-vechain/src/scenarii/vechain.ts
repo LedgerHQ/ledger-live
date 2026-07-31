@@ -3,6 +3,7 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import type { Account } from "@ledgerhq/types-live";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { THOR_SOLO_RPC } from "../thorNode";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { VECHAIN, VTHO, initMSW, makeAccount, registerVthoInMockStore } from "../fixtures";
 import { getBridges } from "../helpers";
@@ -130,7 +131,13 @@ export const scenarioVechain: Scenario<GenericTransaction, Account> = {
 
     registerVthoInMockStore();
 
-    const localConfig = { status: { type: "active" as const }, chainTag };
+    const localConfig = {
+      status: { type: "active" as const },
+      chainTag,
+      // The module reads its Thor endpoint from the coin config, so the solo node has to be
+      // declared here rather than through the environment.
+      node: { url: THOR_SOLO_RPC },
+    };
     LiveConfig.setConfig({ config_currency_vechain: { type: "object", default: localConfig } });
 
     closeMsw = initMSW();

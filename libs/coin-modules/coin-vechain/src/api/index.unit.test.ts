@@ -36,7 +36,10 @@ jest.mock("../logic/history/lastBlock", () => ({ lastBlock: jest.fn() }));
 jest.mock("../logic/history/listOperations", () => ({ listOperations: jest.fn() }));
 jest.mock("../logic/validateIntent", () => ({ validateIntent: jest.fn() }));
 
-const config = () => ({ status: { type: "active" as const } });
+const config = () => ({
+  status: { type: "active" as const },
+  node: { url: "https://vechain.coin.ledger.com" },
+});
 
 const SENDER = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
 const RECIPIENT = "0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86";
@@ -58,7 +61,10 @@ describe("createApi", () => {
   it("sets the coin config, forcing status active", () => {
     createApi(config, "vechain");
 
-    expect(getCoinConfig()).toEqual({ status: { type: "active" } });
+    expect(getCoinConfig()).toEqual({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+    });
   });
 
   it("returns an object with every CoinModuleApi method", () => {

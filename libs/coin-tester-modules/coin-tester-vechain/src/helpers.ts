@@ -12,6 +12,7 @@ import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import type { GenericVechainSigner } from "./signer";
+import { THOR_SOLO_RPC } from "./thorNode";
 
 registerCoinModules(coinModuleLoaders);
 
@@ -113,6 +114,7 @@ export async function getBridges(
     const { currencyBridge, accountBridge } = createBridges(context, () => ({
       status: { type: "active" as const },
       chainTag,
+      node: { url: THOR_SOLO_RPC },
     }));
     return {
       currencyBridge,

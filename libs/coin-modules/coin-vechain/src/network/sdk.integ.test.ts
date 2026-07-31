@@ -1,10 +1,11 @@
 import { getOperations, getTokenOperations } from "./sdk";
-import { getEnv } from "@ledgerhq/live-env";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { EventLog, TransferLog, VetTxsQuery } from "../types";
+import { TEST_VECHAIN_ENDPOINT } from "../test/constants";
+import { setCoinConfig } from "../config";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
+const BASE_URL = TEST_VECHAIN_ENDPOINT;
 const LAST_BLOCK_COUNT = 24580112;
 const MAX_OPS_IN_BLOCK_RANGE = 1000;
 const N_OPS_IN_BLOCK = 3;
@@ -101,7 +102,10 @@ const interceptors = [
 ];
 const server = setupServer(...interceptors);
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => {
+  setCoinConfig(() => ({ status: { type: "active" }, node: { url: BASE_URL } }));
+  server.listen({ onUnhandledRequest: "error" });
+});
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 

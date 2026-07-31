@@ -55,7 +55,10 @@ describe("craftTransaction", () => {
     jest.mocked(estimateGas).mockResolvedValue({ totalGas: 21000 } as never);
     jest.mocked(getThorClient).mockReturnValue(mockBuildTransactionBody() as never);
     jest.mocked(getBlockRef).mockResolvedValue("0xblockref12345678");
-    setCoinConfig(() => ({ status: { type: "active" } }));
+    setCoinConfig(() => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+    }));
   });
 
   afterEach(() => {
@@ -82,7 +85,11 @@ describe("craftTransaction", () => {
   });
 
   it("uses the config-provided chainTag when set", async () => {
-    setCoinConfig(() => ({ status: { type: "active" }, chainTag: 39 }));
+    setCoinConfig(() => ({
+      status: { type: "active" },
+      node: { url: "https://vechain.coin.ledger.com" },
+      chainTag: 39,
+    }));
 
     const crafted = await craftTransaction(NATIVE_INTENT);
 
