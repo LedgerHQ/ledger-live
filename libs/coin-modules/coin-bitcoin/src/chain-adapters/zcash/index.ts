@@ -53,7 +53,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
-import { collectSpendableNotes, collectIronwoodSpendableNotes } from "./operations";
+import { collectIronwoodSpendableNotes } from "./operations";
 import {
   selectNotes,
   estimateMaxSpendableAmount,
@@ -106,7 +106,7 @@ function mapSpends(notes: SpendableNote[]): OrchardSpendInputJs[] {
 }
 
 // Transfer types that actually spend transparent UTXOs as inputs. A pure
-// shielded send ("shielded" / "shielded-to-transparent") spends Orchard notes
+// shielded send ("shielded" / "shielded-to-transparent") spends Ironwood notes
 // only and must never pull in the account's transparent UTXOs — so only these
 // types resolve to a non-empty transparent input set.
 //
@@ -127,7 +127,7 @@ const isTransparentInputTransfer = (transferType: ZcashTransferType): boolean =>
 /**
  * Resolves the transparent UTXOs spent by a Public→* flow. Returns an empty set
  * for transfer types that do not spend transparent inputs, so an account holding
- * transparent UTXOs cannot leak them into an Orchard-note-only send. For the
+ * transparent UTXOs cannot leak them into an Ironwood-note-only send. For the
  * flows that do spend transparent inputs, caller-provided `selectedUtxos` takes
  * precedence over the account's synced UTXO set. Kept as a single helper so the
  * PCZT builder inputs and the optimistic operation's `inputRefs` are always
@@ -138,11 +138,16 @@ function resolveTransparentUtxos(account: ZcashAccount, tx: ZcashTransaction): B
   return tx.selectedUtxos ?? account.bitcoinResources?.utxos ?? [];
 }
 
-// Note-selection flows (Ironwood + Orchard-shielded). Ironwood spends Ironwood
-// notes ("ironwood" / "ironwood-to-transparent"), shielded spends Orchard notes
-// ("shielded" / "shielded-to-transparent").
-const IRONWOOD_TRANSFER_TYPES = new Set<ZcashTransferType>(["ironwood", "ironwood-to-transparent"]);
-const SHIELDED_TRANSFER_TYPES = new Set<ZcashTransferType>(["shielded", "shielded-to-transparent"]);
+// Flows that build a V6 Ironwood-bundle PCZT (via buildIronwoodTransaction): a
+// shielded send spends Ironwood notes ("shielded", "shielded-to-transparent")
+// and a shielded recipient resolves to the Ironwood pool ("transparent-to-shielded"),
+// where NU6.3 sends newly shielded value. Only transparent t→t stays on the V5
+// buildTransaction: it has no shielded bundle at all.
+const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<ZcashTransferType>([
+  "shielded",
+  "shielded-to-transparent",
+  "transparent-to-shielded",
+]);
 
 // Strip any stale fee/change from a prior prepare and reset the amount so the UI
 // never shows a spendable amount without a matching fee.
@@ -178,14 +183,13 @@ function prepareTransparentTransaction(
   return {
     ...tx,
     amount: effectiveAmount,
-    selectedNotes: [], // transparent inputs — no Orchard note spends
+    selectedNotes: [], // transparent inputs — no shielded note spends
     zcashFee: result.fee,
     changeAmount: result.changeAmount,
   } as ZcashTransaction;
 }
 
-// Prepare a note-selection flow (Ironwood or Orchard-shielded). Both share the
-// same pipeline; only the collected note set differs.
+// Prepare a shielded (Ironwood note-selection) flow.
 function prepareNoteTransaction(notes: SpendableNote[], tx: ZcashTransaction): ZcashTransaction {
   // When useAllAmount is set, compute the effective amount from max spendable.
   const effectiveAmount = tx.useAllAmount
@@ -385,12 +389,12 @@ const computeRecipientError = (recipient: string, currencyName: string): Error |
 const computeAmountError = (
   tx: ZcashTransaction,
   totalSpent: BigNumber,
-  orchardBalance: BigNumber,
+  poolBalance: BigNumber,
 ): Error | undefined => {
   if (tx.amount.lte(0) && !tx.useAllAmount) return new Error("Amount must be positive");
   if (!tx.selectedNotes || tx.selectedNotes.length === 0)
     return new Error("Insufficient shielded balance");
-  if (totalSpent.gt(orchardBalance)) return new Error("Insufficient shielded balance");
+  if (totalSpent.gt(poolBalance)) return new Error("Insufficient shielded balance");
   // Verify selected notes actually cover the spend (consistency check)
   const selectedTotal = tx.selectedNotes.reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
   if (selectedTotal.lt(totalSpent)) return new Error("Selected notes do not cover amount + fee");
@@ -553,12 +557,7 @@ const zcashChainAdapter: ChainAdapter = {
     if (!isZcashShieldedEnabled()) {
       if (isZcashTransaction(transaction)) {
         const { transferType } = transaction;
-        if (
-          transferType === "shielded" ||
-          transferType === "shielded-to-transparent" ||
-          transferType === "ironwood" ||
-          transferType === "ironwood-to-transparent"
-        ) {
+        if (transferType === "shielded" || transferType === "shielded-to-transparent") {
           return new Observable(sub =>
             sub.error(
               new Error(
@@ -620,7 +619,7 @@ const zcashChainAdapter: ChainAdapter = {
         // React Native stub omits them entirely. Fail with a clear message
         // rather than a cryptic "client.buildTransaction is not a function"
         // TypeError if a client without shielded-signing support is resolved.
-        const isIronwoodFlow = IRONWOOD_TRANSFER_TYPES.has(tx.transferType);
+        const isIronwoodFlow = IRONWOOD_BUNDLE_TRANSFER_TYPES.has(tx.transferType);
         if (
           (!isIronwoodFlow && !client.buildTransaction) ||
           (isIronwoodFlow && !client.buildIronwoodTransaction) ||
@@ -768,21 +767,16 @@ const zcashChainAdapter: ChainAdapter = {
     if (!isZcashShieldedEnabled()) return undefined;
 
     // Transparent-input flows (Public→*): status is computed from the transparent
-    // balance and the ZIP-317 fee (NOT Orchard note selection). Covers
+    // balance and the ZIP-317 fee (NOT shielded note selection). Covers
     // Public→Private ("transparent-to-shielded") and, with the flag on,
     // Public→Public ("transparent").
     if (isTransparentInputTransfer(tx.transferType)) {
       return getTransparentInputStatus(zcashAccount, tx, account.currency.name);
     }
 
-    // Remaining flows with shielded inputs: Orchard ("shielded",
-    // "shielded-to-transparent") and Ironwood ("ironwood", "ironwood-to-transparent").
-    if (
-      tx.transferType !== "shielded" &&
-      tx.transferType !== "shielded-to-transparent" &&
-      tx.transferType !== "ironwood" &&
-      tx.transferType !== "ironwood-to-transparent"
-    )
+    // Remaining flows spend shielded inputs from the Ironwood pool ("shielded",
+    // "shielded-to-transparent").
+    if (tx.transferType !== "shielded" && tx.transferType !== "shielded-to-transparent")
       return undefined;
 
     const errors: Record<string, Error> = {};
@@ -801,11 +795,8 @@ const zcashChainAdapter: ChainAdapter = {
       } satisfies TransactionStatus);
     }
 
-    // Validate against the pool balance that will be spent.
-    const poolBalance =
-      tx.transferType === "ironwood" || tx.transferType === "ironwood-to-transparent"
-        ? privateInfo.ironwoodBalance
-        : privateInfo.orchardBalance;
+    // Shielded sends spend the Ironwood pool, so validate the amount against it.
+    const poolBalance = privateInfo.ironwoodBalance;
     const fee = tx.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
     const totalSpent = tx.amount.plus(fee);
 
@@ -846,19 +837,10 @@ const zcashChainAdapter: ChainAdapter = {
     }
 
     const transferType = tx?.transferType ?? "transparent";
-    // Max spendable from note-based pools (Orchard or Ironwood).
-    if (
-      transferType !== "shielded" &&
-      transferType !== "shielded-to-transparent" &&
-      transferType !== "ironwood" &&
-      transferType !== "ironwood-to-transparent"
-    )
-      return undefined;
+    // Max spendable from the Ironwood note pool for shielded-input flows.
+    if (transferType !== "shielded" && transferType !== "shielded-to-transparent") return undefined;
 
-    const notes =
-      transferType === "ironwood" || transferType === "ironwood-to-transparent"
-        ? collectIronwoodSpendableNotes(zcashAccount.privateInfo?.transactions ?? [])
-        : collectSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
+    const notes = collectIronwoodSpendableNotes(zcashAccount.privateInfo?.transactions ?? []);
     return Promise.resolve(estimateMaxSpendableAmount(notes, transferType));
   },
 
@@ -870,30 +852,18 @@ const zcashChainAdapter: ChainAdapter = {
     if (!isZcashShieldedEnabled()) return undefined;
 
     // Transparent-input flows (Public→*): spend transparent UTXOs. There is no
-    // Orchard note selection — only ZIP-317 fee/change resolution over the
+    // shielded note selection — only ZIP-317 fee/change resolution over the
     // transparent inputs. signOperation then builds the PCZT with
-    // `selectedNotes: []` (no Orchard spends) and these transparent inputs.
-    // Covers Public→Private ("transparent-to-shielded", Orchard output) and,
+    // `selectedNotes: []` (no shielded spends) and these transparent inputs.
+    // Covers Public→Private ("transparent-to-shielded", Ironwood output) and,
     // with the flag on, Public→Public ("transparent", transparent output).
     if (isTransparentInputTransfer(tx.transferType)) {
       return Promise.resolve(prepareTransparentTransaction(zcashAccount, tx));
     }
 
-    // Note-selection flows: Ironwood ("ironwood" / "ironwood-to-transparent") and
-    // Orchard-shielded ("shielded" / "shielded-to-transparent"). Both run the same
-    // pipeline; only the collected note set differs.
+    // Remaining flows ("shielded" / "shielded-to-transparent") spend Ironwood notes.
     const transactions = zcashAccount.privateInfo?.transactions ?? [];
-    if (IRONWOOD_TRANSFER_TYPES.has(tx.transferType)) {
-      return Promise.resolve(
-        prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx),
-      );
-    }
-    if (SHIELDED_TRANSFER_TYPES.has(tx.transferType)) {
-      return Promise.resolve(prepareNoteTransaction(collectSpendableNotes(transactions), tx));
-    }
-
-    // Any other transfer type ⇒ legacy Bitcoin preparation.
-    return undefined;
+    return Promise.resolve(prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx));
   },
 
   /**
