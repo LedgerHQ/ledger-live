@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";
@@ -84,7 +84,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
   );
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
       onClose={handleCloseDrawer}
       enableDynamicSizing
@@ -107,6 +107,6 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
           {sheetChrome}
         </>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }
