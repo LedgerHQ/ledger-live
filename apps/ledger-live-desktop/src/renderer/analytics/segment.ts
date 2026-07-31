@@ -19,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import { userIdSelector } from "@domain/entity-client-identity";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getDistributionChannel } from "~/helpers/distributionChannel";
+import { osRelease as getOsRelease, osType as getOsType } from "~/system";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import logger from "~/renderer/logger";
 import type { State } from "~/renderer/reducers";
@@ -58,10 +59,8 @@ import { scrubAccountId } from "../helpers/scrubAccountId";
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const os = require("os");
-const osType = os.type();
-const osVersion = os.release();
+const osType = getOsType();
+const osVersion = getOsRelease();
 const sessionId = uuid();
 const getContext = () => ({
   ip: "0.0.0.0",

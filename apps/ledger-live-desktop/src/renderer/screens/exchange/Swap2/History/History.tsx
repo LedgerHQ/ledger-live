@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
+import { showSaveDialog } from "~/renderer/dialog";
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
@@ -67,7 +68,7 @@ const History = () => {
     async function asyncExport() {
       let path;
       if (!getEnv("PLAYWRIGHT_RUN")) {
-        path = await ipcRenderer.invoke("show-save-dialog", {
+        path = await showSaveDialog({
           title: "Exported swap history",
           defaultPath: `ledgerwallet-swap-history-${getDateTxt()}.csv`,
           filters: [
