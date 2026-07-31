@@ -4,7 +4,7 @@ import { UnitSchema } from "@domain/entity-currency-unit";
 /**
  * Canonical Zod-first schema for a fiat currency entity.
  *
- * Written from scratch — does **not** import from `@ledgerhq/types-cryptoassets`.
+ * Written from scratch — does **not** derive from the legacy currency types.
  * TS types are derived via `z.infer<>`.
  *
  * @see {@link FiatCurrency} for the inferred TypeScript type.

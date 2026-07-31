@@ -1026,7 +1026,6 @@
     "superstruct",
     "use-sync-external-store/shim",
     "whatwg-fetch",
-    "@ledgerhq/types-cryptoassets",
     "@ledgerhq/types-live",
     "@ledgerhq/types-devices"
   ]

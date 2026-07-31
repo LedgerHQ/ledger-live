@@ -16,7 +16,7 @@ export interface ICrypto {
 }
 
 // Minimal currency descriptor injected by the consumer. Replaces
-// @ledgerhq/types-cryptoassets (CryptoCurrency) and @ledgerhq/live-env (getEnv):
+// the legacy CryptoCurrency type and @ledgerhq/live-env (getEnv):
 // the caller resolves the explorer id and endpoint and passes them in, so
 // wallet-btc has no dependency on the Ledger currency registry or env.
 export type WalletBtcCurrency = {

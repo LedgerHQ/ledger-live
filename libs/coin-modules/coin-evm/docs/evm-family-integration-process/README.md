@@ -49,7 +49,7 @@ _Optional / extra steps that might be needed on a case-by-case basis depending o
   - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-modules/coin-evm/src/network/explorer`](../../src/network/explorer) folder
   - Add the new explorer type to:
     - the `getExplorerApi` function under [`libs/coin-modules/coin-evm/src/network/explorer/index.ts`](../../src/network/explorer/index.ts)
-    - the `EthereumLikeInfo.explorer.type` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](../../../../../libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
+    - the `EthereumLikeInfo.explorer.type` type under [`libs/ledger-wallet-framework/src/types.ts`](../../../../../libs/ledger-wallet-framework/src/types.ts)
     - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/coin-modules/coin-evm/src/network/explorer/types.ts`](../../src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
 
 ## Tokens support

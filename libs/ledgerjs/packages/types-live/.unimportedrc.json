@@ -6,11 +6,8 @@
     "@jest/expect-utils",
     "@jest/get-type",
     "jest-util",
-    "@ledgerhq/types-cryptoassets",
     "@ledgerhq/types-devices"
   ],
   "ignoreUnused": [],
-  "ignoreUnimported": [
-    "src/crypto-assets/type.ts"
-  ]
+  "ignoreUnimported": []
 }

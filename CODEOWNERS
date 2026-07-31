@@ -168,7 +168,6 @@ libs/psbtv2/                                             @ledgerhq/coin-integrat
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/keyring-eth/                      @ledgerhq/coin-integration
-libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
