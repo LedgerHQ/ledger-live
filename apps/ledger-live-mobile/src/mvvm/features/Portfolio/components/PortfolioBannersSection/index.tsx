@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 import { LNUpsellBanner } from "LLM/features/LNUpsell/components/LNUpsellBanner";
+import { LazyOnboardingBannerView } from "LLM/features/LazyOnboardingBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { width } from "~/helpers/normalizeSize";
@@ -109,6 +110,7 @@ export const PortfolioBannersSection = ({
   showAssets,
 }: PortfolioBannersSectionProps) => {
   const {
+    lazyOnboardingBanner,
     shouldShowOnboardingWidget: showOnboarding,
     shouldDisplayRecover: showRecover,
     contentCardsPaddingTop,
@@ -116,6 +118,16 @@ export const PortfolioBannersSection = ({
     onScroll,
     carouselIndex,
   } = usePortfolioBannersSectionViewModel({ showAssets });
+
+  if (lazyOnboardingBanner.isShown) {
+    return (
+      <BannersSectionShell isFirst={isFirst}>
+        <PaddedBanner>
+          <LazyOnboardingBannerView {...lazyOnboardingBanner} />
+        </PaddedBanner>
+      </BannersSectionShell>
+    );
+  }
 
   if (isLNUpsellBannerShown) {
     return (

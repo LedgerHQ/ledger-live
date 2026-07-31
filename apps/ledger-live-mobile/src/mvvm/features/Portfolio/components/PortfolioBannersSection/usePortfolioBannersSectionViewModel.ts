@@ -1,5 +1,9 @@
 import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+  type LazyOnboardingBannerViewProps,
+  useLazyOnboardingBannerViewModel,
+} from "LLM/features/LazyOnboardingBanner";
 import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayRecoverBanner";
@@ -12,6 +16,7 @@ interface PortfolioBannersSectionViewModelResult {
   readonly contentCardsPaddingTop: "s12" | undefined;
   readonly hasAssets: boolean;
   readonly shouldShowOnboardingWidget: boolean;
+  readonly lazyOnboardingBanner: LazyOnboardingBannerViewProps;
   readonly shouldDisplayRecover: boolean;
   readonly onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   readonly carouselIndex: number;
@@ -22,6 +27,7 @@ export const usePortfolioBannersSectionViewModel = ({
 }: PortfolioBannersSectionViewModelParams): PortfolioBannersSectionViewModelResult => {
   const hasTopWalletDisplayableCards = useTopWalletHasDisplayableContentCards();
   const shouldShowOnboardingWidget = useOnboardingWidgetVisibility();
+  const lazyOnboardingBanner = useLazyOnboardingBannerViewModel();
   const shouldDisplayRecover = useShouldDisplayRecoverBanner();
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -43,6 +49,7 @@ export const usePortfolioBannersSectionViewModel = ({
 
   return {
     shouldShowOnboardingWidget,
+    lazyOnboardingBanner,
     contentCardsPaddingTop,
     hasAssets,
     shouldDisplayRecover,
