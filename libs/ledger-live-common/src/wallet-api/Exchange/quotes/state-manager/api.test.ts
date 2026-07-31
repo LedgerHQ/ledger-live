@@ -15,20 +15,26 @@ jest.mock("../../../../exchange/swap", () => ({
 }));
 
 describe("buildQuotesParams", () => {
+  // `toEqual`, not `toMatchObject`: this pins the exact param set the legacy
+  // axios helper sent, so a dropped or added param fails the test.
   it("maps the resolved input to the aggregator query params", () => {
     const params = buildQuotesParams(["lifi", "okx"], makeQuotesInput(), "usd");
 
-    expect(params).toMatchObject({
+    expect(params).toEqual({
       amountFrom: "100000000",
+      displayLanguage: "en",
+      lang: "en",
+      theme: "dark",
       "providers-whitelist": "lifi,okx",
+      fiatForCounterValue: "usd",
+      currencyTicker: "usd",
+      networkFees: "0",
+      uniswapOrderType: "classic",
       from: "bitcoin",
       to: "ethereum",
       fromAccountId: "send-account",
       addressFrom: "0xfrom",
       addressTo: "0xto",
-      fiatForCounterValue: "usd",
-      currencyTicker: "usd",
-      uniswapOrderType: "classic",
     });
   });
 
