@@ -42,10 +42,9 @@ describe("usePopulatedContactDetail", () => {
   it("should return populated detail state when the contact has addresses", () => {
     const contact = mockContactWithAddress();
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () => usePopulatedContactDetail(contact.id, currencyPort),
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+      wrapper: Wrapper,
+    });
 
     expect(result.current).toMatchObject({
       displayMode: "populated",
@@ -57,10 +56,9 @@ describe("usePopulatedContactDetail", () => {
   it("should return undefined when the contact has no addresses", () => {
     const contact = mockContact();
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () => usePopulatedContactDetail(contact.id, currencyPort),
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+      wrapper: Wrapper,
+    });
 
     expect(result.current).toBeUndefined();
   });
@@ -78,10 +76,9 @@ describe("usePopulatedContactDetail", () => {
   it("should expose address groups ordered by network", () => {
     const contact = mockContactWithMultipleAddresses();
     const Wrapper = makeWrapper([mockMeContact(), contact]);
-    const { result } = renderHook(
-      () => usePopulatedContactDetail(contact.id, currencyPort),
-      { wrapper: Wrapper },
-    );
+    const { result } = renderHook(() => usePopulatedContactDetail(contact.id, currencyPort), {
+      wrapper: Wrapper,
+    });
 
     expect(
       result.current?.addressGroups.flatMap(group => group.rows.map(row => row.addressId)),

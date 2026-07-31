@@ -1,10 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import type {
-  ContactDetailAddressNetworkGroup,
-  ContactDetailAddressRowIntent,
-} from "../../types";
+import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRowIntent } from "../../types";
 import { ContactDetailAddressNetworkSection } from "../ContactDetailAddressNetworkSection/ContactDetailAddressNetworkSection.native";
 
 type ContactDetailAddressListProps = Readonly<{

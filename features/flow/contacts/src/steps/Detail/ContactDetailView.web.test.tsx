@@ -1,10 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import {
-  mockContact,
-  mockContactAddress,
-  mockMeContact,
-} from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createContactDetailAddressRowIntent } from "./model/viewModel";
 import type { ContactDetailLabels } from "./types";
@@ -43,12 +39,7 @@ describe("ContactDetailView", () => {
   });
 
   it("should render a custom Me display name with the Me suffix", () => {
-    render(
-      <ContactDetailView
-        {...defaultProps}
-        contact={mockMeContact({ name: "Maxime" })}
-      />,
-    );
+    render(<ContactDetailView {...defaultProps} contact={mockMeContact({ name: "Maxime" })} />);
 
     expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Maxime (Me)");
   });

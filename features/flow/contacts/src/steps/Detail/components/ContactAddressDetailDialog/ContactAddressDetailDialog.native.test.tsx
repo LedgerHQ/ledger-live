@@ -88,9 +88,7 @@ describe("ContactAddressDetailDialog", () => {
 
     fireEvent.press(screen.getByTestId("contacts-address-detail-copy"));
 
-    expect(onCopyAddress).toHaveBeenCalledWith(
-      "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
-    );
+    expect(onCopyAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 
     await waitFor(() => {
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");

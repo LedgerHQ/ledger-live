@@ -8,17 +8,15 @@ import TrackScreen from "~/analytics/TrackScreen";
 import { WalletAssetsView } from "LLM/features/WalletAssets";
 
 type PortfolioNoAccountsContentProps = {
-  readonly isLNSUpsellBannerShown: boolean;
+  readonly isLNUpsellBannerShown: boolean;
 };
 
-const PortfolioNoAccountsContent = ({
-  isLNSUpsellBannerShown,
-}: PortfolioNoAccountsContentProps) => (
+const PortfolioNoAccountsContent = ({ isLNUpsellBannerShown }: PortfolioNoAccountsContentProps) => (
   <Box lx={{ paddingHorizontal: "s16", marginBottom: "s48" }}>
     <TrackScreen name="Wallet" accountsLength={0} />
     <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
     <TransferDrawer />
-    <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
+    <PortfolioBannersSection isFirst={true} isLNUpsellBannerShown={isLNUpsellBannerShown} />
     <MarketBanner />
     <WalletAssetsView variant="emptyState" noPaddingHorizontal />
   </Box>

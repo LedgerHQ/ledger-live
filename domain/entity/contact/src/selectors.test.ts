@@ -1,10 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { contactsSlice, setContacts } from "./slice";
-import {
-  mockContact,
-  mockContactWithAddress,
-  mockMeContact,
-} from "./schema.mock";
+import { mockContact, mockContactWithAddress, mockMeContact } from "./schema.mock";
 import { ContactAddressIdSchema, ContactIdSchema } from "./schema";
 import {
   selectContactAddressById,
@@ -54,9 +50,7 @@ describe("Contacts selectors", () => {
     const address = contact.addresses[0];
 
     expect(address).toBeDefined();
-    expect(
-      selectContactAddressById(store.getState(), contact.id, address!.id),
-    ).toEqual(address);
+    expect(selectContactAddressById(store.getState(), contact.id, address!.id)).toEqual(address);
     expect(
       selectContactAddressById(
         store.getState(),

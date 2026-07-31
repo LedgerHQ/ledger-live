@@ -12,14 +12,10 @@ export function ContactDetailView({
   addressGroups,
   onAddressRowPress,
 }: ContactDetailViewProps): React.ReactNode {
-  const hasPopulatedAddresses =
-    addressGroups !== undefined && onAddressRowPress !== undefined;
+  const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
 
   return (
-    <div
-      className="flex h-full flex-col gap-32 px-16 py-32"
-      data-testid="contacts-detail-screen"
-    >
+    <div className="flex h-full flex-col gap-32 px-16 py-32" data-testid="contacts-detail-screen">
       <ContactDetailHeader
         contact={contact}
         labels={labels}

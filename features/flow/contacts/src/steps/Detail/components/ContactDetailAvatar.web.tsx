@@ -15,12 +15,7 @@ export function ContactDetailAvatar({
 }: ContactDetailAvatarProps): React.ReactNode {
   if (contact.isMe) {
     return (
-      <Avatar
-        size="xl"
-        src={meAvatarSrc}
-        aria-hidden
-        data-testid="contacts-detail-me-avatar"
-      />
+      <Avatar size="xl" src={meAvatarSrc} aria-hidden data-testid="contacts-detail-me-avatar" />
     );
   }
 

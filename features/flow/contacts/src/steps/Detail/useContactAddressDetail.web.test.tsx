@@ -2,11 +2,7 @@ import { createElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
-import {
-  ContactAddressIdSchema,
-  ContactIdSchema,
-  contactsSlice,
-} from "@domain/entity-contact";
+import { ContactAddressIdSchema, ContactIdSchema, contactsSlice } from "@domain/entity-contact";
 import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { ContactAddressDetailPort } from "./model/ports";

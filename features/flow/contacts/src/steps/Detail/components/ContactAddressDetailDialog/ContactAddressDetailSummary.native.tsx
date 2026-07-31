@@ -15,11 +15,7 @@ export function ContactAddressDetailSummary({
   network,
   formatNetworkTag,
 }: ContactAddressDetailSummaryProps): React.JSX.Element {
-  const iconProps = resolveContactAddressIconProps(
-    row.currencyId,
-    row.label,
-    network.networkId,
-  );
+  const iconProps = resolveContactAddressIconProps(row.currencyId, row.label, network.networkId);
 
   return (
     <Box lx={{ alignItems: "center", gap: "s32" }}>
@@ -32,10 +28,7 @@ export function ContactAddressDetailSummary({
           testID="contacts-address-detail-network-tag"
         />
         <Box lx={{ alignItems: "center", gap: "s4" }}>
-          <Text
-            typography="heading3SemiBold"
-            lx={{ color: "base", textAlign: "center" }}
-          >
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
             {row.label}
           </Text>
           <Text

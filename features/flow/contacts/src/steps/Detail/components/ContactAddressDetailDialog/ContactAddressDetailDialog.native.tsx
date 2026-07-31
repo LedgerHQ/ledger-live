@@ -37,11 +37,7 @@ export function ContactAddressDetailDialog({
               network={network}
               formatNetworkTag={labels.formatNetworkTag}
             />
-            <ContactAddressDetailActions
-              labels={labels}
-              hasCopied={hasCopied}
-              onCopy={onCopy}
-            />
+            <ContactAddressDetailActions labels={labels} hasCopied={hasCopied} onCopy={onCopy} />
           </Box>
         </>
       ) : null}

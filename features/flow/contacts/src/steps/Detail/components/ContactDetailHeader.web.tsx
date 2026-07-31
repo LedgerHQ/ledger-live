@@ -32,9 +32,7 @@ export function ContactDetailHeader({
           <h2 className="heading-3-semi-bold text-base" data-testid="contacts-detail-name">
             {displayName}
           </h2>
-          <p className="body-2 text-muted">
-            {labels.formatAddressCount(contact.addresses.length)}
-          </p>
+          <p className="body-2 text-muted">{labels.formatAddressCount(contact.addresses.length)}</p>
         </div>
       </div>
       <Button

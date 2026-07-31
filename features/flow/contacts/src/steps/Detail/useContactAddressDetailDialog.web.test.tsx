@@ -50,9 +50,7 @@ describe("useContactAddressDetailDialog", () => {
 
     expect(populatedContactDetail).toBeDefined();
 
-    const { result } = renderHook(() =>
-      useContactAddressDetailDialog(populatedContactDetail),
-    );
+    const { result } = renderHook(() => useContactAddressDetailDialog(populatedContactDetail));
 
     act(() => {
       result.current.onAddressRowPress(
@@ -76,9 +74,7 @@ describe("useContactAddressDetailDialog", () => {
       { wrapper: Wrapper },
     );
     const populatedContactDetail = populatedResult.current;
-    const { result } = renderHook(() =>
-      useContactAddressDetailDialog(populatedContactDetail),
-    );
+    const { result } = renderHook(() => useContactAddressDetailDialog(populatedContactDetail));
 
     act(() => {
       result.current.onAddressRowPress(

@@ -6,14 +6,20 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent, renderHook } from "@tests/test-renderer";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { track } from "~/analytics";
-import { LNSUpsellBanner } from ".";
+import { LNUpsellBanner } from ".";
 
-describe("LNSUpsellBanner", () => {
+describe("LNUpsellBanner", () => {
+  const now = new Date("2026-07-06T12:00:00.000Z");
   let t: ReturnType<typeof useTranslation>["t"];
 
   beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(now);
     jest.clearAllMocks();
     t = renderHook(useTranslation).result.current.t;
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe.each([
@@ -27,12 +33,7 @@ describe("LNSUpsellBanner", () => {
     },
   ] as const)("on the $page page", ({ location, placement, page }) => {
     it("should not render if the feature flag is disabled", () => {
-      renderBanner({ ffEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
-    });
-
-    it("should not render if the location param is disabled on the feature flag", () => {
-      renderBanner({ ffLocationEnabled: false });
+      renderBanner({ largeScreenUpsellEnabled: false });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
@@ -46,13 +47,70 @@ describe("LNSUpsellBanner", () => {
       expect(screen.getByText(t(`lnsUpsell.opted_in.cta`))).toBeVisible();
     });
 
-    it("should not render if the user uses another device", () => {
-      renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
+    it("should not render when the tracking params are missing", () => {
+      renderBanner({ hasTrackingParams: false });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it.each(["", "   "])("should not render when the CTA link is %j", ctaLink => {
+      renderBanner({ ctaLink });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
+    it("should trim the CTA link before tracking and opening it", () => {
+      renderBanner({ ctaLink: "  https://example.com/trimmedCta  " });
+      fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+
+      expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/trimmedCta");
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        deviceModel: "lns",
+        link: "https://example.com/trimmedCta",
+        page,
+      });
+    });
+
+    it.each([DeviceModelId.nanoSP, DeviceModelId.nanoX])(
+      "should respect the cooldown for %s",
+      deviceModelId => {
+        renderBanner({
+          devicesModelList: [deviceModelId],
+          onboardingDate: "2026-06-07T12:00:00.000Z",
+        });
+        expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+      },
+    );
+
+    it.each([
+      { deviceModelId: DeviceModelId.nanoSP, analyticsValue: "lnsp" },
+      { deviceModelId: DeviceModelId.nanoX, analyticsValue: "lnx" },
+    ])(
+      "should render for $deviceModelId once its cooldown has elapsed",
+      ({ deviceModelId, analyticsValue }) => {
+        renderBanner({
+          devicesModelList: [deviceModelId],
+          onboardingDate: "2026-06-06T12:00:00.000Z",
+        });
+        fireEvent.press(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
+
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "Level up wallet",
+          deviceModel: analyticsValue,
+          link: "https://example.com/optInCta",
+          page,
+        });
+      },
+    );
+
+    it("should not render if the user's Nano model is outside the audience", () => {
+      renderBanner({ audienceModels: { [DeviceModelId.nanoS]: false } });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
     it("should not render if the user also owns a large-screen device", () => {
-      renderBanner({ devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax] });
+      renderBanner({
+        devicesModelList: [DeviceModelId.nanoS, DeviceModelId.stax],
+      });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
@@ -75,6 +133,7 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optInCta",
         page,
       });
@@ -88,6 +147,7 @@ describe("LNSUpsellBanner", () => {
       expect(Linking.openURL).toHaveBeenCalledWith("https://example.com/optInCta");
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optInCta",
         page,
       });
@@ -102,6 +162,7 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optOutCta",
         page,
       });
@@ -116,47 +177,68 @@ describe("LNSUpsellBanner", () => {
       expect(track).toHaveBeenCalledTimes(1);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Level up wallet",
+        deviceModel: "lns",
         link: "https://example.com/optOutCta",
         page,
       });
     });
 
     function renderBanner({
-      ffEnabled = true,
-      ffLocationEnabled = true,
+      largeScreenUpsellEnabled = true,
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
+      onboardingDate = now.toISOString(),
+      audienceModels = {},
       targetedByHighTierUpsell = false,
       brazePlacement = false,
       largeScreenPlacementEnabled = true,
       hasLargeScreenBannersParam = true,
+      hasTrackingParams = true,
+      ctaLink = undefined as string | undefined,
     }) {
-      const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
-      const ffParams = {
-        opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
-        opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
-      };
       const largeScreenUpsellParams = FEATURE_FLAGS_DEFAULTS.largeScreenUpsell.params;
 
       if (!largeScreenUpsellParams) {
         throw new Error("Expected large-screen upsell default params");
       }
 
-      const { banners: _banners, ...legacyLargeScreenUpsellParams } = largeScreenUpsellParams;
+      const resolvedCtaLink =
+        ctaLink ?? (isOptIn ? "https://example.com/optInCta" : "https://example.com/optOutCta");
+      const configuredParams = {
+        ...largeScreenUpsellParams,
+        audience: {
+          models: {
+            ...largeScreenUpsellParams.audience.models,
+            ...audienceModels,
+          },
+        },
+        banners: {
+          ...largeScreenUpsellParams.banners,
+          [placement]: largeScreenPlacementEnabled,
+        },
+        opted_in: {
+          ...largeScreenUpsellParams.opted_in,
+          enabled: true,
+          link: isOptIn ? resolvedCtaLink : "https://example.com/optInCta",
+        },
+        opted_out: {
+          ...largeScreenUpsellParams.opted_out,
+          enabled: true,
+          link: isOptIn ? "https://example.com/optOutCta" : resolvedCtaLink,
+        },
+      };
+      const { banners: _banners, ...legacyLargeScreenUpsellParams } = configuredParams;
+      const tracking = isOptIn ? "opted_in" : "opted_out";
+      const paramsWithTracking = hasTrackingParams
+        ? configuredParams
+        : { ...configuredParams, [tracking]: null };
       const largeScreenUpsell = {
         ...FEATURE_FLAGS_DEFAULTS.largeScreenUpsell,
-        params: hasLargeScreenBannersParam
-          ? {
-              ...largeScreenUpsellParams,
-              banners: {
-                ...largeScreenUpsellParams.banners,
-                [placement]: largeScreenPlacementEnabled,
-              },
-            }
-          : legacyLargeScreenUpsellParams,
+        enabled: largeScreenUpsellEnabled,
+        params: hasLargeScreenBannersParam ? paramsWithTracking : legacyLargeScreenUpsellParams,
       };
 
-      render(<LNSUpsellBanner location={location} />, {
+      render(<LNUpsellBanner location={location} />, {
         overrideInitialState: state =>
           merge({}, state, {
             settings: {
@@ -167,7 +249,6 @@ describe("LNSUpsellBanner", () => {
             },
             featureFlags: {
               overrides: {
-                llmNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
                 largeScreenUpsell,
                 ...(brazePlacement
                   ? {
@@ -181,8 +262,15 @@ describe("LNSUpsellBanner", () => {
             },
             dynamicContent: {
               mobileCards: [
-                { extras: { campaign: targetedByHighTierUpsell && "LNS_UPSELL_HIGH_TIER" } },
+                {
+                  extras: {
+                    campaign: targetedByHighTierUpsell && "LNS_UPSELL_HIGH_TIER",
+                  },
+                },
               ],
+            },
+            postOnboarding: {
+              onboardingDate,
             },
           }),
       });
