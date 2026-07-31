@@ -66,8 +66,6 @@
               {
                 "group": [
                   "@ledgerhq/**",
-                  "!@ledgerhq/errors",
-                  "!@ledgerhq/errors/**",
                   "!@ledgerhq/logs",
                   "!@ledgerhq/logs/**",
                   "!@ledgerhq/live-network",

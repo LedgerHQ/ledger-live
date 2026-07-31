@@ -45,4 +45,26 @@ const BOUNDARY_EXCEPTIONS = [
   { sourceRoot: "shared/env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
 ];
 
-module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS };
+/**
+ * Packages no workspace manifest may declare, whatever the dependency field.
+ *
+ * `hoist=false` means a package can only resolve what it declares, so banning the
+ * declaration is enough to ban the import too — an undeclared import fails to resolve.
+ *
+ * `@ledgerhq/errors` is frozen and being sunset (LIVE-32915): its classes now live in the
+ * package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared
+ * home below the coin layer. It stays in the repo to keep being published for external
+ * consumers, and is bridged to the external coin packages that still peer-depend on it via
+ * `pnpm.packageExtensions` in the root package.json — see its DEPRECATED.md.
+ */
+const BANNED_DEPENDENCIES = [
+  {
+    name: "@ledgerhq/errors",
+    reason:
+      "frozen and being sunset (LIVE-32915). Define errors as native classes in your own " +
+      "src/errors.ts and branch on `error.name`; shared coin-layer errors live in " +
+      "@ledgerhq/ledger-wallet-framework/errors. See .agents/skills/errors/SKILL.md.",
+  },
+];
+
+module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS, BANNED_DEPENDENCIES };

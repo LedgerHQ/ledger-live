@@ -35,7 +35,5 @@
     "@jest/get-type",
     "jest-util"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

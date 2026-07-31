@@ -31,7 +31,6 @@
     "src/test/testUtils.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/live-env",
-    "@ledgerhq/errors"
+    "@ledgerhq/live-env"
   ]
 }

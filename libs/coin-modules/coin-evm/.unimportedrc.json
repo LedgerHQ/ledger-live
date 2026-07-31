@@ -38,7 +38,5 @@
     "lru-cache",
     "@ledgerhq/types-live"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

@@ -30,7 +30,5 @@
     "src/test/bridge.dataset.ts",
     "src/tests/preload.fixtures.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

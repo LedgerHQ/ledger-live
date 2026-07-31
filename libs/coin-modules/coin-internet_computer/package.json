@@ -107,8 +107,7 @@
     "cbor": "10.0.11",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "rxjs": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

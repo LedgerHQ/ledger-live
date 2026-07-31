@@ -67,7 +67,7 @@ export function enrichSwapDeserializationError(
   error: unknown,
 ): CompleteExchangeError | undefined {
   // Duck-type on `name` + `statusCode` rather than `instanceof TransportStatusError`, matching
-  // the rest of this file and the repo-wide migration off `@ledgerhq/errors` class checks (#19849,
+  // the rest of this file and the repo-wide migration off shared error class checks (#19849,
   // which dropped the `TransportStatusError` import from here).
   const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
   if (

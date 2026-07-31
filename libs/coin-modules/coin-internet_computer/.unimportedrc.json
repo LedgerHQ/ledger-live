@@ -52,7 +52,5 @@
   "ignoreUnimported": [
     "src/supportedFeatures.ts"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

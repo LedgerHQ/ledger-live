@@ -192,8 +192,7 @@
     "@walletconnect/types": "2.23.0",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
-    "rxjs": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

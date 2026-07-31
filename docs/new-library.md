@@ -25,7 +25,7 @@ The repo is moving toward a DDD layout (`domain/`, `features/`, `shared/`); it i
 - [ ] `tsconfig.json` — use the template below
 - [ ] `jest.config.js` — `@swc/jest` transformer, `testEnvironment: "node"` (or `"jsdom"` for React), sonar reporter; copy from a neighbouring package
 - [ ] `project.json` — minimum `{ "targets": { "build": { "executor": "nx:noop" } } }` for source-only packages; required for Nx task graph
-- [ ] `src/errors.ts` — if the package throws custom errors, define them here as plain `class extends Error` (not via `@ledgerhq/errors`)
+- [ ] `src/errors.ts` — if the package throws custom errors, define them here as plain `class extends Error`
 
 ## TypeScript configuration
 

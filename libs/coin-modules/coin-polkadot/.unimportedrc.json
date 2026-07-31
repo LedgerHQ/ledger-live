@@ -32,7 +32,6 @@
   "ignoreUnused": [
     "@polkadot/api",
     "@polkadot/api-augment",
-    "@polkadot/api-derive",
-    "@ledgerhq/errors"
+    "@polkadot/api-derive"
   ]
 }

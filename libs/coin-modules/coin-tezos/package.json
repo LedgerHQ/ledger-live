@@ -59,8 +59,7 @@
     "@taquito/ledger-signer": "^23.0.0-RC.0",
     "@taquito/rpc": "^23.0.0-RC.0",
     "@taquito/taquito": "^23.0.0-RC.0",
-    "@taquito/utils": "^23.0.0-RC.0",
-    "@ledgerhq/errors": "workspace:^"
+    "@taquito/utils": "^23.0.0-RC.0"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

@@ -5,8 +5,7 @@
     "jest-util"
   ],
   "ignoreUnused": [
-    "expect",
-    "@ledgerhq/errors"
+    "expect"
   ],
   "ignoreUnimported": []
 }
