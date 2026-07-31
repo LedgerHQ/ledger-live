@@ -31,13 +31,16 @@ runs:
         # jq filter escaping every char that is special in a JS regex (plus the
         # comma), so the emitted Filter pattern is a literal alternation once split
         # on the unescaped '|' and ',' separators by the workflow resolver
-        # (e2e/tooling/filter/resolve.mjs).
+        # (e2e/tooling/filter/resolve.mjs). Used only for the playwright (--grep)
+        # pattern: detox now selects specs by literal substring (selectSpecs.mjs),
+        # so escaping a spec basename there would stop it from matching its own path.
         JQ_ESC='def esc: gsub("(?<c>[.^$*+?()\\[\\]{}|,\\\\/-])"; "\\" + .c);'
 
         case "$RUNNER" in
           detox)
-            # Detox selects whole spec files via a regex tested against file path/content,
-            # so the reusable unit is the failed spec file (basename). Source: Allure
+            # Detox selects whole spec files via a literal substring match against the
+            # file path (e2e/tooling/filter/selectSpecs.mjs), so the reusable unit is the
+            # failed spec file (basename), emitted raw (unescaped). Source: Allure
             # *-result.json so a pass on a Detox retry clears the earlier failure — the raw
             # Jest --json only records the failing attempt and would over-include specs.
             # The spec file comes from the `sourceFile` label set by e2e/mobile/jest.config.js
@@ -100,9 +103,12 @@ runs:
         fi
 
         if [ "$RUNNER" = "playwright" ]; then
+          # Playwright --grep is a regex, so escape metachars and anchor to the leaf title.
           MAP_TO_PATTERN='map(esc + "(?! [^@])")'
         else
-          MAP_TO_PATTERN='map(esc)'
+          # Detox matches spec basenames literally (selectSpecs.mjs uses String.includes),
+          # so emit them raw — escaping would insert backslashes the literal match can't find.
+          MAP_TO_PATTERN='map(.)'
         fi
         FILTER_PATTERN=$(jq -rs "$JQ_ESC$ITEMS_JQ | $MAP_TO_PATTERN | join(\"|\")" "${files[@]}")
         FAILED_COUNT=$(jq -rs "$ITEMS_JQ"' | length' "${files[@]}")
