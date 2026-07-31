@@ -34,14 +34,10 @@ function makeArgs(): Parameters<typeof fetchQuotes>[0] {
 describe("fetchQuotes", () => {
   let unsubscribe: jest.Mock;
 
-  /**
-   * `fetchQuotes` awaits the dispatched query promise and unsubscribes it once
-   * settled, so the mocked dispatch has to return a promise carrying
-   * `unsubscribe`.
-   */
+  // `fetchQuotes` unsubscribes the query promise once settled, so the stub has
+  // to carry `unsubscribe`.
   function mockResult(result: unknown) {
     getSwapQuotesDispatchMock.mockReturnValue(
-      // A stub can't structurally satisfy ThunkDispatch's overloads.
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       jest.fn(() => Object.assign(Promise.resolve(result), { unsubscribe })) as never,
     );
@@ -50,8 +46,6 @@ describe("fetchQuotes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     unsubscribe = jest.fn();
-    // The thunk returned by `initiate` is opaque to `fetchQuotes`; only the
-    // dispatched result matters, so return a marker we can assert against.
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     initiateMock.mockImplementation(((arg: unknown) => ({ arg })) as never);
   });
@@ -117,8 +111,6 @@ describe("fetchQuotes", () => {
     });
   });
 
-  // `cause` is non-enumerable and does not survive `serializeError`, so the
-  // message is what actually reaches the live app and monitoring.
   it.each([
     ["FETCH_ERROR", { status: "FETCH_ERROR", error: "network down" }, "FETCH_ERROR: network down"],
     ["TIMEOUT_ERROR", { status: "TIMEOUT_ERROR", error: "timed out" }, "TIMEOUT_ERROR: timed out"],
@@ -126,7 +118,7 @@ describe("fetchQuotes", () => {
     ["a SerializedError", { name: "TypeError", message: "boom" }, "boom"],
     ["an unrecognisable error", {}, "unknown error"],
   ])(
-    "throws a named Error for %s, which never reached the aggregator",
+    "throws a named Error whose message carries the detail of %s",
     async (_label, error, expectedDetail) => {
       mockResult({ error });
 

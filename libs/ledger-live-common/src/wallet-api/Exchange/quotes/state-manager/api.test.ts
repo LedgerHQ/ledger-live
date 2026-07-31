@@ -11,13 +11,11 @@ jest.mock("../../../../exchange/swap", () => ({
   getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
 }));
 
-/** Mirrors the apps with `lwdAuth`/`lwmAuth` off: a provider, but no token. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
   withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
 } as never;
 
-/** Mirrors the apps with the auth flag on. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const tokenProvider = (accessToken: string) =>
   ({
@@ -26,9 +24,7 @@ const tokenProvider = (accessToken: string) =>
   }) as never;
 
 describe("buildQuotesParams", () => {
-  // `toEqual`, not `toMatchObject`: this pins the exact param set the legacy
-  // axios helper sent, so a dropped or added param fails the test.
-  it("maps the resolved input to the aggregator query params", () => {
+  it("maps the resolved input to exactly the aggregator query params", () => {
     const params = buildQuotesParams(["lifi", "okx"], makeQuotesInput(), "usd");
 
     expect(params).toEqual({
@@ -110,10 +106,8 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
   afterAll(() => server.close());
 
   beforeEach(() => {
-    // Both apps register an auth provider on the store's `extra`, so the
-    // unauthenticated fallback is not the path production takes. Supplying a
-    // stub keeps these tests on the real path (and silences the adapter's
-    // per-request warning).
+    // Both apps register a provider, so the missing-provider fallback is not
+    // the path production takes.
     store = createTestStore([swapQuotesApi], {
       extra: { authProvider: unauthenticatedProvider },
     });
@@ -252,8 +246,6 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
       ),
     );
 
-    // Two different tokens collapse to a single cache entry, and neither
-    // appears in its key.
     const keys = Object.keys(store.getState().swapQuotesApi.queries);
     expect(keys).toHaveLength(1);
     expect(keys[0]).not.toContain("x-token");
@@ -285,11 +277,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     expect(seen!.headers.get("x-foo")).toBe("bar");
   });
 
-  it("reports a non-2xx non-JSON body as an error carrying the HTTP status", async () => {
-    // Aggregator 5xx responses often carry a non-JSON body, which surfaces as a
-    // PARSING_ERROR with `originalStatus`. HTTP errors stay errors here so the
-    // auth adapter's 401/403 refresh-and-retry can fire; `fetchQuotes` is what
-    // maps them to the legacy empty result.
+  it("reports a non-2xx non-JSON body as a PARSING_ERROR carrying the original status", async () => {
     server.use(
       http.get(
         "https://swap.test/quote",

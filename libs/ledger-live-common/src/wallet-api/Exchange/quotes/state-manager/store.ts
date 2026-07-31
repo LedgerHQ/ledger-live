@@ -7,10 +7,8 @@
  * {@link setSwapQuotesStore}, and `fetchQuotes` retrieves it with
  * {@link getSwapQuotesDispatch} to imperatively run the endpoint.
  *
- * The reference is kept on `globalThis` to guarantee a single shared
- * dispatch across all module instances, even when live-common is resolved
- * to separate copies by lazy-loaded bundles. `registerTransportModule` in
- * `src/hw/index.ts` uses the same approach for the same reason.
+ * Kept on `globalThis` so lazy-loaded bundles that resolve live-common to
+ * separate copies still share one dispatch.
  */
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 
@@ -30,10 +28,7 @@ export function setSwapQuotesStore(dispatch: SwapQuotesDispatch): void {
   globalThis.__ledgerSwapQuotesDispatch = dispatch;
 }
 
-/**
- * Clear the registered dispatch, so tests do not have to reach into the
- * storage mechanism by name.
- */
+/** Clear the registered dispatch. For tests. */
 export function resetSwapQuotesStore(): void {
   globalThis.__ledgerSwapQuotesDispatch = undefined;
 }

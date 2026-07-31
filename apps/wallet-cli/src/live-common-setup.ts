@@ -124,7 +124,6 @@ setFrameworkCryptoAssetsStore(
     ledgerClientVersion,
   }),
 );
-// swap `getQuotes` runs through the RTK Query swapQuotesApi and needs a store dispatch.
-// wallet-cli has no app Redux store, so register a standalone one.
+// `getQuotes` needs a store dispatch; wallet-cli has no app Redux store.
 setupStandaloneSwapQuotesStore();
 registerWalletCliDmkTransport();

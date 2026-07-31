@@ -7,29 +7,13 @@ import { getSwapAPIBaseURL } from "../../../../exchange/swap";
 import type { ResolvedQuotesInput } from "../resolveQuotesInput";
 import type { FetchQuotesResult, RawQuote, RawQuoteError } from "../service/types";
 
-/**
- * Serializable arguments for the {@link swapQuotesApi} `fetchQuotes`
- * endpoint, flattened into a single object so RTK Query can use it as a
- * cache key.
- */
 export type FetchQuotesQueryArgs = {
   providers: string[];
   quotesInput: ResolvedQuotesInput;
-  /** Fiat ticker (e.g. `"USD"`) the aggregator should use for quote countervalues. */
   counterValueCurrency: string;
-  /**
-   * Optional caller-supplied headers, already flattened to a plain object.
-   * `serializeQueryArgs` keeps them out of the cache key so a live-app token
-   * cannot widen it. This is a cache-key guarantee only: RTK Query still
-   * records the unstripped args as `originalArgs` on the cache entry.
-   */
   customHeaders?: Record<string, string>;
 };
 
-/**
- * Build the aggregator `/quote` query string parameters, matching the
- * parameters the legacy axios helper sent.
- */
 export function buildQuotesParams(
   providers: string[],
   quotesInput: ResolvedQuotesInput,
@@ -63,48 +47,28 @@ export function buildQuotesParams(
   return params;
 }
 
-/**
- * Split the raw aggregator payload into successful quote rows (`rawQuotes`)
- * and per-provider rejection rows (`providerErrors`). Rejection rows are the
- * ones carrying an aggregator `code` field.
- */
+/** Rejection rows are the ones carrying an aggregator `code` field. */
 export function splitQuotes(data: Array<RawQuote | RawQuoteError>): FetchQuotesResult {
   const rawQuotes = data.filter((q): q is RawQuote => !("code" in q));
   const providerErrors = data.filter((q): q is RawQuoteError => "code" in q);
   return { rawQuotes, providerErrors };
 }
 
-/**
- * Reshape a successful `/quote` response body into a {@link FetchQuotesResult}.
- * Only 2xx responses reach here; a body that is not an array yields an empty
- * result rather than passing a malformed payload downstream. Non-OK statuses
- * surface as RTK Query errors and are mapped by `fetchQuotes`.
- */
+/** Only 2xx responses reach here; non-OK statuses surface as RTK Query errors. */
 export function transformFetchQuotesResponse(response: unknown): FetchQuotesResult {
   return splitQuotes(Array.isArray(response) ? (response as Array<RawQuote | RawQuoteError>) : []);
 }
 
-// `fetch` inherits none of the axios default headers the legacy helper got from
-// `@ledgerhq/live-network`, so set this one from the same env value.
+// `fetch` does not inherit the axios default headers `@ledgerhq/live-network` sets.
 function clientVersionHeader(): Record<string, string> {
   const version = getEnv("LEDGER_CLIENT_VERSION");
   return version ? { "X-Ledger-Client-Version": version } : {};
 }
 
 /**
- * RTK Query API for the swap quotes aggregator. Exposed as a single
- * `fetchQuotes` query that replaces the legacy axios `fetchQuotes` helper.
- *
- * Consumed imperatively from the server-side `getQuotes` flow (not a React
- * hook) via `dispatch(swapQuotesApi.endpoints.fetchQuotes.initiate(...))`,
- * mirroring the `cryptoAssetsApi` (CAL client) pattern.
- *
- * Unlike the legacy axios call, `/quote` goes through the authenticated base
- * query. Both apps already register an auth provider on their store's `extra`,
- * so the `lwdAuth`/`lwmAuth` feature flags alone decide whether a request
- * carries an `Authorization` header; they are off by default. HTTP status
- * errors are deliberately left as RTK Query errors so the adapter's 401/403
- * refresh-and-retry can fire; `fetchQuotes` maps them to an empty result.
+ * Consumed imperatively from the server-side `getQuotes` flow rather than
+ * through a hook. HTTP status errors are left as RTK Query errors so the auth
+ * adapter's 401/403 refresh-and-retry can fire; `fetchQuotes` maps them.
  */
 export const swapQuotesApi = createApi({
   reducerPath: "swapQuotesApi",
@@ -118,15 +82,13 @@ export const swapQuotesApi = createApi({
       query: ({ providers, quotesInput, counterValueCurrency, customHeaders }) => ({
         url: `${getSwapAPIBaseURL()}/quote`,
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
-        // `fetchBaseQuery` sets `Accept: application/json` itself unless a
-        // caller header already provides one.
         headers: {
           ...clientVersionHeader(),
           ...(customHeaders ?? {}),
         },
       }),
-      // Concurrent requests differing only by `customHeaders` therefore share
-      // one in-flight call, since RTK Query de-duplicates on the cache key.
+      // Keeps a live-app token out of the cache key. Consequence: concurrent
+      // requests differing only by `customHeaders` share one in-flight call.
       serializeQueryArgs: ({ queryArgs }) => {
         const { customHeaders: _omitted, ...cacheable } = queryArgs;
         return cacheable;

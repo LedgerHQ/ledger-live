@@ -79,9 +79,8 @@ function getParentCurrencyId(accounts: AccountLike[], walletAccountId: string): 
   return account ? getParentAccount(account, accounts)?.currency.id : undefined;
 }
 
-// `GetQuotesWireArgs`, not `GetQuotesArgs`: RTK Query owns the request
-// lifecycle, so an abort `signal` is not honoured and the type must not offer
-// one. Direct callers (wallet-cli) would otherwise pass it silently into a void.
+// `GetQuotesWireArgs` omits `signal`: RTK Query owns the request lifecycle, so
+// the type must not offer cancellation it cannot honour.
 export async function getQuotes(
   args: GetQuotesWireArgs,
   context: GetQuotesContext,

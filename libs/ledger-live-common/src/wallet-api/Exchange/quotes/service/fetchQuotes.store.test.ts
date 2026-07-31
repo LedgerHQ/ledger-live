@@ -12,17 +12,13 @@ jest.mock("../../../../exchange/swap", () => ({
   getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
 }));
 
-/** Mirrors the apps with `lwdAuth`/`lwmAuth` off: a provider, but no token. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
   withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
 } as never;
 
-/**
- * `fetchQuotes` against a real store and a real endpoint. `fetchQuotes.test.ts`
- * mocks both collaborators, so it only proves wiring; these cover the
- * behaviour — cache lifetime, de-duplication and error mapping.
- */
+// `fetchQuotes.test.ts` mocks the endpoint and the store, so it only proves
+// wiring; these run against real ones.
 describe("fetchQuotes against a live store", () => {
   const server = setupServer();
   let store: ReturnType<typeof createTestStore>;
@@ -31,7 +27,6 @@ describe("fetchQuotes against a live store", () => {
   beforeAll(() => server.listen());
   afterEach(() => {
     server.resetHandlers();
-    // Drop the reference to this suite's discarded store.
     resetSwapQuotesStore();
   });
   afterAll(() => server.close());
@@ -62,9 +57,6 @@ describe("fetchQuotes against a live store", () => {
     } as Parameters<typeof fetchQuotes>[0];
   }
 
-  // Regression: with `subscribe: false` the cache entry `keepUnusedDataFor: 0`
-  // evicts could be gone before the promise resolved, so a repeated request
-  // returned zero quotes despite a successful response.
   it("returns quotes for repeated identical requests", async () => {
     serveOneQuote();
 
@@ -78,7 +70,7 @@ describe("fetchQuotes against a live store", () => {
     expect(hits).toBe(3);
   });
 
-  it("returns quotes to every caller of concurrent identical requests", async () => {
+  it("returns quotes to every caller of concurrent identical requests, sharing one call", async () => {
     serveOneQuote();
 
     const [first, second] = await Promise.all([
@@ -88,7 +80,6 @@ describe("fetchQuotes against a live store", () => {
 
     expect(first.rawQuotes).toHaveLength(1);
     expect(second.rawQuotes).toHaveLength(1);
-    // RTK Query de-duplicates the in-flight request, so both callers share one.
     expect(hits).toBe(1);
   });
 
