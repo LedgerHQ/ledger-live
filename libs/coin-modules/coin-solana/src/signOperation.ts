@@ -147,20 +147,24 @@ export const buildSignOperation =
         let overrideRecentBlockhash: BlockhashWithExpiryBlockHeight | undefined;
 
         const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize()), {
-            ...getResolution(transaction, deviceModelId, certificateSignatureKind),
-            solanaRPCURL: endpointByCurrencyId(account.currency.id),
-            ...(!hasRealSignatures
-              ? {
-                  delayed: true,
-                  fetchBlockhash: async () => {
-                    const getLatestBlockhash = await api.getLatestBlockhash("confirmed");
-                    overrideRecentBlockhash = getLatestBlockhash;
-                    return bs58.decode(getLatestBlockhash.blockhash);
-                  },
-                }
-              : {}),
-          }),
+          signer.signTransaction(
+            account.freshAddressPath,
+            Buffer.from(hasRealSignatures ? tx.serialize() : tx.message.serialize()),
+            {
+              ...getResolution(transaction, deviceModelId, certificateSignatureKind),
+              solanaRPCURL: endpointByCurrencyId(account.currency.id),
+              ...(!hasRealSignatures
+                ? {
+                    delayed: true,
+                    fetchBlockhash: async () => {
+                      const getLatestBlockhash = await api.getLatestBlockhash("confirmed");
+                      overrideRecentBlockhash = getLatestBlockhash;
+                      return bs58.decode(getLatestBlockhash.blockhash);
+                    },
+                  }
+                : {}),
+            },
+          ),
         );
 
         subscriber.next({
