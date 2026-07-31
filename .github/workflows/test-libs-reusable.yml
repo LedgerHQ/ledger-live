@@ -82,7 +82,7 @@ jobs:
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=6 -- --maxWorkers=2
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
