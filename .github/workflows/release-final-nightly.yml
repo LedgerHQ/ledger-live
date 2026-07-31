@@ -15,6 +15,10 @@ jobs:
       id-token: write
       contents: read
     runs-on: ledger-live-linux-8CPU-32RAM
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -78,33 +82,17 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/wallet-cli
 
-        #JFrog publishing - if statements to be removed when all is migrated
-
       - name: JFrog npm auth (publish registry)
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
+        if: ${{ vars.ARTIFACTORY_SANDBOX_URL != '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
-          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
+          registry: ${{ vars.ARTIFACTORY_SANDBOX_URL }}
 
-      - name: publish nightly (JFrog)
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL != '' }}
-        run: npm_config_registry="https://${{ vars.ARTIFACTORY_PUBLISH_URL }}/" pnpm changeset publish --tag nightly --no-git-tag
-
-        #NPM publishing - to be removed when all is migrated
-
-      - name: authenticate with npm
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
+      - name: pack, attest and publish (JFrog)
+        if: ${{ vars.ARTIFACTORY_SANDBOX_URL != '' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/pack-attest-publish@ci/nightly-pack-attest-publish
         with:
-          registry-url: "https://registry.npmjs.org"
-
-      - name: publish nightly
-        run: pnpm changeset publish --tag nightly --no-git-tag
-        if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-
-      #NPM publishing - end removal
+          dist-tag: nightly
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -187,7 +175,7 @@ jobs:
           payload: |
             channel: "C08JQKWS9KK"
             text: "[Alert] Nightly Release failed"
-            blocks: 
+            blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"

@@ -1,0 +1,51 @@
+name: Pack, attest and publish packages
+description: Pack all public packages, attest tarballs, and publish skipping already-published versions.
+inputs:
+  dist-tag:
+    description: npm dist-tag to publish under.
+    required: false
+    default: latest
+  registry-token:
+    description: NODE_AUTH_TOKEN for npm.org publishing. Leave empty when JFrog auth configures the registry.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Pack all public packages
+      shell: bash
+      run: |
+        set -euo pipefail
+        DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
+        mkdir -p "$DIST_DIR"
+        pnpm -r list --json --depth -1 \
+          | jq -r '.[] | select(.private != true) | .name' \
+          | while IFS= read -r name; do
+              echo "Packing $name..."
+              pnpm --filter "$name" pack --pack-destination "$DIST_DIR"
+            done
+
+    - name: Attest all tarballs
+      uses: LedgerHQ/actions-security/actions/attest-for-npmsjs-com@c92cff0840fbb28663c0061698e5e8ac5228dcce # actions/attest-for-npmsjs-com-0.1.2
+      with:
+        subject-path: '${{ runner.temp }}/pack-attest-publish/*.tgz'
+
+    - name: Publish packages
+      shell: bash
+      env:
+        DIST_TAG: ${{ inputs.dist-tag }}
+        NODE_AUTH_TOKEN: ${{ inputs.registry-token }}
+      run: |
+        set -euo pipefail
+        DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
+        for tarball in "$DIST_DIR"/*.tgz; do
+          [ -f "$tarball" ] || { echo "No tarballs found in $DIST_DIR"; exit 1; }
+          pkg_name=$(tar -xOf "$tarball" package/package.json | jq -r '.name')
+          pkg_version=$(tar -xOf "$tarball" package/package.json | jq -r '.version')
+          if npm view "${pkg_name}@${pkg_version}" version &>/dev/null 2>&1; then
+            echo "Skipping $pkg_name@$pkg_version (already published)"
+            continue
+          fi
+          echo "Publishing $pkg_name@$pkg_version with tag $DIST_TAG"
+          npm publish "$tarball" --tag "$DIST_TAG" --access public
+        done
