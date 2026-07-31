@@ -4,7 +4,7 @@ import type BigNumber from "bignumber.js";
 import { useTranslation } from "~/context/Locale";
 import { useFeature } from "@features/platform-feature-flags";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import type { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import InfoModal from "~/modals/Info";

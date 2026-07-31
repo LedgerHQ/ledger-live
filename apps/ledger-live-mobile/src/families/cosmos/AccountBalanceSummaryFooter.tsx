@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import BigNumber from "bignumber.js";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
 import { Account } from "@ledgerhq/types-live";

@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import type { Account } from "@ledgerhq/types-live";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import InfoModal from "~/modals/Info";
