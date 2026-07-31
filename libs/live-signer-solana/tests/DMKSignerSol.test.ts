@@ -6,16 +6,24 @@ import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { getEnv } from "@ledgerhq/live-env";
 import { PubKeyDisplayMode, UserInputType, Resolution } from "@ledgerhq/coin-solana/signer";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import bs58 from "bs58";
 import { of, throwError } from "rxjs";
 
 jest.mock("@ledgerhq/context-module", () => {
   class MockContextModuleBuilder {
-    setAppSource() { return this; }
-    setChain() { return this; }
-    setCalConfig() { return this; }
-    build() { return {}; }
+    setAppSource() {
+      return this;
+    }
+    setChain() {
+      return this;
+    }
+    setCalConfig() {
+      return this;
+    }
+    build() {
+      return {};
+    }
   }
   return {
     ContextModuleBuilder: MockContextModuleBuilder,
@@ -415,7 +423,11 @@ describe("DmkSignerSol", () => {
 
       new DmkSignerSol(dmkMock, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "prod", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "prod",
+        branch: "main",
+      });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains 'ledger-test'", () => {
@@ -424,7 +436,11 @@ describe("DmkSignerSol", () => {
 
       new DmkSignerSol(dmkMock, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "test",
+        branch: "main",
+      });
     });
 
     it("passes test mode when CAL_SERVICE_URL contains '.stg.' but not 'ledger-test'", () => {
@@ -433,7 +449,11 @@ describe("DmkSignerSol", () => {
 
       new DmkSignerSol(dmkMock, "sessionId");
 
-      expect(setCalConfigSpy).toHaveBeenCalledWith({ url: `${url}/v1`, mode: "test", branch: "main" });
+      expect(setCalConfigSpy).toHaveBeenCalledWith({
+        url: `${url}/v1`,
+        mode: "test",
+        branch: "main",
+      });
     });
   });
 });

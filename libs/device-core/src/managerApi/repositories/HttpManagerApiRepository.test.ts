@@ -1,4 +1,4 @@
-import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
+import { FirmwareNotRecognized, NetworkDown } from "../../errors";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";

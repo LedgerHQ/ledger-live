@@ -1,4 +1,4 @@
-import { UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";

@@ -204,3 +204,12 @@ export class NotEnoughBalanceToDelegate extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class InvalidParameterError extends Error {
+  override name = "InvalidParameterError";
+  [key: string]: unknown;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidParameterError");
+    if (fields) Object.assign(this, fields);
+  }
+}

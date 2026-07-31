@@ -52,6 +52,9 @@
       "exchange/swapTransactionStatus/transactionStatus": [
         "lib-es/exchange/swapTransactionStatus/transactionStatus"
       ],
+      "errors": [
+        "./src/errors.ts"
+      ],
       "*": [
         "lib-es/*"
       ],
@@ -261,6 +264,7 @@
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/entity-client-identity": "workspace:^",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-fiat": "workspace:^",
@@ -269,12 +273,10 @@
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
-    "@domain/entity-client-identity": "workspace:^",
     "@ledgerhq/coin-aleo": "workspace:^",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
-    "@ledgerhq/wallet-btc": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-casper": "workspace:^",
@@ -361,6 +363,7 @@
     "@ledgerhq/wallet-api-core": "^1.35.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^3.4.2",
+    "@ledgerhq/wallet-btc": "workspace:^",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",

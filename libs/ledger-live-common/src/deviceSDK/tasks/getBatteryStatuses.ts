@@ -1,4 +1,4 @@
-import { DisconnectedDevice, StatusCodes } from "@ledgerhq/errors";
+import { DisconnectedDevice, StatusCodes } from "@ledgerhq/hw-transport/errors";
 import type { DeviceId } from "@ledgerhq/types-live";
 
 import { Observable, concat, of, throwError } from "rxjs";

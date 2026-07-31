@@ -3,7 +3,7 @@ import { scan, map, tap } from "rxjs/operators";
 import { useEffect, useMemo, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
-import { UserRefusedDeviceNameChange } from "@ledgerhq/errors";
+import { UserRefusedDeviceNameChange } from "../../errors";
 import { useReplaySubject } from "../../observable";
 import type { Action, Device } from "./types";
 import {

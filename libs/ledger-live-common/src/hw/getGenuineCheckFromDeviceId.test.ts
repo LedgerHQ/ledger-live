@@ -8,7 +8,7 @@ import {
   getGenuineCheckFromDeviceId,
   GetGenuineCheckFromDeviceIdResult,
 } from "./getGenuineCheckFromDeviceId";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
 
 jest.useFakeTimers();
 

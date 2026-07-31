@@ -709,9 +709,6 @@ importers:
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
@@ -2421,7 +2418,7 @@ importers:
         version: link:../../libs/coin-modules/coin-evm
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2437,9 +2434,6 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.16.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-exchange
@@ -2622,7 +2616,7 @@ importers:
         version: link:../../features/platform/style
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-react@0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -2635,9 +2629,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-eth
@@ -8676,9 +8667,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -8874,9 +8862,6 @@ importers:
 
   libs/domain-service:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -9977,13 +9962,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../live-config
@@ -10182,9 +10167,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10234,9 +10216,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10353,9 +10332,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-canton:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10411,9 +10387,6 @@ importers:
       '@ethersproject/keccak256':
         specifier: ^5.7.0
         version: 5.8.0
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../hw-app-eth
@@ -10460,9 +10433,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10637,9 +10607,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-hedera:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10689,9 +10656,6 @@ importers:
       '@helium/transactions':
         specifier: ^4.7.5
         version: 4.11.1
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10744,9 +10708,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-icon:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10790,9 +10751,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-kaspa:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10922,9 +10880,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10968,9 +10923,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11183,9 +11135,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11303,9 +11252,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../logs
@@ -11343,9 +11289,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-http:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11429,9 +11372,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11472,9 +11412,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11518,9 +11455,9 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-vault:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
         version: link:../hw-transport-http
@@ -11918,9 +11855,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -12321,9 +12255,9 @@ importers:
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
         version: 0.4.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12364,9 +12298,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-canton':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-canton
@@ -12413,9 +12344,6 @@ importers:
       '@ledgerhq/coin-celo':
         specifier: workspace:^
         version: link:../coin-modules/coin-celo
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-celo':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-celo
@@ -12468,9 +12396,9 @@ importers:
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
         version: 0.4.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12508,9 +12436,6 @@ importers:
       '@ledgerhq/device-signer-kit-cosmos':
         specifier: 'catalog:'
         version: 1.0.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
@@ -12566,12 +12491,15 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.16.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -12621,9 +12549,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -12673,9 +12598,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-solana':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-solana
@@ -12691,6 +12613,9 @@ importers:
       '@ledgerhq/ledger-trust-service':
         specifier: workspace:^
         version: link:../ledger-services/trust
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -12749,9 +12674,6 @@ importers:
       '@ledgerhq/device-signer-kit-zcash':
         specifier: 0.4.3
         version: 0.4.3(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -13700,10 +13622,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network

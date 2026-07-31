@@ -10,7 +10,7 @@ import {
   DeviceDisconnectedBeforeSendingApdu,
   DeviceDisconnectedWhileSendingError,
 } from "@ledgerhq/device-management-kit";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import { DeviceManagementKitHTTPProxyTransport } from "./DeviceManagementKitHTTPProxyTransport";
 import {
   buildHttpProxyLegacyDeviceId,
