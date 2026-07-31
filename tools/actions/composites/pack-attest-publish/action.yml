@@ -47,5 +47,5 @@ runs:
             continue
           fi
           echo "Publishing $pkg_name@$pkg_version with tag $DIST_TAG"
-          npm publish "$tarball" --tag "$DIST_TAG" --access public
+          #npm publish "$tarball" --tag "$DIST_TAG" --access public
         done
