@@ -83,13 +83,11 @@ jobs:
           path: ${{ github.workspace }}/apps/wallet-cli
 
       - name: JFrog npm auth (publish registry)
-        if: ${{ vars.ARTIFACTORY_SANDBOX_URL != '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
-          registry: ${{ vars.ARTIFACTORY_SANDBOX_URL }}
+          registry: ${{ vars.ARTIFACTORY_PUBLISH_URL }}
 
       - name: pack, attest and publish (JFrog)
-        if: ${{ vars.ARTIFACTORY_SANDBOX_URL != '' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/pack-attest-publish@ci/nightly-pack-attest-publish
         with:
           dist-tag: nightly
