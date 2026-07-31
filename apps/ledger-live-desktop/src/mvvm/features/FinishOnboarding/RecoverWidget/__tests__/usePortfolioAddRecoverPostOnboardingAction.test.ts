@@ -119,7 +119,9 @@ describe("usePortfolioAddRecoverPostOnboardingAction", () => {
       expect(
         store
           .getState()
-          .postOnboarding.actionsToComplete.filter(id => id === PostOnboardingActionId.recover),
+          .postOnboarding.actionsToComplete.filter(
+            (id: PostOnboardingActionId) => id === PostOnboardingActionId.recover,
+          ),
       ).toHaveLength(1),
     );
   });
