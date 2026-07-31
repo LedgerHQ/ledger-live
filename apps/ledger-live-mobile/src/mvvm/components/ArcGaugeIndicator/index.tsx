@@ -86,9 +86,10 @@ export default function ArcGaugeIndicator({ value, startColor, endColor }: Props
   const cursorStyle = useAnimatedStyle(() => {
     "worklet";
     return {
-      position: "absolute" as const,
-      left: cursorPosition.value.x * scale - cursorRadius - cursorStrokeWidth,
-      top: cursorPosition.value.y * scale - cursorRadius - cursorStrokeWidth,
+      transform: [
+        { translateX: cursorPosition.value.x * scale - cursorRadius - cursorStrokeWidth },
+        { translateY: cursorPosition.value.y * scale - cursorRadius - cursorStrokeWidth },
+      ],
     };
   }, [cursorPosition, scale, cursorRadius, cursorStrokeWidth]);
 
@@ -127,7 +128,7 @@ export default function ArcGaugeIndicator({ value, startColor, endColor }: Props
           {displayValue}
         </SvgText>
       </Svg>
-      <Animated.View style={cursorStyle}>
+      <Animated.View style={[{ position: "absolute", top: 0, left: 0 }, cursorStyle]}>
         <Svg width={cursorSize} height={cursorSize} viewBox={`0 0 ${cursorSize} ${cursorSize}`}>
           <Circle
             cx={cursorRadius + cursorStrokeWidth}

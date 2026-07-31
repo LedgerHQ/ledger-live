@@ -3233,7 +3233,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNReanimated (4.3.0):
+  - RNReanimated (4.3.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3260,12 +3260,12 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/apple (= 4.3.0)
-    - RNReanimated/common (= 4.3.0)
+    - RNReanimated/apple (= 4.3.3)
+    - RNReanimated/common (= 4.3.3)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/apple (4.3.0):
+  - RNReanimated/apple (4.3.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3295,7 +3295,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/common (4.3.0):
+  - RNReanimated/common (4.3.3):
     - boost
     - DoubleConversion
     - fast_float
@@ -3709,7 +3709,7 @@ DEPENDENCIES:
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_22b59121ec847ba53fb2e7d8aec6c181/node_modules/react-native-localize`)"
   - "RNReactNativeHapticFeedback (from `../../../node_modules/.pnpm/react-native-haptic-feedback@2.3.3_react-native_4be985a7c9ac5a85953ef361e5810bbb/node_modules/react-native-haptic-feedback`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.0_react-native-work_428dfbb78210a4eccefe4ea5b615ab19/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.3_react-native-work_c499098f4a6855de80586e044102ddec/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.15.4_react-native@0.81.6_d34209bb2ab45ed965aa2e8d5e51931e/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.1_react-native@0.81.6_pa_08eb043c81d24f286c8d48f60dda9206/node_modules/react-native-svg`)"
@@ -3717,7 +3717,7 @@ DEPENDENCIES:
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.21.4_bb7c3452cb2697ae64ac0d020430b5c4/node_modules/@segment/analytics-react-native`)"
   - SocketRocket (~> 0.7.1)
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-nativ_dbadcd2e97a659e26cb720d010c32635/node_modules/@segment/sovran-react-native`)"
-  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera`)"
+  - "VisionCamera (from `../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_1b2450b18c86dd95087287717830fb22/node_modules/react-native-vision-camera`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -4013,7 +4013,7 @@ EXTERNAL SOURCES:
   RNReactNativeHapticFeedback:
     :path: "../../../node_modules/.pnpm/react-native-haptic-feedback@2.3.3_react-native_4be985a7c9ac5a85953ef361e5810bbb/node_modules/react-native-haptic-feedback"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.0_react-native-work_428dfbb78210a4eccefe4ea5b615ab19/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.3_react-native-work_c499098f4a6855de80586e044102ddec/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@4.15.4_react-native@0.81.6_d34209bb2ab45ed965aa2e8d5e51931e/node_modules/react-native-screens"
   RNShare:
@@ -4027,7 +4027,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@1.1.3_@react-nativ_dbadcd2e97a659e26cb720d010c32635/node_modules/@segment/sovran-react-native"
   VisionCamera:
-    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_e6625e401364b9c30fab2026f0a8707f/node_modules/react-native-vision-camera"
+    :path: "../../../node_modules/.pnpm/react-native-vision-camera@4.7.3_react-native-r_1b2450b18c86dd95087287717830fb22/node_modules/react-native-vision-camera"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_40b065189c08febd012a31e10dcb1091/node_modules/react-native/ReactCommon/yoga"
 
@@ -4189,7 +4189,7 @@ SPEC CHECKSUMS:
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
   RNReactNativeHapticFeedback: 5f1542065f0b24c9252bd8cf3e83bc9c548182e4
-  RNReanimated: c74d47574d33045e2129b2a192be1deac616c3a0
+  RNReanimated: a00321c8c83a13c5f670187389f5da26679537ba
   RNScreens: 4f2aed147a2775017923789d8a0a2d377712ec2e
   RNShare: 81b8cfb58b1460c4a197d5379934bdf70980c124
   RNSVG: 63f96b45c10e8b6b4e1c4df831223f0e6af39e5e
