@@ -7,13 +7,14 @@ import {
   extractBalance,
   extractBalances,
   findCryptoCurrencyByNetwork,
+  nextSequenceWithPending,
   toGasOptionsFromUnknown,
   transactionToIntent,
 } from "./utils";
 import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/index";
 import BigNumber from "bignumber.js";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
 import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
@@ -1340,6 +1341,44 @@ describe("coin-framework utils", () => {
         value: new BigNumber(25),
         fee: new BigNumber(25),
       });
+    });
+  });
+
+  describe("nextSequenceWithPending", () => {
+    const pendingOp = (seq: number | null): Operation =>
+      ({
+        transactionSequenceNumber: seq === null ? undefined : new BigNumber(seq),
+      }) as Operation;
+
+    it("uses the network sequence when there are no pending operations", () => {
+      expect(nextSequenceWithPending([], 22n)).toBe(22n);
+    });
+
+    it("bumps past a pending op the network source hasn't caught up to yet", () => {
+      // Just broadcast nonce 22 (still pending); network source still reports 22 -> next must be 23.
+      expect(nextSequenceWithPending([pendingOp(22)], 22n)).toBe(23n);
+    });
+
+    it("takes the highest pending sequence + 1 across several pending ops", () => {
+      expect(nextSequenceWithPending([pendingOp(22), pendingOp(24), pendingOp(23)], 22n)).toBe(25n);
+    });
+
+    it("prefers the network sequence once it has moved ahead of pending ops", () => {
+      // Network source caught up (26 > 24+1) -> it wins, self-correcting.
+      expect(nextSequenceWithPending([pendingOp(24)], 26n)).toBe(26n);
+    });
+
+    it("ignores pending ops without a sequence number", () => {
+      expect(nextSequenceWithPending([pendingOp(null), pendingOp(22)], 22n)).toBe(23n);
+    });
+
+    it("ignores non-integer pending sequence numbers", () => {
+      expect(nextSequenceWithPending([pendingOp(22.5), pendingOp(22)], 22n)).toBe(23n);
+    });
+
+    it("handles a large pending sequence without throwing (fixed-point, not exponential)", () => {
+      // BigNumber(1e21).toString() is "1e+21", which BigInt() cannot parse; .toFixed() must be used.
+      expect(nextSequenceWithPending([pendingOp(1e21)], 5n)).toBe(1000000000000000000001n);
     });
   });
 });

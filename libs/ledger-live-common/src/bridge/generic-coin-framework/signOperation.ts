@@ -3,7 +3,12 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
-import { bigNumberToBigIntDeep, buildOptimisticOperation, transactionToIntent } from "./utils";
+import {
+  bigNumberToBigIntDeep,
+  buildOptimisticOperation,
+  nextSequenceWithPending,
+  transactionToIntent,
+} from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -58,9 +63,13 @@ export const genericSignOperation =
           transactionIntent.senderPublicKey = publicKey;
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
-            // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-            const sequenceNumber = await coinModuleApi.getNextSequence(transactionIntent.sender);
-            transactionIntent.sequence = sequenceNumber;
+            // The network sequence source lags behind a just-broadcast tx, so combine it with
+            // locally-tracked pending operations to avoid reusing a nonce on rapid consecutive sends.
+            const networkSequence = await coinModuleApi.getNextSequence(transactionIntent.sender);
+            transactionIntent.sequence = nextSequenceWithPending(
+              account.pendingOperations ?? [],
+              networkSequence,
+            );
           }
 
           /* Craft unsigned blob via coin-framework */

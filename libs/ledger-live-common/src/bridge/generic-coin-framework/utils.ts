@@ -142,6 +142,33 @@ export function getNativeSpendableAfterPending(account: Account): BigNumber {
   return BigNumber.max(0, account.spendableBalance.minus(pendingSpent));
 }
 
+/**
+ * Next transaction sequence (nonce) that accounts for locally-known pending operations.
+ *
+ * The network sequence source (indexer or a load-balanced RPC) can lag behind a
+ * just-broadcast transaction and briefly return an already-used nonce, causing a
+ * "nonce too low" on the next send. Taking the max with the highest pending
+ * sequence self-corrects once the network source catches up, without waiting for a sync.
+ */
+export function nextSequenceWithPending(
+  pendingOperations: Operation[],
+  networkSequence: bigint,
+): bigint {
+  let highestPending = -1n;
+  for (const op of pendingOperations) {
+    const rawSequence = op.transactionSequenceNumber;
+    // Skip missing or non-integer sequences; `.toFixed()` (not `.toString()`) avoids the
+    // exponential notation that BigInt() cannot parse.
+    if (rawSequence === undefined || rawSequence === null || !rawSequence.isInteger()) {
+      continue;
+    }
+    const seq = BigInt(rawSequence.toFixed());
+    if (seq > highestPending) highestPending = seq;
+  }
+  const pendingFloor = highestPending >= 0n ? highestPending + 1n : 0n;
+  return networkSequence > pendingFloor ? networkSequence : pendingFloor;
+}
+
 // Used for token sub-accounts: lock `op.value` for pending ops that should reduce token spendable.
 // This includes OUT-family and STAKE-family types (stake-family is fee-only on native; see getOperationAmountNumber).
 function isOutgoingOperation(op: Operation): boolean {
