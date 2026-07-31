@@ -1,6 +1,6 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { AddAddressPlaceholderViewProps } from "./types";
+import type { AddAddressPlaceholderViewProps } from "../../Flow/types";
 
 export function ContactsAddAddressPlaceholderView({
   title,

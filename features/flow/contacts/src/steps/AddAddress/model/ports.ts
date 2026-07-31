@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { AddAddressCurrencySelection } from "../types";
+import type { AddAddressCurrencySelection } from "../Flow/types";
 export type {
   ContactsAddressValidationPort,
   ContactsAddressValidationResult,

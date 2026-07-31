@@ -3,7 +3,7 @@ import type {
   AddressLabelConfiguration,
   ContactsAddAddressEntryWebProps,
   ContactsAddAddressEntryWebViewProps,
-} from "./ContactsAddAddressEntry.web.types";
+} from "../ContactsAddAddressEntry.web.types";
 
 function getAddressLabelConfiguration({
   addressLabel,

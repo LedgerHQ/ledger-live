@@ -4,9 +4,9 @@ import {
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   ContactAddressValueSchema,
 } from "@domain/entity-contact";
-import type { ContactsAddAddressNameLabels } from "./AddressName/types";
-import type { ContactsAddAddressEntryWebProps } from "./ContactsAddAddressEntry.web.types";
-import type { AddAddressEntryLabels } from "./types";
+import type { ContactsAddAddressNameLabels } from "../../AddressName/types";
+import type { ContactsAddAddressEntryWebProps } from "../ContactsAddAddressEntry.web.types";
+import type { AddAddressEntryLabels } from "../../Flow/types";
 import { useContactsAddAddressEntryViewModel } from "./useContactsAddAddressEntryViewModel.web";
 
 const labels: AddAddressEntryLabels = {

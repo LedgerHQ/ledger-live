@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { AddAddressPlaceholderViewProps } from "../types";
+import type { AddAddressPlaceholderViewProps } from "../Flow/types";
 
 export function ContactsAddAddressCompletion({
   title,

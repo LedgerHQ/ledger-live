@@ -4,7 +4,7 @@ import type {
   AddAddressLabelState,
   AddAddressNameLabels,
   ValidAddAddressEntryState,
-} from "../types";
+} from "../Flow/types";
 
 export type ContactsAddAddressNameLabels = Readonly<{
   inputLabel: string;

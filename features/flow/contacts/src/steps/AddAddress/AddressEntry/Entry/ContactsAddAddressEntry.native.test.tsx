@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
-import type { AddAddressEntryLabels, AddAddressEntryState } from "./types";
+import type { AddAddressEntryLabels, AddAddressEntryState } from "../../Flow/types";
 import { ContactsAddAddressEntry } from "./ContactsAddAddressEntry.native";
 
 const labels: AddAddressEntryLabels = {

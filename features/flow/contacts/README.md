@@ -92,8 +92,15 @@ src/
 │   │   ├── model/                       # Contact-name validation and creation contract
 │   │   └── index.ts / web.ts / native.ts
 │   ├── AddAddress/                      # Shared address-entry flow and native step content
+│   │   ├── AddressEntry/                # Shared types and dumb platform views
+│   │   │   ├── Entry/                   # Address-entry containers, view models and tests
+│   │   │   └── Placeholder/             # Temporary native state and test
+│   │   ├── AddressName/                 # Web address-label field
+│   │   ├── Completion/                  # Web success content
+│   │   ├── CurrencySelection/           # MAD selection view model
+│   │   ├── Flow/                        # Session state and transitions
 │   │   ├── model/                       # Network resolver, MAD port and address validation
-│   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
+│   │   └── index.ts / web.ts / native.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
 │   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)
 │   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts

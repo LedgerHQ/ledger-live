@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useContactsFeature, type ContactsFeaturePlatform } from "../../featureFlags";
-import type { ContactsCurrencySelectionPort } from "./model/ports";
-import { resolveEligibleAddressCurrencyIds } from "./model/resolveEligibleAddressCurrencyIds";
-import type { AddAddressCurrencySelection } from "./types";
+import { useContactsFeature, type ContactsFeaturePlatform } from "../../../featureFlags";
+import type { ContactsCurrencySelectionPort } from "../model/ports";
+import { resolveEligibleAddressCurrencyIds } from "../model/resolveEligibleAddressCurrencyIds";
+import type { AddAddressCurrencySelection } from "../Flow/types";
 
 export type UseAddAddressCurrencySelectionViewModelOptions = Readonly<{
   platform: ContactsFeaturePlatform;

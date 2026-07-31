@@ -9,7 +9,7 @@ import {
   featureFlagsReducer,
   type Features,
 } from "@shared/feature-flags";
-import type { ContactsCurrencySelectionPort } from "./model/ports";
+import type { ContactsCurrencySelectionPort } from "../model/ports";
 import {
   type AddAddressCurrencySelectionResult,
   useAddAddressCurrencySelectionViewModel,

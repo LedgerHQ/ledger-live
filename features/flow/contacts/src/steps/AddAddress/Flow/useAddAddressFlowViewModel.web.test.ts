@@ -7,7 +7,10 @@ import {
 } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
+import type {
+  ContactsAddressValidationPort,
+  ContactsAddressValidationResult,
+} from "../model/ports";
 import { useAddAddressFlowViewModel } from "./useAddAddressFlowViewModel";
 
 const ETHEREUM_CURRENCY_ID = getCryptoCurrencyById("ethereum").id;

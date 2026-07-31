@@ -18,7 +18,7 @@ export {
   type AddAddressCurrencySelectionResult,
   type AddAddressCurrencySelectionViewModel,
   type UseAddAddressCurrencySelectionViewModelOptions,
-} from "./useAddAddressCurrencySelectionViewModel";
+} from "./CurrencySelection/useAddAddressCurrencySelectionViewModel";
 export type {
   AddAddressContact,
   AddAddressCurrencySelection,
@@ -33,8 +33,8 @@ export type {
   AddAddressPlaceholderViewProps,
   ValidAddAddressEntryState,
   ValidAddAddressLabelState,
-} from "./types";
+} from "./Flow/types";
 export {
   useAddAddressFlowViewModel,
   type UseAddAddressFlowViewModelOptions,
-} from "./useAddAddressFlowViewModel";
+} from "./Flow/useAddAddressFlowViewModel";

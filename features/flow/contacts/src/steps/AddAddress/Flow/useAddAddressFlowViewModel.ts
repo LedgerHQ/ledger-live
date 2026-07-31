@@ -7,7 +7,10 @@ import {
   type ContactAddressLabel,
   type ContactId,
 } from "@domain/entity-contact";
-import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
+import type {
+  ContactsAddressValidationPort,
+  ContactsAddressValidationResult,
+} from "../model/ports";
 import type {
   AddAddressContact,
   AddAddressCurrencySelection,

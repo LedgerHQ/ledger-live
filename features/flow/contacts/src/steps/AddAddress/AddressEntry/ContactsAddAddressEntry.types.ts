@@ -1,4 +1,8 @@
-import type { AddAddressEntryLabels, AddAddressEntryState, AddAddressInputSource } from "./types";
+import type {
+  AddAddressEntryLabels,
+  AddAddressEntryState,
+  AddAddressInputSource,
+} from "../Flow/types";
 
 export type ContactsAddAddressEntryProps = Readonly<{
   addressEntry: AddAddressEntryState;

@@ -7,7 +7,7 @@ import {
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import type { AddAddressLabelState, AddAddressNameLabels } from "../types";
+import type { AddAddressLabelState, AddAddressNameLabels } from "../Flow/types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName.native";
 
 const labels: AddAddressNameLabels = {

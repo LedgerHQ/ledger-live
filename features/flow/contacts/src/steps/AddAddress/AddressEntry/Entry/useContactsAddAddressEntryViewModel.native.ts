@@ -2,8 +2,8 @@ import { useCallback } from "react";
 import type {
   ContactsAddAddressEntryProps,
   ContactsAddAddressEntryViewProps,
-} from "./ContactsAddAddressEntry.types";
-import type { AddAddressEntryLabels, AddAddressEntryState } from "./types";
+} from "../ContactsAddAddressEntry.types";
+import type { AddAddressEntryLabels, AddAddressEntryState } from "../../Flow/types";
 
 type AddressInputPresentation = Readonly<{
   status?: "error" | "success";

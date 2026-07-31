@@ -1,11 +1,11 @@
 import type { ChangeEvent, ClipboardEvent } from "react";
-import type { ContactsAddAddressNameLabels } from "./AddressName/types";
+import type { ContactsAddAddressNameLabels } from "../AddressName/types";
 import type {
   AddAddressEntryLabels,
   AddAddressEntryState,
   AddAddressInputSource,
   AddAddressLabelState,
-} from "./types";
+} from "../Flow/types";
 
 export type AddressLabelConfiguration = Readonly<{
   addressLabel: AddAddressLabelState;
