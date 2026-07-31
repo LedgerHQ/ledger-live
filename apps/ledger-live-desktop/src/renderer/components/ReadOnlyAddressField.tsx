@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { clipboard } from "electron";
+import { readText, writeText } from "~/renderer/clipboard";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import IconCopy from "~/renderer/icons/Copy";
@@ -80,12 +80,13 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
   const [clibboardChanged, setClipboardChanged] = useState(false);
   const copyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const onCopy = useCallback(() => {
-    clipboard.writeText(address);
+    writeText(address);
     setCopyFeedback(true);
     clearTimeout(copyTimeout.current);
     setTimeout(() => {
-      const copiedAddress = clipboard.readText();
-      if (copiedAddress !== address) {
+      const copiedAddress = readText();
+      // `null` means the clipboard could not be read, which is not a tampering signal.
+      if (copiedAddress !== null && copiedAddress !== address) {
         setClipboardChanged(true);
       }
     }, 300);

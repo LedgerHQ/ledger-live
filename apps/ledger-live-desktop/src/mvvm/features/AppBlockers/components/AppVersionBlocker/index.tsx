@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersionBlockCheck";
 import { AppBlocker } from "../AppBlocker";
 import { version as LLD_VERSION } from "../../../../../../package.json";
-import os from "os";
+import { osPlatform } from "~/system";
 import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
@@ -50,7 +50,7 @@ export function AppVersionBlocker({ children }: { children: React.ReactNode }) {
   const { shouldUpdate } = useAppVersionBlockCheck({
     appKey: "lld",
     appVersion: LLD_VERSION,
-    platform: platformsNames[os.platform()],
+    platform: platformsNames[osPlatform()],
     getConfigValue: () => configLlMinVersion,
   });
   const updaterContext = useContext(UpdaterContext);

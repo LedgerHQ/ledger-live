@@ -7,7 +7,6 @@
 */
 
 import { ipcRenderer } from "electron";
-import logo from "./logo.svg";
 import { palettes } from "@ledgerhq/react-ui/styles/index";
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
@@ -52,14 +51,6 @@ const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palette
 ipcRenderer.send("set-background-color", palette.background.default);
 
 window.addEventListener("DOMContentLoaded", () => {
-  const imgNode = document.getElementById("loading-logo") as unknown as HTMLImageElement;
-  const loaderContainer = document.getElementById("loader-container");
-  if (imgNode && loaderContainer) {
-    imgNode.src = logo;
-    loaderContainer.style.backgroundColor = "#000000";
-    loaderContainer.classList.add("fade-out");
-  }
-
   // Send ready-to-show immediately
   setTimeout(() => {
     ipcRenderer.send("ready-to-show", {});
