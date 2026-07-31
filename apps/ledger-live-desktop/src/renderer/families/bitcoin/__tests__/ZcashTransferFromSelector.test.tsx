@@ -58,35 +58,35 @@ describe("ZcashTransferFromSelector", () => {
     mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
   });
 
-  it("renders Public and Ironwood cards with Public active by default and persists the default to the transaction", () => {
+  it("renders Public and Private cards with Public active by default and persists the default to the transaction", () => {
     const onChange = renderSelector(buildAccount(), {});
 
     expect(screen.getByTestId("zcash-transfer-from-selector")).toBeVisible();
     expect(screen.getByTestId("transfer-from-public")).toBeVisible();
-    expect(screen.getByTestId("transfer-from-ironwood")).toBeVisible();
-    expect(screen.queryByTestId("transfer-from-private")).not.toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-private")).toBeVisible();
+    expect(screen.queryByTestId("transfer-from-ironwood")).not.toBeInTheDocument();
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
   it("does not rewrite the default when a sender is already set", () => {
-    const onChange = renderSelector(buildAccount(), { sender: "ironwood" } as Partial<Transaction>);
+    const onChange = renderSelector(buildAccount(), { sender: "private" } as Partial<Transaction>);
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("selects Ironwood when the Ironwood card is clicked", () => {
+  it("selects Private when the Private card is clicked", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {});
     onChange.mockClear();
 
-    fireEvent.click(screen.getByTestId("transfer-from-ironwood"));
+    fireEvent.click(screen.getByTestId("transfer-from-private"));
 
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "ironwood" }));
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "private" }));
   });
 
-  it("selects Public when the Public card is clicked from an Ironwood selection", () => {
+  it("selects Public when the Public card is clicked from a Private selection", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {
-      sender: "ironwood",
+      sender: "private",
     } as Partial<Transaction>);
 
     fireEvent.click(screen.getByTestId("transfer-from-public"));
@@ -94,19 +94,19 @@ describe("ZcashTransferFromSelector", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
-  it("disables the Ironwood card when no FVK is available", () => {
+  it("disables the Private card when no FVK is available", () => {
     renderSelector(buildAccount({ ufvk: null }), { sender: "public" } as Partial<Transaction>);
-    expect(screen.getByTestId("transfer-from-ironwood")).toBeDisabled();
+    expect(screen.getByTestId("transfer-from-private")).toBeDisabled();
   });
 
-  it("enables the Ironwood card when an FVK is available", () => {
+  it("enables the Private card when an FVK is available", () => {
     renderSelector(buildAccount({ ufvk: "uview-test" }), {
       sender: "public",
     } as Partial<Transaction>);
-    expect(screen.getByTestId("transfer-from-ironwood")).not.toBeDisabled();
+    expect(screen.getByTestId("transfer-from-private")).not.toBeDisabled();
   });
 
-  it("shows the correct ironwood balance on the Ironwood card", () => {
+  it("shows the spendable Ironwood balance on the Private card", () => {
     renderSelector(
       buildAccount({
         ironwoodBalance: new BigNumber(50_000_000),
@@ -117,10 +117,10 @@ describe("ZcashTransferFromSelector", () => {
       {},
     );
 
-    expect(screen.getByTestId("transfer-from-ironwood")).toHaveTextContent(/0\.5 ZEC/);
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
   });
 
-  it("shows 0 ZEC on the Ironwood card when ironwoodBalance is 0", () => {
+  it("shows 0 ZEC on the Private card when the Ironwood balance is 0", () => {
     renderSelector(
       buildAccount({
         ironwoodBalance: new BigNumber(0),
@@ -131,7 +131,7 @@ describe("ZcashTransferFromSelector", () => {
       {},
     );
 
-    expect(screen.getByTestId("transfer-from-ironwood")).toHaveTextContent(/0 ZEC/);
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0 ZEC/);
   });
 
   it("excludes shielded holdings from the transparent (Public) balance", () => {
