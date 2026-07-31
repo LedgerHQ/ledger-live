@@ -9005,11 +9005,10 @@
         "title": "Set up Aleo private balance",
         "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
         "bullets": [
-          "Read-only access to decrypt your private balance",
-          "Ledger cannot send or spend your funds",
-          "Only you can sign and spend your funds",
-          "Proof generation is handled by third-party prover services to ensure fast processing",
-          "Provers cannot access or spend your funds"
+          "View key enables read-only access to decrypt your private balance inside Ledger Wallet",
+          "Only you can sign and spend your funds via Ledger Device Signer",
+          "Aleo transactions require zero-knowledge proofs, which take significant computing power",
+          "Proof generation is handled by external Aleo Network service to expedite transactions"
         ],
         "cta": {
           "allow": "Allow",
