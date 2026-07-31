@@ -8,6 +8,10 @@ import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/evm/bridge/mock";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 
@@ -21,12 +25,12 @@ const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateM
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = {
   type: "TokenCurrency" as const,
-  id: "ethereum/erc20/usd_tether__erc20_",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
   name: "Tether USD (ERC-20)",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20" as const,
 };
 

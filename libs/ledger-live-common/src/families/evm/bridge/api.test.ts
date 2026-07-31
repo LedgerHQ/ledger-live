@@ -30,9 +30,9 @@ describe("evm bridge", () => {
         ) {
           return {
             type: "TokenCurrency",
-            id: "ethereum/erc20/usd__coin",
+            id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd__coin"),
             contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-            parentCurrencyId: "ethereum",
+            parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
             tokenType: "erc20",
             name: "USD Coin",
             ticker: "USDC",
@@ -48,9 +48,11 @@ describe("evm bridge", () => {
         ) {
           return {
             type: "TokenCurrency",
-            id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+            id: TokenCurrencyIdSchema.parse(
+              "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+            ),
             contractAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
-            parentCurrencyId: "sonic",
+            parentCurrencyId: CryptoCurrencyIdSchema.parse("sonic"),
             tokenType: "erc20",
             name: "Bridged USDC (Sonic Labs)",
             ticker: "USDC",

@@ -89,7 +89,7 @@ describe("filterAccountsExcludingBlacklisted", () => {
   const btcAccount = genAccount("btc", {
     currency: {
       ...mockEthereumCurrency,
-      id: "bitcoin",
+      id: CryptoCurrencyIdSchema.parse("bitcoin"),
       name: "Bitcoin",
       ticker: "BTC",
       type: "CryptoCurrency",

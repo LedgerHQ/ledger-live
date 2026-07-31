@@ -1,4 +1,5 @@
 import { renderHook, withReadOnlyDisabled, act } from "@tests/test-renderer";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import { track } from "~/analytics";
@@ -167,7 +168,10 @@ describe("useTopBarViewModel", () => {
       mockedUseSyncIndicator.mockReturnValue({
         ...defaultSyncState,
         isError: true,
-        errorCurrencyIds: ["bitcoin", "ethereum"],
+        errorCurrencyIds: [
+          CryptoCurrencyIdSchema.parse("bitcoin"),
+          CryptoCurrencyIdSchema.parse("ethereum"),
+        ],
       });
 
       const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));

@@ -10,6 +10,10 @@ import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -41,12 +45,12 @@ LiveConfig.setConfig({
 });
 const USDT = {
   type: "TokenCurrency" as const,
-  id: "ethereum/erc20/usd_tether__erc20_",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_tether__erc20_"),
   name: "Tether USD (ERC-20)",
   ticker: "USDT",
   units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
   contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20" as const,
 };
 
