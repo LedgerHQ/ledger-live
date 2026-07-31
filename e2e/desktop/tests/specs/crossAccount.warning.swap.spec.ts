@@ -49,7 +49,7 @@ test.describe("Swap - cross account warning", () => {
         annotation: [
           {
             type: "TMS",
-            description: "LIVE-19543", // to change
+            description: "LIVE-19543",
           },
         ],
       },
