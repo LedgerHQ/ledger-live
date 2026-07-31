@@ -16,7 +16,7 @@ import Label from "~/renderer/components/Label";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
-type Sender = "public" | "ironwood";
+type Sender = "public" | "private";
 
 type Props = {
   account: Account;
@@ -86,12 +86,14 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   if (!active) return null;
 
-  const sender: Sender = tx.sender === "ironwood" ? "ironwood" : "public";
+  const sender: Sender = tx.sender === "private" ? "private" : "public";
 
   const privateInfo = (account as ZcashAccount).privateInfo;
   const fvkAvailable = Boolean(privateInfo?.ufvk);
   const orchardBalance = privateInfo?.orchardBalance ?? BigNumber(0);
   const saplingBalance = privateInfo?.saplingBalance ?? BigNumber(0);
+  // Only the Ironwood pool is spendable from the send flow; Sapling/Orchard send
+  // flows are deprecated, so the private card shows the Ironwood balance.
   const ironwoodBalance = privateInfo?.ironwoodBalance ?? BigNumber(0);
 
   const totalBalance = account.balance ?? BigNumber(0);
@@ -102,7 +104,7 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
-  const ironwoodLabel = formatCurrencyUnit(unit, ironwoodBalance, formatConfig);
+  const privateLabel = formatCurrencyUnit(unit, ironwoodBalance, formatConfig);
 
   const select = (next: Sender) => {
     if (next === sender) return;
@@ -137,20 +139,20 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
         <Card
           as="button"
           type="button"
-          $active={sender === "ironwood"}
-          aria-pressed={sender === "ironwood"}
+          $active={sender === "private"}
+          aria-pressed={sender === "private"}
           disabled={!fvkAvailable}
-          onClick={() => select("ironwood")}
-          data-testid="transfer-from-ironwood"
+          onClick={() => select("private")}
+          data-testid="transfer-from-private"
         >
           <CardTitle>
-            <Trans i18nKey="zcash.shielded.send.transferFrom.ironwood.title" />
+            <Trans i18nKey="zcash.shielded.send.transferFrom.private.title" />
           </CardTitle>
           <CardSubtitle>
-            <Trans i18nKey="zcash.shielded.send.transferFrom.ironwood.subtitle" />
+            <Trans i18nKey="zcash.shielded.send.transferFrom.private.subtitle" />
           </CardSubtitle>
           <CardAmount>
-            <Discreet>{ironwoodLabel}</Discreet>
+            <Discreet>{privateLabel}</Discreet>
           </CardAmount>
         </Card>
       </Box>

@@ -19,15 +19,14 @@ import { resolveTransparentUtxos } from "./statusHelpers";
 
 // The V6 builder mirrors zcash-utils' own precondition: the transaction must carry
 // an Ironwood bundle, which an Ironwood spend or an Ironwood output creates. Those
-// are the flows below -- a shielded recipient resolves to the Ironwood pool there,
-// which is where NU6.3 sends newly shielded funds.
+// are the flows below -- a shielded send spends Ironwood notes ("shielded",
+// "shielded-to-transparent") and a shielded recipient resolves to the Ironwood
+// pool ("transparent-to-shielded"), which is where NU6.3 sends newly shielded funds.
 //
-// The other flows stay on the V5 builder: t→t has no shielded bundle at all, and
-// the Orchard flows spend Orchard notes, which the V6 builder cannot take (its
-// `spends` read each note's `position` from the Ironwood commitment tree).
+// Only t→t ("transparent") stays on the V5 builder: it has no shielded bundle at all.
 const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
-  "ironwood",
-  "ironwood-to-transparent",
+  "shielded",
+  "shielded-to-transparent",
   "transparent-to-shielded",
 ]);
 
@@ -40,12 +39,11 @@ const IRONWOOD_BUNDLE_TRANSFER_TYPES = new Set<Transaction["transferType"]>([
  * PSBT fallback in coin-zcash.
  *
  * `logic.combine` still finalizes through the V5 path: @ledgerhq/zcash-utils
- * exposes no V6 counterpart, so a V6 PCZT gets as far as device signing.
+ * exposes no V6 counterpart, so a V6 PCZT (any shielded or shielding flow) gets
+ * as far as device signing.
  *
- * One flow has no builder at all past NU6.3: a shielded send to a third party
- * (z→z). It would need Orchard spends alongside an Ironwood output, and the V6
- * builder only takes Ironwood spends — NU6.3 makes the Orchard pool spendable but
- * no longer creditable.
+ * Every shielded send spends the Ironwood pool, so z→z and z→t both build as V6
+ * PCZTs (Ironwood spends). The deprecated Sapling/Orchard send flows are gone.
  */
 export const buildSignOperation =
   (signerContext: SignerContext): AccountBridge<Transaction, ZcashAccount>["signOperation"] =>

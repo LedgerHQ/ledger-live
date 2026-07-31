@@ -8915,9 +8915,9 @@
             "title": "Public balance",
             "subtitle": "Transparent"
           },
-          "ironwood": {
-            "title": "Ironwood balance",
-            "subtitle": "Ironwood"
+          "private": {
+            "title": "Private balance",
+            "subtitle": "Shielded"
           }
         },
         "memo": {
