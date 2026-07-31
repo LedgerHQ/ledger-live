@@ -3,17 +3,14 @@
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
 import React from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@ledgerhq/ledger-wallet-framework/types";
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";

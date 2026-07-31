@@ -1,5 +1,5 @@
 import { renderHook, withReadOnlyDisabled, act } from "@tests/test-renderer";
-import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import { track } from "~/analytics";

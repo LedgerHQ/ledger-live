@@ -2,16 +2,13 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/evm/bridge/mock";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import {
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-} from "@ledgerhq/ledger-wallet-framework/types";
 import { genAccount } from "../../../mock/account";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 
