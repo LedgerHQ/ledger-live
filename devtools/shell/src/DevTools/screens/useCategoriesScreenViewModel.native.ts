@@ -9,12 +9,13 @@ export interface CategoriesScreenViewProps {
   items: CatalogItem[];
   query: string;
   onQueryChange: (query: string) => void;
+  footer?: React.ReactNode;
 }
 
 export function useCategoriesScreenViewModel({
   navigation,
 }: CategoriesScreenProps): CategoriesScreenViewProps {
-  const { categories, query, setQuery } = useDevToolsShell();
+  const { categories, query, setQuery, footer } = useDevToolsShell();
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: "DevTools" });
@@ -34,5 +35,5 @@ export function useCategoriesScreenViewModel({
     [filtered, navigation],
   );
 
-  return { items, query, onQueryChange: setQuery };
+  return { items, query, onQueryChange: setQuery, footer };
 }

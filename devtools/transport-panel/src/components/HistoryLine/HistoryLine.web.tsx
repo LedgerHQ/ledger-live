@@ -1,9 +1,6 @@
 import type { Envelope, MessageMap } from "@devtools/transport";
 import { ArrowUp, ArrowDown } from "@ledgerhq/lumen-ui-react/symbols";
-import { useMemo, useState } from "react";
-
-const COLLAPSED_LIMIT = 50;
-const EXPANDED_LIMIT = 500;
+import { useHistoryLine } from "../../hooks";
 
 interface HistoryLineProps<M extends MessageMap> {
   readonly envelope: Envelope<M>;
@@ -11,21 +8,11 @@ interface HistoryLineProps<M extends MessageMap> {
 }
 
 export function HistoryLine<M extends MessageMap>({ envelope, localOrigin }: HistoryLineProps<M>) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const isSent = envelope.origin === localOrigin;
+  const { isExpanded, setIsExpanded, isSent, collapsedText, expandedText } = useHistoryLine(
+    envelope,
+    localOrigin,
+  );
   const Arrow = isSent ? ArrowUp : ArrowDown;
-
-  const collapsed = `#${envelope.seq} ${String(envelope.kind)} ${envelope.id} ${JSON.stringify(envelope.payload)}`;
-  const collapsedText =
-    collapsed.length > COLLAPSED_LIMIT ? collapsed.slice(0, COLLAPSED_LIMIT) + "…" : collapsed;
-
-  const expandedText = useMemo(() => {
-    const payloadJson = JSON.stringify(envelope.payload, null, 2);
-    const payload =
-      payloadJson.length > EXPANDED_LIMIT ? "Output too big to display" : envelope.payload;
-    return JSON.stringify({ ...envelope, payload }, null, 2);
-  }, [envelope]);
 
   return (
     <button
