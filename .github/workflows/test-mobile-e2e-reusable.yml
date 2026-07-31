@@ -1329,12 +1329,12 @@ jobs:
       ANDROID_LABEL: ${{ inputs.tests_type != 'iOS Only' && 'Android' || '' }}
     steps:
       - name: Report e2e results to Slack
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@test/e2e-slack-report-ci-validation
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          channel: CTMQ0S5SB
-          # Second channel only on scheduled runs / opt-in.
-          secondary_channel: ${{ (inputs.slack_notif || github.event_name == 'schedule') && 'C05FKJ7DFAP' || '' }}
+          # TEST BRANCH: route to the test channel, single post. DO NOT MERGE.
+          channel: C0BLPFRTXM1
+          secondary_channel: ""
           product: "Ledger Live Mobile E2E"
           ref: ${{ env.REF }}
           smoke_tests: ${{ inputs.smoke_tests }}

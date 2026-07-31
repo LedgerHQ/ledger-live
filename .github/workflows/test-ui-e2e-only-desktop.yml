@@ -430,7 +430,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@test/e2e-slack-report-ci-validation
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
@@ -474,7 +474,7 @@ jobs:
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
         id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@test/e2e-slack-report-ci-validation
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
@@ -602,10 +602,11 @@ jobs:
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - name: Report e2e results to Slack
-        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@test/e2e-slack-report-ci-validation
         with:
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          channel: C05FKJ7DFAP
+          # TEST BRANCH: route to the test channel. DO NOT MERGE.
+          channel: C0BLPFRTXM1
           product: "Ledger Live Desktop E2E"
           ref: ${{ env.REF }}
           smoke_tests: ${{ inputs.smoke_tests }}
