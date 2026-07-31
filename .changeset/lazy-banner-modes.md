@@ -1,5 +1,7 @@
 ---
+"@features/flow-lazy-onboarding-banner": patch
 "@shared/feature-flags": minor
+"live-mobile": minor
 ---
 
-Add the `lazyOnboardingBanner` feature flag with shop direct and feature intro modes
+Add the shared lazy onboarding banner flow, its Mobile portfolio view and configurable Shop link feature flag.

@@ -25,8 +25,18 @@ const MockOnboardingWidget = jest.mocked(OnboardingWidget);
 const MockLNUpsellBanner = jest.mocked(LNUpsellBanner);
 const MockContentCardsLocation = jest.mocked(ContentCardsLocation);
 
+const hiddenLazyOnboardingBanner = {
+  isShown: false,
+  title: "Discover Ledger devices",
+  description: "Explore our latest products and accessories",
+  imageUrl: "lazy-onboarding-banner.png",
+  onPress: jest.fn(),
+  onClose: jest.fn(),
+};
+
 const baseViewModel = {
   shouldShowOnboardingWidget: false,
+  lazyOnboardingBanner: hiddenLazyOnboardingBanner,
   contentCardsPaddingTop: undefined,
   hasAssets: false,
   shouldDisplayRecover: false,
@@ -55,6 +65,22 @@ describe("PortfolioBannersSection", () => {
   it("renders the LN upsell banner when isLNUpsellBannerShown is true", () => {
     renderSection({ isLNUpsellBannerShown: true });
     expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+    expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+    expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
+  });
+
+  it("renders the lazy onboarding banner with priority over other banners", () => {
+    mockUseViewModel.mockReturnValue({
+      ...baseViewModel,
+      lazyOnboardingBanner: { ...hiddenLazyOnboardingBanner, isShown: true },
+      shouldShowOnboardingWidget: true,
+      shouldDisplayRecover: true,
+    });
+
+    render(<PortfolioBannersSection isFirst={false} isLNUpsellBannerShown />);
+
+    expect(screen.getByText("Discover Ledger devices")).toBeVisible();
+    expect(screen.queryByTestId("mock-lns-banner")).toBeNull();
     expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
   });

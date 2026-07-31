@@ -9518,6 +9518,10 @@
       "cta": "Learn more"
     }
   },
+  "lazyOnboardingBanner": {
+    "title": "Discover Ledger devices",
+    "description": "Explore our latest products and accessories"
+  },
   "marketBanner": {
     "title": "Market",
     "viewAll": "View all",
