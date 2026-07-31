@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { showOpenDialog, showSaveDialog } from "~/renderer/dialog";
 
 import React, { useCallback } from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
@@ -32,61 +32,57 @@ const RunLocalAppButton = () => {
   const onExportLocalManifest = useCallback(
     (manifest: LiveAppManifest) => {
       const { id, name } = manifest;
-      ipcRenderer
-        .invoke("show-save-dialog", {
-          title: "Export Manifest",
-          defaultPath: `${name}-manifest.json`,
-          buttonLabel: "Export",
-          filters: [{ name: "JSON", extensions: ["json"] }],
-        })
-        .then(function (response) {
-          if (!response.canceled && response.filePath) {
-            const exportedManifest = localLiveApps.find(
-              (manifest: LiveAppManifest) => manifest.id === id,
-            );
+      showSaveDialog({
+        title: "Export Manifest",
+        defaultPath: `${name}-manifest.json`,
+        buttonLabel: "Export",
+        filters: [{ name: "JSON", extensions: ["json"] }],
+      }).then(function (response) {
+        if (!response.canceled && response.filePath) {
+          const exportedManifest = localLiveApps.find(
+            (manifest: LiveAppManifest) => manifest.id === id,
+          );
 
-            const manifestData = JSON.stringify(exportedManifest, null, 2);
-            try {
-              writeFile(response.filePath, manifestData, "utf-8", () =>
-                console.log("File exported successfully!"),
-              );
-            } catch (parseError) {
-              console.warn(parseError);
-            }
+          const manifestData = JSON.stringify(exportedManifest, null, 2);
+          try {
+            writeFile(response.filePath, manifestData, "utf-8", () =>
+              console.log("File exported successfully!"),
+            );
+          } catch (parseError) {
+            console.warn(parseError);
           }
-        });
+        }
+      });
     },
     [localLiveApps],
   );
 
   const onBrowseLocalManifest = useCallback(() => {
-    ipcRenderer
-      .invoke("show-open-dialog", {
-        properties: ["openFile"],
-      })
-      .then(function (response) {
-        if (!response.canceled) {
-          const fileName = response.filePaths[0];
-          readFile(fileName, (readError, data) => {
-            if (!readError) {
-              try {
-                const manifest = JSON.parse(data.toString());
-                if (Array.isArray(manifest)) {
-                  manifest.forEach(m => {
-                    addLocalManifest(m);
-                  });
-                } else {
-                  addLocalManifest(manifest);
-                }
-              } catch (parseError) {
-                console.log(parseError);
+    showOpenDialog({
+      properties: ["openFile"],
+    }).then(function (response) {
+      if (!response.canceled) {
+        const fileName = response.filePaths[0];
+        readFile(fileName, (readError, data) => {
+          if (!readError) {
+            try {
+              const manifest = JSON.parse(data.toString());
+              if (Array.isArray(manifest)) {
+                manifest.forEach(m => {
+                  addLocalManifest(m);
+                });
+              } else {
+                addLocalManifest(manifest);
               }
+            } catch (parseError) {
+              console.log(parseError);
             }
-          });
-        } else {
-          console.log("no file selected");
-        }
-      });
+          }
+        });
+      } else {
+        console.log("no file selected");
+      }
+    });
   }, [addLocalManifest]);
 
   const onOpenModal = useCallback(
