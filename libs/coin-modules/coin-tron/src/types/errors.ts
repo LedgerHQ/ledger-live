@@ -157,3 +157,22 @@ export class NotEnoughGas extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+/** A Tronify REST call returned a non-success `resCode`. Carries the raw code. */
+export class TronifyApiError extends Error {
+  override name = "TronifyApiError";
+  resCode?: number;
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronifyApiError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+/** An energy-rent operation was requested but no provider is configured in coin-config. */
+export class EnergyRentProviderNotConfigured extends Error {
+  override name = "EnergyRentProviderNotConfigured";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "EnergyRentProviderNotConfigured");
+    if (fields) Object.assign(this, fields);
+  }
+}
