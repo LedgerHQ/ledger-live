@@ -1,5 +1,5 @@
 import type { ApplicationDependency } from "@ledgerhq/device-management-kit";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AccountDescriptor } from "../models";
 import { requireChainId } from "./eth-vault-products";
 import type { NormalizedDefiProduct, NormalizedDefiTransaction } from "./normalize";

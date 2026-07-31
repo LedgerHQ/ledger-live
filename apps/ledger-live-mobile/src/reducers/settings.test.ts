@@ -20,10 +20,8 @@ import reducer, {
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   importSettings,
   setAnalyticsConsentInfo,

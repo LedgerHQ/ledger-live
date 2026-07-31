@@ -1,13 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { CryptoCurrencyIdSchema, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import {
+  CryptoCurrencyIdSchema,
+  getCryptoCurrencyById,
+  type CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import {
   TokenCurrencyIdSchema,
   TokenCurrencySchema,
   type TokenCurrency,
 } from "@domain/entity-currency-token";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 type CryptoCurrencyOverrides = Omit<Partial<CryptoCurrency>, "id"> & { id?: string };
 type TokenCurrencyOverrides = Omit<Partial<TokenCurrency>, "id" | "parentCurrencyId"> & {

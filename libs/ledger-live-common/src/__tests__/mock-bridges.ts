@@ -5,7 +5,7 @@ import { reduce, filter, map } from "rxjs/operators";
 import "./test-helpers/setup";
 import { getAccountBridge, getCurrencyBridge } from "../bridge";
 import { setEnv } from "@shared/env";
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { toAccountRaw, flattenAccounts } from "../account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import { firstValueFrom } from "rxjs";

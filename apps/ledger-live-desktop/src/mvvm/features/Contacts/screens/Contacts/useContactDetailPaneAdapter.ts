@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { ContactId } from "@domain/entity-contact";
 import {
   type AddAddressContact,
+  useContactsMeContact,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   useContactAddressDetailDialog,
@@ -24,8 +25,9 @@ export function useContactDetailPaneAdapter(
   onOpenContact: ContactsListViewProps["onOpenContact"];
 }> {
   const { t } = useTranslation();
+  const meContact = useContactsMeContact();
   const currencyPort = useContactsAddressCurrencyAdapter();
-  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>();
+  const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
   const emptyContact = useEmptyContactDetail(detailContactId);
   const populatedContactDetail = usePopulatedContactDetail(detailContactId, currencyPort);
   const {
@@ -38,10 +40,12 @@ export function useContactDetailPaneAdapter(
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
+      addExternalAddress: t("contacts.addExternalAddress"),
       emptyMeTitle: t("contacts.detail.emptyState.meTitle"),
       emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
@@ -94,7 +98,7 @@ export function useContactDetailPaneAdapter(
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(
     () => ({
       isOpen,
-      contactName: populatedContactDetail?.contact.name ?? "",
+      contactName: populatedContactDetail?.contact.name ?? emptyContact?.name ?? "",
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
@@ -102,6 +106,7 @@ export function useContactDetailPaneAdapter(
     }),
     [
       addressDetailDialogLabels,
+      emptyContact?.name,
       isOpen,
       onCloseAddressDetail,
       populatedContactDetail?.contact.name,

@@ -121,7 +121,15 @@ describe("contact mock factories", () => {
 
     const contacts = mockPopulatedContacts();
 
-    expect(contacts.map(contact => contact.name)).toEqual(["Me", "Ada", "Ben", "Olive"]);
+    expect(contacts.map(contact => contact.name)).toEqual([
+      "Me",
+      "Ada",
+      "Ben",
+      "Charlie",
+      "Diana",
+      "Olive",
+    ]);
+    expect(contacts[0]?.addresses).toHaveLength(3);
     expect(contacts[2]?.addresses).toHaveLength(2);
   });
 });

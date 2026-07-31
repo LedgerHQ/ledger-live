@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking } from "react-native";
 import { log } from "@ledgerhq/logs";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getProviderIconUrl } from "@ledgerhq/live-common/icons/providers/providers";
 import type { AdditionalProviderConfig } from "@ledgerhq/live-common/exchange/providers/swap";
 import { render, screen, waitFor } from "@tests/test-renderer";

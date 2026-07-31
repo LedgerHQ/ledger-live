@@ -10230,6 +10230,16 @@
         "contactDescription": "Save a wallet address to send to {{name}}"
       }
     },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copyAddress": "Copy address",
+      "copied": "Copied",
+      "edit": "Edit",
+      "share": "Share",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
+    },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import CurrencySettings, {
   getCurrencyHasSettings,
   CustomCurrencyHeader,

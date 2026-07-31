@@ -1,6 +1,6 @@
 import { getStateFromPath } from "@react-navigation/native";
 import { Dispatch } from "redux";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { openModularDrawer } from "~/reducers/modularDrawer";
 import { callbackRegistry } from "LLM/features/ModularDrawer/hooks/useCallbackRegistry/registries";
 import { generateCallbackId } from "LLM/features/ModularDrawer/utils/callbackIdGenerator";
