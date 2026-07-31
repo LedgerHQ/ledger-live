@@ -152,6 +152,12 @@ const swaps = [
     xrayTicket: "B2CQA-3907",
     tag: [...deviceTagsWithoutLNS(), "@sui", "@solana", "@family-solana", "@family-sui"],
   },
+  {
+    fromAccount: Account.ALEO_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-????",
+    tag: [...deviceTagsWithoutLNS(), "@aleo", "@family-aleo", "@bitcoin", "@family-bitcoin"],
+  },
   // Temporary removed with Changelly deactivation.
   // {
   //   fromAccount: TokenAccount.CELO_1,
@@ -191,6 +197,10 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: exchangeApp,
+      // FIXME: remove
+      featureFlags: {
+        currencyAleo: { enabled: true },
+      },
 
       cliCommandsOnApp: [
         [

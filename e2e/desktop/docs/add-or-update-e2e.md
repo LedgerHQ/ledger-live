@@ -33,6 +33,15 @@ export SPECULOS_DEVICE=nanoSP
 export MOCK=0
 ```
 
+App versions come from the Provider 1 catalog. To side-load a build the catalog doesn't serve yet
+(pre-release, or one you built yourself), drop the `.elf` under
+`$COINAPPS/<model>/<firmware>/<AppName>/app_<version>.elf` and pin it — catalog display names,
+comma-separated:
+
+```bash
+export E2E_APP_VERSIONS="Exchange:4.4.3,Aleo:1.1.1"
+```
+
 ---
 
 ## Adding New Coin E2E Test

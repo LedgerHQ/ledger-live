@@ -171,7 +171,8 @@ export const getMergedFeatureFlags = ({
         enableModularization: true,
         enableDialogDesktop: true,
         searchDebounceTime: 300,
-        backendEnvironment: "PROD",
+        // FIXME: aleo is not yet in DADA PROD
+        backendEnvironment: "STAGING",
         live_apps_allowlist: [],
         live_apps_blocklist: [],
       },

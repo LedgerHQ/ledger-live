@@ -10,7 +10,6 @@ import {
   liveDataWithRecipientAddressCommand,
   liveDataCommand,
 } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
@@ -256,7 +255,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
     xrayTicket: "B2CQA-4731",
-    extraCliCommands: [shareViewKeyCommand(Account.ALEO_1)],
   },
 ];
 
@@ -267,10 +265,7 @@ test.describe("Send flows", () => {
         teamOwner: Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
-        cliCommands: [
-          liveDataWithRecipientAddressCommand(transaction.transaction),
-          ...(transaction.extraCliCommands ?? []),
-        ],
+        cliCommands: [liveDataWithRecipientAddressCommand(transaction.transaction)],
         env: transaction.disableBroadcast ? { DISABLE_TRANSACTION_BROADCAST: "1" } : {},
         featureFlags: {
           ...FF_NEW_SEND_FLOW_DISABLED,

@@ -459,6 +459,26 @@ export const specs: Specs = {
   },
 };
 
+// Pins app versions the Provider 1 catalog doesn't serve yet, so a locally built
+// .elf in COINAPPS can be side-loaded: E2E_APP_VERSIONS="Exchange:4.4.3,Aleo:1.1.1".
+// Names are catalog display names ("Bitcoin Test", not "Bitcoin_Testnet").
+function getAppVersionOverrides(): [string, string][] {
+  return (process.env.E2E_APP_VERSIONS ?? "")
+    .split(",")
+    .filter(entry => entry.trim())
+    .map((entry): [string, string] => {
+      const separator = entry.lastIndexOf(":");
+      const name = entry.slice(0, separator).trim();
+      const version = entry.slice(separator + 1).trim();
+      invariant(
+        name && version,
+        "E2E_APP_VERSIONS: expected '<App Name>:<version>', got %s",
+        entry,
+      );
+      return [name, version];
+    });
+}
+
 // Resolves DeviceParams from the Provider 1 catalog (app version + firmware) and
 // the spec's model. The app binary path is deterministic via conventionalAppSubpath,
 // so we no longer scan COINAPPS — for local Docker we only verify the expected
@@ -478,6 +498,9 @@ export async function startSpeculos(
   const firmware = await getDeviceFirmwareVersion(model);
 
   const catalogVersions = await getNanoAppCatalogVersionMap(getEnv("E2E_NANO_APP_VERSION_PATH"));
+  for (const [name, version] of getAppVersionOverrides()) {
+    catalogVersions.set(name, version);
+  }
 
   const displayName = spec.currency?.managerAppName || appQuery.appName;
   const appVersion = appQuery.appVersion ?? catalogVersions.get(displayName);
