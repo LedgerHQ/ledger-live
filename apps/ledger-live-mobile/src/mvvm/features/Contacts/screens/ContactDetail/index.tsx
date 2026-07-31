@@ -2,6 +2,7 @@ import React from "react";
 import { ContactDetailView } from "@features/flow-contacts";
 import { TrackScreen } from "~/analytics";
 import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlowDrawer";
+import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
 export function ContactDetailScreen(): React.JSX.Element | null {
@@ -18,6 +19,7 @@ export function ContactDetailScreen(): React.JSX.Element | null {
       {viewModel.addAddressFlowState.status !== "closed" ? (
         <ContactsAddAddressFlowDrawer {...viewModel.addAddressFlowProps} />
       ) : null}
+      <ContactAddressDetailDialogSheet {...viewModel.addressDetailDialog} />
     </>
   );
 }
