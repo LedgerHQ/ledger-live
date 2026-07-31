@@ -22,7 +22,6 @@ const bulletPointTranslationKeys = [
   "aleo.addAccount.stepViewKeyWarning.bullets.1",
   "aleo.addAccount.stepViewKeyWarning.bullets.2",
   "aleo.addAccount.stepViewKeyWarning.bullets.3",
-  "aleo.addAccount.stepViewKeyWarning.bullets.4",
 ];
 
 export function ViewKeyWarning({ onAllow, onCancel }: Props) {
