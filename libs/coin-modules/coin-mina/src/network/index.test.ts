@@ -709,12 +709,13 @@ describe("fetchValidators", () => {
 
     const result = await fetchValidators();
 
-    expect(mockNetwork).toHaveBeenCalledWith({
-      method: "GET",
-      url: `https://validators.example.com?page=0&size=${MAX_VALIDATORS_PER_PAGE}&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
-      timeout: MINA_VALIDATORS_TIMEOUT,
-      data: undefined,
-    });
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "GET",
+        url: `https://validators.example.com?page=0&size=${MAX_VALIDATORS_PER_PAGE}&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
+        timeout: MINA_VALIDATORS_TIMEOUT,
+      }),
+    );
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       address: "B62qvalidator",

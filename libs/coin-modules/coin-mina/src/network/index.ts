@@ -501,6 +501,12 @@ const fetchAllValidatorPages = async (): Promise<ValidatorInfo[]> => {
 
     validators.push(...data.content);
     if (data.last || data.content.length === 0) break;
+    if (currentPage === MAX_VALIDATORS_PAGES - 1) {
+      log(
+        "warn",
+        `[MINA] (fetchAllValidatorPages) Hit MAX_VALIDATORS_PAGES (${MAX_VALIDATORS_PAGES}) without reaching the last page, validator list may be truncated`,
+      );
+    }
   }
 
   return validators.map(validator => ({
@@ -520,6 +526,6 @@ const fetchAllValidatorPages = async (): Promise<ValidatorInfo[]> => {
 
 export const fetchValidators = makeLRUCache(
   fetchAllValidatorPages,
-  () => "",
+  () => getBlockberryUrl(),
   minutes(MINA_VALIDATORS_CACHE_TTL_MINUTES, 1),
 );
