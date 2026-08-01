@@ -110,6 +110,9 @@ function makeTransactions(): Tx[] {
       );
       expect(latestOp.value.gt(0)).toBe(true);
       expect(latestOp.value.gt(prevSub!.balance.times(0.99))).toBe(true);
+      expect(sub!.balance).toEqual(prevSub!.balance.minus(latestOp.value).minus(latestOp.fee));
+      expect(sub!.balance.lte(latestOp.fee.times(10))).toBe(true);
+      expect(sub!.balance.lt(prevSub!.balance.times(0.01))).toBe(true);
     },
   };
 
