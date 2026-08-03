@@ -1,11 +1,12 @@
 import type { FearAndGreedIndex } from "@domain/entity-market-sentiment";
-import { coinMarketCapApi, FIFTEEN_MINUTES_IN_SECONDS } from "@shared/api-services";
+import { coinMarketCapApi } from "@shared/api-services";
 import { transformFearAndGreedResponse } from "./transforms";
-
-export { FIFTEEN_MINUTES_IN_MS } from "@shared/api-services";
 
 /** RTK Query cache tags for the Crypto Fear & Greed index. */
 export const FEAR_AND_GREED_TAGS = ["FearAndGreedLatest"] as const;
+
+// CMC refreshes this index every 15 minutes, so cache and poll on the same cadence.
+const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
 
 /**
  * Crypto Fear & Greed endpoint, injected into the shared CoinMarketCap service api.

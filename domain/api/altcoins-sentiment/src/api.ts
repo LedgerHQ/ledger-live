@@ -1,11 +1,12 @@
 import type { AltcoinSeasonIndex } from "@domain/entity-altcoins-sentiment";
-import { coinMarketCapApi, FIFTEEN_MINUTES_IN_SECONDS } from "@shared/api-services";
+import { coinMarketCapApi } from "@shared/api-services";
 import { transformAltcoinSeasonIndexResponse } from "./transforms";
-
-export { FIFTEEN_MINUTES_IN_MS } from "@shared/api-services";
 
 /** RTK Query cache tags for the Altcoin Season Index. */
 export const ALTCOIN_SEASON_INDEX_TAGS = ["AltcoinSeasonIndexLatest"] as const;
+
+// CMC refreshes this index every 15 minutes, so cache and poll on the same cadence.
+const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
 
 /**
  * Altcoin Season Index endpoint, injected into the shared CoinMarketCap service api.
