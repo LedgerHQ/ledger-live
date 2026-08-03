@@ -48,7 +48,7 @@ config falls back to `74` (VeChain Live is mainnet-only).
 
 | File | Role |
 | --- | --- |
-| `src/thorNode.ts` | `docker compose` lifecycle + `waitForThorReady` (polls `/blocks/best`, reads the genesis chainTag from `/blocks/0`) |
+| `src/thorNode.ts` | `docker compose` lifecycle + `readGenesisChainTag` (reads the genesis chainTag from `/blocks/0`) |
 | `src/signer.ts` | Software secp256k1 signer (via `@vechain/sdk-core`) implementing both the legacy `VechainSigner` and the generic-adapter signer contracts |
 | `src/helpers.ts` | `getBridges(strategy, signer, chainTag)` — wires either the legacy bridge (adapted to `GenericTransaction`) or the generic coin-framework bridges |
 | `src/fixtures.ts` | Currency, VTHO token, account factory, MSW bootstrap |

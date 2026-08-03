@@ -1,6 +1,6 @@
 services:
   thor-solo:
-    image: vechain/thor:v2.4.4
+    image: vechain/thor:v2.4.4@sha256:77792cb1a360b870eb6e9e0df385052df9ea9735754c083c8adda267183ba902
     container_name: coin-tester-vechain
     command: solo --api-addr 0.0.0.0:8669 --api-cors "*" --on-demand
     ports:

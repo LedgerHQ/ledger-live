@@ -7,7 +7,7 @@ import { THOR_SOLO_RPC } from "../thorNode";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { VECHAIN, VTHO, initMSW, makeAccount, registerVthoInMockStore } from "../fixtures";
 import { getBridges } from "../helpers";
-import { killThorNode, spawnThorNode, waitForThorReady } from "../thorNode";
+import { killThorNode, readGenesisChainTag, spawnThorNode } from "../thorNode";
 import { buildVechainTestSigner } from "../signer";
 
 /**
@@ -126,7 +126,7 @@ export const scenarioVechain: Scenario<GenericTransaction, Account> = {
 
   setup: async strategy => {
     await spawnThorNode();
-    const chainTag = await waitForThorReady();
+    const chainTag = await readGenesisChainTag();
 
     const funder = buildVechainTestSigner(FUNDER_PRIVATE_KEY);
     const recipient = buildVechainTestSigner(RECIPIENT_PRIVATE_KEY);
