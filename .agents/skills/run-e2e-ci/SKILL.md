@@ -31,11 +31,12 @@ These are `workflow_dispatch` workflows — **no slash-command triggers them**. 
 ```bash
 BR=<branch>            # PR head branch
 TAGS=<derived-filter>  # e.g. "@solana" — see the table above. Drop -f test_filter ONLY for a justified full suite.
+CHAIN=<derived-chain>  # e.g. "solana" or "evm,solana" — derive from the diff; omit -f chain to auto-detect.
 
 # Filtered runs (preferred). Narrow tests_type when the change is platform-specific.
 gh workflow run test-ui-e2e-only-desktop.yml --ref "$BR" -f test_filter="$TAGS"
 gh workflow run test-mobile-e2e-reusable.yml --ref "$BR" -f test_filter="$TAGS" -f tests_type="iOS & Android" -f speculos_device=nanoX
-gh workflow run test-coin-tester.yml --ref "$BR" -f chain="solana"   # or omit -f chain to auto-detect affected coins
+gh workflow run test-coin-tester.yml --ref "$BR" -f chain="$CHAIN"   # or omit -f chain to auto-detect affected coins
 
 gh run list --branch "$BR" --limit 6   # grab the run IDs
 ```
