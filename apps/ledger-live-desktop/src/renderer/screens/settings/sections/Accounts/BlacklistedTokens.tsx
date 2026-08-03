@@ -14,11 +14,11 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type BlacklistedTokenSection = {
   parentCurrency: CryptoCurrency;
-  tokens: TokenCurrency[];
+  assets: CryptoOrTokenCurrency[];
 };
 
 export default function BlacklistedTokens() {
@@ -103,7 +103,7 @@ export default function BlacklistedTokens() {
 
       {sectionVisible && (
         <div>
-          {sections.map(({ parentCurrency, tokens }) => (
+          {sections.map(({ parentCurrency, assets }) => (
             <Box key={parentCurrency.id}>
               <BlacklistedTokensSectionHeader>
                 <Text ff="Inter|Bold" fontSize={2} color="neutral.c60">
@@ -111,9 +111,9 @@ export default function BlacklistedTokens() {
                 </Text>
               </BlacklistedTokensSectionHeader>
               <Body>
-                {tokens.map((token: TokenCurrency) => (
-                  <BlacklistedTokenRow key={token.id}>
-                    <CryptoCurrencyIcon currency={token} size={28} />
+                {assets.map((asset: CryptoOrTokenCurrency) => (
+                  <BlacklistedTokenRow key={asset.id}>
+                    <CryptoCurrencyIcon currency={asset} size={28} />
                     <Text
                       style={{
                         marginLeft: 10,
@@ -123,9 +123,9 @@ export default function BlacklistedTokens() {
                       color="neutral.c100"
                       fontSize={3}
                     >
-                      {token.name}
+                      {asset.name}
                     </Text>
-                    <IconContainer onClick={() => onShowToken(token.id)}>
+                    <IconContainer onClick={() => onShowToken(asset.id)}>
                       <IconCross size={16} />
                     </IconContainer>
                   </BlacklistedTokenRow>

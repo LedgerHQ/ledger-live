@@ -5511,7 +5511,7 @@
       },
       "tokenBlacklist": {
         "title": "Hidden tokens",
-        "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
+        "desc": "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count": "1 token",
         "count_other": "{{count}} tokens"
       },

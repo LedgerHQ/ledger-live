@@ -203,7 +203,11 @@ describe("AccountsSettings - BlacklistedTokens", () => {
   });
 
   it("handles async loading errors gracefully", async () => {
-    mockFindTokenById.mockRejectedValue(new Error("Token not found"));
+    // A synchronous throw from the store escapes the helper's per-id `.catch`,
+    // so the whole load rejects and the component falls back to an empty list.
+    mockFindTokenById.mockImplementation(() => {
+      throw new Error("Store unavailable");
+    });
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     render(<AccountsSettings navigation={mockNavigation} route={mockRoute} />, {

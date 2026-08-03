@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { loadBlacklistedTokenSections as loadBlacklistedTokenSectionsBase } from "@ledgerhq/live-common/account/index";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { TokenCurrency } from "@domain/entity-currency-token";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import SettingsRow from "~/components/SettingsRow";
 import { showToken } from "~/actions/settings";
@@ -24,7 +24,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 type BlacklistedTokenSection = {
   key: string;
   parentCurrency: CryptoCurrency;
-  data: TokenCurrency[];
+  data: CryptoOrTokenCurrency[];
 };
 
 async function loadBlacklistedTokenSections(
@@ -34,7 +34,7 @@ async function loadBlacklistedTokenSections(
   return sections.map(section => ({
     key: section.parentCurrency.id,
     parentCurrency: section.parentCurrency,
-    data: section.tokens,
+    data: section.assets,
   }));
 }
 
@@ -59,14 +59,14 @@ export default function AccountsSettings({
   );
 
   const renderItem = useCallback(
-    ({ item: token }: { item: TokenCurrency }) => (
+    ({ item: asset }: { item: CryptoOrTokenCurrency }) => (
       <View style={styles.row}>
         <View style={styles.rowIconContainer}>
-          <CurrencyIcon currency={token} size={20} />
+          <CurrencyIcon currency={asset} size={20} />
         </View>
-        <LText style={styles.rowTitle}>{token.name}</LText>
+        <LText style={styles.rowTitle}>{asset.name}</LText>
         <TouchableOpacity
-          onPress={() => dispatch(showToken(token.id))}
+          onPress={() => dispatch(showToken(asset.id))}
           style={styles.cta}
           hitSlop={hitSlop}
         >
@@ -77,7 +77,7 @@ export default function AccountsSettings({
     [colors, dispatch],
   );
 
-  const keyExtractor = useCallback((token: TokenCurrency) => token.id, []);
+  const keyExtractor = useCallback((asset: CryptoOrTokenCurrency) => asset.id, []);
 
   const renderHeader = useCallback(
     () => (
