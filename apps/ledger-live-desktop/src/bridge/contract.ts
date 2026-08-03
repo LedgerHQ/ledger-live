@@ -73,4 +73,7 @@ export type LedgerBridge = {
  */
 export const CHANNELS = {
   bootstrap: "bootstrap",
+  /** Write-through updates to the `lld.json` store hydrated in {@link Bootstrap.store}. */
+  storeSet: "lld-store:set",
+  storeClear: "lld-store:clear",
 } as const;

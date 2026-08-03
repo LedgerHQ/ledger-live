@@ -3,7 +3,6 @@ import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
 import { app, Menu, ipcMain, type BrowserWindow, dialog, protocol } from "electron";
-import Store from "electron-store";
 import menu from "./menu";
 import {
   createEarlyMainWindow,
@@ -32,8 +31,6 @@ console.timeEnd("T-imports");
 console.time("T-init");
 
 setUserDataPath();
-
-Store.initRenderer();
 
 const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
 
