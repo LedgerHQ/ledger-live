@@ -7,12 +7,13 @@ import {
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 import { SOLANA_DUMMY_ADDRESS } from "../constants";
 import { createTransaction } from "../createTransaction";
@@ -71,6 +72,28 @@ function makeSyncAndScan(getChainAPI: (config: Config) => ChainAPI, getAddress: 
   };
 }
 
+/**
+ * Cache key for estimateMaxSpendable.
+ *
+ * Include pending operations so new outgoing txs bust the cache and "send max" stays correct.
+ * See: https://ledgerhq.atlassian.net/browse/LIVE-35129
+ */
+export const estimateMaxSpendableCacheKey = ({
+  account,
+  parentAccount,
+  transaction,
+}: {
+  account: AccountLike;
+  parentAccount?: Account | null | undefined;
+  transaction?: Transaction | null | undefined;
+}): string => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const pendingOpsSig = (mainAccount.pendingOperations ?? []).map(op => op.hash).join(",");
+  return `${account.id}:${account.spendableBalance.toString()}:pending:${pendingOpsSig}:tx:${
+    transaction?.model.kind ?? "<no transaction>"
+  }`;
+};
+
 function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
   const estimateMaxSpendable: AccountBridge<
     Transaction,
@@ -94,19 +117,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => ChainAPI) {
     return estimateMaxSpendableWithAPI(arg, api);
   };
 
-  const cacheKeyByAccSpendableBalance = ({
-    account,
-    transaction,
-  }: {
-    account: AccountLike;
-    transaction?: Transaction | null | undefined;
-  }) => {
-    return `${account.id}:${account.spendableBalance.toString()}:tx:${
-      transaction?.model.kind ?? "<no transaction>"
-    }`;
-  };
-
-  return makeLRUCache(estimateMaxSpendable, cacheKeyByAccSpendableBalance, minutes(5));
+  return makeLRUCache(estimateMaxSpendable, estimateMaxSpendableCacheKey, minutes(5));
 }
 
 function makeBroadcast(

@@ -1,4 +1,5 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
+import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { calculateToken2022TransferFees } from "./helpers/token";
@@ -19,7 +20,23 @@ export const estimateFeeAndSpendable = async (
   const txKind = transaction?.model.kind ?? "transfer";
   const txFee = await estimateTxFee(api, account.freshAddress, txKind);
 
-  const spendableBalance = BigNumber.max(account.spendableBalance.minus(txFee), 0);
+  // A synced spendableBalance does not reflect still-pending outgoing txs (pending ops never
+  // decrement it and the on-chain balance is not yet confirmed), so subtract pending SOL
+  // debits to keep max spendable correct while a previous send is pending. See LIVE-35129.
+  //
+  // FEES ops are handled separately: a pending token send produces a parent FEES op on the
+  // main account whose `value` is the token amount (see optimisticOpForTokenTransfer), so only
+  // its SOL `fee` leaves this account. For every other op type getOperationAmountNumber already
+  // returns the signed native delta.
+  const pendingDebits = (account.pendingOperations ?? []).reduce((sum, op) => {
+    const delta = op.type === "FEES" ? op.fee.negated() : getOperationAmountNumber(op);
+    return delta.isNegative() ? sum.plus(delta.negated()) : sum;
+  }, new BigNumber(0));
+
+  const spendableBalance = BigNumber.max(
+    account.spendableBalance.minus(txFee).minus(pendingDebits),
+    0,
+  );
 
   switch (txKind) {
     case "token.createATA": {
