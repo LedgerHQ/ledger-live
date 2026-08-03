@@ -199,6 +199,9 @@
     "./domain/entity/pay-card": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/wallet-sync": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/pay-card": {
       "entry": ["src/index.ts"]
     },
