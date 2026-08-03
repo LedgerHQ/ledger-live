@@ -19,6 +19,24 @@ jest.mock(
   () => ({ useFeatureFlagsToolProps: () => ({ marker: "ff-props" }) }),
   { virtual: true },
 );
+jest.mock("@devtools/transport-panel", () => ({ TransportPanel: () => null }), { virtual: true });
+jest.mock(
+  "@devtools/wire",
+  () => {
+    const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "tool" };
+    return {
+      buildTransport: () => ({
+        transport: {},
+        subscribe: () => () => {},
+        getState: () => wireState,
+        setHubUrl: jest.fn(),
+      }),
+      buildCopyStoreProtocol: () => ({}),
+      combineProtocols: (...args: unknown[]) => args[0],
+    };
+  },
+  { virtual: true },
+);
 
 function withBottomInset(children: React.ReactNode) {
   return (

@@ -760,8 +760,8 @@ export class SwapPage extends WebViewAppPage {
     expect(providerName).toBeDefined();
   }
 
-  @step("Check swap widget balance is masked in discreet mode for $0")
-  async checkWidgetBalanceIsDiscreet(ticker: string) {
+  @step("Check from-account balance is masked in discreet mode for $0")
+  async checkFromAccountBalanceIsDiscreet(ticker: string) {
     const webview = await this.getWebView();
     const text = webview.getByTestId(this.fromAccountBalance);
     await expect(text).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));

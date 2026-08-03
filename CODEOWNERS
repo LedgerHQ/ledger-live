@@ -62,6 +62,11 @@ libs/feature-flag-module/                                @ledgerhq/platform
 libs/ledger-auth/                                        @ledgerhq/platform
 libs/oxc-live-libs/                                      @ledgerhq/platform
 
+# Platform — devtools
+devtools/transport/                                      @ledgerhq/platform
+devtools/protocols/                                      @ledgerhq/platform
+devtools/wire/                                           @ledgerhq/platform
+
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp

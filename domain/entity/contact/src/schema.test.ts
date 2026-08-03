@@ -98,6 +98,10 @@ describe("ContactAddressSchema", () => {
     expect(() => ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum\nWallet")).toThrow();
   });
+
+  it("rejects address labels longer than 32 characters", () => {
+    expect(() => ContactAddressLabelSchema.parse("a".repeat(33))).toThrow();
+  });
 });
 
 describe("contact mock factories", () => {

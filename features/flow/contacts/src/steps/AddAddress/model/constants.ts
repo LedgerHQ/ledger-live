@@ -1,1 +1,0 @@
-export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;

@@ -14,7 +14,6 @@ export function MemoControls({ vm }: MemoControlsProps) {
   const styles = useStyleSheet(
     theme => ({
       root: {
-        marginTop: -theme.spacings.s12,
         marginBottom: theme.spacings.s24,
         gap: theme.spacings.s12,
         paddingHorizontal: theme.spacings.s8,

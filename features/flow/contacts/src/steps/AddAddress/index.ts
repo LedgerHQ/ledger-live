@@ -3,7 +3,6 @@ export type {
   ContactsAddressValidationResult,
   ContactsCurrencySelectionPort,
 } from "./model/ports";
-export { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
 export {
   createContactsAddressValidationDependencies,
   createContactsAddressValidationService,
