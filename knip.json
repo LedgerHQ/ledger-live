@@ -202,6 +202,9 @@
     "./domain/entity/wallet-sync": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/starred-account": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/pay-card": {
       "entry": ["src/index.ts"]
     },
