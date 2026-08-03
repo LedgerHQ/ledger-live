@@ -36,18 +36,21 @@ function resolveAddressInputPresentation(
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: true,
       };
-    case "invalid":
+    case "invalid": {
+      let helperText = labels.invalidAddress;
+      if (addressEntry.error === "domain_not_found") {
+        helperText = labels.domainNotFound;
+      } else if (addressEntry.error === "sanctioned") {
+        helperText = labels.sanctionedAddress;
+      }
+
       return {
         inputStatus: "error",
-        helperText:
-          addressEntry.error === "domain_not_found"
-            ? labels.domainNotFound
-            : addressEntry.error === "sanctioned"
-              ? labels.sanctionedAddress
-              : labels.invalidAddress,
+        helperText,
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: false,
       };
+    }
     case "unavailable":
       return {
         inputStatus: "error",
