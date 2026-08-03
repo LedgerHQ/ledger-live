@@ -1,4 +1,4 @@
-import type { Bootstrap, CardSessionBridge, DbBridge } from "~/bridge/contract";
+import type { Bootstrap, CardSessionBridge, DbBridge, TransportBridge } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
   version: 1,
@@ -34,6 +34,19 @@ export const db: jest.Mocked<DbBridge> = {
   resetAll: jest.fn().mockResolvedValue(undefined),
   reload: jest.fn().mockResolvedValue(undefined),
   cleanCache: jest.fn().mockResolvedValue(undefined),
+};
+
+/**
+ * Every method resolves by default. Callers chain `.catch()` on these, so returning
+ * `undefined` would throw rather than simply doing nothing — the old catch-all
+ * `ipcRenderer.invoke` mock resolved for any channel, and this preserves that.
+ */
+export const transport: jest.Mocked<TransportBridge> = {
+  open: jest.fn().mockResolvedValue(undefined),
+  exchange: jest.fn().mockResolvedValue(undefined),
+  close: jest.fn().mockResolvedValue(undefined),
+  listen: jest.fn().mockResolvedValue(undefined),
+  listenUnsubscribe: jest.fn().mockResolvedValue(undefined),
 };
 
 // Reads the live env so tests can set CARD_SESSION_BOOTSTRAP per case.

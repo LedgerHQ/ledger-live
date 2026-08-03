@@ -7,6 +7,7 @@ import {
 } from "~/bridge/contract";
 import { expose } from "./expose";
 import { db } from "./db";
+import { transport } from "./transport";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -33,6 +34,7 @@ export function installBridge(): void {
     // Consumers that mutate it (the `process.env` shim) take a copy.
     bootstrap: deepFreeze(bootstrap),
     db,
+    transport,
     cardSession,
   };
 
