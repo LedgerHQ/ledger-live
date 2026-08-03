@@ -24,6 +24,7 @@ import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewa
 import type { AlgorandOptInFlowParamList } from "~/families/algorand/OptInFlow/types";
 import type { CardanoDelegationFlowParamList } from "~/families/cardano/DelegationFlow/types";
 import type { CardanoUndelegationFlowParamList } from "~/families/cardano/UndelegationFlow/types";
+import type { CardanoVoteDelegationFlowParamList } from "~/families/cardano/VoteDelegationFlow/types";
 import type { CeloWithdrawFlowParamList } from "~/families/celo/WithdrawFlow/types";
 import type { CeloRevokeFlowFlowParamList } from "~/families/celo/RevokeFlow/types";
 import type { CeloActivateFlowParamList } from "~/families/celo/ActivateFlow/types";
@@ -85,6 +86,10 @@ type Props =
   | StackNavigatorProps<
       CardanoUndelegationFlowParamList,
       ScreenName.CardanoUndelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      CardanoVoteDelegationFlowParamList,
+      ScreenName.CardanoVoteDelegationConnectDevice
     >
   | StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInConnectDevice>
   | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawConnectDevice>

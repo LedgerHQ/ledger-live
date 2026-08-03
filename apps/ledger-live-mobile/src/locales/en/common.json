@@ -6021,6 +6021,63 @@
     }
   },
   "cardano": {
+    "voteDelegation": {
+      "header": "Vote Delegation",
+      "delegateVotePower": "Delegate your voting power to a DRep to actively participate in Cardano governance.",
+      "button": "Start vote delegation",
+      "options": {
+        "dRep": "DRep",
+        "alwaysAbstain": "Always abstain",
+        "alwaysNoConfidence": "Always no-confidence"
+      },
+      "lastActiveOn": "Last active on",
+      "dRep": "DRep",
+      "changeVoteDelegation": "Change Vote Delegation",
+      "stakeKeyRegistrationDeposit": "Stake key registration deposit",
+      "delegatingTo": "Delegating to",
+      "drepId": "DRep ID",
+      "currentlyVotingFor": "Currently voting for",
+      "search": "Search by name or DRep Id...",
+      "noDRepFound": "No DRep found for \"<0>{{search}}</0>\".",
+      "tableHeader": {
+        "DRep": "DRep",
+        "lastActiveOn": "Last active on"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your voting power to a DRep to actively participate in Cardano governance.",
+            "bullet": {
+              "0": "Your assets remain securely in your wallet",
+              "1": "You can change your DRep at any time",
+              "2": "Shape the future of the Cardano network"
+            }
+          },
+          "dRep": {
+            "title": "Select DRep"
+          },
+          "summary": {
+            "title": "Summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "verification": {
+            "success": {
+              "title": "Voting power successfully delegated",
+              "text": "Your voting power will be delegated once the blockchain confirms the transaction."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          },
+          "confirmation": {
+            "success": {
+              "title": "Vote Delegation Successful",
+              "text": "You have successfully delegated your vote."
+            }
+          }
+        }
+      }
+    },
     "info": {
       "balanceDoesNotIncludeRewards": {
         "title": "Total balance doesn't include staking rewards"

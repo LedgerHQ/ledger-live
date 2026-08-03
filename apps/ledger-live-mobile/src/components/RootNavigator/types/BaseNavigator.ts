@@ -26,6 +26,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
 import type { AlgorandClaimRewardsFlowParamList } from "../../../families/algorand/Rewards/ClaimRewardsFlow/type";
+import type { CardanoVoteDelegationFlowParamList } from "../../../families/cardano/VoteDelegationFlow/types";
 import type { CeloActivateFlowParamList } from "../../../families/celo/ActivateFlow/types";
 import type { CeloLockFlowParamList } from "../../../families/celo/LockFlow/types";
 import type { CeloRegistrationFlowParamList } from "../../../families/celo/RegistrationFlow/types";
@@ -272,6 +273,9 @@ export type BaseNavigatorStackParamList = {
   // Algorand
   [NavigatorName.AlgorandClaimRewardsFlow]: NavigatorScreenParams<AlgorandClaimRewardsFlowParamList>;
   [NavigatorName.AlgorandOptInFlow]: NavigatorScreenParams<AlgorandOptInFlowParamList>;
+
+  // Cardano
+  [NavigatorName.CardanoVoteDelegationFlow]: NavigatorScreenParams<CardanoVoteDelegationFlowParamList>;
 
   // Celo
   [NavigatorName.CeloWithdrawFlow]: NavigatorScreenParams<CeloWithdrawFlowParamList>;
