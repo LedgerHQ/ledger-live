@@ -2,7 +2,11 @@ import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { NotEnoughGas } from "./errors";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import BigNumber from "bignumber.js";
@@ -28,9 +32,11 @@ const BALANCE_AT_BUG_THRESHOLD = SPENDABLE_AT_BUG_THRESHOLD.plus(MAIN_ACCOUNT_RE
 
 const VIBECODOOR_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: "solana/spl/the_vibecodoor_aj1mspd4vjdn5r3xptnhsjhqggwdlge8brqi2w6pump",
+  id: TokenCurrencyIdSchema.parse(
+    "solana/spl/the_vibecodoor_aj1mspd4vjdn5r3xptnhsjhqggwdlge8brqi2w6pump",
+  ),
   contractAddress: VIBECODOOR_MINT,
-  parentCurrencyId: "solana",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("solana"),
   tokenType: "spl",
   name: "The Vibecodoor",
   ticker: "Vibecodoor",

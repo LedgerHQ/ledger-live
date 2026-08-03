@@ -1,7 +1,7 @@
 import { AssertionError } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
   },
