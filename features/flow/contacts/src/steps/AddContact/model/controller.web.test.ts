@@ -1,4 +1,4 @@
-import { contact } from "@domain/entity-contact";
+import { contact, ContactNameSchema, DUPLICATE_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { createAddContactController } from "./controller";
 import type { ContactCreationPort } from "./ports";
 
@@ -23,6 +23,19 @@ describe("createAddContactController", () => {
       invalidNameError: "InvalidContactNameError",
       isSaveEnabled: false,
     });
+  });
+
+  it("rejects a duplicate name before calling the creation port", async () => {
+    const createContact = jest.fn();
+    const controller = createAddContactController(createContactCreationPort(createContact));
+    const existingNames = [ContactNameSchema.parse("Ada")];
+
+    expect(controller.getViewModel(" ada ", existingNames)).toMatchObject({
+      invalidNameError: DUPLICATE_CONTACT_NAME_ERROR_NAME,
+      isSaveEnabled: false,
+    });
+    await expect(controller.save(" ada ", existingNames)).rejects.toThrow();
+    expect(createContact).not.toHaveBeenCalled();
   });
 
   it("rejects save when the draft name is empty", async () => {

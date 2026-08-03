@@ -1,9 +1,22 @@
 import { renderHook, act } from "@testing-library/react";
-import { INVALID_CONTACT_NAME_ERROR_NAME, contact } from "@domain/entity-contact";
+import {
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+  contact,
+} from "@domain/entity-contact";
+import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { useContacts } from "../../hooks";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 
+jest.mock("../../hooks", () => ({ useContacts: jest.fn() }));
+
+const mockedUseContacts = jest.mocked(useContacts);
+
 describe("useAddContactViewModel", () => {
+  beforeEach(() => {
+    mockedUseContacts.mockReturnValue([mockMeContact(), mockContact({ name: "Ada" })]);
+  });
   it("updates derived state when the draft name changes", () => {
     const contactCreation: ContactCreationPort = {
       createContact: jest.fn(),
@@ -36,6 +49,20 @@ describe("useAddContactViewModel", () => {
     });
 
     expect(result.current.invalidNameError).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(result.current.isSaveEnabled).toBe(false);
+  });
+
+  it("blocks a duplicate contact name from the current Contacts state", () => {
+    const contactCreation: ContactCreationPort = {
+      createContact: jest.fn(),
+    };
+    const { result } = renderHook(() => useAddContactViewModel(contactCreation));
+
+    act(() => {
+      result.current.setDraftName(" ada ");
+    });
+
+    expect(result.current.invalidNameError).toBe(DUPLICATE_CONTACT_NAME_ERROR_NAME);
     expect(result.current.isSaveEnabled).toBe(false);
   });
 

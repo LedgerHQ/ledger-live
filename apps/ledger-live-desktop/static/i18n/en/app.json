@@ -9309,7 +9309,8 @@
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      "invalidNameError": "Special characters are not allowed."
+      "invalidNameError": "Special characters are not allowed.",
+      "duplicateNameError": "This contact name is already in use."
     },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",

@@ -272,6 +272,35 @@ describe("Contacts integration", () => {
     });
   });
 
+  it("should block a duplicate contact name and allow a unique replacement", async () => {
+    const me = mockMeContact();
+    const ada = mockContact({ id: "contact-ada", name: "Ada" });
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState({ contacts: { contacts: [me, ada] } }),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-add-contact"));
+    const input = screen.getByTestId("contacts-add-contact-name-input");
+
+    fireEvent.change(input, { target: { value: " ada " } });
+
+    expect(screen.getByText("This contact name is already in use.")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
+
+    fireEvent.change(input, { target: { value: "Ben" } });
+
+    expect(screen.queryByText("This contact name is already in use.")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-add-contact-save")).toBeEnabled();
+  });
+
   it("should filter saved contacts when searching", async () => {
     const { user } = renderContactsScreen(populatedContactsPageState);
 

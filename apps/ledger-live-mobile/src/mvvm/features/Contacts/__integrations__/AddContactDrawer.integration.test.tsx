@@ -66,6 +66,35 @@ describe("Contacts add contact drawer integration", () => {
     });
   });
 
+  it("should block a duplicate contact name and allow a unique replacement", async () => {
+    const me = mockMeContact();
+    const ada = mockContact({ id: "contact-ada", name: "Ada" });
+    const { user } = render(<ContactsTestApp />, {
+      overrideInitialState: withFlagOverrides(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({
+          ...state,
+          contacts: { contacts: [me, ada] },
+        }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("contacts-add-contact-header"));
+    const input = screen.getByTestId("contacts-add-contact-name-input");
+
+    fireEvent.changeText(input, " ada ");
+
+    expect(screen.getByText("This contact name is already in use.")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Confirm name" })).toBeDisabled();
+
+    fireEvent.changeText(input, "Ben");
+
+    await waitFor(() => {
+      expect(screen.queryByText("This contact name is already in use.")).toBeNull();
+      expect(screen.getByRole("button", { name: "Confirm name" })).toBeEnabled();
+    });
+  });
+
   it("should add a contact from the header and restore the unfiltered list", async () => {
     const me = mockMeContact();
     const ben = mockContact({ id: "contact-ben", name: "Ben" });
