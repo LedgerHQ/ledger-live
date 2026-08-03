@@ -1,6 +1,6 @@
 services:
   flextesa:
-    image: oxheadalpha/flextesa:latest
+    image: oxheadalpha/flextesa:latest@sha256:fc6a223f366af7978275f3c01006b86d8fd487804cd44776da1977d5cd525a7b
     container_name: flextesa
     platform: linux/amd64
     environment:
