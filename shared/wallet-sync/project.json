@@ -1,0 +1,8 @@
+{
+  "tags": ["scope:shared"],
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

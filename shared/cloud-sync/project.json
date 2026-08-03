@@ -1,0 +1,8 @@
+{
+  "name": "@shared/cloud-sync",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
