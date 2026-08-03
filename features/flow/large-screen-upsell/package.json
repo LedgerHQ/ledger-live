@@ -2,11 +2,12 @@
   "name": "@features/flow-large-screen-upsell",
   "version": "0.3.0",
   "private": true,
-  "description": "Large-screen upsell decision engine plus portable modal screen/content/utils scaffold",
+  "description": "Large-screen upsell decision engine, feature-scoped modal state, and portable modal UI",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./schema.mock": "./src/state/schema.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -18,9 +19,10 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/large-screen-upsell"
   },
   "dependencies": {
-    "@domain/entity-large-screen-upsell-modal": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
-    "@shared/feature-flags": "workspace:^"
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:^",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

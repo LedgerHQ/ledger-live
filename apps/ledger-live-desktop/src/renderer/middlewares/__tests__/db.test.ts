@@ -1,5 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
-import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";

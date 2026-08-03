@@ -29,7 +29,7 @@ import { marketBannerStoreSelector } from "../reducers/marketBanner";
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   persistedLargeScreenUpsellModalSelector,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";

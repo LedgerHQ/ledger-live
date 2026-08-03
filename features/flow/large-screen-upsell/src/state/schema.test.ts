@@ -23,7 +23,7 @@ describe("LargeScreenUpsellModalStateSchema", () => {
       lastSeenAt: MAX_DATE_MS,
       session: "blockedByCompeting" as const,
     },
-  ])("accepts $retries retries with lastSeenAt $lastSeenAt", state => {
+  ])("accepts $retries retries with lastSeenAt $lastSeenAt", (state) => {
     expect(LargeScreenUpsellModalStateSchema.parse(state)).toEqual(state);
   });
 
@@ -59,11 +59,11 @@ describe("LargeScreenUpsellModalStateSchema", () => {
 describe("RestorableLargeScreenUpsellModalStateSchema", () => {
   it.each([null, undefined, "not-an-object", [1, 2, 3], 42])(
     "falls back to defaults given the non-object payload %p",
-    payload => {
-      expect(RestorableLargeScreenUpsellModalStateSchema.parse(payload)).toEqual(
-        restorableDefaults,
-      );
-    },
+    (payload) => {
+      expect(
+        RestorableLargeScreenUpsellModalStateSchema.parse(payload)
+      ).toEqual(restorableDefaults);
+    }
   );
 
   it("strips ephemeral session from a persisted payload", () => {
@@ -72,7 +72,7 @@ describe("RestorableLargeScreenUpsellModalStateSchema", () => {
         retries: 2,
         lastSeenAt: Date.parse("2026-07-01T12:00:00.000Z"),
         session: "dismissed",
-      }),
+      })
     ).toEqual({
       retries: 2,
       lastSeenAt: Date.parse("2026-07-01T12:00:00.000Z"),

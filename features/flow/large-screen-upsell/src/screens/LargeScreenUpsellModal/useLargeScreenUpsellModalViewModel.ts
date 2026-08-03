@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@features/platform-feature-flags";
-import {
-  markDismissed,
-  recordUpsellModalDisplay,
-  resetUpsellModalRetries,
-} from "@domain/entity-large-screen-upsell-modal";
 import { LARGE_SCREEN_UPSELL_IMAGES } from "../../assets";
+import { markDismissed, recordUpsellModalDisplay, resetUpsellModalRetries } from "../../state";
 import {
   useLargeScreenUpsellDecision,
   type UseLargeScreenUpsellDecisionInput,

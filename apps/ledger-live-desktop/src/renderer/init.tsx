@@ -10,7 +10,7 @@ import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";

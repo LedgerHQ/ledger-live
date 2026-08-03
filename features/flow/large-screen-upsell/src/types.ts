@@ -1,5 +1,5 @@
-import type { RestorableLargeScreenUpsellModalState } from "@domain/entity-large-screen-upsell-modal";
 import type { Features } from "@shared/feature-flags";
+import type { RestorableLargeScreenUpsellModalState } from "./state";
 
 type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params"]>;
 
@@ -18,7 +18,11 @@ export type LargeScreenUpsellDecision =
         | "touchscreen_seen"
         | "model_disabled";
     }
-  | { shouldShow: false; reason: "cooldown" | "throttled"; deviceModelId: NanoDeviceModelId };
+  | {
+      shouldShow: false;
+      reason: "cooldown" | "throttled";
+      deviceModelId: NanoDeviceModelId;
+    };
 
 export type LargeScreenUpsellUserState = {
   seenNanoModelIds: NanoDeviceModelId[];
