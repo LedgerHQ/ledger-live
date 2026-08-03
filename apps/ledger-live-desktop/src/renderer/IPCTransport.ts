@@ -2,7 +2,7 @@
  * IPC Transport for Speculos and HTTP Proxy only
  * WebHID devices use DeviceManagementKit directly in renderer
  */
-import { ipcRenderer } from "electron";
+import { transport as transportBridge } from "~/renderer/bridge";
 import Transport, { type DescriptorEvent, TransportError } from "@ledgerhq/hw-transport";
 import { log, trace, TraceContext } from "@ledgerhq/logs";
 import { Observer } from "rxjs";
@@ -19,7 +19,10 @@ const LOG_TYPE = "hid-ipc";
  * Only used for Speculos and HTTP proxy transports
  */
 export default class IPCTransport extends Transport {
-  static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "object");
+  // Was `typeof ipcRenderer === "object"`, always true in a renderer. Kept equivalent
+  // rather than narrowed to "a Speculos port or device proxy is configured", which would be
+  // a behavioural change.
+  static isSupported = (): Promise<boolean> => Promise.resolve(true);
 
   static list = (): Promise<unknown[]> => Promise.resolve([]);
 
@@ -30,15 +33,15 @@ export default class IPCTransport extends Transport {
     const unsubscribe = () => {
       if (unsubscribed) return;
       unsubscribed = true;
-      ipcRenderer.invoke("transport:listen:unsubscribe", { requestId }).catch(() => {
+      transportBridge.listenUnsubscribe(requestId).catch(() => {
         // Ignore errors on unsubscribe
       });
     };
 
     // For HTTP transports, we don't have real device discovery
     // Just send a simple available signal
-    ipcRenderer
-      .invoke("transport:listen", { requestId })
+    transportBridge
+      .listen(requestId)
       .then(result => {
         if (unsubscribed) return;
         if (result.type === "listen-error") {
@@ -71,12 +74,7 @@ export default class IPCTransport extends Transport {
     const requestId = uuid();
 
     try {
-      const result = await ipcRenderer.invoke("transport:open", {
-        requestId,
-        descriptor,
-        timeout,
-        context,
-      });
+      const result = await transportBridge.open(requestId, descriptor, timeout);
 
       if (result.type === "open-error") {
         trace({
@@ -114,11 +112,7 @@ export default class IPCTransport extends Transport {
     log(LOG_TYPE, "exchange", { apdu: apduHex, timeout: abortTimeoutMs });
 
     try {
-      const result = await ipcRenderer.invoke("transport:exchange", {
-        requestId: this.requestId,
-        apdu: apduHex,
-        timeout: abortTimeoutMs,
-      });
+      const result = await transportBridge.exchange(this.requestId, apduHex, abortTimeoutMs);
 
       if (result.type === "exchange-error") {
         trace({
@@ -144,9 +138,7 @@ export default class IPCTransport extends Transport {
     log(LOG_TYPE, "close", { descriptor: this.descriptor });
 
     try {
-      await ipcRenderer.invoke("transport:close", {
-        requestId: this.requestId,
-      });
+      await transportBridge.close(this.requestId);
 
       trace({
         type: LOG_TYPE,

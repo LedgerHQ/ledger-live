@@ -86,10 +86,49 @@ export type DbBridge = {
   cleanCache(): Promise<void>;
 };
 
+type TransportError = { message: string; id: string };
+
+/**
+ * Transport handlers resolve with a tagged union instead of rejecting, so failures arrive
+ * as data. That is why these are typed as unions rather than as promises that throw.
+ */
+export type TransportOpenResult =
+  | { type: "open-response"; requestId: string; data: { descriptor: string } }
+  | { type: "open-error"; requestId: string; error: TransportError };
+
+export type TransportExchangeResult =
+  | { type: "exchange-response"; requestId: string; data: string }
+  | { type: "exchange-error"; requestId: string; error: TransportError };
+
+export type TransportListenResult =
+  | {
+      type: "listen-response";
+      requestId: string;
+      data: { type: string; descriptor: string; device: unknown };
+    }
+  | { type: "listen-error"; requestId: string; error: TransportError };
+
+/**
+ * Device transport, used only for Speculos and the HTTP proxy. Real devices talk WebHID
+ * straight from the renderer and do not come through here.
+ *
+ * APDUs cross as hex strings: a Buffer would be flattened by the bridge's conversion.
+ */
+export type TransportBridge = {
+  open(requestId: string, descriptor: string, timeout?: number): Promise<TransportOpenResult>;
+  exchange(requestId: string, apduHex: string, timeout?: number): Promise<TransportExchangeResult>;
+  close(requestId: string): Promise<{ type: "close-response"; requestId: string }>;
+  listen(requestId: string): Promise<TransportListenResult>;
+  listenUnsubscribe(
+    requestId: string,
+  ): Promise<{ type: "unsubscribe-response"; requestId: string }>;
+};
+
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
   db: DbBridge;
+  transport: TransportBridge;
 };
 
 /**
@@ -114,4 +153,9 @@ export const CHANNELS = {
   resetAll: "resetAll",
   reload: "reload",
   cleanCache: "cleanCache",
+  transportOpen: "transport:open",
+  transportExchange: "transport:exchange",
+  transportClose: "transport:close",
+  transportListen: "transport:listen",
+  transportListenUnsubscribe: "transport:listen:unsubscribe",
 } as const;
