@@ -39,10 +39,10 @@ const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
   "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
     "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
-  ...pathsToModuleNameMapper(compilerOptions.paths),
-  // Must precede the generic "~/(.*)" rule below, which would otherwise resolve this to
-  // the real module. The real bridge reads window.lld, which only the preload provides.
+  // Must precede every "~/*" rule, including those generated from tsconfig paths:
+  // moduleNameMapper is applied in insertion order.
   "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
+  ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
   "^@ledgerhq/lumen-ui-react/symbols$":

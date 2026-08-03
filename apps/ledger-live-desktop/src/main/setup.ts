@@ -60,10 +60,6 @@ ipcMain.handle(
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
 
-ipcMain.handle("getPathUserData", () => app.getPath("userData"));
-
-ipcMain.handle("getPathHome", () => app.getPath("home"));
-
 /**
  * Dev-only: reads a per-environment dotenv file for the renderer's config-mismatch
  * diagnostic. These files exist only in a repo checkout, and the renderer has no
