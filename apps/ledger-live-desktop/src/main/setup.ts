@@ -1,6 +1,6 @@
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
-import "~/live-common-setup-base";
+import "./live-common-setup-main";
 import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
