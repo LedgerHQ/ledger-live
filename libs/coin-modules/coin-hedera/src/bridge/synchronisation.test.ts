@@ -116,6 +116,25 @@ describe("getAccountShape", () => {
     );
   });
 
+  it("passes the newest stored consensus timestamp as the cursor, at full precision", async () => {
+    // @ts-expect-error - no other fields are needed for this test
+    const initialAccount = {
+      syncHash: mockSyncHash,
+      operations: [
+        { date: new Date("2021-07-01T00:00:00Z"), extra: { pagingToken: "1625097600.111222333" } },
+        { date: new Date("2021-07-01T00:00:00Z"), extra: { pagingToken: "1625097600.999888777" } },
+      ],
+      pendingOperations: [],
+    } as Account;
+
+    await getAccountShape({ ...mockInfo, initialAccount }, { paginationConfig: {} });
+
+    expect(logic.listOperationsV2).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ cursor: "1625097600.999888777" }),
+    );
+  });
+
   it("should NOT pass cursor on fresh sync", async () => {
     await getAccountShape(mockInfo, { paginationConfig: {} });
 

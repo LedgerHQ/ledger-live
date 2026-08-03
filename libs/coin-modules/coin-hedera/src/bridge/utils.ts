@@ -116,6 +116,21 @@ export async function buildCalTokenMap({
   return tokenByAddress;
 }
 
+function assignBridgeOperationIds<O extends Operation<HederaOperationExtra>>(operations: O[]): O[] {
+  const baseIdCounts = new Map<string, number>();
+  for (const op of operations) {
+    const baseId = encodeOperationId(op.accountId, op.hash, op.type);
+    baseIdCounts.set(baseId, (baseIdCounts.get(baseId) ?? 0) + 1);
+  }
+
+  return operations.map(op => {
+    const baseId = encodeOperationId(op.accountId, op.hash, op.type);
+    const needsDiscriminator = (baseIdCounts.get(baseId) ?? 0) > 1;
+    const discriminator = op.recipients[0] ?? op.value.toString();
+    return { ...op, id: needsDiscriminator ? `${baseId}-${discriminator}` : baseId };
+  });
+}
+
 /**
  * Re-encodes id and accountId for both coin and token operations into the bridge's format.
  * Token operations: accountId becomes encodeTokenAccountId, filtered to CAL-listed tokens only.
@@ -136,33 +151,31 @@ export function resolveBridgeOperations({
   bridgeTokenOperations: Operation<HederaOperationExtra>[];
 } {
   const keptTokenOperationHashes = new Set<string>();
+  const allTokenOperationHashes = new Set(tokenOperations.map(op => op.hash));
 
-  const bridgeTokenOperations = tokenOperations.flatMap(operation => {
+  const resolvedTokenOperations = tokenOperations.flatMap(operation => {
     const tokenAddress = operation.contract?.toLowerCase();
     const token = tokenAddress ? calTokenByAddress.get(tokenAddress) : undefined;
     if (!token) return [];
 
     keptTokenOperationHashes.add(operation.hash);
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, token);
-    return [
-      {
-        ...operation,
-        accountId: tokenAccountId,
-        id: encodeOperationId(tokenAccountId, operation.hash, operation.type),
-      },
-    ];
+    return [{ ...operation, accountId: tokenAccountId }];
   });
 
-  // persist only FEES ops for token transfers that are in CAL
-  const bridgeCoinOperations = coinOperations
-    .filter(op => (op.type !== "FEES" ? true : keptTokenOperationHashes.has(op.hash)))
-    .map(op => ({
-      ...op,
-      id: encodeOperationId(ledgerAccountId, op.hash, op.type),
-      accountId: ledgerAccountId,
-    }));
+  const resolvedCoinOperations = coinOperations
+    .filter(
+      op =>
+        op.type !== "FEES" ||
+        keptTokenOperationHashes.has(op.hash) ||
+        !allTokenOperationHashes.has(op.hash),
+    )
+    .map(op => ({ ...op, accountId: ledgerAccountId }));
 
-  return { bridgeCoinOperations, bridgeTokenOperations };
+  return {
+    bridgeCoinOperations: assignBridgeOperationIds(resolvedCoinOperations),
+    bridgeTokenOperations: assignBridgeOperationIds(resolvedTokenOperations),
+  };
 }
 
 export const getSubAccounts = async ({
@@ -301,9 +314,9 @@ const makeCoinOperationForOrphanChildOperation = async (
     subOperations: [],
     nftOperations: [],
     internalOperations: [],
-    accountId: "",
+    accountId,
     date: childOperation.date,
-    extra: {},
+    extra: { ...childOperation.extra },
   };
 };
 
@@ -320,12 +333,10 @@ export const prepareOperations = async (
   // loop through coin operations to prepare a map of hash => operations
   const coinOperationsByHash: Record<string, CoinOperationForOrphanChildOperation[]> = {};
   preparedCoinOperations.forEach(op => {
-    if (!coinOperationsByHash[op.hash]) {
-      coinOperationsByHash[op.hash] = [];
-    }
-
     op.subOperations = [];
-    coinOperationsByHash[op.hash].push(op as CoinOperationForOrphanChildOperation);
+    coinOperationsByHash[op.hash] ??= [];
+    const operationsForHash = coinOperationsByHash[op.hash];
+    operationsForHash.push(op as CoinOperationForOrphanChildOperation);
   });
 
   // loop through token operations to potentially copy them as a child operation of a coin operation
@@ -339,6 +350,7 @@ export const prepareOperations = async (
       const noneOperation = await makeCoinOperationForOrphanChildOperation(tokenOperation);
       mainOperations = [noneOperation];
       preparedCoinOperations.push(noneOperation);
+      coinOperationsByHash[tokenOperation.hash] = mainOperations;
     }
 
     // ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send

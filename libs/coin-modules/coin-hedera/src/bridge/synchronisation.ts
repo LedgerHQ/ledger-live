@@ -13,7 +13,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
 import { listOperationsV2 } from "../logic";
-import { resolveConfig } from "../logic/utils";
+import { getSyncCursor, resolveConfig } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
 import type { HederaAccount } from "../types";
@@ -61,15 +61,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 
   const pendingOperations = shouldSyncFromScratch ? [] : (initialAccount?.pendingOperations ?? []);
   const oldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
-  const latestOperation = oldOperations[0];
-
-  // grab latest operation timestamps for incremental sync
-  let latestOperationTimestamp: string | null = null;
-
-  if (!shouldSyncFromScratch && latestOperation) {
-    const timestamp = Math.floor(latestOperation.date.getTime() / 1000);
-    latestOperationTimestamp = new BigNumber(timestamp).toFixed(9);
-  }
+  const syncCursor = getSyncCursor(shouldSyncFromScratch ? null : initialAccount);
 
   const calTokenByAddress = await buildCalTokenMap({
     erc20Tokens,
@@ -85,7 +77,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     tokenEvmAddresses: [...calTokenByAddress.values()]
       .filter(token => token.tokenType === "erc20")
       .map(token => token.contractAddress.toLowerCase()),
-    ...(latestOperationTimestamp && { cursor: latestOperationTimestamp }),
+    ...(syncCursor && { cursor: syncCursor }),
     fetchAllPages: true,
     skipFeesForTokenOperations: false,
     useEncodedHash: true,
