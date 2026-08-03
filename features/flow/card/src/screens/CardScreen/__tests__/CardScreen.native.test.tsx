@@ -1,32 +1,9 @@
 import React from "react";
-import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, render, screen } from "@testing-library/react-native";
-import { payCardApi, payCardApiExtra } from "@domain/api-pay-card";
-import { payCardSlice } from "@domain/entity-pay-card";
-import { Provider } from "react-redux";
 import { CardScreen } from "../index.native";
 
-function makeCardStore() {
-  return configureStore({
-    reducer: {
-      payCard: payCardSlice.reducer,
-      [payCardApi.reducerPath]: payCardApi.reducer,
-    },
-    middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({
-        thunk: {
-          extraArgument: payCardApiExtra({ payCardApiMocksEnabled: true }),
-        },
-      }).concat(payCardApi.middleware),
-  });
-}
-
 function renderCardScreen() {
-  return render(
-    <Provider store={makeCardStore()}>
-      <CardScreen />
-    </Provider>,
-  );
+  return render(<CardScreen />);
 }
 
 describe("CardScreen (Native)", () => {
