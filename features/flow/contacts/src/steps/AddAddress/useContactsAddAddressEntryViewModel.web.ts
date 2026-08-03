@@ -1,8 +1,26 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
+import type { ContactsAddAddressNameLabels } from "./AddressName/types";
 import type {
   ContactsAddAddressEntryWebProps,
   ContactsAddAddressEntryWebViewProps,
 } from "./ContactsAddAddressEntry.web.types";
+import type { AddAddressLabelState } from "./types";
+
+type AddressLabelConfiguration = Readonly<{
+  addressLabel: AddAddressLabelState;
+  nameLabels: ContactsAddAddressNameLabels;
+  onAddressLabelChange: (value: string) => void;
+}>;
+
+function getAddressLabelConfiguration({
+  addressLabel,
+  nameLabels,
+  onAddressLabelChange,
+}: Partial<AddressLabelConfiguration>): AddressLabelConfiguration | undefined {
+  return addressLabel && nameLabels && onAddressLabelChange
+    ? { addressLabel, nameLabels, onAddressLabelChange }
+    : undefined;
+}
 
 function getPastedValue(value: string, event: ClipboardEvent<HTMLInputElement>): string {
   const input = event.currentTarget;
@@ -66,7 +84,9 @@ export function useContactsAddAddressEntryViewModel({
   labels,
   onAddressChange,
   onConfirm,
+  ...addressLabelProps
 }: ContactsAddAddressEntryWebProps): ContactsAddAddressEntryWebViewProps {
+  const addressLabelConfiguration = getAddressLabelConfiguration(addressLabelProps);
   const presentation = useMemo(
     () => resolveAddressInputPresentation(addressEntry, labels),
     [addressEntry, labels],
@@ -82,12 +102,39 @@ export function useContactsAddAddressEntryViewModel({
     },
     [addressEntry.value, onAddressChange],
   );
+  const onNameChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) =>
+      addressLabelConfiguration?.onAddressLabelChange(event.target.value),
+    [addressLabelConfiguration],
+  );
+  const nameValidationMessage = useMemo(
+    () =>
+      addressLabelConfiguration?.addressLabel.validationError
+        ? addressLabelConfiguration.nameLabels.validationErrors[
+            addressLabelConfiguration.addressLabel.validationError
+          ]
+        : undefined,
+    [addressLabelConfiguration],
+  );
+  const isNameValid =
+    addressLabelConfiguration === undefined ||
+    addressLabelConfiguration.addressLabel.status === "valid";
+
+  const addressLabelViewProps = addressLabelConfiguration
+    ? {
+        addressLabel: addressLabelConfiguration.addressLabel,
+        nameLabels: addressLabelConfiguration.nameLabels,
+        nameValidationMessage,
+        onAddressLabelChange: onNameChange,
+      }
+    : {};
 
   return {
     value: addressEntry.value,
     labels,
     ...presentation,
-    isConfirmEnabled: presentation.isConfirmEnabled && onConfirm !== undefined,
+    ...addressLabelViewProps,
+    isConfirmEnabled: presentation.isConfirmEnabled && isNameValid && onConfirm !== undefined,
     onChange,
     onPaste,
     onConfirm,

@@ -1,14 +1,50 @@
 import type { ChangeEvent, ClipboardEvent } from "react";
-import type { AddAddressEntryLabels, AddAddressEntryState, AddAddressInputSource } from "./types";
+import type { ContactsAddAddressNameLabels } from "./AddressName/types";
+import type {
+  AddAddressEntryLabels,
+  AddAddressEntryState,
+  AddAddressInputSource,
+  AddAddressLabelState,
+} from "./types";
 
-export type ContactsAddAddressEntryWebProps = Readonly<{
+type AddressLabelConfiguration = Readonly<{
+  addressLabel: AddAddressLabelState;
+  nameLabels: ContactsAddAddressNameLabels;
+  onAddressLabelChange: (value: string) => void;
+}>;
+
+type WithoutAddressLabelConfiguration = Readonly<{
+  addressLabel?: never;
+  nameLabels?: never;
+  onAddressLabelChange?: never;
+}>;
+
+type AddressLabelViewConfiguration = Readonly<{
+  addressLabel: AddAddressLabelState;
+  nameLabels: ContactsAddAddressNameLabels;
+  nameValidationMessage?: string;
+  onAddressLabelChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}>;
+
+type WithoutAddressLabelViewConfiguration = Readonly<{
+  addressLabel?: never;
+  nameLabels?: never;
+  nameValidationMessage?: never;
+  onAddressLabelChange?: never;
+}>;
+
+type ContactsAddAddressEntryWebBaseProps = Readonly<{
   addressEntry: AddAddressEntryState;
   labels: AddAddressEntryLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onConfirm?: () => void;
 }>;
 
-export type ContactsAddAddressEntryWebViewProps = Readonly<{
+export type ContactsAddAddressEntryWebProps =
+  | (ContactsAddAddressEntryWebBaseProps & AddressLabelConfiguration)
+  | (ContactsAddAddressEntryWebBaseProps & WithoutAddressLabelConfiguration);
+
+type ContactsAddAddressEntryWebViewBaseProps = Readonly<{
   value: string;
   labels: AddAddressEntryLabels;
   inputStatus?: "error" | "success";
@@ -19,3 +55,7 @@ export type ContactsAddAddressEntryWebViewProps = Readonly<{
   onPaste: (event: ClipboardEvent<HTMLInputElement>) => void;
   onConfirm?: () => void;
 }>;
+
+export type ContactsAddAddressEntryWebViewProps =
+  | (ContactsAddAddressEntryWebViewBaseProps & AddressLabelViewConfiguration)
+  | (ContactsAddAddressEntryWebViewBaseProps & WithoutAddressLabelViewConfiguration);

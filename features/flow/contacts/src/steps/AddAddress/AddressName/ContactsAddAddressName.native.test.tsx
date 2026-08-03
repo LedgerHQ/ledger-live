@@ -1,12 +1,13 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   ContactAddressLabelSchema,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
-import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
-import type { AddAddressLabelState, AddAddressNameLabels } from "./types";
+import type { AddAddressLabelState, AddAddressNameLabels } from "../types";
 import { ContactsAddAddressName } from "./ContactsAddAddressName.native";
 
 const labels: AddAddressNameLabels = {
@@ -18,6 +19,7 @@ const labels: AddAddressNameLabels = {
     [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: "Special characters are not allowed.",
     [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]:
       "This address name is already used for this contact.",
+    [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "This address name is too long.",
   },
 };
 
