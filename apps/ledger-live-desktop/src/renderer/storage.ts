@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { ipcRenderer } from "electron";
+import { db } from "~/renderer/bridge";
+import type { Serializable } from "~/bridge/contract";
 import { getEnv } from "@shared/env";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
@@ -137,17 +138,17 @@ export const getKey = async <
   keyPath: K,
   defaultValue?: DV,
 ): Promise<V> => {
-  let data = await ipcRenderer.invoke("getKey", {
-    ns,
-    keyPath,
-    defaultValue,
-  });
+  // The bridge returns `unknown`, not `any`. This module owns the transform table, so it is
+  // the deliberate place to reassert the type.
+  let data: unknown = await db.getKey(ns, keyPath, defaultValue);
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const transform = transforms[keyPath as keyof Transforms];
   if (transform) {
-    data = await transform.get(data);
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    data = await transform.get(data as Parameters<typeof transform.get>[0]);
   }
-  return data;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return data as V;
 };
 
 let debounceToUse = debounce;
@@ -169,11 +170,7 @@ const debouncedSetKey = memoize(
         const transformedValue = transform
           ? await transform.set(value as Parameters<typeof transform.set>[0])
           : value;
-        await ipcRenderer.invoke("setKey", {
-          ns,
-          keyPath,
-          value: transformedValue,
-        });
+        await db.setKey(ns, keyPath, transformedValue as Serializable);
       } catch (e) {
         logger.error("debouncedSetKey failed", { ns, keyPath }, e);
       }
@@ -190,26 +187,22 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
 };
 
 export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
-  ipcRenderer.invoke("hasEncryptionKey", {
-    ns,
-    keyPath,
-  });
+  db.hasEncryptionKey(ns, keyPath);
 
-export const setEncryptionKey = (encryptionKey: string) =>
-  ipcRenderer.invoke("setEncryptionKey", { encryptionKey });
+export const setEncryptionKey = (encryptionKey: string) => db.setEncryptionKey(encryptionKey);
 
-export const removeEncryptionKey = () => ipcRenderer.invoke("removeEncryptionKey", {});
+export const removeEncryptionKey = () => db.removeEncryptionKey();
 
 export const isEncryptionKeyCorrect = (encryptionKey: string) =>
-  ipcRenderer.invoke("isEncryptionKeyCorrect", { encryptionKey });
+  db.isEncryptionKeyCorrect(encryptionKey);
 
-export const hasBeenDecrypted = () => ipcRenderer.invoke("hasBeenDecrypted", {});
+export const hasBeenDecrypted = () => db.hasBeenDecrypted();
 
-export const resetAll = () => ipcRenderer.invoke("resetAll");
+export const resetAll = () => db.resetAll();
 
-export const reload = () => ipcRenderer.invoke("reload");
+export const reload = () => db.reload();
 
-export const cleanCache = () => ipcRenderer.invoke("cleanCache");
+export const cleanCache = () => db.cleanCache();
 
 function identitySelector<V>(state: V): V {
   return state;
