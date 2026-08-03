@@ -12,11 +12,14 @@ describe("datadog anonymizer", () => {
   });
 
   describe("filepath", () => {
-    it("should return path unchanged when env paths are not set", () => {
+    it("should anonymise from the first log line when the env overrides are unset", () => {
       process.env.LEDGER_CONFIG_DIRECTORY = "";
       process.env.HOME_DIRECTORY = "";
       const anonymizer = require("~/datadog/anonymizer").default;
-      expect(anonymizer.filepath("/some/path")).toBe("");
+      expect(anonymizer.filepath("/tmp/ledger-live-test/userdata/app.json")).toBe(
+        "$USER_DATA/app.json",
+      );
+      expect(anonymizer.filepath("/unrelated/path")).toBe("/unrelated/path");
     });
 
     it("should return path unchanged for app:// URLs", () => {
