@@ -1,6 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { pushDevicesApi, pushDevicesApiExtra } from "@shared/api-services";
-import { createPushDevicesRequest, pushDevicesSyncApi } from "./api";
+import {
+  pushDevicesApi,
+  pushDevicesApiExtra as sharedPushDevicesApiExtra,
+} from "@shared/api-services";
+import { createPushDevicesRequest, pushDevicesApiExtra, pushDevicesSyncApi } from "./api";
 import { DeviceId } from "@domain/entity-client-identity";
 
 describe("pushDevicesApi configuration", () => {
@@ -14,6 +17,10 @@ describe("pushDevicesApi configuration", () => {
 });
 
 describe("pushDevicesApiExtra", () => {
+  it("is re-exported, so an app configures the store from this package alone", () => {
+    expect(pushDevicesApiExtra).toBe(sharedPushDevicesApiExtra);
+  });
+
   it("returns the validated config", () => {
     const config = { pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "1.0.0" };
     expect(pushDevicesApiExtra(config)).toEqual(config);
