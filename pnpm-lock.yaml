@@ -824,6 +824,12 @@ importers:
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell
+      '@devtools/transport-panel':
+        specifier: workspace:*
+        version: link:../../devtools/transport-panel
+      '@devtools/wire':
+        specifier: workspace:*
+        version: link:../../devtools/wire
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -1555,6 +1561,12 @@ importers:
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell
+      '@devtools/transport-panel':
+        specifier: workspace:*
+        version: link:../../devtools/transport-panel
+      '@devtools/wire':
+        specifier: workspace:*
+        version: link:../../devtools/wire
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -34663,7 +34675,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -37550,10 +37561,6 @@ packages:
   undici@5.29.0:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
-
-  undici@6.19.2:
-    resolution: {integrity: sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==}
-    engines: {node: '>=18.17'}
 
   undici@6.21.1:
     resolution: {integrity: sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==}
@@ -44043,7 +44050,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.4.3
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     transitivePeerDependencies:
@@ -72886,8 +72893,6 @@ snapshots:
   undici@5.29.0:
     dependencies:
       '@fastify/busboy': 2.1.1
-
-  undici@6.19.2: {}
 
   undici@6.21.1: {}
 

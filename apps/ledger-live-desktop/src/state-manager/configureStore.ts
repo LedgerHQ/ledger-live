@@ -21,6 +21,7 @@ import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
+import { sleepingListener } from "./sleepingListener";
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -116,7 +117,8 @@ const customCreateStore = ({
             fetchRemoteFlags: fetchRemoteFlags ?? undefined,
             getAppLanguage: languageSelector,
           }),
-        ),
+        )
+        .concat(sleepingListener.middleware),
     devTools: __DEV__,
   });
 

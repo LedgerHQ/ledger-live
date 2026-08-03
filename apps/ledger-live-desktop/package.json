@@ -74,6 +74,8 @@
     "@domain/entity-large-screen-upsell-modal": "workspace:*",
     "@devtools/shell": "workspace:^",
     "@devtools/bindings": "workspace:*",
+    "@devtools/transport-panel": "workspace:*",
+    "@devtools/wire": "workspace:*",
     "@electron/fuses": "2.0.0",
     "@features/flow-card": "workspace:^",
     "@features/flow-contacts": "workspace:^",
