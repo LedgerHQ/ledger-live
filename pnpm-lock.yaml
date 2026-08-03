@@ -1588,6 +1588,9 @@ importers:
       '@domain/entity-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/altcoins-sentiment
+      '@domain/entity-analytics-consent':
+        specifier: workspace:*
+        version: link:../../domain/entity/analytics-consent
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../domain/entity/client-identity
@@ -1615,6 +1618,9 @@ importers:
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../domain/entity/pay-card
+      '@features/flow-analytics-consent':
+        specifier: workspace:*
+        version: link:../../features/flow/analytics-consent
       '@features/flow-card':
         specifier: workspace:^
         version: link:../../features/flow/card

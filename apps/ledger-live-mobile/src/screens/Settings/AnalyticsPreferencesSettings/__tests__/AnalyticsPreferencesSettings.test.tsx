@@ -5,7 +5,7 @@ import type { InitialState } from "@react-navigation/native";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
+import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
 import * as analytics from "~/analytics";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -65,9 +65,9 @@ function renderAnalyticsPreferencesSettings(options: RenderOptions = {}) {
   });
 }
 
-const { policyVersion: expectedPrivacyPolicyVersion } = resolveAnalyticsOptInParams(
-  FEATURE_FLAGS_DEFAULTS.analyticsOptIn,
-);
+const expectedPrivacyPolicyVersion =
+  resolveAnalyticsOptInParams(FEATURE_FLAGS_DEFAULTS.analyticsOptIn).currentPolicyVersion
+    ?.normalized ?? null;
 
 describe("AnalyticsPreferencesSettings", () => {
   let trackSpy: jest.SpiedFunction<typeof analytics.track>;
