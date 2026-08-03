@@ -54,7 +54,11 @@ runs:
       id: test-files
       shell: bash
       run: |
-        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "${INPUTS_TEST_FILTER}" "${INPUTS_TEST_DIRECTORY}")
+        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+        # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+        SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
+        [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
+        TEST_FILES=$(node "$SHARD_TESTS" "${INPUTS_TEST_FILTER}" "${INPUTS_TEST_DIRECTORY}")
         echo "test_files_for_sharding<<EOF" >> $GITHUB_OUTPUT
         echo "$TEST_FILES"                 >> $GITHUB_OUTPUT
         echo "EOF"                         >> $GITHUB_OUTPUT
@@ -164,12 +168,17 @@ runs:
         SHARD_COUNT_ANDROID=${{ steps.shard-counts.outputs.SHARD_COUNT_ANDROID }}
         TEST_DIR="${INPUTS_TEST_DIRECTORY}"
 
+        # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+        # action keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+        SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
+        [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
+
         echo "Pre-computing shard assignments for iOS ($SHARD_COUNT_IOS shards) and Android ($SHARD_COUNT_ANDROID shards)"
 
         # Generate iOS shards with pre-computed file lists
         IOS_MATRIX="["
         for i in $(seq 1 $SHARD_COUNT_IOS); do
-          SHARD_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "$TEST_FILES" ios "$TEST_DIR" $i $SHARD_COUNT_IOS)
+          SHARD_FILES=$(node "$SHARD_TESTS" "$TEST_FILES" ios "$TEST_DIR" $i $SHARD_COUNT_IOS)
           # Escape for JSON
           SHARD_FILES_ESCAPED=$(echo "$SHARD_FILES" | jq -Rs '.')
           if [ $i -gt 1 ]; then
@@ -182,7 +191,7 @@ runs:
         # Generate Android shards with pre-computed file lists
         ANDROID_MATRIX="["
         for i in $(seq 1 $SHARD_COUNT_ANDROID); do
-          SHARD_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "$TEST_FILES" android "$TEST_DIR" $i $SHARD_COUNT_ANDROID)
+          SHARD_FILES=$(node "$SHARD_TESTS" "$TEST_FILES" android "$TEST_DIR" $i $SHARD_COUNT_ANDROID)
           # Escape for JSON
           SHARD_FILES_ESCAPED=$(echo "$SHARD_FILES" | jq -Rs '.')
           if [ $i -gt 1 ]; then

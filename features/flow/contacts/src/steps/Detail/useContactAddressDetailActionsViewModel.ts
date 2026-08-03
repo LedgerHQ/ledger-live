@@ -14,10 +14,7 @@ import {
   createIdleContactAddressDeleteLifecycle,
   createOpenContactAddressDeleteLifecycle,
 } from "./model/addressDetailActionsViewModel";
-import type {
-  ContactAddressDeleteLifecycle,
-  ContactAddressDetailActionsViewModel,
-} from "./types";
+import type { ContactAddressDeleteLifecycle, ContactAddressDetailActionsViewModel } from "./types";
 
 type ContactsStateRoot = Parameters<typeof selectContactAddressById>[0];
 

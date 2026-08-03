@@ -9293,6 +9293,7 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
+    "addExternalAddress": "Add external address",
     "addAddressEntry": {
       "title": "Enter address",
       "addressPlaceholder": "Address or ENS",
@@ -9301,8 +9302,22 @@
       "validAddress": "Valid address",
       "invalidAddress": "Invalid address",
       "domainNotFound": "Domain not found",
+      "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "This ENS name resolves to the address shown above."
+    },
+    "addAddressName": {
+      "inputLabel": "Address name",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "tooLongLabel": "Address names must be 32 characters or fewer."
+    },
+    "addAddressReview": {
+      "title": "Review address",
+      "continue": "Confirm address",
+      "successTitle": "Address saved",
+      "close": "Close"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
@@ -9318,6 +9333,7 @@
       "name": "Me"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
       "emptyState": {
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
@@ -9332,6 +9348,29 @@
       "edit": "Edit",
       "delete": "Delete",
       "networkTag": "{{name}} Network"
+    },
+    "detailActions": {
+      "editContact": "Edit contact",
+      "deleteContact": "Delete contact"
+    },
+    "editContact": {
+      "title": "Edit contact",
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges": "Apply changes",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "deleteContact": {
+      "title": "Delete contact?",
+      "description": "Deleting this contact will erase all associated addresses.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editSigner": {
+      "title": "Confirm on your device",
+      "description": "Connect and unlock your Ledger device to confirm this change.",
+      "confirm": "Continue",
+      "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",

@@ -3,10 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { ContactAddressIdSchema, contactsSlice } from "@domain/entity-contact";
-import {
-  mockContactWithAddress,
-  mockMeContact,
-} from "@domain/entity-contact/schema.mock";
+import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
 
@@ -72,8 +69,7 @@ describe("useContactAddressDetailActionsViewModel", () => {
     const missingAddressId = ContactAddressIdSchema.parse("address-missing");
     const Wrapper = makeWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
-      () =>
-        useContactAddressDetailActionsViewModel(contact.id, missingAddressId, createPorts()),
+      () => useContactAddressDetailActionsViewModel(contact.id, missingAddressId, createPorts()),
       { wrapper: Wrapper },
     );
 

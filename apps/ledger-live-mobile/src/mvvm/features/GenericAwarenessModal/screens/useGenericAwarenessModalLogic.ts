@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   isGenericAwarenessModalContentCardReady,
@@ -42,6 +42,9 @@ export function useGenericAwarenessModalLogic(
   { campaignId, cards }: GenericAwarenessModalLogicInput,
   { enabled, isOpen, open }: GenericAwarenessModalLogicContext,
 ) {
+  // Resets when this hook remounts (e.g. nav stack pop+push); auto-open may fire again once per mount.
+  const hasAutoOpenedAppStartThisSessionRef = useRef(false);
+
   const cardToOpen = useMemo(
     () => getGenericAwarenessModalCardToOpen({ campaignId, cards }),
     [campaignId, cards],
@@ -51,8 +54,17 @@ export function useGenericAwarenessModalLogic(
     useCallback(() => {
       if (!enabled || isOpen || !cardToOpen) return;
 
+      const isAutoAppStart = !campaignId && isGenericAwarenessModalAppStartId(cardToOpen.id);
+      if (isAutoAppStart && hasAutoOpenedAppStartThisSessionRef.current) {
+        return;
+      }
+
+      if (isAutoAppStart) {
+        hasAutoOpenedAppStartThisSessionRef.current = true;
+      }
+
       open(cardToOpen.id);
-    }, [cardToOpen, enabled, isOpen, open]),
+    }, [campaignId, cardToOpen, enabled, isOpen, open]),
   );
 
   return {

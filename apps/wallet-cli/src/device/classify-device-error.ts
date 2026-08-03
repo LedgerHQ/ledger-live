@@ -1,5 +1,5 @@
 /**
- * Single classifier that maps any thrown value from the device stack (DMK, @ledgerhq/errors,
+ * Single classifier that maps any thrown value from the device stack (DMK,
  * @ledgerhq/hw-transport, rxjs) to a canonical `DeviceState`.
  *
  * Kept deliberately free of rendering / I/O — callers use `renderDeviceState` or wrap the
@@ -96,7 +96,7 @@ export function classifyDeviceError(error: unknown, ctx: ClassifyContext = {}): 
   if (error == null) return { code: "unknown", cause: error };
 
   // Device-not-detected: rxjs EmptyError is thrown when lastValueFrom sees no emission,
-  // @ledgerhq/errors Disconnected* covers USB unplug / transport close.
+  // Disconnected* covers USB unplug / transport close.
   if (isDisconnectedError(error)) {
     return { code: "disconnected" };
   }

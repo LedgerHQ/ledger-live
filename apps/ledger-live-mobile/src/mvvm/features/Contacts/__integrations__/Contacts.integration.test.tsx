@@ -1,11 +1,17 @@
 import React from "react";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { Pressable, Text } from "react-native";
 import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { render, screen, withFlagOverrides, waitFor } from "@tests/test-renderer";
 import type { ContactId } from "@domain/entity-contact";
-import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  mockContact,
+  mockContactAddress,
+  mockMeContact,
+  mockPopulatedContacts,
+} from "@domain/entity-contact/schema.mock";
 import { ContactDetailView } from "@features/flow-contacts";
 import { NavigatorName, ScreenName } from "~/const";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
@@ -645,7 +651,7 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should keep one Add Address drawer through QR, placeholders and success", async () => {
+  it("should keep one Add Address drawer through QR, naming and success", async () => {
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
       navigationInitialState: contactDetailNavigationState,
       overrideInitialState: withContactsPageReadyState({
@@ -682,9 +688,23 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-add-address-confirm"));
-    expect(await screen.findByTestId("contacts-add-address-name-screen-continue")).toBeVisible();
+    const addressNameInput = await screen.findByTestId("contacts-add-address-name-input");
+    expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
+    expect(addressNameInput).toHaveProp("maxLength", 32);
+    expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
+    expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Name address");
+    expect(
+      screen.getByText(
+        "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
 
-    await user.press(screen.getByTestId("contacts-add-address-name-screen-continue"));
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Exchange");
+    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveProp("value", "Exchange");
+
+    await user.press(screen.getByTestId("contacts-add-address-name-continue"));
     expect(await screen.findByTestId("contacts-add-address-review-screen-continue")).toBeVisible();
 
     await user.press(screen.getByTestId("contacts-add-address-review-screen-continue"));
@@ -736,5 +756,72 @@ describe("Contacts integration", () => {
       ScreenName.MyWalletContactDetail,
     );
     expect(screen.queryByTestId("accounts-list-screen")).toBeNull();
+  });
+
+  it("should render populated contact detail when a contact with addresses is opened", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByText("2 addresses")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-address-list")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-polygon")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeVisible();
+      expect(screen.queryByTestId("contacts-detail-empty-state")).toBeNull();
+    });
+  });
+
+  it("should open the address detail sheet when an address row is pressed", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+
+    expect(await screen.findByTestId("contacts-address-detail-dialog")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-address-detail-network-tag")).toHaveTextContent(
+        "Ethereum Network",
+      );
+      expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
+        "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+      );
+      expect(screen.getByTestId("contacts-address-detail-qr-code")).toBeVisible();
+    });
+  });
+
+  it("should copy the address from the detail sheet", async () => {
+    const setString = jest.spyOn(Clipboard, "setString");
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts: mockPopulatedContacts() } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ben"));
+    await user.press(await screen.findByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.press(await screen.findByTestId("contacts-address-detail-copy"));
+
+    await waitFor(() => {
+      expect(setString).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
+      expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+    });
   });
 });

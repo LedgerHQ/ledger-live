@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-analytics-consent",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

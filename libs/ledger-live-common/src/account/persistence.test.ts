@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Account } from "@ledgerhq/types-live";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { accountPersistedStateChanged, accountsPersistedStateChanged } from "./persistence";

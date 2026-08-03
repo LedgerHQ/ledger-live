@@ -13,10 +13,8 @@ import {
   removeDismissedContentCards,
   setDismissedContentCards,
 } from "../actions/settings";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker, FiatCurrencySchema } from "@domain/entity-currency-fiat";
 import reducer, {
   lastSeenDeviceSelector,
   languageSelector,
@@ -33,7 +31,6 @@ import reducer, {
   supportedCounterValuesSelector,
   possibleIntermediaries,
 } from "./settings";
-import { FiatCurrencySchema } from "@domain/entity-currency-fiat";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);

@@ -1,4 +1,6 @@
 import {
+  ContactAddressLabelTooLongError,
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DuplicateContactAddressLabelError,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   InvalidContactAddressLabelError,
@@ -53,18 +55,28 @@ describe("contact address label validation", () => {
     expect(isValidContactAddressLabel("")).toBe(false);
   });
 
-  it("accepts a valid draft label without imposing a length limit", () => {
+  it("rejects an address label longer than 32 characters", () => {
     const longLabel = "Ethereum ".repeat(50);
 
     expect(getContactAddressLabelValidationError("Ethereum")).toBeNull();
-    expect(isValidContactAddressLabel(longLabel)).toBe(true);
+    expect(getContactAddressLabelValidationError(longLabel)).toBe(
+      CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+    );
+    expect(isValidContactAddressLabel(longLabel)).toBe(false);
   });
 
-  it("reports invalid characters for a non-empty invalid draft label", () => {
-    expect(getContactAddressLabelValidationError("Ethereum 💎")).toBe(
+  it("ignores surrounding whitespace when checking the address label length", () => {
+    const labelWithWhitespace = `  ${"a".repeat(32)}  `;
+
+    expect(getContactAddressLabelValidationError(labelWithWhitespace)).toBeNull();
+    expect(parseContactAddressLabel(labelWithWhitespace)).toBe("a".repeat(32));
+  });
+
+  it("reports invalid non-ASCII characters for a non-empty draft label", () => {
+    expect(getContactAddressLabelValidationError("Ethér")).toBe(
       INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
     );
-    expect(isValidContactAddressLabel("Ethereum 💎")).toBe(false);
+    expect(isValidContactAddressLabel("Ethér")).toBe(false);
   });
 
   it("reports a duplicate within the existing labels", () => {
@@ -76,19 +88,14 @@ describe("contact address label validation", () => {
     expect(isValidContactAddressLabel("ETHEREUM", existingLabels)).toBe(false);
   });
 
-  it("treats canonically equivalent Unicode labels as duplicates", () => {
-    const existingLabels = [ContactAddressLabelSchema.parse("Ethér")];
-
-    expect(getContactAddressLabelValidationError("Ethe\u0301r", existingLabels)).toBe(
-      DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-    );
-    expect(normalizeContactAddressLabelForComparison(" Ethér ")).toBe(
-      normalizeContactAddressLabelForComparison("ETHE\u0301R"),
+  it("normalizes ASCII labels for comparison", () => {
+    expect(normalizeContactAddressLabelForComparison(" Ethereum ")).toBe(
+      normalizeContactAddressLabelForComparison("ETHEREUM"),
     );
   });
 
   it("parses and normalizes a valid address label", () => {
-    expect(parseContactAddressLabel("  Ethe\u0301r  ")).toBe("Ethér");
+    expect(parseContactAddressLabel("  Ethereum  ")).toBe("Ethereum");
   });
 
   it("throws the matching domain error for invalid and duplicate labels", () => {
@@ -97,6 +104,9 @@ describe("contact address label validation", () => {
     expect(() => parseContactAddressLabel("Ethereum 💎")).toThrow(InvalidContactAddressLabelError);
     expect(() => parseContactAddressLabel("ethereum", existingLabels)).toThrow(
       DuplicateContactAddressLabelError,
+    );
+    expect(() => parseContactAddressLabel("Ethereum ".repeat(50))).toThrow(
+      ContactAddressLabelTooLongError,
     );
   });
 });

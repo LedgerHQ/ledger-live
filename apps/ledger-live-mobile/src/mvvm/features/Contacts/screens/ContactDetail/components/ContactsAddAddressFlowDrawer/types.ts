@@ -8,6 +8,7 @@ export type ContactsAddAddressFlowDrawerProps = Readonly<{
   state: AddAddressFlowState;
   eligibleNetworkIds: readonly string[];
   onAddressChange: (value: string, inputMethod: AddAddressInputSource) => void;
+  onAddressNameChange: (value: string) => void;
   onAddressConfirm: () => void;
   onBack: () => void;
   onClose: () => void;

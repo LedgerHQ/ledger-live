@@ -16,6 +16,7 @@ import useGenericAwarenessModalCarouselViewModel, {
 import useGenericAwarenessModalPromptViewModel, {
   type GenericAwarenessModalPromptViewModel,
 } from "./hooks/useGenericAwarenessModalPromptViewModel";
+import { useGenericAwarenessModalBrazeLogging } from "./hooks/useGenericAwarenessModalBrazeLogging";
 import CarouselContent from "./components/CarouselContent";
 import FeatureIntroContent from "./components/FeatureIntroContent";
 import PromptContent from "./components/PromptContent";
@@ -69,9 +70,25 @@ const GenericAwarenessModalView = ({
   contentCard,
 }: GenericAwarenessModalViewProps) => {
   const hasStoredContentCards = useSelector(selectGenericAwarenessModalHasStoredContentCards);
-  const carouselViewModel = useGenericAwarenessModalCarouselViewModel(contentCard, isOpen);
-  const featureIntroViewModel = useGenericAwarenessModalFeatureIntroViewModel(contentCard, isOpen);
-  const promptViewModel = useGenericAwarenessModalPromptViewModel(contentCard, isOpen);
+  const { logClick, logDismiss } = useGenericAwarenessModalBrazeLogging(contentCard?.id, isOpen);
+  const carouselViewModel = useGenericAwarenessModalCarouselViewModel(
+    contentCard,
+    isOpen,
+    logClick,
+    logDismiss,
+  );
+  const featureIntroViewModel = useGenericAwarenessModalFeatureIntroViewModel(
+    contentCard,
+    isOpen,
+    logClick,
+    logDismiss,
+  );
+  const promptViewModel = useGenericAwarenessModalPromptViewModel(
+    contentCard,
+    isOpen,
+    logClick,
+    logDismiss,
+  );
 
   useEffect(() => {
     if (isOpen && !contentCard && hasStoredContentCards) {

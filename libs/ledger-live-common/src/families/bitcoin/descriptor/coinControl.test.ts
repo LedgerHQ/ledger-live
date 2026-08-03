@@ -5,7 +5,7 @@ import type { TransactionStatus as BtcTransactionStatus } from "@ledgerhq/coin-b
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CoinControlDisplayData, CoinControlUtxoRow } from "../../../bridge/descriptor/types";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
-import { getCryptoCurrencyById } from "../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { bitcoinCoinControlConfig } from "./coinControl";
 import { bitcoinPickingStrategy } from "../types";
 import type { BitcoinOutput } from "../types";

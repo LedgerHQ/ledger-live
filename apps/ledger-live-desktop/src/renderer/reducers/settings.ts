@@ -2,15 +2,18 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
   getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
+import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyById,
-  OFAC_CURRENCIES,
-} from "@ledgerhq/live-common/currencies/index";
+  selectSupportedFiats,
+  type FiatCurrency,
+} from "@domain/entity-currency-fiat";
+import { OFAC_CURRENCIES } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@shared/env";
 import { Currency } from "@domain/entity-currency";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import { Unit } from "@domain/entity-currency-unit";
 import {
   AccountLike,

@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Asset } from "~/types/asset";
 import { padAssetsWithDefaults } from "../assetUtils";
 

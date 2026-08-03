@@ -12,13 +12,19 @@ import { supportedDeviceModelIds as clsSupportedDeviceModelIds } from "../device
 import { DeviceModel } from "@ledgerhq/devices";
 import customLockScreenFetchSize from "../hw/customLockScreenFetchSize";
 import { getDeviceName } from "../device/use-cases/getDeviceNameUseCase";
-import { currenciesByMarketcap, listCryptoCurrencies } from "../currencies";
+import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
+import { currenciesByMarketcap } from "../currencies";
 import { makeAppV2Mock } from "./mock";
 
 jest.useFakeTimers();
 jest.mock("../hw/customLockScreenFetchSize");
 jest.mock("../device/use-cases/getDeviceNameUseCase");
 jest.mock("../currencies");
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
+  listCryptoCurrencies: jest.fn(),
+  findCryptoCurrencyById: jest.fn(),
+}));
 jest.mock("../device/use-cases/getLatestFirmwareForDeviceUseCase", () => ({
   ...jest.requireActual("../device/use-cases/getLatestFirmwareForDeviceUseCase"),
   getLatestFirmwareForDeviceUseCase: jest.fn().mockResolvedValue(null),

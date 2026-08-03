@@ -4,7 +4,5 @@
     "**/lib/**",
     "**/lib-es/**"
   ],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

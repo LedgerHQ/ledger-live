@@ -29,6 +29,7 @@ export type {
   AddAddressInputMethod,
   AddAddressInputSource,
   AddAddressLabelState,
+  AddAddressNameLabels,
   AddAddressPlaceholderViewProps,
   ValidAddAddressEntryState,
   ValidAddAddressLabelState,

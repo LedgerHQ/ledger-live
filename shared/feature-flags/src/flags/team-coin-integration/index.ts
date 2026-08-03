@@ -110,6 +110,7 @@ export * from "./llmMemoTag";
 export * from "./llmTezosStaking";
 export * from "./llmWebviewManifestDomainCheck";
 export * from "./newSendFlow";
+export * from "./newSendFlowFirstInteractionBanner";
 export * from "./useDeviceActionSignatureSend";
 export * from "./web3hub";
 export * from "./zcashShielded";

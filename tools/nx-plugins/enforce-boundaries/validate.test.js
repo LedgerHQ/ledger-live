@@ -9,6 +9,7 @@ const {
   findViolations,
   findSourceImportViolations,
   collectLegacyPackageNames,
+  findBannedDependencyViolations,
 } = require("./validate");
 
 /**
@@ -507,4 +508,85 @@ test("no violations in a clean workspace", t => {
   const legacy = new Set(["@ledgerhq/errors"]); // lumen not in set
   const violations = findSourceImportViolations(root, legacy);
   assert.equal(violations.length, 0);
+});
+
+const BANNED = [{ name: "@ledgerhq/banned", reason: "frozen" }];
+
+/** @param {Record<string, object>} manifests keyed by project root */
+function bannedDepGraph(manifests) {
+  return {
+    nodes: Object.fromEntries(Object.keys(manifests).map(root => [root, { data: { root } }])),
+    dependencies: {},
+  };
+}
+
+test("findBannedDependencyViolations flags a banned dependency", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED);
+  assert.equal(violations.length, 1);
+  assert.equal(violations[0].manifest, path.join("libs/a", "package.json"));
+  assert.equal(violations[0].dependency, "@ledgerhq/banned");
+  assert.equal(violations[0].field, "dependencies");
+});
+
+test("findBannedDependencyViolations covers every dependency field", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", devDependencies: { "@ledgerhq/banned": "workspace:^" } },
+    "libs/b": { name: "@ledgerhq/b", peerDependencies: { "@ledgerhq/banned": "^6.0.0" } },
+    // optionalDependencies is a real escape hatch: 10 manifests in this repo use it
+    "libs/c": { name: "@ledgerhq/c", optionalDependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+    "libs/b/package.json": JSON.stringify(manifests["libs/b"]),
+    "libs/c/package.json": JSON.stringify(manifests["libs/c"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED);
+  assert.equal(violations.length, 3);
+  assert.deepEqual(violations.map(v => v.field).sort(), [
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+  ]);
+});
+
+test("findBannedDependencyViolations skips the banned package's own manifest", t => {
+  const manifests = {
+    "libs/banned": { name: "@ledgerhq/banned", dependencies: { "@ledgerhq/banned": "1.0.0" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/banned/package.json": JSON.stringify(manifests["libs/banned"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
+});
+
+test("findBannedDependencyViolations is a no-op with no banned packages", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/banned": "workspace:^" } },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, []), []);
+});
+
+test("findBannedDependencyViolations ignores unrelated dependencies and missing manifests", t => {
+  const manifests = {
+    "libs/a": { name: "@ledgerhq/a", dependencies: { "@ledgerhq/logs": "workspace:^" } },
+    "libs/gone": { name: "@ledgerhq/gone" },
+  };
+  const root = makeTmpWorkspace({
+    "libs/a/package.json": JSON.stringify(manifests["libs/a"]),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });

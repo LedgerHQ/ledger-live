@@ -1,5 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { DistributionItem } from "@ledgerhq/types-live";
 

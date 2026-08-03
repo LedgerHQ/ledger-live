@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "@ledgerhq/coin-aptos/constants";
 import { getCurrencyConfiguration } from "./config";
-import { findCryptoCurrencyById } from "./currencies";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 /**
  * Interface for the end user.

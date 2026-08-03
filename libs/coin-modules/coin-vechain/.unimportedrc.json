@@ -64,7 +64,6 @@
     "eip55",
     "invariant",
     "lodash",
-    "rxjs",
-    "@ledgerhq/errors"
+    "rxjs"
   ]
 }

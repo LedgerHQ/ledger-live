@@ -24,8 +24,7 @@
     "axios",
     "expect",
     "invariant",
-    "lodash",
-    "@ledgerhq/errors"
+    "lodash"
   ],
   "ignoreUnresolved": [
     "@jest/expect-utils",

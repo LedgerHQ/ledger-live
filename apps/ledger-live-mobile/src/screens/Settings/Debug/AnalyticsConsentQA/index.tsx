@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { parseStoredPolicyVersion } from "@domain/entity-analytics-consent";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   needsConsentRenewal,
@@ -27,6 +28,13 @@ function valueLxColor(ok: boolean): "success" | "error" {
   return ok ? "success" : "error";
 }
 
+/** Map stored string|number|null into the legacy numeric helper used by this debug screen. */
+function toLegacyStoredVersion(value: string | number | null): number | null {
+  const parsed = parseStoredPolicyVersion(value);
+  if (parsed == null) return null;
+  return Number(parsed.normalized);
+}
+
 export default function DebugAnalyticsConsentQA() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -37,7 +45,8 @@ export default function DebugAnalyticsConsentQA() {
   const personalizedEnabled = useSelector(personalizedRecommendationsEnabledSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const storedVersionOk = !needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
+  const storedLegacyVersion = toLegacyStoredVersion(consentInfo.privacyPolicyVersion);
+  const storedVersionOk = !needsPrivacyPolicyAck(storedLegacyVersion, policyVersion);
   const consentDateOk = !needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
 
   const expectation = useMemo(() => {
@@ -48,10 +57,7 @@ export default function DebugAnalyticsConsentQA() {
     if (!hasCompletedOnboarding) {
       return { shouldOffer: false as const, phase: null, reason: "onboardingIncomplete" as const };
     }
-    const needsUpdatePrivacy = needsPrivacyPolicyAck(
-      consentInfo.privacyPolicyVersion,
-      policyVersion,
-    );
+    const needsUpdatePrivacy = needsPrivacyPolicyAck(storedLegacyVersion, policyVersion);
     const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
     if (!needsUpdatePrivacy && !needsRenewal) {
       return { shouldOffer: false as const, phase: null, reason: "nothingToRenew" as const };
@@ -71,7 +77,7 @@ export default function DebugAnalyticsConsentQA() {
     feature?.enabled,
     hasCompletedOnboarding,
     consentInfo.consentDate,
-    consentInfo.privacyPolicyVersion,
+    storedLegacyVersion,
     policyVersion,
     consentValidityDays,
   ]);

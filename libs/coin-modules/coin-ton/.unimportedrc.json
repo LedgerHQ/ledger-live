@@ -20,7 +20,6 @@
   ],
   "ignoreUnused": [
     "msw",
-    "@ledgerhq/live-env",
-    "@ledgerhq/errors"
+    "@ledgerhq/live-env"
   ]
 }

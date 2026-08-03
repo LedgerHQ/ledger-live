@@ -4,7 +4,7 @@ import DeviceAction from "./index";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 const nanoS: Device = {
   modelId: DeviceModelId.nanoS,
