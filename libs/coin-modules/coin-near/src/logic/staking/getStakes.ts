@@ -3,17 +3,9 @@ import { getStakingPositions } from "../../network";
 import type { NearStakingPosition } from "../../network/sdk.types";
 import { canUnstake, canWithdraw } from "../../logic";
 
-/**
- * A NEAR delegation splits into up to three framework stakes per staking pool: the staked
- * principal, the unstaked amount still inside the unbonding window, and the unstaked amount that
- * has become withdrawable.
- *
- * Rewards are not a separate position: a staking pool compounds them into the staked balance, so
- * `amount` already includes them and there is no `amountRewarded` to report.
- *
- * Amounts below the staking threshold are dropped. The node reports a staked balance one
- * yoctoNEAR below what was staked, so a position can otherwise linger as unactionable dust.
- */
+// Maps a delegation to up to three stakes (staked, unbonding, withdrawable) per pool. Rewards
+// compound into the staked balance so aren't a separate position, and sub-threshold dust (the node
+// under-reports staked by 1 yoctoNEAR) is dropped.
 export function toStakes(address: string, positions: NearStakingPosition[]): Stake[] {
   const items: Stake[] = [];
 

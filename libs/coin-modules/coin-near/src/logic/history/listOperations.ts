@@ -15,13 +15,8 @@ const MAX_PAGE_SIZE = 100;
 const blockHeight = (transaction: NearTransaction): number =>
   transaction.block?.block_height !== undefined ? Number(transaction.block.block_height) : 0;
 
-/**
- * Map an indexer transaction to a framework operation.
- *
- * Unlike the account bridge's mapping, an OUT value is the transferred amount **only**. The bridge
- * folds the fee into the value itself, whereas the generic framework adds `tx.fees` on top of
- * `value` for outgoing operations, so including it here would charge the fee twice.
- */
+// Unlike the account bridge, an OUT value here is the transferred amount only — the generic
+// framework adds `tx.fees` on top for outgoing ops, so folding the fee in here would double-charge it.
 export function toOperation(transaction: NearTransaction, address: string): Operation {
   const type = getOperationType(transaction, address);
   const date = new Date(Number.parseFloat(transaction.block_timestamp) / 1e6);
@@ -47,12 +42,8 @@ export function toOperation(transaction: NearTransaction, address: string): Oper
   };
 }
 
-/**
- * Paginated operation history, newest first.
- *
- * The cursor is the indexer's own opaque page token, forwarded unchanged. Paging is forward-only
- * from newest to oldest, so ascending order cannot be honoured across pages.
- */
+// Paginated, newest-first history. The cursor is the indexer's own opaque token, forwarded
+// unchanged; paging is forward-only newest-to-oldest, so ascending order can't be honoured across pages.
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,

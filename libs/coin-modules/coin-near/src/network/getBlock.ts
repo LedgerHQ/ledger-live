@@ -4,11 +4,8 @@ import type { NearBlockHeader } from "./sdk.types";
 
 type BlockQuery = { finality: "final" } | { block_id: number };
 
-/**
- * Block header via the JSON-RPC `block` method. Only the header is requested; the chunk list in
- * the response is ignored, since reading a block's transactions would require one extra call per
- * chunk.
- */
+// Block header via the JSON-RPC `block` method. Only the header is requested; reading a block's
+// transactions would cost one extra call per chunk.
 const getBlockHeader = async (params: BlockQuery): Promise<NearBlockHeader> => {
   const currencyConfig = getCoinConfig();
   const { data } = await network<{

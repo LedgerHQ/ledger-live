@@ -18,15 +18,9 @@ function overriddenGasPrice(parameters: FeeEstimation["parameters"]): string | u
   return gasPrice.isInteger() && gasPrice.gt(0) ? gasPrice.toFixed() : undefined;
 }
 
-/**
- * Fee for an intent, in yoctoNEAR.
- *
- * The costs come from the protocol config rather than from preloaded data: nothing preloads on this
- * code path, and the preload defaults are zeros, which would silently yield a fee of zero.
- *
- * A missing recipient yields a zero estimate instead of an error, so a form can be priced while the
- * user is still filling it in.
- */
+// Fee for an intent, in yoctoNEAR, sourced from the protocol config since nothing preloads on this
+// path (preload defaults are zeros, which would silently yield a zero fee). A missing recipient
+// prices as zero rather than erroring, so a form can price while still being filled in.
 export async function estimateFees(
   intent: NearIntent,
   customFeesParameters?: FeeEstimation["parameters"],

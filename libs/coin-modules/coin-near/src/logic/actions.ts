@@ -9,13 +9,9 @@ export type ActionsInput = {
   useAllAmount?: boolean;
 };
 
-/**
- * The actions of a NEAR transaction, one per supported mode.
- *
- * Staking goes through the staking pool contract: the amount is the attached deposit when staking,
- * and a call argument when unstaking or withdrawing. The `_all` variants take no amount, which is
- * how "use all" avoids leaving dust behind when the balance moves between crafting and execution.
- */
+// One action per supported mode. Staking goes through the pool contract (attached deposit when
+// staking, call argument otherwise); `_all` variants take no amount, so "use all" can't leave dust
+// behind if the balance moves between crafting and execution.
 export const buildActions = ({ mode, amount, useAllAmount }: ActionsInput): Action[] => {
   switch (mode) {
     case "stake":

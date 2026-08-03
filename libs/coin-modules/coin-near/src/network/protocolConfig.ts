@@ -3,13 +3,9 @@ import { BigNumber } from "bignumber.js";
 import { NearProtocolConfigNotLoaded } from "../errors";
 import { getProtocolConfig } from "./node";
 
-/**
- * Per-action gas costs and the storage price, derived from the protocol config.
- *
- * The account bridge gets these from preloaded data; callers that run outside a bridge sync (the
- * CoinModuleApi surface) have no preload step, so they read them here instead. Cached because the
- * protocol config only changes with a protocol upgrade.
- */
+// Per-action gas costs and storage price, derived from the protocol config. The account bridge
+// reads these from preload; callers outside a bridge sync (CoinModuleApi) have none, so this reads
+// them directly — cached since the config only changes on a protocol upgrade.
 export type NearActionCosts = {
   storageCost: BigNumber;
   createAccountCostSend: BigNumber;

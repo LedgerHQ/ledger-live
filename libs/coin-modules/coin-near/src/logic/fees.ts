@@ -15,14 +15,9 @@ export type FeeInput = {
 
 const STAKING_MODES = new Set(["stake", "unstake", "withdraw"]);
 
-/**
- * The fee for a transaction, in yoctoNEAR.
- *
- * Single source of the formula for both callers: the account bridge, which sources `costs` from
- * preloaded data, and the CoinModuleApi surface, which reads them from the protocol config.
- * Sending to an implicit (hex) account that does not exist yet also pays for creating the account
- * and adding its access key.
- */
+// Fee for a transaction, in yoctoNEAR — single formula shared by the account bridge (`costs` from
+// preload) and CoinModuleApi (from the protocol config). Sending to a not-yet-existing implicit
+// account also pays for creating it and adding its access key.
 export const computeFees = ({
   mode,
   recipient,

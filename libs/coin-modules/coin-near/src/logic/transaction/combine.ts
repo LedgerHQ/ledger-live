@@ -1,12 +1,7 @@
 import * as nearAPI from "near-api-js";
 
-/**
- * Decode a hex signature, refusing anything Node would quietly truncate.
- *
- * `Buffer.from(value, "hex")` stops at the first invalid character and drops a trailing half-byte,
- * so a malformed signature would otherwise be attached at the wrong length and only fail once the
- * network rejects the broadcast.
- */
+// Refuses what `Buffer.from(value, "hex")` would quietly truncate: it stops at the first invalid
+// character and drops a trailing half-byte, which would attach a wrong-length signature that only fails at broadcast.
 function decodeSignature(signature: string): Buffer {
   const decoded = Buffer.from(signature, "hex");
 
@@ -20,13 +15,8 @@ function decodeSignature(signature: string): Buffer {
   return decoded;
 }
 
-/**
- * Attach a device signature to a crafted transaction and return the signed transaction, base64'd
- * and ready to broadcast.
- *
- * The key type is read back from the transaction's own public key rather than passed in, so the
- * signature scheme always matches the key the transaction was crafted for.
- */
+// Attaches a device signature and returns the signed, base64'd transaction ready to broadcast. The
+// key type is read back from the transaction's own public key, so it always matches the crafting key.
 export function combine(tx: string, signature: string, _pubkey?: string): string {
   const transaction = nearAPI.transactions.Transaction.decode(Buffer.from(tx, "base64"));
 

@@ -33,26 +33,9 @@ import { craftTransaction, type NearIntent } from "../logic/transaction/craftTra
 import { estimateFees } from "../logic/transaction/estimateFees";
 import { validateIntent } from "../logic/transaction/validateIntent";
 
-/**
- * CoinModuleApi ("Alpaca") entry point for NEAR.
- *
- * NEAR is account-based with real delegated staking through staking pool contracts, so the staking
- * reads are implemented and `stakingSupported` is set. What is not implemented is deliberate:
- *
- * - `getRewards`: a staking pool compounds rewards into the staked balance, so there is no discrete
- *   reward-distribution event to list.
- * - `getBlock`: reading a block's transactions costs one extra call per chunk; only the header,
- *   which `getBlockInfo` returns, is cheap.
- * - `getNextSequence`: a NEAR nonce belongs to an access key, not to an account, so it cannot be
- *   resolved from an address alone. `craftTransaction` resolves it from the sender public key.
- * - `call` and `craftRawTransaction`: no contract-call surface in this module.
- * - tokens: the module has no NEP-141 support, so every balance and operation is native.
- */
-/**
- * `stakingSupported` is not part of `CoinModuleApi`; the wallet framework reads it off the bridge
- * api to decide whether to fetch validators during a sync. It is declared inline rather than by
- * importing `BridgeApi`, which coin modules are not allowed to depend on.
- */
+// CoinModuleApi ("Alpaca") entry point for NEAR. Staking reads are implemented (real pool-contract
+// delegation); getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline throws below for why.
+// `stakingSupported` isn't part of `CoinModuleApi`; declared inline (not via `BridgeApi`, which coin modules can't depend on) so the wallet framework can gate validator sync on it.
 export function createApi(
   config: NearCoinConfig,
   _currencyId: string,

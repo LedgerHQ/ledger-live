@@ -129,10 +129,8 @@ async function validateSend(
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
 
-/**
- * The most a staking operation can move. Unstaking and withdrawing move already-delegated funds, so
- * only the fee comes out of the liquid balance; staking spends it.
- */
+// The ceiling a staking op can move: unstake/withdraw move already-delegated funds (only the fee
+// comes out of the liquid balance), staking spends the liquid balance itself.
 async function maxStakingAmount(
   mode: string,
   balances: Balance[],
@@ -195,10 +193,8 @@ async function validateStaking(
   return { errors, warnings, estimatedFees, amount, totalSpent };
 }
 
-/**
- * Validate an intent against the account's balances, mirroring the account bridge's rules for both
- * transfers and staking.
- */
+// Validates an intent against the account's balances, mirroring the account bridge's rules for
+// both transfers and staking.
 export async function validateIntent(
   intent: NearIntent,
   balances: Balance[],
