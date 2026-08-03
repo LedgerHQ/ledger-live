@@ -1,0 +1,34 @@
+{
+  "name": "@domain/entity-account-name",
+  "version": "0.0.1",
+  "private": true,
+  "description": "AccountName entity: naming utilities, account-names store, and wallet-sync module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": ["./src/slice.ts"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-name"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/wallet-sync": "workspace:^",
+    "immer": "^11.0.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}
