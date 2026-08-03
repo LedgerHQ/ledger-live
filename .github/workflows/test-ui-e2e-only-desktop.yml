@@ -415,7 +415,7 @@ jobs:
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, e2e-tests]
     outputs:
-      status_color: ${{ steps.summary.outputs.status_color }}
+      status: ${{ steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
     if: ${{ !cancelled() }}
@@ -460,7 +460,7 @@ jobs:
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
-      status_color: ${{ steps.summary.outputs.status_color }}
+      status: ${{ steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
     env:
@@ -595,133 +595,42 @@ jobs:
     runs-on: [ledger-live-medium]
     needs: [prepare-devices, report-to-allure, report-to-allure-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
+    env:
+      IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
+      DEVICE_1: ${{ needs.prepare-devices.outputs.device_1 || 'nanoSP' }}
+      DEVICE_2: ${{ needs.prepare-devices.outputs.device_2 }}
+      REF: ${{ inputs.ref || github.ref_name }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
-      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        name: Prepare Slack payload
-        id: status
-        env:
-          IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
-          DEVICE_1: ${{ needs.prepare-devices.outputs.device_1 }}
-          DEVICE_2: ${{ needs.prepare-devices.outputs.device_2 }}
-          EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
-          TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
+      - name: Report e2e results to Slack
+        uses: LedgerHQ/ledger-live/tools/actions/composites/e2e-slack-report@develop
         with:
-          script: |
-            const fs = require("fs");
-            const isDual = process.env.IS_DUAL === "true";
-            const device1 = process.env.DEVICE_1 || "nanoSP";
-            const device2 = process.env.DEVICE_2;
-            let blocks;
-            if (isDual) {
-              blocks = [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${device1} + ${device2}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
-                    "emoji": true
-                  }
-                },
-                { "type": "divider" },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `🐧 linux (${device1}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `🐧 linux (${device2}) · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure-device2.outputs.summary_message || 'No test results' }}`
-                  }
-                },
-                { "type": "divider" },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": `*Allure Report (${device1})*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-${device1}>`
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": `*Allure Report (${device2})*\n<${{ needs.report-to-allure-device2.outputs.report-url }}|allure-results-${device2}>`
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
-                    }
-                  ]
-                }
-              ];
-            } else {
-              blocks = [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${device1}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
-                    "emoji": true
-                  }
-                },
-                { "type": "divider" },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `🐧 linux · FF '${{ env.E2E_DESKTOP_FEATURE_FLAGS }}' : ${{ needs.report-to-allure.outputs.summary_message || 'No test results' }}`
-                  }
-                },
-                { "type": "divider" },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
-                    }
-                  ]
-                }
-              ];
-              if (process.env.EXPORT_TO_XRAY === 'true') {
-                blocks.push({
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
-                    }
-                  ]
-                });
-              }
-            }
-            const d1Color = "${{ needs.report-to-allure.outputs.status_color }}";
-            const d2Color = "${{ needs.report-to-allure-device2.outputs.status_color }}";
-            const color = isDual
-              ? (d1Color === "#33FF39" && d2Color === "#33FF39" ? "#33FF39" : "#FF333C")
-              : (d1Color || "#808080");
-            const slackPayload = {
-              "text": " ",
-              "attachments": [
-                {
-                  "color": color,
-                  "fallback": `Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
-                  blocks
-                }
-              ]
-            };
-            fs.writeFileSync("payload-slack-content.json", JSON.stringify({ ...slackPayload, channel: "C05FKJ7DFAP" }), "utf-8");
-
-      - name: Post to Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
-        with:
-          method: chat.postMessage
           token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+          channel: C05FKJ7DFAP
+          product: "Ledger Live Desktop E2E"
+          ref: ${{ env.REF }}
+          smoke_tests: ${{ inputs.smoke_tests }}
+          header_devices: ${{ env.IS_DUAL == 'true' && format('{0} + {1}', env.DEVICE_1, env.DEVICE_2) || env.DEVICE_1 }}
+          run_url: ${{ env.RUN_URL }}
+          row1_emoji: "🐧"
+          # Dual runs put the device in the label ("linux (nanoSP)"); single runs use plain "linux".
+          row1_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_1) || 'linux' }}
+          row1_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
+          row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
+          row1_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_1) || 'Allure Report' }}
+          row1_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_1) || 'allure-results-linux' }}
+          row1_status: ${{ needs.report-to-allure.outputs.status }}
+          # Row 2 only renders on dual-device runs (empty label = dropped).
+          row2_emoji: "🐧"
+          row2_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_2) || '' }}
+          row2_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
+          row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
+          row2_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_2) || '' }}
+          row2_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_2) || '' }}
+          row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
+          # Xray link: single-device runs with export_to_xray only (matches previous behavior).
+          extra_field_title: ${{ (env.IS_DUAL != 'true' && inputs.export_to_xray) && 'Xray Link' || '' }}
+          extra_field_url: "https://ledgerhq.atlassian.net/browse/${{ github.event.inputs.test_execution }}"
+          extra_field_link_text: "Test Execution"

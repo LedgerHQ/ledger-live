@@ -9,8 +9,10 @@ description: |
 # Dead-code detection: explicit exports + knip (not unimported)
 
 The repo is migrating dead-code / unused-dependency detection from the legacy **`unimported`**
-tool to **`knip`**, one package at a time. knip is configured centrally in the root
-[`knip.json`](../../../knip.json) (one `workspaces` entry per package).
+tool to **`knip`**, one package at a time. The root [`knip.json`](../../../knip.json) holds only
+the shared rules — a package needs no `workspaces` entry there, since knip derives its entry files
+from `package.json` (`main`, `bin`, `exports`) and its own defaults
+([entry files](https://knip.dev/explanations/entry-files)).
 
 ## Why this isn't just "swap the tool"
 
@@ -51,8 +53,7 @@ A new package has no consumers, so it should start in the target state — no `.
      "./package.json": "./package.json"
    }
    ```
-2. **Register in `knip.json`** — add a `workspaces` entry (`entry`, `ignore`, `ignoreDependencies`).
-3. **Use knip, not unimported** — add a script that runs knip scoped to the workspace:
+2. **Use knip, not unimported** — add a script that runs knip scoped to the workspace:
    `pnpm knip --directory <relative-hop-to-root> -W <workspace-path>`
    (`--directory` is the hop back to the repo root — `../..` for `libs/<x>`,
    `../../..` for `libs/coin-modules/<x>`; `-W` is the workspace path from root).
@@ -78,6 +79,18 @@ Start with leaf / low-dependency packages; `ledger-live-common` (largest surface
 For a **new** package, flag either of these and point here:
 
 - a `.unimportedrc.json` or a script running the **bare `unimported` binary**
-  (`"unimported": "unimported"`) — it must use knip via a root `knip.json` `workspaces` entry; or
+  (`"unimported": "unimported"`) — it must run knip instead; or
 - a **`./*` wildcard** in `package.json#exports` — new packages must enumerate explicit exports
   so knip can detect zombie files.
+
+## The `workspaces` block in `knip.json` is a temporary workaround
+
+Everything must work without touching `knip.json`. The `workspaces` entries that remain are
+band-aids for packages that don't declare their surface properly yet — deep imports behind a `./*`
+wildcard, runtime entries invisible to `package.json` (Electron preloads, web workers), or
+dependencies knip can't resolve. Each one hides a package that hasn't finished the migration above.
+
+So: don't grow this file. Fixing the package's `exports` is the real fix, and it lets the
+corresponding `workspaces` entry be deleted. If you truly cannot avoid an entry, keep it to the
+smallest possible delta and remember a configured `entry` **replaces** knip's default patterns
+rather than extending them.

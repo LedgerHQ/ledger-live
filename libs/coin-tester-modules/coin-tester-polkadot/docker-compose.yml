@@ -17,7 +17,7 @@ services:
         timeout: 10s
         retries: 12
   sidecar-api:
-    image: ghcr.io/ledgerhq/polkadot-sidecar:rolling
+    image: ghcr.io/ledgerhq/polkadot-sidecar:20.14.1@sha256:7b4e963ffb70ddfb2932cae07eed0bd3a3d3d4ed7a6ee29d2fc55248c5f7440f
     container_name: sidecar-api
     platform: linux/x86_64
     depends_on:
@@ -26,6 +26,7 @@ services:
     environment:
       - SAS_EXPRESS_BIND_HOST=0.0.0.0
       - SAS_SUBSTRATE_URL=ws://chopsticks:8000
+      - SAS_SUBSTRATE_RELAY_CHAIN_URL=ws://chopsticks:8000
       - SAS_EXPRESS_KEEP_ALIVE_TIMEOUT=60000
       - SAS_EXPRESS_PORT=8080
     ports:

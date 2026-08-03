@@ -2,7 +2,7 @@
 # https://github.com/cosmos/gaia/pkgs/container/gaia before relying on it. The
 # version must be cosmos-sdk >= 0.47 so `gaiad genesis ...` sub-commands and
 # `gaiad init --default-denom` exist (see coin-tester-gaiad/entrypoint.sh).
-FROM --platform=linux/amd64 ghcr.io/cosmos/gaia:v25.1.0
+FROM --platform=linux/amd64 ghcr.io/cosmos/gaia:v27.5.0@sha256:12426adea174c69773a74d249273155a6cec8f90bef15438dd0aea8764aea993
 
 USER root
 

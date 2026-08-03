@@ -1,6 +1,6 @@
 services:
   tron:
-    image: tronbox/tre:1.0.3
+    image: tronbox/tre:1.0.3@sha256:96ba5f8ae616dc1b3939043d25f2734e63cc4de1085f967d34c5205777c1141b
     container_name: coin-tester-tron
     healthcheck:
       test:

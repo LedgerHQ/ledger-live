@@ -812,10 +812,50 @@ describe("estimateFees", () => {
     });
 
     expect(result.fees).toBe(BigInt(minFees));
-    // max = spendable(10000) - suggestedFee(100) - (DUST_MARGIN(500) - (DUST_MARGIN*0.1 + opSize(200)))
-    //     = 9900 - (500 - 250) = 9650
-    expect(result.amount).toBe(9650n);
+    // max = spendable(10000) - mainOpFee(500) - (DUST_MARGIN(500) - (DUST_MARGIN*0.1 + opSize(200)))
+    //     = 9500 - (500 - 250) = 9250
+    expect(result.amount).toBe(9250n);
   });
+
+  // Regression for LIVE-28506: the max must reserve the fee that is actually reported, so that
+  // `amount + estimatedFees` always fits the spendable balance. Reserving the raw taquito
+  // suggestion instead made every send-max fail validation once `minFees` exceeded it by more
+  // than the dust margin — at any balance.
+  it.each([
+    // balance, minFees, suggestedFeeMutez, burnFeeMutez, expected amount
+    [10000n, 2000, 100, 0, 7750n],
+    [10000n, 100, 2000, 0, 7750n],
+    // recipient allocation burn (277 bytes * COST_PER_BYTE), minus taquito's 20-byte pad
+    [100000n, 2000, 100, 69250, 33500n],
+  ])(
+    "useAllAmount send reserves the reported fee (balance=%i, minFees=%i, suggested=%i, burn=%i)",
+    async (balance, minFees, suggestedFeeMutez, burnFeeMutez, expectedAmount) => {
+      mockTezosToolkit.estimate.transfer.mockResolvedValue({
+        suggestedFeeMutez,
+        gasLimit: 1500,
+        storageLimit: 0,
+        burnFeeMutez,
+        opSize: 200,
+      });
+      (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+        fees: { ...defaultFeesConfig, minFees },
+      });
+
+      const result = await estimateFees({
+        account: { ...revealedAccount, balance },
+        transaction: {
+          mode: "send",
+          recipient: "tz1VSUr8wwNhLAzempoch5d6nLRSNtxK8LBr",
+          amount: 0n,
+          useAllAmount: true,
+        },
+      });
+
+      expect(result.amount).toBe(expectedAmount);
+      // the invariant validateIntent's balance-coverage check relies on
+      expect(result.amount! + result.estimatedFees).toBeLessThanOrEqual(balance);
+    },
+  );
 
   it("useAllAmount send excludes staked and unstaked funds from the max", async () => {
     const balance = 10000n;

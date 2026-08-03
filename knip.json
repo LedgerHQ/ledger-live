@@ -91,191 +91,37 @@
         "stylis"
       ]
     },
-    "./libs/env": {
-      "entry": ["src/index.ts"]
-    },
-    "./libs/live-hooks": {
-      "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
-    },
     "./libs/live-countervalues": {
-      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"],
       "ignoreDependencies": ["@ledgerhq/live-network"]
     },
-    "./libs/live-countervalues-react": {
-      "entry": ["src/index.tsx", "src/portfolio.tsx"]
-    },
-    "./libs/live-dmk-mobile": {
-      "entry": ["src/index.ts"]
-    },
-    "./libs/live-engagement": {
-      "entry": ["src/index.ts", "src/largeScreenUpsellModal.ts"]
-    },
     "./libs/live-wallet": {
-      "entry": [
-        "src/walletsync/index.ts",
-        "src/cloudsync/index.ts",
-        "src/liveqr/cross.ts",
-        "src/liveqr/importAccounts.ts",
-        "src/ordering.ts",
-        "src/addAccounts.ts",
-        "src/store.ts",
-        "src/accountName.ts"
-      ]
-    },
-    "./libs/ledger-key-ring-protocol": {
-      "entry": ["src/index.ts", "src/store.ts", "src/qrcode/index.ts"]
+      "entry": ["src/walletsync/index.ts", "src/liveqr/cross.ts", "src/liveqr/importAccounts.ts"]
     },
     "./libs/hw-ledger-key-ring-protocol": {
-      "entry": ["src/index.ts"],
       "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
-    },
-    "./libs/promise": {
-      "entry": ["src/index.ts"]
-    },
-    "./libs/wallet-analytics": {
-      "entry": ["src/index.ts"]
     },
     "./libs/ui/packages/native": {
       "entry": [
-        "src/assets/cryptoIcons.ts",
         "src/assets/icons.ts",
-        "src/index.ts",
-        "src/styles/index.ts",
         "src/styles/InvertTheme.tsx",
         "src/icons/Close.tsx",
-        "src/icons/Info.tsx",
         "storybook/stories/index.ts",
-        "App.tsx",
-        "src/pre-ldls/index.ts",
-        "src/pre-ldls/components/index.ts",
         "index.js"
       ],
       "ignoreDependencies": ["stylis"],
       "ignore": [".storybook*/*", "storybook/constants/*"]
     },
     "./libs/ui/packages/icons": {
-      "entry": [
-        "src/react/index.ts",
-        "src/native/index.ts",
-        "src/reactLegacy/index.ts",
-        "src/nativeLegacy/index.ts"
-      ],
       "ignore": ["index.js"]
     },
-    "./libs/ledgerjs/packages/react-native-hid": {
-      "entry": ["src/index.ts"]
-    },
-    "./libs/asset-aggregation": {
-      "entry": ["src/index.ts"]
-    },
     "./libs/coin-tester-modules/coin-tester-cosmos": {
-      "entry": ["src/scenarii/Babylon.ts", "src/scenarii/Cosmos.ts"],
       "ignoreDependencies": ["expect"]
     },
-    "./domain/entity/currency": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/currency-crypto": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/currency-fiat": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/currency-token": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/currency-unit": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/contact": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/market-sentiment": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/altcoins-sentiment": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/pay-card": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/wallet-sync": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/starred-account": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/aggregated-asset": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/interest-rate": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/entity/account-name": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/pay-card": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/currency-fiat": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/currency-token": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/market-sentiment": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/altcoins-sentiment": {
-      "entry": ["src/index.ts"]
-    },
-    "./domain/api/aggregated-assets": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/schema-primitives": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/auth": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/feature-flags": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/live-env": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/cloud-sync": {
-      "entry": ["src/index.ts"]
-    },
-    "./shared/cloud-sync-module": {
-      "entry": ["src/index.ts"]
-    },
     "./features/flow/market-banner": {
-      "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
-    },
-    "./features/flow/card": {
-      "entry": ["src/index.ts"]
+      "entry": ["src/components/MarketBanner/index.native.ts"]
     },
     "./features/flow/contacts": {
-      "entry": ["src/index.ts", "src/index.native.ts", "src/jest.native.ts"]
-    },
-    "./features/flow/fear-and-greed": {
-      "entry": ["src/index.ts"]
-    },
-    "./features/platform/env": {
-      "entry": ["src/index.ts"]
-    },
-    "./features/platform/feature-flags": {
-      "entry": ["src/index.ts"]
-    },
-    "./features/platform/style": {
-      "entry": ["src/index.ts"]
-    },
-    "./features/platform/aggregated-assets": {
-      "entry": ["src/index.ts"]
-    },
-    "./libs/coin-tester-modules/coin-tester-multiversx": {
-      "entry": ["src/scenarii/multiversx.ts"]
+      "entry": ["src/jest.native.ts"]
     },
     "./libs/coin-tester-modules/coin-tester-vechain": {
       "entry": ["src/scenarii/vechain.ts"]
