@@ -93,6 +93,7 @@ function resolveAddressEntryState(
       };
     case "invalid_format":
     case "domain_not_found":
+    case "sanctioned":
       return {
         status: "invalid",
         value,

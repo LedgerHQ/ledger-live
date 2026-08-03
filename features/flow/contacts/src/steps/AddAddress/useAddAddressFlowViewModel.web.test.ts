@@ -469,6 +469,7 @@ describe("useAddAddressFlowViewModel", () => {
   it.each([
     ["invalid_format", "manual"],
     ["domain_not_found", "ens"],
+    ["sanctioned", "manual"],
   ] as const)("should expose %s as an invalid address", async (error, inputMethod) => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({ status: error });
@@ -487,6 +488,22 @@ describe("useAddAddressFlowViewModel", () => {
         inputMethod,
         error,
       },
+    });
+  });
+
+  it("should prevent confirmation for a sanctioned address", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned" });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.confirmAddress());
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: { status: "invalid", error: "sanctioned" },
     });
   });
 

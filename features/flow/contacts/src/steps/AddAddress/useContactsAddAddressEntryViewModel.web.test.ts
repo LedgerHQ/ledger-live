@@ -13,6 +13,7 @@ const labels: AddAddressEntryLabels = {
   validAddress: "Valid address",
   invalidAddress: "Invalid address",
   domainNotFound: "Domain not found",
+  sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is temporarily unavailable.",
   ensDisclaimer: "ENS disclaimer",
 };
@@ -109,5 +110,23 @@ describe("useContactsAddAddressEntryViewModel", () => {
     });
 
     expect(result.current.isConfirmEnabled).toBe(false);
+  });
+
+  it("should expose a sanctioned address as a blocking error", () => {
+    const { result } = renderViewModel({
+      addressEntry: {
+        status: "invalid",
+        value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+        resolvedAddress: null,
+        inputMethod: "manual",
+        error: "sanctioned",
+      },
+    });
+
+    expect(result.current).toMatchObject({
+      inputStatus: "error",
+      helperText: "This address is sanctioned and cannot be used.",
+      isConfirmEnabled: false,
+    });
   });
 });

@@ -40,7 +40,11 @@ function resolveAddressInputPresentation(
       return {
         inputStatus: "error",
         helperText:
-          addressEntry.error === "domain_not_found" ? labels.domainNotFound : labels.invalidAddress,
+          addressEntry.error === "domain_not_found"
+            ? labels.domainNotFound
+            : addressEntry.error === "sanctioned"
+              ? labels.sanctionedAddress
+              : labels.invalidAddress,
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: false,
       };

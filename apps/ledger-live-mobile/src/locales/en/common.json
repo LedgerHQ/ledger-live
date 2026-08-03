@@ -10203,6 +10203,7 @@
       "validAddress": "Valid address",
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
+      "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
       "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
     },

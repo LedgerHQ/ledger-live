@@ -90,6 +90,12 @@ export function createContactsAddressValidationService(
           };
         }
 
+        if (
+          await dependencies.isAddressSanctioned(resolvedCurrency.network, resolvedAddress.address)
+        ) {
+          return { status: "sanctioned" };
+        }
+
         return {
           status: "valid",
           resolvedAddress: ContactAddressValueSchema.parse(resolvedAddress.address),
