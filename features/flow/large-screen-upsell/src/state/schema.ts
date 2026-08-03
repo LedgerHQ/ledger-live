@@ -9,9 +9,7 @@ export const LargeScreenUpsellModalSessionSchema = z.enum([
   "blockedByCompeting",
 ]);
 
-export type LargeScreenUpsellModalSession = z.infer<
-  typeof LargeScreenUpsellModalSessionSchema
->;
+export type LargeScreenUpsellModalSession = z.infer<typeof LargeScreenUpsellModalSessionSchema>;
 
 export const LargeScreenUpsellModalStateSchema = z.object({
   retries: z.number().int().nonnegative().safe(),
@@ -19,22 +17,21 @@ export const LargeScreenUpsellModalStateSchema = z.object({
   session: LargeScreenUpsellModalSessionSchema,
 });
 
-export const defaultLargeScreenUpsellModalState: z.infer<
-  typeof LargeScreenUpsellModalStateSchema
-> = {
-  retries: 0,
-  lastSeenAt: null,
-  session: "ready",
-};
+export const defaultLargeScreenUpsellModalState: z.infer<typeof LargeScreenUpsellModalStateSchema> =
+  {
+    retries: 0,
+    lastSeenAt: null,
+    session: "ready",
+  };
 
 /** Persisted fields only — session is ephemeral. */
 export const RestorableLargeScreenUpsellModalStateSchema = z
   .object({
     retries: LargeScreenUpsellModalStateSchema.shape.retries.catch(
-      defaultLargeScreenUpsellModalState.retries
+      defaultLargeScreenUpsellModalState.retries,
     ),
     lastSeenAt: LargeScreenUpsellModalStateSchema.shape.lastSeenAt.catch(
-      defaultLargeScreenUpsellModalState.lastSeenAt
+      defaultLargeScreenUpsellModalState.lastSeenAt,
     ),
   })
   .catch({

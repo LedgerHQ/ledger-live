@@ -22,7 +22,7 @@ const lastSeenAt = Date.parse("2026-07-01T12:00:00.000Z");
 
 const withSession = (
   state: Pick<LargeScreenUpsellModalState, "retries" | "lastSeenAt">,
-  session: LargeScreenUpsellModalState["session"] = "ready"
+  session: LargeScreenUpsellModalState["session"] = "ready",
 ): LargeScreenUpsellModalState => ({
   ...state,
   session,
@@ -94,9 +94,7 @@ describe("largeScreenUpsellModal", () => {
         expected: initialState,
       },
     ])("falls back to defaults given $description", ({ payload, expected }) => {
-      expect(
-        reducer(undefined, restoreLargeScreenUpsellModalState(payload))
-      ).toEqual(expected);
+      expect(reducer(undefined, restoreLargeScreenUpsellModalState(payload))).toEqual(expected);
     });
 
     it("does not restore ephemeral session from a persisted payload", () => {
@@ -107,8 +105,8 @@ describe("largeScreenUpsellModal", () => {
             retries: 2,
             lastSeenAt,
             session: "dismissed",
-          })
-        )
+          }),
+        ),
       ).toEqual(withSession({ retries: 2, lastSeenAt }));
     });
   });
@@ -119,60 +117,51 @@ describe("largeScreenUpsellModal", () => {
 
     const firstDisplayState = reducer(
       initialState,
-      recordUpsellModalDisplay(firstDisplayTimestamp)
+      recordUpsellModalDisplay(firstDisplayTimestamp),
     );
     expect(firstDisplayState).toEqual(
-      withSession({ retries: 1, lastSeenAt: firstDisplayTimestamp })
+      withSession({ retries: 1, lastSeenAt: firstDisplayTimestamp }),
     );
 
-    expect(
-      reducer(
-        firstDisplayState,
-        recordUpsellModalDisplay(secondDisplayTimestamp)
-      )
-    ).toEqual(withSession({ retries: 2, lastSeenAt: secondDisplayTimestamp }));
+    expect(reducer(firstDisplayState, recordUpsellModalDisplay(secondDisplayTimestamp))).toEqual(
+      withSession({ retries: 2, lastSeenAt: secondDisplayTimestamp }),
+    );
   });
 
   it("defaults the display timestamp to now", () => {
     jest.useFakeTimers().setSystemTime(new Date("2026-07-01T12:00:00.000Z"));
 
     expect(reducer(initialState, recordUpsellModalDisplay())).toEqual(
-      withSession({ retries: 1, lastSeenAt })
+      withSession({ retries: 1, lastSeenAt }),
     );
   });
 
   it("marks session as dismissed", () => {
     expect(reducer(initialState, markDismissed())).toEqual(
-      withSession({ retries: 0, lastSeenAt: null }, "dismissed")
+      withSession({ retries: 0, lastSeenAt: null }, "dismissed"),
     );
   });
 
   it("marks session as blockedByCompeting only while ready", () => {
     expect(reducer(initialState, markBlockedByCompeting())).toEqual(
-      withSession({ retries: 0, lastSeenAt: null }, "blockedByCompeting")
+      withSession({ retries: 0, lastSeenAt: null }, "blockedByCompeting"),
     );
 
     expect(
-      reducer(
-        withSession({ retries: 0, lastSeenAt: null }, "dismissed"),
-        markBlockedByCompeting()
-      )
+      reducer(withSession({ retries: 0, lastSeenAt: null }, "dismissed"), markBlockedByCompeting()),
     ).toEqual(withSession({ retries: 0, lastSeenAt: null }, "dismissed"));
   });
 
   it("resets retries without clearing the last display timestamp or session", () => {
     expect(
-      reducer(
-        withSession({ retries: 3, lastSeenAt }, "dismissed"),
-        resetUpsellModalRetries()
-      )
+      reducer(withSession({ retries: 3, lastSeenAt }, "dismissed"), resetUpsellModalRetries()),
     ).toEqual(withSession({ retries: 0, lastSeenAt }, "dismissed"));
   });
 
   it("sets the retry count to an arbitrary non-negative integer", () => {
-    expect(
-      reducer(withSession({ retries: 0, lastSeenAt }), setUpsellModalRetries(5))
-    ).toEqual(withSession({ retries: 5, lastSeenAt }));
+    expect(reducer(withSession({ retries: 0, lastSeenAt }), setUpsellModalRetries(5))).toEqual(
+      withSession({ retries: 5, lastSeenAt }),
+    );
   });
 
   it("ignores invalid retry counts", () => {
@@ -185,30 +174,18 @@ describe("largeScreenUpsellModal", () => {
 
   it("sets the last display timestamp to an arbitrary value or null", () => {
     expect(
-      reducer(
-        withSession({ retries: 1, lastSeenAt: null }),
-        setLastSeenUpsellModal(lastSeenAt)
-      )
+      reducer(withSession({ retries: 1, lastSeenAt: null }), setLastSeenUpsellModal(lastSeenAt)),
     ).toEqual(withSession({ retries: 1, lastSeenAt }));
 
-    expect(
-      reducer(
-        withSession({ retries: 1, lastSeenAt }),
-        setLastSeenUpsellModal(null)
-      )
-    ).toEqual(withSession({ retries: 1, lastSeenAt: null }));
+    expect(reducer(withSession({ retries: 1, lastSeenAt }), setLastSeenUpsellModal(null))).toEqual(
+      withSession({ retries: 1, lastSeenAt: null }),
+    );
   });
 
   it("ignores invalid last display timestamps", () => {
     const state = withSession({ retries: 1, lastSeenAt });
 
-    for (const invalid of [
-      -1,
-      2.7,
-      NaN,
-      Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER + 1,
-    ]) {
+    for (const invalid of [-1, 2.7, NaN, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER + 1]) {
       expect(reducer(state, setLastSeenUpsellModal(invalid))).toEqual(state);
     }
   });
@@ -232,10 +209,7 @@ describe("largeScreenUpsellModal", () => {
 
   it("selects raw values from root state", () => {
     const state = {
-      largeScreenUpsellModal: withSession(
-        { retries: 3, lastSeenAt },
-        "dismissed"
-      ),
+      largeScreenUpsellModal: withSession({ retries: 3, lastSeenAt }, "dismissed"),
     };
 
     expect(retriesUpsellModalSelector(state)).toBe(3);

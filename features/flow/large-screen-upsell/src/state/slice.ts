@@ -8,8 +8,7 @@ import {
 } from "./schema";
 import type { LargeScreenUpsellModalState } from "./types";
 
-export const initialState: LargeScreenUpsellModalState =
-  defaultLargeScreenUpsellModalState;
+export const initialState: LargeScreenUpsellModalState = defaultLargeScreenUpsellModalState;
 
 export const isStorableTimestamp = (value: number): boolean =>
   Number.isSafeInteger(value) && value >= 0 && value <= MAX_DATE_MS;
@@ -20,11 +19,9 @@ export const largeScreenUpsellModalSlice = createSlice({
   reducers: {
     restoreLargeScreenUpsellModalState: (
       state,
-      action: PayloadAction<Partial<LargeScreenUpsellModalState>>
+      action: PayloadAction<Partial<LargeScreenUpsellModalState>>,
     ) => {
-      const restored = RestorableLargeScreenUpsellModalStateSchema.parse(
-        action.payload
-      );
+      const restored = RestorableLargeScreenUpsellModalStateSchema.parse(action.payload);
 
       state.retries = restored.retries;
       state.lastSeenAt = restored.lastSeenAt;
@@ -38,15 +35,15 @@ export const largeScreenUpsellModalSlice = createSlice({
         payload: timestamp,
       }),
     },
-    markDismissed: (state) => {
+    markDismissed: state => {
       state.session = "dismissed";
     },
-    markBlockedByCompeting: (state) => {
+    markBlockedByCompeting: state => {
       if (state.session === "ready") {
         state.session = "blockedByCompeting";
       }
     },
-    resetUpsellModalRetries: (state) => {
+    resetUpsellModalRetries: state => {
       state.retries = initialState.retries;
     },
     setUpsellModalRetries: (state, action: PayloadAction<number>) => {
@@ -67,16 +64,14 @@ export const largeScreenUpsellModalSlice = createSlice({
     },
   },
   selectors: {
-    largeScreenUpsellModalSelector: (state) => state,
-    persistedLargeScreenUpsellModalSelector: (
-      state
-    ): RestorableLargeScreenUpsellModalState => ({
+    largeScreenUpsellModalSelector: state => state,
+    persistedLargeScreenUpsellModalSelector: (state): RestorableLargeScreenUpsellModalState => ({
       retries: state.retries,
       lastSeenAt: state.lastSeenAt,
     }),
-    retriesUpsellModalSelector: (state) => state.retries,
-    lastSeenUpsellModalSelector: (state) => state.lastSeenAt,
-    sessionSelector: (state) => state.session,
+    retriesUpsellModalSelector: state => state.retries,
+    lastSeenUpsellModalSelector: state => state.lastSeenAt,
+    sessionSelector: state => state.session,
   },
 });
 

@@ -1,7 +1,7 @@
 import type { LargeScreenUpsellModalState } from "./types";
 
 export function mockLargeScreenUpsellModalState(
-  overrides?: Partial<LargeScreenUpsellModalState>
+  overrides?: Partial<LargeScreenUpsellModalState>,
 ): LargeScreenUpsellModalState {
   return {
     retries: 0,
@@ -12,7 +12,7 @@ export function mockLargeScreenUpsellModalState(
 }
 
 export function mockSeenLargeScreenUpsellModalState(
-  overrides?: Partial<LargeScreenUpsellModalState>
+  overrides?: Partial<LargeScreenUpsellModalState>,
 ): LargeScreenUpsellModalState {
   return mockLargeScreenUpsellModalState({
     retries: 1,
