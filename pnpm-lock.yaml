@@ -1395,12 +1395,6 @@ importers:
       uuid:
         specifier: 9.0.1
         version: 9.0.1
-      winston:
-        specifier: 3.13.0
-        version: 3.13.0
-      winston-transport:
-        specifier: 4.7.0
-        version: 4.7.0
       write-file-atomic:
         specifier: 5.0.1
         version: 5.0.1

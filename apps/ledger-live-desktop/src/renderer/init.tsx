@@ -28,7 +28,7 @@ import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
-import logger, { enableDebugLogger } from "./logger";
+import logger, { enableDebugLogger, type LogEntry } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
@@ -55,7 +55,6 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-import { LogEntry } from "winston";
 import { importMarketState } from "./actions/market";
 import { importMarketBannerState } from "./reducers/marketBanner";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
@@ -107,7 +106,9 @@ async function init() {
         filters,
       })}`,
     );
-    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+    enableDebugLogger(
+      (log: LogEntry) => everyLogs || Boolean(log?.type && filters.includes(log.type)),
+    );
   }
 
   checkLibs({
