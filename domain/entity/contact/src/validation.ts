@@ -1,5 +1,7 @@
 import {
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
@@ -8,7 +10,11 @@ import {
   type ContactAddressLabelValidationErrorName,
   type ContactNameValidationErrorName,
 } from "./errors";
-import { ContactAddressLabelSchema, ContactNameSchema } from "./schema";
+import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
+  ContactAddressLabelSchema,
+  ContactNameSchema,
+} from "./schema";
 import type { ContactAddressLabel, ContactName } from "./types";
 
 export function getContactNameValidationError(
@@ -47,10 +53,16 @@ export function getContactAddressLabelValidationError(
   draftLabel: string,
   existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabelValidationErrorName | null {
-  const parsed = ContactAddressLabelSchema.safeParse(draftLabel);
+  const trimmedDraftLabel = draftLabel.trim();
+
+  if (trimmedDraftLabel.length > CONTACT_ADDRESS_LABEL_MAX_LENGTH) {
+    return CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME;
+  }
+
+  const parsed = ContactAddressLabelSchema.safeParse(trimmedDraftLabel);
 
   if (!parsed.success) {
-    return draftLabel.trim().length === 0 ? null : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
+    return trimmedDraftLabel.length === 0 ? null : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
   }
 
   const comparisonLabel = normalizeContactAddressLabelForComparison(parsed.data);
@@ -75,7 +87,13 @@ export function parseContactAddressLabel(
   draftLabel: string,
   existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabel {
-  const parsed = ContactAddressLabelSchema.safeParse(draftLabel);
+  const trimmedDraftLabel = draftLabel.trim();
+
+  if (trimmedDraftLabel.length > CONTACT_ADDRESS_LABEL_MAX_LENGTH) {
+    throw new ContactAddressLabelTooLongError();
+  }
+
+  const parsed = ContactAddressLabelSchema.safeParse(trimmedDraftLabel);
 
   if (!parsed.success) {
     throw new InvalidContactAddressLabelError();
