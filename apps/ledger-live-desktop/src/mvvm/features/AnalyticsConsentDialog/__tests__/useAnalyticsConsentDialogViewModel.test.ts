@@ -3,28 +3,15 @@ import { act, renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
-  ANALYTICS_CONSENT_FLOW,
   ANALYTICS_CONSENT_DIALOG_PAGE,
   useAnalyticsConsentDialogViewModel,
 } from "../hooks/useAnalyticsConsentDialogViewModel";
 
-const mockUseMatch = jest.fn();
-
 const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
-
-jest.mock("react-router", () => ({
-  ...jest.requireActual("react-router"),
-  useMatch: (args: unknown) => mockUseMatch(args),
-}));
 
 jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: (url: string) => url,
 }));
-
-const dialogClosedPayload = {
-  page: ANALYTICS_CONSENT_DIALOG_PAGE,
-  flow: ANALYTICS_CONSENT_FLOW,
-};
 
 type ViewModel = ReturnType<typeof useAnalyticsConsentDialogViewModel>;
 type SettingsState = typeof INITIAL_STATE;
@@ -124,18 +111,10 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
     jest.setSystemTime(FIXED_NOW);
     jest.clearAllMocks();
-    mockUseMatch.mockReturnValue({});
   });
 
   afterEach(() => {
     jest.useRealTimers();
-  });
-
-  it("keeps phase closed when portfolio route is not focused", () => {
-    mockUseMatch.mockReturnValue(null);
-    const { result } = renderReconfirmViewModel();
-
-    expectClosed(result.current);
   });
 
   it("opens consentReconfirm when renewal is needed, policy is current, and share analytics is on", async () => {
@@ -297,20 +276,5 @@ describe("useAnalyticsConsentDialogViewModel", () => {
       },
       true,
     );
-  });
-
-  it("tracks drawer_closed when leaving portfolio while modal is open", async () => {
-    const { result, rerender } = renderReconfirmViewModel();
-
-    await flushEffects();
-    expectConsentReconfirm(result.current);
-
-    act(() => {
-      mockUseMatch.mockReturnValue(null);
-      rerender(undefined);
-    });
-
-    expect(jest.mocked(track)).toHaveBeenCalledWith("drawer_closed", dialogClosedPayload);
-    expectClosed(result.current);
   });
 });

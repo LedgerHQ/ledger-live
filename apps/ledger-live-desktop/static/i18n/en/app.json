@@ -5036,10 +5036,6 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
-      "analyticsConsentOptInQa": {
-        "rowTitle": "Analytics opt-in consent (QA)",
-        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
-      },
       "devTools": {
         "rowTitle": "DevTools",
         "rowDesc": "Open the DevTools shell (feature flags and dev tools panel)."
