@@ -1,11 +1,21 @@
+import { z } from "zod";
+
+/**
+ * The rate kinds the apps understand.
+ *
+ * DADA sends values outside this set, so {@link InterestRateSchema} keeps `type` as a plain string
+ * and consumers narrow to this union, dropping anything unrecognised.
+ */
+export const ApyTypeSchema = z.enum(["NRR", "APY", "APR"]);
+
 /** An interest rate attached to one currency. */
-export interface InterestRate {
+export const InterestRateSchema = z.object({
   /** Currency identifier */
-  currencyId: string;
+  currencyId: z.string(),
   /** Interest rate value */
-  rate: number;
-  /** Type of rate (NRR, APR, APY, etc.) */
-  type: string;
+  rate: z.number(),
+  /** Type of rate (NRR, APR, APY, etc.) — intentionally wider than ApyType, see above */
+  type: z.string(),
   /** Timestamp when the rate was fetched */
-  fetchAt: string;
-}
+  fetchAt: z.string(),
+});

@@ -1,3 +1,12 @@
+/*
+ * The Domain Test CI job installs only ./domain/** and ./shared/**, so @shared/env's transitive
+ * @ledgerhq/live-env (a libs/ package) is absent. Mock it with a factory so the real module is
+ * never resolved — this test only reads a static property.
+ */
+jest.mock("@shared/env", () => ({
+  getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
+}));
+
 import { assetsDataApi } from "./api";
 
 describe("assetsDataApi", () => {
