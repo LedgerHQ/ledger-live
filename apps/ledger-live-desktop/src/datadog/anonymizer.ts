@@ -1,49 +1,12 @@
-let configDir = (() => {
-  const { LEDGER_CONFIG_DIRECTORY } = process.env;
-  if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
-  if (process.type === "browser") {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const electron = require("electron");
-    return electron.app.getPath("userData");
-  }
+import { bootstrap } from "~/renderer/bridge";
 
-  // we load in async the user data. there is a short period where this will be "" but then it becomes the real path
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const electron = require("electron");
-  const ipc = electron?.ipcRenderer ?? electron?.default?.ipcRenderer;
-  if (ipc && typeof ipc.invoke === "function") {
-    const promise = ipc.invoke("getPathUserData");
-    if (promise != null && typeof promise.then === "function") {
-      promise.then((path: string) => {
-        configDir = path;
-      });
-    }
-  }
-  return "";
-})();
-
-let homeDir = (() => {
-  const { HOME_DIRECTORY } = process.env;
-  if (HOME_DIRECTORY) return HOME_DIRECTORY;
-  if (process.type === "browser") {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const electron = require("electron");
-    return electron.app.getPath("home");
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const electron = require("electron");
-  const ipc = electron?.ipcRenderer ?? electron?.default?.ipcRenderer;
-  if (ipc && typeof ipc.invoke === "function") {
-    const promise = ipc.invoke("getPathHome");
-    if (promise != null && typeof promise.then === "function") {
-      promise.then((path: string) => {
-        homeDir = path;
-      });
-    }
-  }
-  return "";
-})();
+/**
+ * Paths scrubbed out of telemetry. Read from the bootstrap snapshot so they are set from the
+ * first log line: `filepathReplace` blanks its input entirely while they are unset, so the
+ * previous async IPC lookup meant early errors were reported with no path information.
+ */
+const configDir = bootstrap.env.LEDGER_CONFIG_DIRECTORY || bootstrap.paths.userData;
+const homeDir = bootstrap.env.HOME_DIRECTORY || bootstrap.paths.home;
 
 function filepathReplace(path: string): string {
   // all the paths the app will use. we replace them to anonymize
