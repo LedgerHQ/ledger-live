@@ -3,6 +3,7 @@ import { cardSession } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { getEnv } from "@shared/env";
 import logger from "~/renderer/logger";
+import { cardSession as cardSessionBridge } from "~/renderer/bridge";
 import type { AppDispatch } from "~/state-manager/configureStore";
 
 /**
@@ -14,7 +15,8 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  * state, so a `userdata` fixture cannot carry it — an env var at launch is the one route that reaches
  * both `cardSession` and the `isSignedIn` flag.
  *
- * **This injects a bearer credential.** It is read from `process.env` at boot. Keeping it out of
+ * **This injects a bearer credential.** Main hands it over once per page load, outside the
+ * bootstrap snapshot. Keeping it out of
  * `@shared/env` keeps `getAllEnvs()` — export-log metadata, the env debug UI, Allure
  * `environment.properties` — from serializing it. After the read, the process env is cleared so a
  * later dump of `process.env` is clear of it too. A later launch still receives the value if the
@@ -31,8 +33,9 @@ import type { AppDispatch } from "~/state-manager/configureStore";
  * that most needs it. Please don't "harden" this to a define without solving that first.
  */
 export async function bootstrapCardSession(dispatch: AppDispatch): Promise<void> {
-  const raw = process.env.CARD_SESSION_BOOTSTRAP;
-  if (raw) delete process.env.CARD_SESSION_BOOTSTRAP;
+  const raw = await cardSessionBridge.takeBootstrap();
+  // Still set while nodeIntegration is on.
+  delete process.env.CARD_SESSION_BOOTSTRAP;
 
   const isDev = typeof __DEV__ !== "undefined" && __DEV__;
   if (!isDev && !getEnv("PLAYWRIGHT_RUN")) return;

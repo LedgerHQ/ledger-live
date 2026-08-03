@@ -66,6 +66,9 @@ declare namespace Electron {
 }
 
 interface Window {
+  // Read through `~/renderer/bridge`, which checks the version.
+  lld: import("./src/bridge/contract").LedgerBridge;
+
   // Electron's nodeIntegration provides require on window
   require: NodeJS.Require;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
