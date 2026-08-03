@@ -67,7 +67,7 @@ export type CarouselContentProps = {
   onSlidePrimaryClick: (slide: GenericAwarenessModalCarouselSlide) => void;
   onSlideChange: (index: number) => void;
   onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
-  onClose: () => void;
+  onCompleteClose: () => void;
 };
 
 function CarouselContentProgress() {
@@ -83,12 +83,12 @@ function CarouselContentFooter({
   slides,
   onSlidePrimaryClick,
   onContinueClick,
-  onClose,
+  onCompleteClose,
 }: Readonly<{
   slides: GenericAwarenessModalCarouselSlide[];
   onSlidePrimaryClick: (slide: GenericAwarenessModalCarouselSlide) => void;
   onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
-  onClose: () => void;
+  onCompleteClose: () => void;
 }>) {
   const { t } = useTranslation();
   const { currentIndex, totalSlides, goToNext } = useSlidesContext();
@@ -105,11 +105,11 @@ function CarouselContentFooter({
   const handleContinue = useCallback(() => {
     onContinueClick(currentIndex, isLastSlide);
     if (isLastSlide) {
-      onClose();
+      onCompleteClose();
     } else {
       goToNext();
     }
-  }, [currentIndex, goToNext, isLastSlide, onClose, onContinueClick]);
+  }, [currentIndex, goToNext, isLastSlide, onCompleteClose, onContinueClick]);
 
   const handlePrimary = useCallback(() => {
     if (currentSlide) {
@@ -148,7 +148,7 @@ export default function CarouselContent({
   onSlidePrimaryClick,
   onSlideChange,
   onContinueClick,
-  onClose,
+  onCompleteClose,
 }: Readonly<CarouselContentProps>) {
   return (
     <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
@@ -167,7 +167,7 @@ export default function CarouselContent({
           slides={slides}
           onSlidePrimaryClick={onSlidePrimaryClick}
           onContinueClick={onContinueClick}
-          onClose={onClose}
+          onCompleteClose={onCompleteClose}
         />
       </Slides.Footer>
     </Slides>
