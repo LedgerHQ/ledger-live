@@ -226,6 +226,9 @@
     "./shared/live-env": {
       "entry": ["src/index.ts"]
     },
+    "./shared/cloud-sync": {
+      "entry": ["src/index.ts"]
+    },
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
