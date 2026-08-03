@@ -58,14 +58,14 @@ describe("ZcashTransferFromSelector", () => {
     mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
   });
 
-  it("renders both cards with Public active by default and persists the default to the transaction", () => {
+  it("renders Public and Private cards with Public active by default and persists the default to the transaction", () => {
     const onChange = renderSelector(buildAccount(), {});
 
     expect(screen.getByTestId("zcash-transfer-from-selector")).toBeVisible();
     expect(screen.getByTestId("transfer-from-public")).toBeVisible();
     expect(screen.getByTestId("transfer-from-private")).toBeVisible();
+    expect(screen.queryByTestId("transfer-from-ironwood")).not.toBeInTheDocument();
 
-    // Public default is written to the transaction state once on mount.
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
@@ -77,7 +77,7 @@ describe("ZcashTransferFromSelector", () => {
 
   it("selects Private when the Private card is clicked", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {});
-    onChange.mockClear(); // ignore the on-mount default write
+    onChange.mockClear();
 
     fireEvent.click(screen.getByTestId("transfer-from-private"));
 
@@ -94,27 +94,64 @@ describe("ZcashTransferFromSelector", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
-  it("keeps the Private card clickable in every sync state (never disabled)", () => {
-    const onChange = renderSelector(buildAccount({ syncState: "disabled", ufvk: "uview-test" }), {
-      sender: "public",
-    } as Partial<Transaction>);
-    onChange.mockClear();
-
-    fireEvent.click(screen.getByTestId("transfer-from-private"));
-
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "private" }));
-  });
-
-  it("shows the unavailable hint on the Private card when no FVK is available", () => {
+  it("disables the Private card when no FVK is available", () => {
     renderSelector(buildAccount({ ufvk: null }), { sender: "public" } as Partial<Transaction>);
-    expect(screen.getByTestId("transfer-from-private-unavailable")).toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-private")).toBeDisabled();
   });
 
-  it("hides the unavailable hint when an FVK is available", () => {
+  it("enables the Private card when an FVK is available", () => {
     renderSelector(buildAccount({ ufvk: "uview-test" }), {
       sender: "public",
     } as Partial<Transaction>);
-    expect(screen.queryByTestId("transfer-from-private-unavailable")).not.toBeInTheDocument();
+    expect(screen.getByTestId("transfer-from-private")).not.toBeDisabled();
+  });
+
+  it("shows the spendable Ironwood balance on the Private card", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(50_000_000),
+        orchardBalance: new BigNumber(0),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
+  });
+
+  it("shows 0 ZEC on the Private card when the Ironwood balance is 0", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(50_000_000),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0 ZEC/);
+  });
+
+  it("excludes the spendable Ironwood balance from the transparent (Public) balance, ignoring the deprecated pools", () => {
+    renderSelector(
+      {
+        ...buildAccount({
+          orchardBalance: new BigNumber(30_000_000),
+          saplingBalance: new BigNumber(20_000_000),
+          ironwoodBalance: new BigNumber(10_000_000),
+          ufvk: "uview-test",
+        }),
+        // balance = transparent + ironwood only; the deprecated Orchard/Sapling
+        // pools are not part of it (see getPrivateBalance / computeZcashBalance).
+        balance: new BigNumber(50_000_000),
+      } as Account,
+      {},
+    );
+
+    // total = 0.5 ZEC (transparent + ironwood), ironwood = 0.1 ZEC → transparent = 0.4 ZEC
+    expect(screen.getByTestId("transfer-from-public")).toHaveTextContent(/0\.4 ZEC/);
   });
 
   it("renders nothing when the zcashShielded feature flag is off", () => {
