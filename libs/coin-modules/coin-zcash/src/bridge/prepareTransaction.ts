@@ -1,8 +1,8 @@
 import type { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction, ZcashAccount, ZcashTransferType } from "../types/bridge";
+import type { Transaction, ZcashAccount } from "../types/bridge";
 import type { SpendableNote } from "../network/types";
-import { collectIronwoodSpendableNotes, collectSpendableNotes } from "./operations";
+import { collectIronwoodSpendableNotes } from "./operations";
 import {
   estimateMaxSpendableAmount,
   estimateMaxSpendableTransparent,
@@ -10,12 +10,6 @@ import {
   selectTransparentInputs,
 } from "../logic/coin-selection";
 import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
-
-// Note-selection flows (Ironwood + Orchard-shielded). Ironwood spends Ironwood
-// notes ("ironwood" / "ironwood-to-transparent"), shielded spends Orchard notes
-// ("shielded" / "shielded-to-transparent").
-const IRONWOOD_TRANSFER_TYPES = new Set<ZcashTransferType>(["ironwood", "ironwood-to-transparent"]);
-const SHIELDED_TRANSFER_TYPES = new Set<ZcashTransferType>(["shielded", "shielded-to-transparent"]);
 
 // Strip any stale fee/change from a prior prepare and reset the amount so the UI
 // never shows a spendable amount without a matching fee.
@@ -50,8 +44,7 @@ function prepareTransparentTransaction(account: ZcashAccount, tx: Transaction): 
   };
 }
 
-// Prepare a note-selection flow (Ironwood or Orchard-shielded). Both share the
-// same pipeline; only the collected note set differs.
+// Prepare a shielded (Ironwood note-selection) flow.
 function prepareNoteTransaction(notes: SpendableNote[], tx: Transaction): Transaction {
   // When useAllAmount is set, compute the effective amount from max spendable.
   const effectiveAmount = tx.useAllAmount
@@ -72,9 +65,8 @@ function prepareNoteTransaction(notes: SpendableNote[], tx: Transaction): Transa
 /**
  * Resolves fee + change (and, for shielded-input flows, the selected notes) for
  * the transaction's transfer type. Transparent-input flows (Public→*) spend
- * transparent UTXOs -- no note selection; note-selection flows spend Orchard
- * ("shielded", "shielded-to-transparent") or Ironwood ("ironwood",
- * "ironwood-to-transparent") notes.
+ * transparent UTXOs -- no note selection; shielded-input flows ("shielded",
+ * "shielded-to-transparent") spend Ironwood notes.
  */
 export const prepareTransaction: AccountBridge<
   Transaction,
@@ -87,12 +79,5 @@ export const prepareTransaction: AccountBridge<
   }
 
   const transactions = account.privateInfo?.transactions ?? [];
-  if (IRONWOOD_TRANSFER_TYPES.has(tx.transferType)) {
-    return prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx);
-  }
-  if (SHIELDED_TRANSFER_TYPES.has(tx.transferType)) {
-    return prepareNoteTransaction(collectSpendableNotes(transactions), tx);
-  }
-
-  return tx;
+  return prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx);
 };
