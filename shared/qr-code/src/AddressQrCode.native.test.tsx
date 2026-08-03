@@ -14,9 +14,7 @@ jest.mock("react-native-qrcode-svg", () => {
 
 describe("AddressQrCode", () => {
   it("should render the encoded address value", () => {
-    const { getByTestId } = render(
-      <AddressQrCode value="0xabc123" testID="address-qr-code" />,
-    );
+    const { getByTestId } = render(<AddressQrCode value="0xabc123" testID="address-qr-code" />);
 
     expect(getByTestId("address-qr-code")).toBeTruthy();
     expect(getByTestId("mock-qr-code-value")).toHaveTextContent("0xabc123");
@@ -24,10 +22,7 @@ describe("AddressQrCode", () => {
 
   it("should render optional center content", () => {
     const { getByText } = render(
-      <AddressQrCode
-        value="0xabc123"
-        centerContent={<Text>icon</Text>}
-      />,
+      <AddressQrCode value="0xabc123" centerContent={<Text>icon</Text>} />,
     );
 
     expect(getByText("icon")).toBeTruthy();

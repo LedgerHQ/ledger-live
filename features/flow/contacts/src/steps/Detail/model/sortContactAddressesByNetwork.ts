@@ -54,11 +54,6 @@ export function sortContactAddressesByNetwork(
   const networkOrderIndex = createNetworkOrderIndex(networkIds);
 
   return [...addresses].sort((left, right) =>
-    compareContactAddressesByNetwork(
-      left,
-      right,
-      currencyPort.resolveNetworkId,
-      networkOrderIndex,
-    ),
+    compareContactAddressesByNetwork(left, right, currencyPort.resolveNetworkId, networkOrderIndex),
   );
 }

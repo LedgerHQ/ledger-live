@@ -1,7 +1,7 @@
 "use strict";
 
 const { createProjectGraphAsync } = require("@nx/devkit");
-const { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS } = require("./constraints");
+const { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS, BANNED_DEPENDENCIES } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -11,7 +11,15 @@ const path = require("node:path");
  * @typedef {{ nodes: Record<string, GraphNode>, dependencies: Record<string, GraphEdge[]> }} ProjectGraphLike
  * @typedef {{ sourceName: string, sourceTags: string[], target: string, targetTags: string[] }} Violation
  * @typedef {{ file: string, specifier: string }} SourceViolation
+ * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
  */
+
+const DEPENDENCY_FIELDS = [
+  "dependencies",
+  "devDependencies",
+  "peerDependencies",
+  "optionalDependencies",
+];
 
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
@@ -124,6 +132,47 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
 }
 
 /**
+ * Check every workspace manifest for a dependency on a banned package.
+ *
+ * A banned package's own manifest is skipped: the package may still live in the repo (to
+ * keep being published) while nothing in the workspace is allowed to depend on it.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @param {Array<{name: string, reason: string}>} bannedDependencies
+ * @returns {BannedDepViolation[]}
+ */
+function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies = []) {
+  if (bannedDependencies.length === 0) return [];
+  const banned = new Map(bannedDependencies.map(b => [b.name, b.reason]));
+  const violations = [];
+
+  for (const node of Object.values(graph.nodes)) {
+    const root = node.data?.root;
+    if (!root) continue;
+    const manifest = path.join(root, "package.json");
+    let pkg;
+    try {
+      pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
+    } catch {
+      continue;
+    }
+    if (banned.has(pkg.name)) continue; // the banned package itself
+
+    for (const field of DEPENDENCY_FIELDS) {
+      for (const dependency of Object.keys(pkg[field] ?? {})) {
+        const reason = banned.get(dependency);
+        if (reason !== undefined) {
+          violations.push({ manifest, dependency, field, reason });
+        }
+      }
+    }
+  }
+
+  return violations;
+}
+
+/**
  * Walk the Nx project graph and collect every edge that violates the
  * DEP_CONSTRAINTS rules. A given edge can match multiple constraints
  * (e.g. a `type:domain-api` source also has `scope:domain`); the
@@ -212,11 +261,37 @@ async function main() {
     );
   }
 
+  const bannedDepViolations = findBannedDependencyViolations(
+    graph,
+    workspaceRoot,
+    BANNED_DEPENDENCIES,
+  );
+
+  if (bannedDepViolations.length > 0) {
+    hasError = true;
+    console.error(`\n✗ ${bannedDepViolations.length} banned-dependency violation(s):\n`);
+    for (const v of bannedDepViolations) {
+      console.error(`  ${v.manifest}  →  ${v.dependency}  (${v.field})`);
+    }
+    const reasons = new Map(bannedDepViolations.map(v => [v.dependency, v.reason]));
+    for (const [dependency, reason] of reasons) {
+      console.error(`\n${dependency} is banned: ${reason}`);
+    }
+    console.error(
+      "\nBanned packages are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
+    );
+  }
+
   if (hasError) process.exit(1);
   console.log("✓ module boundaries ok");
 }
 
-module.exports = { findViolations, findSourceImportViolations, collectLegacyPackageNames };
+module.exports = {
+  findViolations,
+  findSourceImportViolations,
+  collectLegacyPackageNames,
+  findBannedDependencyViolations,
+};
 
 if (require.main === module) {
   main().catch(err => {

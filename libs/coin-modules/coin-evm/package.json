@@ -76,8 +76,7 @@
     "eip55": "^2.1.1",
     "ethers": "catalog:",
     "invariant": "^2.2.2",
-    "react-native-get-random-values": "^1.8.0",
-    "@ledgerhq/errors": "workspace:^"
+    "react-native-get-random-values": "^1.8.0"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

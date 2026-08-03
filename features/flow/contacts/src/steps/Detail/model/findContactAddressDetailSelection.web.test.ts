@@ -1,9 +1,6 @@
 import { createContactDetailAddressRowIntent } from "./viewModel";
 import { findContactAddressDetailSelection } from "./findContactAddressDetailSelection";
-import {
-  mockContact,
-  mockContactAddress,
-} from "@domain/entity-contact/schema.mock";
+import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 describe("findContactAddressDetailSelection", () => {
@@ -44,8 +41,6 @@ describe("findContactAddressDetailSelection", () => {
     });
     const address = contact.addresses[0]!;
 
-    expect(
-      findContactAddressDetailSelection([], address.id),
-    ).toBeUndefined();
+    expect(findContactAddressDetailSelection([], address.id)).toBeUndefined();
   });
 });

@@ -168,8 +168,7 @@
     "bignumber.js": "^9.1.2",
     "gql.tada": "^1.9.2",
     "lodash": "4.17.21",
-    "rxjs": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@gql.tada/internal": "1.0.9",

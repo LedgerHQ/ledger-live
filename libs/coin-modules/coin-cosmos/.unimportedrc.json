@@ -40,7 +40,6 @@
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": [
-    "rxjs",
-    "@ledgerhq/errors"
+    "rxjs"
   ]
 }

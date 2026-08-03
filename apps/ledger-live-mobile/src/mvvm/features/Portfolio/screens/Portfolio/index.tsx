@@ -58,7 +58,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAccountListUIEnabled,
     shouldDisplayAssetSection,
     showAssets,
-    isLNSUpsellBannerShown,
+    isLNUpsellBannerShown,
     isAddModalOpened,
     backgroundColor,
     isSyncError,
@@ -104,7 +104,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (!showAssets) {
       sections.push(
-        <PortfolioEmptySection key="empty" isLNSUpsellBannerShown={isLNSUpsellBannerShown} />,
+        <PortfolioEmptySection key="empty" isLNUpsellBannerShown={isLNUpsellBannerShown} />,
       );
       return sections;
     }
@@ -116,7 +116,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         <PortfolioBannersSection
           key="banners"
           isFirst={true}
-          isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+          isLNUpsellBannerShown={isLNUpsellBannerShown}
           showAssets={showAssets}
         />
       </Box>,
@@ -158,7 +158,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     showAssets,
     shouldDisplayAssetSection,
     onBackFromUpdate,
-    isLNSUpsellBannerShown,
+    isLNUpsellBannerShown,
     isAccountListUIEnabled,
     hideEmptyTokenAccount,
     openAddModal,

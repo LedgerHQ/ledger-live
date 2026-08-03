@@ -5,9 +5,9 @@ const formatWithMeSuffix = (name: string) => `${name} (Me)`;
 
 describe("resolveMeContactDisplayName", () => {
   it("should return the contact name for saved contacts", () => {
-    expect(
-      resolveMeContactDisplayName(mockContact({ name: "Ada" }), formatWithMeSuffix),
-    ).toBe("Ada");
+    expect(resolveMeContactDisplayName(mockContact({ name: "Ada" }), formatWithMeSuffix)).toBe(
+      "Ada",
+    );
   });
 
   it("should return Me when the self contact still uses the default name", () => {
@@ -15,8 +15,8 @@ describe("resolveMeContactDisplayName", () => {
   });
 
   it("should append the Me suffix when the self contact has a custom name", () => {
-    expect(
-      resolveMeContactDisplayName(mockMeContact({ name: "Maxime" }), formatWithMeSuffix),
-    ).toBe("Maxime (Me)");
+    expect(resolveMeContactDisplayName(mockMeContact({ name: "Maxime" }), formatWithMeSuffix)).toBe(
+      "Maxime (Me)",
+    );
   });
 });

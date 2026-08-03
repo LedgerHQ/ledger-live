@@ -127,6 +127,14 @@ export type AddAddressEntryLabels = Readonly<{
   ensDisclaimer: string;
 }>;
 
+export type AddAddressNameLabels = Readonly<{
+  title: string;
+  inputLabel: string;
+  namingDisclaimer: string;
+  continueToReview: string;
+  validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
+}>;
+
 export type AddAddressPlaceholderViewProps = Readonly<{
   title: string;
   buttonLabel: string;

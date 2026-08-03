@@ -15,8 +15,7 @@ export function ContactDetailView({
   addressGroups,
   onAddressRowPress,
 }: ContactDetailViewProps): React.JSX.Element {
-  const hasPopulatedAddresses =
-    addressGroups !== undefined && onAddressRowPress !== undefined;
+  const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
 
   return (
     <Box testID="contacts-detail-screen" lx={{ flex: 1, backgroundColor: "base" }}>

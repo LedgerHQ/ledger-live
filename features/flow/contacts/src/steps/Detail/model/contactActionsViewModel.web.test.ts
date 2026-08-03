@@ -70,7 +70,9 @@ describe("contact delete lifecycle builders", () => {
 
 describe("isSignerRequiredForContactEdit", () => {
   it("returns false when edit is direct", () => {
-    expect(isSignerRequiredForContactEdit(createContactDetailEditIntent(mockContact()))).toBe(false);
+    expect(isSignerRequiredForContactEdit(createContactDetailEditIntent(mockContact()))).toBe(
+      false,
+    );
   });
 
   it("returns true when edit requires signer confirmation", () => {

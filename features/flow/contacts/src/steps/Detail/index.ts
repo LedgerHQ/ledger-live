@@ -69,4 +69,9 @@ export type {
   ContactDetailViewProps,
   PopulatedContactDetailViewModel,
 } from "./types";
-export type { ContactAddressDetailDialogLabels, ContactAddressDetailDialogNativeLabels, ContactAddressDetailDialogProps, ContactAddressDetailDialogNativeProps } from "./components/ContactAddressDetailDialog/types";
+export type {
+  ContactAddressDetailDialogLabels,
+  ContactAddressDetailDialogNativeLabels,
+  ContactAddressDetailDialogProps,
+  ContactAddressDetailDialogNativeProps,
+} from "./components/ContactAddressDetailDialog/types";
