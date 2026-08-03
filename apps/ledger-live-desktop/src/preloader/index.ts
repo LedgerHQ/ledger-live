@@ -8,6 +8,11 @@
 
 import { ipcRenderer } from "electron";
 import { palettes } from "@ledgerhq/react-ui/styles/index";
+import { installBridge } from "./bridge";
+
+// Must be first: the renderer reads bootstrap values at module-evaluation time.
+installBridge();
+
 // When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
   const rendererNode = document.getElementById("react-root");
