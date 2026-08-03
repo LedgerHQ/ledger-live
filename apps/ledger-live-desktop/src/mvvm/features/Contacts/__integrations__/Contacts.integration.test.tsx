@@ -39,6 +39,15 @@ jest.mock("~/renderer/store", () => ({
   resetStore: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  ...jest.requireActual<typeof import("@ledgerhq/live-common/bridge/index")>(
+    "@ledgerhq/live-common/bridge/index",
+  ),
+  getAccountBridgeByFamily: jest.fn().mockResolvedValue({
+    validateAddress: jest.fn().mockResolvedValue(true),
+  }),
+}));
+
 const contextMenuValue = {
   close: mockClose,
   view: CONTEXT_MENU_VIEW.myWallet,
@@ -541,6 +550,68 @@ describe("Contacts integration", () => {
     expect(confirmationButton).toBeDisabled();
     expect(confirmationButton.querySelector("svg")).not.toBeNull();
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
+  });
+
+  it("should render the address and its prefilled name together before review", async () => {
+    const { store, user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <Routes>
+          <Route path="/contacts" element={<ContactsScreen />} />
+        </Routes>
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+
+    const dialog = screen.getByRole("dialog");
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    const addressNameInput = screen.getByTestId("contacts-add-address-name-input");
+    expect(screen.getByRole("dialog")).toBe(dialog);
+    expect(addressNameInput).toHaveValue("Ethereum");
+    expect(addressNameInput).toHaveAttribute("maxlength", "32");
+    expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+
+    const confirmationButton = screen.getByTestId("contacts-add-address-confirm");
+    await waitFor(() => expect(confirmationButton).toBeEnabled());
+
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Ethereum 💎");
+
+    expect(screen.getByText("Special characters are not allowed.")).toBeVisible();
+    expect(confirmationButton).toBeDisabled();
+
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Exchange");
+    await user.click(confirmationButton);
+
+    expect(screen.getByRole("dialog")).toBe(dialog);
+    expect(screen.getByTestId("contacts-add-address-review")).toBeVisible();
+
+    await user.click(
+      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
+    );
+    expect(screen.getByTestId("contacts-add-address-input")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveValue("Exchange");
+
+    await user.click(screen.getByTestId("contacts-add-address-confirm"));
+    await user.click(screen.getByTestId("contacts-add-address-review-continue"));
+
+    expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
   });
 
   it("should expose the Add Address session started for Me", async () => {
