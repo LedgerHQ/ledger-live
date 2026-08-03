@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "ขั้นสูง",
     "custom" : "กำหนดเอง",
+    "defaultNetworkFee" : "ค่าธรรมเนียมเครือข่ายเริ่มต้น",
     "fast" : "เร็ว",
     "networkFees" : "ค่าธรรมเนียมเครือข่าย",
     "high" : "สูง",
@@ -540,7 +541,9 @@
       "zcash_title" : "Ledger Nano S™ ไม่รองรับการสวอป Zcash",
       "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "aleo_title" : "Ledger Nano S™ ไม่รองรับการสวอป Aleo",
-      "aleo_description" : "ในการสวอป Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+      "aleo_description" : "ในการสวอป Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "aleo_tokens_title" : "Ledger Nano S™ ไม่รองรับการสวอปโทเคน Aleo",
+      "aleo_tokens_description" : "ในกาสวอปโทเคน Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "ซิงค์วอลเล็ตของคุณ",
           "description" : "ดูแลบัญชีคริปโตของคุณให้มีการซิงค์อยู่เสมอ"
-        },
-        "customImage" : {
-          "title" : "ปรับแต่งหน้าจอล็อค",
-          "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์"
         },
         "discoverWallet" : {
           "title" : "ดูว่าวอลเล็ตของคุณทำอะไรได้บ้าง",
@@ -5459,11 +5458,6 @@
           "description" : "ทดสอบแอนิเมชันทั้งหมดที่ใช้ในแอป Ledger Wallet",
           "longDesc" : "เครื่องมือนี้มีไว้ให้ทีมตรวจสอบแอนิเมชัน Lottie ที่ใช้ในแอปได้"
         },
-        "testStories" : {
-          "title" : "ทดสอบเรื่องราว Storyly",
-          "description" : "ทดสอบเรื่องราวทั้งหมดที่ใช้ในแอป Ledger Wallet",
-          "longDesc" : "เครื่องมือนี้มีไว้ให้ทีมตรวจสอบเนื้อหาของ Storyly ที่ใช้ในแอปได้"
-        },
         "testStaxPostonboarding" : {
           "title" : "ทดสอบ Stax Post Onboarding",
           "description" : "ทดสอบฟีเจอร์ Stax Post Onboarding ทั้งหมด"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "อาจดำเนินการในภายหลัง"
       }
     },
-    "postOnboarding" : {
-      "title" : "ปรับแต่งหน้าจอล็อค",
-      "description" : "ใช้รูปหรือศิลปะดิจิทัลที่คุณชอบเป็นหน้าล็อกสกรีนของเครื่อง",
-      "actionCompletedPopupLabel" : "ปรับแต่งอุปกรณ์ในแบบของคุณ"
-    },
     "customImageSet" : "หน้าจอล็อคที่ปรับแต่ง",
     "finishCTA" : "ปิด"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "ส่งแบบสาธารณะ",
+          "transparentToShielded" : "ส่งจากบัญชีสาธารณะไปยังบัญชีส่วนตัว",
+          "shieldedToTransparent" : "ส่งจากส่วนตัวไปสาธารณะ",
+          "shielded" : "ส่งแบบส่วนตัว"
+        },
         "transferFrom" : {
           "label" : "โอนจาก",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Private Balance",
             "subtitle" : "แบบส่วนตัว (Shielded)",
             "unavailable" : "ยอดคงเหลือในบัญชีส่วนตัว (Private Balance) ไม่พร้อมใช้งาน"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (ไม่บังคับ)",
+          "placeholder" : "ป้อน Memo",
+          "tooltip" : "แนบข้อความส่วนตัวกับธุรกรรมที่ได้รับการปกป้องนี้ เฉพาะผู้รับเท่านั้นที่สามารถอ่านได้ สูงสุด 512 ไบต์"
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "ยอดคงเหลือส่วนตัวยังไม่ได้ทำการซิงค์",
+            "cta" : "ดำเนินการซิงค์ต่อ"
+          },
+          "running" : {
+            "message" : "ยอดคงเหลือส่วนตัวกำลังทำการซิงค์ ({{progress}}%)",
+            "timeRemaining" : "ต้องใช้เวลาอีกประมาณ: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "ยอดคงเหลือในบัญชีอาจยังไม่อัปเดต",
+            "cta" : "ซิงค์ยอดคงเหลือในบัญชี"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "โอนด้วยตัวเอง",
+      "headerAction" : "สวอป",
       "headerActionTooltip" : "คุณไม่มีเงินเพียงพอที่จะทำการโอนด้วยตนเอง",
       "modal" : {
-        "title" : "โอนด้วยตัวเอง",
+        "title" : "สวอป",
         "stepRecipient" : {
           "selectLabel" : "โอนจาก"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "รายชื่อ",
     "addContact" : "เพิ่มรายชื่อ",
+    "addAddress" : "เพิ่มที่อยู่",
+    "addContactDrawer" : {
+      "namePlaceholder" : "ตั้งชื่อรายชื่อ",
+      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อ-นามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S'",
+      "invalidNameError" : "ไม่อนุญาตให้ใช้อักขระพิเศษ"
+    },
     "searchPlaceholder" : "ค้นหารายชื่อ",
     "searchNoResults" : "ไม่พบรายชื่อ",
+    "addressCount_zero" : "ไม่มีที่อยู่คริปโต",
+    "addressCount_one" : "{{count}} ที่อยู่คริปโต",
+    "addressCount_other" : "{{count}} ที่อยู่คริปโต",
     "me" : {
-      "name" : "ที่อยู่ของฉัน",
-      "addressCount_zero" : "0 ที่อยู่คริปโต",
-      "addressCount_one" : "{{count}} ที่อยู่",
-      "addressCount_other" : "{{count}} ที่อยู่"
+      "name" : "ที่อยู่ของฉัน"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "ไม่มีที่อยู่คริปโตที่บันทึกไว้สำหรับคุณ",
+        "contactTitle" : "ไม่มีที่อยู่คริปโตที่บันทึกไว้สำหรับ {{name}}",
+        "meDescription" : "บันทึกที่อยู่วอลเล็ตของคุณเก็บไว้ เพื่อให้ครั้งถัดไปคุณสามารถรับคริปโตด้วยชื่อได้ทันที",
+        "contactDescription" : "บันทึกที่อยู่วอลเล็ตของพวกเขาเก็บไว้ เพื่อให้ครั้งถัดไปคุณสามารถส่งหาด้วยชื่อได้ทันที"
+      }
+    },
+    "addressDetail" : {
+      "send" : "ส่ง",
+      "copy" : "คัดลอก",
+      "copied" : "คัดลอกแล้ว",
+      "edit" : "แก้ไข",
+      "delete" : "ลบ",
+      "networkTag" : "เครือข่าย {{name}}"
     },
     "ledgerSyncIntroduction" : {
       "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
