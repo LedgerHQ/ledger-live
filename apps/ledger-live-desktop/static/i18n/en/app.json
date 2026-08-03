@@ -9305,6 +9305,19 @@
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "This ENS name resolves to the address shown above."
     },
+    "addAddressName": {
+      "inputLabel": "Address name",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "tooLongLabel": "Address names must be 32 characters or fewer."
+    },
+    "addAddressReview": {
+      "title": "Review address",
+      "continue": "Confirm address",
+      "successTitle": "Address saved",
+      "close": "Close"
+    },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",

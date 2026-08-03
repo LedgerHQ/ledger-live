@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import type { ContactId } from "@domain/entity-contact";
+import {
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  type ContactId,
+} from "@domain/entity-contact";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
   createContactsListViewModel,
@@ -15,6 +20,7 @@ import {
   type AddAddressContact,
   type AddAddressFlowState,
   type ContactsAddAddressEntryLabels,
+  type ContactsAddAddressNameLabels,
   type ContactAddressDetailDialogProps,
   type ContactsLedgerSyncStatus,
   type ContactsListViewLabels,
@@ -25,7 +31,10 @@ import { useContactsFeatureIntroductionPreference } from "../../hooks/useContact
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
-import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
+import type {
+  ContactsAddAddressFlowDialogProps,
+  ContactsAddAddressReviewLabels,
+} from "./components/ContactsAddAddressFlowDialog";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
   Readonly<{
@@ -54,6 +63,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeCurrencySelection,
     goBack: goBackAddAddress,
     updateAddress,
+    updateAddressLabel,
+    continueFromAddressDetails,
+    continueFromName,
+    continueFromReview,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
   const selectCurrencyForContact = useCallback(
@@ -82,6 +95,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
     closeAddAddress();
   }, [cancelCurrencySelection, closeAddAddress]);
   const onBackAddAddress = useCallback(() => {
+    if (
+      addAddressFlowState.status === "namingAddress" ||
+      addAddressFlowState.status === "reviewingAddress"
+    ) {
+      goBackAddAddress();
+      return;
+    }
+
     if (addAddressFlowState.status !== "enteringAddress") {
       return;
     }
@@ -104,22 +125,56 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [t],
   );
+  const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
+    () => ({
+      inputLabel: t("contacts.addAddressName.inputLabel"),
+      continueToReview: t("contacts.addAddressName.continueToReview"),
+      validAddress: t("contacts.addAddressEntry.validAddress"),
+      validationErrors: {
+        [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.invalidLabel"),
+        [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t("contacts.addAddressName.duplicateLabel"),
+        [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t("contacts.addAddressName.tooLongLabel"),
+      },
+    }),
+    [t],
+  );
+  const addAddressReviewLabels = useMemo<ContactsAddAddressReviewLabels>(
+    () => ({
+      title: t("contacts.addAddressReview.title"),
+      continue: t("contacts.addAddressReview.continue"),
+      successTitle: t("contacts.addAddressReview.successTitle"),
+      close: t("contacts.addAddressReview.close"),
+    }),
+    [t],
+  );
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
-      labels: addAddressEntryLabels,
+      entryLabels: addAddressEntryLabels,
+      nameLabels: addAddressNameLabels,
+      reviewLabels: addAddressReviewLabels,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
       },
+      onContinueFromAddressDetails: continueFromAddressDetails,
+      onAddressLabelChange: updateAddressLabel,
+      onContinueFromName: continueFromName,
+      onContinueFromReview: continueFromReview,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
     [
       addAddressEntryLabels,
+      addAddressNameLabels,
+      addAddressReviewLabels,
       addAddressFlowState,
       onBackAddAddress,
       onCloseAddAddress,
       updateAddress,
+      updateAddressLabel,
+      continueFromAddressDetails,
+      continueFromName,
+      continueFromReview,
     ],
   );
   const { detail, addressDetailDialog, onOpenMe, onOpenContact } =
