@@ -1,9 +1,4 @@
-import {
-  COIN_MARKET_CAP_TAGS,
-  coinMarketCapApi,
-  coinMarketCapApiExtra,
-  getCoinMarketCapExtra,
-} from "./coinmarketcap";
+import { coinMarketCapApi, coinMarketCapApiExtra, getCoinMarketCapExtra } from "./api";
 
 const valid = { coinMarketCapApiUrl: "https://cmc.test" };
 
@@ -14,10 +9,6 @@ describe("coinMarketCapApi", () => {
 
   it("declares no endpoints of its own", () => {
     expect(Object.keys(coinMarketCapApi.endpoints)).toHaveLength(0);
-  });
-
-  it("declares every tag its use cases may provide", () => {
-    expect([...COIN_MARKET_CAP_TAGS]).toEqual(["AltcoinSeasonIndexLatest", "FearAndGreedLatest"]);
   });
 });
 

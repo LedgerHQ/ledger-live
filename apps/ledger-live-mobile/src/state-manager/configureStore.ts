@@ -17,7 +17,7 @@ import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
-import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@domain/api-services";
+import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";

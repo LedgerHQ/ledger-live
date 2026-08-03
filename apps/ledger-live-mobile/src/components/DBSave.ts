@@ -39,7 +39,7 @@ import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
-import { calApi } from "@domain/api-services";
+import { calApi } from "@shared/api-services";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import {

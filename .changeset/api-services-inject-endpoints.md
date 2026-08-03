@@ -1,5 +1,5 @@
 ---
-"@domain/api-services": minor
+"@shared/api-services": minor
 "@domain/api-altcoins-sentiment": minor
 "@domain/api-market-sentiment": minor
 "@domain/api-currency-token": minor
@@ -14,11 +14,14 @@
 
 Split backend access from use case in `domain/api` using RTK Query `injectEndpoints`
 
-`@domain/api-services` now holds one endpoint-less `createApi({ endpoints: () => ({}) })` per backend —
+`@shared/api-services` now holds one endpoint-less `createApi({ endpoints: () => ({}) })` per backend —
 CAL, CoinMarketCap, Countervalues and Push Devices — each owning only that backend's `extraArgument`
-contract, a transport-only base query, its cache tags and its reducer path. Use-case packages add their
-endpoints with `injectEndpoints`, so a single reducer, middleware and cache serve every use case on a
-given backend.
+contract, a transport-only base query and its reducer path. Use-case packages add their endpoints with
+`injectEndpoints`, so a single reducer, middleware and cache serve every use case on a given backend.
+
+Cache tags stay with the endpoints that provide them: each use-case package declares its own and
+registers them on the shared api with `enhanceEndpoints({ addTagTypes })`, which mutates and returns
+that same api. So adding a use case never means editing another backend's file.
 
 CoinMarketCap previously had two independent `createApi` instances (altcoins-sentiment and
 market-sentiment) against the same base URL, duplicating the base query, the `extraArgument` schema and

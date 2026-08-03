@@ -5,7 +5,7 @@ import { llmRTKApiReducers } from "./rtkQueryApi";
  * dropped api changes the store shape without failing typecheck. Pinning the exact set is the only
  * thing that catches it.
  *
- * `@domain/api-services` entries own one backend each; their endpoints are injected by the
+ * `@shared/api-services` entries own one backend each; their endpoints are injected by the
  * matching `@domain/api-*` use-case packages, which the view-models import directly.
  */
 const EXPECTED_REDUCER_PATHS = [

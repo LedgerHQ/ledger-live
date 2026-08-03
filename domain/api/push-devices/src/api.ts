@@ -3,7 +3,7 @@ import {
   pushDevicesApi,
   pushDevicesApiExtra,
   type PushDevicesApiExtra,
-} from "@domain/api-services";
+} from "@shared/api-services";
 
 export { pushDevicesApiExtra };
 export type { PushDevicesApiExtra };

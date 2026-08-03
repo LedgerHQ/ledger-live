@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { coinMarketCapApiExtra, coinMarketCapApi } from "@domain/api-services";
+import { coinMarketCapApiExtra, coinMarketCapApi } from "@shared/api-services";
 import { altcoinsSentimentApi, useGetAltcoinSeasonIndexLatestQuery } from "./api";
 
 const rawResponse = {

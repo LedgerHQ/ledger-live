@@ -1,5 +1,5 @@
 {
-  "name": "@domain/api-services",
+  "name": "@shared/api-services",
   "version": "0.1.0",
   "private": true,
   "description": "One endpoint-less RTK Query api per backend service: base query, cache tags and extraArgument contract. Use-case packages inject their endpoints into these.",
@@ -15,7 +15,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W domain/api/services"
+    "unimported": "pnpm knip --directory ../.. -W shared/api-services"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-dmk-speculos";
 import { configureStore } from "@reduxjs/toolkit";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { calApiExtra } from "@domain/api-services";
+import { calApiExtra } from "@shared/api-services";
 import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@shared/env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";

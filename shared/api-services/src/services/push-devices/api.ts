@@ -1,5 +1,3 @@
-// Push Devices service: base query and the endpoint-less api its use cases inject into.
-
 import {
   createApi,
   fetchBaseQuery,
@@ -8,23 +6,13 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { z } from "zod";
-
-/**
- * Thunk `extraArgument` contract for every Push-Devices-backed api. An empty
- * `pushDevicesServiceUrl` disables sync — the base query soft-fails rather than throwing, so the app
- * can boot without the service configured.
- */
-export const PushDevicesApiExtraSchema = z.object({
-  pushDevicesServiceUrl: z.string().trim(),
-  ledgerClientVersion: z.string().trim().min(1),
-});
-
-/** Slice of the Redux thunk `extraArgument` owned by the Push Devices service. */
-export type PushDevicesApiExtra = z.infer<typeof PushDevicesApiExtraSchema>;
-
-/** Max retries for transient Push Devices request failures. */
-const MAX_RETRIES = 3;
+import {
+  HEADER_X_LEDGER_CLIENT_VERSION,
+  MAX_RETRIES,
+  PUSH_DEVICES_REDUCER_PATH,
+} from "./constants";
+import { PushDevicesApiExtraSchema } from "./schema";
+import type { PushDevicesApiExtra } from "./types";
 
 /** Builds this service's slice of the thunk `extraArgument`. */
 export function pushDevicesApiExtra(config: PushDevicesApiExtra): PushDevicesApiExtra {
@@ -55,7 +43,7 @@ const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
       baseUrl: extra.pushDevicesServiceUrl,
       prepareHeaders: headers => {
         headers.set("Content-Type", "application/json");
-        headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
+        headers.set(HEADER_X_LEDGER_CLIENT_VERSION, extra.ledgerClientVersion);
         return headers;
       },
     });
@@ -65,15 +53,11 @@ const pushDevicesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
 );
 
 /**
- * The Push Devices service api: owns the base URL and the reducer path, but no endpoints. Use-case
- * packages call `injectEndpoints` on it — which mutates and returns this same object, so cache,
- * reducer and middleware stay unified across them.
- *
- * Register this in the store; never call endpoints on it. Only the injected reference returned by
- * a use-case package carries the endpoint types.
+ * Endpoint-less Push Devices Service api. Register it in the store; use cases add endpoints and tags
+ * to this same object — see {@link https://github.com/LedgerHQ/ledger-live/blob/develop/shared/api-services/README.md}.
  */
 export const pushDevicesApi = createApi({
-  reducerPath: "pushDevicesApi",
+  reducerPath: PUSH_DEVICES_REDUCER_PATH,
   baseQuery: pushDevicesBaseQuery,
   tagTypes: [],
   endpoints: () => ({}),

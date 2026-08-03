@@ -1,4 +1,4 @@
-import { pushDevicesApi, pushDevicesApiExtra } from "./pushDevices";
+import { pushDevicesApi, pushDevicesApiExtra } from "./api";
 
 const valid = { pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "1.2.3" };
 

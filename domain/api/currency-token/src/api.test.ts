@@ -4,7 +4,7 @@ jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
 }));
 
-import { calApiExtra, calApi } from "@domain/api-services";
+import { calApiExtra, calApi } from "@shared/api-services";
 import { convertApiToken } from "./converter";
 import {
   cryptoAssetsApi,

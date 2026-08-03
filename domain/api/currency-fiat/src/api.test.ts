@@ -4,7 +4,7 @@ jest.mock("./converter", () => ({
   resolveSupportedFiats: jest.fn(),
 }));
 
-import { countervaluesApi, cvsApiExtra } from "@domain/api-services";
+import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import { resolveSupportedFiats } from "./converter";
 import { currencyFiatApi, useGetSupportedFiatsQuery } from "./api";
 import { SupportedFiatsResponseSchema } from "./schema";

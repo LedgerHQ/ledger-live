@@ -9,7 +9,7 @@ import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@domain/api-services";
+import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";

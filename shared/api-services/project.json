@@ -1,5 +1,5 @@
 {
-  "name": "@domain/api-services",
+  "name": "@shared/api-services",
   "targets": {
     "build": {
       "executor": "nx:noop"

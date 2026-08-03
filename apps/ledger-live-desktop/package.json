@@ -65,7 +65,7 @@
     "@datadog/browser-logs": "6.30.1",
     "@datadog/browser-rum": "6.30.1",
     "@domain/api-pay-card": "workspace:^",
-    "@domain/api-services": "workspace:^",
+    "@shared/api-services": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency": "workspace:^",

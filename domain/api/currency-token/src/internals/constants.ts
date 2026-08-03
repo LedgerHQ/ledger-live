@@ -1,6 +1,7 @@
 // Package-private: nothing under `internals/` is re-exported from the public barrel (`../index.ts`).
-// Reducer path, cache tags, retry count and the client-version header live in
-// `@domain/api-services` — they belong to the CAL transport, not to this use case.
+
+/** RTK Query cache tags for CAL token data. */
+export const TOKEN_TAGS = ["Tokens"] as const;
 
 /** Default page size for the paginated `getTokensData` query. */
 export const DEFAULT_PAGE_SIZE = 1000;

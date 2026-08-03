@@ -90,7 +90,7 @@
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
     "@domain/api-altcoins-sentiment": "workspace:^",
-    "@domain/api-services": "workspace:^",
+    "@shared/api-services": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-market-sentiment": "workspace:^",

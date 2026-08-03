@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { pushDevicesApi, pushDevicesApiExtra } from "@domain/api-services";
+import { pushDevicesApi, pushDevicesApiExtra } from "@shared/api-services";
 import { createPushDevicesRequest, pushDevicesSyncApi } from "./api";
 import { DeviceId } from "@domain/entity-client-identity";
 

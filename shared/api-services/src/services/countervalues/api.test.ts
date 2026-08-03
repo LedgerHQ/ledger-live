@@ -1,4 +1,4 @@
-import { countervaluesApi, cvsApiExtra, getCvsExtra } from "./countervalues";
+import { countervaluesApi, cvsApiExtra, getCvsExtra } from "./api";
 
 const valid = { countervaluesServiceUrl: "https://cvs.test" };
 

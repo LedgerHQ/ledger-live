@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { calApiExtra, type CalApiExtra } from "@domain/api-services";
+import { calApiExtra, type CalApiExtra } from "@shared/api-services";
 import { buildCryptoAssetsStore } from "./buildCryptoAssetsStore";
 import type { CryptoAssetsStore } from "./port";
 

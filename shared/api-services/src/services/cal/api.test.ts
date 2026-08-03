@@ -1,4 +1,4 @@
-import { calApi, calApiExtra, getCalExtra } from "./cal";
+import { calApi, calApiExtra, getCalExtra } from "./api";
 
 const valid = { calServiceUrl: "https://cal.test", ledgerClientVersion: "test" };
 

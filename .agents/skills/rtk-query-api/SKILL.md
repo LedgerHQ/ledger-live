@@ -41,47 +41,61 @@ export enum EntityTags {
 
 ## Sharing one backend across use cases
 
-When a **second** use case needs the same base URL, do not add a second `createApi` — split the backend
-from the use case. Declare an empty api for the backend, then add endpoints with
-[`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints).
-It mutates and returns the *same* api object, so one reducer, one middleware and one cache serve every
-use case.
+When a **second** use case needs the same base URL, do not add a second `createApi`. Two `createApi`
+calls against one backend means two store slices, two caches and two middlewares for one service.
+Instead split *reaching the backend* from *what you ask it for*:
 
-In `domain/api/`, these empty apis live in `@domain/api-services`, one file per backend, each holding
-just the `extraArgument` contract, a transport-only base query and the `createApi` — see
-[domain/api/README.md](../../../domain/api/README.md).
+| Half | Owner | Contains |
+| --- | --- | --- |
+| Reaching a backend | [`@shared/api-services`](../../../shared/api-services/README.md) — one dir per backend | Base URL, base query, retry, `reducerPath`, `extraArgument` contract |
+| What you ask it for | `@domain/api-<name>` | Endpoints, wire schemas, transforms, **cache tags**, hooks |
+
+The shared half declares an empty api. The use-case half adds to it with
+[`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints)
+for endpoints and `enhanceEndpoints({ addTagTypes })` for tags. Both **mutate and return the same api
+object**, so one reducer, one middleware and one cache serve every use case.
 
 ```typescript
-// ✅ GOOD - the service api: base query + config, no endpoints
+// ✅ GOOD - the service api: base query + config. No endpoints, no tags.
 export const myServiceApi = createApi({
   reducerPath: "myServiceApi",
   baseQuery: myServiceBaseQuery,
-  // tagTypes is ONLY accepted here, never in injectEndpoints — list every tag any injector uses.
-  tagTypes: [...FIRST_USE_CASE_TAGS, ...SECOND_USE_CASE_TAGS],
+  tagTypes: [],
   endpoints: () => ({}),
 });
 ```
 
 ```typescript
-// ✅ GOOD - a use case injecting into it
-export const firstUseCaseApi = myServiceApi.injectEndpoints({
-  endpoints: build => ({
-    getEntity: build.query<Entity, string>({
-      query: id => `entities/${id}`,
-      providesTags: [...FIRST_USE_CASE_TAGS],
+// ✅ GOOD - a use case adds its own tags, then its endpoints
+export const FIRST_USE_CASE_TAGS = ["Entity"] as const;
+
+export const firstUseCaseApi = myServiceApi
+  .enhanceEndpoints({ addTagTypes: FIRST_USE_CASE_TAGS })
+  .injectEndpoints({
+    endpoints: build => ({
+      getEntity: build.query<Entity, string>({
+        query: id => `entities/${id}`,
+        providesTags: [...FIRST_USE_CASE_TAGS],
+      }),
     }),
-  }),
-});
+  });
 
 export const { useGetEntityQuery } = firstUseCaseApi;
 ```
 
+- **Cache tags belong to the use case, not the shared api.** `injectEndpoints` does not accept
+  `tagTypes`, which makes it tempting to declare every tag upfront in the shared file — don't.
+  `enhanceEndpoints({ addTagTypes })` widens the tag union in place, so a tag stays next to the
+  endpoints that provide it and adding a use case never means editing a shared file.
 - **Register the service api; call endpoints on the use case.** Only the injected reference is typed
   with the endpoints — `injectEndpoints` cannot retype the original.
 - **Injection is a module-level side effect.** An endpoint exists only once its use-case module has
   been evaluated as a *value* import; a type-only import will not trigger it. Never import an api from
-  `@domain/api-services` in order to call endpoints on it.
-- **Keep the shared file transport-only.** If a backend's base query needs use-case knowledge (mock
+  `@shared/api-services` in order to call endpoints on it.
+- **A tag-less api has a narrower state type.** The registered api declares no tags, so a helper typed
+  on an injected reference (whose use case added some) will not accept an app's `State`. Type such
+  helpers on the service api.
+- **Keep the shared half transport-only.** If a backend's base query needs use-case knowledge (mock
   handlers keyed by endpoint URL, endpoint-name lookups), leave its `createApi` in the use-case package.
 - **`overrideExisting` defaults to `false`** — injecting an endpoint name that already exists is
   silently ignored unless you opt in.
