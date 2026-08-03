@@ -50,6 +50,8 @@ const moduleNameMapper = {
   "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
   "styled-components": require.resolve("styled-components"),
   electron: "<rootDir>/tests/mocks/electron.ts",
+  // The real bridge reads window.ledger, which only the preload provides.
+  "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),
   "^react-redux": "<rootDir>/node_modules/react-redux",
