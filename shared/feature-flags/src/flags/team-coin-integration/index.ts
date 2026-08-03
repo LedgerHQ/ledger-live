@@ -69,7 +69,6 @@ export * from "./currencyRobinhood";
 export * from "./currencyRobinhoodTestnet";
 export * from "./currencyRsk";
 export * from "./currencyScroll";
-export * from "./currencyScrollSepolia";
 export * from "./currencySecretNetwork";
 export * from "./currencySeiNetworkEvm";
 export * from "./currencyShape";
