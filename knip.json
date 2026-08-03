@@ -214,6 +214,9 @@
     "./domain/entity/account-name": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/recent-addresses": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/pay-card": {
       "entry": ["src/index.ts"]
     },
