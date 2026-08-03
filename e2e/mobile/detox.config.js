@@ -1,7 +1,8 @@
 const path = require("path");
 const iosArch = "arm64";
-// NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
-const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
+// Host-keyed so an inherited CI variable cannot select the wrong ABI. Override: E2E_ANDROID_ABI.
+const isAppleSilicon = process.platform === "darwin" && process.arch === "arm64";
+const androidArch = process.env.E2E_ANDROID_ABI || (isAppleSilicon ? "arm64-v8a" : "x86_64");
 const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 const SCHEME = "ledgerlivemobile";
 
@@ -36,7 +37,8 @@ module.exports = {
       teardownTimeout: 120000,
     },
     noRetryArgs: ["json", "outputFile"],
-    retries: 0,
+    // Local default. CI passes --retries on the CLI, which takes precedence.
+    retries: Number(process.env.E2E_RETRIES || 1),
     forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
