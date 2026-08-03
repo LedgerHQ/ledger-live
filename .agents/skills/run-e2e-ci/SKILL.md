@@ -43,7 +43,7 @@ gh run list --branch "$BR" --limit 6   # grab the run IDs
 
 Mobile **requires** `tests_type` (`Android Only`|`iOS Only`|`iOS & Android`) and `speculos_device` (`nanoS`|`nanoSP`|`nanoX`|`stax`|`flex`|`nanoGen5`). Desktop defaults to Speculos nanoSP. Coin Tester auto-detects affected coins (or `-f chain="evm,solana"`).
 
-**Verify the filter took effect:** open the run's Summary → **Resolved filtered pattern** and confirm it matched specs. A mistyped filter that matches 0 specs runs nothing (the run also emits a "filter has no matches" warning).
+**Verify the filter took effect:** open the run's Summary → **Resolved filtered pattern** and confirm it matched specs. A filter that matches 0 specs is wasted — on **Mobile** the test jobs are skipped, on **Desktop** the run **fails** ("No tests executed") — and `resolve.mjs` emits a "filter has no matches" warning. Fix the filter and re-dispatch.
 
 ## Post the run on the PR
 
