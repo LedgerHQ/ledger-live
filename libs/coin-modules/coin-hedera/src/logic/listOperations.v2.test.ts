@@ -201,7 +201,11 @@ describe("listOperationsV2", () => {
         { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: 1000 },
       ],
       staking_reward_transfers: [],
-      transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
       name: "CRYPTOTRANSFER",
     });
 
@@ -269,6 +273,7 @@ describe("listOperationsV2", () => {
       staking_reward_transfers: [],
       token_transfers: [],
       transfers: [{ account: mockMirrorAccount.account, amount: -300000 }],
+      transaction_id: `${mockMirrorAccount.account}-${sharedTimestamp}`,
     });
     const mockERC20Transfer = getMockedERC20TokenTransfer({
       token_evm_address: mockTokenERC20.contractAddress,
@@ -349,6 +354,9 @@ describe("listOperationsV2", () => {
         type: "FEES",
         value: new BigNumber(300000),
         hash: sharedHash,
+        // a fee goes from the payer to the node, not between the token transfer's parties
+        senders: [mockMirrorAccount.account],
+        recipients: [mockMirrorTransaction.node],
       }),
     ]);
   });
@@ -595,7 +603,11 @@ describe("listOperationsV2", () => {
         { token_id: tokenId, account: "0.0.67890", amount: 1000 },
       ],
       staking_reward_transfers: [],
-      transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
       name: "CRYPTOTRANSFER",
     });
 
@@ -632,12 +644,12 @@ describe("listOperationsV2", () => {
     ]);
   });
 
-  it("should not emit FEES coin op for child HTS token transfer (nonce > 0)", async () => {
+  // child records such as TOKENWIPE land here; their `nonce` is never consulted
+  it("should not emit a coin op for a token transfer with no HBAR transfers and no fee", async () => {
     const tokenId = "0.0.7890";
     const mockTransaction = getMockedMirrorTransaction({
       consensus_timestamp: "1625097600.000000000",
       transaction_hash: "hash1",
-      nonce: 1,
       charged_tx_fee: 0,
       token_transfers: [
         { token_id: tokenId, account: mockMirrorAccount.account, amount: -1000 },
@@ -847,6 +859,50 @@ describe("listOperationsV2", () => {
     ]);
   });
 
+  it("should sum several staking reward rows for the same account", async () => {
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "hash1",
+      charged_tx_fee: 500000,
+      result: "SUCCESS",
+      memo_base64: "",
+      token_transfers: [],
+      // the mirror node can report an account's reward across several rows
+      staking_reward_transfers: [
+        { account: mockMirrorAccount.account, amount: 600000 },
+        { account: mockMirrorAccount.account, amount: 400000 },
+      ],
+      transfers: [{ account: mockMirrorAccount.account, amount: 500000 }],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+      name: "CRYPTOTRANSFER",
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [mockTransaction],
+      nextCursor: null,
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      currencyId: mockCurrency.id,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toMatchObject([
+      { type: "REWARD", value: new BigNumber(1000000) },
+      // the reward is netted out of the transfer row, leaving only the fee this account paid
+      { type: "FEES", value: new BigNumber(500000) },
+    ]);
+  });
+
   it("should create REWARD operation for ERC20 transfers with staking rewards", async () => {
     const mockTokenERC20 = getMockedERC20TokenCurrency();
     const mockRewardAmount = 10000000;
@@ -945,6 +1001,7 @@ describe("listOperationsV2", () => {
       token_transfers: [],
       staking_reward_transfers: [],
       transfers: [{ account: mockMirrorAccount.account, amount: -500000 }],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
       name: "CRYPTOUPDATEACCOUNT",
     });
 
@@ -1000,6 +1057,7 @@ describe("listOperationsV2", () => {
       token_transfers: [],
       staking_reward_transfers: [],
       transfers: [{ account: mockMirrorAccount.account, amount: -500000 }],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
       name: "CRYPTOUPDATEACCOUNT",
     });
 
@@ -1295,7 +1353,12 @@ describe("listOperationsV2", () => {
         { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: 1000 },
       ],
       staking_reward_transfers: [],
-      transfers: [],
+      // the account pays the fee in HBAR, so a FEES coin op is built and has to be dropped
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
       name: "CRYPTOTRANSFER",
     });
 
@@ -1327,6 +1390,74 @@ describe("listOperationsV2", () => {
     expect(result.coinOperations).toEqual([]);
     expect(result.tokenOperations).toHaveLength(1);
     expect(result.tokenOperations[0].type).toBe("OUT");
+  });
+
+  it("should keep a FEES operation whose hash has no token operation when skipping token fees", async () => {
+    const mockTokenHTS = getMockedHTSTokenCurrency();
+    const tokenTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "hash-token",
+      charged_tx_fee: 500000,
+      result: "SUCCESS",
+      token_transfers: [
+        {
+          token_id: mockTokenHTS.contractAddress,
+          account: mockMirrorAccount.account,
+          amount: -1000,
+        },
+        { token_id: mockTokenHTS.contractAddress, account: "0.0.67890", amount: 1000 },
+      ],
+      staking_reward_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+      name: "CRYPTOTRANSFER",
+    });
+    // no token transfer, so its fee is the only trace this transaction left on the account
+    const feeOnlyTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097601.000000000",
+      transaction_hash: "hash-fee-only",
+      charged_tx_fee: 500000,
+      result: "SUCCESS",
+      token_transfers: [],
+      staking_reward_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -500000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      transaction_id: `${mockMirrorAccount.account}-1625097601.000000000`,
+      name: "CRYPTOTRANSFER",
+    });
+
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [tokenTransaction, feeOnlyTransaction],
+      nextCursor: null,
+    });
+
+    setCryptoAssetsStore({
+      findTokenById: async () => undefined,
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockTokenHTS),
+      getTokensSyncHash: async () => "",
+    });
+
+    const result = await listOperations({
+      limit: mockLimit,
+      order: mockOrder,
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: true,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    });
+
+    expect(result.coinOperations).toMatchObject([{ hash: "hash-fee-only", type: "FEES" }]);
+    expect(result.tokenOperations).toMatchObject([{ hash: "hash-token", type: "OUT" }]);
   });
 
   it("should use encoded hash when useEncodedHash is true", async () => {
@@ -1750,5 +1881,746 @@ describe("listOperationsV2", () => {
     });
 
     expect(result.coinOperations).toEqual([]);
+  });
+
+  describe("multi-recipient transactions", () => {
+    const firstRecipient = "0.0.67890";
+    const secondRecipient = "0.0.99999";
+
+    const listArgs = {
+      limit: mockLimit,
+      order: mockOrder as "desc",
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    };
+
+    const mockTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "hash1",
+      charged_tx_fee: 500000,
+      result: "SUCCESS",
+      transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+      token_transfers: [],
+      staking_reward_transfers: [],
+      transfers: [
+        { account: mockMirrorAccount.account, amount: -2500000 },
+        { account: firstRecipient, amount: 1000000 },
+        { account: secondRecipient, amount: 1000000 },
+        { account: "0.0.3", amount: 500000 },
+      ],
+      name: "CRYPTOTRANSFER",
+    });
+
+    beforeEach(() => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [mockTransaction],
+        nextCursor: null,
+      });
+    });
+
+    it("emits one OUT per recipient, each addressed to that recipient alone", async () => {
+      const result = await listOperations(listArgs);
+
+      expect(
+        result.coinOperations
+          .map(op => ({ type: op.type, recipients: op.recipients }))
+          .sort((a, b) => a.recipients[0].localeCompare(b.recipients[0])),
+      ).toEqual([
+        { type: "OUT", recipients: [firstRecipient] },
+        { type: "OUT", recipients: [secondRecipient] },
+      ]);
+    });
+
+    it("splits the outflow so the operation values sum to what left the account", async () => {
+      const result = await listOperations(listArgs);
+
+      const total = result.coinOperations.reduce((sum, op) => sum.plus(op.value), new BigNumber(0));
+
+      expect(total).toEqual(new BigNumber(2500000));
+    });
+
+    it("charges the transaction fee to exactly one of the operations", async () => {
+      const result = await listOperations(listArgs);
+
+      const feesCharged = result.coinOperations.filter(op => op.fee.gt(0));
+
+      expect(feesCharged).toHaveLength(1);
+      expect(feesCharged[0].fee).toEqual(new BigNumber(500000));
+      expect(feesCharged[0].recipients).toEqual([firstRecipient]);
+    });
+
+    it("assigns a distinct id to every operation of a multi-recipient transaction", async () => {
+      const result = await listOperations(listArgs);
+
+      const ids = result.coinOperations.map(op => op.id);
+
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(ids.sort()).toEqual([`hash1:OUT:${firstRecipient}`, `hash1:OUT:${secondRecipient}`]);
+    });
+
+    it("emits both the HBAR and the HTS movement of a multi-asset transaction", async () => {
+      const mockTokenHTS = getMockedHTSTokenCurrency();
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            staking_reward_transfers: [],
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -1500000 },
+              { account: firstRecipient, amount: 1000000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            token_transfers: [
+              {
+                token_id: mockTokenHTS.contractAddress,
+                account: mockMirrorAccount.account,
+                amount: -1000,
+              },
+              { token_id: mockTokenHTS.contractAddress, account: firstRecipient, amount: 1000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(result.coinOperations).toMatchObject([
+        {
+          type: "OUT",
+          value: new BigNumber(1500000),
+          fee: new BigNumber(500000),
+          recipients: [firstRecipient],
+        },
+      ]);
+      expect(result.tokenOperations.map(op => op.id)).toEqual([
+        `hash1:OUT:${mockTokenHTS.contractAddress}`,
+      ]);
+    });
+
+    it("emits one token operation per token id of a multi-asset transfer", async () => {
+      const soldToken = "0.0.1001";
+      const boughtToken = "0.0.1002";
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            staking_reward_transfers: [],
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -500000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            token_transfers: [
+              { token_id: soldToken, account: mockMirrorAccount.account, amount: -1000 },
+              { token_id: soldToken, account: firstRecipient, amount: 1000 },
+              { token_id: boughtToken, account: firstRecipient, amount: -500 },
+              { token_id: boughtToken, account: mockMirrorAccount.account, amount: 500 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(
+        result.tokenOperations.map(op => ({
+          id: op.id,
+          contract: op.contract,
+          type: op.type,
+          value: op.value,
+        })),
+      ).toEqual([
+        {
+          id: `hash1:OUT:${soldToken}`,
+          contract: soldToken,
+          type: "OUT",
+          value: new BigNumber(1000),
+        },
+        {
+          id: `hash1:IN:${boughtToken}`,
+          contract: boughtToken,
+          type: "IN",
+          value: new BigNumber(500),
+        },
+      ]);
+    });
+
+    it("emits no token operation for a token id the account's rows net out to zero", async () => {
+      const movedToken = "0.0.1001";
+      const passThroughToken = "0.0.1002";
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            staking_reward_transfers: [],
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -500000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            token_transfers: [
+              { token_id: movedToken, account: mockMirrorAccount.account, amount: -1000 },
+              { token_id: movedToken, account: firstRecipient, amount: 1000 },
+              // the account forwards everything it receives, so its holding does not change
+              { token_id: passThroughToken, account: firstRecipient, amount: -500 },
+              { token_id: passThroughToken, account: mockMirrorAccount.account, amount: 500 },
+              { token_id: passThroughToken, account: mockMirrorAccount.account, amount: -500 },
+              { token_id: passThroughToken, account: secondRecipient, amount: 500 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(
+        result.tokenOperations.map(op => ({ contract: op.contract, value: op.value })),
+      ).toEqual([{ contract: movedToken, value: new BigNumber(1000) }]);
+    });
+
+    it("emits one token operation per recipient of a multi-recipient token transfer", async () => {
+      const tokenId = "0.0.1001";
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            staking_reward_transfers: [],
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -500000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            token_transfers: [
+              { token_id: tokenId, account: mockMirrorAccount.account, amount: -1000 },
+              { token_id: tokenId, account: firstRecipient, amount: 600 },
+              { token_id: tokenId, account: secondRecipient, amount: 400 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(
+        result.tokenOperations
+          .map(op => ({ id: op.id, value: op.value, recipients: op.recipients }))
+          .sort((a, b) => a.recipients[0].localeCompare(b.recipients[0])),
+      ).toEqual([
+        {
+          id: `hash1:OUT:${tokenId}:${firstRecipient}`,
+          value: new BigNumber(600),
+          recipients: [firstRecipient],
+        },
+        {
+          id: `hash1:OUT:${tokenId}:${secondRecipient}`,
+          value: new BigNumber(400),
+          recipients: [secondRecipient],
+        },
+      ]);
+    });
+
+    it("splits the outflow when the fee is shared between the node and the reward accounts", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // how mainnet actually splits a fee: node, fee collector, and both reward accounts
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -2500000 },
+              { account: firstRecipient, amount: 1000000 },
+              { account: secondRecipient, amount: 1000000 },
+              { account: "0.0.3", amount: 250000 },
+              { account: "0.0.98", amount: 150000 },
+              { account: "0.0.800", amount: 50000 },
+              { account: "0.0.801", amount: 50000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(
+        result.coinOperations
+          .map(op => ({ recipients: op.recipients, value: op.value, fee: op.fee }))
+          .sort((a, b) => a.recipients[0].localeCompare(b.recipients[0])),
+      ).toEqual([
+        {
+          recipients: [firstRecipient],
+          value: new BigNumber(1500000),
+          fee: new BigNumber(500000),
+        },
+        { recipients: [secondRecipient], value: new BigNumber(1000000), fee: new BigNumber(0) },
+      ]);
+    });
+
+    it("keeps one netted OUT when a second account also sent HBAR", async () => {
+      const coSender = "0.0.55555";
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${coSender}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // the recipient amounts do add up to this account's outflow, but a second account also
+            // sent HBAR, so nothing proves it funded those recipients rather than the co-sender
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -1000000 },
+              { account: coSender, amount: -500000 },
+              { account: firstRecipient, amount: 600000 },
+              { account: secondRecipient, amount: 400000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(result.coinOperations).toMatchObject([
+        {
+          id: "hash1:OUT",
+          type: "OUT",
+          value: new BigNumber(1000000),
+          fee: new BigNumber(0),
+          recipients: [secondRecipient, firstRecipient],
+        },
+      ]);
+    });
+
+    it("keeps one netted OUT when the recipient amounts do not add up to what left the account", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // the fee rows account for 400000 of the 500000 charged, so the split cannot be trusted
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -2400000 },
+              { account: firstRecipient, amount: 1000000 },
+              { account: secondRecipient, amount: 1000000 },
+              { account: "0.0.3", amount: 400000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // the netted value still matches the mirror's own row, so the balance stays correct
+      expect(result.coinOperations).toMatchObject([
+        {
+          id: "hash1:OUT",
+          type: "OUT",
+          value: new BigNumber(2400000),
+          fee: new BigNumber(500000),
+        },
+      ]);
+    });
+  });
+
+  describe("transactions whose fee another account paid", () => {
+    const otherPayer = "0.0.55555";
+    const recipient = "0.0.67890";
+
+    const listArgs = {
+      limit: mockLimit,
+      order: mockOrder as "desc",
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    };
+
+    it("charges no fee to an OUT the account did not pay for", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${otherPayer}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            transfers: [
+              { account: otherPayer, amount: -500000 },
+              { account: mockMirrorAccount.account, amount: -1000000 },
+              { account: recipient, amount: 1000000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(result.coinOperations).toMatchObject([
+        { type: "OUT", value: new BigNumber(1000000), fee: new BigNumber(0) },
+      ]);
+    });
+
+    it("emits an IN and a FEES op when the account both received and paid", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // received 1000000 and paid the 500000 fee, so the mirror nets the row to +500000
+            transfers: [
+              { account: otherPayer, amount: -1000000 },
+              { account: mockMirrorAccount.account, amount: 500000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // the IN reports the gross amount received; the fee it paid is a row of its own
+      expect(result.coinOperations).toMatchObject([
+        {
+          type: "IN",
+          value: new BigNumber(1000000),
+          fee: new BigNumber(500000),
+          senders: [otherPayer],
+          recipients: [mockMirrorAccount.account],
+        },
+        {
+          type: "FEES",
+          value: new BigNumber(500000),
+          fee: new BigNumber(500000),
+          // a fee goes from the payer to the node, not between the transfer's parties
+          senders: [mockMirrorAccount.account],
+          recipients: ["0.0.3"],
+        },
+      ]);
+    });
+
+    it("emits a single IN with no companion FEES op when another account paid", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${otherPayer}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            transfers: [
+              { account: otherPayer, amount: -1500000 },
+              { account: mockMirrorAccount.account, amount: 1000000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // an IN op reports the charged fee whoever paid it, but only a payer gets a FEES op
+      expect(result.coinOperations).toMatchObject([
+        { type: "IN", value: new BigNumber(1000000), fee: new BigNumber(500000) },
+      ]);
+    });
+
+    it("emits nothing when the account's HBAR nets out and it paid no fee", async () => {
+      const sender = "0.0.44444";
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${otherPayer}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // the account forwards what it receives, so its HBAR balance is unchanged
+            transfers: [
+              { account: otherPayer, amount: -500000 },
+              { account: sender, amount: -1000000 },
+              { account: mockMirrorAccount.account, amount: 1000000 },
+              { account: mockMirrorAccount.account, amount: -1000000 },
+              { account: recipient, amount: 1000000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOTRANSFER",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // a FEES op here would debit a fee the account never paid
+      expect(result.coinOperations).toEqual([]);
+    });
+
+    it("charges no fee to a STAKE the account did not pay for", async () => {
+      const mockStakingAnalysis: StakingAnalysis = {
+        operationType: "STAKE",
+        previousStakingNodeId: null,
+        targetStakingNodeId: 3,
+        stakedAmount: BigInt(1000000000),
+      };
+      (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${otherPayer}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // staking changes no balance, so only the payer and the node appear
+            transfers: [
+              { account: otherPayer, amount: -500000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+            name: "CRYPTOUPDATEACCOUNT",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // the STAKE family reads `fee` as its balance delta, so a foreign fee would debit the account
+      expect(result.coinOperations).toMatchObject([
+        { type: "STAKE", value: new BigNumber(0), fee: new BigNumber(0) },
+      ]);
+    });
+  });
+
+  describe("FEES operation recipients", () => {
+    const listArgs = {
+      limit: mockLimit,
+      order: mockOrder as "desc",
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+    };
+
+    it("falls back to the credited network account when the transaction has no node", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            consensus_timestamp: "1625097600.000000000",
+            transaction_hash: "hash1",
+            charged_tx_fee: 500000,
+            transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+            token_transfers: [],
+            staking_reward_transfers: [],
+            // mirror leaves `node` null on child records, which only move the fee
+            nonce: 1,
+            node: null,
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -500000 },
+              { account: "0.0.98", amount: 400000 },
+              { account: "0.0.800", amount: 50000 },
+              { account: "0.0.801", amount: 50000 },
+            ],
+            name: "CRYPTOCREATEACCOUNT",
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      // an empty recipients list would read as a fee paid to nobody
+      expect(result.coinOperations).toMatchObject([
+        {
+          type: "FEES",
+          value: new BigNumber(500000),
+          senders: [mockMirrorAccount.account],
+          recipients: ["0.0.98"],
+        },
+      ]);
+    });
+  });
+
+  describe("failed transactions", () => {
+    it("stays an OUT charged the transaction fee when the account paid it", async () => {
+      const mockTransaction = getMockedMirrorTransaction({
+        consensus_timestamp: "1625097600.000000000",
+        transaction_hash: "hash1",
+        charged_tx_fee: 500000,
+        result: "INSUFFICIENT_ACCOUNT_BALANCE",
+        transaction_id: `${mockMirrorAccount.account}-1625097600.000000000`,
+        token_transfers: [],
+        staking_reward_transfers: [],
+        // a failed transaction moves no value, only the fee
+        transfers: [
+          { account: mockMirrorAccount.account, amount: -500000 },
+          { account: "0.0.3", amount: 500000 },
+        ],
+        name: "CRYPTOTRANSFER",
+      });
+
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [mockTransaction],
+        nextCursor: null,
+      });
+
+      const result = await listOperations({
+        limit: mockLimit,
+        order: mockOrder,
+        currencyId: mockCurrency.id,
+        address: mockMirrorAccount.account,
+        evmAddress: mockMirrorAccount.evm_address,
+        mirrorTokens: [],
+        tokenEvmAddresses: [],
+        fetchAllPages: true,
+        skipFeesForTokenOperations: false,
+        useEncodedHash: false,
+        useSyntheticBlocks: false,
+      });
+
+      expect(result.coinOperations).toMatchObject([
+        {
+          id: "hash1:OUT",
+          type: "OUT",
+          hasFailed: true,
+          value: new BigNumber(500000),
+          fee: new BigNumber(500000),
+        },
+      ]);
+    });
+  });
+
+  describe("incremental sync", () => {
+    const listArgs = (cursor?: string) => ({
+      limit: mockLimit,
+      order: mockOrder as "desc",
+      currencyId: mockCurrency.id,
+      address: mockMirrorAccount.account,
+      evmAddress: mockMirrorAccount.evm_address,
+      mirrorTokens: [],
+      tokenEvmAddresses: [],
+      fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
+      useSyntheticBlocks: false,
+      ...(cursor && { cursor }),
+    });
+
+    // two transactions inside one second: a cursor truncated to seconds re-fetches both
+    const chain = [
+      getMockedMirrorTransaction({
+        consensus_timestamp: "1625097600.111222333",
+        transaction_hash: "hash-early",
+        charged_tx_fee: 500000,
+        transaction_id: `${mockMirrorAccount.account}-1625097600.111222333`,
+        transfers: [
+          { account: mockMirrorAccount.account, amount: -1500000 },
+          { account: "0.0.67890", amount: 1000000 },
+        ],
+      }),
+      getMockedMirrorTransaction({
+        consensus_timestamp: "1625097600.999888777",
+        transaction_hash: "hash-late",
+        charged_tx_fee: 500000,
+        transaction_id: `${mockMirrorAccount.account}-1625097600.999888777`,
+        transfers: [
+          { account: mockMirrorAccount.account, amount: -2500000 },
+          { account: "0.0.67890", amount: 2000000 },
+        ],
+      }),
+    ];
+
+    beforeEach(() => {
+      // stands in for the mirror node's `timestamp=gt:` filter
+      (apiClient.getAccountTransactions as jest.Mock).mockImplementation(({ pagingToken }) => ({
+        transactions: pagingToken
+          ? chain.filter(tx => new BigNumber(tx.consensus_timestamp).gt(pagingToken))
+          : chain,
+        nextCursor: null,
+      }));
+    });
+
+    it("emits no operation twice when re-syncing with no new chain activity", async () => {
+      const first = await listOperations(listArgs());
+      expect(first.coinOperations).toHaveLength(2);
+
+      const cursor = utils.getSyncCursor({ operations: first.coinOperations });
+      const second = await listOperations(listArgs(cursor ?? undefined));
+
+      expect(second.coinOperations).toEqual([]);
+    });
+
+    it("still picks up a transaction landing in the same second as the stored one", async () => {
+      const stored = await listOperations(listArgs());
+      const earlyOperation = stored.coinOperations.filter(op => op.hash === "hash-early");
+      const cursor = utils.getSyncCursor({ operations: earlyOperation });
+
+      const next = await listOperations(listArgs(cursor ?? undefined));
+
+      expect(next.coinOperations.map(op => op.hash)).toEqual(["hash-late"]);
+    });
   });
 });

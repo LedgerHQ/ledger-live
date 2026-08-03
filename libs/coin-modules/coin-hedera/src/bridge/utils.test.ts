@@ -64,6 +64,39 @@ describe("bridge utils", () => {
       expect(noneOp?.subOperations?.[0]).toEqual(mockedOrphanTokenOperation);
       expect(noneOp?.hash).toBe("unknown-hash");
     });
+
+    it("reuses one NONE coin operation for every orphan token op of the same hash", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const accountId = encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL);
+      // a multi-recipient token transfer produces one op per recipient, all under one hash
+      const orphans = [
+        getMockedOperation({ hash: "unknown-hash", accountId, recipients: ["0.0.67890"] }),
+        getMockedOperation({ hash: "unknown-hash", accountId, recipients: ["0.0.99999"] }),
+      ];
+
+      const result = await prepareOperations([], orphans);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].subOperations).toEqual(orphans);
+    });
+
+    it("gives the NONE anchor the parent account id and the child's extra", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const extra: HederaOperationExtra = { pagingToken: "1625097600.999888777" };
+      const mockedOrphanTokenOperation = getMockedOperation({
+        hash: "unknown-hash",
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+        extra,
+      });
+
+      const result = await prepareOperations([], [mockedOrphanTokenOperation]);
+
+      // the anchor's pagingToken is what getSyncCursor reads, so it cannot be dropped
+      expect(result[0]).toMatchObject({
+        accountId: mockedTokenAccount.parentId,
+        extra,
+      });
+    });
   });
 
   describe("mergeSubAccounts", () => {
@@ -357,6 +390,94 @@ describe("bridge utils", () => {
       });
 
       expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+    });
+
+    it("keeps a FEES coin op that has no token op at all", () => {
+      const feesOp = getMockedOperation({ hash: "h1", type: "FEES" });
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations: [feesOp],
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+    });
+
+    it("falls back to the value to tell apart colliding operations with no recipient", () => {
+      const coinOperations = [
+        getMockedOperation({ hash: "h1", type: "OUT", recipients: [], value: new BigNumber(1) }),
+        getMockedOperation({ hash: "h1", type: "OUT", recipients: [], value: new BigNumber(2) }),
+      ];
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations,
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      const ids = bridgeCoinOperations.map(op => op.id);
+      expect(new Set(ids).size).toBe(coinOperations.length);
+    });
+
+    it("assigns a distinct id to every operation of a multi-recipient transaction", () => {
+      const coinOperations = [
+        getMockedOperation({ hash: "h1", type: "OUT", recipients: ["0.0.67890"] }),
+        getMockedOperation({ hash: "h1", type: "OUT", recipients: ["0.0.99999"] }),
+      ];
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations,
+        tokenOperations: [],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      const ids = bridgeCoinOperations.map(op => op.id);
+      expect(new Set(ids).size).toBe(coinOperations.length);
+    });
+
+    it("keeps ids unique across coin and token operations of a multi-asset transaction", () => {
+      const htsToken = getMockedHTSTokenCurrency({ contractAddress: "0.0.1001" });
+      const erc20Token = getMockedERC20TokenCurrency({ contractAddress: "0xabc" });
+
+      const { bridgeCoinOperations, bridgeTokenOperations } = resolveBridgeOperations({
+        coinOperations: [
+          getMockedOperation({ hash: "h1", type: "OUT", recipients: ["0.0.67890"] }),
+          getMockedOperation({ hash: "h1", type: "OUT", recipients: ["0.0.99999"] }),
+        ],
+        tokenOperations: [
+          getMockedOperation({
+            hash: "h1",
+            type: "OUT",
+            recipients: ["0.0.67890"],
+            contract: htsToken.contractAddress,
+          }),
+          getMockedOperation({
+            hash: "h1",
+            type: "OUT",
+            recipients: ["0.0.99999"],
+            contract: htsToken.contractAddress,
+          }),
+          getMockedOperation({
+            hash: "h1",
+            type: "OUT",
+            recipients: ["0.0.67890"],
+            contract: erc20Token.contractAddress,
+          }),
+        ],
+        ledgerAccountId,
+        calTokenByAddress: new Map([
+          [htsToken.contractAddress, htsToken],
+          [erc20Token.contractAddress.toLowerCase(), erc20Token],
+        ]),
+      });
+
+      const ids = [...bridgeCoinOperations, ...bridgeTokenOperations].map(op => op.id);
+
+      expect(new Set(ids).size).toBe(ids.length);
     });
   });
 

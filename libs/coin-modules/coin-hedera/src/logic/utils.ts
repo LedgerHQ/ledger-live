@@ -598,6 +598,45 @@ export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
   return new BigNumber(nanos).dividedBy(10 ** 9);
 }
 
+/** Consensus timestamp this operation is known to be at or after, at nanosecond precision:
+ *  anything coarser leaves stored transactions inside the next `gt:` window, where they get re-emitted. */
+function consensusTimestampLowerBound(operation: LiveOperation): BigNumber | null {
+  const extra = isValidExtra(operation.extra) ? operation.extra : null;
+  const pagingToken = extra?.pagingToken ? new BigNumber(extra.pagingToken) : null;
+
+  if (pagingToken && !pagingToken.isNaN()) return pagingToken;
+
+  // operations stored by older versions carry no pagingToken, so `date` is floored to the second:
+  // the next sync can only re-fetch this operation, never skip past it
+  const flooredDate = millisToSeconds(operation.date.getTime()).integerValue(BigNumber.ROUND_FLOOR);
+
+  return flooredDate.isNaN() ? null : flooredDate;
+}
+
+/** Highest consensus timestamp already stored: everything at or below it was fetched by a previous
+ *  sync, so the next one can start there. */
+export function getSyncCursor(
+  account: Pick<HederaAccount, "operations" | "subAccounts"> | null | undefined,
+): string | null {
+  const operations = [
+    ...(account?.operations ?? []),
+    // token operations live on subAccounts; leaving them out drags the cursor behind, and a re-fetched
+    // operation whose id changed since it was stored ends up next to its stale copy instead of replacing it
+    ...(account?.subAccounts ?? []).flatMap(subAccount => subAccount.operations),
+  ];
+
+  let highest: BigNumber | null = null;
+
+  for (const operation of operations) {
+    const candidate = consensusTimestampLowerBound(operation);
+
+    if (!candidate) continue;
+    if (!highest || candidate.gt(highest)) highest = candidate;
+  }
+
+  return highest?.toFixed(9, BigNumber.ROUND_FLOOR) ?? null;
+}
+
 export function toTimestamp(consensusTimestamp: string): Timestamp {
   const [secondsPart, nanosPart] = consensusTimestamp.split(".");
 

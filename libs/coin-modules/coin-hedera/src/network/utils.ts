@@ -54,69 +54,153 @@ export async function createTransactionId(
   }
 }
 
-function isValidRecipient(accountId: AccountId, recipients: string[]): boolean {
-  if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
-    // account is a node, only add to list if we have none
-    if (accountId.num.lt(100)) {
-      return recipients.length === 0;
-    }
+type RecipientKind = "node" | "system" | "regular";
 
-    // account is a system account that is not a node, do NOT add
-    if (accountId.num.lt(1000)) {
-      return false;
+function classifyRecipient(accountId: AccountId): RecipientKind {
+  if (accountId.shard.eq(0) && accountId.realm.eq(0)) {
+    if (accountId.num.lt(100)) return "node";
+    if (accountId.num.lt(1000)) return "system";
+  }
+
+  return "regular";
+}
+
+// mirror can list one account on several rows of the same asset
+function sumNetByAccount(
+  mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
+): Map<string, BigNumber> {
+  const netByAccount = new Map<string, BigNumber>();
+
+  for (const transfer of mirrorTransfers) {
+    const previous = netByAccount.get(transfer.account) ?? new BigNumber(0);
+    netByAccount.set(transfer.account, previous.plus(transfer.amount));
+  }
+
+  return netByAccount;
+}
+
+/** First network account credited by these transfers: a consensus node, or the fee collection
+ *  account. Nodes take a fee share on every transaction, so a credited one is never a transfer's
+ *  real recipient — it only says where the fee went. */
+function findCreditedNetworkAccount(netByAccount: Map<string, BigNumber>): string | null {
+  for (const [account, net] of netByAccount) {
+    if (!net.isPositive()) continue;
+    if (classifyRecipient(AccountId.fromString(account)) === "node") return account;
+  }
+
+  return null;
+}
+
+/** The account that collected this transaction's fee. `rawTx.node` names it on top-level
+ *  transactions, but mirror reports `node: null` on child records, where the transfers are the
+ *  only trace of where the fee went. */
+export function findFeeRecipient(
+  mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
+): string | null {
+  return findCreditedNetworkAccount(sumNetByAccount(mirrorTransfers));
+}
+
+type TransferRole = "sender" | "recipient" | "ignored";
+
+function classifyTransferRole({
+  account,
+  net,
+  rewardPayerAddress,
+  hasStakingRewards,
+}: {
+  account: string;
+  net: BigNumber;
+  rewardPayerAddress: string;
+  hasStakingRewards: boolean;
+}): TransferRole {
+  if (net.isNegative()) {
+    // rewards are surfaced as separate REWARD operations, so their payer is not a sender
+    const shouldIgnoreAddress = account === rewardPayerAddress && hasStakingRewards;
+
+    return shouldIgnoreAddress ? "ignored" : "sender";
+  }
+
+  if (!net.isPositive()) return "ignored";
+
+  // the network's own cut (node fee share, system accounts) is not a transfer to a recipient
+  return classifyRecipient(AccountId.fromString(account)) === "regular" ? "recipient" : "ignored";
+}
+
+function splitTransferParties({
+  netByAccount,
+  stakingRewards,
+  rewardPayerAddress,
+  hasStakingRewards,
+}: {
+  netByAccount: Map<string, BigNumber>;
+  stakingRewards: Map<string, BigNumber>;
+  rewardPayerAddress: string;
+  hasStakingRewards: boolean;
+}): Pick<Operation, "senders" | "recipients"> & { amountByRecipient: Map<string, BigNumber> } {
+  const senders: string[] = [];
+  const recipients: string[] = [];
+  const amountByRecipient = new Map<string, BigNumber>();
+
+  for (const [account, rawNet] of netByAccount) {
+    // the mirror node folds each account's staking reward into its transfer row
+    const net = rawNet.minus(stakingRewards.get(account) ?? 0);
+
+    switch (classifyTransferRole({ account, net, rewardPayerAddress, hasStakingRewards })) {
+      case "sender":
+        senders.push(account);
+        break;
+      case "recipient":
+        recipients.push(account);
+        amountByRecipient.set(account, net);
+        break;
     }
   }
 
-  return true;
+  // nodes receive a fee share on every tx, so list one as recipient only if nobody else received
+  const nodeAccount = recipients.length === 0 ? findCreditedNetworkAccount(netByAccount) : null;
+
+  if (nodeAccount) {
+    recipients.push(nodeAccount);
+    amountByRecipient.set(nodeAccount, netByAccount.get(nodeAccount) ?? new BigNumber(0));
+  }
+
+  return { senders, recipients, amountByRecipient };
 }
 
 export function parseTransfers(
   mirrorTransfers: (HederaMirrorCoinTransfer | HederaMirrorTokenTransfer)[],
   address: string,
-  stakingReward = new BigNumber(0),
-): Pick<Operation, "type" | "value" | "senders" | "recipients"> {
-  let value = new BigNumber(0);
-  let type: OperationType = "NONE";
-
-  const senders: string[] = [];
-  const recipients: string[] = [];
+  stakingRewards: Map<string, BigNumber> = new Map(),
+): Pick<Operation, "senders" | "recipients"> & {
+  /** null when this account is absent from these transfers */
+  netAmount: BigNumber | null;
+  amountByRecipient: Map<string, BigNumber>;
+} {
   const rewardPayerAddress = getEnv("HEDERA_STAKING_REWARD_ACCOUNT_ID");
 
-  for (const transfer of mirrorTransfers) {
-    const amount = new BigNumber(transfer.amount);
-    const accountId = AccountId.fromString(transfer.account);
+  const netByAccount = sumNetByAccount(mirrorTransfers);
 
-    // staking reward is included in transfer, so it can be positive even if user sent less HBARs than the reward is
-    const amountWithoutReward = transfer.account === address ? amount.minus(stakingReward) : amount;
+  const userNet = netByAccount.get(address);
+  const netAmount = userNet === undefined ? null : userNet.minus(stakingRewards.get(address) ?? 0);
 
-    if (transfer.account === address) {
-      value = amountWithoutReward.abs();
-      type = amountWithoutReward.isNegative() ? "OUT" : "IN";
-    }
+  const hasStakingRewards = [...stakingRewards.values()].some(reward => reward.gt(0));
 
-    if (amountWithoutReward.isNegative()) {
-      // exclude reward payer from senders list, because rewards are shown as separate operations
-      const shouldIgnoreAddress = transfer.account === rewardPayerAddress && stakingReward.gt(0);
-
-      if (shouldIgnoreAddress) {
-        continue;
-      }
-
-      senders.push(transfer.account);
-    } else if (isValidRecipient(accountId, recipients)) {
-      recipients.push(transfer.account);
-    }
-  }
+  const { senders, recipients, amountByRecipient } = splitTransferParties({
+    netByAccount,
+    stakingRewards,
+    rewardPayerAddress,
+    hasStakingRewards,
+  });
 
   // NOTE: earlier addresses are the "fee" addresses
   senders.reverse();
   recipients.reverse();
 
   return {
-    type,
-    value,
     senders,
     recipients,
+    netAmount,
+    amountByRecipient,
   };
 }
 

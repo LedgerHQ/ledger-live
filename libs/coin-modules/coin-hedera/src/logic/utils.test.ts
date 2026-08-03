@@ -36,6 +36,7 @@ import { getMockedValidator } from "../test/fixtures/validator.fixture";
 import type {
   HederaAccount,
   HederaMemo,
+  HederaOperation,
   HederaPreloadData,
   HederaTxData,
   HederaValidator,
@@ -79,6 +80,7 @@ import {
   nanosToSeconds,
   secondsToNanos,
   toTimestamp,
+  getSyncCursor,
   createStakingRewardOperationHash,
   resolveConfig,
   base64ToUrlSafeBase64,
@@ -688,6 +690,97 @@ describe("logic utils", () => {
 
       expect(result.seconds.toString()).toBe("1758733200");
       expect(result.nanos.toString()).toBe("600000000");
+    });
+  });
+
+  describe("getSyncCursor", () => {
+    const operationAt = (pagingToken: string, date = new Date("2024-01-01T00:00:00Z")) =>
+      getMockedOperation({ date, extra: { pagingToken } });
+
+    const accountWith = (
+      operations: HederaOperation[],
+      subAccountOperations: HederaOperation[] = [],
+    ) =>
+      ({
+        operations,
+        ...(subAccountOperations.length > 0 && {
+          subAccounts: [{ operations: subAccountOperations }],
+        }),
+      }) as Pick<HederaAccount, "operations" | "subAccounts">;
+
+    it("returns null for an empty account", () => {
+      expect(getSyncCursor(accountWith([]))).toBeNull();
+    });
+
+    it("returns null when there is no account to resume from", () => {
+      expect(getSyncCursor(null)).toBeNull();
+    });
+
+    it("picks the highest pagingToken rather than the first operation's", () => {
+      const operations = [
+        operationAt("1625097600.111222333"),
+        operationAt("1625097600.999888777"),
+        operationAt("1625097600.444555666"),
+      ];
+
+      expect(getSyncCursor(accountWith(operations))).toBe("1625097600.999888777");
+    });
+
+    it("keeps nanosecond precision so a stored transaction cannot fall inside the next gt: window", () => {
+      expect(getSyncCursor(accountWith([operationAt("1625097600.000000001")]))).toBe(
+        "1625097600.000000001",
+      );
+    });
+
+    it("truncates a sub-nanosecond pagingToken instead of rounding it up", () => {
+      // rounding up would push the cursor past 1625097600.000000001 and skip it in the next gt: window
+      expect(getSyncCursor(accountWith([operationAt("1625097600.0000000009")]))).toBe(
+        "1625097600.000000000",
+      );
+    });
+
+    it("falls back to the operation date truncated to seconds when no pagingToken is stored", () => {
+      const operation = getMockedOperation({ date: new Date("2021-07-01T00:00:00.500Z") });
+
+      expect(getSyncCursor(accountWith([operation]))).toBe("1625097600.000000000");
+    });
+
+    it("prefers a pagingToken over a later-dated operation without one", () => {
+      const operations = [
+        getMockedOperation({ date: new Date("2021-07-01T00:00:00Z") }),
+        operationAt("1625097600.123456789"),
+      ];
+
+      expect(getSyncCursor(accountWith(operations))).toBe("1625097600.123456789");
+    });
+
+    it("falls back to the operation date when the stored pagingToken is not a number", () => {
+      const operation = operationAt("not-a-number", new Date("2021-07-01T00:00:00.500Z"));
+
+      // an unreadable pagingToken must not discard the operation, or the cursor moves past it
+      expect(getSyncCursor(accountWith([operation]))).toBe("1625097600.000000000");
+    });
+
+    it("never moves past an operation stored without a pagingToken", () => {
+      const operations = [
+        // migrated operation: no pagingToken, real consensus timestamp 1625097600.5
+        getMockedOperation({ date: new Date("2021-07-01T00:00:00.500Z"), extra: {} }),
+        operationAt("1625097600.100000000", new Date("2021-07-01T00:00:00.100Z")),
+      ];
+
+      // .1 is the newest timestamp we can prove was fetched, so 1625097600.5 is only re-fetched
+      expect(getSyncCursor(accountWith(operations))).toBe("1625097600.100000000");
+    });
+
+    it("takes token operations stored on subAccounts into account", () => {
+      const cursor = getSyncCursor(
+        accountWith(
+          [operationAt("1625097600.111222333")],
+          [operationAt("1625097600.999888777")], // token operation, newer than any coin operation
+        ),
+      );
+
+      expect(cursor).toBe("1625097600.999888777");
     });
   });
 

@@ -119,8 +119,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("IN");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(100));
       expect(result.senders).toEqual(["0.0.5678"]);
       expect(result.recipients).toEqual([userAddress]);
     });
@@ -133,8 +132,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(-100));
       expect(result.senders).toEqual([userAddress]);
       expect(result.recipients).toEqual(["0.0.5678"]);
     });
@@ -148,10 +146,37 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(50));
+      expect(result.netAmount).toEqual(new BigNumber(-50));
       expect(result.senders).toEqual(["0.0.1234", "0.0.5678"]);
       expect(result.recipients).toEqual(["0.0.9999"]);
+    });
+
+    it("reports the amount received by each recipient", () => {
+      const transfers = [
+        createMirrorCoinTransfer(userAddress, -100),
+        createMirrorCoinTransfer("0.0.5678", 30),
+        createMirrorCoinTransfer("0.0.9999", 70),
+      ];
+
+      const result = parseTransfers(transfers, userAddress);
+
+      expect([...result.amountByRecipient]).toEqual([
+        ["0.0.5678", new BigNumber(30)],
+        ["0.0.9999", new BigNumber(70)],
+      ]);
+    });
+
+    it("sums several rows of the same account into one net amount", () => {
+      const transfers = [
+        createMirrorCoinTransfer(userAddress, -100),
+        createMirrorCoinTransfer(userAddress, 40),
+        createMirrorCoinTransfer("0.0.5678", 60),
+      ];
+
+      const result = parseTransfers(transfers, userAddress);
+
+      expect(result.netAmount).toEqual(new BigNumber(-60));
+      expect(result.senders).toEqual([userAddress]);
     });
 
     it("should correctly process token transfers", () => {
@@ -163,8 +188,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(10));
+      expect(result.netAmount).toEqual(new BigNumber(-10));
       expect(result.senders).toEqual([userAddress]);
       expect(result.recipients).toEqual(["0.0.5678"]);
     });
@@ -178,8 +202,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(-100));
       expect(result.senders).toEqual([userAddress]);
       expect(result.recipients).toEqual([]);
     });
@@ -193,10 +216,10 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(-100));
       expect(result.senders).toEqual([userAddress]);
       expect(result.recipients).toEqual([nodeAccount]);
+      expect(result.amountByRecipient.get(nodeAccount)).toEqual(new BigNumber(100));
     });
 
     it("should exclude node accounts if there are other recipients", () => {
@@ -210,13 +233,29 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("OUT");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(-100));
       expect(result.senders).toEqual([userAddress]);
       expect(result.recipients).toEqual([normalAccount]);
+      expect(result.amountByRecipient.has(nodeAccount)).toBe(false);
     });
 
-    it("should handle transactions where user is not involved", () => {
+    it("should exclude node accounts listed before the real recipient", () => {
+      const normalAccount = "0.0.5678";
+      const nodeAccount = "0.0.3";
+      // the mirror node lists the fee rows first as often as last
+      const transfers = [
+        createMirrorCoinTransfer(userAddress, -100),
+        createMirrorCoinTransfer(nodeAccount, 50),
+        createMirrorCoinTransfer(normalAccount, 50),
+      ];
+
+      const result = parseTransfers(transfers, userAddress);
+
+      expect(result.recipients).toEqual([normalAccount]);
+      expect(result.amountByRecipient.has(nodeAccount)).toBe(false);
+    });
+
+    it("returns a null netAmount when the account is absent from the transfers", () => {
       const transfers = [
         createMirrorCoinTransfer("0.0.5678", -100),
         createMirrorCoinTransfer("0.0.9999", 100),
@@ -224,8 +263,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("NONE");
-      expect(result.value).toEqual(new BigNumber(0));
+      expect(result.netAmount).toBeNull();
       expect(result.senders).toEqual(["0.0.5678"]);
       expect(result.recipients).toEqual(["0.0.9999"]);
     });
@@ -235,8 +273,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("NONE");
-      expect(result.value).toEqual(new BigNumber(0));
+      expect(result.netAmount).toBeNull();
       expect(result.senders).toEqual([]);
       expect(result.recipients).toEqual([]);
     });
@@ -250,8 +287,7 @@ describe("network utils", () => {
 
       const result = parseTransfers(transfers, userAddress);
 
-      expect(result.type).toBe("IN");
-      expect(result.value).toEqual(new BigNumber(100));
+      expect(result.netAmount).toEqual(new BigNumber(100));
       expect(result.senders).toEqual(["0.0.5678", "0.0.900"]);
       expect(result.recipients).toEqual([userAddress]);
     });
@@ -261,24 +297,61 @@ describe("network utils", () => {
       const stakingReward = new BigNumber(20);
       const transfers = [createMirrorCoinTransfer(userAddress, amount.toNumber())];
 
-      const expectedAmountWithoutReward = amount.minus(stakingReward);
-      const result = parseTransfers(transfers, userAddress, stakingReward);
+      const result = parseTransfers(
+        transfers,
+        userAddress,
+        new Map([[userAddress, stakingReward]]),
+      );
 
-      expect(result).toMatchObject({
-        type: "IN",
-        value: expectedAmountWithoutReward,
-      });
+      expect(result.netAmount).toEqual(amount.minus(stakingReward));
+    });
+
+    it("nets each recipient's reward out of the amount it received", () => {
+      const recipient = "0.0.5678";
+      const transfers = [
+        createMirrorCoinTransfer(userAddress, -100),
+        createMirrorCoinTransfer(recipient, 130),
+      ];
+
+      const result = parseTransfers(
+        transfers,
+        userAddress,
+        new Map([[recipient, new BigNumber(30)]]),
+      );
+
+      expect(result.amountByRecipient.get(recipient)).toEqual(new BigNumber(100));
     });
 
     it("excludes reward payer from senders when staking reward is present", () => {
-      const stakingReward = new BigNumber(30000000);
       const transfers = [
         createMirrorCoinTransfer(rewardPayer, -30000000),
         createMirrorCoinTransfer("0.0.801", 1000),
         createMirrorCoinTransfer(userAddress, 30000000),
       ];
 
-      const result = parseTransfers(transfers, userAddress, stakingReward);
+      const result = parseTransfers(
+        transfers,
+        userAddress,
+        new Map([[userAddress, new BigNumber(30000000)]]),
+      );
+
+      expect(result.senders).not.toContain(rewardPayer);
+    });
+
+    it("excludes reward payer from senders when another account received the reward", () => {
+      const otherAccount = "0.0.9999";
+      const transfers = [
+        createMirrorCoinTransfer(rewardPayer, -30000000),
+        createMirrorCoinTransfer(otherAccount, 30000000),
+        createMirrorCoinTransfer(userAddress, -100),
+        createMirrorCoinTransfer("0.0.5678", 100),
+      ];
+
+      const result = parseTransfers(
+        transfers,
+        userAddress,
+        new Map([[otherAccount, new BigNumber(30000000)]]),
+      );
 
       expect(result.senders).not.toContain(rewardPayer);
     });
