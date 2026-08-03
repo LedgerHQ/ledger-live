@@ -98,7 +98,7 @@ const teamPlatform = {
     desc: "Trustchain API Prod",
   },
   LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING: {
-    def: "https://keycloak.api.live.aws.stg.ldg-tech.com",
+    def: "https://global.api.stg.ledger-test.com/keycloak",
     parser: stringParser,
     desc: "Keycloak base URL for Ledger authenticated APIs (staging)",
   },
