@@ -1,5 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useContactsDevToolViewModel } from "../useContactsDevToolViewModel";
+import type { Contact } from "@domain/entity-contact";
 
 describe("useContactsDevToolViewModel", () => {
   it("should expose disabled defaults when the flag is not overridden", () => {
@@ -169,7 +170,7 @@ describe("useContactsDevToolViewModel", () => {
     });
 
     expect(store.getState().contacts.contacts).toHaveLength(6);
-    expect(store.getState().contacts.contacts.map(contact => contact.name)).toEqual([
+    expect(store.getState().contacts.contacts.map((contact: Contact) => contact.name)).toEqual([
       "Me",
       "Ada",
       "Ben",
