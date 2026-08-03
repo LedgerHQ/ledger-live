@@ -1,6 +1,6 @@
 import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
-import "~/live-common-setup-base";
+import "./live-common-setup-main";
 import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
@@ -62,6 +62,60 @@ ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userDa
 ipcMain.handle("getPathUserData", () => app.getPath("userData"));
 
 ipcMain.handle("getPathHome", () => app.getPath("home"));
+
+/**
+ * Dev-only: reads a per-environment dotenv file for the renderer's config-mismatch
+ * diagnostic. These files exist only in a repo checkout, and the renderer has no
+ * filesystem access of its own.
+ *
+ * The environment name is checked against a fixed list rather than interpolated
+ * directly, so a compromised renderer cannot use this to read arbitrary files.
+ */
+const DOTENV_ENVIRONMENTS = new Set(["production", "staging", "testing", "development"]);
+
+ipcMain.handle("read-dotenv-file", async (_event, environment: string) => {
+  if (!__DEV__ || !DOTENV_ENVIRONMENTS.has(environment)) return null;
+  try {
+    return await fs.readFile(`./.env.${environment}`, "utf8");
+  } catch {
+    return null;
+  }
+});
+
+/**
+ * Local Live App manifests (Developer settings).
+ *
+ * The dialog and the file I/O are deliberately performed together here rather than
+ * handing a filesystem path back to the renderer: the renderer only ever sees the file
+ * contents it asked for, never a path it could reuse to read or write somewhere else.
+ */
+ipcMain.handle("read-local-manifest", async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({ properties: ["openFile"] });
+  if (canceled || !filePaths.length) return null;
+  try {
+    return await fs.readFile(filePaths[0], "utf8");
+  } catch (error) {
+    console.warn("Could not read local manifest", error);
+    return null;
+  }
+});
+
+ipcMain.handle("write-local-manifest", async (_event, defaultName: string, contents: string) => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: "Export Manifest",
+    defaultPath: defaultName,
+    buttonLabel: "Export",
+    filters: [{ name: "JSON", extensions: ["json"] }],
+  });
+  if (canceled || !filePath) return false;
+  try {
+    await fs.writeFile(filePath, contents, "utf8");
+    return true;
+  } catch (error) {
+    console.warn("Could not write local manifest", error);
+    return false;
+  }
+});
 
 ipcMain.handle(
   "export-operations",

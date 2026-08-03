@@ -8,7 +8,7 @@ import {
 } from "firebase/remote-config";
 import snakeCase from "lodash/snakeCase";
 import isMatch from "lodash/isMatch";
-import * as fs from "fs";
+import { ipcRenderer } from "electron";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { formatDefaultFeatures } from "@features/platform-feature-flags";
@@ -151,10 +151,11 @@ const warnOnConfigMismatch = async () => {
   }
   const envs = ["production", "staging", "testing", "development"];
   envs.forEach(async (env: string) => {
-    const envFilePath = `./.env.${env}`;
     let apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId, envVars;
     try {
-      const fileContent = await fs.promises.readFile(envFilePath, "utf8");
+      // Read in the main process: the renderer has no filesystem access.
+      const fileContent: string | null = await ipcRenderer.invoke("read-dotenv-file", env);
+      if (!fileContent) throw new Error(`no dotenv file for ${env}`);
       envVars = parseEnvFile(fileContent);
       apiKey = envVars["FIREBASE_API_KEY"];
       authDomain = envVars["FIREBASE_AUTH_DOMAIN"];
