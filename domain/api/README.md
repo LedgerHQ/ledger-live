@@ -74,13 +74,14 @@ evaluated as a *value* import. So:
 > `State` — type it on the service api. `WithCryptoAssetsApi` in `currency-token/src/persistence.ts` is
 > the worked example.
 
-## When a backend keeps its own `createApi`
+## Not yet migrated
 
-Only when its base query is **pure transport** does a backend belong in `@shared/api-services`. If the
-base query carries use-case knowledge — mock handlers keyed by endpoint URL, endpoint-name lookups,
-response types from its own wire schemas — splitting it would either drag that wire contract into the
-shared package or leave the shared side owning nothing real. `@domain/api-pay-card` is the current
-example and keeps its own `createApi`.
+`@domain/api-pay-card` still declares its own `createApi`. This is a **holdout, not a sanctioned
+pattern** — do not copy it. Its base query resolves mock responses keyed by endpoint URL and typed from
+its own wire schemas, so it has to be made transport-only before it can move. Owned by the Pay Card
+team to migrate; see [LIVE-33829](https://ledgerhq.atlassian.net/browse/LIVE-33829).
+
+Every other backend goes through `@shared/api-services`, and any new one must.
 
 ## Scope
 

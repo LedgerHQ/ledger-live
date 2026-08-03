@@ -37,5 +37,7 @@ blob is a version-pinned custom format that contains no reducer path.
 replaces the two identical sentiment builders.
 
 No endpoint behaviour changes: bodies, names, tags, transforms and cache settings are unchanged.
-`@domain/api-pay-card` is untouched — its base query is mostly a mock harness keyed by endpoint URL, so
-it keeps its own `createApi`.
+
+`@domain/api-pay-card` is untouched in this change and is the only backend still declaring its own
+`createApi`. Its base query resolves mock responses keyed by endpoint URL, so it needs to be made
+transport-only first — a holdout to migrate, not a pattern to follow.

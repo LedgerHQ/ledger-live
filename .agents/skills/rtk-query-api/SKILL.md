@@ -58,9 +58,9 @@ The shared half declares an empty api. The use-case half adds to it with
 for endpoints and `enhanceEndpoints({ addTagTypes })` for tags. Both **mutate and return the same api
 object**, so one reducer, one middleware and one cache serve every use case.
 
-The one exception: if a backend's base query needs use-case knowledge — mock handlers keyed by endpoint
-URL, endpoint-name lookups, response types from its own wire schemas — it keeps its `createApi` in the
-use-case package, because splitting it would drag that wire contract into the shared package.
+There are no exceptions. If a backend's base query currently needs use-case knowledge — mock handlers
+keyed by endpoint URL, endpoint-name lookups, response types from its own wire schemas — that is a
+problem to fix in the base query, not a reason to keep a second `createApi`.
 
 ```typescript
 // ✅ GOOD - the service api: base query + config. No endpoints, no tags.

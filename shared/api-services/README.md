@@ -105,9 +105,9 @@ Each service's `extraArgument` builder stays separate — there is deliberately 
 because consumers like `apps/web-tools`, `apps/cli` and `buildStandaloneCryptoAssetsStore` configure
 one service only and must not be forced to supply config for services they never call.
 
-A backend belongs here only if its base query is **pure transport**. `@domain/api-pay-card` keeps its
-own `createApi`: its base query resolves mocks keyed by endpoint URL and typed from its own response
-schemas, so splitting it would either drag that wire contract in here or leave this side owning nothing.
+A base query added here must be **pure transport** — no endpoint URLs, no endpoint-name lookups, no wire
+schemas. `@domain/api-pay-card` is the one backend not yet here: its base query resolves mock responses
+keyed by endpoint URL, so it needs that untangling first. It is a holdout to migrate, not a precedent.
 
 > [!NOTE]
 > `@domain/api-aggregated-assets` is a placeholder for **DADA**, which currently lives as
