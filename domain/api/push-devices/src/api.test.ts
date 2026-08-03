@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { pushDevicesApi, pushDevicesApiExtra, createPushDevicesRequest } from "./api";
+import { pushDevicesApi, pushDevicesApiExtra } from "@domain/api-services";
+import { createPushDevicesRequest, pushDevicesSyncApi } from "./api";
 import { DeviceId } from "@domain/entity-client-identity";
 
 describe("pushDevicesApi configuration", () => {
@@ -8,7 +9,7 @@ describe("pushDevicesApi configuration", () => {
   });
 
   it("exposes the pushDevices mutation endpoint", () => {
-    expect(pushDevicesApi.endpoints.pushDevices).toBeDefined();
+    expect(pushDevicesSyncApi.endpoints.pushDevices).toBeDefined();
   });
 });
 
@@ -78,7 +79,7 @@ describe("pushDevicesApi HTTP request", () => {
       middleware: gdm => gdm().concat(pushDevicesApi.middleware),
     });
     const result = await bareStore.dispatch(
-      pushDevicesApi.endpoints.pushDevices.initiate({ equipment_id: "u", devices: [] }),
+      pushDevicesSyncApi.endpoints.pushDevices.initiate({ equipment_id: "u", devices: [] }),
     );
     expect(result.error).toMatchObject({
       status: "CUSTOM_ERROR",
@@ -93,7 +94,7 @@ describe("pushDevicesApi HTTP request", () => {
 
     const store = makeStore();
     await store.dispatch(
-      pushDevicesApi.endpoints.pushDevices.initiate({
+      pushDevicesSyncApi.endpoints.pushDevices.initiate({
         equipment_id: "user-uuid",
         devices: ["device-1"],
       }),

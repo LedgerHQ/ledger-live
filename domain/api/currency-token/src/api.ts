@@ -1,15 +1,12 @@
-import {
-  createApi,
-  fetchBaseQuery,
-  retry,
-  type BaseQueryFn,
-  type FetchArgs,
-  type FetchBaseQueryError,
-} from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { ApiTokenResponseSchema, CalApiExtraSchema } from "./schema";
 import {
-  type CalApiExtra,
+  calApi,
+  getCalExtra,
+  HEADER_X_LEDGER_CLIENT_VERSION,
+  TOKEN_TAGS,
+} from "@domain/api-services";
+import { ApiTokenResponseSchema } from "./schema";
+import {
   type GetTokensDataParams,
   type PageParam,
   type TokenByAddressInCurrencyParams,
@@ -17,16 +14,12 @@ import {
   type TokensDataWithPagination,
 } from "./types";
 import {
-  CAL_REDUCER_PATH,
-  DEFAULT_PAGE_SIZE,
-  HEADER_X_LEDGER_CLIENT_VERSION,
-  HEADER_X_LEDGER_COMMIT,
-  MAX_RETRIES,
-  TOKEN_TAGS,
   commitHeaderMissingError,
   currencyNotFoundError,
+  DEFAULT_PAGE_SIZE,
   fetchCurrencyError,
   fetchError,
+  HEADER_X_LEDGER_COMMIT,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
 } from "./internals";
@@ -34,40 +27,11 @@ import {
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
 
 /**
- * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so
- * this is the one compile- and runtime-checked entry point: `parse` fails fast at app init if the CAL
- * config is incomplete (e.g. an env var resolved to an empty string).
+ * CAL token endpoints, injected into the shared CAL service api. `injectEndpoints` returns that same
+ * api object, so this reference shares its reducer, middleware and cache with every other CAL use
+ * case — but only this one is typed with the endpoints below.
  */
-export function calApiExtra(extra: CalApiExtra): CalApiExtra {
-  return CalApiExtraSchema.parse(extra);
-}
-
-/** Extracts the {@link CalApiExtra} from the `extraArgument` of the API. */
-function getCalExtra(api: { extra: unknown }): CalApiExtra {
-  return api.extra as CalApiExtra;
-}
-
-/** Reads the injected {@link CalApiExtra} and delegates to {@link fetchBaseQuery}. Wrapped in `retry`. */
-const calBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
-  (args, api, extraOptions) => {
-    const extra = getCalExtra(api);
-    return fetchBaseQuery({
-      baseUrl: extra.calServiceUrl,
-      prepareHeaders: headers => {
-        headers.set("Content-Type", "application/json");
-        headers.set(HEADER_X_LEDGER_CLIENT_VERSION, extra.ledgerClientVersion);
-        return headers;
-      },
-    })(args, api, extraOptions);
-  },
-  { maxRetries: MAX_RETRIES },
-);
-
-/** RTK Query API for the Crypto Asset List (CAL) token data. */
-export const cryptoAssetsApi = createApi({
-  reducerPath: CAL_REDUCER_PATH,
-  baseQuery: calBaseQuery,
-  tagTypes: [...TOKEN_TAGS],
+export const cryptoAssetsApi = calApi.injectEndpoints({
   endpoints: build => ({
     findTokenById: build.query<TokenCurrency | undefined, TokenByIdParams>({
       query: params => ({

@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
-import { cryptoAssetsApi, calApiExtra } from "./api";
+import { calApiExtra } from "@domain/api-services";
+import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION } from "./internals";
 import {
   extractTokensFromState,

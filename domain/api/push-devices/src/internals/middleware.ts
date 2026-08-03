@@ -1,6 +1,6 @@
 import { isDummyUserId, identitiesSlice } from "@domain/entity-client-identity";
 import type { IdentitiesState } from "@domain/entity-client-identity";
-import { pushDevicesApi, createPushDevicesRequest } from "../api";
+import { createPushDevicesRequest, pushDevicesSyncApi } from "../api";
 
 export type Dispatch = (action: any) => any;
 
@@ -88,7 +88,7 @@ export async function attemptSync<State>(
   }
 
   const request = createPushDevicesRequest(userId, identitiesState.deviceIds);
-  const result = await dispatch(pushDevicesApi.endpoints.pushDevices.initiate(request));
+  const result = await dispatch(pushDevicesSyncApi.endpoints.pushDevices.initiate(request));
 
   if (result && typeof result === "object") {
     if ("error" in result && result.error) {

@@ -4,10 +4,10 @@ jest.mock("./converter", () => ({
   convertApiToken: jest.fn(),
 }));
 
+import { calApiExtra, calApi } from "@domain/api-services";
 import { convertApiToken } from "./converter";
 import {
   cryptoAssetsApi,
-  calApiExtra,
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
@@ -73,7 +73,11 @@ describe("ApiResponseSchema", () => {
 
 describe("cryptoAssetsApi configuration", () => {
   it("should have the correct reducer path", () => {
-    expect(cryptoAssetsApi.reducerPath).toBe("cryptoAssetsApi");
+    expect(cryptoAssetsApi.reducerPath).toBe("calApi");
+  });
+
+  it("is the CAL service api, mutated in place by injectEndpoints", () => {
+    expect(cryptoAssetsApi).toBe(calApi);
   });
 
   it("should expose all four endpoints", () => {
@@ -112,26 +116,14 @@ describe("param interfaces", () => {
   });
 });
 
-describe("calApiExtra", () => {
-  it("returns the validated config", () => {
-    expect(
-      calApiExtra({ calServiceUrl: "https://cal.test", ledgerClientVersion: "1.2.3" }),
-    ).toEqual({ calServiceUrl: "https://cal.test", ledgerClientVersion: "1.2.3" });
-  });
-
-  it("throws when a required field is missing or empty", () => {
-    // @ts-expect-error — ledgerClientVersion is required
-    expect(() => calApiExtra({ calServiceUrl: "https://cal.test" })).toThrow();
-    expect(() => calApiExtra({ calServiceUrl: "", ledgerClientVersion: "1.2.3" })).toThrow();
-  });
-});
-
 describe("cryptoAssetsApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
+  // Wired the way the apps wire it: the store registers the *service api*, and the endpoints only
+  // exist because importing this package injected them.
   const makeStore = () =>
     configureStore({
-      reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+      reducer: { [calApi.reducerPath]: calApi.reducer },
       middleware: gdm =>
         gdm({
           thunk: {
@@ -140,7 +132,7 @@ describe("cryptoAssetsApi requests", () => {
               ledgerClientVersion: "1.2.3",
             }),
           },
-        }).concat(cryptoAssetsApi.middleware),
+        }).concat(calApi.middleware),
     });
 
   function mockFetch(body: unknown, headers: Record<string, string> = {}) {
