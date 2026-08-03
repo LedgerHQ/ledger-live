@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   ListRenderItemInfo,
@@ -21,16 +21,22 @@ import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 
 const CONTAINER_IMPRESSION_THRESHOLD = 0.8;
+const LEADING_SLIDE_KEY = "content-cards-carousel-leading";
 
 type Props = {
   showLumenPageIndicator?: boolean;
   disableVerticalStretch?: boolean;
+  leadingSlide?: React.ReactNode;
   styles?: {
     gap?: number;
     pagination?: boolean;
     widthFactor?: WidthFactor;
   };
 };
+
+type CarouselListItem =
+  | { kind: "leading"; key: string; node: React.ReactNode }
+  | { kind: "card"; key: string; item: ContentCardItem };
 
 const defaultStyles = {
   gap: 6,
@@ -43,6 +49,7 @@ const Carousel = ContentLayoutBuilder<Props>(
     items,
     showLumenPageIndicator = false,
     disableVerticalStretch = false,
+    leadingSlide,
     styles: _styles = defaultStyles,
   }) => {
     const styles = {
@@ -58,11 +65,46 @@ const Carousel = ContentLayoutBuilder<Props>(
     const theme = useTheme();
     const separatorWidth = theme.space[styles.gap];
 
+    const listData = useMemo<CarouselListItem[]>(() => {
+      const cards: CarouselListItem[] = items.map(item => ({
+        kind: "card",
+        key: item.props.metadata.id,
+        item,
+      }));
+      if (!leadingSlide) return cards;
+      return [{ kind: "leading", key: LEADING_SLIDE_KEY, node: leadingSlide }, ...cards];
+    }, [items, leadingSlide]);
+
+    const listDataKeys = useMemo(() => listData.map(item => item.key).join("|"), [listData]);
+
     const isPaginationEnabled = styles.pagination && !showLumenPageIndicator;
-    const showDots = showLumenPageIndicator && items.length > 1;
+    const showDots = showLumenPageIndicator && listData.length > 1;
+    // Match Braze TopWallet spacing: room between slide and PageIndicator (avoid tight dots).
+    const carouselGap = showDots ? 12 : 8;
 
     const carouselRef = useRef<FlatList>(null);
     const [carouselIndex, setCarouselIndex] = useState(0);
+    // TopWallet: size the track to the tallest slide (e.g. LNS 2-line description) so nothing crops.
+    const slideHeightsRef = useRef<Record<string, number>>({});
+    const [trackHeight, setTrackHeight] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+      slideHeightsRef.current = {};
+      setTrackHeight(undefined);
+      setCarouselIndex(0);
+      carouselRef.current?.scrollToOffset({ offset: 0, animated: false });
+    }, [listDataKeys]);
+
+    const handleSlideLayout = useCallback(
+      (key: string, height: number) => {
+        if (!disableVerticalStretch || height <= 0) return;
+        if (slideHeightsRef.current[key] === height) return;
+        slideHeightsRef.current[key] = height;
+        const maxHeight = Math.max(...Object.values(slideHeightsRef.current));
+        setTrackHeight(current => (current === maxHeight ? current : maxHeight));
+      },
+      [disableVerticalStretch],
+    );
 
     const setIndexOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       const contentOffsetX = e.nativeEvent.contentOffset.x;
@@ -108,8 +150,10 @@ const Carousel = ContentLayoutBuilder<Props>(
       viewRef,
     );
     const handleViewableItemsChanged = useCallback(
-      ({ viewableItems }: { viewableItems: ViewToken<ContentCardItem>[] }) => {
-        const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
+      ({ viewableItems }: { viewableItems: ViewToken<CarouselListItem>[] }) => {
+        const visibleCards = viewableItems
+          .map(({ item }) => (item.kind === "card" ? item.item.props.metadata.id : null))
+          .filter((id): id is string => id !== null);
         const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
         visibleCardsRef.current = visibleCards;
         if (isInViewRef.current)
@@ -119,7 +163,10 @@ const Carousel = ContentLayoutBuilder<Props>(
     );
 
     return (
-      <View ref={viewRef} style={[{ gap: 8 }, disableVerticalStretch ? null : { flex: 1 }]}>
+      <View
+        ref={viewRef}
+        style={[{ gap: carouselGap }, disableVerticalStretch ? null : { flex: 1 }]}
+      >
         <FlatList
           horizontal
           ref={carouselRef}
@@ -130,34 +177,50 @@ const Carousel = ContentLayoutBuilder<Props>(
           bounces={false}
           snapToInterval={width - separatorWidth * 1.5}
           decelerationRate={0}
+          style={trackHeight != null ? { height: trackHeight } : undefined}
           contentContainerStyle={{
             paddingHorizontal: isFullWidth ? separatorWidth : separatorWidth / 2,
+            ...(disableVerticalStretch ? { alignItems: "flex-start" } : null),
           }}
           viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
           onViewableItemsChanged={handleViewableItemsChanged}
-          data={items}
+          data={listData}
+          keyExtractor={item => item.key}
           ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
-          renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (
+          renderItem={({ item }: ListRenderItemInfo<CarouselListItem>) => (
             <Animated.View
-              key={item.props.metadata.id}
+              key={item.key}
               entering={SlideInRight}
               layout={LinearTransition.duration(100)}
+              onLayout={event => handleSlideLayout(item.key, event.nativeEvent.layout.height)}
               style={{
                 width: width - separatorWidth * 2,
-                flex: 1,
+                ...(disableVerticalStretch ? null : { flex: 1 }),
+                justifyContent: "flex-start",
               }}
             >
-              {<item.component {...item.props} />}
+              {item.kind === "leading" ? item.node : <item.item.component {...item.item.props} />}
             </Animated.View>
           )}
         />
 
-        {isPaginationEnabled ? <Pagination items={items} carouselIndex={carouselIndex} /> : null}
+        {isPaginationEnabled ? (
+          leadingSlide ? (
+            <Box lx={{ alignItems: "center" }}>
+              <PageIndicator
+                currentPage={Math.min(carouselIndex + 1, listData.length)}
+                totalPages={listData.length}
+              />
+            </Box>
+          ) : (
+            <Pagination items={items} carouselIndex={carouselIndex} />
+          )
+        ) : null}
         {showDots ? (
           <Box lx={{ alignItems: "center" }}>
             <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, items.length)}
-              totalPages={items.length}
+              currentPage={Math.min(carouselIndex + 1, listData.length)}
+              totalPages={listData.length}
             />
           </Box>
         ) : null}

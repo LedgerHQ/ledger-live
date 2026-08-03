@@ -18,10 +18,16 @@ import {
   setUpsellModalRetries,
 } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import type { FeatureIntroViewModel } from "LLM/components/FeatureIntroLayout/types";
+import { useLNUpsellBannerState } from "LLM/features/LNUpsell/hooks/useLNUpsellBannerState";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { unsafe_setKnownDeviceModelIds } from "~/actions/settings";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { analyticsEnabledSelector, knownDeviceModelIdsSelector } from "~/reducers/settings";
+import {
+  analyticsEnabledSelector,
+  knownDeviceModelIdsSelector,
+  personalizedRecommendationsEnabledSelector,
+} from "~/reducers/settings";
 import {
   useLargeScreenUpsellEligibility,
   type LargeScreenUpsellIneligibilityReason,
@@ -34,6 +40,7 @@ import {
 import { parseDateOrOffset } from "./utils";
 
 const FLAG_KEY = "largeScreenUpsell";
+const LNS_UPSELL_HIGH_TIER = "LNS_UPSELL_HIGH_TIER";
 const PREVIEW_MODAL_ID = "large-screen-upsell-modal-debug-preview";
 const PREVIEW_IOS_BOTTOM_PADDING = 20;
 
@@ -145,9 +152,23 @@ export function useLargeScreenUpsellDebugViewModel() {
   const lastSeenAt = useSelector(lastSeenUpsellModalSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
+  const isPersonalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
+  const { isShown: isLnPortfolioBannerShown, tracking: lnBannerTracking } =
+    useLNUpsellBannerState("wallet");
+  const { mobileCards } = useDynamicContent();
 
-  const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
+  const isNanoSeen = NANO_DEVICE_MODEL_IDS.every(id => knownDeviceModelIds[id]);
+  const isNanoSSeen = Boolean(knownDeviceModelIds[DeviceModelId.nanoS]);
   const hasSeenTouchscreen = DevicesWithTouchScreen.some(id => knownDeviceModelIds[id]);
+  const trackingParams = feature?.params?.[lnBannerTracking];
+  const isLnCtaEnabled = Boolean(trackingParams?.enabled && trackingParams?.link?.trim());
+  const isLnHomepagePlacementEnabled = feature?.params?.banners?.homepage ?? true;
+  const isExcludedByHighTier = Boolean(
+    isPersonalizedRecommendationsEnabled &&
+      mobileCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER),
+  );
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewVariant, setPreviewVariant] = useState<LargeScreenUpsellVariant>(
@@ -203,6 +224,24 @@ export function useLargeScreenUpsellDebugViewModel() {
           [DeviceModelId.nanoX]: seen,
         }),
       );
+    },
+    [dispatch],
+  );
+
+  /** Prefer a single Nano model when testing shared eligibility (S/SP/X, no touchscreen). */
+  const handleToggleNanoSSeen = useCallback(
+    (seen: boolean) => {
+      if (seen) {
+        dispatch(
+          unsafe_setKnownDeviceModelIds(
+            Object.fromEntries(
+              ALL_DEVICE_MODEL_IDS.map(id => [id, id === DeviceModelId.nanoS]),
+            ),
+          ),
+        );
+        return;
+      }
+      dispatch(unsafe_setKnownDeviceModelIds({ [DeviceModelId.nanoS]: false }));
     },
     [dispatch],
   );
@@ -321,6 +360,18 @@ export function useLargeScreenUpsellDebugViewModel() {
     dispatch(setLastSeenUpsellModal(null));
   }, [dispatch]);
 
+  const handleEnableLnHomepagePlacement = useCallback(() => {
+    if (!params) return;
+    overrideParams({
+      ...params,
+      banners: { ...params.banners, homepage: true },
+      [lnBannerTracking]: {
+        ...params[lnBannerTracking],
+        enabled: true,
+      },
+    });
+  }, [lnBannerTracking, overrideParams, params]);
+
   const handleClosePreview = useCallback(() => {
     setIsPreviewOpen(false);
   }, []);
@@ -384,14 +435,39 @@ export function useLargeScreenUpsellDebugViewModel() {
     handleToggleFlag,
     isNanoSeen,
     nanoSeenHint: isNanoSeen
-      ? "A Nano has been seen. Toggle off to clear the audience gate."
-      : "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
+      ? "All Nanos (S/SP/X) marked seen. Toggle off to clear them."
+      : "Toggle on to mark Nano S + SP + X as seen (modal / banner audience).",
     handleToggleNanoSeen,
+    isNanoSSeen,
+    nanoSSeenHint: isNanoSSeen
+      ? "Nano S only (other models cleared). Useful for a clean eligibility check."
+      : "Toggle on to mark Nano S only and clear every other seen device.",
+    handleToggleNanoSSeen,
     hasSeenTouchscreen,
     seenDevicesHint: hasSeenTouchscreen
       ? "A touchscreen device (Flex/Stax) has been seen — it blocks the upsell. Clear to reset."
       : "Clears every seen device model (removes any touchscreen that blocks the upsell).",
     handleClearSeenDevices,
+    lnPortfolioBanner: {
+      isShown: isLnPortfolioBannerShown,
+      tracking: lnBannerTracking,
+      flagEnabled: isFlagEnabled,
+      ctaEnabled: isLnCtaEnabled,
+      ctaHint: isLnCtaEnabled
+        ? `params.${lnBannerTracking}.enabled + link are set.`
+        : `params.${lnBannerTracking}.enabled/link missing — enable CTA for the current tracking branch.`,
+      homepagePlacementEnabled: Boolean(isLnHomepagePlacementEnabled),
+      eligibilityOk: eligibility.isEligible,
+      eligibilityHint: eligibility.isEligible
+        ? `Eligible (${eligibility.deviceModelId}).`
+        : `Not eligible: ${"reason" in eligibility ? eligibility.reason : "unknown"}.`,
+      notExcludedByHighTier: !isExcludedByHighTier,
+      highTierHint: isExcludedByHighTier
+        ? "Opted-in + Braze campaign LNS_UPSELL_HIGH_TIER suppresses the banner."
+        : "No high-tier Braze exclusion.",
+      personalizedRecommendationsEnabled: isPersonalizedRecommendationsEnabled,
+    },
+    handleEnableLnHomepagePlacement,
     handleApplyOnboardingDate,
     handleSetOnboardingDateNull,
     handleApplyRetries,

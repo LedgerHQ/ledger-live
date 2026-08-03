@@ -283,8 +283,8 @@ function TopWalletFields({
   onChangeExtraField: OnChangeExtraField;
 }>) {
   const isAction = values.type === ContentCardsType.action;
-  const isHardwareCarousel =
-    values.layout === ContentCardsLayout.carousel && values.type === ContentCardsType.smallSquare;
+  const isCarousel = values.layout === ContentCardsLayout.carousel;
+  const isHardwareCarousel = isCarousel && values.type === ContentCardsType.smallSquare;
   const actionVisual =
     isAction && values.extras.image_background?.trim() ? "imageBackground" : "icon";
   return (
@@ -298,15 +298,34 @@ function TopWalletFields({
           editable here.
         </Text>
       </Box>
-      {isHardwareCarousel ? (
-        <GenericAwarenessModalField
-          label="Section title (category header, e.g. Touchscreen offers)"
-          value={values.categoryTitle}
-          onChangeText={value => onChange("categoryTitle", value)}
-        />
+      {isCarousel ? (
+        <>
+          <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8" }}>
+            Container (section header — empty = cards only)
+          </Text>
+          <GenericAwarenessModalField
+            label="Container title"
+            value={values.categoryTitle}
+            onChangeText={value => onChange("categoryTitle", value)}
+          />
+          <GenericAwarenessModalField
+            label="Container description"
+            value={values.categoryDescription}
+            onChangeText={value => onChange("categoryDescription", value)}
+            multiline
+          />
+          <GenericAwarenessModalField
+            label="Container CTA"
+            value={values.categoryCta}
+            onChangeText={value => onChange("categoryCta", value)}
+          />
+          <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8", marginTop: "s8" }}>
+            Card
+          </Text>
+        </>
       ) : null}
       <GenericAwarenessModalField
-        label={isHardwareCarousel ? "Product title (child card)" : "Title"}
+        label={isHardwareCarousel ? "Product title" : "Title"}
         value={values.title}
         onChangeText={value => onChange("title", value)}
       />

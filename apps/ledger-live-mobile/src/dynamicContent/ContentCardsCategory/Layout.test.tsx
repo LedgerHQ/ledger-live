@@ -20,6 +20,25 @@ jest.mock("LLM/features/DynamicContent/components/LogContentCardWrapper", () => 
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
+jest.mock("~/contentCards/layouts/carousel", () => {
+  const React = require("react");
+  const { View, Text } = require("react-native");
+  return {
+    __esModule: true,
+    default: ({
+      items,
+      leadingSlide,
+    }: {
+      items: unknown[];
+      leadingSlide?: React.ReactNode;
+    }) => (
+      <View testID="mock-carousel">
+        {leadingSlide}
+        <Text testID="carousel-item-count">{String(items.length)}</Text>
+      </View>
+    ),
+  };
+});
 
 jest.mock("~/contentCards/cards/utils", () => {
   const actual = jest.requireActual<typeof import("~/contentCards/cards/utils")>(
@@ -162,5 +181,29 @@ describe("ContentCardsCategory Layout", () => {
       expectedTrackingBase,
     );
     expect(dismissCard).toHaveBeenCalledWith("card-1");
+  });
+
+  it("keeps unique layout to one Braze card when leadingSlide forces a shared carousel", () => {
+    const cards = [
+      createBrazeActionCard({ order: "1" }),
+      createBrazeActionCard({
+        order: "2",
+        title: "Second card",
+      }),
+    ];
+    // Second card needs a distinct id for mapping.
+    cards[1] = { ...cards[1], id: "card-2" };
+
+    render(
+      <Layout
+        category={topWalletCategory}
+        cards={cards}
+        leadingSlide={<Text testID="upsell-leading">upsell</Text>}
+      />,
+    );
+
+    expect(screen.getByTestId("mock-carousel")).toBeVisible();
+    expect(screen.getByTestId("upsell-leading")).toBeVisible();
+    expect(screen.getByTestId("carousel-item-count")).toHaveTextContent("1");
   });
 });

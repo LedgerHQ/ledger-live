@@ -42,12 +42,31 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     lastSeenHint: "Now: null",
     handleToggleFlag: jest.fn(),
     isNanoSeen: false,
-    nanoSeenHint: "No Nano seen. Toggle on to simulate a seen Nano (audience gate).",
+    nanoSeenHint:
+      "Toggle on to mark Nano S + SP + X as seen (modal / banner audience).",
     handleToggleNanoSeen: jest.fn(),
+    isNanoSSeen: false,
+    nanoSSeenHint:
+      "Toggle on to mark Nano S only and clear every other seen device.",
+    handleToggleNanoSSeen: jest.fn(),
     hasSeenTouchscreen: false,
     seenDevicesHint:
       "Clears every seen device model (removes any touchscreen that blocks the upsell).",
     handleClearSeenDevices: jest.fn(),
+    lnPortfolioBanner: {
+      isShown: false,
+      tracking: "opted_out",
+      flagEnabled: false,
+      ctaEnabled: false,
+      ctaHint: "params.opted_out.enabled/link missing.",
+      homepagePlacementEnabled: true,
+      eligibilityOk: false,
+      eligibilityHint: "Not eligible: no_nano.",
+      notExcludedByHighTier: true,
+      highTierHint: "No high-tier Braze exclusion.",
+      personalizedRecommendationsEnabled: false,
+    },
+    handleEnableLnHomepagePlacement: jest.fn(),
     handleApplyOnboardingDate: jest.fn(),
     handleSetOnboardingDateNull: jest.fn(),
     handleApplyRetries: jest.fn(),
@@ -153,5 +172,21 @@ describe("LargeScreenUpsellDebug", () => {
     fireEvent.press(screen.getByText("Clear seen devices"));
 
     expect(handleClearSeenDevices).toHaveBeenCalled();
+  });
+
+  it("toggles Nano S seen", () => {
+    const handleToggleNanoSSeen = jest.fn();
+    mockedViewModel.mockReturnValue(buildViewModel({ handleToggleNanoSSeen, isNanoSSeen: false }));
+
+    render(<LargeScreenUpsellDebug />);
+
+    const label = screen.getByText("Nano S seen");
+    expect(label).toBeVisible();
+    const row = label.parentElement?.parentElement;
+    const nanoSSwitch = row?.querySelector('[role="switch"]');
+    expect(nanoSSwitch).toBeTruthy();
+    fireEvent(nanoSSwitch as Element, "onCheckedChange", true);
+
+    expect(handleToggleNanoSSeen).toHaveBeenCalledWith(true);
   });
 });

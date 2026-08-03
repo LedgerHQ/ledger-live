@@ -313,6 +313,82 @@ describe("PortfolioContentCards", () => {
     expect(screen.queryByText("Foo")).toBeNull();
     expect(screen.queryByText("Bar")).toBeNull();
   });
+
+  test("renders leadingSlide alone when there are no portfolio cards", () => {
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: { desktopCards: [], portfolioCards: [] },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(screen.getByTestId("upsell-leading")).toBeInTheDocument();
+  });
+
+  test("with brazePlacement puts leadingSlide in the Lumen grid beside Braze (not a carousel)", async () => {
+    mockShouldDisplayBrazePlacement = true;
+
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: desktopCardsForBrazeGrid,
+          portfolioCards: CardsForBrazeGrid,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId("upsell-leading")).toBeInTheDocument();
+    // Grid max 2 slots: LNS + 1 Braze (Foo); Bar is truncated.
+    expect(screen.getByText("Foo")).toBeVisible();
+    expect(screen.queryByText("Bar")).toBeNull();
+    expect(screen.queryByTestId("carousel-arrow-next")).not.toBeInTheDocument();
+  });
+
+  test("classic path stacks leadingSlide above Braze carousel and caps Braze at 2", async () => {
+    const threeCards = [
+      ...Cards,
+      {
+        id: "2",
+        title: "Baz",
+        description: "Third card should be truncated.",
+        path: "ledger-live://deep-link",
+        location: LocationContentCard.Portfolio,
+      },
+    ];
+
+    render(<PortfolioContentCards leadingSlide={<div data-testid="upsell-leading" />} />, {
+      initialState: {
+        dynamicContent: {
+          desktopCards: threeCards.map(asClassicBrazeCard),
+          portfolioCards: threeCards,
+        },
+        settings: {
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: true,
+          lastAnalyticsConsentDate: new Date().toISOString(),
+          privacyPolicyVersion: 1,
+        },
+      },
+    });
+
+    expect(await screen.findByTestId("upsell-leading")).toBeInTheDocument();
+    expect(screen.getByText("Foo")).toBeInTheDocument();
+    expect(screen.getByText("Bar")).toBeInTheDocument();
+    expect(screen.queryByText("Baz")).toBeNull();
+    // Braze-only carousel still has arrows when 2+ Braze slides.
+    expect(screen.getByTestId("carousel-arrow-next")).toBeInTheDocument();
+  });
 });
 
 describe("BottomCarouselContentCards", () => {
