@@ -1,0 +1,40 @@
+import {
+  COIN_MARKET_CAP_TAGS,
+  coinMarketCapApi,
+  coinMarketCapApiExtra,
+  getCoinMarketCapExtra,
+} from "./coinmarketcap";
+
+const valid = { coinMarketCapApiUrl: "https://cmc.test" };
+
+describe("coinMarketCapApi", () => {
+  it("has the correct reducer path", () => {
+    expect(coinMarketCapApi.reducerPath).toBe("coinMarketCapApi");
+  });
+
+  it("declares no endpoints of its own", () => {
+    expect(Object.keys(coinMarketCapApi.endpoints)).toHaveLength(0);
+  });
+
+  it("declares every tag its use cases may provide", () => {
+    expect([...COIN_MARKET_CAP_TAGS]).toEqual(["AltcoinSeasonIndexLatest", "FearAndGreedLatest"]);
+  });
+});
+
+describe("coinMarketCapApiExtra", () => {
+  it("returns the validated config", () => {
+    expect(coinMarketCapApiExtra(valid)).toEqual(valid);
+  });
+
+  it("throws when the url is missing or empty", () => {
+    // @ts-expect-error — coinMarketCapApiUrl is required
+    expect(() => coinMarketCapApiExtra({})).toThrow();
+    expect(() => coinMarketCapApiExtra({ coinMarketCapApiUrl: "" })).toThrow();
+  });
+});
+
+describe("getCoinMarketCapExtra", () => {
+  it("reads the config off the thunk extraArgument", () => {
+    expect(getCoinMarketCapExtra({ extra: valid })).toBe(valid);
+  });
+});
