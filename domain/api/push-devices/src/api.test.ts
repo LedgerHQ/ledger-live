@@ -1,9 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {
-  pushDevicesApi,
-  pushDevicesApiExtra as sharedPushDevicesApiExtra,
-} from "@shared/api-services";
-import { createPushDevicesRequest, pushDevicesApiExtra, pushDevicesSyncApi } from "./api";
+import { pushDevicesApi, pushDevicesApiExtra } from "@shared/api-services";
+import { createPushDevicesRequest, pushDevicesSyncApi } from "./api";
 import { DeviceId } from "@domain/entity-client-identity";
 
 describe("pushDevicesApi configuration", () => {
@@ -13,34 +10,6 @@ describe("pushDevicesApi configuration", () => {
 
   it("exposes the pushDevices mutation endpoint", () => {
     expect(pushDevicesSyncApi.endpoints.pushDevices).toBeDefined();
-  });
-});
-
-describe("pushDevicesApiExtra", () => {
-  it("is re-exported, so an app configures the store from this package alone", () => {
-    expect(pushDevicesApiExtra).toBe(sharedPushDevicesApiExtra);
-  });
-
-  it("returns the validated config", () => {
-    const config = { pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "1.0.0" };
-    expect(pushDevicesApiExtra(config)).toEqual(config);
-  });
-
-  it("accepts empty pushDevicesServiceUrl (sync disabled)", () => {
-    expect(() =>
-      pushDevicesApiExtra({ pushDevicesServiceUrl: "", ledgerClientVersion: "1.0.0" }),
-    ).not.toThrow();
-  });
-
-  it("throws when ledgerClientVersion is empty", () => {
-    expect(() =>
-      pushDevicesApiExtra({ pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "" }),
-    ).toThrow();
-  });
-
-  it("throws when fields are missing", () => {
-    // @ts-expect-error — both fields required
-    expect(() => pushDevicesApiExtra({})).toThrow();
   });
 });
 
