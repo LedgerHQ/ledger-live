@@ -1,16 +1,12 @@
 import type {
+  AddAddressCompletionLabels,
   AddAddressFlowState,
   AddAddressInputSource,
   ContactsAddAddressEntryLabels,
   ContactsAddAddressNameLabels,
 } from "@features/flow-contacts";
 
-export type ContactsAddAddressReviewLabels = Readonly<{
-  title: string;
-  continue: string;
-  successTitle: string;
-  close: string;
-}>;
+export type ContactsAddAddressReviewLabels = AddAddressCompletionLabels;
 
 export type ContactsAddAddressFlowDialogProps = Readonly<{
   state: AddAddressFlowState;

@@ -3,6 +3,16 @@ export type { ContactsAddAddressEntryWebProps as ContactsAddAddressEntryProps } 
 export type { AddAddressEntryLabels as ContactsAddAddressEntryLabels } from "./types";
 export { ContactsAddAddressNameInput as ContactsAddAddressName } from "./AddressName/Input/ContactsAddAddressNameInput.web";
 export { ContactsAddAddressCompletion } from "./Completion/ContactsAddAddressCompletion.web";
+export {
+  ContactsAddAddressFlowContent,
+  resolveAddAddressWebFlowStep,
+  shouldUseAddAddressFlowBackNavigation,
+} from "./ContactsAddAddressFlowContent.web";
+export type {
+  AddAddressWebFlowStep,
+  ContactsAddAddressFlowContentProps,
+} from "./ContactsAddAddressFlowContent.web";
+export type { AddAddressCompletionLabels } from "./types";
 export type {
   ContactsAddAddressNameLabels,
   ContactsAddAddressNameProps,

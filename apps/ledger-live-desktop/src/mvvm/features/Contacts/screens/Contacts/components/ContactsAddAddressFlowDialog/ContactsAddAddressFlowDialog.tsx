@@ -1,101 +1,13 @@
-import React from "react";
+import type React from "react";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {
-  ContactsAddAddressEntry,
-  ContactsAddAddressCompletion,
-  ContactsAddAddressName,
-  type AddAddressFlowState,
-  type ContactsAddAddressEntryLabels,
-  type ContactsAddAddressNameLabels,
+  ContactsAddAddressFlowContent,
+  resolveAddAddressWebFlowStep,
+  shouldUseAddAddressFlowBackNavigation,
+  type AddAddressWebFlowStep,
 } from "@features/flow-contacts";
-import type { ContactsAddAddressFlowDialogProps, ContactsAddAddressReviewLabels } from "./types";
-
-type ContactsAddAddressDialogStep = "currency" | "address" | "name" | "review" | "success";
-
-function resolveCurrentStep(state: AddAddressFlowState): ContactsAddAddressDialogStep {
-  switch (state.status) {
-    case "enteringAddress":
-      return "address";
-    case "namingAddress":
-      return "name";
-    case "reviewingAddress":
-      return "review";
-    case "success":
-      return "success";
-    case "selectingCurrency":
-    case "closed":
-      return "currency";
-  }
-}
-
-function isEnteringAddress(
-  state: AddAddressFlowState,
-): state is Extract<AddAddressFlowState, { status: "enteringAddress" }> {
-  return state.status === "enteringAddress";
-}
-
-function createAddressContent(
-  state: Extract<AddAddressFlowState, { status: "enteringAddress" }>,
-  labels: ContactsAddAddressEntryLabels,
-  nameLabels: ContactsAddAddressNameLabels,
-  onAddressChange: ContactsAddAddressFlowDialogProps["onAddressChange"],
-  onAddressLabelChange: ContactsAddAddressFlowDialogProps["onAddressLabelChange"],
-  onContinueFromAddressDetails: ContactsAddAddressFlowDialogProps["onContinueFromAddressDetails"],
-): React.JSX.Element {
-  return (
-    <ContactsAddAddressEntry
-      addressEntry={state.addressEntry}
-      addressLabel={state.addressLabel}
-      labels={labels}
-      nameLabels={nameLabels}
-      onAddressChange={onAddressChange}
-      onAddressLabelChange={onAddressLabelChange}
-      onConfirm={onContinueFromAddressDetails}
-    />
-  );
-}
-
-function isNamingAddress(
-  state: AddAddressFlowState,
-): state is Extract<AddAddressFlowState, { status: "namingAddress" }> {
-  return state.status === "namingAddress";
-}
-
-function createNameContent(
-  state: Extract<AddAddressFlowState, { status: "namingAddress" }>,
-  labels: ContactsAddAddressNameLabels,
-  onAddressLabelChange: ContactsAddAddressFlowDialogProps["onAddressLabelChange"],
-  onContinueFromName: ContactsAddAddressFlowDialogProps["onContinueFromName"],
-): React.JSX.Element {
-  return (
-    <ContactsAddAddressName
-      addressEntry={state.addressEntry}
-      addressLabel={state.addressLabel}
-      labels={labels}
-      onAddressLabelChange={onAddressLabelChange}
-      onContinue={onContinueFromName}
-    />
-  );
-}
-
-function createCompletionContent(
-  state: Extract<AddAddressFlowState, { status: "reviewingAddress" | "success" }>,
-  labels: ContactsAddAddressReviewLabels,
-  onContinueFromReview: ContactsAddAddressFlowDialogProps["onContinueFromReview"],
-  onClose: ContactsAddAddressFlowDialogProps["onClose"],
-): React.JSX.Element {
-  const isReviewingAddress = state.status === "reviewingAddress";
-
-  return (
-    <ContactsAddAddressCompletion
-      buttonLabel={isReviewingAddress ? labels.continue : labels.close}
-      onContinue={isReviewingAddress ? onContinueFromReview : onClose}
-      testID={isReviewingAddress ? "contacts-add-address-review" : "contacts-add-address-success"}
-      title={isReviewingAddress ? labels.title : labels.successTitle}
-    />
-  );
-}
+import type { ContactsAddAddressFlowDialogProps } from "./types";
 
 export function ContactsAddAddressFlowDialog({
   state,
@@ -117,12 +29,25 @@ export function ContactsAddAddressFlowDialog({
   return (
     <ModularDialogFlow onClose={onClose}>
       {modularDialog => {
-        const isAddressEntry = isEnteringAddress(state);
-        const isAddressNaming = isNamingAddress(state);
-        const isReviewingAddress = state.status === "reviewingAddress";
-        const isSuccess = state.status === "success";
-        const currentStep = resolveCurrentStep(state);
-        const screens: DialogFlowScreenRegistry<ContactsAddAddressDialogStep> = {
+        const currentStep = resolveAddAddressWebFlowStep(state);
+        const flowContent =
+          state.status === "selectingCurrency" ? (
+            modularDialog.content
+          ) : (
+            <ContactsAddAddressFlowContent
+              completionLabels={reviewLabels}
+              entryLabels={entryLabels}
+              nameLabels={nameLabels}
+              onAddressChange={onAddressChange}
+              onAddressLabelChange={onAddressLabelChange}
+              onClose={onClose}
+              onContinueFromAddressDetails={onContinueFromAddressDetails}
+              onContinueFromName={onContinueFromName}
+              onContinueFromReview={onContinueFromReview}
+              state={state}
+            />
+          );
+        const screens: DialogFlowScreenRegistry<AddAddressWebFlowStep> = {
           currency: {
             content: modularDialog.content,
             options: {
@@ -135,45 +60,28 @@ export function ContactsAddAddressFlowDialog({
             },
           },
           address: {
-            content: isAddressEntry
-              ? createAddressContent(
-                  state,
-                  entryLabels,
-                  nameLabels,
-                  onAddressChange,
-                  onAddressLabelChange,
-                  onContinueFromAddressDetails,
-                )
-              : modularDialog.content,
+            content: flowContent,
             options: {
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
             },
           },
           name: {
-            content: isAddressNaming
-              ? createNameContent(state, nameLabels, onAddressLabelChange, onContinueFromName)
-              : modularDialog.content,
+            content: flowContent,
             options: {
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
             },
           },
           review: {
-            content:
-              isReviewingAddress || isSuccess
-                ? createCompletionContent(state, reviewLabels, onContinueFromReview, onClose)
-                : modularDialog.content,
+            content: flowContent,
             options: {
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
             },
           },
           success: {
-            content:
-              isReviewingAddress || isSuccess
-                ? createCompletionContent(state, reviewLabels, onContinueFromReview, onClose)
-                : modularDialog.content,
+            content: flowContent,
             options: {
               dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: false,
@@ -189,11 +97,7 @@ export function ContactsAddAddressFlowDialog({
               dialogContentProps: { className: "w-400 bg-canvas-sheet pb-0" },
             }}
             isOpen
-            onBack={
-              isAddressEntry || isAddressNaming || isReviewingAddress
-                ? onBack
-                : modularDialog.onBack
-            }
+            onBack={shouldUseAddAddressFlowBackNavigation(state) ? onBack : modularDialog.onBack}
             onClose={onClose}
             screens={screens}
           />
