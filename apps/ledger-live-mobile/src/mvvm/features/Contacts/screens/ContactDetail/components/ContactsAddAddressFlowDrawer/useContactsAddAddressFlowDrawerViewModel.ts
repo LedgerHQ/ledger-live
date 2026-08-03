@@ -20,10 +20,9 @@ function resolveDrawerStep(
       return "address";
     case "namingAddress":
       return "name";
-    case "reviewingAddress":
-      return "review";
+    case "confirmationRequired":
     case "success":
-      return "success";
+      return "name";
   }
 }
 
@@ -36,7 +35,6 @@ export function useContactsAddAddressFlowDrawerViewModel({
   onBack,
   onClose,
   onContinueFromName,
-  onContinueFromReview,
   onCurrencySelected,
   onQrCodeClick,
 }: ContactsAddAddressFlowDrawerProps) {
@@ -79,7 +77,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
           }
         : null,
     addressNameProps:
-      state.status === "namingAddress"
+      state.status === "namingAddress" || state.status === "confirmationRequired"
         ? {
             addressLabel: state.addressLabel,
             labels: {
@@ -107,15 +105,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
     isOpen: state.status !== "closed",
-    labels: {
-      review: t("contacts.addAddressFlow.review"),
-      success: t("contacts.addAddressFlow.success"),
-      continue: t("common.continue"),
-      done: t("common.done"),
-    },
     onBack,
-    onContinueFromReview,
-    onFinish: onClose,
   } as const;
 }
 

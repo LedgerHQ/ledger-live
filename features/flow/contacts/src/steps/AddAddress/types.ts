@@ -90,6 +90,11 @@ type NamedAddAddressSession = Omit<ConfirmedAddAddressSession, "addressLabel"> &
     addressLabel: ValidAddAddressLabelState;
   }>;
 
+export type AddAddressContactDetailTarget = Readonly<{
+  type: "contactDetail";
+  contactId: ContactId;
+}>;
+
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
@@ -104,7 +109,12 @@ export type AddAddressFlowState =
         status: "reviewingAddress";
         origin: "addressDetails" | "addressName";
       }>)
-  | (NamedAddAddressSession & Readonly<{ status: "success" }>);
+  | (NamedAddAddressSession & Readonly<{ status: "confirmationRequired" }>)
+  | (NamedAddAddressSession &
+      Readonly<{
+        status: "success";
+        target?: AddAddressContactDetailTarget;
+      }>);
 
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
@@ -116,6 +126,7 @@ export type AddAddressFlowViewModel = Readonly<{
   continueFromAddressDetails: () => void;
   continueFromName: () => void;
   continueFromReview: () => void;
+  completeMockConfirmation: () => void;
   goBack: () => void;
   close: () => void;
 }>;
@@ -140,7 +151,6 @@ export type AddAddressNameLabels = Readonly<{
   continueToReview: string;
   validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
 }>;
-
 export type AddAddressCompletionLabels = Readonly<{
   title: string;
   continue: string;

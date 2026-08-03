@@ -298,13 +298,12 @@ export function useAddAddressFlowViewModel({
       }
 
       return {
-        status: "reviewingAddress",
+        status: "confirmationRequired",
         selectedContactId: currentState.selectedContactId,
         existingAddressLabels: currentState.existingAddressLabels,
         selectedCurrencyId: currentState.selectedCurrencyId,
         addressEntry: currentState.addressEntry,
         addressLabel: currentState.addressLabel,
-        origin: "addressName",
       };
     });
   }, []);
@@ -340,6 +339,20 @@ export function useAddAddressFlowViewModel({
       return { ...session, status: "success" };
     });
   }, []);
+  const completeMockConfirmation = useCallback(() => {
+    setState(currentState =>
+      currentState.status === "confirmationRequired"
+        ? {
+            ...currentState,
+            status: "success",
+            target: {
+              type: "contactDetail",
+              contactId: currentState.selectedContactId,
+            },
+          }
+        : currentState,
+    );
+  }, []);
   const goBack = useCallback(() => {
     cancelAddressValidation();
     setState(currentState => {
@@ -362,6 +375,8 @@ export function useAddAddressFlowViewModel({
             ? { ...session, status: "enteringAddress" }
             : { ...session, status: "namingAddress" };
         }
+        case "confirmationRequired":
+          return { ...currentState, status: "namingAddress" };
         case "success":
           return currentState;
       }
@@ -383,6 +398,7 @@ export function useAddAddressFlowViewModel({
     continueFromAddressDetails,
     continueFromName,
     continueFromReview,
+    completeMockConfirmation,
     goBack,
     close,
   };

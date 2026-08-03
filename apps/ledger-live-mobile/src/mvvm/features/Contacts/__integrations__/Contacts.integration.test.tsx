@@ -181,7 +181,7 @@ function ContactDetailViewModelProbe() {
       case "enteringAddress":
         return `enteringAddress:${viewModel.addAddressFlowState.selectedContactId}:${viewModel.addAddressFlowState.selectedCurrencyId}`;
       case "namingAddress":
-      case "reviewingAddress":
+      case "confirmationRequired":
       case "success":
         return viewModel.addAddressFlowState.status;
     }
@@ -651,15 +651,19 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should keep one Add Address drawer through QR, naming and success", async () => {
+  it("should save an address to the selected contact after mocked confirmation", async () => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
-      navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+      navigationInitialState: savedContactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(
+        {
+          lwmContacts: {
+            enabled: true,
+            params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+          },
         },
-      }),
+        state => ({ ...state, contacts: { contacts: [mockMeContact(), contact] } }),
+      ),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -705,15 +709,11 @@ describe("Contacts integration", () => {
     expect(screen.getByTestId("contacts-add-address-name-input")).toHaveProp("value", "Exchange");
 
     await user.press(screen.getByTestId("contacts-add-address-name-continue"));
-    expect(await screen.findByTestId("contacts-add-address-review-screen-continue")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-add-address-review-screen-continue"));
-    expect(await screen.findByTestId("contacts-add-address-success-screen-continue")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-add-address-success-screen-continue"));
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(screen.getByText("Exchange")).toBeVisible();
     });
   });
 

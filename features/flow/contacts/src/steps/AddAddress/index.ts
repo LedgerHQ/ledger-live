@@ -21,6 +21,7 @@ export {
 } from "./useAddAddressCurrencySelectionViewModel";
 export type {
   AddAddressContact,
+  AddAddressContactDetailTarget,
   AddAddressCurrencySelection,
   AddAddressEntryLabels,
   AddAddressEntryState,
@@ -30,7 +31,6 @@ export type {
   AddAddressInputSource,
   AddAddressLabelState,
   AddAddressNameLabels,
-  AddAddressPlaceholderViewProps,
   ValidAddAddressEntryState,
   ValidAddAddressLabelState,
 } from "./types";

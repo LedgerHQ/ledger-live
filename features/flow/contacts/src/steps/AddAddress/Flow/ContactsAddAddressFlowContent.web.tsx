@@ -37,6 +37,7 @@ export function resolveAddAddressWebFlowStep(
     case "enteringAddress":
       return "address";
     case "namingAddress":
+    case "confirmationRequired":
       return "name";
     case "reviewingAddress":
       return "review";
@@ -49,7 +50,8 @@ export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowS
   return (
     state.status === "enteringAddress" ||
     state.status === "namingAddress" ||
-    state.status === "reviewingAddress"
+    state.status === "reviewingAddress" ||
+    state.status === "confirmationRequired"
   );
 }
 
@@ -79,6 +81,7 @@ export function ContactsAddAddressFlowContent({
         />
       );
     case "namingAddress":
+    case "confirmationRequired":
       return (
         <ContactsAddAddressNameInput
           addressEntry={state.addressEntry}
