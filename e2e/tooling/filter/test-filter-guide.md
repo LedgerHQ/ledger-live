@@ -47,7 +47,8 @@ addAccount,deeplinks
 1. Open the run's **Summary** → **Workflow Context** → **Resolved filtered pattern**.
 2. If a pattern matches nothing, the run emits a warning annotation, e.g.
    `E2E filter has no matches` or `Missing E2E tag`. A filter that resolves to 0 specs
-   means **no tests run** — fix the pattern and re-dispatch.
+   is wasted — on **Mobile** the test jobs are skipped, on **Desktop** the run **fails**
+   ("No tests executed"). Fix the pattern and re-dispatch.
 
 ## See also
 
