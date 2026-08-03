@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {
