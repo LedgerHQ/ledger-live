@@ -585,9 +585,9 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
 }
 
 const SWAP_INIT_STALL_HINT =
-  `\n The device Exchange app is ready but Ledger Live never ` +
-  `delivered the swap payload, so "Review transaction" was never reached. See the ` +
-  `"⚠️ Swap-init error" attachment (or the "Webview Console Logs" attachment).`;
+  `\nHint: The device Exchange app is ready but Ledger Live never ` +
+  `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +
+  `"⚠️ Swap-init error" attachment.`;
 
 function isExchangeAppReadyStall(screenText: string): boolean {
   return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());

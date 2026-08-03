@@ -1,5 +1,6 @@
 import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
+import * as allure from "allure-js-commons";
 import {
   activateLedgerSync,
   expectValidAddressDevice,
@@ -23,6 +24,14 @@ import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
+
+function formatSwapScenario(swap: Swap, amount: string): string {
+  const from = swap.accountToDebit.currency.name;
+  const to = swap.accountToCredit.currency.name;
+  const provider = swap.provider?.uiName ?? "unknown";
+  return `${from} → ${to} | amount ${amount} | provider ${provider}`;
+}
+
 export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
@@ -51,7 +60,14 @@ export class SpeculosPage extends AppPage {
 
   @step("Verify amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndAcceptSwap(swap, amount);
+    const scenario = formatSwapScenario(swap, amount);
+    await allure.parameter("Swap scenario", scenario);
+    try {
+      await verifyAmountsAndAcceptSwap(swap, amount);
+    } catch (error) {
+      if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
+      throw error;
+    }
   }
 
   @step("Verify amounts and accept swap for different seed")

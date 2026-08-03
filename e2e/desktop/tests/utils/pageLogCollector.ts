@@ -146,7 +146,21 @@ export class PageLogCollector {
     );
     if (matches.length === 0) return null;
 
-    return matches.map(entry => PageLogCollector.formatSwapInitEntry(entry)).join("\n\n");
+    const step = PageLogCollector.deriveSwapInitStep(matches);
+    const body = matches.map(entry => PageLogCollector.formatSwapInitEntry(entry)).join("\n\n");
+    return step ? `Step: ${step}\n\n${body}` : body;
+  }
+
+  private static deriveSwapInitStep(matches: ConsoleLog[]): string | null {
+    const text = matches.map(entry => entry.text).join(" ");
+    if (text.includes("PayloadStepError") || text.includes("swap002")) {
+      return "PAYLOAD (Backend Swap Payload Retrieval)";
+    }
+    if (text.includes("CompleteExchangeError")) {
+      const deviceStep = text.match(/"step"\s*:\s*"([^"]+)"/)?.[1] ?? "INIT";
+      return `device Exchange app (${deviceStep})`;
+    }
+    return null;
   }
 
   private static formatSwapInitEntry(entry: ConsoleLog): string {
