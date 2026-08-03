@@ -7,7 +7,10 @@ import buildCoinConfig, {
 export type TronifyProviderConfig = {
   /** Base URL of the Tronify REST API (e.g. https://open.tronify.io). */
   url: string;
-  /** Channel name agreed with Tronify, sent as `sourceFlag` on every request. */
+  /**
+   * Channel name agreed with Tronify, sent as `sourceFlag` on every request that takes it
+   * (all except `uploadHash`, which is keyed by the order id alone).
+   */
   sourceFlag: string;
   /**
    * Optional API key, sent as an auth header when present; omit when requests are
@@ -17,11 +20,18 @@ export type TronifyProviderConfig = {
   apiKey?: string;
 };
 
-/** Energy-rent provider selection and per-provider settings (ADR-050). */
+/**
+ * Energy-rent provider selection and its settings (ADR-050). The chosen provider's settings are
+ * required alongside its id, so a provider cannot be selected without being configured. Adding a
+ * provider turns this into a union of such pairs.
+ *
+ * This is a compile-time contract only — the value reaches us as unvalidated remote coin-config
+ * JSON, so the client still guards at runtime.
+ */
 export type EnergyRentConfig = {
   /** Active provider; the logic-layer switch dispatches on this. */
   provider: "tronify";
-  tronify?: TronifyProviderConfig;
+  tronify: TronifyProviderConfig;
 };
 
 export type TronConfig = {

@@ -38,8 +38,25 @@ describe("tronify network client", () => {
     setConfig({ url: TRONIFY_URL, sourceFlag: SOURCE_FLAG });
   });
 
-  it("throws EnergyRentProviderNotConfigured when tronify is not configured", async () => {
+  it("rejects with EnergyRentProviderNotConfigured when energyRent is absent", async () => {
     setConfig(undefined);
+    await expect(queryPreorderInfo(orderParams)).rejects.toBeInstanceOf(
+      EnergyRentProviderNotConfigured,
+    );
+  });
+
+  // The config type requires `tronify` alongside the provider id, but coin-config reaches us as
+  // unvalidated remote JSON — hence the runtime guard this covers.
+  it("rejects with EnergyRentProviderNotConfigured when remote config omits the tronify settings", async () => {
+    coinConfig.setCoinConfig(
+      () =>
+        ({
+          status: { type: "active" },
+          explorer: { url: "https://tron.coin.ledger.com" },
+          energyRent: { provider: "tronify" },
+        }) as never,
+    );
+
     await expect(queryPreorderInfo(orderParams)).rejects.toBeInstanceOf(
       EnergyRentProviderNotConfigured,
     );
