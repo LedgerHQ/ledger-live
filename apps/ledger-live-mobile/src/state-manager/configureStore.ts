@@ -17,10 +17,7 @@ import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
-import { calApiExtra } from "@domain/api-currency-token";
-import { cvsApiExtra } from "@domain/api-currency-fiat";
-import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@domain/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
@@ -48,10 +45,7 @@ export const store = configureStore({
             ...cvsApiExtra({
               countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
             }),
-            ...marketSentimentApiExtra({
-              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
-            }),
-            ...altcoinsSentimentApiExtra({
+            ...coinMarketCapApiExtra({
               coinMarketCapApiUrl: getEnv("CMC_API_URL"),
             }),
             ...pushDevicesApiExtra({
