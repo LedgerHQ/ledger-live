@@ -13,11 +13,16 @@ import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
-import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
+import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector, languageSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
-import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import {
+  calApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  pushDevicesApiExtra,
+} from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";

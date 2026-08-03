@@ -9,12 +9,17 @@ import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import { calApiExtra, coinMarketCapApiExtra, cvsApiExtra } from "@shared/api-services";
+import {
+  calApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  pushDevicesApiExtra,
+} from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
-import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
+import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
