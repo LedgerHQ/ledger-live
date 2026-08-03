@@ -6,7 +6,7 @@ import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { withTranslation, Trans } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
