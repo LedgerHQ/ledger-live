@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef, memo, useEffect } from "react";
+import React, { useCallback, useState, useRef, memo, useEffect, useMemo } from "react";
 import debounce from "lodash/debounce";
 import { DRep } from "@ledgerhq/live-common/families/cardano/DRep";
 import styled from "styled-components";
@@ -36,10 +36,9 @@ const ScrollLoadingList = ({
   search,
   isPaginating,
 }: ScrollLoadingListProps) => {
-  const scrollRef = useRef<HTMLInputElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
   useEffect(() => {
-    // $FlowFixMe
     if (search !== "") {
       setScrollOffset(bufferSize);
     } else {
@@ -52,7 +51,6 @@ const ScrollLoadingList = ({
     const target = scrollRef && scrollRef.current;
     if (
       target &&
-      // $FlowFixMe
       target.scrollTop + target.offsetHeight >= target.scrollHeight - scrollEndThreshold
     ) {
       fetchPoolsFromNextPage();
@@ -66,8 +64,20 @@ const ScrollLoadingList = ({
     bufferSize,
     scrollEndThreshold,
   ]);
+
+  const debouncedHandleScroll = useMemo(
+    () => debounce(handleScroll, 50),
+    [handleScroll]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedHandleScroll.cancel();
+    };
+  }, [debouncedHandleScroll]);
+
   return (
-    <ScrollContainer ref={scrollRef} onScroll={debounce(handleScroll, 50)} style={style}>
+    <ScrollContainer ref={scrollRef} onScroll={debouncedHandleScroll} style={style}>
       {data.length > bufferSize
         ? data.slice(0, scrollOffset).map(renderItem)
         : data.map(renderItem)}
