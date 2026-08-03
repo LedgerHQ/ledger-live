@@ -205,6 +205,12 @@
     "./domain/entity/starred-account": {
       "entry": ["src/index.ts"]
     },
+    "./domain/entity/aggregated-asset": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/entity/interest-rate": {
+      "entry": ["src/index.ts"]
+    },
     "./domain/api/pay-card": {
       "entry": ["src/index.ts"]
     },
@@ -218,6 +224,9 @@
       "entry": ["src/index.ts"]
     },
     "./domain/api/altcoins-sentiment": {
+      "entry": ["src/index.ts"]
+    },
+    "./domain/api/aggregated-assets": {
       "entry": ["src/index.ts"]
     },
     "./shared/schema-primitives": {
@@ -257,6 +266,9 @@
       "entry": ["src/index.ts"]
     },
     "./features/platform/style": {
+      "entry": ["src/index.ts"]
+    },
+    "./features/platform/aggregated-assets": {
       "entry": ["src/index.ts"]
     },
     "./libs/coin-tester-modules/coin-tester-multiversx": {
