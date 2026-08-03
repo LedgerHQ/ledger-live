@@ -25,3 +25,4 @@ if (bridge.version !== 1) {
 }
 
 export const bootstrap = bridge.bootstrap;
+export const db = bridge.db;

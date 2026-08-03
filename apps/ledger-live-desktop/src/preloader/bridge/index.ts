@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron";
 import { CHANNELS, type Bootstrap, type LedgerBridge } from "~/bridge/contract";
 import { expose } from "./expose";
+import { db } from "./db";
 
 /**
  * Assembles and publishes the `window.ledger` bridge.
@@ -17,6 +18,7 @@ export function installBridge(): void {
     // Frozen so renderer code cannot mutate what is meant to be a snapshot of main's
     // state. Consumers that need to mutate (the `process.env` shim) must take a copy.
     bootstrap: Object.freeze(bootstrap),
+    db,
   };
 
   // `lld`, not `ledger`: the renderer already installs a `window.ledger` debug handle for

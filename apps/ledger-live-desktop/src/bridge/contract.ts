@@ -59,9 +59,37 @@ export type Bootstrap = {
   store: Record<string, unknown>;
 };
 
+/**
+ * The application database, owned by the main process.
+ *
+ * One named method per operation, with no channel parameter. A generic
+ * `invoke(channel, ...args)` passthrough would be far less code, and would also hand any
+ * script running in the renderer the entire main-process surface — including
+ * `setEncryptionKey` and `isEncryptionKeyCorrect`, which together are an offline oracle
+ * against the account database. Naming each operation keeps that surface reviewable and
+ * lets the payloads stay typed.
+ */
+export type DbBridge = {
+  getKey(ns: string, keyPath: string, defaultValue?: unknown): Promise<unknown>;
+  /**
+   * `value` must be JSON-safe. Account graphs contain BigNumber instances, which the
+   * bridge would silently flatten, so callers encode before reaching this point.
+   */
+  setKey(ns: string, keyPath: string, value: Serializable): Promise<void>;
+  hasEncryptionKey(ns: string, keyPath: string): Promise<boolean>;
+  setEncryptionKey(encryptionKey: string): Promise<void>;
+  removeEncryptionKey(): Promise<void>;
+  isEncryptionKeyCorrect(encryptionKey: string): Promise<boolean>;
+  hasBeenDecrypted(): Promise<boolean>;
+  resetAll(): Promise<void>;
+  reload(): Promise<void>;
+  cleanCache(): Promise<void>;
+};
+
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
+  db: DbBridge;
 };
 
 /**
@@ -76,4 +104,14 @@ export const CHANNELS = {
   /** Write-through updates to the `lld.json` store hydrated in {@link Bootstrap.store}. */
   storeSet: "lld-store:set",
   storeClear: "lld-store:clear",
+  getKey: "getKey",
+  setKey: "setKey",
+  hasEncryptionKey: "hasEncryptionKey",
+  setEncryptionKey: "setEncryptionKey",
+  removeEncryptionKey: "removeEncryptionKey",
+  isEncryptionKeyCorrect: "isEncryptionKeyCorrect",
+  hasBeenDecrypted: "hasBeenDecrypted",
+  resetAll: "resetAll",
+  reload: "reload",
+  cleanCache: "cleanCache",
 } as const;
