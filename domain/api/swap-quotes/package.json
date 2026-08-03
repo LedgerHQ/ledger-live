@@ -1,0 +1,36 @@
+{
+  "name": "@domain/api-swap-quotes",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Domain API client for the swap quotes aggregator: RTK Query endpoint for the /quote request",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/api/swap-quotes"
+  },
+  "dependencies": {
+    "@ledgerhq/wallet-api-exchange-module": "workspace:^",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/auth": "workspace:^",
+    "@shared/env": "workspace:*"
+  },
+  "devDependencies": {
+    "@jest/globals": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "typescript": "catalog:"
+  }
+}

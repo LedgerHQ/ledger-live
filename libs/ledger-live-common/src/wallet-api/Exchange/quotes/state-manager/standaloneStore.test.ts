@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
@@ -7,9 +8,12 @@ import { getSwapQuotesDispatch, resetSwapQuotesStore } from "./store";
 import { swapQuotesApi } from "./api";
 import { setupStandaloneSwapQuotesStore } from "./standaloneStore";
 
-jest.mock("../../../../exchange/swap", () => ({
-  getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
-}));
+let previousBaseUrl: string;
+beforeAll(() => {
+  previousBaseUrl = getEnv("SWAP_API_BASE");
+  setEnv("SWAP_API_BASE", "https://swap.test");
+});
+afterAll(() => setEnv("SWAP_API_BASE", previousBaseUrl));
 
 describe("setupStandaloneSwapQuotesStore", () => {
   const server = setupServer();

@@ -1,15 +1,22 @@
+import { configureStore } from "@reduxjs/toolkit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { createTestStore } from "@tests/test-helpers/testUtils";
 import { getEnv, setEnv } from "@shared/env";
 
-import { makeQuotesInput } from "../fixtures/quotesInput";
-import { makeRawQuote, makeRawQuoteError } from "../fixtures/rawQuotes";
+import { makeQuotesInput } from "./quotesInput.fixture";
+import { makeRawQuote, makeRawQuoteError } from "./rawQuotes.fixture";
 import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
 
-jest.mock("../../../../exchange/swap", () => ({
-  getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
-}));
+function createTestStore(extra: unknown) {
+  return configureStore({
+    reducer: { [swapQuotesApi.reducerPath]: swapQuotesApi.reducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: { extraArgument: extra },
+      }).concat(swapQuotesApi.middleware),
+  });
+}
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
@@ -97,20 +104,26 @@ describe("transformFetchQuotesResponse", () => {
 describe("swapQuotesApi.fetchQuotes (integration)", () => {
   const server = setupServer();
   let store: ReturnType<typeof createTestStore>;
+  let previousBaseUrl: string;
 
-  beforeAll(() => server.listen());
+  beforeAll(() => {
+    server.listen();
+    previousBaseUrl = getEnv("SWAP_API_BASE");
+    setEnv("SWAP_API_BASE", "https://swap.test");
+  });
   afterEach(() => {
     store.dispatch(swapQuotesApi.util.resetApiState());
     server.resetHandlers();
   });
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+    setEnv("SWAP_API_BASE", previousBaseUrl);
+  });
 
   beforeEach(() => {
     // Both apps register a provider, so the missing-provider fallback is not
     // the path production takes.
-    store = createTestStore([swapQuotesApi], {
-      extra: { authProvider: unauthenticatedProvider },
-    });
+    store = createTestStore({ authProvider: unauthenticatedProvider });
   });
 
   function initiate() {
@@ -197,9 +210,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
         return HttpResponse.json([]);
       }),
     );
-    const authedStore = createTestStore([swapQuotesApi], {
-      extra: { authProvider: tokenProvider("tok-123") },
-    });
+    const authedStore = createTestStore({ authProvider: tokenProvider("tok-123") });
 
     await authedStore.dispatch(
       swapQuotesApi.endpoints.fetchQuotes.initiate(

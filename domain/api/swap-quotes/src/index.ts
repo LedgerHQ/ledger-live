@@ -1,12 +1,10 @@
-/**
- * Raw aggregator payload shapes. Moved to `@domain/api-swap-quotes`; re-exported
- * here for the existing live-common call sites.
- */
+export { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
 export type {
+  FetchQuotesQueryArgs,
   FetchQuotesResult,
   ProviderTypes,
-  RawPermit2Details,
   RawPermit2Domain,
+  RawPermit2Details,
   RawPermit2Message,
   RawPermit2Single,
   RawPermit2Types,
@@ -22,5 +20,6 @@ export type {
   RawQuoteSlippageInfo,
   RawQuoteTags,
   RawTokenAllowanceData,
+  ResolvedQuotesInput,
   TradeMethod,
-} from "@domain/api-swap-quotes";
+} from "./types";

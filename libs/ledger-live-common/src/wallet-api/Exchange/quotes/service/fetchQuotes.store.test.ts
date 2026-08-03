@@ -1,6 +1,7 @@
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
+import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
@@ -8,9 +9,12 @@ import { swapQuotesApi } from "../state-manager/api";
 import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
 
-jest.mock("../../../../exchange/swap", () => ({
-  getSwapAPIBaseURL: jest.fn(() => "https://swap.test"),
-}));
+let previousBaseUrl: string;
+beforeAll(() => {
+  previousBaseUrl = getEnv("SWAP_API_BASE");
+  setEnv("SWAP_API_BASE", "https://swap.test");
+});
+afterAll(() => setEnv("SWAP_API_BASE", previousBaseUrl));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
