@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { MinaAccount, Transaction, ValidatorInfo } from "@ledgerhq/live-common/families/mina/types";
 import { BigNumber } from "bignumber.js";
