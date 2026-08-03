@@ -89,13 +89,6 @@ describe("computeShieldedSpendFee", () => {
     // 3 spends: orchard = 3; + transparent recipient = 4 → 20_000.
     expect(computeShieldedSpendFee(3, false, "shielded-to-transparent").toNumber()).toBe(20_000);
   });
-
-  it("ironwood-to-transparent uses the same fee model as shielded-to-transparent", () => {
-    // Ironwood actions are priced identically to Orchard (ZIP-317).
-    expect(computeShieldedSpendFee(1, false, "ironwood-to-transparent").toNumber()).toBe(15_000);
-    expect(computeShieldedSpendFee(1, true, "ironwood-to-transparent").toNumber()).toBe(15_000);
-    expect(computeShieldedSpendFee(3, false, "ironwood-to-transparent").toNumber()).toBe(20_000);
-  });
 });
 
 // ── selectNotes ────────────────────────────────────────────────────────
@@ -192,29 +185,14 @@ describe("selectNotes", () => {
     expect(result?.selectedNotes[0].txid).toBe("large");
   });
 
-  it("selects Ironwood notes with transferType ironwood (same algorithm as shielded)", () => {
-    // selectNotes treats Ironwood notes identically to Orchard notes.
-    const ironwoodNotes = [makeNote({ amount: new BigNumber(1_000_000) })];
-    const result = selectNotes(ironwoodNotes, new BigNumber(500_000), "ironwood");
+  it("selects notes for shielded-to-transparent with transparent recipient fee leg", () => {
+    const notes = [makeNote({ amount: new BigNumber(1_000_000) })];
+    const result = selectNotes(notes, new BigNumber(500_000), "shielded-to-transparent");
 
     expect(result?.selectedNotes).toHaveLength(1);
-    expect(result?.fee.toNumber()).toBe(10_000); // grace floor
-    expect(result?.changeAmount.toNumber()).toBe(490_000);
-  });
-
-  it("selects Ironwood notes for ironwood-to-transparent with transparent recipient fee leg", () => {
-    const ironwoodNotes = [makeNote({ amount: new BigNumber(1_000_000) })];
-    const result = selectNotes(ironwoodNotes, new BigNumber(500_000), "ironwood-to-transparent");
-
-    expect(result?.selectedNotes).toHaveLength(1);
-    // Same fee as shielded-to-transparent: orchard floor 2 + 1 t-out = 3 logical → 15_000.
+    // orchard-family floor 2 + 1 t-out = 3 logical → 15_000.
     expect(result?.fee.toNumber()).toBe(15_000);
     expect(result?.changeAmount.toNumber()).toBe(485_000);
-  });
-
-  it("returns undefined for ironwood when balance is insufficient", () => {
-    const notes = [makeNote({ amount: new BigNumber(5_000) })];
-    expect(selectNotes(notes, new BigNumber(100_000), "ironwood")).toBe(undefined);
   });
 });
 
@@ -487,32 +465,5 @@ describe("estimateMaxSpendableAmount", () => {
     // transparent recipient = 1; logical = 3 → fee = 15_000.
     const result = estimateMaxSpendableAmount(notes, "shielded-to-transparent");
     expect(result.toNumber()).toBe(185_000); // 200_000 - 15_000
-  });
-
-  it("computes max spendable for ironwood (same fee model as shielded)", () => {
-    const notes = [makeNote({ amount: new BigNumber(100_000) })];
-    // 1 spend, ironwood: orchard floor 2 actions → fee = 10_000
-    const result = estimateMaxSpendableAmount(notes, "ironwood");
-    expect(result.toNumber()).toBe(90_000);
-  });
-
-  it("computes max spendable for ironwood-to-transparent (same fee model as shielded-to-transparent)", () => {
-    const notes = [
-      makeNote({
-        txid: "tx1",
-        outputIndex: 0,
-        nullifier: "aa".repeat(32),
-        amount: new BigNumber(100_000),
-      }),
-      makeNote({
-        txid: "tx1",
-        outputIndex: 1,
-        nullifier: "bb".repeat(32),
-        amount: new BigNumber(100_000),
-      }),
-    ];
-    // 2 spends, ironwood-to-transparent: orchard floor 2 + 1 t-out = 3 logical → fee = 15_000
-    const result = estimateMaxSpendableAmount(notes, "ironwood-to-transparent");
-    expect(result.toNumber()).toBe(185_000);
   });
 });

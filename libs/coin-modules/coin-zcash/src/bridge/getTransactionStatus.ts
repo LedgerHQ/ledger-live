@@ -67,12 +67,8 @@ export const getTransactionStatus: AccountBridge<
     };
   }
 
-  // Validate against the pool balance that will be spent.
-  const poolBalance =
-    transaction.transferType === "ironwood" ||
-    transaction.transferType === "ironwood-to-transparent"
-      ? privateInfo.ironwoodBalance
-      : privateInfo.orchardBalance;
+  // Shielded sends spend the Ironwood pool, so validate the amount against it.
+  const poolBalance = privateInfo.ironwoodBalance ?? new BigNumber(0);
   const fee = transaction.zcashFee ?? new BigNumber(ZIP317_MINIMUM_FEE);
   const totalSpent = transaction.amount.plus(fee);
 

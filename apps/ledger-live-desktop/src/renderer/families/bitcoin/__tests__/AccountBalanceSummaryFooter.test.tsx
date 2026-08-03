@@ -1,4 +1,5 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Observable, Subscriber } from "rxjs";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
@@ -296,5 +297,42 @@ describe("Bitcoin Account Balance Summary Footer", () => {
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  it("shows only the ironwoodBalance as the private balance, excluding the deprecated Orchard/Sapling pools", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          // balance = transparent + ironwood only (0.1 + 0.5 ZEC).
+          balance: new BigNumber(60_000_000),
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            orchardBalance: new BigNumber(30_000_000),
+            saplingBalance: new BigNumber(20_000_000),
+            ironwoodBalance: new BigNumber(50_000_000),
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      // Private = ironwood (0.5 ZEC); transparent = balance − ironwood (0.1 ZEC);
+      // available = balance (0.6 ZEC). The residual Orchard/Sapling notes are
+      // deliberately not reflected anywhere.
+      expect(screen.getByText("0.5 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.1 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.6 ZEC")).toBeInTheDocument();
+    });
   });
 });
