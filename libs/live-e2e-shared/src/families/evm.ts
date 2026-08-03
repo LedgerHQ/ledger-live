@@ -5,6 +5,7 @@ import {
   waitForReviewTransaction,
   pressUntilTextFound,
   waitFor,
+  SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS,
 } from "../speculos";
 import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import {
@@ -132,7 +133,7 @@ async function getEnsScreenTexts(ensName: string): Promise<string[]> {
 }
 
 export async function approveTokenTouchDevices() {
-  await waitForReviewTransaction();
+  await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
   await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
@@ -140,7 +141,7 @@ export async function approveTokenTouchDevices() {
 export const approveTokenButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
-      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO);
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
       await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
       await getButtonsController().both();
     },
