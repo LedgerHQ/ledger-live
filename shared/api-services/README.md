@@ -21,7 +21,9 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 
 ## What lives here, and what does not
 
-This is the seam: **reaching a backend** here, **what you ask it for** in `domain/api/*`.
+This is the seam: **reaching a backend** here, **what you ask it for** in `domain/api/*`. Every backend
+goes through it by default — a service with a single use case still belongs here, so that the second one
+is a one-line addition rather than a migration.
 
 | Concern | Owner | Why |
 | --- | --- | --- |

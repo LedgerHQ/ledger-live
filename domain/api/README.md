@@ -12,7 +12,9 @@ existing ones under a unified access point.
 forces the *reaching* half to be re-declared per use case, so two packages hitting the same backend
 duplicate it and end up with two store slices, two caches and two middlewares for one service.
 
-These are split:
+**Every package here splits them, from the start** — this is the default, not something to reach for
+once a second use case appears. Doing it upfront costs nothing and makes the second use case a one-line
+addition instead of a migration.
 
 | Half | Owner | Contains |
 | --- | --- | --- |

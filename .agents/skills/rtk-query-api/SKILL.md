@@ -39,21 +39,28 @@ export enum EntityTags {
 }
 ```
 
-## Sharing one backend across use cases
+## Splitting backend access from use case
 
-When a **second** use case needs the same base URL, do not add a second `createApi`. Two `createApi`
-calls against one backend means two store slices, two caches and two middlewares for one service.
-Instead split *reaching the backend* from *what you ask it for*:
+**In `domain/api/`, this is the default — not something you reach for once a second use case appears.**
+Always split *reaching the backend* from *what you ask it for*:
 
 | Half | Owner | Contains |
 | --- | --- | --- |
 | Reaching a backend | [`@shared/api-services`](../../../shared/api-services/README.md) — one dir per backend | Base URL, base query, retry, `reducerPath`, `extraArgument` contract |
 | What you ask it for | `@domain/api-<name>` | Endpoints, wire schemas, transforms, **cache tags**, hooks |
 
+Doing it upfront costs nothing and means the second use case is a one-line addition rather than a
+migration. Two `createApi` calls against one backend would give you two store slices, two caches and
+two middlewares for one service.
+
 The shared half declares an empty api. The use-case half adds to it with
 [`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints)
 for endpoints and `enhanceEndpoints({ addTagTypes })` for tags. Both **mutate and return the same api
 object**, so one reducer, one middleware and one cache serve every use case.
+
+The one exception: if a backend's base query needs use-case knowledge — mock handlers keyed by endpoint
+URL, endpoint-name lookups, response types from its own wire schemas — it keeps its `createApi` in the
+use-case package, because splitting it would drag that wire contract into the shared package.
 
 ```typescript
 // ✅ GOOD - the service api: base query + config. No endpoints, no tags.
@@ -95,8 +102,6 @@ export const { useGetEntityQuery } = firstUseCaseApi;
 - **A tag-less api has a narrower state type.** The registered api declares no tags, so a helper typed
   on an injected reference (whose use case added some) will not accept an app's `State`. Type such
   helpers on the service api.
-- **Keep the shared half transport-only.** If a backend's base query needs use-case knowledge (mock
-  handlers keyed by endpoint URL, endpoint-name lookups), leave its `createApi` in the use-case package.
 - **`overrideExisting` defaults to `false`** — injecting an endpoint name that already exists is
   silently ignored unless you opt in.
 
