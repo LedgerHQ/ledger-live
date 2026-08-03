@@ -91,7 +91,9 @@ describe("LargeScreenUpsellDebug", () => {
     render(<LargeScreenUpsellDebug />);
 
     expect(screen.getByText("Large-screen upsell debug")).toBeVisible();
-    expect(screen.getByText("WON'T SHOW")).toBeVisible();
+    expect(screen.getByText("Shows at next app start")).toBeVisible();
+    expect(screen.getAllByText("WON'T SHOW")).toHaveLength(2);
+    expect(screen.getByText("LN Portfolio banner")).toBeVisible();
     expect(screen.getByText("Decision breakdown")).toBeVisible();
     expect(screen.getByText("Feature flag enabled")).toBeVisible();
     expect(screen.getByText("largeScreenUpsell")).toBeVisible();
@@ -178,12 +180,9 @@ describe("LargeScreenUpsellDebug", () => {
 
     render(<LargeScreenUpsellDebug />);
 
-    const label = screen.getByText("Nano S seen");
-    expect(label).toBeVisible();
-    const row = label.parentElement?.parentElement;
-    const nanoSSwitch = row?.querySelector('[role="switch"]');
-    expect(nanoSSwitch).toBeTruthy();
-    fireEvent(nanoSSwitch as Element, "onCheckedChange", true);
+    expect(screen.getByText("Nano S seen")).toBeVisible();
+    // Switches: preview variant, largeScreenUpsell, modal.enabled, Nano seen, Nano S seen.
+    fireEvent(screen.getAllByRole("switch")[4], "onCheckedChange", true);
 
     expect(handleToggleNanoSSeen).toHaveBeenCalledWith(true);
   });
