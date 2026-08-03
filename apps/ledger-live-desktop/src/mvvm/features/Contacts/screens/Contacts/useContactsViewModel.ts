@@ -25,6 +25,7 @@ import { useContactsFeatureIntroductionPreference } from "../../hooks/useContact
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import type { ContactsAddAddressFlowDialogProps } from "./components/ContactsAddAddressFlowDialog";
 
 export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> &
@@ -32,6 +33,7 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
     addAddressFlowState: AddAddressFlowState;
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
+    editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
     onClearSearch: () => void;
   }>;
 
@@ -123,7 +125,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       updateAddress,
     ],
   );
-  const { detail, addressDetailDialog, onOpenMe, onOpenContact } =
+  const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =
     useContactDetailPaneAdapter(onAddAddress);
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
@@ -189,6 +191,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addAddressFlowState,
     addAddressFlowDialog,
     addressDetailDialog,
+    editDeleteDialogs,
     viewModel,
     labels,
     searchQuery,
