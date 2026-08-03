@@ -17,8 +17,8 @@ import { restoreReceiveVerifyHint } from "@features/flow-pay-request/state";
 import { restorePayCardLoginIntro } from "@features/flow-pay-card-auth/state";
 import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/state";
 import i18n from "~/renderer/i18n/init";
-import { ipcRenderer } from "electron";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
+import { deeplink } from "~/renderer/bridge";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
@@ -182,7 +182,10 @@ async function init() {
     deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
     store.dispatch(setDeepLinkUrl(deepLinkUrl));
   }
-  ipcRenderer.once("deep-linking", (_, url: string) => {
+  // Once-only: the bridge exposes a persistent subscription, so cancel it on first
+  // delivery rather than relying on a once-only listener.
+  const stopInitialDeepLinkListener = deeplink.onOpen((url: string) => {
+    stopInitialDeepLinkListener();
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });

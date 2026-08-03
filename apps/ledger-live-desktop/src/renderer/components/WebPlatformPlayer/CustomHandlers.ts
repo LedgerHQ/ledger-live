@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ipcRenderer } from "electron";
+import { deeplink } from "~/renderer/bridge";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -32,7 +33,7 @@ type CreateDeeplinkOpenHandlerParams = {
 
 export function createDeeplinkOpenHandler({
   isDeeplinkOpenHardeningEnabled,
-  openDeepLink = url => ipcRenderer.send("deep-linking", url),
+  openDeepLink = url => deeplink.open(url),
 }: CreateDeeplinkOpenHandlerParams) {
   return (params?: DeeplinkOpenHandlerParams) => {
     if (!params) {

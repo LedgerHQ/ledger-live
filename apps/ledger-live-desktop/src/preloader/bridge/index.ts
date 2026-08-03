@@ -3,6 +3,7 @@ import { CHANNELS, type Bootstrap, type LedgerBridge } from "~/bridge/contract";
 import { expose } from "./expose";
 import { db } from "./db";
 import { transport } from "./transport";
+import { deeplink, updater } from "./push";
 
 /**
  * Assembles and publishes the `window.ledger` bridge.
@@ -21,6 +22,8 @@ export function installBridge(): void {
     bootstrap: Object.freeze(bootstrap),
     db,
     transport,
+    updater,
+    deeplink,
   };
 
   // `lld`, not `ledger`: the renderer already installs a `window.ledger` debug handle for
