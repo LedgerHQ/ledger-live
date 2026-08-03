@@ -1,14 +1,14 @@
 import React from "react";
-import { ContactsAddAddressEntry } from "./ContactsAddAddressEntry.web";
-import { ContactsAddAddressNameInput } from "./AddressName/Input/ContactsAddAddressNameInput.web";
-import type { ContactsAddAddressNameLabels } from "./AddressName/types";
-import { ContactsAddAddressCompletion } from "./Completion/ContactsAddAddressCompletion.web";
+import { ContactsAddAddressEntry } from "../ContactsAddAddressEntry.web";
+import { ContactsAddAddressNameInput } from "../AddressName/Input/ContactsAddAddressNameInput.web";
+import type { ContactsAddAddressNameLabels } from "../AddressName/types";
+import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion.web";
 import type {
   AddAddressCompletionLabels,
   AddAddressEntryLabels,
   AddAddressFlowState,
   AddAddressInputSource,
-} from "./types";
+} from "../types";
 
 export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review" | "success";
 

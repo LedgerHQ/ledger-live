@@ -7,11 +7,11 @@ export {
   ContactsAddAddressFlowContent,
   resolveAddAddressWebFlowStep,
   shouldUseAddAddressFlowBackNavigation,
-} from "./ContactsAddAddressFlowContent.web";
+} from "./Flow/ContactsAddAddressFlowContent.web";
 export type {
   AddAddressWebFlowStep,
   ContactsAddAddressFlowContentProps,
-} from "./ContactsAddAddressFlowContent.web";
+} from "./Flow/ContactsAddAddressFlowContent.web";
 export type { AddAddressCompletionLabels } from "./types";
 export type {
   ContactsAddAddressNameLabels,

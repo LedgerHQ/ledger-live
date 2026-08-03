@@ -11,7 +11,7 @@ import type {
   AddAddressCompletionLabels,
   AddAddressEntryLabels,
   AddAddressFlowState,
-} from "./types";
+} from "../types";
 import {
   ContactsAddAddressFlowContent,
   type ContactsAddAddressFlowContentProps,
@@ -19,7 +19,7 @@ import {
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
 } from "./ContactsAddAddressFlowContent.web";
-import type { ContactsAddAddressNameLabels } from "./AddressName/types";
+import type { ContactsAddAddressNameLabels } from "../AddressName/types";
 
 type OpenAddAddressFlowState = Exclude<AddAddressFlowState, { status: "closed" }>;
 
