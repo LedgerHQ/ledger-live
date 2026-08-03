@@ -37,16 +37,13 @@ const DRepNameAndHexContainer = styled(Box).attrs(() => ({
   }
 `;
 
-function lastActiveOn(date: string) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const formatDate = useDateFormatter(dayAndHourFormat);
-  return formatDate(new Date(date));
-}
+
 
 function StepSummary(props: StepProps) {
   const { account, transaction, status, selectedDRep, bridgePending } = props;
 
   const feesUnit = useMaybeAccountUnit(account);
+  const formatDate = useDateFormatter(dayAndHourFormat);
   if (
     !account ||
     !transaction ||
@@ -113,7 +110,7 @@ function StepSummary(props: StepProps) {
             </Text>
             <Box>
               <Text ff="Inter|Medium" color="neutral.c80" fontSize={4}>
-                {lastActiveOn(selectedDRep.active)}
+                {formatDate(new Date(selectedDRep.active))}
               </Text>
             </Box>
           </Box>

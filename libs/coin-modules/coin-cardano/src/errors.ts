@@ -39,7 +39,13 @@ export class CardanoInvalidPoolId extends Error {
   }
 }
 
-export const CardanoInvalidDRepHex = createCustomErrorClass("CardanoInvalidDRepHex");
+export class CardanoInvalidDRepHex extends Error {
+  override name = "CardanoInvalidDRepHex";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "CardanoInvalidDRepHex");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
 /**
  * Cardano warning/error for high fees
