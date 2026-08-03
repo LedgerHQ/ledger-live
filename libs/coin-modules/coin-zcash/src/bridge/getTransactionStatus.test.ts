@@ -84,8 +84,6 @@ describe("isTransparentInputTransfer", () => {
     ["transparent-to-shielded", true],
     ["shielded", false],
     ["shielded-to-transparent", false],
-    ["ironwood", false],
-    ["ironwood-to-transparent", false],
   ] as [ZcashTransferType, boolean][])("answers %s with %s", (transferType, expected) => {
     expect(isTransparentInputTransfer(transferType)).toBe(expected);
   });
@@ -351,31 +349,11 @@ describe("getTransactionStatus, note-spending flows", () => {
     });
   });
 
-  // The pool being spent is what bounds the amount: an Ironwood send may not
-  // draw on the Orchard balance, and vice versa.
+  // A shielded send spends the Ironwood pool, so the Ironwood balance bounds the
+  // amount even when the deprecated Orchard pool holds plenty.
   it.each([
     ["shielded", U_ADDRESS],
     ["shielded-to-transparent", T_ADDRESS],
-  ] as [ZcashTransferType, string][])(
-    "bounds %s by the orchard balance",
-    async (transferType, recipient) => {
-      const acc = account({ orchardBalance: 20_000, ironwoodBalance: 10_000_000 });
-      const tx = transaction({
-        transferType,
-        recipient,
-        amount: new BigNumber(30_000),
-        selectedNotes: [note(1_000_000)],
-      });
-
-      expect((await getTransactionStatus(acc, tx)).errors.amount).toEqual(
-        new Error("Insufficient shielded balance"),
-      );
-    },
-  );
-
-  it.each([
-    ["ironwood", U_ADDRESS],
-    ["ironwood-to-transparent", T_ADDRESS],
   ] as [ZcashTransferType, string][])(
     "bounds %s by the ironwood balance",
     async (transferType, recipient) => {

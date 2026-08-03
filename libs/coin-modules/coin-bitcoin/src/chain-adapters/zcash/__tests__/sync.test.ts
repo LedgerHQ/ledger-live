@@ -145,7 +145,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(0));
   });
 
-  it("should set balance and spendableBalance to transparent + private when processing shielded transactions", () => {
+  it("should track the deprecated orchard pool in privateInfo but exclude it from the balance", () => {
     const incomingTx: ShieldedTransaction = {
       id: "tx1",
       hex: "00",
@@ -174,9 +174,10 @@ describe("reduceShieldedSyncResult", () => {
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    // balance = transparent(100000) + orchard(50000) = 150000
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(150000));
-    expect(output.accountUpdate.spendableBalance).toEqual(new BigNumber(150000));
+    // orchard is deprecated and excluded from the balance: balance = transparent(100000)
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(50000));
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(100000));
+    expect(output.accountUpdate.spendableBalance).toEqual(new BigNumber(100000));
   });
 
   it("should merge new shielded operations and credit orchard balance for an incoming tx", () => {
@@ -326,9 +327,9 @@ describe("reduceShieldedSyncResult", () => {
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(incomingAmount);
-    // balance = transparent(100000) + orchard(5000)
-    expect(output.accountUpdate.balance).toEqual(initialBalance.plus(incomingAmount));
-    expect(output.accountUpdate.spendableBalance).toEqual(initialBalance.plus(incomingAmount));
+    // orchard is deprecated and excluded from the balance: balance = transparent(100000)
+    expect(output.accountUpdate.balance).toEqual(initialBalance);
+    expect(output.accountUpdate.spendableBalance).toEqual(initialBalance);
   });
 
   it("should accumulate orchard delta across chunks without touching the transparent balance", () => {
@@ -394,8 +395,8 @@ describe("reduceShieldedSyncResult", () => {
       "acc-1",
     );
     expect(chunk1.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(4000));
-    // balance = transparent(10000) + orchard(4000)
-    expect(chunk1.accountUpdate.balance).toEqual(new BigNumber(14000));
+    // orchard is deprecated and excluded from the balance: balance = transparent(10000)
+    expect(chunk1.accountUpdate.balance).toEqual(new BigNumber(10000));
 
     const chunk2 = reduceShieldedSyncResult(
       chunk1,
@@ -409,8 +410,8 @@ describe("reduceShieldedSyncResult", () => {
       "acc-1",
     );
     expect(chunk2.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(4500));
-    // balance = transparent(10000) + orchard(4500)
-    expect(chunk2.accountUpdate.balance).toEqual(new BigNumber(14500));
+    // orchard is deprecated and excluded from the balance: balance = transparent(10000)
+    expect(chunk2.accountUpdate.balance).toEqual(new BigNumber(10000));
   });
 
   it("should populate privateInfo in accountUpdate", () => {
@@ -529,8 +530,8 @@ describe("reduceShieldedSyncResult", () => {
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(1000));
-    // balance = transparent(100000) + orchard(1000)
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(101000));
+    // orchard is deprecated and excluded from the balance: balance = transparent(100000)
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(100000));
   });
 
   it("should compute private deltas for both orchard and sapling notes (LIVE-27917)", () => {
@@ -558,8 +559,8 @@ describe("reduceShieldedSyncResult", () => {
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(5000));
     expect(output.accountUpdate.privateInfo?.saplingBalance).toEqual(new BigNumber(0));
-    // balance = transparent(0) + orchard(5000)
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(5000));
+    // orchard/sapling are deprecated and excluded from the balance: balance = transparent(0)
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(0));
   });
 
   it("should credit orchard balance for a transparent→shielded (shielding) tx without touching the transparent balance", () => {
@@ -584,8 +585,8 @@ describe("reduceShieldedSyncResult", () => {
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(9000));
-    // balance = transparent(50000) + orchard(9000)
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(59000));
+    // orchard is deprecated and excluded from the balance: balance = transparent(50000)
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(50000));
   });
 
   it("should debit orchard balance for a shielded→transparent (deshielding) tx without touching the transparent balance", () => {
@@ -637,8 +638,8 @@ describe("reduceShieldedSyncResult", () => {
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(1000));
-    // balance = transparent(100000) + orchard(1000)
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(101000));
+    // orchard is deprecated and excluded from the balance: balance = transparent(100000)
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(100000));
   });
 
   it("should filter out already processed operations by blockHash", () => {
@@ -1238,7 +1239,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.balance).toEqual(new BigNumber(5_000_000));
   });
 
-  it("total balance includes ironwoodBalance alongside orchardBalance", () => {
+  it("total balance includes ironwoodBalance but excludes the deprecated orchardBalance", () => {
     const tx: ShieldedTransaction = {
       id: "tx-both",
       hex: "00",
@@ -1264,8 +1265,8 @@ describe("reduceShieldedSyncResult", () => {
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(2_000_000));
     expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(3_000_000));
-    // balance = transparent(1M) + orchard(2M) + ironwood(3M) = 6M
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(6_000_000));
+    // orchard is excluded: balance = transparent(1M) + ironwood(3M) = 4M
+    expect(output.accountUpdate.balance).toEqual(new BigNumber(4_000_000));
   });
 
   it("spentKnownNullifiers marks ironwood notes as spent and recomputes ironwoodBalance", () => {
