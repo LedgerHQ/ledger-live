@@ -10212,7 +10212,8 @@
       "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
-      "duplicateLabel": "This address name is already used for this contact."
+      "duplicateLabel": "This address name is already used for this contact.",
+      "labelTooLong": "This address name is too long."
     },
     "addAddressFlow": {
       "review": "Validation",

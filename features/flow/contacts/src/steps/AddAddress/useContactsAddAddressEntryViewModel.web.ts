@@ -58,6 +58,9 @@ export function useContactsAddAddressEntryViewModel({
   addressEntry,
   labels,
   onAddressChange,
+  addressLabel,
+  nameLabels,
+  onAddressLabelChange,
   onConfirm,
 }: ContactsAddAddressEntryWebProps): ContactsAddAddressEntryWebViewProps {
   const presentation = useMemo(
@@ -75,14 +78,30 @@ export function useContactsAddAddressEntryViewModel({
     },
     [addressEntry.value, onAddressChange],
   );
+  const onNameChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => onAddressLabelChange?.(event.target.value),
+    [onAddressLabelChange],
+  );
+  const nameValidationMessage = useMemo(
+    () =>
+      addressLabel?.validationError
+        ? nameLabels?.validationErrors[addressLabel.validationError]
+        : undefined,
+    [addressLabel?.validationError, nameLabels?.validationErrors],
+  );
+  const isNameValid = addressLabel === undefined || addressLabel.status === "valid";
 
   return {
     value: addressEntry.value,
     labels,
     ...presentation,
-    isConfirmEnabled: presentation.isConfirmEnabled && onConfirm !== undefined,
+    addressLabel,
+    nameLabels,
+    nameValidationMessage,
+    isConfirmEnabled: presentation.isConfirmEnabled && isNameValid && onConfirm !== undefined,
     onChange,
     onPaste,
+    onAddressLabelChange: onAddressLabelChange ? onNameChange : undefined,
     onConfirm,
   };
 }

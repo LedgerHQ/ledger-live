@@ -99,7 +99,11 @@ export type AddAddressFlowState =
     }>
   | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
   | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
-  | (NamedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
+  | (NamedAddAddressSession &
+      Readonly<{
+        status: "reviewingAddress";
+        origin: "addressDetails" | "addressName";
+      }>)
   | (NamedAddAddressSession & Readonly<{ status: "success" }>);
 
 export type AddAddressFlowViewModel = Readonly<{
@@ -109,6 +113,7 @@ export type AddAddressFlowViewModel = Readonly<{
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
   updateAddressLabel: (label: string) => void;
   confirmAddress: () => void;
+  continueFromAddressDetails: () => void;
   continueFromName: () => void;
   continueFromReview: () => void;
   goBack: () => void;

@@ -256,7 +256,7 @@ export function useAddAddressFlowViewModel({
   );
   const updateAddressLabel = useCallback((value: string) => {
     setState(currentState => {
-      if (currentState.status !== "namingAddress") {
+      if (currentState.status !== "enteringAddress" && currentState.status !== "namingAddress") {
         return currentState;
       }
 
@@ -302,15 +302,41 @@ export function useAddAddressFlowViewModel({
         selectedCurrencyId: currentState.selectedCurrencyId,
         addressEntry: currentState.addressEntry,
         addressLabel: currentState.addressLabel,
+        origin: "addressName",
       };
     });
   }, []);
+  const continueFromAddressDetails = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      if (
+        currentState.status !== "enteringAddress" ||
+        currentState.addressEntry.status !== "valid" ||
+        currentState.addressLabel.status !== "valid"
+      ) {
+        return currentState;
+      }
+
+      return {
+        status: "reviewingAddress",
+        selectedContactId: currentState.selectedContactId,
+        existingAddressLabels: currentState.existingAddressLabels,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+        addressLabel: currentState.addressLabel,
+        origin: "addressDetails",
+      };
+    });
+  }, [cancelAddressValidation]);
   const continueFromReview = useCallback(() => {
-    setState(currentState =>
-      currentState.status === "reviewingAddress"
-        ? { ...currentState, status: "success" }
-        : currentState,
-    );
+    setState(currentState => {
+      if (currentState.status !== "reviewingAddress") {
+        return currentState;
+      }
+
+      const { origin, ...session } = currentState;
+      return { ...session, status: "success" };
+    });
   }, []);
   const goBack = useCallback(() => {
     cancelAddressValidation();
@@ -328,8 +354,12 @@ export function useAddAddressFlowViewModel({
           };
         case "namingAddress":
           return { ...currentState, status: "enteringAddress" };
-        case "reviewingAddress":
-          return { ...currentState, status: "namingAddress" };
+        case "reviewingAddress": {
+          const { origin, ...session } = currentState;
+          return origin === "addressDetails"
+            ? { ...session, status: "enteringAddress" }
+            : { ...session, status: "namingAddress" };
+        }
         case "success":
           return currentState;
       }
@@ -348,6 +378,7 @@ export function useAddAddressFlowViewModel({
     updateAddress,
     updateAddressLabel,
     confirmAddress,
+    continueFromAddressDetails,
     continueFromName,
     continueFromReview,
     goBack,

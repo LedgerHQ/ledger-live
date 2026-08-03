@@ -1,6 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import type { ClipboardEvent } from "react";
-import { ContactAddressValueSchema } from "@domain/entity-contact";
+import {
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  ContactAddressValueSchema,
+} from "@domain/entity-contact";
+import type { ContactsAddAddressNameLabels } from "./AddressName/types";
 import type { ContactsAddAddressEntryWebProps } from "./ContactsAddAddressEntry.web.types";
 import type { AddAddressEntryLabels } from "./types";
 import { useContactsAddAddressEntryViewModel } from "./useContactsAddAddressEntryViewModel.web";
@@ -19,6 +23,16 @@ const labels: AddAddressEntryLabels = {
 const RESOLVED_ADDRESS = ContactAddressValueSchema.parse(
   "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
 );
+const nameLabels: ContactsAddAddressNameLabels = {
+  inputLabel: "Address name",
+  continueToReview: "Continue to review",
+  validAddress: "Valid address",
+  validationErrors: {
+    InvalidContactAddressLabelError: "Special characters are not allowed.",
+    DuplicateContactAddressLabelError: "Duplicate address name.",
+    ContactAddressLabelTooLongError: "Address name is too long.",
+  },
+};
 
 function renderViewModel(overrides: Partial<ContactsAddAddressEntryWebProps> = {}) {
   const onAddressChange = jest.fn();
@@ -109,5 +123,37 @@ describe("useContactsAddAddressEntryViewModel", () => {
     });
 
     expect(result.current.isConfirmEnabled).toBe(false);
+  });
+
+  it("should require a valid address label for the combined Desktop form", () => {
+    const onAddressLabelChange = jest.fn();
+    const { result } = renderViewModel({
+      addressEntry: {
+        status: "valid",
+        value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+        resolvedAddress: RESOLVED_ADDRESS,
+        inputMethod: "manual",
+      },
+      addressLabel: {
+        status: "invalid",
+        value: "Ethereum 💎",
+        label: null,
+        validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+      },
+      nameLabels,
+      onAddressLabelChange,
+      onConfirm: jest.fn(),
+    });
+
+    expect(result.current.isConfirmEnabled).toBe(false);
+    expect(result.current.nameValidationMessage).toBe("Special characters are not allowed.");
+
+    act(() => {
+      result.current.onAddressLabelChange?.({
+        target: { value: "Exchange" },
+      } as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(onAddressLabelChange).toHaveBeenCalledWith("Exchange");
   });
 });

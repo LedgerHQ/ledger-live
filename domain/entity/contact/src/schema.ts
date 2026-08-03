@@ -13,12 +13,16 @@ const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
 const ContactAddressLabelPattern = /^(?=.*[\p{L}\p{N}])[\p{L}\p{Mn}\p{Mc}\p{N}\p{P}\p{Zs}]+$/u;
 
+export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;
+
 export const ContactNameSchema = NonEmptyStringSchema.regex(
   ContactNamePattern,
   "Expected letters, spaces, apostrophes, or hyphens",
 );
 
-export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(ContactAddressLabelPattern);
+export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(ContactAddressLabelPattern).max(
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
+);
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;
 
