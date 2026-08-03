@@ -141,6 +141,13 @@ export type AddAddressNameLabels = Readonly<{
   validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
 }>;
 
+export type AddAddressCompletionLabels = Readonly<{
+  title: string;
+  continue: string;
+  successTitle: string;
+  close: string;
+}>;
+
 export type AddAddressPlaceholderViewProps = Readonly<{
   title: string;
   buttonLabel: string;
