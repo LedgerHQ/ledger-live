@@ -53,10 +53,6 @@ ipcMain.handle(
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
 
-ipcMain.handle("getPathUserData", () => app.getPath("userData"));
-
-ipcMain.handle("getPathHome", () => app.getPath("home"));
-
 ipcMain.handle(
   "export-operations",
   async (
