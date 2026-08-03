@@ -48,6 +48,14 @@ ipcMain.on(CHANNELS.bootstrap, event => {
   event.returnValue = buildBootstrap();
 });
 
+ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
+  getStore().set(key, value);
+});
+
+ipcMain.on(CHANNELS.storeClear, () => {
+  getStore().clear();
+});
+
 const isPlaywrightRun = () => {
   const value = process.env.PLAYWRIGHT_RUN;
   return !!value && value !== "0" && value !== "false";
