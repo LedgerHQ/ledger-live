@@ -319,7 +319,10 @@ function TopWalletFields({
             value={values.categoryCta}
             onChangeText={value => onChange("categoryCta", value)}
           />
-          <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s8", marginTop: "s8" }}>
+          <Text
+            typography="body2SemiBold"
+            lx={{ color: "base", marginBottom: "s8", marginTop: "s8" }}
+          >
             Card
           </Text>
         </>

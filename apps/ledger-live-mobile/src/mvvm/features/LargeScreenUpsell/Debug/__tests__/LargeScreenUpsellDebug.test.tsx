@@ -42,12 +42,10 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     lastSeenHint: "Now: null",
     handleToggleFlag: jest.fn(),
     isNanoSeen: false,
-    nanoSeenHint:
-      "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
+    nanoSeenHint: "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
     handleToggleNanoSeen: jest.fn(),
     isNanoSSeen: false,
-    nanoSSeenHint:
-      "Toggle on to mark Nano S only and clear every other seen device.",
+    nanoSSeenHint: "Toggle on to mark Nano S only and clear every other seen device.",
     handleToggleNanoSSeen: jest.fn(),
     hasSeenTouchscreen: false,
     seenDevicesHint:

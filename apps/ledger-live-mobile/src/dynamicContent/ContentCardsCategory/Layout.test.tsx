@@ -25,13 +25,7 @@ jest.mock("~/contentCards/layouts/carousel", () => {
   const { View, Text } = require("react-native");
   return {
     __esModule: true,
-    default: ({
-      items,
-      leadingSlide,
-    }: {
-      items: unknown[];
-      leadingSlide?: React.ReactNode;
-    }) => (
+    default: ({ items, leadingSlide }: { items: unknown[]; leadingSlide?: React.ReactNode }) => (
       <View testID="mock-carousel">
         {leadingSlide}
         <Text testID="carousel-item-count">{String(items.length)}</Text>

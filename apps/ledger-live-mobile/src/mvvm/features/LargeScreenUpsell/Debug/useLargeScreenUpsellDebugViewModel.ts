@@ -167,7 +167,7 @@ export function useLargeScreenUpsellDebugViewModel() {
   const isLnHomepagePlacementEnabled = feature?.params?.banners?.homepage ?? true;
   const isExcludedByHighTier = Boolean(
     isPersonalizedRecommendationsEnabled &&
-      mobileCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER),
+    mobileCards.some(c => c.extras.campaign === LNS_UPSELL_HIGH_TIER),
   );
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -234,9 +234,7 @@ export function useLargeScreenUpsellDebugViewModel() {
       if (seen) {
         dispatch(
           unsafe_setKnownDeviceModelIds(
-            Object.fromEntries(
-              ALL_DEVICE_MODEL_IDS.map(id => [id, id === DeviceModelId.nanoS]),
-            ),
+            Object.fromEntries(ALL_DEVICE_MODEL_IDS.map(id => [id, id === DeviceModelId.nanoS])),
           ),
         );
         return;
