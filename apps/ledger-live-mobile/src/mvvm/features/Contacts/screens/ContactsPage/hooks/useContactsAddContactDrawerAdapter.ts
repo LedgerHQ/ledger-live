@@ -16,7 +16,7 @@ import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 
 export function useContactsAddContactDrawerAdapter(
-  onSaveSuccess: () => void,
+  onSaveSuccess: () => void
 ): ContactsAddContactDrawerProps {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export function useContactsAddContactDrawerAdapter(
         return createdContact;
       },
     }),
-    [dispatch],
+    [dispatch]
   );
   const drawerViewModel = useAddContactDrawerViewModel({
     contactCreation,
@@ -48,11 +48,15 @@ export function useContactsAddContactDrawerAdapter(
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
       confirmName: t("contacts.addContactDrawer.confirmName"),
       nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
+        [INVALID_CONTACT_NAME_ERROR_NAME]: t(
+          "contacts.addContactDrawer.invalidNameError"
+        ),
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t(
+          "contacts.addContactDrawer.duplicateNameError"
+        ),
       },
     }),
-    [t],
+    [t]
   );
 
   return {

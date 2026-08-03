@@ -16,7 +16,7 @@ import { v4 as uuid } from "uuid";
 import { useDispatch } from "LLD/hooks/redux";
 
 export function useAddContactDialogAdapter(
-  onSaveSuccess: () => void,
+  onSaveSuccess: () => void
 ): ContactsAddContactDialogProps {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -35,9 +35,12 @@ export function useAddContactDialogAdapter(
         return createdContact;
       },
     }),
-    [dispatch],
+    [dispatch]
   );
-  const dialogViewModel = useAddContactDrawerViewModel({ contactCreation, onSaveSuccess });
+  const dialogViewModel = useAddContactDrawerViewModel({
+    contactCreation,
+    onSaveSuccess,
+  });
   const labels = useMemo<ContactsAddContactDialogLabels>(
     () => ({
       title: t("contacts.addContact"),
@@ -45,11 +48,15 @@ export function useAddContactDialogAdapter(
       namingDisclaimer: t("contacts.addContactDrawer.namingDisclaimer"),
       confirmName: t("contacts.addContact"),
       nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
+        [INVALID_CONTACT_NAME_ERROR_NAME]: t(
+          "contacts.addContactDrawer.invalidNameError"
+        ),
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t(
+          "contacts.addContactDrawer.duplicateNameError"
+        ),
       },
     }),
-    [t],
+    [t]
   );
 
   return {

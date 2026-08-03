@@ -33,18 +33,20 @@ describe("contact name validation", () => {
   });
 
   it("reports the stable InvalidContactNameError name for a non-empty invalid draft name", () => {
-    expect(getContactNameValidationError("Olive2")).toBe(INVALID_CONTACT_NAME_ERROR_NAME);
+    expect(getContactNameValidationError("Olive2")).toBe(
+      INVALID_CONTACT_NAME_ERROR_NAME
+    );
   });
 
   it("reports a duplicate name after trimming, normalizing, and folding case", () => {
     const existingNames = [ContactNameSchema.parse("Élodie")];
 
     expect(getContactNameValidationError(" e\u0301LODIE ", existingNames)).toBe(
-      DUPLICATE_CONTACT_NAME_ERROR_NAME,
+      DUPLICATE_CONTACT_NAME_ERROR_NAME
     );
     expect(isValidContactName(" e\u0301LODIE ", existingNames)).toBe(false);
     expect(normalizeContactNameForComparison(" Élodie ")).toBe(
-      normalizeContactNameForComparison("e\u0301LODIE"),
+      normalizeContactNameForComparison("e\u0301LODIE")
     );
   });
 
@@ -61,7 +63,9 @@ describe("contact name validation", () => {
   it("parseContactName throws DuplicateContactNameError for an existing name", () => {
     const existingNames = [ContactNameSchema.parse("Ada")];
 
-    expect(() => parseContactName(" ada ", existingNames)).toThrow(DuplicateContactNameError);
+    expect(() => parseContactName(" ada ", existingNames)).toThrow(
+      DuplicateContactNameError
+    );
   });
 
   it("parseContactName returns a parsed name for a valid draft name", () => {
@@ -97,7 +101,7 @@ describe("contact address label validation", () => {
 
   it("reports invalid non-ASCII characters for a non-empty draft label", () => {
     expect(getContactAddressLabelValidationError("Ethér")).toBe(
-      INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+      INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME
     );
     expect(isValidContactAddressLabel("Ethér")).toBe(false);
   });
@@ -105,15 +109,15 @@ describe("contact address label validation", () => {
   it("reports a duplicate within the existing labels", () => {
     const existingLabels = [ContactAddressLabelSchema.parse("Ethereum")];
 
-    expect(getContactAddressLabelValidationError(" ethereum ", existingLabels)).toBe(
-      DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-    );
+    expect(
+      getContactAddressLabelValidationError(" ethereum ", existingLabels)
+    ).toBe(DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME);
     expect(isValidContactAddressLabel("ETHEREUM", existingLabels)).toBe(false);
   });
 
   it("normalizes ASCII labels for comparison", () => {
     expect(normalizeContactAddressLabelForComparison(" Ethereum ")).toBe(
-      normalizeContactAddressLabelForComparison("ETHEREUM"),
+      normalizeContactAddressLabelForComparison("ETHEREUM")
     );
   });
 
@@ -124,9 +128,11 @@ describe("contact address label validation", () => {
   it("throws the matching domain error for invalid and duplicate labels", () => {
     const existingLabels = [ContactAddressLabelSchema.parse("Ethereum")];
 
-    expect(() => parseContactAddressLabel("Ethereum 💎")).toThrow(InvalidContactAddressLabelError);
+    expect(() => parseContactAddressLabel("Ethereum 💎")).toThrow(
+      InvalidContactAddressLabelError
+    );
     expect(() => parseContactAddressLabel("ethereum", existingLabels)).toThrow(
-      DuplicateContactAddressLabelError,
+      DuplicateContactAddressLabelError
     );
     expect(() => parseContactAddressLabel("Ethereum ".repeat(50))).toThrow(
       ContactAddressLabelTooLongError

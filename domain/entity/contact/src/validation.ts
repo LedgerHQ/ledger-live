@@ -38,7 +38,7 @@ export const CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME =
 
 export function getContactNameValidationError(
   draftName: string,
-  existingNames: readonly ContactName[] = [],
+  existingNames: readonly ContactName[] = []
 ): ContactNameValidationErrorName | null {
   const trimmedDraftName = draftName.trim();
 
@@ -54,7 +54,7 @@ export function getContactNameValidationError(
 
   const comparisonName = normalizeContactNameForComparison(parsed.data);
   return existingNames.some(
-    name => normalizeContactNameForComparison(name) === comparisonName,
+    (name) => normalizeContactNameForComparison(name) === comparisonName
   )
     ? DUPLICATE_CONTACT_NAME_ERROR_NAME
     : null;
@@ -62,7 +62,7 @@ export function getContactNameValidationError(
 
 export function isValidContactName(
   draftName: string,
-  existingNames: readonly ContactName[] = [],
+  existingNames: readonly ContactName[] = []
 ): boolean {
   return (
     draftName.trim().length > 0 &&
@@ -76,9 +76,12 @@ export function normalizeContactNameForComparison(name: string): string {
 
 export function parseContactName(
   draftName: string,
-  existingNames: readonly ContactName[] = [],
+  existingNames: readonly ContactName[] = []
 ): ContactName {
-  const validationError = getContactNameValidationError(draftName, existingNames);
+  const validationError = getContactNameValidationError(
+    draftName,
+    existingNames
+  );
 
   if (validationError === INVALID_CONTACT_NAME_ERROR_NAME) {
     throw new InvalidContactNameError();
@@ -97,13 +100,15 @@ export function parseContactName(
   return parsed.data;
 }
 
-export function normalizeContactAddressLabelForComparison(label: string): string {
+export function normalizeContactAddressLabelForComparison(
+  label: string
+): string {
   return label.trim().normalize("NFC").toLocaleLowerCase("en-US");
 }
 
 export function getContactAddressLabelValidationError(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = [],
+  existingLabels: readonly ContactAddressLabel[] = []
 ): ContactAddressLabelValidationErrorName | null {
   const trimmedDraftLabel = draftLabel.trim();
 
@@ -114,12 +119,17 @@ export function getContactAddressLabelValidationError(
   const parsed = ContactAddressLabelSchema.safeParse(trimmedDraftLabel);
 
   if (!parsed.success) {
-    return trimmedDraftLabel.length === 0 ? null : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
+    return trimmedDraftLabel.length === 0
+      ? null
+      : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
   }
 
-  const comparisonLabel = normalizeContactAddressLabelForComparison(parsed.data);
+  const comparisonLabel = normalizeContactAddressLabelForComparison(
+    parsed.data
+  );
   return existingLabels.some(
-    label => normalizeContactAddressLabelForComparison(label) === comparisonLabel,
+    (label) =>
+      normalizeContactAddressLabelForComparison(label) === comparisonLabel
   )
     ? DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME
     : null;
@@ -127,7 +137,7 @@ export function getContactAddressLabelValidationError(
 
 export function isValidContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = [],
+  existingLabels: readonly ContactAddressLabel[] = []
 ): boolean {
   return (
     draftLabel.trim().length > 0 &&
@@ -137,9 +147,12 @@ export function isValidContactAddressLabel(
 
 export function parseContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = [],
+  existingLabels: readonly ContactAddressLabel[] = []
 ): ContactAddressLabel {
-  const validationError = getContactAddressLabelValidationError(draftLabel, existingLabels);
+  const validationError = getContactAddressLabelValidationError(
+    draftLabel,
+    existingLabels
+  );
 
   if (validationError === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME) {
     throw new ContactAddressLabelTooLongError();
