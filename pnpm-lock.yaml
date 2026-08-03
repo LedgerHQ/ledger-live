@@ -1096,6 +1096,9 @@ importers:
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../../libs/transaction-observability
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/types-devices
@@ -1899,6 +1902,9 @@ importers:
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../../libs/transaction-observability
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/types-devices
@@ -10886,6 +10892,9 @@ importers:
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../speculos-transport
+      '@ledgerhq/transaction-observability':
+        specifier: workspace:^
+        version: link:../transaction-observability
       '@ledgerhq/wallet-api-acre-module':
         specifier: workspace:^
         version: link:../wallet-api-acre-module
@@ -14087,6 +14096,43 @@ importers:
         specifier: ^6.1.1
         version: 6.1.4
 
+  libs/transaction-observability:
+    dependencies:
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../evm-tools
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../types-live
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.35.0
+        version: 1.35.0(@ton/crypto@3.3.0)
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+
   libs/types-devices:
     devDependencies:
       '@swc/core':
@@ -15823,7 +15869,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -20296,6 +20342,9 @@ packages:
 
   '@ledgerhq/wallet-api-client@1.15.3':
     resolution: {integrity: sha512-S9tsiZqQG9tywOnT14MoWeyPvtN7A25Na/0+0/VBGiAyhbPdVJ+cCcyB7yODUOcZ2elscLSmckKb/rZw6IGSaw==}
+
+  '@ledgerhq/wallet-api-core@1.35.0':
+    resolution: {integrity: sha512-HPISSNlIxT4QsSki7eT3kVOijpZsy1JtqWOUERz+UJzmJ/oWwZF8+i39ZNd+Oaxp4yakFknFDlBt8f2FPXvYFA==}
 
   '@ledgerhq/wallet-api-core@2.0.0':
     resolution: {integrity: sha512-WS6xXJM+LBubSEyrxUF8Sss9hAHQf20cLacO+IgB7N40XQdhK754JBdDYnWoYQtEgeQMOSrEyMF40hkCHsI9nQ==}
@@ -26708,7 +26757,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -35928,6 +35977,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -48842,6 +48892,17 @@ snapshots:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/wallet-api-core': 2.0.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
+    transitivePeerDependencies:
+      - '@ton/crypto'
+      - encoding
+
+  '@ledgerhq/wallet-api-core@1.35.0(@ton/crypto@3.3.0)':
+    dependencies:
+      '@ledgerhq/errors': 6.37.0
+      '@stacks/transactions': 6.17.0
+      '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
+      bignumber.js: 9.1.2
+      zod: 4.4.3
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding

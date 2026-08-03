@@ -12,6 +12,8 @@ import { enabledExperimentalFeatures } from "~/renderer/experimental";
 import { crashReportingSelector } from "~/renderer/reducers/settings";
 import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
+import { setTransactionObserver, toSegmentTrackEvent } from "@ledgerhq/transaction-observability";
+import { track } from "~/renderer/analytics/segment";
 
 const MAX_KEYLEN = 32;
 
@@ -41,6 +43,44 @@ export const ConnectEnvsToDatadog = () => {
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
+
+  // Forward every transaction (sign/broadcast) log event to Segment/Mixpanel. Additive — the
+  // Datadog path (useBroadcast → broadcastLogger) is untouched. `track` self-gates on consent.
+  useEffect(() => {
+    return setTransactionObserver(event => {
+      const mapped = toSegmentTrackEvent(event);
+      if (mapped) track(mapped.event, mapped.properties);
+    });
+  }, []);
+
+  // Dev-only: log every transaction (sign/broadcast) log event emitted by the bridge seam,
+  // so wide sign/broadcast observability can be verified locally (all staking routes/coins).
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    return setTransactionObserver(event => {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[tx-observability] ${event.stage}/${event.status}`,
+        event.status === "failure"
+          ? {
+              flow: event.flow,
+              productFlow: event.productFlow,
+              currencyId: event.currencyId,
+              transactionType: event.transactionType,
+              errorCategory: event.errorCategory,
+              errorName: event.error.name,
+            }
+          : {
+              flow: event.flow,
+              productFlow: event.productFlow,
+              currencyId: event.currencyId,
+              transactionType: event.transactionType,
+              validators: event.validators,
+              manifestId: event.manifestId,
+            },
+      );
+    });
+  }, []);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)
