@@ -66,12 +66,6 @@ const CardAmount = styled(Text).attrs(() => ({
   color: "neutral.c80",
 }))``;
 
-const Unavailable = styled(Text).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 2,
-  color: "warning.c70",
-}))``;
-
 const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) => {
   const shieldedEnabled = useFeature("zcashShielded")?.enabled ?? false;
   const isZcash = account.type === "Account" && account.currency.id === "zcash";
@@ -92,20 +86,25 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
 
   if (!active) return null;
 
-  const sender: Sender = tx.sender ?? "public";
+  const sender: Sender = tx.sender === "private" ? "private" : "public";
 
   const privateInfo = (account as ZcashAccount).privateInfo;
   const fvkAvailable = Boolean(privateInfo?.ufvk);
   const orchardBalance = privateInfo?.orchardBalance ?? BigNumber(0);
   const saplingBalance = privateInfo?.saplingBalance ?? BigNumber(0);
+  // Only the Ironwood pool is spendable from the send flow; Sapling/Orchard send
+  // flows are deprecated, so the private card shows the Ironwood balance.
+  const ironwoodBalance = privateInfo?.ironwoodBalance ?? BigNumber(0);
 
   const totalBalance = account.balance ?? BigNumber(0);
-  const privateBalance = orchardBalance.plus(saplingBalance);
-  const transparentBalance = totalBalance.minus(privateBalance);
+  const transparentBalance = totalBalance
+    .minus(orchardBalance)
+    .minus(saplingBalance)
+    .minus(ironwoodBalance);
 
   const formatConfig = { showCode: true, discreet, locale };
   const transparentLabel = formatCurrencyUnit(unit, transparentBalance, formatConfig);
-  const privateLabel = formatCurrencyUnit(unit, privateBalance, formatConfig);
+  const privateLabel = formatCurrencyUnit(unit, ironwoodBalance, formatConfig);
 
   const select = (next: Sender) => {
     if (next === sender) return;
@@ -155,11 +154,6 @@ const ZcashTransferFromSelector = ({ account, transaction, onChange }: Props) =>
           <CardAmount>
             <Discreet>{privateLabel}</Discreet>
           </CardAmount>
-          {!fvkAvailable ? (
-            <Unavailable data-testid="transfer-from-private-unavailable">
-              <Trans i18nKey="zcash.shielded.send.transferFrom.private.unavailable" />
-            </Unavailable>
-          ) : null}
         </Card>
       </Box>
     </Box>

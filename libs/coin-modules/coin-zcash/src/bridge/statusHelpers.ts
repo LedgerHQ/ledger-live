@@ -5,7 +5,7 @@ import { ZcashSaplingRecipientNotSupported } from "../types/errors";
 import { classifyZcashRecipient } from "../logic/address";
 
 // Transfer types that actually spend transparent UTXOs as inputs. A pure
-// shielded send ("shielded" / "shielded-to-transparent") spends Orchard notes
+// shielded send ("shielded" / "shielded-to-transparent") spends Ironwood notes
 // only and must never pull in the account's transparent UTXOs -- so only
 // these types resolve to a non-empty transparent input set. "transparent"
 // (Public→Public t→t) is included: coin-zcash builds it as a PCZT that spends
