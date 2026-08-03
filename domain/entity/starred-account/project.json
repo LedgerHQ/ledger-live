@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-starred-account",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}
