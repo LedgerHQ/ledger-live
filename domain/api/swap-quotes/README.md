@@ -21,7 +21,21 @@ quotes stay with the caller.
   in the app's `rtkQueryApi.ts` so its reducer and middleware are wired up.
 - `buildQuotesParams`, `splitQuotes`, `transformFetchQuotesResponse` — the pure
   pieces of the request/response mapping, exported for testing and reuse.
-- The `Raw*` payload types plus `FetchQuotesResult` and `ResolvedQuotesInput`.
+- The zod schemas, and the `Raw*` payload types inferred from them.
+- `./store` — `setSwapQuotesStore` / `getSwapQuotesDispatch`, the dispatch holder
+  the endpoint runs against. `./store.standalone` builds a minimal store for
+  headless consumers.
+
+## Schema first
+
+`schema.ts` is the source of truth: every payload type in `types.ts` is
+`z.infer`red from it, and the fixtures are produced by parsing through it, so a
+fixture cannot drift from the contract.
+
+Validation in `transformFetchQuotesResponse` is **observational**: a row failing the schema is
+logged but still returned, because discarding it would make that provider's
+quote silently vanish on any unmodelled field. Tighten to drop-invalid once real
+payloads are known to conform.
 
 ## Usage
 

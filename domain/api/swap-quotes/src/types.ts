@@ -1,145 +1,60 @@
-import type { ProviderErrorCodes, QuotesInput } from "@ledgerhq/wallet-api-exchange-module";
+import type { QuotesInput } from "@ledgerhq/wallet-api-exchange-module";
+import type { z } from "zod";
+
+import type {
+  FetchQuotesResultSchema,
+  ProviderTypesSchema,
+  RawPermit2DetailsSchema,
+  RawPermit2DomainSchema,
+  RawPermit2MessageSchema,
+  RawPermit2SingleSchema,
+  RawPermit2TypesSchema,
+  RawQuoteApiResponseSchema,
+  RawQuoteApiSchema,
+  RawQuoteApprovalTransactionSchema,
+  RawQuoteCustomFieldsSchema,
+  RawQuoteErrorParameterSchema,
+  RawQuoteErrorSchema,
+  RawQuoteNetworkFeesSchema,
+  RawQuotePayoutNetworkFeesSchema,
+  RawQuoteSchema,
+  RawQuoteSlippageInfoSchema,
+  RawQuoteTagsSchema,
+  RawTokenAllowanceDataSchema,
+  TradeMethodSchema,
+} from "./schema";
+
+export type TradeMethod = z.infer<typeof TradeMethodSchema>;
+export type ProviderTypes = z.infer<typeof ProviderTypesSchema>;
+export type RawPermit2Domain = z.infer<typeof RawPermit2DomainSchema>;
+export type RawPermit2Details = z.infer<typeof RawPermit2DetailsSchema>;
+export type RawPermit2Single = z.infer<typeof RawPermit2SingleSchema>;
+export type RawPermit2Types = z.infer<typeof RawPermit2TypesSchema>;
+export type RawPermit2Message = z.infer<typeof RawPermit2MessageSchema>;
+export type RawQuoteSlippageInfo = z.infer<typeof RawQuoteSlippageInfoSchema>;
+export type RawQuoteNetworkFees = z.infer<typeof RawQuoteNetworkFeesSchema>;
+export type RawQuotePayoutNetworkFees = z.infer<typeof RawQuotePayoutNetworkFeesSchema>;
+export type RawQuoteTags = z.infer<typeof RawQuoteTagsSchema>;
+export type RawQuoteApprovalTransaction = z.infer<typeof RawQuoteApprovalTransactionSchema>;
+export type RawTokenAllowanceData = z.infer<typeof RawTokenAllowanceDataSchema>;
+export type RawQuoteCustomFields = z.infer<typeof RawQuoteCustomFieldsSchema>;
+export type RawQuote = z.infer<typeof RawQuoteSchema>;
+export type RawQuoteErrorParameter = z.infer<typeof RawQuoteErrorParameterSchema>;
+export type RawQuoteError = z.infer<typeof RawQuoteErrorSchema>;
+export type RawQuoteAPI = z.infer<typeof RawQuoteApiSchema>;
+export type RawQuoteAPIResponse = z.infer<typeof RawQuoteApiResponseSchema>;
+export type FetchQuotesResult = z.infer<typeof FetchQuotesResultSchema>;
 
 /**
  * A {@link QuotesInput} with the wallet-side lookups already resolved, so the
- * request can be built without access to accounts.
+ * request can be built without access to accounts. Not schema-derived:
+ * `QuotesInput` belongs to the published wallet-api wire contract.
  */
 export type ResolvedQuotesInput = QuotesInput & {
   sendAddress: string;
   receiveAddress: string;
   sendCurrencyId: string;
   receiveCurrencyId: string;
-};
-
-export type TradeMethod = "fixed" | "float";
-
-export type ProviderTypes = "DEX" | "CEX";
-
-export type RawPermit2Domain = {
-  name: string;
-  chainId: number;
-  verifyingContract: string;
-};
-
-export type RawPermit2Details = {
-  token: string;
-  amount: string;
-  expiration: string;
-  nonce: string;
-};
-
-export type RawPermit2Single = {
-  details: RawPermit2Details;
-  spender: string;
-  sigDeadline: string;
-};
-
-export type RawPermit2Types = {
-  EIP712Domain: { name: string; type: string }[];
-  PermitSingle: { name: string; type: string }[];
-  PermitDetails: { name: string; type: string }[];
-};
-
-export type RawPermit2Message = {
-  values: RawPermit2Single;
-  message: RawPermit2Single;
-  domain: RawPermit2Domain;
-  types: RawPermit2Types;
-  primaryType: "PermitSingle";
-};
-
-export type RawQuoteSlippageInfo = {
-  default: number;
-  minSlippage?: number;
-  maxSlippage?: number;
-};
-
-export type RawQuoteNetworkFees = {
-  value?: number;
-  currency: string;
-  gasLimit?: string;
-};
-
-export type RawQuotePayoutNetworkFees = {
-  value: number;
-  currency: string;
-};
-
-export type RawQuoteTags = {
-  isRegistrationRequired: boolean;
-  isTokenApprovalRequired: boolean;
-};
-
-export type RawQuoteApprovalTransaction = {
-  calldata: string;
-  from: string;
-  gasLimit: number;
-  gasPrice: number;
-  to: string;
-  value: string;
-};
-
-export type RawTokenAllowanceData = {
-  approvalTransaction?: RawQuoteApprovalTransaction;
-  approvedAmount?: string;
-  isApproved: boolean;
-};
-
-export type RawQuoteCustomFields = {
-  permitData?: Partial<RawPermit2Message>;
-  quote?: unknown;
-  priceRoute?: unknown;
-  "@type"?: string;
-  quoteId?: unknown;
-  quoteResponse?: {
-    typedData: Partial<RawPermit2Message>;
-    orderHash?: string;
-  };
-};
-
-export type RawQuote = {
-  amountFrom?: number;
-  amountToId?: unknown;
-  amountFromId?: unknown;
-  feeCurrency?: unknown;
-  amountTo: number;
-  currencyTicker?: string;
-  exchangeRate: number;
-  provider: string;
-  providerType: ProviderTypes;
-  providerURL?: string;
-  quoteId?: string;
-  slippage: number;
-  slippageInfo?: RawQuoteSlippageInfo;
-  type: TradeMethod;
-  networkFees: RawQuoteNetworkFees;
-  payoutNetworkFees?: RawQuotePayoutNetworkFees;
-  tags: RawQuoteTags;
-  key: string;
-  tokenAllowanceData?: RawTokenAllowanceData;
-  customFields?: RawQuoteCustomFields;
-  liquiditySource: "RFQ" | "AMM" | undefined;
-  errors?: unknown[];
-};
-
-export type RawQuoteErrorParameter = {
-  [key: string]: string;
-};
-
-export type RawQuoteError = {
-  code: ProviderErrorCodes | (string & {});
-  type: "float" | "fixed";
-  provider: string;
-  message: string;
-  parameter: RawQuoteErrorParameter;
-};
-
-export type RawQuoteAPI = RawQuote | RawQuoteError;
-export type RawQuoteAPIResponse = Array<RawQuoteAPI>;
-
-export type FetchQuotesResult = {
-  rawQuotes: RawQuote[];
-  providerErrors: RawQuoteError[];
 };
 
 export type FetchQuotesQueryArgs = {

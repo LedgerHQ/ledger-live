@@ -1,4 +1,4 @@
-import type { ResolvedQuotesInput } from "./types";
+import type { ResolvedQuotesInput } from "../types";
 
 export function makeQuotesInput(overrides: Partial<ResolvedQuotesInput> = {}): ResolvedQuotesInput {
   return {

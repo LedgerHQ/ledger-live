@@ -3,8 +3,8 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { getEnv, setEnv } from "@shared/env";
 
-import { makeQuotesInput } from "./quotesInput.fixture";
-import { makeRawQuote, makeRawQuoteError } from "./rawQuotes.fixture";
+import { makeQuotesInput } from "./fixtures/quotesInput";
+import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
 import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
 
 function createTestStore(extra: unknown) {

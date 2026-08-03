@@ -1,9 +1,11 @@
 import { ProviderErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 
-import type { RawQuote, RawQuoteError } from "./types";
+import { RawQuoteErrorSchema, RawQuoteSchema } from "../schema";
+import type { RawQuote, RawQuoteError } from "../types";
 
+/** Parsed through the schema, so a fixture cannot drift from the contract. */
 export function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
-  return {
+  return RawQuoteSchema.parse({
     provider: "lifi",
     providerType: "DEX",
     amountFrom: 1,
@@ -16,16 +18,16 @@ export function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
     key: "lifi-key",
     liquiditySource: "AMM",
     ...overrides,
-  };
+  });
 }
 
 export function makeRawQuoteError(overrides: Partial<RawQuoteError> = {}): RawQuoteError {
-  return {
+  return RawQuoteErrorSchema.parse({
     code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
     type: "float",
     provider: "okx",
     message: "amount out of range",
     parameter: { minAmount: "200000000" },
     ...overrides,
-  };
+  });
 }

@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query";
 import { createAuthenticatedBaseQuery } from "@shared/auth";
 import { getEnv } from "@shared/env";
 
+import { RawQuoteErrorSchema, RawQuoteSchema } from "./schema";
 import type {
   FetchQuotesQueryArgs,
   FetchQuotesResult,
@@ -50,9 +51,34 @@ export function splitQuotes(data: Array<RawQuote | RawQuoteError>): FetchQuotesR
   return { rawQuotes, providerErrors };
 }
 
-/** Only 2xx responses reach here; non-OK statuses surface as RTK Query errors. */
+/**
+ * Only 2xx responses reach here; non-OK statuses surface as RTK Query errors.
+ *
+ * Rows are validated but never discarded: a provider shipping an unexpected
+ * shape would otherwise make its quote silently vanish. Mismatches are logged
+ * so the schema can be tightened once real payloads are known to conform.
+ */
 export function transformFetchQuotesResponse(response: unknown): FetchQuotesResult {
-  return splitQuotes(Array.isArray(response) ? (response as Array<RawQuote | RawQuoteError>) : []);
+  if (!Array.isArray(response)) return { rawQuotes: [], providerErrors: [] };
+
+  const rows = response as Array<RawQuote | RawQuoteError>;
+  const result = splitQuotes(rows);
+
+  // Validate each row against the one schema it should match, rather than the
+  // union: a union failure reports both branches and buries the real issue.
+  for (const [schema, group] of [
+    [RawQuoteSchema, result.rawQuotes],
+    [RawQuoteErrorSchema, result.providerErrors],
+  ] as const) {
+    for (const row of group) {
+      const parsed = schema.safeParse(row);
+      if (!parsed.success) {
+        console?.warn("swapQuotesApi: /quote row did not match the schema", parsed.error.issues);
+      }
+    }
+  }
+
+  return result;
 }
 
 // `fetch` does not inherit the axios default headers `@ledgerhq/live-network` sets.

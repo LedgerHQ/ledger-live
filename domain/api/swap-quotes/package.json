@@ -7,6 +7,8 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./store": "./src/store/store.ts",
+    "./store.standalone": "./src/store/store.standalone.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,7 +23,8 @@
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/auth": "workspace:^",
-    "@shared/env": "workspace:*"
+    "@shared/env": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

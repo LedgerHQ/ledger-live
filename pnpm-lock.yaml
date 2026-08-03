@@ -3736,6 +3736,9 @@ importers:
       '@shared/env':
         specifier: workspace:*
         version: link:../../../shared/env
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'

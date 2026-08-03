@@ -1,4 +1,11 @@
 export { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
+export {
+  FetchQuotesResultSchema,
+  RawQuoteApiResponseSchema,
+  RawQuoteApiSchema,
+  RawQuoteErrorSchema,
+  RawQuoteSchema,
+} from "./schema";
 export type {
   FetchQuotesQueryArgs,
   FetchQuotesResult,
