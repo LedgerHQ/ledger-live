@@ -61,3 +61,13 @@ export function buildBootstrap(): Bootstrap {
 ipcMain.on(CHANNELS.bootstrap, event => {
   event.returnValue = buildBootstrap();
 });
+
+// Write-through for the store hydrated into the bootstrap snapshot. Fire-and-forget: the
+// renderer updates its own copy at the same time, so it never needs to wait for the disk.
+ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
+  getStore().set(key, value);
+});
+
+ipcMain.on(CHANNELS.storeClear, () => {
+  getStore().clear();
+});

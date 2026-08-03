@@ -40,6 +40,9 @@ const moduleNameMapper = {
   "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
     "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
   ...pathsToModuleNameMapper(compilerOptions.paths),
+  // Must precede the generic "~/(.*)" rule below, which would otherwise resolve this to
+  // the real module. The real bridge reads window.lld, which only the preload provides.
+  "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/lumen-ui-react$": "<rootDir>/node_modules/@ledgerhq/lumen-ui-react",
   "^@ledgerhq/lumen-ui-react/symbols$":
@@ -50,8 +53,6 @@ const moduleNameMapper = {
   "@lottiefiles/dotlottie-react": "<rootDir>/tests/mocks/dotlottie-react.tsx",
   "styled-components": require.resolve("styled-components"),
   electron: "<rootDir>/tests/mocks/electron.ts",
-  // The real bridge reads window.ledger, which only the preload provides.
-  "^~/renderer/bridge$": "<rootDir>/tests/mocks/bridge.ts",
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),
   "^react-redux": "<rootDir>/node_modules/react-redux",
