@@ -490,6 +490,22 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
+  it("should prevent confirmation for a sanctioned address", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: false });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.confirmAddress());
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: { status: "invalid", inputMethod: "manual", error: "sanctioned" },
+    });
+  });
+
   it("should keep ENS provenance when a resolved domain has an invalid format", async () => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({
@@ -510,6 +526,27 @@ describe("useAddAddressFlowViewModel", () => {
         resolvedAddress: null,
         inputMethod: "ens",
         error: "invalid_format",
+      },
+    });
+  });
+
+  it("should keep ENS provenance when a resolved domain is sanctioned", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: true });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress("ledger.eth", "manual"));
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: {
+        status: "invalid",
+        value: "ledger.eth",
+        resolvedAddress: null,
+        inputMethod: "ens",
+        error: "sanctioned",
       },
     });
   });
