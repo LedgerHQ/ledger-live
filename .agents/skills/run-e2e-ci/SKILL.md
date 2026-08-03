@@ -7,32 +7,60 @@ description: Trigger the on-demand E2E / Coin Tester CI workflows (Desktop E2E, 
 
 **When:** for changes that impact the e2e apps (desktop/mobile/coin logic), once the PR is getting ready for review. Desktop & Mobile E2E only run on a schedule + manual dispatch, so trigger them deliberately. Coin Tester already auto-runs on PRs for affected coins — only dispatch it to force a chain or re-run.
 
-**First scope it down.** Study the PR diff and its impact, then run only the subset that's truly needed instead of the full suite: choose which surfaces to run at all (desktop / mobile / coin), narrow with `test_filter` tags (`@bitcoin`, `@family-evm`, `@solana`, `@generic-coin-framework`, …), set Coin Tester `chain`, and limit Mobile `tests_type`. Full suite is slow and expensive — reserve it for broad/cross-cutting changes.
+## Scope it down first — filtered is the default, full suite is the exception
+
+**Always run the smallest subset that covers the change.** The full suite is slow, expensive, and competes for shared on-chain accounts, so run it **only** for genuinely cross-cutting changes — and when you do, **say why** in the PR comment. Derive the scope from the diff:
+
+| What the diff touches | How to scope |
+|---|---|
+| One coin module (`libs/coin-modules/coin-solana`) | `test_filter=@solana` + Coin Tester `chain=solana` |
+| A coin family (`**/families/evm`) | `test_filter=@family-evm` (or `@generic-coin-framework`) |
+| A specific spec / flow (`swap`, `subAccount`, `newSendFlow`) | `test_filter` with the tag or spec path |
+| Platform-specific (Android manifest, iOS plist) | narrow Mobile `tests_type` (`Android Only` / `iOS Only`); skip the other surfaces |
+| Desktop-only or Mobile-only change | run only that surface; skip the others + Coin Tester |
+| Shared / cross-cutting (build tooling, TS upgrade, currency core) | full suite — **and add a one-line rationale** |
+
+Filter tags: `@bitcoin`, `@family-evm`, `@solana`, `@generic-coin-framework`, `@smoke`, … See the [test-filter guide](../../../e2e/tooling/filter/test-filter-guide.md) for the grammar and the mobile (whole spec files by path/`@`-tag) vs desktop (test titles) matching difference.
+
+## Dispatch
 
 These are `workflow_dispatch` workflows — **no slash-command triggers them**. Dispatch with `gh`, which must run **outside the sandbox** (`dangerouslyDisableSandbox: true`).
 
-`gh workflow run --ref <branch>` is all you need: the workflows checkout `inputs.ref || github.sha`, so the optional "Specify branch" (`ref`) field can stay blank — it falls back to the commit `--ref` points to, which is the code actually pulled and tested. Run-names echo the branch, so use `gh run list` to confirm.
+`gh workflow run --ref <branch>` is all you need: the workflows checkout `inputs.ref || github.sha`, so the optional "Specify branch" (`ref`) field can stay blank — it falls back to the commit `--ref` points to. Run-names echo the branch, so use `gh run list` to confirm.
 
 ```bash
-BR=<branch>   # PR head branch
-gh workflow run test-ui-e2e-only-desktop.yml --ref "$BR"
-gh workflow run test-mobile-e2e-reusable.yml --ref "$BR" -f tests_type="iOS & Android" -f speculos_device=nanoX
-gh workflow run test-coin-tester.yml --ref "$BR"
-gh run list --branch "$BR" --limit 6   # grab the 3 run IDs
+BR=<branch>            # PR head branch
+TAGS=<derived-filter>  # e.g. "@solana" — see the table above. Drop -f test_filter ONLY for a justified full suite.
+
+# Filtered runs (preferred). Narrow tests_type when the change is platform-specific.
+gh workflow run test-ui-e2e-only-desktop.yml --ref "$BR" -f test_filter="$TAGS"
+gh workflow run test-mobile-e2e-reusable.yml --ref "$BR" -f test_filter="$TAGS" -f tests_type="iOS & Android" -f speculos_device=nanoX
+gh workflow run test-coin-tester.yml --ref "$BR" -f chain="solana"   # or omit -f chain to auto-detect affected coins
+
+gh run list --branch "$BR" --limit 6   # grab the run IDs
 ```
 
-Mobile **requires** `tests_type` (`Android Only`|`iOS Only`|`iOS & Android`) and `speculos_device` (`nanoS`|`nanoSP`|`nanoX`|`stax`|`flex`|`nanoGen5`). Desktop defaults to Speculos nanoSP. Coin Tester auto-detects affected coins (or `-f chain="evm,solana"`). Optional Desktop/Mobile filter: `-f test_filter="@bitcoin,@family-evm"`.
+Mobile **requires** `tests_type` (`Android Only`|`iOS Only`|`iOS & Android`) and `speculos_device` (`nanoS`|`nanoSP`|`nanoX`|`stax`|`flex`|`nanoGen5`). Desktop defaults to Speculos nanoSP. Coin Tester auto-detects affected coins (or `-f chain="evm,solana"`).
 
-Then post the run on the PR (`gh pr comment <pr> --body ...`, use `--edit-last` to update):
+**Verify the filter took effect:** open the run's Summary → **Resolved filtered pattern** and confirm it matched specs. A mistyped filter that matches 0 specs runs nothing (the run also emits a "filter has no matches" warning).
+
+## Post the run on the PR
+
+Fill the **Scope** column with the actual filter used (never a hardcoded "full suite"), and add a **rationale** line stating what you scoped to and why the other surfaces were skipped. Post with `gh pr comment <pr> --body ...` (`--edit-last` to update):
 
 ```markdown
 ## 🧪 Triggered test workflows
 
-Manually dispatched on `<branch>` (commit <short-sha>, `git rev-parse --short HEAD`), full suite:
+Manually dispatched on `<branch>` (commit <short-sha>, `git rev-parse --short HEAD`), scoped to <scope>:
 
 | Workflow | Scope | Run |
 |---|---|---|
-| [Desktop] E2E Only | full suite, Speculos nanoSP | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
-| [Mobile] E2E Only | full suite, iOS & Android, nanoX | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
-| [Coin] Test Coin modules | affected coins (auto-detected) | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
+| [Desktop] E2E Only | `<@tag>` filter, Speculos nanoSP | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
+| [Mobile] E2E Only | `<@tag>` filter, <tests_type>, nanoX | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
+| [Coin] Test Coin modules | `chain=<...>` (or affected coins) | [run <id>](https://github.com/LedgerHQ/ledger-live/actions/runs/<id>) |
+
+Scope rationale: <which surfaces changed, what you filtered to, and why the rest were skipped>.
 ```
+
+Only write "full suite" when you deliberately ran everything, and keep the rationale line explaining why the change is cross-cutting enough to need it.
+
