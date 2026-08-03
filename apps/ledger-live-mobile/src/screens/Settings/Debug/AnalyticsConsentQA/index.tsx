@@ -30,6 +30,7 @@ import {
   resolveBaselinePolicyVersion,
   resolveScenarioConsentDate,
   resolveScenarioVersions,
+  resolveStoredPolicyInspectorStatus,
   SCENARIO_GROUPS,
   SYNTHETIC_BASELINE,
   VERDICT_META,
@@ -138,14 +139,11 @@ function buildInspectorFields(
     storedPolicyValue = "Invalid";
   }
 
-  let storedPolicyStatus: InspectorField["status"];
-  if (consentInfo.privacyPolicyVersion === null) {
-    storedPolicyStatus = { label: "Missing", tone: "error" };
-  } else if (storedVersion) {
-    storedPolicyStatus = { label: "Valid", tone: "success" };
-  } else {
-    storedPolicyStatus = { label: "Invalid", tone: "error" };
-  }
+  const storedPolicyStatus = resolveStoredPolicyInspectorStatus(
+    consentInfo.privacyPolicyVersion,
+    storedVersion,
+    currentPolicyVersion,
+  );
 
   let consentDateValue: string;
   if (formattedConsentDate) {
