@@ -18,7 +18,7 @@ import type { EvmSignablePayload, OpenLoan } from "./types";
 // Public, keyless Ethereum mainnet RPC used when neither --rpc nor EVM_RPC_URL is set.
 export const DEFAULT_RPC_URL = "https://ethereum-rpc.publicnode.com";
 
-export type Flow = "open" | "close" | "repay" | "withdraw";
+export type Flow = "open" | "close" | "repay" | "withdraw" | "address";
 
 export interface BorrowFlowOptions {
   flow: Flow;
@@ -44,7 +44,11 @@ export interface BorrowFlowOptions {
   loanAmount?: string;
   repayAmount?: string;
   withdrawAmount?: string;
+  requireAction?: boolean;
+  returnAddress?: boolean;
 }
+
+export type BorrowFlowOptionsWithoutAddress = Omit<BorrowFlowOptions, "returnAddress">;
 
 const positive = (v?: string): boolean => v != null && Number.parseFloat(v) > 0;
 
@@ -93,9 +97,18 @@ async function open(
   if (!opts.collateralAmount || !opts.loanAmount) {
     throw new Error("open requires --collateral-amount and --loan-amount");
   }
-  if (!opts.force && findPositions(await getPositions(address)).length > 0) {
-    console.log("Position already open — skipping. Use --force.");
-    return;
+  if (!opts.force) {
+    const positions = findPositions(await getPositions(address));
+    if (positions.some(loan => positive(loan.debtBalance))) {
+      console.log("Loan with debt already open — skipping. Use --force.");
+      return;
+    }
+    if (positions.length > 0) {
+      console.log(
+        "Collateral-only position found — skipping open. Reset loan state before ensureLoanOpen.",
+      );
+      return;
+    }
   }
   const dryRun = opts.dryRun ?? false;
   console.log(`Opening loan on market=${marketId}`);
@@ -174,7 +187,9 @@ async function close(
       relevantToFlow(opts.flow, loan),
     );
     if (loans.length === 0) {
-      console.log(nothingToDoMessage(opts.flow));
+      const message = nothingToDoMessage(opts.flow);
+      if (opts.requireAction) throw new Error(message);
+      console.log(message);
       return;
     }
     if (!opts.all) {
@@ -201,7 +216,11 @@ async function close(
  * `COINAPPS`. Pass `speculosApiPort` to reuse an already-running device (the
  * caller then owns its lifecycle and on-device approval).
  */
-export async function runBorrow(options: BorrowFlowOptions): Promise<void> {
+export function runBorrow(
+  options: BorrowFlowOptionsWithoutAddress & { returnAddress: true },
+): Promise<string>;
+export function runBorrow(options: BorrowFlowOptionsWithoutAddress): Promise<void>;
+export async function runBorrow(options: BorrowFlowOptions): Promise<string | void> {
   // SEED is sourced from the environment only — never a CLI flag, never logged.
   const { path, specKey } = resolveAccount(options.account ?? "ETH_4");
 
@@ -245,11 +264,16 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<void> {
     try {
       const address = await executor.getAddress();
       console.log(`Account ${options.account ?? "ETH_4"}: ${address} (Ethereum, staging)`);
+      if (options.flow === "address") {
+        if (options.returnAddress) return address;
+        return;
+      }
       if (options.flow === "open") {
         await open(executor, address, options);
       } else {
         await close(executor, address, options);
       }
+      if (options.returnAddress) return address;
     } finally {
       executor.dispose();
     }
@@ -258,8 +282,14 @@ export async function runBorrow(options: BorrowFlowOptions): Promise<void> {
   }
 }
 
-export const openBorrowPosition = (options: Omit<BorrowFlowOptions, "flow">): Promise<void> =>
-  runBorrow({ ...options, flow: "open" });
+export const openBorrowPosition = (
+  options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
+): Promise<void> => runBorrow({ ...options, flow: "open" });
 
-export const closeBorrowPosition = (options: Omit<BorrowFlowOptions, "flow">): Promise<void> =>
-  runBorrow({ ...options, flow: "close" });
+export const closeBorrowPosition = (
+  options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
+): Promise<void> => runBorrow({ ...options, flow: "close" });
+
+export const repayBorrowPosition = (
+  options: Omit<BorrowFlowOptionsWithoutAddress, "flow">,
+): Promise<void> => runBorrow({ ...options, flow: "repay" });

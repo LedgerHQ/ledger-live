@@ -14,6 +14,7 @@ import {
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
+import { useFeature } from "@features/platform-feature-flags";
 import React, { useCallback } from "react";
 import { Keyboard } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -40,6 +41,8 @@ export function AddressMatchedSection({
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
+  const isFirstInteractionBannerEnabled =
+    useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
   const helpSheetRef = useBottomSheetRef();
   const openHelpSheet = useCallback(() => {
     Keyboard.dismiss();
@@ -157,7 +160,8 @@ export function AddressMatchedSection({
         )}
       </Box>
       <Box lx={{ flexDirection: "column", marginVertical: "s16", marginHorizontal: "s8" }}>
-        {searchResult.isFirstInteraction &&
+        {isFirstInteractionBannerEnabled &&
+          searchResult.isFirstInteraction &&
           !isSanctioned &&
           !hasBridgeError &&
           isAddressComplete && (

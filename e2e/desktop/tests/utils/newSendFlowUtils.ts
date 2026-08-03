@@ -6,6 +6,7 @@ import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { buildTags } from "tests/utils/tagsUtils";
 
@@ -80,6 +81,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         speculosApp: tx.accountToDebit.currency.speculosApp,
         cliCommands: [liveDataWithRecipientAddressCommand(tx)],
         featureFlags: {
+          ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           newSendFlow: {
             enabled: true,
             params: { families: NEW_SEND_FLOW_FAMILIES },

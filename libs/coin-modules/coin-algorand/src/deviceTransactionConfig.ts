@@ -2,7 +2,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
-import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { extractTokenId } from "./tokens";
 import type { AlgorandTransaction, Transaction, TransactionStatus } from "./types";

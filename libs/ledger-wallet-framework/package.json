@@ -115,7 +115,8 @@
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
-    "uuid": "11.1.0"
+    "uuid": "11.1.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",

@@ -3,7 +3,12 @@ import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers"
 
 export const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"] as const;
 
-const LNS_UNSUPPORTED_CURRENCIES = new Set([Currency.SUI.id, Currency.VET.id, Currency.HBAR.id]);
+const LNS_UNSUPPORTED_CURRENCIES = new Set([
+  Currency.SUI.id,
+  Currency.VET.id,
+  Currency.HBAR.id,
+  Currency.ALEO.id,
+]);
 
 export function shouldSkipLNSTag(currencyId: string): boolean {
   return LNS_UNSUPPORTED_CURRENCIES.has(currencyId);

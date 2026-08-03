@@ -9,6 +9,10 @@ export class BorrowPage extends WebViewAppPage {
   private readonly borrowRoutePattern = /\/borrow/;
   private readonly simulateLoanRoutePattern = /\/loan\/simulate-loan/;
   private readonly loanExecutionRoutePattern = /\/loan\/loan-execution/;
+  private readonly loanOverviewRoutePattern = /\/loanoverview\//;
+  private readonly repayExecutionRoutePattern = /\/forms\/repay\/[^/]+\/execute/;
+  private readonly withdrawOverviewRoutePattern = /\/withdrawoverview\//;
+  private readonly withdrawExecutionRoutePattern = /\/forms\/withdraw\//;
 
   // --- Borrow webview test ids (mirror borrow-live-app/packages/features/src/testIds.ts) ---
   private readonly introModalId = "borrow-intro-modal";
@@ -30,13 +34,31 @@ export class BorrowPage extends WebViewAppPage {
   private readonly loanCompletionCardId = "borrow-loan-completion-card";
   private readonly viewMyLoanButtonId = "borrow-view-my-loan-button";
   private readonly yourLoansTitleId = "borrow-your-loans-title";
+  private readonly loansDashboardId = "borrow-loans-dashboard";
+  private readonly repayButtonId = "borrow-repay-button";
+  private readonly loanOverviewScreenId = "borrow-loan-overview-screen";
+  private readonly loanDashboardRowId = "borrow-loan-dashboard-row";
+  private readonly repayModalId = "borrow-repay-modal";
+  private readonly repayInFullButtonId = "borrow-repay-in-full-button";
+  private readonly repayContinueButtonId = "borrow-repay-continue-button";
+  private readonly repayExecutionScreenId = "borrow-repay-execution-screen";
+  private readonly authorizeRepayButtonId = "borrow-authorize-repay-button";
+  private readonly repayStep1AccessApprovedId = "borrow-repay-step-1-access-approved";
+  private readonly repayStep2RepayDoneId = "borrow-repay-step-2-repay-done";
+  private readonly repayCompletionCardId = "borrow-repay-completion-card";
+  private readonly withdrawOverviewScreenId = "borrow-withdraw-overview-screen";
+  private readonly withdrawCollateralButtonId = "borrow-withdraw-collateral-button";
+  private readonly withdrawExecutionScreenId = "borrow-withdraw-execution-screen";
+  private readonly authorizeWithdrawButtonId = "borrow-authorize-withdraw-button";
+  private readonly withdrawStepDoneId = "borrow-withdraw-step-done";
+  private readonly withdrawCompletionCardId = "borrow-withdraw-completion-card";
+  private readonly backToMyLoansButtonId = "borrow-back-to-my-loans-button";
 
   private readonly hostContinueLabel = "Continue";
   private readonly hostSignModalTextPattern = /Approve token|Sign transaction/i;
   private readonly mainnetFundingHint =
     "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
-  /** Partner polls mainnet after each signed tx; deposit step ETA is ~2 min. */
   private readonly executionStepTimeoutMs = 240_000;
 
   // --- Host (LLD) locators ---
@@ -146,12 +168,60 @@ export class BorrowPage extends WebViewAppPage {
       .or(this.getNewLoanBtn(webview));
   }
 
-  private borrowStepCompleteIndicator(webview: Page) {
-    return webview
-      .getByTestId(this.step3BorrowDoneId)
-      .or(this.loanCompletionCard(webview))
-      .or(this.viewMyLoanBtn(webview))
-      .or(this.executionError(webview));
+  private loansDashboard(webview: Page) {
+    return webview.getByTestId(this.loansDashboardId);
+  }
+
+  private loanDashboardRow(webview: Page) {
+    return webview.getByTestId(this.loanDashboardRowId);
+  }
+
+  private loanOverviewScreen(webview: Page) {
+    return webview.getByTestId(this.loanOverviewScreenId);
+  }
+
+  private repayBtn(webview: Page) {
+    return webview.getByTestId(this.repayButtonId);
+  }
+
+  private repayModal(webview: Page) {
+    return webview.getByTestId(this.repayModalId);
+  }
+
+  private repayInFullBtn(webview: Page) {
+    return webview.getByTestId(this.repayInFullButtonId);
+  }
+
+  private repayContinueBtn(webview: Page) {
+    return webview.getByTestId(this.repayContinueButtonId);
+  }
+
+  private repayExecutionScreen(webview: Page) {
+    return webview.getByTestId(this.repayExecutionScreenId);
+  }
+
+  private authorizeRepayBtn(webview: Page) {
+    return webview.getByTestId(this.authorizeRepayButtonId);
+  }
+
+  private withdrawOverviewScreen(webview: Page) {
+    return webview.getByTestId(this.withdrawOverviewScreenId);
+  }
+
+  private withdrawCollateralBtn(webview: Page) {
+    return webview.getByTestId(this.withdrawCollateralButtonId);
+  }
+
+  private withdrawExecutionScreen(webview: Page) {
+    return webview.getByTestId(this.withdrawExecutionScreenId);
+  }
+
+  private authorizeWithdrawBtn(webview: Page) {
+    return webview.getByTestId(this.authorizeWithdrawButtonId);
+  }
+
+  private backToMyLoansBtn(webview: Page) {
+    return webview.getByTestId(this.backToMyLoansButtonId);
   }
 
   @step("Go and wait for Borrow cold-start entry")
@@ -242,25 +312,83 @@ export class BorrowPage extends WebViewAppPage {
     await expect(this.executionFlowEntryBtn(webview)).toBeVisible();
   }
 
+  private async waitForExecutionStep(
+    screen: ReturnType<Page["locator"]>,
+    markers: ReturnType<Page["locator"]>[],
+    timeoutMs = 60_000,
+  ): Promise<void> {
+    await expect
+      .poll(
+        async () => {
+          for (const marker of markers) {
+            if (await marker.isVisible()) return true;
+          }
+          return false;
+        },
+        { timeout: timeoutMs },
+      )
+      .toBe(true);
+  }
+
+  private async clickGiveApprovalWhenReady(
+    stepDone: ReturnType<Page["locator"]>,
+    giveApproval: ReturnType<Page["locator"]>,
+    nextAuthorize: ReturnType<Page["locator"]>,
+    stepLabel: string,
+  ): Promise<boolean> {
+    const deadline = Date.now() + 60_000;
+    while (Date.now() < deadline) {
+      if (await stepDone.isVisible()) return false;
+      if (await nextAuthorize.isEnabled()) return false;
+      if ((await giveApproval.isVisible()) && (await giveApproval.isEnabled())) {
+        await giveApproval.click();
+        return true;
+      }
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    if (await stepDone.isVisible()) return false;
+    if (await nextAuthorize.isEnabled()) return false;
+    throw new Error(
+      `${stepLabel}: give approval did not become clickable or auto-complete within 60s`,
+    );
+  }
+
   @step("Check if Give approval step is required")
   async isGiveApprovalRequired() {
     const webview = await this.getWebView();
+    const screen = this.loanExecutionScreen(webview);
+    await expect(screen).toBeVisible();
+
+    const step1Done = screen.getByTestId(this.step1AccessApprovedId);
     const giveApproval = this.giveApprovalBtn(webview);
     const authorizeDepositing = this.authorizeDepositingBtn(webview);
-    await expect(giveApproval.or(authorizeDepositing)).toBeVisible({ timeout: 60_000 });
-    return giveApproval.isVisible();
+
+    if (await step1Done.isVisible()) return false;
+    if (await authorizeDepositing.isEnabled()) return false;
+    return (await giveApproval.isVisible()) && (await giveApproval.isEnabled());
+  }
+
+  @step("Complete Give approval step if required")
+  async completeGiveApprovalIfRequired(): Promise<boolean> {
+    const webview = await this.getWebView();
+    const screen = this.loanExecutionScreen(webview);
+    await expect(screen).toBeVisible();
+    return this.clickGiveApprovalWhenReady(
+      screen.getByTestId(this.step1AccessApprovedId),
+      this.giveApprovalBtn(webview),
+      this.authorizeDepositingBtn(webview),
+      "Open loan Step 1 approval",
+    );
   }
 
   @step("Click Give approval")
   async clickGiveApproval() {
     const webview = await this.getWebView();
-    await this.giveApprovalBtn(webview).click();
+    const giveApproval = this.giveApprovalBtn(webview);
+    await expect(giveApproval).toBeEnabled();
+    await giveApproval.click();
   }
 
-  /**
-   * Swap uses #sign-summary-continue-button; borrow host modal often only exposes role-based
-   * Continue.
-   */
   @step("Click Continue on host sign modal")
   async clickSignSummaryContinue() {
     await expect(this.hostSignModal).toBeVisible();
@@ -309,17 +437,48 @@ export class BorrowPage extends WebViewAppPage {
     await expect(this.modalBackdrop).toBeHidden({ timeout: 120_000 });
   }
 
-  private async expectExecutionStepOutcome(webview: Page, doneTestId: string, stepLabel: string) {
-    const done = this.executionStepDone(webview, doneTestId);
-    const error = this.executionError(webview);
+  @step("Complete host device signature")
+  async completeHostDeviceSignature(signOnDevice: () => Promise<void>) {
+    await this.clickSignSummaryContinue();
+    await Promise.all([this.waitForHostDeviceValidation(), signOnDevice()]);
+    await this.waitForHostSignModalClosed();
+  }
 
-    await expect(done.or(error)).toBeVisible({ timeout: this.executionStepTimeoutMs });
-
-    if (await this.isExecutionErrorVisible(webview)) {
-      throw new Error(
-        `Borrow execution step failed in webview (${stepLabel}, ${doneTestId}). ${this.mainnetFundingHint}`,
-      );
+  @step("Click Try again on borrow execution error")
+  async clickExecutionTryAgainIfVisible(): Promise<boolean> {
+    const webview = await this.getWebView();
+    const tryAgain = webview.getByRole("button", { name: "Try again" });
+    if (await tryAgain.isVisible()) {
+      await tryAgain.click();
+      return true;
     }
+    return false;
+  }
+
+  private async expectFlowComplete(
+    webview: Page,
+    successMarkers: ReturnType<Page["locator"]>[],
+    stepLabel: string,
+  ): Promise<void> {
+    const deadline = Date.now() + this.executionStepTimeoutMs;
+    while (Date.now() < deadline) {
+      for (const marker of successMarkers) {
+        if (await marker.isVisible()) return;
+      }
+      await new Promise(resolve => setTimeout(resolve, 1_000));
+    }
+    if (await this.isExecutionErrorVisible(webview)) {
+      throw new Error(`${stepLabel} failed in webview. ${this.mainnetFundingHint}`);
+    }
+    throw new Error(`${stepLabel} timed out after ${this.executionStepTimeoutMs}ms`);
+  }
+
+  private async expectExecutionStepOutcome(webview: Page, doneTestId: string, stepLabel: string) {
+    await this.expectFlowComplete(
+      webview,
+      [this.executionStepDone(webview, doneTestId)],
+      `Borrow execution step (${stepLabel}, ${doneTestId})`,
+    );
   }
 
   @step("Wait for Step 1 approval to complete")
@@ -339,13 +498,15 @@ export class BorrowPage extends WebViewAppPage {
   @step("Wait for Step 3 borrow to complete")
   async expectBorrowStepCompleted() {
     const webview = await this.getWebView();
-    await expect(this.borrowStepCompleteIndicator(webview).first()).toBeVisible({
-      timeout: this.executionStepTimeoutMs,
-    });
-
-    if (await this.isExecutionErrorVisible(webview)) {
-      throw new Error(`Borrow Step 3 failed in webview. ${this.mainnetFundingHint}`);
-    }
+    await this.expectFlowComplete(
+      webview,
+      [
+        webview.getByTestId(this.step3BorrowDoneId),
+        this.loanCompletionCard(webview),
+        this.viewMyLoanBtn(webview),
+      ],
+      "Borrow Step 3",
+    );
   }
 
   @step("Click Authorize depositing")
@@ -370,5 +531,210 @@ export class BorrowPage extends WebViewAppPage {
     await expect(this.loanSuccessIndicator(webview).first()).toBeVisible({
       timeout: 60_000,
     });
+  }
+
+  @step("Go and wait for Borrow hot-start dashboard")
+  async goAndWaitForBorrowHotStart(entryFn: () => Promise<void>) {
+    this._webviewPage = undefined;
+    await entryFn();
+    await expect(this.page).toHaveURL(this.borrowRoutePattern);
+    const webview = await this.getWebView();
+    await expect(this.loansDashboard(webview)).toBeVisible({ timeout: 60_000 });
+  }
+
+  @step("Click the active loan on the dashboard")
+  async clickActiveLoanDashboardRow() {
+    const webview = await this.getWebView();
+    const rows = this.loanDashboardRow(webview);
+    await expect(rows).toHaveCount(1, { timeout: 60_000 });
+
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await rows.first().click();
+      try {
+        await expect(webview).toHaveURL(this.loanOverviewRoutePattern, { timeout: 20_000 });
+        await expect(this.loanOverviewScreen(webview)).toBeVisible();
+        await expect(this.repayBtn(webview)).toBeEnabled();
+        return;
+      } catch {
+        await webview.reload();
+        await expect(this.loansDashboard(webview)).toBeVisible({ timeout: 60_000 });
+        await expect(rows).toHaveCount(1);
+      }
+    }
+
+    await expect(webview).toHaveURL(this.loanOverviewRoutePattern);
+    await expect(this.loanOverviewScreen(webview)).toBeVisible();
+    await expect(this.repayBtn(webview)).toBeEnabled();
+  }
+
+  @step("Click the repaid loan on the dashboard")
+  async clickRepaidLoanDashboardRow() {
+    const webview = await this.getWebView();
+    const rows = this.loanDashboardRow(webview);
+    await expect(rows).toHaveCount(1, { timeout: 60_000 });
+    const row = rows.first();
+    await expect(row).toBeVisible();
+    await row.click();
+    await expect(webview).toHaveURL(this.withdrawOverviewRoutePattern);
+    await expect(this.withdrawOverviewScreen(webview)).toBeVisible();
+  }
+
+  @step("Verify loan overview screen is visible")
+  async expectLoanOverviewVisible() {
+    const webview = await this.getWebView();
+    await expect(webview).toHaveURL(this.loanOverviewRoutePattern);
+    await expect(this.loanOverviewScreen(webview)).toBeVisible();
+  }
+
+  @step("Click Repay on loan overview")
+  async clickRepay() {
+    const webview = await this.getWebView();
+    const repayButton = this.repayBtn(webview);
+    await expect(repayButton).toBeEnabled();
+    await repayButton.click();
+    await expect(this.repayModal(webview)).toBeVisible();
+  }
+
+  @step("Repay in full and continue to execution")
+  async submitRepayInFull() {
+    const webview = await this.getWebView();
+    const repayInFullButton = this.repayInFullBtn(webview);
+    await expect(repayInFullButton).toBeEnabled();
+    await repayInFullButton.click();
+    const continueButton = this.repayContinueBtn(webview);
+    await expect(continueButton).toBeEnabled({ timeout: 30_000 });
+    await continueButton.click();
+    await expect(this.repayModal(webview)).toBeHidden();
+    await expect(webview).toHaveURL(this.repayExecutionRoutePattern);
+    await expect(this.repayExecutionScreen(webview)).toBeVisible();
+  }
+
+  @step("Check if repay Give approval step is required")
+  async isRepayGiveApprovalRequired() {
+    const webview = await this.getWebView();
+    const screen = this.repayExecutionScreen(webview);
+    await expect(screen).toBeVisible();
+
+    const step1Done = screen.getByTestId(this.repayStep1AccessApprovedId);
+    const giveApproval = screen.getByTestId(this.giveApprovalButtonId);
+    const authorizeRepay = this.authorizeRepayBtn(webview);
+
+    if (await step1Done.isVisible()) return false;
+    if (await authorizeRepay.isEnabled()) return false;
+    return (await giveApproval.isVisible()) && (await giveApproval.isEnabled());
+  }
+
+  @step("Complete repay Give approval step if required")
+  async completeRepayGiveApprovalIfRequired(): Promise<boolean> {
+    const webview = await this.getWebView();
+    const screen = this.repayExecutionScreen(webview);
+    await expect(screen).toBeVisible();
+    return this.clickGiveApprovalWhenReady(
+      screen.getByTestId(this.repayStep1AccessApprovedId),
+      screen.getByTestId(this.giveApprovalButtonId),
+      this.authorizeRepayBtn(webview),
+      "Repay Step 1 approval",
+    );
+  }
+
+  @step("Click Authorize repayment")
+  async clickAuthorizeRepay() {
+    const webview = await this.getWebView();
+    const authorizeButton = this.authorizeRepayBtn(webview);
+    await expect(authorizeButton).toBeEnabled();
+    await authorizeButton.click();
+  }
+
+  @step("Wait for repay Step 1 approval to complete")
+  async expectRepayApprovalStepCompleted() {
+    const webview = await this.getWebView();
+    await this.expectExecutionStepOutcome(
+      webview,
+      this.repayStep1AccessApprovedId,
+      "Repay Step 1 approval",
+    );
+    await expect(this.authorizeRepayBtn(webview)).toBeEnabled();
+  }
+
+  @step("Wait for repay execution to complete")
+  async expectRepayExecutionCompleted() {
+    const webview = await this.getWebView();
+    await this.expectFlowComplete(
+      webview,
+      [
+        webview.getByTestId(this.repayStep2RepayDoneId),
+        webview.getByTestId(this.repayCompletionCardId),
+        this.viewMyLoanBtn(webview),
+      ],
+      "Repay execution",
+    );
+  }
+
+  @step("Verify repay success screen")
+  async expectRepaySuccess() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.repayCompletionCardId)).toBeVisible({
+      timeout: 60_000,
+    });
+    await expect(this.viewMyLoanBtn(webview)).toBeVisible();
+  }
+
+  @step("Verify withdraw overview screen is visible")
+  async expectWithdrawOverviewVisible() {
+    const webview = await this.getWebView();
+    await expect(webview).toHaveURL(this.withdrawOverviewRoutePattern);
+    await expect(this.withdrawOverviewScreen(webview)).toBeVisible();
+  }
+
+  @step("Click Withdraw collateral on overview")
+  async clickWithdrawCollateral() {
+    const webview = await this.getWebView();
+    const withdrawButton = this.withdrawCollateralBtn(webview);
+    await expect(withdrawButton).toBeEnabled();
+    await withdrawButton.click();
+    await expect(webview).toHaveURL(this.withdrawExecutionRoutePattern);
+    await expect(this.withdrawExecutionScreen(webview)).toBeVisible();
+  }
+
+  @step("Click Authorize withdrawal")
+  async clickAuthorizeWithdraw() {
+    const webview = await this.getWebView();
+    const authorizeButton = this.authorizeWithdrawBtn(webview);
+    await expect(authorizeButton).toBeEnabled();
+    await authorizeButton.click();
+  }
+
+  @step("Wait for withdraw execution to complete")
+  async expectWithdrawExecutionCompleted() {
+    const webview = await this.getWebView();
+    await this.expectFlowComplete(
+      webview,
+      [
+        webview.getByTestId(this.withdrawStepDoneId),
+        webview.getByTestId(this.withdrawCompletionCardId),
+        this.backToMyLoansBtn(webview),
+      ],
+      "Withdraw execution",
+    );
+  }
+
+  @step("Verify withdraw success screen")
+  async expectWithdrawSuccess() {
+    const webview = await this.getWebView();
+    await expect(webview.getByTestId(this.withdrawCompletionCardId)).toBeVisible({
+      timeout: 60_000,
+    });
+    await expect(this.backToMyLoansBtn(webview)).toBeVisible();
+  }
+
+  @step("Click Back to my loans")
+  async clickBackToMyLoans() {
+    const webview = await this.getWebView();
+    await this.backToMyLoansBtn(webview).click();
+    await this.waitForExecutionStep(
+      this.loansDashboard(webview),
+      [this.loansDashboard(webview), this.getNewLoanBtn(webview), this.introModal(webview)],
+      60_000,
+    );
   }
 }

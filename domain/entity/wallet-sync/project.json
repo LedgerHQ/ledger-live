@@ -1,0 +1,8 @@
+{
+  "name": "@domain/entity-wallet-sync",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

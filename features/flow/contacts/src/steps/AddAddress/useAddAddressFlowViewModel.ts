@@ -93,13 +93,15 @@ function resolveAddressEntryState(
       };
     case "invalid_format":
     case "domain_not_found":
+    case "sanctioned":
       return {
         status: "invalid",
         value,
         resolvedAddress: null,
         inputMethod:
           result.status === "domain_not_found" ||
-          (result.status === "invalid_format" && result.isDomain)
+          ((result.status === "invalid_format" || result.status === "sanctioned") &&
+            result.isDomain)
             ? "ens"
             : inputMethod,
         error: result.status,
