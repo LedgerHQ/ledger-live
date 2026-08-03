@@ -161,6 +161,8 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             apps/ledger-live-mobile
+            e2e/mobile
+            e2e/tooling
             pnpm-lock.yaml
             .pnpmfile.cjs
             tools
