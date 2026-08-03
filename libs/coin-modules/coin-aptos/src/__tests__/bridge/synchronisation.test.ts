@@ -3,7 +3,12 @@ import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account"
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+  TokenCurrencyIdSchema,
+  CryptoCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../bridge/bridge.fixture";
@@ -816,9 +821,9 @@ describe("getAccountShape", () => {
     mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
-        id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
+        id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt_0xd111::staked_coin::stakedaptos"),
         contractAddress: "0xd111::staked_coin::StakedAptos",
-        parentCurrencyId: "aptos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
         name: "dstAPT",
         tokenType: "coin",
         ticker: "dstAPT",
@@ -1341,9 +1346,9 @@ describe("getSubAccounts", () => {
     mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
-        id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
+        id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt_0xd111::staked_coin::stakedaptos"),
         contractAddress: "0xd111::staked_coin::StakedAptos",
-        parentCurrencyId: "aptos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
         name: "dstAPT",
         tokenType: "coin",
         ticker: "dstAPT",
@@ -1917,9 +1922,9 @@ describe("getStake", () => {
     mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
-        id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
+        id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt_0xd111::staked_coin::stakedaptos"),
         contractAddress: "0xd111::staked_coin::StakedAptos",
-        parentCurrencyId: "aptos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
         name: "dstAPT",
         tokenType: "coin",
         ticker: "dstAPT",

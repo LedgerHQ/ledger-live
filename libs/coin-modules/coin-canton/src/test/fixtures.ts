@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-transfer.json";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig, { type CantonCoinConfig } from "../config";
@@ -48,7 +48,7 @@ export function createFactory<T>(defaults: T) {
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {
-    id: "canton_network",
+    id: CryptoCurrencyIdSchema.parse("canton_network"),
     name: "Canton",
     type: "CryptoCurrency",
     family: "canton",

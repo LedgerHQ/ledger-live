@@ -59,14 +59,21 @@ function resolveAddressInputPresentation(
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: true,
       };
-    case "invalid":
+    case "invalid": {
+      let helperText = labels.invalidAddress;
+      if (addressEntry.error === "domain_not_found") {
+        helperText = labels.domainNotFound;
+      } else if (addressEntry.error === "sanctioned") {
+        helperText = labels.sanctionedAddress;
+      }
+
       return {
         status: "error",
-        helperText:
-          addressEntry.error === "domain_not_found" ? labels.domainNotFound : labels.invalidAddress,
+        helperText,
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: false,
       };
+    }
     case "unavailable":
       return {
         status: "error",

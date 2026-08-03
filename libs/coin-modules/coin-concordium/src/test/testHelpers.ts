@@ -7,6 +7,7 @@
 
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Transaction, TransactionStatus } from "../types";
 
 /**
@@ -201,7 +202,7 @@ export function createTestCryptoCurrency(
 ): import("@ledgerhq/ledger-wallet-framework/types").CryptoCurrency {
   return {
     type: "CryptoCurrency",
-    id: "concordium_testnet",
+    id: CryptoCurrencyIdSchema.parse("concordium_testnet"),
     coinType: 919,
     name: "Concordium",
     managerAppName: "Concordium",

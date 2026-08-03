@@ -67,7 +67,7 @@ describe("ContactsAddAddressName", () => {
       name: "invalid characters",
       addressLabel: {
         status: "invalid",
-        value: "Ethereum 💎",
+        value: "Ethér",
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },

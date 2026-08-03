@@ -1,3 +1,4 @@
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { getAddress as getAddressResolver } from "./";
 
 describe("getAddress resolver", () => {
@@ -25,7 +26,7 @@ describe("getAddress resolver", () => {
     const result = await getAddress(mockDeviceId, {
       currency: {
         type: "CryptoCurrency",
-        id: "sui",
+        id: CryptoCurrencyIdSchema.parse("sui"),
         coinType: 784,
         name: "Sui",
         managerAppName: "Sui",
@@ -65,7 +66,7 @@ describe("getAddress resolver", () => {
       getAddress(mockDeviceId, {
         currency: {
           type: "CryptoCurrency",
-          id: "sui",
+          id: CryptoCurrencyIdSchema.parse("sui"),
           coinType: 784,
           name: "Sui",
           managerAppName: "Sui",
@@ -100,7 +101,7 @@ describe("getAddress resolver", () => {
       getAddress(mockDeviceId, {
         currency: {
           type: "CryptoCurrency",
-          id: "sui",
+          id: CryptoCurrencyIdSchema.parse("sui"),
           coinType: 784,
           name: "Sui",
           managerAppName: "Sui",

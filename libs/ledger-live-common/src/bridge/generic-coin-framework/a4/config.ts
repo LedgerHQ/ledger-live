@@ -36,7 +36,7 @@ const A4ConfigSchema = z.object({
 });
 
 // https://explorers.api.vault.ledger.com/a4/networks
-const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
+export const A4_SUPPORTED_NETWORKS: ReadonlyArray<string> = [
   "adi",
   "arbitrum",
   "arc",

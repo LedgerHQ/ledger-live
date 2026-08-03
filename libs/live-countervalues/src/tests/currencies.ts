@@ -1,11 +1,12 @@
 import type { CryptoCurrency, FiatCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 
 // Minimal currency fixtures so tests don't pull the full currency registry.
 // Only the fields consumed by the countervalues logic and the account mocks are populated.
 
 const bitcoin: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "bitcoin",
+  id: CryptoCurrencyIdSchema.parse("bitcoin"),
   name: "Bitcoin",
   ticker: "BTC",
   managerAppName: "Bitcoin",
@@ -22,7 +23,7 @@ const bitcoin: CryptoCurrency = {
 
 const ethereum: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   name: "Ethereum",
   ticker: "ETH",
   managerAppName: "Ethereum",

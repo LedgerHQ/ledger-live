@@ -44,6 +44,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | EVM explorer (Etherscan proxy) | `proxyetherscan.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
 | EVM explorer (Blockscout proxy) | `proxyblockscout.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
 | EVM dApp RPC | `eth-dapps.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
+| A4 indexer (L2 backend) | `explorers.api.vault.ledger.com`<br>_path: `/a4`; pre-prod: `explorers.api.live.ppr.ledger-test.com`; staging: `explorers.api.live.stg.ledger-test.com`_ | [env](/shared/env/src/definitions/team-coin-integration/index.ts) | prod / staging |
 | Aptos node | `apt.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Aptos indexer | `apt.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Algorand explorer/indexer | `algorand.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |

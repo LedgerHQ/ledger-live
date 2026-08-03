@@ -40,7 +40,7 @@ export type AddAddressEntryState =
       value: string;
       resolvedAddress: null;
       inputMethod: AddAddressInputMethod;
-      error: "invalid_format" | "domain_not_found";
+      error: "invalid_format" | "domain_not_found" | "sanctioned";
     }>
   | Readonly<{
       status: "unavailable";
@@ -123,6 +123,7 @@ export type AddAddressEntryLabels = Readonly<{
   validAddress: string;
   invalidAddress: string;
   domainNotFound: string;
+  sanctionedAddress: string;
   validationUnavailable: string;
   ensDisclaimer: string;
 }>;

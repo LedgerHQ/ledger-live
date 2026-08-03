@@ -67,6 +67,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
               validAddress: t("contacts.addAddressEntry.validAddress"),
               invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
               domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+              sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
               validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
             },

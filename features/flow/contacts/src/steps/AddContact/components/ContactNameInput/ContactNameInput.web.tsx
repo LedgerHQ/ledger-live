@@ -25,6 +25,7 @@ export function ContactNameInput({
       maxCount={CONTACT_NAME_MAX_LENGTH}
       helperText={errorMessage}
       status={errorMessage ? "error" : undefined}
+      className="mt-2"
     />
   );
 }

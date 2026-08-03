@@ -12,6 +12,7 @@ const labels: AddAddressEntryLabels = {
   validAddress: "Valid address",
   invalidAddress: "Invalid address",
   domainNotFound: "No address found for this domain",
+  sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS names resolve to wallet addresses.",
 };
@@ -159,6 +160,7 @@ describe("ContactsAddAddressEntry", () => {
   it.each([
     ["invalid_format", "Invalid address"],
     ["domain_not_found", "No address found for this domain"],
+    ["sanctioned", "This address is sanctioned and cannot be used."],
   ] as const)("should render the %s error", (error, expectedMessage) => {
     renderEntry({
       status: "invalid",

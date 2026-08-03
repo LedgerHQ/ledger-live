@@ -1,6 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { getEnv } from "@ledgerhq/live-env";
 import BigNumber from "bignumber.js";
 import { apiClient } from "../network/api";
@@ -1207,11 +1208,11 @@ describe("listOperationsV2", () => {
   it("should produce two token operations for a swap with two different-token transfers", async () => {
     const sharedHash = "erc20-in-transfer-hash";
     const mockTokenA = getMockedERC20TokenCurrency({
-      id: "hedera/erc20/0xTokenA",
+      id: TokenCurrencyIdSchema.parse("hedera/erc20/0xTokenA"),
       contractAddress: "0xTokenA",
     });
     const mockTokenB = getMockedERC20TokenCurrency({
-      id: "hedera/erc20/0xTokenB",
+      id: TokenCurrencyIdSchema.parse("hedera/erc20/0xTokenB"),
       contractAddress: "0xTokenB",
     });
 

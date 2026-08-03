@@ -1,7 +1,7 @@
 import {
   DEFAULT_RPC_URL,
   runBorrow,
-  type BorrowFlowOptions,
+  type BorrowFlowOptionsWithoutAddress,
   type Flow,
 } from "../borrow/borrowFlow";
 
@@ -9,7 +9,7 @@ const FLOWS: Flow[] = ["open", "close", "repay", "withdraw"];
 const FLOW_SET = new Set<string>(FLOWS);
 const isFlow = (v: string | undefined): v is Flow => v !== undefined && FLOW_SET.has(v);
 
-function parseArgs(argv: string[]): BorrowFlowOptions {
+function parseArgs(argv: string[]): BorrowFlowOptionsWithoutAddress {
   const flow = argv[0];
   if (!isFlow(flow))
     throw new Error("Usage: pnpm e2e-cli borrow <open|close|repay|withdraw> [options]");

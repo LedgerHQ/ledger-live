@@ -1,5 +1,6 @@
 import React from "react";
 import type { ContactDetailViewProps } from "./types";
+import { ContactDetailActions } from "./components/ContactDetailActions/ContactDetailActions.web";
 import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.web";
 import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.web";
 import { ContactDetailHeader } from "./components/ContactDetailHeader.web";
@@ -11,11 +12,16 @@ export function ContactDetailView({
   onAddAddress,
   addressGroups,
   onAddressRowPress,
+  detailActions,
 }: ContactDetailViewProps): React.ReactNode {
   const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
 
   return (
-    <div className="flex h-full flex-col gap-32 px-16 py-32" data-testid="contacts-detail-screen">
+    <div
+      className="relative flex h-full flex-col gap-32 px-16 py-32"
+      data-testid="contacts-detail-screen"
+    >
+      {detailActions ? <ContactDetailActions {...detailActions} /> : null}
       <ContactDetailHeader
         contact={contact}
         labels={labels}
