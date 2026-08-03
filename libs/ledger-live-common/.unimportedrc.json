@@ -390,6 +390,7 @@
     "src/bridge/descriptor/stake/features.ts",
     "src/bridge/descriptor/types.ts",
     "src/bridge/generic-coin-framework/a4/config.ts",
+    "src/bridge/generic-coin-framework/a4/client/utils.ts",
     "src/bridge/jsHelpers.ts",
     "src/bridge/mockHelpers.ts",
     "src/bridge/setup.ts",
