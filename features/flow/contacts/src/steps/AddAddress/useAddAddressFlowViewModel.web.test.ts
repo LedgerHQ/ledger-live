@@ -6,6 +6,7 @@ import {
 } from "@domain/entity-contact";
 import { mockContact, mockContactAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
 import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
 import { useAddAddressFlowViewModel } from "./useAddAddressFlowViewModel";
 
@@ -287,6 +288,42 @@ describe("useAddAddressFlowViewModel", () => {
 
     act(() => result.current.continueFromName());
     expect(result.current.state.status).toBe("reviewingAddress");
+  });
+
+  it("should limit default and edited address labels to 32 characters", async () => {
+    const contact = mockContact();
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+    const longDefaultLabel = "A".repeat(CONTACT_ADDRESS_LABEL_MAX_LENGTH + 1);
+    const longEditedLabel = "B".repeat(CONTACT_ADDRESS_LABEL_MAX_LENGTH + 1);
+
+    act(() => result.current.start(contact));
+    act(() =>
+      result.current.completeCurrencySelection(contact.id, {
+        currencyId: ETHEREUM_CURRENCY_ID,
+        assetDisplayName: longDefaultLabel,
+      }),
+    );
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressLabel: {
+        status: "valid",
+        value: longDefaultLabel.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH),
+      },
+    });
+
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.confirmAddress());
+    act(() => result.current.updateAddressLabel(longEditedLabel));
+
+    expect(result.current.state).toMatchObject({
+      status: "namingAddress",
+      addressLabel: {
+        status: "valid",
+        value: longEditedLabel.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH),
+      },
+    });
   });
 
   it("should expose invalid characters and prevent review", async () => {

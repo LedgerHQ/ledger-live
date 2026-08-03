@@ -10206,8 +10206,15 @@
       "validationUnavailable": "Address validation is temporarily unavailable",
       "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
     },
+    "addAddressName": {
+      "title": "Name address",
+      "inputLabel": "Address name",
+      "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact."
+    },
     "addAddressFlow": {
-      "name": "Name",
       "review": "Validation",
       "success": "Success"
     },
