@@ -159,7 +159,7 @@ export function useLargeScreenUpsellDebugViewModel() {
     useLNUpsellBannerState("wallet");
   const { mobileCards } = useDynamicContent();
 
-  const isNanoSeen = NANO_DEVICE_MODEL_IDS.every(id => knownDeviceModelIds[id]);
+  const isNanoSeen = NANO_DEVICE_MODEL_IDS.some(id => knownDeviceModelIds[id]);
   const isNanoSSeen = Boolean(knownDeviceModelIds[DeviceModelId.nanoS]);
   const hasSeenTouchscreen = DevicesWithTouchScreen.some(id => knownDeviceModelIds[id]);
   const trackingParams = feature?.params?.[lnBannerTracking];
@@ -435,8 +435,8 @@ export function useLargeScreenUpsellDebugViewModel() {
     handleToggleFlag,
     isNanoSeen,
     nanoSeenHint: isNanoSeen
-      ? "All Nanos (S/SP/X) marked seen. Toggle off to clear them."
-      : "Toggle on to mark Nano S + SP + X as seen (modal / banner audience).",
+      ? "At least one Nano (S/SP/X) is marked seen. Toggle off clears S/SP/X."
+      : "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
     handleToggleNanoSeen,
     isNanoSSeen,
     nanoSSeenHint: isNanoSSeen

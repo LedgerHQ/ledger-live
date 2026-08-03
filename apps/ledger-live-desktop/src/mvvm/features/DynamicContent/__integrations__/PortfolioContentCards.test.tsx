@@ -355,13 +355,13 @@ describe("PortfolioContentCards", () => {
     expect(screen.queryByTestId("carousel-arrow-next")).not.toBeInTheDocument();
   });
 
-  test("classic path stacks leadingSlide above Braze carousel and caps Braze at 2", async () => {
+  test("classic path stacks leadingSlide above Braze carousel without truncating Braze cards", async () => {
     const threeCards = [
       ...Cards,
       {
         id: "2",
         title: "Baz",
-        description: "Third card should be truncated.",
+        description: "Third card remains visible on classic path.",
         path: "ledger-live://deep-link",
         location: LocationContentCard.Portfolio,
       },
@@ -385,7 +385,7 @@ describe("PortfolioContentCards", () => {
     expect(await screen.findByTestId("upsell-leading")).toBeInTheDocument();
     expect(screen.getByText("Foo")).toBeInTheDocument();
     expect(screen.getByText("Bar")).toBeInTheDocument();
-    expect(screen.queryByText("Baz")).toBeNull();
+    expect(screen.getByText("Baz")).toBeInTheDocument();
     // Braze-only carousel still has arrows when 2+ Braze slides.
     expect(screen.getByTestId("carousel-arrow-next")).toBeInTheDocument();
   });

@@ -43,7 +43,7 @@ function buildViewModel(overrides: Record<string, unknown> = {}) {
     handleToggleFlag: jest.fn(),
     isNanoSeen: false,
     nanoSeenHint:
-      "Toggle on to mark Nano S + SP + X as seen (modal / banner audience).",
+      "Toggle on to mark Nano S + SP + X as seen (matches eligibility: any Nano).",
     handleToggleNanoSeen: jest.fn(),
     isNanoSSeen: false,
     nanoSSeenHint:

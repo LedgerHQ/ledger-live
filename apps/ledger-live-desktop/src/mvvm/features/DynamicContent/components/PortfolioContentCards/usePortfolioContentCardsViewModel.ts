@@ -4,7 +4,7 @@ import type { PortfolioContentCard } from "~/types/dynamicContent";
 import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
 import type { CarouselActions } from "../../types";
 
-/** Desktop portfolio Braze placement: max 2 cards in the row (LNS counts as one when present). */
+/** Desktop Braze placement grid: max 2 cards in the row (LN upsell counts as one when present). */
 export const MAX_DESKTOP_BRAZE_PLACEMENT_CARDS = 2;
 
 export type BrazeCarouselEntry = {
@@ -51,9 +51,6 @@ export function usePortfolioContentCardsViewModel({
       return entries
         .filter(({ card }) => isPortfolioCardEligibleForLumenGrid(card))
         .slice(0, maxBraze);
-    }
-    if (hasLeadingSlide) {
-      return entries.slice(0, MAX_DESKTOP_BRAZE_PLACEMENT_CARDS);
     }
     return entries;
   }, [hasLeadingSlide, portfolioCards, shouldDisplayBrazePlacement]);
