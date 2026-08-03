@@ -1,4 +1,12 @@
-import type { Bootstrap, CardSessionBridge, DbBridge, TransportBridge } from "~/bridge/contract";
+import type {
+  Bootstrap,
+  CardSessionBridge,
+  DbBridge,
+  TransportBridge,
+  DeeplinkBridge,
+  UpdaterBridge,
+  UpdaterStatusEvent,
+} from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
   version: 1,
@@ -47,6 +55,21 @@ export const transport: jest.Mocked<TransportBridge> = {
   close: jest.fn().mockResolvedValue(undefined),
   listen: jest.fn().mockResolvedValue(undefined),
   listenUnsubscribe: jest.fn().mockResolvedValue(undefined),
+};
+
+/**
+ * `on*` methods return an unsubscribe closure, so the doubles must return one too —
+ * consumers call the result on unmount and would otherwise crash.
+ */
+export const updater: jest.Mocked<UpdaterBridge> = {
+  init: jest.fn(),
+  quitAndInstall: jest.fn(),
+  onStatus: jest.fn((_callback: (event: UpdaterStatusEvent) => void) => () => {}),
+};
+
+export const deeplink: jest.Mocked<DeeplinkBridge> = {
+  open: jest.fn(),
+  onOpen: jest.fn((_callback: (url: string) => void) => () => {}),
 };
 
 // Reads the live env so tests can set CARD_SESSION_BOOTSTRAP per case.
