@@ -135,6 +135,10 @@
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Alıcı hesap, seçili ASA'yı onaylamadı."
     },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo çok uzun",
+      "description" : "Algorand memo'ları 1024 baytı aşamaz. Lütfen memo'nuzu kısaltın."
+    },
     "BluetoothRequired" : {
       "title" : "Üzgünüz, Bluetooth devre dışı",
       "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
@@ -1397,13 +1401,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Daha fazla görün. Daha az dokunun. %{{discount}} tasarruf",
-      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın."
+      "subtitle" : "Daha büyük ekranın, daha akıllı işlem incelemelerinin, gelişmiş korumanın ve özel %{{discount}} indirimin keyfini çıkarın.",
+      "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
     },
     "optedOut" : {
-      "title" : "Dolandırıcılık girişimlerini tespit edin. Tüm ayrıntıları görün",
-      "subtitle" : "İşlem detaylarını dokunmatik ekranlı bir imzalayıcıda net bir şekilde inceleyin ve gelişmiş güvenlik kontrolleriyle dolandırıcılıkları tespit edin."
-    },
-    "cta" : "Dokunmatik ekranlı imzalayıcıları keşfedin"
+      "title" : "Dolandırıcılıkları imzalamadan önce fark edin",
+      "subtitle" : "Gerçek zamanlı tehdit tespiti sağlayan gelişmiş güvenlik özellikleri hakkında daha fazla bilgi edinin.",
+      "cta" : "Daha fazla bilgi"
+    }
   },
   "earn" : {
     "simulator" : {
@@ -3469,8 +3474,6 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Wallet kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
       "walletSyncDescription" : "Farklı bilgisayarlar arasında geçiş yaparken veya bir telefon kullanırken portföyünüzün güncel kalmasını sağlayın",
-      "region" : "Bölge",
-      "regionDesc" : "Tarih, saat ve para birimi görüntüleme biçimlerini güncellemek için bölgenizi seçin.",
       "password" : "Uygulama kilidi",
       "passwordDesc" : "Ledger Wallet uygulamasını kilitlemek için bir şifre belirleyin.",
       "passwordDescBioCompat" : "Ledger Wallet uygulamasını kilitlemek için bir şifre veya {{biometricsType}} belirleyin.",
@@ -4289,7 +4292,11 @@
         "monad_title" : "Ledger Nano S™, Monad takasını desteklemez",
         "monad_description" : "Monad takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "zcash_title" : "Ledger Nano S™, Zcash takasını desteklemez",
-        "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+        "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "aleo_title" : "Ledger Nano S™, Aleo takasını desteklemez",
+        "aleo_description" : "Aleo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "aleo_tokens_title" : "Ledger Nano S™, Aleo token takasını desteklemez",
+        "aleo_tokens_description" : "Aleo token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -4499,6 +4506,28 @@
       "hideFullMessage" : "Tam mesajı gizle"
     }
   },
+  "walletApiSignMessage" : {
+    "sign" : {
+      "title" : "{{productName}} üzerinde devam edin",
+      "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin.",
+      "cancelled" : {
+        "title" : "İşlem cihazda reddedildi",
+        "close" : "Kapat",
+        "retry" : "Tekrar dene"
+      }
+    }
+  },
+  "walletApiSignTransaction" : {
+    "sign" : {
+      "title" : "{{productName}} üzerinde devam edin",
+      "description" : "Güvenli Ekranınızda gösterilen yönergeleri izleyin.",
+      "cancelled" : {
+        "title" : "İşlem cihazda reddedildi",
+        "close" : "Kapat",
+        "retry" : "Tekrar dene"
+      }
+    }
+  },
   "sync" : {
     "error" : "Senkronizasyon hatası",
     "loading" : "Senkronizasyon"
@@ -4574,6 +4603,16 @@
       "feesAmount" : "Ücret tutarı ({{unit}})",
       "gasLimit" : "Gas limiti ({{unit}})",
       "feesPaid" : "İşleminizi başlatabilmek için ağa ödenen ücretler",
+      "tronFees" : {
+        "sufficient" : {
+          "title" : "TRX ağ ücretleri",
+          "description" : "Ağ ücretini ödemek için {{energy}} enerji ve {{bandwidth}} bant genişliği kullanacaksınız."
+        },
+        "insufficient" : {
+          "title" : "Ağ ücreti dökümü",
+          "description" : "Bu transferi karşılamak için yeterli enerji ve bant genişliğiniz yok. Eksik tutar TRX yakılarak karşılanacak."
+        }
+      },
       "insufficientBalanceFees" : "Ağ ücretlerini karşılayacak kadar bakiye mevcut değil.",
       "amountToSend" : "({{currency}}) olarak gönderilecek tutar",
       "coinToSend" : "Gönderilecek coin",
@@ -4765,6 +4804,7 @@
       "slow" : "Yavaş",
       "custom" : "Özel",
       "customFees" : "Özel ücretler",
+      "defaultNetworkFee" : "Varsayılan ağ ücreti",
       "coinControl" : "Coin yönetimi",
       "edit" : {
         "title" : "Birim seçin"
@@ -6763,6 +6803,12 @@
       }
     }
   },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Yatır",
+      "OUT" : "Çek"
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
@@ -6955,6 +7001,7 @@
             "allAssetsUsed" : "Tüm varlıklar kullanıldı",
             "minAmount" : "Minimum tutar: <0>{{min}}</0>",
             "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "visibilityDelay" : "Bu yetki devrini yetki devri panonuzda görmeniz {{numberOfMinutes}} dakika kadar sürebilir.",
             "cta" : "Devam"
           },
           "verification" : {
@@ -8450,9 +8497,6 @@
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "Analiz",
-    "allocation" : {
-      "title" : "Dağılım"
-    },
     "operations" : {
       "title" : "İşlem geçmişi"
     }
@@ -8797,10 +8841,6 @@
           "title" : "Cüzdanınızı senkronize edin",
           "description" : "Kripto hesaplarınızı senkronize tutun"
         },
-        "customImage" : {
-          "title" : "Kilit ekranını kişiselleştirin",
-          "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin."
-        },
         "recover" : {
           "title" : "Yedeklemenizi güvenceye alın",
           "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın"
@@ -8828,10 +8868,6 @@
         "titleCompleted" : "Kripto satın alındı",
         "description" : "500’den fazla coin ve token arasından seçiminizi yapın.",
         "popupLabel" : "Kripto satın alındı"
-      },
-      "customImage" : {
-        "titleCompleted" : "Kilit ekranı kişiselleştirildi",
-        "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
       "recover" : {
         "titleCompleted" : "Yedekleme güvenceye alındı",
@@ -8880,11 +8916,6 @@
         }
       }
     }
-  },
-  "newsfeed" : {
-    "title" : "Haber akışı",
-    "poweredByCryptopanic" : "Cryptopanic desteğiyle",
-    "noPosts" : "Yeni içerik mevcut değil"
   },
   "deviceConnect" : {
     "title" : "Cihazı bağlayın"
@@ -9613,6 +9644,8 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
+    "emptyAccounts" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
+    "addAccount" : "Hesap ekle",
     "perpetualsBanner" : "Şu anda yalnızca Arbitrum zincirindeki USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
@@ -10115,7 +10148,7 @@
       }
     },
     "accountActions" : {
-      "publicToPrivate" : "Kendine transfer"
+      "publicToPrivate" : "Takas et"
     },
     "send" : {
       "balanceSelection" : {
@@ -10191,12 +10224,61 @@
   "contacts" : {
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
+    "addAddress" : "Adres ekle",
+    "addYourAddress" : "Adresinizi ekleyin",
     "searchPlaceholder" : "Kişi ara",
+    "searchNoResults" : "Kişi bulunamadı",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Kişi adı",
+      "namingDisclaimer" : "Gizlilik için ad ve soyadların tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad + baş harf kullanın, örn. \"John S\".",
+      "confirmName" : "Adı onayla",
+      "invalidNameError" : "Özel karakterlere izin verilmez."
+    },
+    "addressCount_zero" : "0 adres",
+    "addressCount_one" : "{{count}} adres",
+    "addressCount_other" : "{{count}} adres",
     "me" : {
       "name" : "Ben",
       "addressCount_zero" : "0 adres",
       "addressCount_one" : "{{count}} adres",
       "addressCount_other" : "{{count}} adres"
+    },
+    "detail" : {
+      "ledgerWalletAddresses" : "Ledger Wallet adresleri",
+      "myAddresses" : "Adreslerim",
+      "emptyState" : {
+        "title" : "Henüz adres yok",
+        "meTitle" : "Kendi adreslerinizi kaydedin",
+        "meDescription" : "Borsalarda veya diğer cüzdanlarda size ait olan harici adresleri kaydedin. Kendinize yapacağınız bir sonraki gönderimde, Ledger cihazınız belirlediğiniz ismi gösterecektir.",
+        "contactDescription" : "{{name}} kişisine transfer göndermek için bir cüzdan adresi kaydedin"
+      }
+    },
+    "ledgerSyncIntroduction" : {
+      "title" : "Kişileri kaydetmek için Ledger Sync'i etkinleştirin",
+      "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
+      "activate" : "Ledger Sync'i etkinleştir",
+      "dismiss" : "Anladım",
+      "checkingAccessibilityLabel" : "Ledger Sync durumu kontrol ediliyor"
+    },
+    "featureIntroduction" : {
+      "title" : "Karşınızda Kişiler",
+      "description" : "Kripto adres defteriniz: Gönderim yaptığınız cüzdanları kaydedin, hepsi tek bir yerde.",
+      "primaryAction" : "Kişileri deneyin",
+      "secondaryAction" : "Belki sonra",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Adresleri bir kez kaydedin",
+          "description" : "Gönderim yaptığınız adresleri tek bir yerde tutun."
+        },
+        "sendToRightAddress" : {
+          "title" : "Doğru adrese gönderin",
+          "description" : "Fonlar her seferinde doğru cüzdana ulaşır."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Tüm cihazlarınızda gizli kalır",
+          "description" : "Ledger Sync ile uçtan uca şifrelenir."
+        }
+      }
     }
   }
 }
