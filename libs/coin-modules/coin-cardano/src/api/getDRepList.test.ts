@@ -1,7 +1,7 @@
 import { fetchDRepList } from "./getDRepList";
 import network from "@ledgerhq/live-network/network";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { APIGetDRepList } from "./api-types";
 
 jest.mock("@ledgerhq/live-network/network");
