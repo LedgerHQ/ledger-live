@@ -22,12 +22,12 @@ export interface TransportPanelContentProps<M extends MessageMap> {
 export function TransportPanelContent<M extends MessageMap>({
   bottomSheetRef,
   transport,
-}: TransportPanelContentProps<M>) {
+}: Readonly<TransportPanelContentProps<M>>) {
   const debugBottomSheetRef = useBottomSheetRef();
 
   return (
     <Box>
-      <BottomSheet ref={bottomSheetRef} snapPoints="medium">
+      <BottomSheet ref={bottomSheetRef} snapPoints="full">
         <BottomSheetView>
           <BottomSheetHeader
             title="Transport State"
