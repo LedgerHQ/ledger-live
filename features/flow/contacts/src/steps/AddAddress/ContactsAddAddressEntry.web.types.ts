@@ -7,7 +7,7 @@ import type {
   AddAddressLabelState,
 } from "./types";
 
-type AddressLabelConfiguration = Readonly<{
+export type AddressLabelConfiguration = Readonly<{
   addressLabel: AddAddressLabelState;
   nameLabels: ContactsAddAddressNameLabels;
   onAddressLabelChange: (value: string) => void;

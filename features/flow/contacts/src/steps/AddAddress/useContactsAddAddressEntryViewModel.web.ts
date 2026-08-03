@@ -1,16 +1,9 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
-import type { ContactsAddAddressNameLabels } from "./AddressName/types";
 import type {
+  AddressLabelConfiguration,
   ContactsAddAddressEntryWebProps,
   ContactsAddAddressEntryWebViewProps,
 } from "./ContactsAddAddressEntry.web.types";
-import type { AddAddressLabelState } from "./types";
-
-type AddressLabelConfiguration = Readonly<{
-  addressLabel: AddAddressLabelState;
-  nameLabels: ContactsAddAddressNameLabels;
-  onAddressLabelChange: (value: string) => void;
-}>;
 
 function getAddressLabelConfiguration({
   addressLabel,

@@ -86,6 +86,16 @@ describe("ContactsAddAddressName", () => {
       helperText: "This address name is already used for this contact.",
     },
     {
+      name: "too long label",
+      addressLabel: {
+        status: "invalid",
+        value: "E".repeat(CONTACT_ADDRESS_LABEL_MAX_LENGTH + 1),
+        label: null,
+        validationError: CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+      },
+      helperText: "This address name is too long.",
+    },
+    {
       name: "empty label",
       addressLabel: {
         status: "empty",
