@@ -8917,8 +8917,7 @@
           },
           "private": {
             "title": "Private balance",
-            "subtitle": "Shielded",
-            "unavailable": "Private balance unavailable"
+            "subtitle": "Shielded"
           }
         },
         "memo": {
