@@ -12,15 +12,22 @@ instead of the whole suite. Applies to both apps:
 
 ## The `test_filter` input
 
-Free-text field on the workflow dispatch form. Provide one or more patterns separated by
-`,` or `|` (escape a literal separator with a backslash):
+Free-text field on the workflow dispatch form. Separate multiple patterns with `,` or `|`
+— a spec runs if it matches **any** of them (OR). Prefer simple tags (`@solana`) or a
+path/filename substring:
 
 ```text
 @smoke
 @bitcoin,@family-evm
 @generic-coin-framework,@solana
-addAccount deeplinks
+addAccount,deeplinks
 ```
+
+> **Separators and escaping differ per runner — keep patterns simple.** `,` and `|` work
+> on both runners. On **mobile**, whitespace *also* separates patterns (a space starts
+> another OR alternative) and backslash-escaping is **not** applied. On **desktop**, the
+> patterns become a `--grep` **regex**, so spaces and regex metacharacters are significant.
+> Avoid spaces inside a single pattern, and don't rely on escaping separators.
 
 ### What a pattern matches
 
