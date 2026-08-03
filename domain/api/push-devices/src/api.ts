@@ -1,12 +1,5 @@
 import type { DeviceId } from "@domain/entity-client-identity";
-import {
-  pushDevicesApi,
-  pushDevicesApiExtra,
-  type PushDevicesApiExtra,
-} from "@shared/api-services";
-
-export { pushDevicesApiExtra };
-export type { PushDevicesApiExtra };
+import { pushDevicesApi } from "@shared/api-services";
 
 /**
  * Request payload for the PushDevices endpoint
