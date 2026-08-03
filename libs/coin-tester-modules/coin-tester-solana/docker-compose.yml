@@ -1,6 +1,6 @@
 services:
   agave:
-    image: ghcr.io/zeta-chain/solana-docker:2.0.24
+    image: ghcr.io/zeta-chain/solana-docker:2.0.24@sha256:f935ab27e3d24a5963ba53aa83c6605760aac53aeb1004055bc0a3ab9581b07b
     container_name: agave
     volumes:
       - ./data:/ledger
