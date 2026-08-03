@@ -1,24 +1,16 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { Link } from "react-router";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 
 export default function AnalyticsConsentOptInDevTool() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-
-  const onOpen = useCallback(() => {
-    navigate("/settings/developer/analytics-consent-opt-in-qa");
-  }, [navigate]);
-
   return (
     <SettingsSectionRow
-      title={t("settings.developer.analyticsConsentOptInQa.rowTitle")}
-      desc={t("settings.developer.analyticsConsentOptInQa.rowDesc")}
+      title="Analytics consent QA"
+      desc="Policy bumps, consent state, drawer preview"
     >
-      <Button size="sm" appearance="accent" onClick={onOpen}>
-        {t("settings.developer.open")}
+      <Button asChild size="sm" appearance="accent">
+        <Link to="/settings/developer/analytics-consent-opt-in-qa">Open</Link>
       </Button>
     </SettingsSectionRow>
   );
