@@ -22,6 +22,7 @@ export type ContactsAddressValidationResult =
     }>
   | Readonly<{
       status: "sanctioned";
+      isDomain: boolean;
     }>;
 
 export type ContactsAddressValidationPort = Readonly<{

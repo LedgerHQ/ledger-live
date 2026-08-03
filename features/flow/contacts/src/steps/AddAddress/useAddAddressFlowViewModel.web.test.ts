@@ -469,7 +469,6 @@ describe("useAddAddressFlowViewModel", () => {
   it.each([
     ["invalid_format", "manual"],
     ["domain_not_found", "ens"],
-    ["sanctioned", "manual"],
   ] as const)("should expose %s as an invalid address", async (error, inputMethod) => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({ status: error });
@@ -493,7 +492,7 @@ describe("useAddAddressFlowViewModel", () => {
 
   it("should prevent confirmation for a sanctioned address", async () => {
     const contactId = mockContact().id;
-    const addressValidation = createValidationPort({ status: "sanctioned" });
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: false });
     const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
 
     act(() => result.current.start(contactWithoutAddresses(contactId)));
@@ -503,7 +502,7 @@ describe("useAddAddressFlowViewModel", () => {
 
     expect(result.current.state).toMatchObject({
       status: "enteringAddress",
-      addressEntry: { status: "invalid", error: "sanctioned" },
+      addressEntry: { status: "invalid", inputMethod: "manual", error: "sanctioned" },
     });
   });
 
@@ -527,6 +526,27 @@ describe("useAddAddressFlowViewModel", () => {
         resolvedAddress: null,
         inputMethod: "ens",
         error: "invalid_format",
+      },
+    });
+  });
+
+  it("should keep ENS provenance when a resolved domain is sanctioned", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: true });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress("ledger.eth", "manual"));
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: {
+        status: "invalid",
+        value: "ledger.eth",
+        resolvedAddress: null,
+        inputMethod: "ens",
+        error: "sanctioned",
       },
     });
   });

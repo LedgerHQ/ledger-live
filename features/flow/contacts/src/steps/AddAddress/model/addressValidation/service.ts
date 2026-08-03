@@ -93,7 +93,7 @@ export function createContactsAddressValidationService(
         if (
           await dependencies.isAddressSanctioned(resolvedCurrency.network, resolvedAddress.address)
         ) {
-          return { status: "sanctioned" };
+          return { status: "sanctioned", isDomain: resolvedAddress.isDomain };
         }
 
         return {

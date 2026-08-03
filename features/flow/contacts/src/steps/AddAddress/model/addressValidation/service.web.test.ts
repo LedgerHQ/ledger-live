@@ -61,7 +61,7 @@ describe("createContactsAddressValidationService", () => {
 
     await expect(
       service.validateAddress({ currencyId: ETHEREUM.id, address: RAW_ADDRESS }),
-    ).resolves.toEqual({ status: "sanctioned" });
+    ).resolves.toEqual({ status: "sanctioned", isDomain: false });
     expect(dependencies.isAddressSanctioned).toHaveBeenCalledWith(ETHEREUM, RAW_ADDRESS);
   });
 
@@ -161,7 +161,7 @@ describe("createContactsAddressValidationService", () => {
 
     await expect(
       service.validateAddress({ currencyId: ETHEREUM.id, address: "ledger.eth" }),
-    ).resolves.toEqual({ status: "sanctioned" });
+    ).resolves.toEqual({ status: "sanctioned", isDomain: true });
     expect(dependencies.isAddressSanctioned).toHaveBeenCalledWith(ETHEREUM, RESOLVED_ADDRESS);
   });
 
