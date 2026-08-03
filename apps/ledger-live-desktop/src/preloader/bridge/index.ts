@@ -6,6 +6,7 @@ import {
   type LedgerBridge,
 } from "~/bridge/contract";
 import { expose } from "./expose";
+import { db } from "./db";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -31,6 +32,7 @@ export function installBridge(): void {
     version: 1,
     // Consumers that mutate it (the `process.env` shim) take a copy.
     bootstrap: deepFreeze(bootstrap),
+    db,
     cardSession,
   };
 
