@@ -53,11 +53,14 @@ function MemoValueInputComponent({
     helpSheetRef.current?.present();
   }, [helpSheetRef]);
 
+  const placeholder = t("send.newSendFlow.enterTag", { tag: memoLabel });
+
   return (
     <>
       <TextInput
         testID="send-memo-input"
-        label={t("send.newSendFlow.enterTag", { tag: memoLabel })}
+        placeholder={placeholder}
+        aria-label={placeholder}
         value={value}
         onChangeText={handleChangeText}
         keyboardType={isTagType ? "number-pad" : "default"}
