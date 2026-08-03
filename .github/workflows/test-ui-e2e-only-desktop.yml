@@ -4,8 +4,8 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 4 * * 1,3,5"
-    - cron: "0 4 * * 2,4"
+    - cron: "0 1 * * 1,3,5"
+    - cron: "0 1 * * 2,4"
   workflow_dispatch:
     inputs:
       ref:
@@ -294,7 +294,8 @@ jobs:
           RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
-            --check-dir "e2e/desktop/tests")"
+            --check-dir "e2e/desktop/tests" \
+            --runner playwright)"
           echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
         env:

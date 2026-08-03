@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import {
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
 } from "@domain/entity-contact";
@@ -92,6 +93,9 @@ export function useContactsAddAddressFlowDrawerViewModel({
                 ),
                 [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
                   "contacts.addAddressName.duplicateLabel",
+                ),
+                [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(
+                  "contacts.addAddressName.labelTooLong",
                 ),
               },
             },

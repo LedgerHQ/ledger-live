@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { useFeature } from "@features/platform-feature-flags";
 import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
@@ -17,12 +16,10 @@ import {
 import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
 import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
-  resolveAnalyticsOptInParams,
+  useAnalyticsConsentDecision,
   type AnalyticsConsentPhase,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 
 export const ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE = "Analytics consent drawer";
 
@@ -37,19 +34,17 @@ export function useAnalyticsConsentDrawerViewModel() {
   const dispatch = useDispatch();
   const navigation = useNavigation<BaseNavigation>();
   const isFocused = useIsFocused();
-  const feature = useFeature("analyticsOptIn");
-  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(feature);
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
 
-  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
+  const { isFeatureEnabled, decision, currentPolicyVersion } =
+    useAnalyticsConsentDecision(consentInfo);
+  // An invalid remote version must not erase the version the user already acknowledged.
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
 
-  const shouldOffer = Boolean(
-    feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
-  );
+  const shouldOffer = isFeatureEnabled && hasCompletedOnboarding && decision.kind !== "none";
 
   const [phase, setPhase] = useState<AnalyticsConsentPhase>("closed");
 
@@ -67,19 +62,8 @@ export function useAnalyticsConsentDrawerViewModel() {
       handleCloseDrawer();
       return;
     }
-    setPhase(current =>
-      resolveAnalyticsConsentPhase(current, needsRenewal, needsUpdatePrivacy, analyticsEnabled),
-    );
-  }, [
-    isFocused,
-    shouldOffer,
-    needsRenewal,
-    needsUpdatePrivacy,
-    analyticsEnabled,
-    handleCloseDrawer,
-    policyVersion,
-    consentValidityDays,
-  ]);
+    setPhase(current => resolveAnalyticsConsentPhase(current, decision, analyticsEnabled));
+  }, [isFocused, shouldOffer, decision, analyticsEnabled, handleCloseDrawer]);
 
   const persistConsentCompletion = useCallback(async () => {
     dispatch(
@@ -136,14 +120,14 @@ export function useAnalyticsConsentDrawerViewModel() {
     );
     dispatch(
       setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
+        consentDate: consentInfo.consentDate,
         privacyPolicyVersion: policyVersion,
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     await updateIdentify();
     handleCloseDrawer();
-  }, [dispatch, handleCloseDrawer, policyVersion]);
+  }, [dispatch, handleCloseDrawer, policyVersion, consentInfo.consentDate]);
 
   const onSetPreferences = useCallback(() => {
     track("button_clicked", {

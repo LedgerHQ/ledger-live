@@ -6,7 +6,7 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
+import { resolveAnalyticsOptInParams } from "@features/flow-analytics-consent";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
   setAnalytics,
@@ -71,7 +71,8 @@ const useAnalyticsConsentLogic = ({ entryPoint }: Props): UseAnalyticsConsentLog
   const analyticsOptInFeature = useFeature("analyticsOptIn");
   const lwmNotificationsOptIn = useFeature("lwmNotificationsOptIn");
   const completeLazyOnboarding = useCompleteLazyOnboarding();
-  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
+  const policyVersion =
+    resolveAnalyticsOptInParams(analyticsOptInFeature).currentPolicyVersion?.normalized ?? null;
   const flow = trackingKeysByFlow[entryPoint];
 
   const skipDeviceOnboarding = useCallback(() => {

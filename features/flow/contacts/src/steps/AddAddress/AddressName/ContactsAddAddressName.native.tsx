@@ -9,8 +9,8 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "./model/constants";
-import type { ContactsAddAddressNameProps } from "./ContactsAddAddressName.types";
+import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import type { ContactsAddAddressNameNativeProps } from "./types";
 
 export function ContactsAddAddressName({
   addressLabel,
@@ -18,7 +18,7 @@ export function ContactsAddAddressName({
   bottomOffset = 0,
   onChangeText,
   onContinue,
-}: ContactsAddAddressNameProps): React.JSX.Element {
+}: ContactsAddAddressNameNativeProps): React.JSX.Element {
   const validationMessage = addressLabel.validationError
     ? labels.validationErrors[addressLabel.validationError]
     : undefined;

@@ -14,6 +14,8 @@ const fundedAssetsAccounts: AccountType[] = [
   TokenAccount.ETH_USDC_1,
   TokenAccount.ETH_USDT_1,
 ];
+// Masking is currency-agnostic, so a single account covers the balance-masking checks below.
+const balanceCheckAccount = Account.ETH_1;
 
 test.describe("Swap Discreet mode", () => {
   setupEnv();
@@ -60,7 +62,7 @@ test.describe("Swap Discreet mode", () => {
   test(
     "Balance should not be visible in the swap widget",
     {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [
         {
           type: "TMS",
@@ -70,14 +72,37 @@ test.describe("Swap Discreet mode", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      for (const account of fundedAssetsAccounts) {
-        await app.swap.selectFromAccountCoinSelector();
-        await app.modularDialog.selectAsset(account.currency);
-        await app.modularDialog.selectNetwork(account.currency);
-        await app.modularDialog.selectAccountByName(account);
-        await app.swap.checkAssetFromContains(account.currency.ticker);
-        await app.swap.checkWidgetBalanceIsDiscreet(account.currency.ticker);
-      }
+      await app.swap.selectFromAccountCoinSelector();
+      await app.modularDialog.selectAsset(balanceCheckAccount.currency);
+      await app.modularDialog.selectNetwork(balanceCheckAccount.currency);
+      await app.modularDialog.selectAccountByName(balanceCheckAccount);
+      await app.swap.checkAssetFromContains(balanceCheckAccount.currency.ticker);
+      await app.swap.checkFromAccountBalanceIsDiscreet(balanceCheckAccount.currency.ticker);
+    },
+  );
+
+  test(
+    "Balance should not be visible in the swap main form",
+    {
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
+      annotation: [
+        {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      ],
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
+      await app.swap.selectFromAccountCoinSelector();
+      await app.modularDialog.selectAsset(balanceCheckAccount.currency);
+      await app.modularDialog.selectNetwork(balanceCheckAccount.currency);
+      await app.modularDialog.selectAccountByName(balanceCheckAccount);
+      await app.swap.checkAssetFromContains(balanceCheckAccount.currency.ticker);
+      await app.swap.checkFromAccountBalanceIsDiscreet(balanceCheckAccount.currency.ticker);
     },
   );
 });

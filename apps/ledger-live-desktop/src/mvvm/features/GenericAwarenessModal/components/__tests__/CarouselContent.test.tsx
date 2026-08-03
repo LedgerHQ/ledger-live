@@ -32,7 +32,7 @@ const defaultProps: CarouselContentProps = {
   onSlidePrimaryClick: jest.fn(),
   onSlideChange: jest.fn(),
   onContinueClick: jest.fn(),
-  onClose: jest.fn(),
+  onCompleteClose: jest.fn(),
 };
 
 jest.mock("~/renderer/hooks/useTheme");
@@ -143,7 +143,7 @@ describe("CarouselContent", () => {
 
     expect(onContinueClick).toHaveBeenCalledWith(0, false);
     expect(onSlideChange).toHaveBeenCalledWith(1);
-    expect(defaultProps.onClose).not.toHaveBeenCalled();
+    expect(defaultProps.onCompleteClose).not.toHaveBeenCalled();
   });
 
   it("should invoke onSlidePrimaryClick with the current slide", async () => {
@@ -167,31 +167,31 @@ describe("CarouselContent", () => {
     expect(onSlidePrimaryClick).toHaveBeenCalledWith(slides[1]);
   });
 
-  it("should call onContinueClick with last slide flag and onClose when Close is clicked", async () => {
+  it("should call onContinueClick with last slide flag and onCompleteClose when Close is clicked", async () => {
     const onContinueClick = jest.fn();
-    const onClose = jest.fn();
+    const onCompleteClose = jest.fn();
     const onSlidePrimaryClick = jest.fn();
-    const { user } = renderCarousel({ onContinueClick, onClose, onSlidePrimaryClick });
+    const { user } = renderCarousel({ onContinueClick, onCompleteClose, onSlidePrimaryClick });
 
     await advanceCarouselSlide(user, "First slide title");
 
     await user.click(screen.getByRole("button", { name: "Close" }));
 
     expect(onContinueClick).toHaveBeenCalledWith(1, true);
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onCompleteClose).toHaveBeenCalledTimes(1);
     expect(onSlidePrimaryClick).not.toHaveBeenCalled();
   });
 
-  it("should call onContinueClick and onClose when Continue is clicked on a single-slide carousel", async () => {
+  it("should call onContinueClick and onCompleteClose when Continue is clicked on a single-slide carousel", async () => {
     const onContinueClick = jest.fn();
-    const onClose = jest.fn();
-    const { user } = renderCarousel({ slides: [slides[0]], onContinueClick, onClose });
+    const onCompleteClose = jest.fn();
+    const { user } = renderCarousel({ slides: [slides[0]], onContinueClick, onCompleteClose });
 
     expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
 
     expect(onContinueClick).toHaveBeenCalledWith(0, true);
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onCompleteClose).toHaveBeenCalledTimes(1);
   });
 });

@@ -3,6 +3,7 @@ import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { AnalyticsConsentInfo } from "@domain/entity-analytics-consent";
 import type { Currency } from "@domain/entity-currency";
 import type { Unit } from "@domain/entity-currency-unit";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
@@ -318,10 +319,7 @@ export type SettingsState = {
   hasClickedRecover: boolean;
 };
 
-export type AnalyticsConsentInfo = {
-  consentDate: string | null;
-  privacyPolicyVersion: number | null;
-};
+export type { AnalyticsConsentInfo };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;

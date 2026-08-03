@@ -12,20 +12,20 @@ concurrency:
   # they would otherwise race on the same on-chain accounts across machines, which no per-run
   # mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 1,3,5')) && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || (github.event_name == 'schedule' && github.event.schedule == '0 0 * * 1,3,5')) && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
   schedule:
-    - cron: "0 3 * * 1,3,5"
-    - cron: "0 3 * * 2,4"
+    - cron: "0 0 * * 1,3,5"
+    - cron: "0 0 * * 2,4"
   workflow_dispatch:
     inputs:
       ref:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -113,7 +113,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to select spec files by file path or declared @-tag (mobile matches whole spec files, not test names), separated by ',' or '|' (e.g. "@smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -424,7 +424,8 @@ jobs:
           RESOLVED_FILTER="$(node e2e/tooling/filter/resolve.mjs \
             --input "$TEST_FILTER_INPUT" \
             --smoke-tests "$SMOKE_TESTS_INPUT" \
-            --check-dir "e2e/mobile/specs")"
+            --check-dir "e2e/mobile/specs" \
+            --runner detox)"
           echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
         env:
