@@ -47,4 +47,6 @@ export type LedgerBridge = {
 // Every channel is listed here: never add a generic invoke passthrough.
 export const CHANNELS = {
   bootstrap: "bootstrap",
+  storeSet: "lld-store:set",
+  storeClear: "lld-store:clear",
 } as const;

@@ -42,3 +42,11 @@ export function buildBootstrap(): Bootstrap {
 ipcMain.on(CHANNELS.bootstrap, event => {
   event.returnValue = buildBootstrap();
 });
+
+ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
+  getStore().set(key, value);
+});
+
+ipcMain.on(CHANNELS.storeClear, () => {
+  getStore().clear();
+});
