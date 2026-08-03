@@ -26,6 +26,7 @@ const getAndroidTestBinary = type =>
 
 /** @type {Detox.DetoxConfig} */
 module.exports = {
+  extends: "detox-allure2-adapter/preset-detox",
   testRunner: {
     $0: "jest",
     args: {
@@ -42,6 +43,19 @@ module.exports = {
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
+  session: {
+    debugSynchronization: 10000,
+  },
+  artifacts: {
+    rootDir: "artifacts",
+    plugins: {
+      log: "failing",
+      screenshot: "failing",
+      video: "none",
+      instruments: "none",
+      uiHierarchy: "disabled",
+    },
+  },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
     init: {
@@ -52,10 +66,6 @@ module.exports = {
     cleanup: {
       shutdownDevice: false,
     },
-    session: {
-      debugSynchronization: 60000,
-    },
-    extends: "detox-allure2-adapter/preset-detox",
   },
   apps: {
     "ios.debug": {
@@ -97,6 +107,8 @@ module.exports = {
       testBinaryPath: getAndroidTestBinary("detoxPreRelease"),
     },
   },
+  // Workers past the first resolve `${configuration.device}${JEST_WORKER_ID}` (jest.environment.ts),
+  // so the numbered aliases have no static reference and their count caps E2E_WORKER_COUNT.
   devices: {
     simulator: {
       type: "ios.simulator",

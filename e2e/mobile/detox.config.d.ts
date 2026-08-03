@@ -1,6 +1,10 @@
 // Detoxconfig
 declare let detoxConfig: {
+  extends: string;
   testRunner: Record<string, unknown>;
+  logger: Record<string, unknown>;
+  session: Record<string, unknown>;
+  artifacts: Record<string, unknown>;
   behavior: Record<string, unknown>;
   apps: {
     [key: string]: {
