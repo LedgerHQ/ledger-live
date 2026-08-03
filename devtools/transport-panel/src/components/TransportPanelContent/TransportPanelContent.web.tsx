@@ -11,7 +11,7 @@ interface TransportPanelContentProps<M extends MessageMap> {
 
 export function TransportPanelContent<M extends MessageMap>({
   transportConfig,
-}: TransportPanelContentProps<M>) {
+}: Readonly<TransportPanelContentProps<M>>) {
   const { transport, target, setTarget, hubUrl, setHubUrl, role } = transportConfig;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   return (
