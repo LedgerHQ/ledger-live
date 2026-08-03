@@ -1,3 +1,4 @@
+import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -10,7 +11,7 @@ export class CosmosValidatorsManager {
   protected _version: string;
   protected _currency!: CryptoCurrency;
   protected _minDenom!: string;
-  protected _endPoint: string | undefined;
+  protected _endPoint: EnvValue<EnvName> | undefined;
   protected _rewardsState: any | undefined;
   private _crypto: cosmosBase;
 
@@ -18,7 +19,7 @@ export class CosmosValidatorsManager {
     currency: CryptoCurrency,
     options?: {
       namespace?: string;
-      endPoint?: string;
+      endPoint?: EnvValue<EnvName>;
       rewardsState?: any;
     },
   ) {

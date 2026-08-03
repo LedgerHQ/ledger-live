@@ -759,6 +759,8 @@
     "src/families/celo/coinModuleApi.ts",
     "src/families/celo/config.ts",
     "src/families/concordium/config.ts",
+    "src/families/cosmos/bridge/api.ts",
+    "src/families/cosmos/coinModuleApi.ts",
     "src/families/cosmos/config.ts",
     "src/families/evm/accountRawAssign.ts",
     "src/families/evm/bridge/api.ts",

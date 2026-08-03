@@ -84,7 +84,8 @@ describe("logic/history/listOperations", () => {
     expect(page.items).toHaveLength(1);
     const op = page.items[0];
     expect(op.type).toBe("OUT");
-    expect(op.value).toBe(1_000_500n);
+    // value excludes fee (CoinModuleApi convention); the generic framework re-adds it for OUT.
+    expect(op.value).toBe(1_000_000n);
     expect(op.senders).toEqual([ADDR]);
     expect(op.recipients).toEqual(["cosmos1recipient"]);
     expect(op.asset).toEqual({ type: "native" });
@@ -103,6 +104,14 @@ describe("logic/history/listOperations", () => {
     const details = page.items[0].details as { validators: { amount: unknown }[] };
     expect(details.validators[0].amount).toBe("1000000");
     expect(typeof details.validators[0].amount).toBe("string");
+  });
+
+  it("mirrors the first validator into details.stake (bigint) for the generic framework's operation adapter", async () => {
+    const page = await listOperations(apiWith([makeDelegateTx()]), ADDR, {
+      minHeight: 0,
+    });
+    const details = page.items[0].details as { stake: { address: string; amount: bigint } };
+    expect(details.stake).toEqual({ address: "cosmosvaloper1v", amount: 1_000_000n });
   });
 
   it("dedupes a tx returned in both the sender and recipient streams", async () => {

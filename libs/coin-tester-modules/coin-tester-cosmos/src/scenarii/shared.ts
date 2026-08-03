@@ -1,22 +1,21 @@
 import BigNumber from "bignumber.js";
-import { setupServer } from "msw/node";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { Account, StakingResources } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
-import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
-import resolver from "@ledgerhq/coin-cosmos/hw-getAddress";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   CosmosAccount,
   CosmosCurrencyConfig,
   CosmosOperationExtra,
-  Transaction as CosmosTransaction,
 } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { makeAccount } from "../fixtures";
 import { buildSigner } from "../signer";
+import { getBridges } from "../helpers";
 
-type CosmosScenarioTransaction = ScenarioTransaction<CosmosTransaction, CosmosAccount>;
+type CosmosScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
 const LOCAL_LCD = "http://127.0.0.1:1317";
 
@@ -78,19 +77,38 @@ export type CosmosScenarioOptions = {
 // devnet lifecycle, address prefix, and retry budget differ — hence the options.
 export function makeCosmosScenario(
   options: CosmosScenarioOptions,
-): Scenario<CosmosTransaction, CosmosAccount> {
+): Scenario<GenericTransaction, Account> {
   const { name, currency, hrp, delegateLabel, spawn, kill, retryInterval, retryLimit } = options;
   const unit = currency.units[0];
 
   // Populated in setup() before getTransactions() runs. Closure-scoped per
   // scenario, so two scenarios never share state.
-  const mockServer = setupServer();
   let recipientAddress = "";
   let validatorAddress = "";
 
-  const getTransactions = (): CosmosScenarioTransaction[] => [
+  /** The subset of delegation-shaped fields both `CosmosResources` and the generic
+   * framework's `StakingResources` agree on (only `status`'s literal union differs). */
+  interface StakingView {
+    delegations: Array<{ validatorAddress: string; amount: BigNumber }>;
+    delegatedBalance: BigNumber;
+  }
+
+  /**
+   * Legacy exposes `cosmosResources`, generic-adapter `stakingResources` (untyped on Account —
+   * genericGetAccountShape sets it directly), so each is read behind a cast.
+   */
+  const getStakingView = (account: Account, strategy: BridgeStrategy): StakingView | undefined =>
+    strategy === "legacy"
+      ? (account as CosmosAccount).cosmosResources
+      : (account as Account & { stakingResources?: StakingResources }).stakingResources;
+
+  const getTransactions = (
+    _address: string,
+    strategy: BridgeStrategy,
+  ): CosmosScenarioTransaction[] => [
     {
       name: `Send 1 ${currency.ticker}`,
+      family: "cosmos",
       mode: "send",
       recipient: recipientAddress,
       amount: parseCurrencyUnit(unit, "1"),
@@ -109,49 +127,39 @@ export function makeCosmosScenario(
     },
     {
       name: delegateLabel,
+      family: "cosmos",
       mode: "delegate",
-      // Delegate is keyed on transaction.amount across the whole cosmos module:
-      // getTransactionStatus.getDelegateTransactionStatus validates it and
-      // buildTransaction's "delegate" case reads it — unlike redelegate/undelegate,
-      // which read validators[].amount. So the delegated amount goes in
-      // transaction.amount; validators[0] only supplies the target address (its
-      // amount is unused by the delegate build path, kept for symmetry below).
+      // Delegate reads transaction.amount (unlike undelegate/redelegate, which read
+      // validators[].amount); genericToCosmosTransaction sets both — see bridges.ts.
+      valAddress: validatorAddress,
       amount: parseCurrencyUnit(unit, "100"),
-      validators: [
-        {
-          address: validatorAddress,
-          amount: parseCurrencyUnit(unit, "100"),
-        },
-      ],
       expect: (previousAccount, currentAccount) => {
         const [latestOperation] = currentAccount.operations;
         expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
         expect(latestOperation.type).toBe("DELEGATE");
         // op.value for DELEGATE is just the fee — principal is bonded, not spent.
         expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
-        // The retry budget gives the delegation time to land (immediately on
-        // Cosmos Hub, at the next epoch boundary on Babylon); once applied, the
-        // LCD reflects it.
-        expect(
-          currentAccount.cosmosResources.delegations.some(
-            d => d.validatorAddress === validatorAddress,
-          ),
-        ).toBe(true);
-        expect(currentAccount.cosmosResources.delegatedBalance.toFixed()).toBe(
-          parseCurrencyUnit(unit, "100").toFixed(),
-        );
-        // Op extras name the validator we delegated to.
-        const extra = latestOperation.extra as CosmosOperationExtra;
-        expect(extra.validators?.[0]?.address).toBe(validatorAddress);
-        expect(extra.validators?.[0]?.amount.toFixed()).toBe(
-          parseCurrencyUnit(unit, "100").toFixed(),
-        );
+        // The retry budget lets the delegation land (immediate on Hub, next epoch on Babylon).
+        const staking = getStakingView(currentAccount, strategy);
+        expect(staking).toBeDefined();
+        expect(staking!.delegations.some(d => d.validatorAddress === validatorAddress)).toBe(true);
+        expect(staking!.delegatedBalance.toFixed()).toBe(parseCurrencyUnit(unit, "100").toFixed());
+        // Legacy's operation.extra carries cosmos's `validators` array; the generic framework's
+        // adaptCoreOperationToLiveOperation only forwards a singular `stake` field (see
+        // listOperations.ts's toOperation, which mirrors validators[0] into details.stake for it).
+        const stakeTarget =
+          strategy === "legacy"
+            ? (latestOperation.extra as CosmosOperationExtra).validators?.[0]
+            : (latestOperation.extra as { stake?: { address: string; amount: BigNumber } }).stake;
+        expect(stakeTarget?.address).toBe(validatorAddress);
+        expect(stakeTarget?.amount.toFixed()).toBe(parseCurrencyUnit(unit, "100").toFixed());
       },
     },
     {
       name: "Claim rewards",
+      family: "cosmos",
       mode: "claimReward",
-      validators: [{ address: validatorAddress, amount: new BigNumber(0) }],
+      valAddress: validatorAddress,
       expect: (previousAccount, currentAccount) => {
         const [latestOperation] = currentAccount.operations;
         expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
@@ -177,18 +185,27 @@ export function makeCosmosScenario(
   return {
     name,
 
-    setup: async () => {
+    setup: async strategy => {
       const signer = await buildSigner();
-      const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
-      const { accountBridge, currencyBridge } = createBridges(
-        signerContext,
-        () => coinConfig as unknown as CosmosCoinConfig,
+
+      // generic-adapter reads its config from LiveConfig; harmless for the legacy
+      // arm (which gets coinConfig directly via getBridges below).
+      // Merge into the existing schema instead of replacing it: sibling scenarii (Babylon/Cosmos)
+      // run in the same Jest worker and each register their own currency key.
+      LiveConfig.setConfig({
+        ...LiveConfig.instance.config,
+        [`config_currency_${currency.id}`]: { type: "object" as const, default: coinConfig },
+      });
+
+      const { accountBridge, currencyBridge, getAddress } = await getBridges(
+        strategy,
+        signer,
+        coinConfig,
       );
 
       // Derive the dev account from the (random) seed BEFORE the chain boots, then
       // hand its address to the devnet so genesis pre-funds exactly that account.
       // entrypoint.sh reads DEV_ADDRESS from the environment via docker-compose.
-      const getAddress = resolver(signerContext);
       const { address } = await getAddress("", {
         path: "44'/118'/0'/0/0",
         currency,
@@ -209,10 +226,9 @@ export function makeCosmosScenario(
 
       const account = makeAccount(address, currency);
       return {
-        // Drop the narrower CosmosOperation generic — Scenario expects the
-        // 2-arity AccountBridge; cast is sound because Scenario only exposes
-        // the base interface.
-        accountBridge: accountBridge as AccountBridge<CosmosTransaction, CosmosAccount>,
+        // Typed on the broad `Account`: legacy sets `cosmosResources`, generic-adapter
+        // `stakingResources`, so no single family type fits both — getStakingView reads the right one.
+        accountBridge,
         currencyBridge,
         account,
         retryInterval,
@@ -223,13 +239,6 @@ export function makeCosmosScenario(
     getTransactions,
 
     beforeAll: async account => {
-      mockServer.listen({
-        onUnhandledRequest: request => {
-          const hostname = new URL(request.url).hostname;
-          if (["127.0.0.1", "localhost"].includes(hostname)) return;
-          throw new Error(`Unhandled request: ${request.method} ${request.url}`);
-        },
-      });
       // entrypoint.sh funds the dev account with 1,000,000 units at genesis. The
       // chain leaves it marginally under that after genesis processing (a small,
       // deterministic overhead), so assert it's funded with effectively the full
@@ -240,7 +249,6 @@ export function makeCosmosScenario(
     },
 
     teardown: async () => {
-      mockServer.close();
       await kill();
     },
   };

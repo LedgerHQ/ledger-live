@@ -923,4 +923,130 @@ describe("CosmosApi", () => {
       expect(Number.isNaN(unbonding.completionDate.getTime())).toBe(false);
     });
   });
+
+  const BABYLON_ADDRESS = "bbn1uwpws077a0a9pclapv3f2fyj5u0mlh6ewmds8n";
+
+  // height 100 < epoch boundary 360, so the caller's queued messages merge.
+  const mockBabylonRoutes = (msgs: { msg_type: string; msg: string }[]) => {
+    // @ts-expect-error method is mocked
+    network.mockImplementation(({ url }: { url: string }) => {
+      const respond = (data: unknown) => Promise.resolve({ data });
+      if (url.includes("current_epoch"))
+        return respond({ current_epoch: "5", epoch_boundary: "360" });
+      if (url.includes("/babylon/epoching/v1/"))
+        return respond({ msgs, pagination: { next_key: null, total: String(msgs.length) } });
+      if (url.includes("blocks/latest")) return respond({ block: { header: { height: "100" } } });
+      if (url.includes("/redelegations")) return respond({ redelegation_responses: [] });
+      if (url.includes("/unbonding_delegations")) return respond({ unbonding_responses: [] });
+      if (url.includes("/rewards")) return respond({ rewards: [] });
+      if (url.includes("/staking/v1beta1/delegations/"))
+        return respond({
+          delegation_responses: [
+            {
+              delegation: { validator_address: "bbnvaloper1active" },
+              balance: { denom: "ubbn", amount: "50" },
+            },
+          ],
+        });
+      if (url.includes("/staking/v1beta1/validators/"))
+        return respond({ validator: { status: "BOND_STATUS_BONDED" } });
+      return Promise.reject(new Error(`unmocked url: ${url}`));
+    });
+  };
+
+  describe("getStakingPositions", () => {
+    const currency = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
+
+    it("returns delegations/unbondings with queued epoching messages merged (babylon)", async () => {
+      mockBabylonRoutes([
+        {
+          msg_type: "cosmos.staking.v1beta1.MsgDelegate",
+          msg: `delegator_address:"${BABYLON_ADDRESS}" validator_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"30" >`,
+        },
+      ]);
+
+      const babylonApi = new CosmosAPI("babylon");
+      const { delegations, unbondings } = await babylonApi.getStakingPositions(
+        BABYLON_ADDRESS,
+        currency,
+      );
+
+      expect(unbondings).toEqual([]);
+      expect(delegations).toEqual([
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1active",
+          amount: new BigNumber(50),
+        }),
+        expect.objectContaining({
+          validatorAddress: "bbnvaloper1pending",
+          amount: new BigNumber(30),
+        }),
+      ]);
+    });
+  });
+
+  describe("getRedelegationsWithQueued", () => {
+    const babylon = { id: "babylon", units: [{}, { code: "ubbn" }] } as CryptoCurrency;
+    const cosmos = { id: "cosmos", units: [{}, { code: "uatom" }] } as CryptoCurrency;
+
+    it("merges queued redelegations on epoched chains (babylon)", async () => {
+      mockBabylonRoutes([
+        {
+          msg_type: "cosmos.staking.v1beta1.MsgBeginRedelegate",
+          msg: `delegator_address:"${BABYLON_ADDRESS}" validator_src_address:"bbnvaloper1active" validator_dst_address:"bbnvaloper1pending" amount:<denom:"ubbn" amount:"20" >`,
+        },
+      ]);
+
+      const babylonApi = new CosmosAPI("babylon");
+      const redelegations = await babylonApi.getRedelegationsWithQueued(BABYLON_ADDRESS, babylon);
+
+      expect(redelegations).toEqual([
+        expect.objectContaining({
+          validatorSrcAddress: "bbnvaloper1active",
+          validatorDstAddress: "bbnvaloper1pending",
+          amount: new BigNumber(20),
+        }),
+      ]);
+    });
+
+    it("returns only executed redelegations and skips epoching/delegations on non-epoched chains (cosmos)", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation(({ url }: { url: string }) => {
+        const respond = (data: unknown) => Promise.resolve({ data });
+        if (url.includes("/redelegations"))
+          return respond({
+            redelegation_responses: [
+              {
+                redelegation: {
+                  validator_src_address: "cosmosvaloper1src",
+                  validator_dst_address: "cosmosvaloper1dst",
+                },
+                entries: [
+                  {
+                    redelegation_entry: {
+                      initial_balance: "1000000",
+                      completion_time: "2026-01-01T00:00:00Z",
+                    },
+                  },
+                ],
+              },
+            ],
+          });
+        return Promise.reject(new Error(`unmocked url: ${url}`));
+      });
+
+      const redelegations = await cosmosApi.getRedelegationsWithQueued("cosmos1a", cosmos);
+
+      expect(redelegations).toEqual([
+        expect.objectContaining({
+          validatorSrcAddress: "cosmosvaloper1src",
+          validatorDstAddress: "cosmosvaloper1dst",
+          amount: new BigNumber("1000000"),
+        }),
+      ]);
+      const urls = mockedNetwork.mock.calls.map(([o]) => o.url);
+      expect(urls.some(u => u?.includes("epoching"))).toBe(false);
+      expect(urls.some(u => u?.includes("/staking/v1beta1/delegations/"))).toBe(false);
+    });
+  });
 });

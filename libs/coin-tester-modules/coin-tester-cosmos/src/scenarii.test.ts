@@ -8,29 +8,32 @@ import { CosmosScenario } from "./scenarii/Cosmos";
 global.console = console;
 jest.setTimeout(600_000);
 
-describe("Cosmos Tester", () => {
-  it("scenario Babylon", async () => {
-    try {
-      await executeScenario(BabylonScenario);
-    } catch (e) {
-      if (e !== "done") {
-        await killBabylond();
-        throw e;
+describe.each([["legacy"], ["generic-adapter"]] as const)(
+  "Cosmos Tester (%s strategy)",
+  strategy => {
+    it("scenario Babylon", async () => {
+      try {
+        await executeScenario(BabylonScenario, strategy);
+      } catch (e) {
+        if (e !== "done") {
+          await killBabylond();
+          throw e;
+        }
       }
-    }
-  });
+    });
 
-  it("scenario Cosmos", async () => {
-    try {
-      await executeScenario(CosmosScenario);
-    } catch (e) {
-      if (e !== "done") {
-        await killGaiad();
-        throw e;
+    it("scenario Cosmos", async () => {
+      try {
+        await executeScenario(CosmosScenario, strategy);
+      } catch (e) {
+        if (e !== "done") {
+          await killGaiad();
+          throw e;
+        }
       }
-    }
-  });
-});
+    });
+  },
+);
 
 // `exit` (and some signal paths) won't await pending promises, so the handler
 // must trigger teardown synchronously rather than awaiting it. Tear down both

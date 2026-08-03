@@ -56,7 +56,7 @@ describe("listOperations via MSW", () => {
     expect(page.items).toHaveLength(1);
     const op = page.items[0];
     expect(op.type).toBe("OUT");
-    expect(op.value).toBe(2_005_000n); // amount (2_000_000) + fee (5_000), sender pays fees
+    expect(op.value).toBe(2_000_000n); // OUT value excludes fee (framework re-adds it, so we avoid double-counting)
     expect(op.senders).toEqual([ADDR]);
     expect(op.recipients).toEqual(["cosmos1recipient00000000000000000000000000"]);
     expect(op.asset).toEqual({ type: "native" });
