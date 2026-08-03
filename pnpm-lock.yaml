@@ -11964,6 +11964,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../live-dmk-speculos
+      '@ledgerhq/live-signer-aleo':
+        specifier: workspace:^
+        version: link:../live-signer-aleo
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../live-signer-evm
