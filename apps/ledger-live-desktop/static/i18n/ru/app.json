@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Дополнительно",
     "custom" : "Пользовательская",
+    "defaultNetworkFee" : "Стандартная комиссия сети",
     "fast" : "Быстро",
     "networkFees" : "Комиссия сети",
     "high" : "Высокая",
@@ -540,7 +541,9 @@
       "zcash_title" : "Ledger Nano S™ не поддерживает обмен Zcash",
       "zcash_description" : "Для обмена Zcash используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "aleo_title" : "Ledger Nano S™ не поддерживает обмен Aleo",
-      "aleo_description" : "Используйте другие совместимые устройства Ledger для обмена Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "aleo_description" : "Используйте другие совместимые устройства Ledger для обмена Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "aleo_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Aleo",
+      "aleo_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Aleo. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Синхронизируйте кошельки",
           "description" : "Поддерживайте синхронизацию между вашими счетами."
-        },
-        "customImage" : {
-          "title" : "Настройки экрана блокировки",
-          "description" : "Поместите любимый цифровой арт или фотографию в качестве заставки экрана блокировки вашего устройства."
         },
         "discoverWallet" : {
           "title" : "Узнайте, что умеет ваш кошелёк",
@@ -5459,11 +5458,6 @@
           "description" : "Возможность протестировать анимацию, которая используется в Ledger Wallet.",
           "longDesc" : "Инструмент предоставляется команде на условиях «как есть» для проверки Lottie-анимаций, используемых в приложении."
         },
-        "testStories" : {
-          "title" : "Протестировать сторис из Storyly",
-          "description" : "Возможность протестировать истории, доступные в Ledger Wallet.",
-          "longDesc" : "Инструмент предоставляется команде на условиях «как есть» для проверки Storyly-сторис, используемых в приложении."
-        },
         "testStaxPostonboarding" : {
           "title" : "Попробовать работу Stax после настройки",
           "description" : "Попробовать все функции Stax, доступные после настройки"
@@ -5558,7 +5552,7 @@
         "desc" : "Вы можете скрыть транзакции с нулевой суммой и избежать потенциальной атаки отравления адреса в сетях Eth, Polygon, BSC, Tron..."
       },
       "doNotAskAgainSkipMemo" : {
-        "title" : "Больше не спрашивать про пропуск Memo при отправке",
+        "title" : "Не напоминать про Memo при отправке",
         "desc" : "Отключить предупреждение о пропуске тега примечания (Memo) при отправке криптовалют"
       }
     }
@@ -8283,11 +8277,6 @@
         "doThisLater" : "Не сейчас"
       }
     },
-    "postOnboarding" : {
-      "title" : "Настройки экрана блокировки",
-      "description" : "Используйте любимый цифровой арт или фото в качестве экрана блокировки вашего устройства.",
-      "actionCompletedPopupLabel" : "Устройство персонализировано"
-    },
     "customImageSet" : "Экран блокировки настроен",
     "finishCTA" : "Закрыть"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Публичная отправка",
+          "transparentToShielded" : "Отправка с публичного на приватный",
+          "shieldedToTransparent" : "Отправка с приватного на публичный",
+          "shielded" : "Приватная отправка"
+        },
         "transferFrom" : {
           "label" : "Перевести с",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Конфиденциальный баланс",
             "subtitle" : "Экранированная",
             "unavailable" : "Конфиденциальный баланс недоступен"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (необязательно)",
+          "placeholder" : "Введите Memo",
+          "tooltip" : "Прикрепите приватное сообщение к этой экранированной транзакции. Только получатель сможет его прочитать. До 512 байт."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "Приватный баланс не синхронизирован",
+            "cta" : "Возобновить синхронизацию"
+          },
+          "running" : {
+            "message" : "Синхронизируем приватный баланс ({{progress}}%)",
+            "timeRemaining" : "Осталось: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "Баланс может быть неактуальным",
+            "cta" : "Синхронизировать баланс"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Перевод себе",
+      "headerAction" : "Обменять",
       "headerActionTooltip" : "У вас недостаточно средств для перевода себе",
       "modal" : {
-        "title" : "Перевод себе",
+        "title" : "Обменять",
         "stepRecipient" : {
           "selectLabel" : "Перевести с"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "Контакты",
     "addContact" : "Добавить контакт",
+    "addAddress" : "Добавить адрес",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Имя контакта",
+      "namingDisclaimer" : "В целях конфиденциальности не используйте полные имена и фамилии. Используйте никнейм или просто имя и инициал (например, Вася П.)",
+      "invalidNameError" : "Спецсимволы использовать нельзя."
+    },
     "searchPlaceholder" : "Поиск контакта...",
     "searchNoResults" : "Контакт не найден",
+    "addressCount_zero" : "0 адресов",
+    "addressCount_one" : "{{count}} адрес",
+    "addressCount_other" : "Адресов: {{count}}",
     "me" : {
-      "name" : "Я",
-      "addressCount_zero" : "0 адресов",
-      "addressCount_one" : "{{count}} адрес",
-      "addressCount_other" : "Адресов: {{count}}"
+      "name" : "Я"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "У вас нет сохранённых адресов",
+        "contactTitle" : "Нет сохранённых адресов для {{name}}",
+        "meDescription" : "Сохраните адреса своих криптокошельков, и в дальнейшем получайте криптовалюту по имени.",
+        "contactDescription" : "Сохраните адреса криптокошельков, и в дальнейшем отправляйте криптовалюту по имени."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Отправить",
+      "copy" : "Скопировать",
+      "copied" : "Скопировано",
+      "edit" : "Редактировать",
+      "delete" : "Удалить",
+      "networkTag" : "Сеть {{name}}"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Ваши контакты защищены сквозным шифрованием устройством Ledger и синхронизируются между вашими устройствами — только вы можете разблокировать их.",
