@@ -1,19 +1,10 @@
 import { act, renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
+import { deeplink } from "~/renderer/bridge";
 import useDeeplink from "..";
 
-type DeepLinkListener = (event: unknown, url: string) => void;
-
-const mockDeepLinkListeners: Record<string, DeepLinkListener> = {};
 const mockHandler = jest.fn();
 
-jest.mock("electron", () => ({
-  ipcRenderer: {
-    on: jest.fn((channel: string, listener: DeepLinkListener) => {
-      mockDeepLinkListeners[channel] = listener;
-    }),
-    removeListener: jest.fn(),
-  },
-}));
+let emitDeepLink: ((url: string) => void) | undefined;
 
 jest.mock("../useDeepLinkHandler", () => ({
   useDeepLinkHandler: () => ({
@@ -24,9 +15,13 @@ jest.mock("../useDeepLinkHandler", () => ({
 describe("useDeeplink", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    for (const key of Object.keys(mockDeepLinkListeners)) {
-      delete mockDeepLinkListeners[key];
-    }
+    emitDeepLink = undefined;
+    jest.mocked(deeplink.onOpen).mockImplementation(callback => {
+      emitDeepLink = callback;
+      return () => {
+        emitDeepLink = undefined;
+      };
+    });
   });
 
   it("should queue background deeplinks while locked and replay them as background when hardening is enabled", async () => {
@@ -43,7 +38,7 @@ describe("useDeeplink", () => {
     });
 
     act(() => {
-      mockDeepLinkListeners["deep-linking"](undefined, url);
+      emitDeepLink!(url);
     });
 
     expect(mockHandler).not.toHaveBeenCalled();
@@ -98,7 +93,7 @@ describe("useDeeplink", () => {
     });
 
     act(() => {
-      mockDeepLinkListeners["deep-linking"](undefined, url);
+      emitDeepLink!(url);
     });
 
     expect(mockHandler).toHaveBeenCalledWith(url, false);

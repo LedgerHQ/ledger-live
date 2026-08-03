@@ -3,6 +3,9 @@ import {
   type Bootstrap,
   type CardSessionBridge,
   type DbBridge,
+  type DeeplinkBridge,
+  type UpdaterBridge,
+  type UpdaterStatusEvent,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -35,6 +38,21 @@ export const db: jest.Mocked<DbBridge> = {
   resetAll: jest.fn().mockResolvedValue(undefined),
   reload: jest.fn().mockResolvedValue(undefined),
   cleanCache: jest.fn().mockResolvedValue(undefined),
+};
+
+/**
+ * `on*` methods return an unsubscribe closure, so the doubles must return one too —
+ * consumers call the result on unmount and would otherwise crash.
+ */
+export const updater: jest.Mocked<UpdaterBridge> = {
+  init: jest.fn(),
+  quitAndInstall: jest.fn(),
+  onStatus: jest.fn((_callback: (event: UpdaterStatusEvent) => void) => () => {}),
+};
+
+export const deeplink: jest.Mocked<DeeplinkBridge> = {
+  open: jest.fn(),
+  onOpen: jest.fn((_callback: (url: string) => void) => () => {}),
 };
 
 export const cardSession: CardSessionBridge = {

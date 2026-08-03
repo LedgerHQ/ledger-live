@@ -8,6 +8,7 @@ import {
 } from "~/bridge/contract";
 import { expose } from "./expose";
 import { db } from "./db";
+import { deeplink, updater } from "./push";
 
 const deepFreeze = <T>(value: T): T => {
   if (value && typeof value === "object" && !Object.isFrozen(value)) {
@@ -33,6 +34,8 @@ export function installBridge(): void {
     version: BRIDGE_VERSION,
     bootstrap: deepFreeze(bootstrap),
     db,
+    updater,
+    deeplink,
     cardSession,
   };
 

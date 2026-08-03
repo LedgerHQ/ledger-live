@@ -49,6 +49,39 @@ export type DbBridge = {
   cleanCache(): Promise<void>;
 };
 
+/**
+ * Removes a subscription created by one of the `on*` methods below.
+ *
+ * Subscriptions are cancelled through a returned closure rather than by passing the
+ * listener back, because `removeListener(channel, fn)` cannot work across the bridge: the
+ * renderer's function arrives in the preload as a proxy with a different identity, so the
+ * lookup would silently fail and the listener would leak.
+ */
+export type Unsubscribe = () => void;
+
+/**
+ * Payload pushed by the auto-updater.
+ *
+ * `status` is kept as a plain string here rather than importing the renderer's
+ * `UpdateStatus` union: this file is compiled into the preload bundle and must not pull in
+ * renderer code. The consumer narrows it.
+ */
+export type UpdaterStatusEvent = {
+  status: string;
+  payload?: { percent?: number; version?: string };
+};
+
+export type UpdaterBridge = {
+  init(): void;
+  quitAndInstall(): void;
+  onStatus(callback: (event: UpdaterStatusEvent) => void): Unsubscribe;
+};
+
+export type DeeplinkBridge = {
+  open(url: string): void;
+  onOpen(callback: (url: string) => void): Unsubscribe;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -58,6 +91,8 @@ export type LedgerBridge = {
   version: typeof BRIDGE_VERSION;
   bootstrap: Bootstrap;
   db: DbBridge;
+  updater: UpdaterBridge;
+  deeplink: DeeplinkBridge;
   cardSession: CardSessionBridge;
 };
 
@@ -77,5 +112,7 @@ export const CHANNELS = {
   resetAll: "resetAll",
   reload: "reload",
   cleanCache: "cleanCache",
+  updater: "updater",
+  deepLinking: "deep-linking",
   cardSessionBootstrap: "card-session:bootstrap",
 } as const;
