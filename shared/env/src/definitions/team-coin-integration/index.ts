@@ -7,6 +7,21 @@ import {
 } from "@ledgerhq/live-env";
 
 const teamCoinIntegration = {
+  A4_URL_STG: {
+    def: "https://explorers.api.live.stg.ledger-test.com/a4",
+    parser: stringParser,
+    desc: "A4 indexer base URL for staging. No trailing network segment.",
+  },
+  A4_URL_PPR: {
+    def: "https://explorers.api.live.ppr.ledger-test.com/a4",
+    parser: stringParser,
+    desc: "A4 indexer base URL for pre-prod. No trailing network segment.",
+  },
+  A4_URL_PRD: {
+    def: "https://explorers.api.vault.ledger.com/a4",
+    parser: stringParser,
+    desc: "A4 indexer base URL for production. No trailing network segment.",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
