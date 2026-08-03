@@ -593,6 +593,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
 
 export function runSwapDiscreetModeTest(
   accounts: AccountType[],
+  balanceCheckAccount: AccountType,
   tmsLinks: string[],
   tags: string[],
 ) {
@@ -622,6 +623,14 @@ export function runSwapDiscreetModeTest(
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.checkSelectAssetPage();
       await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
+    });
+
+    it("Checks if the balance is hidden in the swap main form", async () => {
+      // Masking is currency-agnostic, so a single account is enough here.
+      await app.swapLiveApp.tapFromCurrency();
+      await app.modularDrawer.selectAsset(balanceCheckAccount);
+      await app.swapLiveApp.checkAssetFromContains(balanceCheckAccount.currency.ticker);
+      await app.swapLiveApp.checkFromAccountBalanceIsDiscreet(balanceCheckAccount.currency.ticker);
     });
   });
 }
