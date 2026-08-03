@@ -443,7 +443,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@feature/QAA-1365-workers-with-reset
         with:
           test_directory: e2e/mobile
           test_filter: ${{ steps.test-filter.outputs.filter }}
