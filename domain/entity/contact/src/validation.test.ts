@@ -60,11 +60,11 @@ describe("contact address label validation", () => {
     expect(isValidContactAddressLabel(longLabel)).toBe(true);
   });
 
-  it("reports invalid characters for a non-empty invalid draft label", () => {
-    expect(getContactAddressLabelValidationError("Ethereum 💎")).toBe(
+  it("reports invalid non-ASCII characters for a non-empty draft label", () => {
+    expect(getContactAddressLabelValidationError("Ethér")).toBe(
       INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
     );
-    expect(isValidContactAddressLabel("Ethereum 💎")).toBe(false);
+    expect(isValidContactAddressLabel("Ethér")).toBe(false);
   });
 
   it("reports a duplicate within the existing labels", () => {
@@ -76,19 +76,14 @@ describe("contact address label validation", () => {
     expect(isValidContactAddressLabel("ETHEREUM", existingLabels)).toBe(false);
   });
 
-  it("treats canonically equivalent Unicode labels as duplicates", () => {
-    const existingLabels = [ContactAddressLabelSchema.parse("Ethér")];
-
-    expect(getContactAddressLabelValidationError("Ethe\u0301r", existingLabels)).toBe(
-      DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-    );
-    expect(normalizeContactAddressLabelForComparison(" Ethér ")).toBe(
-      normalizeContactAddressLabelForComparison("ETHE\u0301R"),
+  it("normalizes ASCII labels for comparison", () => {
+    expect(normalizeContactAddressLabelForComparison(" Ethereum ")).toBe(
+      normalizeContactAddressLabelForComparison("ETHEREUM"),
     );
   });
 
   it("parses and normalizes a valid address label", () => {
-    expect(parseContactAddressLabel("  Ethe\u0301r  ")).toBe("Ethér");
+    expect(parseContactAddressLabel("  Ethereum  ")).toBe("Ethereum");
   });
 
   it("throws the matching domain error for invalid and duplicate labels", () => {

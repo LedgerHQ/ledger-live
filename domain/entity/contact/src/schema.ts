@@ -11,7 +11,7 @@ export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCur
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
-const ContactAddressLabelPattern = /^(?=.*[\p{L}\p{N}])[\p{L}\p{Mn}\p{Mc}\p{N}\p{P}\p{Zs}]+$/u;
+const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
 
 export const ContactNameSchema = NonEmptyStringSchema.regex(
   ContactNamePattern,

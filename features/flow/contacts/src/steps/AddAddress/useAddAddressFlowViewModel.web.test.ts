@@ -335,13 +335,13 @@ describe("useAddAddressFlowViewModel", () => {
     act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
     await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
     act(() => result.current.confirmAddress());
-    act(() => result.current.updateAddressLabel("Ethereum 💎"));
+    act(() => result.current.updateAddressLabel("Ethér"));
 
     expect(result.current.state).toMatchObject({
       status: "namingAddress",
       addressLabel: {
         status: "invalid",
-        value: "Ethereum 💎",
+        value: "Ethér",
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
