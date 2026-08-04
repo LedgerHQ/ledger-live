@@ -65,9 +65,10 @@ jest.mock("@features/flow-contacts", () => {
   };
 });
 
-const actualUseAddAddressFlowViewModel = jest.requireActual<typeof import("@features/flow-contacts")>(
-  "@features/flow-contacts",
-).useAddAddressFlowViewModel;
+const actualUseAddAddressFlowViewModel =
+  jest.requireActual<typeof import("@features/flow-contacts")>(
+    "@features/flow-contacts",
+  ).useAddAddressFlowViewModel;
 const mockUseAddAddressFlowViewModel = jest.mocked(useAddAddressFlowViewModel);
 
 const contextMenuValue = {
