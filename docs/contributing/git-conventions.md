@@ -2,34 +2,40 @@
 
 This is the canonical guidance for Git conventions in this repo.
 
-The goal is for Git history to surface the **type** and **scope** of changes, and reference a related Jira ticket when possible.
+Our Git history should always surface the **type**, **scope** and description of changes, 
+and when possible, link to a Jira ticket.
 
 ## Summary
 
-The structure below is based on [Conventional Commits](https://www.conventionalcommits.org/):
+The structure is required for **commit messages** and **PR titles** and optional for **branch names**.
+
+Structure:
 
 ```text
-branch:    <type>/<scope>-<ticket>-<short-description>
-commit:    <type>(<scope>): <description>
-PR title:  <type>(<scope>): <description> (<ticket>)
+commit message:  <type>(<scope>): <description>
+PR title:        <type>(<scope>): <description> (<optional-ticket>)
+branch name:     <type>/<scope>-<ticket>-<short-description>
 ```
 
-e.g.
+Valid examples:
 
 ```text
-branch: feat/ui-LIVE-1234-add-dark-mode-toggle
-commit: feat(ui): add dark mode toggle
-PR title: feat(ui): add dark mode toggle (LIVE-1234)
+commit message:  feat(ui): add dark mode toggle
+PR title:        feat(ui): add dark mode toggle
+PR title:        feat(ui): add dark mode toggle (LIVE-1234)
+branch name:     feat/ui-LIVE-1234-add-dark-mode-toggle
 ```
 
-We will enforce this struture for commit messages and PR titles (which will be used for merge commits).
-This makes it easier to extract reliable data from Git history.
+Invalid examples:
 
-Consistent naming of branches is entirely optional as these do not remain in Git History.
+```text
+commit message:  feat: add dark mode toggle
+PR title:        feat: add dark mode toggle (LIVE-1234)
+```
 
 ## Type
 
-Types come from Conventional Commit types:
+Types are listed in [commitlint.types.js](../../commitlint.types.js):
 
 - `build`
 - `chore`
@@ -47,7 +53,7 @@ Do not use the legacy `bugfix` or `support`. Use `fix` for bug fixes and `chore`
 
 ## Scope
 
-Scopes give context around the changes. They name the related concern, domain or feature related to the work.
+Scopes give context around the changes. They name the concern, domain or feature related to the work.
 
 Examples:
 
@@ -62,7 +68,7 @@ Avoid multiple scopes – prefer a single more informative value, e.g. use `port
 
 Avoid broad scopes – prefer specifics, e.g. use `coin-modules` instead of `shared`.
 
-Do not use ticket IDs as scope: `fix(LIVE-1234)` is not a valid scope. Use in the PR title instead.
+Do not use ticket IDs as scope: `fix(LIVE-1234)` is not a valid scope.
 
 ## Tickets
 
@@ -72,13 +78,13 @@ Internal contributions should be related to a Jira ticket. If a ticket does not 
 
 A short description of the changes. This should add to the information provided by type and scope.
 
-## Branch names
+## Branch names (optional guidance)
 
 e.g. `feat/ui-LIVE-1234-add-dark-mode-toggle`
 
 Use kebab-case, keep branch names short and keep each branch focused on one concern.
 
-Rules are not enforced on branch names. Following this structure is entirely optional.
+_Rules are not enforced on branch names. Following this structure is entirely optional._
 
 ## Commit messages
 
@@ -86,7 +92,7 @@ e.g. `feat(ui): add dark mode toggle`
 
 Rules:
 
-- `type` and `scope` are required – see guidelines above
+- `type` and `scope` are required.
 - `description` is imperative, lowercase and has no trailing period.
 - Keep the subject line at or below 72 characters.
 - Do not use gitmoji.
@@ -98,12 +104,13 @@ Use `pnpm commit` to create a valid commit message, using tab-completion for typ
 
 Use `pnpm commitlint --from <target-branch>` to check every commit on the branch.
 
-## Pull request and merge titles
+## Pull request titles
 
 e.g. `feat(ui): add dark mode toggle (LIVE-1234)`
 
-Pull request titles use the same Conventional Commit shape as commit messages, with the Jira ticket at the end when one exists.
+Pull request titles use the same structure as commit messages, with the option of a Jira ticket at the end.
 
-A GitHub workflow may automatically prepend a platform prefix based on PR labels, e.g. "LWD" or "LWM". Leave that prefix in place if automation adds it.
+A GitHub workflow may automatically prepend a platform prefix based on PR labels, e.g. "LWD" or "LWM". 
+Leave that prefix in place if automation adds it.
 
-When creating a merge commit for a pull request, use the pull request title as the merge commit title.
+When creating a merge commit for a pull request, use a valid pull request title as the merge commit title.
