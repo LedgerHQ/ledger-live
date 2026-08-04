@@ -135,6 +135,10 @@
     "AlgorandASANotOptInInRecipient" : {
       "title" : "บัญชีผู้รับยังไม่ได้เลือกเข้าร่วม ASA ที่เลือก"
     },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Memo ยาวเกินไป",
+      "description" : "Memo ของ Algorand ต้องไม่เกิน 1024 ไบต์ โปรดย่อ Memo ให้สั้นลง"
+    },
     "BluetoothRequired" : {
       "title" : "ขออภัย บลูทูธถูกปิดใช้งาน",
       "description" : "โปรดเปิดใช้งานบลูทูธในการตั้งค่าโทรศัพท์ของคุณ ({{state}} State)"
@@ -1397,13 +1401,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "ดูเพิ่มเติม ใช้งานคล่องตัวขึ้น รับส่วนลดถึง {{discount}}%",
-      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%"
+      "subtitle" : "เพลิดเพลินกับหน้าจอที่ใหญ่ขึ้น, การตรวจสอบธุรกรรมที่ฉลาดขึ้น, การปกป้องที่ดียิ่งขึ้น และรับส่วนลดเพิ่ม {{discount}}%",
+      "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
     },
     "optedOut" : {
-      "title" : "ตรวจจับสแกมได้ทันที ดูได้ทุกรายละเอียด",
-      "subtitle" : "ตรวจสอบอย่างชัดเจนบนอุปกรณ์ลงนามหน้าจอสัมผัส และตรวจจับสแกมด้วยการตรวจสอบความปลอดภัยขั้นสูง"
-    },
-    "cta" : "ดูอุปกรณ์ลงนามหน้าจอสัมผัส"
+      "title" : "ตรวจพบสแกมก่อนลงนาม",
+      "subtitle" : "เรียนรู้เพิ่มเติมเกี่ยวกับฟีเจอร์ความปลอดภัยขั้นสูงที่ช่วยตรวจจับภัยคุกคามแบบเรียลไทม์",
+      "cta" : "เรียนรู้เพิ่มเติม"
+    }
   },
   "earn" : {
     "simulator" : {
@@ -3469,8 +3474,6 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "ซิงค์บัญชีคริปโตบนแอป Ledger Wallet ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
       "walletSyncDescription" : "พอร์ตของคุณจะอัปเดตเสมอ ไม่ว่าจะดูบนคอมหรือมือถือ",
-      "region" : "ภูมิภาค",
-      "regionDesc" : "เลือกภูมิภาคของคุณเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
       "password" : "ล็อกแอป",
       "passwordDesc" : "ตั้งรหัสผ่านเพื่อล็อกแอป Ledger Wallet",
       "passwordDescBioCompat" : "ตั้งรหัสผ่านหรือ {{biometricsType}} เพื่อล็อกแอป Ledger Wallet",
@@ -4289,7 +4292,11 @@
         "monad_title" : "Ledger Nano S™ ไม่รองรับการสวอป Monad",
         "monad_description" : "หากต้องการสวอป Monad ให้ใช้อุปกรณ์ Ledger ที่รองรับรุ่นอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "zcash_title" : "Ledger Nano S™ ไม่รองรับการสวอป Zcash",
-        "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+        "zcash_description" : "เพื่อสวอป Zcash ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "aleo_title" : "Ledger Nano S™ ไม่รองรับการสวอป Aleo",
+        "aleo_description" : "ในการสวอป Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "aleo_tokens_title" : "Ledger Nano S™ ไม่รองรับการสวอปโทเคน Aleo",
+        "aleo_tokens_description" : "ในกาสวอปโทเคน Aleo ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
       }
     },
     "lending" : {
@@ -4499,6 +4506,28 @@
       "hideFullMessage" : "ซ่อนข้อความแบบเต็ม"
     }
   },
+  "walletApiSignMessage" : {
+    "sign" : {
+      "title" : "ดำเนินการต่อบน {{productName}} ของคุณ",
+      "description" : "โปรดทำตามคำแนะนำที่ปรากฏบนหน้าจอที่ปลอดภัยของคุณ",
+      "cancelled" : {
+        "title" : "การทำรายการถูกปฏิเสธโดยอุปกรณ์ของคุณ",
+        "close" : "ปิด",
+        "retry" : "ลองอีกครั้ง"
+      }
+    }
+  },
+  "walletApiSignTransaction" : {
+    "sign" : {
+      "title" : "ดำเนินการต่อบน {{productName}} ของคุณ",
+      "description" : "โปรดทำตามคำแนะนำที่ปรากฏบนหน้าจอที่ปลอดภัยของคุณ",
+      "cancelled" : {
+        "title" : "การทำรายการถูกปฏิเสธโดยอุปกรณ์ของคุณ",
+        "close" : "ปิด",
+        "retry" : "ลองอีกครั้ง"
+      }
+    }
+  },
   "sync" : {
     "error" : "ข้อผิดพลาดในการซิงค์",
     "loading" : "ซิงค์"
@@ -4574,6 +4603,16 @@
       "feesAmount" : "ยอดค่าธรรมเนียม {{unit}}",
       "gasLimit" : "ปริมาณแก๊สสูงสุด ({{unit}}",
       "feesPaid" : "ค่าธรรมเนียมที่ต้องชำระให้กับเครือข่ายเพื่อทำธุรกรรมของคุณ",
+      "tronFees" : {
+        "sufficient" : {
+          "title" : "ค่าธรรมเนียมเครือข่าย TRX",
+          "description" : "คุณจะใช้ {{energy}} Energy และ {{bandwidth}} Bandwidth ในการจ่ายค่าธรรมเนียมเครือข่าย"
+        },
+        "insufficient" : {
+          "title" : "รายละเอียดค่าธรรมเนียมเครือข่าย",
+          "description" : "คุณมี Energy และ Bandwidth ไม่เพียงพอสำหรับการทำธุรกรรมโอนนี้ ส่วนที่ขาดจะถูกชดเชยโดยการจ่ายด้วย TRX"
+        }
+      },
       "insufficientBalanceFees" : "ยอดคงเหลือไม่เพียงพอสำหรับค่าธรรมเนียมเครือข่าย",
       "amountToSend" : "จำนวนที่จะส่งใน {{currency}}",
       "coinToSend" : "เหรียญที่จะส่ง",
@@ -4765,6 +4804,7 @@
       "slow" : "ช้า",
       "custom" : "กำหนดเอง",
       "customFees" : "ค่าธรรมเนียมที่กำหนดเอง",
+      "defaultNetworkFee" : "ค่าธรรมเนียมเครือข่ายเริ่มต้น",
       "coinControl" : "Coin Control",
       "edit" : {
         "title" : "เลือกหน่วย"
@@ -6763,6 +6803,12 @@
       }
     }
   },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "ฝาก",
+      "OUT" : "ถอน"
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "คุณสามารถรับ Reward ได้โดยการ Delegate บัญชีของคุณ",
@@ -6955,6 +7001,7 @@
             "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป",
             "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
             "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
+            "visibilityDelay" : "อาจใช้เวลาสูงสุดถึง {{numberOfMinutes}} นาทีก่อนที่จะเห็นการ Delegate นี้บนบอร์ดการ Delegate ของคุณ",
             "cta" : "ดำเนินการต่อ"
           },
           "verification" : {
@@ -8450,9 +8497,6 @@
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "การวิเคราะห์",
-    "allocation" : {
-      "title" : "สัดส่วน"
-    },
     "operations" : {
       "title" : "ประวัติธุรกรรม"
     }
@@ -8797,10 +8841,6 @@
           "title" : "ซิงค์วอลเล็ตของคุณ",
           "description" : "ดูแลบัญชีคริปโตของคุณให้มีการซิงค์อยู่เสมอ"
         },
-        "customImage" : {
-          "title" : "ปรับแต่งหน้าจอล็อค",
-          "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์"
-        },
         "recover" : {
           "title" : "สำรองข้อมูลเสร็จแล้ว",
           "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว"
@@ -8828,10 +8868,6 @@
         "titleCompleted" : "คริปโตที่ซื้อ",
         "description" : "เลือกเหรียญและโทเคนได้จากกว่า 500 รายการ",
         "popupLabel" : "คริปโตที่ซื้อ"
-      },
-      "customImage" : {
-        "titleCompleted" : "หน้าจอล็อคที่ปรับแต่ง",
-        "popupLabel" : "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
       "recover" : {
         "titleCompleted" : "ข้อมูลสำรองได้ถูกจัดเก็บอย่างปลอดภัยแล้ว",
@@ -8880,11 +8916,6 @@
         }
       }
     }
-  },
-  "newsfeed" : {
-    "title" : "Newsfeed",
-    "poweredByCryptopanic" : "Powered by Cryptopanic",
-    "noPosts" : "ไม่มีโพสต์ในขณะนี้"
   },
   "deviceConnect" : {
     "title" : "เชื่อมต่ออุปกรณ์"
@@ -9613,6 +9644,8 @@
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "accountCount_one" : "{{count}} บัญชี",
     "accountCount_other" : "{{count}} บัญชี",
+    "emptyAccounts" : "คุณยังไม่มีบัญชี {{network}} โปรดเพิ่มบัญชีเพื่อดำเนินการต่อ",
+    "addAccount" : "เพิ่มบัญชี",
     "perpetualsBanner" : "ปัจจุบันรองรับเฉพาะ USDC บนเครือข่าย Arbitrum เท่านั้น",
     "errors" : {
       "title" : "การเชื่อมต่อล้มเหลว",
@@ -10115,7 +10148,7 @@
       }
     },
     "accountActions" : {
-      "publicToPrivate" : "โอนด้วยตัวเอง"
+      "publicToPrivate" : "สวอป"
     },
     "send" : {
       "balanceSelection" : {
@@ -10191,12 +10224,61 @@
   "contacts" : {
     "title" : "รายชื่อ",
     "addContact" : "เพิ่มรายชื่อ",
+    "addAddress" : "เพิ่มที่อยู่",
+    "addYourAddress" : "เพิ่มที่อยู่คริปโตของคุณ",
     "searchPlaceholder" : "ค้นหารายชื่อ",
+    "searchNoResults" : "ไม่พบรายชื่อ",
+    "addContactDrawer" : {
+      "namePlaceholder" : "ตั้งชื่อรายชื่อ",
+      "namingDisclaimer" : "เพื่อความเป็นส่วนตัว โปรดหลีกเลี่ยงการใช้ชื่อ-นามสกุลเต็ม แนะนำให้ใช้ชื่อเล่นหรือชื่อจริง + อักษรย่อ เช่น 'John S'",
+      "confirmName" : "ยืนยันชื่อ",
+      "invalidNameError" : "ไม่อนุญาตให้ใช้อักขระพิเศษ"
+    },
+    "addressCount_zero" : "ไม่มีที่อยู่คริปโต",
+    "addressCount_one" : "{{count}} ที่อยู่คริปโต",
+    "addressCount_other" : "{{count}} ที่อยู่คริปโต",
     "me" : {
       "name" : "ที่อยู่ของฉัน",
       "addressCount_zero" : "0 ที่อยู่คริปโต",
       "addressCount_one" : "{{count}} ที่อยู่",
       "addressCount_other" : "{{count}} ที่อยู่"
+    },
+    "detail" : {
+      "ledgerWalletAddresses" : "ที่อยู่คริปโตของแอป Ledger Wallet",
+      "myAddresses" : "ที่อยู่คริปโตของฉัน",
+      "emptyState" : {
+        "title" : "ยังไม่มีที่อยู่คริปโตในขณะนี้",
+        "meTitle" : "บันทึกที่อยู่คริปโตของคุณเอง",
+        "meDescription" : "บันทึกที่อยู่ภายนอกที่คุณมีบน Exchange หรือวอลเล็ตอื่น ๆ ครั้งต่อไปเมื่อคุณส่งหาตัวเอง อุปกรณ์ Ledger จะแสดงชื่อที่คุณตั้งไว้",
+        "contactDescription" : "บันทึกที่อยู่คริปโตของวอลเล็ตเพื่อส่งไปยัง {{name}}"
+      }
+    },
+    "ledgerSyncIntroduction" : {
+      "title" : "เปิดฟีเจอร์ Ledger Sync เพื่อบันทึกรายชื่อ",
+      "description" : "รายชื่อติดต่อของคุณได้รับการเข้ารหัสแบบต้นทางถึงปลายทาง (End-to-End Encrypted) ด้วย Ledger ของคุณ และซิงค์กับอุปกรณ์ต่าง ๆ ของคุณ โดยมีเพียงคุณเท่านั้นที่สามารถปลดล็อกได้",
+      "activate" : "เปิด Ledger Sync",
+      "dismiss" : "เข้าใจแล้ว",
+      "checkingAccessibilityLabel" : "กำลังตรวจสอบสถานะของฟีเจอร์ Ledger Sync"
+    },
+    "featureIntroduction" : {
+      "title" : "เปิดตัวฟีเจอร์รายชื่อ",
+      "description" : "สมุดที่อยู่คริปโตของคุณ: เก็บบันทึกวอลเล็ตที่คุณส่งหาทั้งหมดไว้ในที่เดียว",
+      "primaryAction" : "ลองใช้ฟีเจอร์รายชื่อ",
+      "secondaryAction" : "ไว้ทีหลัง",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "บันทึกที่อยู่คริปโตเพียงครั้งเดียว",
+          "description" : "จัดเก็บที่อยู่คริปโตที่คุณส่งหาไว้ในที่เดียว"
+        },
+        "sendToRightAddress" : {
+          "title" : "ส่งไปยังที่อยู่คริปโตที่ถูกต้อง",
+          "description" : "เงินทุนจะได้รับการส่งไปยังวอลเล็ตที่ถูกต้องทุกครั้ง"
+        },
+        "privateAcrossDevices" : {
+          "title" : "รักษาความเป็นส่วนตัวบนทุกอุปกรณ์ของคุณ",
+          "description" : "ได้รับการเข้ารหัสแบบครบวงจรด้วยฟีเจอร์ Ledger Sync"
+        }
+      }
     }
   }
 }
