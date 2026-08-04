@@ -11,7 +11,7 @@ export class InvalidContactNameError extends ContactError {
 }
 
 export class DuplicateContactNameError extends ContactError {
-  override readonly name = "DuplicateContactNameError" as const;
+  override name = "DuplicateContactNameError" as const;
 }
 
 export class InvalidContactAddressLabelError extends ContactError {
