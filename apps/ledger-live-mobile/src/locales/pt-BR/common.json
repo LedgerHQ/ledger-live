@@ -1548,10 +1548,6 @@
     }
   },
   "graph" : {
-    "week" : "1S",
-    "month" : "1M",
-    "year" : "1A",
-    "all" : "TUDO",
     "graphNotSupported" : "O gráfico não está disponível para esse token"
   },
   "carousel" : {
@@ -1697,10 +1693,8 @@
     "cta" : "Comprar sua Ledger agora",
     "footer" : "Já tenho uma Ledger, configurar agora",
     "bannerTitle" : "Segurança de alto nível para suas criptomoedas e NFTs",
-    "bannerTitle2" : "Você precisará de uma Ledger para negociar",
     "bannerSubtitle" : "com uma Ledger Flex",
     "bannerButtonTitle" : "Descubra a Flex",
-    "bannerButtonTitle2" : "Comprar uma Ledger",
     "setupCta" : "Já tenho uma Ledger, configurar agora"
   },
   "rebornBuyDevice" : {
@@ -2829,44 +2823,18 @@
       "skipCTA" : "Talvez mais tarde"
     }
   },
-  "tabs" : {
-    "accounts" : "Contas",
-    "transfer" : "Transferir",
-    "manager" : "Minha Ledger",
-    "myWallet" : "Minha carteira",
-    "settings" : "Configurações",
-    "platform" : "Live Apps",
-    "discover" : "Explorar",
-    "nanoX" : "Nano X",
-    "market" : "Mercado",
-    "earn" : "Ganhar",
-    "card" : "Cartão",
-    "swap" : "Trocar"
-  },
   "portfolio" : {
     "totalBalance" : "Saldo Total",
-    "syncError" : "Erro de sincronização",
-    "syncFailed" : "Falha de sincronização",
     "syncPending" : "Sincronizando...",
     "transactionsPendingConfirmation" : {
       "title" : "Saldo dessincronizado",
       "desc" : "Algumas transações ainda não foram confirmadas. Elas serão refletidas no seu saldo e estarão disponíveis após serem confirmadas."
     },
     "emptyState" : {
-      "noAppsTitle" : "Instalar um aplicativo no meu dispositivo",
-      "noAppsDesc" : "Instale aplicativos no seu dispositivo antes de adicionar contas na Ledger Wallet. Vá à Minha Ledger para instalar aplicativos.",
-      "noAccountsTitle" : "Você não tem nenhuma conta...",
-      "noAccountsDesc" : "Adicione contas ao seu Portfólio.",
       "buttons" : {
         "import" : "Adicionar ativos",
-        "buy" : "Comprar",
         "manager" : "Instalar aplicativos",
         "managerSecondary" : "Instalar aplicativos em meu dispositivo"
-      },
-      "addAccounts" : {
-        "addAccounts" : "Adicionar ativos",
-        "title" : "Começar",
-        "description" : "Você pode comprar criptomoedas com os nossos provedores ou configurar sua carteira"
       }
     },
     "noOpState" : {
@@ -2874,7 +2842,8 @@
       "desc" : "Basta enviar os criptoativos para seu endereço de recebimento e esperar o aplicativo sincronizar."
     },
     "carousel" : {
-      "title" : "Para você"
+      "title" : "Para você",
+      "closeAll" : "Fechar tudo"
     },
     "perpsEntry" : {
       "title" : "Perpétuos",
@@ -2886,14 +2855,6 @@
       "cardDescription" : "Pegar emprestado a taxas competitivas",
       "cta" : "Descobrir"
     },
-    "recommended" : {
-      "title" : "Recomendado"
-    },
-    "topGainers" : {
-      "title" : "Destaques do mercado (24H)",
-      "seeMarket" : "Ver tudo"
-    },
-    "walletBalance" : "Saldo da carteira",
     "balance" : {
       "noSigner" : "Sua carteira de criptomoedas segura",
       "noAccounts" : "Comece depositando fundos\nna sua carteira"
@@ -2926,8 +2887,7 @@
       "sell" : "Vender",
       "swap" : "Trocar",
       "send" : "Enviar",
-      "deposit" : "Receber",
-      "stake" : "Aplicar"
+      "deposit" : "Receber"
     },
     "quickActionsCtas" : {
       "transfer" : "Transferir",
@@ -3865,8 +3825,7 @@
       "learnMore" : "Saiba mais sobre a Tag/Memo"
     },
     "send" : {
-      "title" : "Enviar",
-      "description" : "Envie cripto a outra carteira."
+      "title" : "Enviar"
     },
     "fees" : {
       "title" : "Editar taxas"
@@ -3999,21 +3958,12 @@
       "title" : "Comprar",
       "description" : "Compre cripto com fiat em segurança."
     },
-    "sell" : {
-      "title" : "Vender",
-      "description" : "Venda cripto por fiat em segurança."
-    },
     "exchange" : {
       "title" : "Comprar / Vender",
       "connectingTo" : "Conectando você a {{provider}}"
     },
-    "stake" : {
-      "title" : "Aplicar",
-      "description" : "Receba recompensas com sua cripto."
-    },
     "swap" : {
       "title" : "Trocar",
-      "description" : "Troque cripto por cripto.",
       "selectDevice" : "Selecione seu dispositivo",
       "broadcasting" : "Transmitindo Troca",
       "loadingFees" : "Carregando taxas de rede...",
@@ -4493,11 +4443,6 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "Conecte sua carteira a DApps."
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "Nunca perca o acesso à sua cripto",
-      "tag" : "Um mês grátis"
     }
   },
   "signMessage" : {
@@ -4540,6 +4485,11 @@
       "title" : "Enviar {{currency}}",
       "available" : "Disponível {{amount}}",
       "to" : "Para:",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "Sobre o endereço do destinatário",
+        "title" : "Verifique o endereço no seu dispositivo Ledger",
+        "description" : "Seu dispositivo Ledger mostrará o endereço completo na tela com segurança. Certifique-se de que ele corresponda ao endereço da fonte original."
+      },
       "placeholder" : "Digite o endereço ou ENS",
       "placeholderNoENS" : "Digite o endereço",
       "pasteFromClipboard" : {
@@ -9552,13 +9502,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "Faça upgrade da sua Ledger Nano S™",
-      "description" : "Ganhe um desconto exclusivo de 20% nos autenticadores Ledger mais recentes.",
+      "title" : "Mais clareza. Mais segurança",
+      "description" : "Faça upgrade para qualquer autenticador com tela touch e ganhe 20% de desconto.",
       "cta" : "Atualizar minha Ledger"
     },
     "opted_out" : {
-      "title" : "Faça upgrade da sua Ledger Nano S™",
-      "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança.",
+      "title" : "Mais proteção. Mais controle",
+      "description" : "Saiba mais sobre recursos avançados de segurança.",
       "cta" : "Saiba mais"
     }
   },
@@ -10122,7 +10072,7 @@
       "stepViewKeyWarning" : {
         "title" : "Configurar saldo privado Aleo",
         "description" : "A Ledger Wallet armazena sua chave de visualização para exibir seu saldo privado e utiliza serviços de terceiros para processar transações privadas. <0>Saiba mais</0>",
-        "bullets" : ["Acesso somente de leitura para descriptografar seu saldo privado", "A Ledger não pode enviar nem gastar seus fundos", "Somente você pode assinar e gastar seus fundos", "A geração de provas é feita por serviços de comprovação externos, a fim de garantir um processamento rápido", "Os comprovadores não podem acessar nem gastar seus fundos"],
+        "bullets" : ["A chave de visualização permite acesso somente de leitura para descriptografar seu saldo privado dentro da Ledger Wallet", "Somente você pode assinar e gastar seus fundos pelo dispositivo autenticador Ledger", "As transações de Aleo exigem provas de conhecimento zero, o que demanda um alto poder computacional", "A geração de provas é realizada por um serviço externo da rede Aleo, para agilizar as transações"],
         "cta" : {
           "allow" : "Permitir",
           "cancel" : "Cancelar"
@@ -10232,7 +10182,29 @@
       "namePlaceholder" : "Nome do contato",
       "namingDisclaimer" : "Por privacidade, evite nomes e sobrenomes completos. Use um apelido ou apenas o primeiro nome + inicial, por exemplo, 'John S'.",
       "confirmName" : "Confirmar nome",
-      "invalidNameError" : "Não são permitidos caracteres especiais."
+      "invalidNameError" : "Não são permitidos caracteres especiais.",
+      "duplicateNameError" : "Este nome de contato já está em uso."
+    },
+    "addAddressEntry" : {
+      "title" : "Digite o endereço",
+      "addressPlaceholder" : "Endereço ou ENS",
+      "confirmAddress" : "Confirmar endereço",
+      "validatingAddress" : "Validando endereço",
+      "validAddress" : "Endereço válido",
+      "invalidAddress" : "Endereço inválido",
+      "domainNotFound" : "Nenhum endereço encontrado para esse domínio",
+      "sanctionedAddress" : "Este endereço está sob sanção e não pode ser utilizado.",
+      "validationUnavailable" : "A validação de endereço está temporariamente indisponível",
+      "ensDisclaimer" : "Nomes ENS resolvem para endereços de carteira. Sempre verifique o endereço resolvido antes de continuar."
+    },
+    "addAddressName" : {
+      "title" : "Nomear endereço",
+      "inputLabel" : "Nome do endereço",
+      "namingDisclaimer" : "Recomenda-se dar um nome a este endereço para encontrá-lo facilmente quando necessário. Ficará visível apenas para você.",
+      "continueToReview" : "Continuar para revisar",
+      "invalidLabel" : "Não são permitidos caracteres especiais.",
+      "duplicateLabel" : "Este nome de endereço já está em uso para este contato.",
+      "labelTooLong" : "Este nome de endereço é muito longo."
     },
     "addressCount_zero" : "0 endereço",
     "addressCount_one" : "{{count}} endereço",
@@ -10252,6 +10224,42 @@
         "meDescription" : "Salvar os endereços externos de sua propriedade em corretoras ou outras carteiras. Na próxima vez que enviar para si mesmo, seu dispositivo Ledger exibirá o nome escolhido.",
         "contactDescription" : "Salve um endereço de carteira para enviar a {{name}}"
       }
+    },
+    "addressDetail" : {
+      "send" : "Enviar",
+      "copy" : "Copiar",
+      "copyAddress" : "Copiar endereço",
+      "copied" : "Copiado",
+      "edit" : "Editar",
+      "share" : "Compartilhar",
+      "delete" : "Excluir",
+      "networkTag" : "Rede {{name}}"
+    },
+    "detailActions" : {
+      "editName" : "Editar nome",
+      "deleteContact" : "Excluir contato",
+      "menuAccessibilityLabel" : "Opções de contato"
+    },
+    "editContact" : {
+      "title" : "Editar contato",
+      "namePlaceholder" : "Nome do contato",
+      "namingDisclaimer" : "Por privacidade, evite nomes e sobrenomes completos. Use um apelido ou apenas o primeiro nome mais uma inicial, por exemplo: “João S”.",
+      "confirmName" : "Confirmar nome",
+      "applyChanges" : "Aplicar alterações",
+      "invalidNameError" : "Não são permitidos caracteres especiais."
+    },
+    "deleteContact" : {
+      "title" : "Excluir contato?",
+      "description" : "Excluir este contato apagará todos os endereços associados.",
+      "mobileDescription" : "Remover este contato apagará todos os endereços associados.",
+      "confirm" : "Excluir",
+      "cancel" : "Cancelar"
+    },
+    "editSigner" : {
+      "title" : "Confirme em seu dispositivo",
+      "description" : "Conecte e desbloqueie seu dispositivo Ledger para confirmar essa alteração.",
+      "confirm" : "Continuar",
+      "cancel" : "Cancelar"
     },
     "ledgerSyncIntroduction" : {
       "title" : "Ative o Ledger Sync para salvar contatos",
