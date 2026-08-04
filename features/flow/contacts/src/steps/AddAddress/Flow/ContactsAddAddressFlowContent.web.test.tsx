@@ -95,6 +95,7 @@ function createContentProps(
     onAddressLabelChange: jest.fn(),
     onContinueFromName: jest.fn(),
     onContinueFromReview: jest.fn(),
+    onCompleteMockConfirmation: jest.fn(),
     onClose: jest.fn(),
   };
 }
@@ -104,6 +105,7 @@ describe("ContactsAddAddressFlowContent", () => {
     ["selectingCurrency", "currency", false],
     ["enteringAddress", "address", true],
     ["namingAddress", "name", true],
+    ["confirmationRequired", "review", true],
     ["reviewingAddress", "review", true],
     ["success", "success", false],
   ] satisfies ReadonlyArray<
@@ -127,6 +129,12 @@ describe("ContactsAddAddressFlowContent", () => {
 
     fireEvent.click(screen.getByTestId("contacts-add-address-name-continue"));
     expect(nameProps.onContinueFromName).toHaveBeenCalledTimes(1);
+
+    const confirmationProps = createContentProps(createContentState("confirmationRequired"));
+    rerender(<ContactsAddAddressFlowContent {...confirmationProps} />);
+
+    fireEvent.click(screen.getByTestId("contacts-add-address-confirmation-continue"));
+    expect(confirmationProps.onCompleteMockConfirmation).toHaveBeenCalledTimes(1);
 
     const reviewProps = createContentProps(createContentState("reviewingAddress"));
     rerender(<ContactsAddAddressFlowContent {...reviewProps} />);

@@ -85,7 +85,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
               title: t("contacts.addAddressName.title"),
               inputLabel: t("contacts.addAddressName.inputLabel"),
               namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
-              continueToReview: t("contacts.addAddressName.continueToReview"),
+              continueToReview: t("common.continue"),
               validationErrors: {
                 [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
                   "contacts.addAddressName.invalidLabel",
@@ -105,7 +105,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
         : null,
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
-    isOpen: state.status !== "closed",
+    isOpen: state.status !== "closed" && state.status !== "success",
     onBack,
   } as const;
 }

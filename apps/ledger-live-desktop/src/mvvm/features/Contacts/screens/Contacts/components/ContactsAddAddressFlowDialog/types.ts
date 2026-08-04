@@ -18,6 +18,7 @@ export type ContactsAddAddressFlowDialogProps = Readonly<{
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
+  onCompleteMockConfirmation: () => void;
   onBack: () => void;
   onClose: () => void;
 }>;
