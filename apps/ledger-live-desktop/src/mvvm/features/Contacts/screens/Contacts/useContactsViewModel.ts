@@ -69,6 +69,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     continueFromAddressDetails,
     continueFromName,
     continueFromReview,
+    completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
   const selectCurrencyForContact = useCallback(
@@ -163,6 +164,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       onAddressLabelChange: updateAddressLabel,
       onContinueFromName: continueFromName,
       onContinueFromReview: continueFromReview,
+      onCompleteMockConfirmation: completeMockConfirmation,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
@@ -178,6 +180,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       continueFromAddressDetails,
       continueFromName,
       continueFromReview,
+      completeMockConfirmation,
     ],
   );
   const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =

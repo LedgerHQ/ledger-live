@@ -10216,10 +10216,6 @@
       "duplicateLabel": "This address name is already used for this contact.",
       "labelTooLong": "This address name is too long."
     },
-    "addAddressFlow": {
-      "review": "Validation",
-      "success": "Success"
-    },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
     "addressCount_other": "{{count}} addresses",

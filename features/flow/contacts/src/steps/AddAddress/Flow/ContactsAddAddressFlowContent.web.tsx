@@ -25,6 +25,7 @@ export type ContactsAddAddressFlowContentProps = Readonly<{
   onAddressLabelChange: (value: string) => void;
   onContinueFromName: () => void;
   onContinueFromReview: () => void;
+  onCompleteMockConfirmation: () => void;
   onClose: () => void;
 }>;
 
@@ -38,6 +39,7 @@ export function resolveAddAddressWebFlowStep(
       return "address";
     case "namingAddress":
       return "name";
+    case "confirmationRequired":
     case "reviewingAddress":
       return "review";
     case "success":
@@ -49,7 +51,8 @@ export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowS
   return (
     state.status === "enteringAddress" ||
     state.status === "namingAddress" ||
-    state.status === "reviewingAddress"
+    state.status === "reviewingAddress" ||
+    state.status === "confirmationRequired"
   );
 }
 
@@ -63,6 +66,7 @@ export function ContactsAddAddressFlowContent({
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
+  onCompleteMockConfirmation,
   onClose,
 }: ContactsAddAddressFlowContentProps): React.JSX.Element {
   switch (state.status) {
@@ -86,6 +90,15 @@ export function ContactsAddAddressFlowContent({
           labels={nameLabels}
           onAddressLabelChange={onAddressLabelChange}
           onContinue={onContinueFromName}
+        />
+      );
+    case "confirmationRequired":
+      return (
+        <ContactsAddAddressCompletion
+          buttonLabel={completionLabels.continue}
+          onContinue={onCompleteMockConfirmation}
+          testID="contacts-add-address-confirmation"
+          title={completionLabels.title}
         />
       );
     case "reviewingAddress":
