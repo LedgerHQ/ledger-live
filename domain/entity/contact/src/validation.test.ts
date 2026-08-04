@@ -3,16 +3,12 @@ import {
   DuplicateContactAddressLabelError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
+} from "./errors";
+import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
-} from "./errors";
-import {
-  ContactAddressLabelInputSchema,
-  ContactAddressLabelSchema,
-} from "./schema";
-import {
   getContactAddressLabelValidationError,
   getContactNameValidationError,
   isValidContactAddressLabel,
@@ -21,6 +17,10 @@ import {
   parseContactAddressLabel,
   parseContactName,
 } from "./validation";
+import {
+  ContactAddressLabelInputSchema,
+  ContactAddressLabelSchema,
+} from "./schema";
 
 describe("contact name validation", () => {
   it("does not report an error for an empty draft name", () => {

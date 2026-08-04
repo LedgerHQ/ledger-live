@@ -3,10 +3,6 @@ import {
   DuplicateContactAddressLabelError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
 } from "./errors";
 import {
   ContactAddressLabelInputSchema,
@@ -14,13 +10,24 @@ import {
 } from "./schema";
 import type { ContactAddressLabel, ContactName } from "./types";
 
-export type ContactNameValidationErrorName =
-  typeof INVALID_CONTACT_NAME_ERROR_NAME;
+export type ContactNameValidationErrorName = InvalidContactNameError["name"];
+
+export const INVALID_CONTACT_NAME_ERROR_NAME =
+  "InvalidContactNameError" satisfies ContactNameValidationErrorName;
 
 export type ContactAddressLabelValidationErrorName =
-  | typeof INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME
-  | typeof DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME
-  | typeof CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME;
+  | InvalidContactAddressLabelError["name"]
+  | DuplicateContactAddressLabelError["name"]
+  | ContactAddressLabelTooLongError["name"];
+
+export const INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME =
+  "InvalidContactAddressLabelError" satisfies ContactAddressLabelValidationErrorName;
+
+export const DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME =
+  "DuplicateContactAddressLabelError" satisfies ContactAddressLabelValidationErrorName;
+
+export const CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME =
+  "ContactAddressLabelTooLongError" satisfies ContactAddressLabelValidationErrorName;
 
 type ContactNameValidationResult = {
   readonly validationError: ContactNameValidationErrorName | null;

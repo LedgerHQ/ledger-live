@@ -5,9 +5,9 @@ import {
 } from "@shared/schema-primitives";
 import { z } from "zod";
 import {
-  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
+  ContactAddressLabelTooLongError,
+  InvalidContactAddressLabelError,
+  InvalidContactNameError,
 } from "./errors";
 
 export const ContactIdSchema = NonEmptyStringSchema;
@@ -25,8 +25,10 @@ export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;
 
 export const ContactNameSchema = z
   .string()
-  .min(1, { error: INVALID_CONTACT_NAME_ERROR_NAME })
-  .regex(ContactNamePattern, { error: INVALID_CONTACT_NAME_ERROR_NAME })
+  .min(1, { error: () => new InvalidContactNameError().name })
+  .regex(ContactNamePattern, {
+    error: () => new InvalidContactNameError().name,
+  })
   .brand<"ContactName">();
 
 export const ContactNameInputSchema = z
@@ -37,12 +39,12 @@ export const ContactNameInputSchema = z
 
 export const ContactAddressLabelSchema = z
   .string()
-  .min(1, { error: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME })
+  .min(1, { error: () => new InvalidContactAddressLabelError().name })
   .max(CONTACT_ADDRESS_LABEL_MAX_LENGTH, {
-    error: CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+    error: () => new ContactAddressLabelTooLongError().name,
   })
   .regex(ContactAddressLabelPattern, {
-    error: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+    error: () => new InvalidContactAddressLabelError().name,
   })
   .brand<"ContactAddressLabel">();
 
