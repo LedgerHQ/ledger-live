@@ -82,7 +82,7 @@ test.describe("Swap - discreet mode", () => {
   );
 
   test(
-    "Balance should not be visible in the swap main form",
+    "Swap balance is hidden in the swap main form in discreet mode",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [

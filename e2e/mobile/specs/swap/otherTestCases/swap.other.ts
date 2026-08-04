@@ -628,7 +628,7 @@ export function runSwapDiscreetModeTest(
       await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
 
-    it("Checks if the balance is hidden in the swap main form", async () => {
+    it("Swap balance is hidden in the swap main form in discreet mode", async () => {
       // Masking is currency-agnostic, so a single account is enough here.
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.selectAsset(balanceCheckAccount);

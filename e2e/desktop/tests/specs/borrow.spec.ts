@@ -161,7 +161,7 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow repay and withdraw on-chain", () => {
+test.describe("Borrow", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Repay/withdraw flows require broadcast to be enabled — run on manual Desktop E2E with enable_broadcast",
@@ -180,7 +180,7 @@ test.describe("Borrow repay and withdraw on-chain", () => {
   });
 
   test(
-    "Hot start opens repay modal and completes full repay execution",
+    `[${openLoanAccount.currency.testLabel}] - Borrow hot start opens the repay modal and completes full repay`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6073" },
@@ -226,7 +226,7 @@ test.describe("Borrow repay and withdraw on-chain", () => {
   );
 
   test(
-    "Hot start routes a fully-repaid loan to withdraw and completes collateral withdrawal",
+    `[${openLoanAccount.currency.testLabel}] - Borrow hot start routes a repaid loan to withdraw and completes collateral withdrawal`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6080" },
