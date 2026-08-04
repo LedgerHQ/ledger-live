@@ -1,5 +1,5 @@
 import { ZcashAccount } from "@ledgerhq/coin-bitcoin/types";
-import { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
+import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { updateAccountWithUpdater, UpdateAccountAction } from "~/renderer/actions/accounts";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 
@@ -9,7 +9,8 @@ export const syncStateUpdater = (
 ): UpdateAccountAction =>
   updateAccountWithUpdater(account?.id || "", currentAccount => {
     const zcashAccount = currentAccount as ZcashAccount;
-    const existingPrivateInfo = zcashAccount.privateInfo || DEFAULT_ZCASH_PRIVATE_INFO;
+    const existingPrivateInfo =
+      (zcashAccount.privateInfo as ZcashPrivateInfo | undefined) || DEFAULT_ZCASH_PRIVATE_INFO;
     const nextPrivateInfo: ZcashPrivateInfo = {
       ...existingPrivateInfo,
       ...info,

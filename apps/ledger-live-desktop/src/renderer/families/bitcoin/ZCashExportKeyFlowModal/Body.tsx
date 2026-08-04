@@ -30,7 +30,7 @@ type OwnProps = {
   ufvk: string;
   ufvkExportError: Error | undefined | null;
   onStepIdChanged: (stepId: StepId) => void;
-  onUfvkChanged: (ufvk: string, error?: Error | null) => void;
+  onUfvkChanged: (ufvk: string, shieldedAddress: string | null, error?: Error | null) => void;
   onRetry: () => void;
   birthday: string;
   invalidBirthday: boolean;

@@ -1,8 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { from, switchMap } from "rxjs";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import {
   removeShieldedSubscription,
@@ -11,12 +13,31 @@ import {
 } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
+import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
+
+// The bridge registry returns a generic AccountBridge. When zcashShielded is on,
+// the runtime value is always ZcashAccountBridge — assert that rather than casting blindly.
+function assertZcashBridge(bridge: unknown): asserts bridge is ZcashAccountBridge {
+  if (
+    typeof (bridge as ZcashAccountBridge).getFullViewingKey !== "function" ||
+    typeof (bridge as ZcashAccountBridge).deriveShieldedAddress !== "function"
+  ) {
+    throw new Error("[zcashShielded] expected ZcashAccountBridge — is the feature flag on?");
+  }
+}
+
+export function useZcashBridge(account: Account): ZcashAccountBridge {
+  const bridge = useAccountBridge(account);
+  assertZcashBridge(bridge);
+  return bridge;
+}
 
 export function useZcashShieldedSync(account: ZcashAccount) {
   const dispatch = useDispatch();
   const shieldedSubscriptions = useSelector(selectShieldedSubscriptions);
+  const bridge = useZcashBridge(account);
 
   const saveSyncState = useCallback(
     (info: Partial<ZcashPrivateInfo>) => {
@@ -24,6 +45,37 @@ export function useZcashShieldedSync(account: ZcashAccount) {
     },
     [account, dispatch],
   );
+
+  const zcashPrivateInfo = account.privateInfo as ZcashPrivateInfo | undefined;
+  const ufvk = zcashPrivateInfo?.ufvk ?? null;
+  const shieldedAddress = zcashPrivateInfo?.shieldedAddress ?? null;
+
+  // Self-heal: accounts activated before this feature landed have a UFVK but no
+  // shieldedAddress. Derive it host-side on mount without touching the device.
+  //
+  // Concurrency: if deps change while a derive is in-flight (e.g. account identity
+  // changes), React runs the cleanup (`active = false`) before the next effect fires.
+  // The in-flight promise still resolves but its `if (active)` guard is false, so the
+  // stale result is discarded. Only the latest effect's result is ever dispatched.
+  useEffect(() => {
+    if (!ufvk || shieldedAddress) return;
+
+    let active = true;
+    bridge
+      .deriveShieldedAddress(ufvk)
+      .then(addr => {
+        if (active) saveSyncState({ shieldedAddress: addr });
+      })
+      .catch(() => {
+        // Error intentionally not logged: IPC/Zaino errors can echo request
+        // parameters and the UFVK must never appear in logs (privacy requirement).
+        console.warn("Zcash self-heal: deriveShieldedAddress failed, will retry on next mount");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [ufvk, shieldedAddress, bridge, saveSyncState]);
 
   const clearExistingSubscription = useCallback(() => {
     const existing = shieldedSubscriptions.find(s => s.accountId === account.id);

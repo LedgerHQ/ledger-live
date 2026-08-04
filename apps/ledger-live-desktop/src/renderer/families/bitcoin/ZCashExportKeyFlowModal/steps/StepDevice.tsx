@@ -1,11 +1,10 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
-import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
-import type { BitcoinAccountBridge } from "@ledgerhq/coin-bitcoin/bridge/js";
+import type { ZcashAccount as CoinZcashAccount } from "@ledgerhq/coin-zcash/types/bridge";
+import { useZcashBridge } from "../../useZcashShieldedSync";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -54,22 +53,32 @@ const StepExport = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account) : null;
   invariant(account && mainAccount, "No account given");
 
-  const bridge = useAccountBridge(mainAccount) as unknown as BitcoinAccountBridge;
+  const bridge = useZcashBridge(mainAccount);
   const requestUfvkFromDevice = useCallback(async () => {
     try {
       if (!device) {
         throw new DisconnectedDevice();
       }
       const { viewKey } = await bridge
-        .getFullViewingKey(mainAccount as BitcoinAccount, {
+        .getFullViewingKey(mainAccount as CoinZcashAccount, {
           deviceId: device.deviceId,
           path: mainAccount.freshAddressPath,
         })
         .finally(() => setUfvkRequestSent(true));
-      onUfvkChanged(viewKey);
+      let shieldedAddress: string | null = null;
+      try {
+        shieldedAddress = await bridge.deriveShieldedAddress(viewKey);
+      } catch {
+        // Error intentionally not logged: IPC/Zaino errors can echo request
+        // parameters and the UFVK must never appear in logs (privacy requirement).
+        console.warn(
+          "Zcash: deriveShieldedAddress failed at activation (non-fatal), address will be recomputed on next mount",
+        );
+      }
+      onUfvkChanged(viewKey, shieldedAddress);
       transitionTo("confirmation");
     } catch (error) {
-      onUfvkChanged("", error as Error);
+      onUfvkChanged("", null, error as Error);
     }
   }, [bridge, device, mainAccount, transitionTo, onUfvkChanged]);
 
