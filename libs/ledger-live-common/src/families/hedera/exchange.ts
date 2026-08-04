@@ -1,4 +1,4 @@
-import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
+import { LatestFirmwareVersionRequired } from "../../errors";
 import Exchange from "@ledgerhq/hw-app-exchange";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import calService from "@ledgerhq/ledger-cal-service";

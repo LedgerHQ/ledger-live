@@ -1,6 +1,6 @@
 import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { reinstallConfigurationConsent } from "./reinstallConfigurationConsent";
-import { PinNotSet, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice, PinNotSet } from "../../../errors";
 
 describe("reinstallConfigurationConsent", () => {
   let transport: Transport;

@@ -3,22 +3,18 @@ import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
 import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
-import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { currencyFiatApi } from "@domain/api-currency-fiat";
-import { marketSentimentApi } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApi } from "@domain/api-altcoins-sentiment";
+import { calApi, coinMarketCapApi, countervaluesApi, pushDevicesApi } from "@shared/api-services";
 import { payCardApi } from "@domain/api-pay-card";
-import { pushDevicesApi } from "@domain/api-push-devices";
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 import { swapQuotesApi } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/api";
-// Add new RTK Query API here:
+// Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
+// injected by the `@domain/api-*` use-case packages, which the view-models import directly.
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
-  [marketSentimentApi.reducerPath]: marketSentimentApi,
-  [altcoinsSentimentApi.reducerPath]: altcoinsSentimentApi,
+  [calApi.reducerPath]: calApi,
+  [coinMarketCapApi.reducerPath]: coinMarketCapApi,
+  [countervaluesApi.reducerPath]: countervaluesApi,
   [counterValuesApi.reducerPath]: counterValuesApi,
-  [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
-  [currencyFiatApi.reducerPath]: currencyFiatApi,
   [cgApi.reducerPath]: cgApi,
   [marketApi.reducerPath]: marketApi,
   [payCardApi.reducerPath]: payCardApi,

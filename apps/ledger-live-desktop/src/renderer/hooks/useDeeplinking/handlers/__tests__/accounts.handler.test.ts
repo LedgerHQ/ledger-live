@@ -1,13 +1,10 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  getCryptoCurrencyById,
-  findCryptoCurrencyByKeyword,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { accountsHandler, accountHandler } from "../accounts.handler";
 import { createMockContext } from "./test-utils";
 
-jest.mock("@ledgerhq/live-common/currencies/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   findCryptoCurrencyByKeyword: jest.fn(),
 }));
 

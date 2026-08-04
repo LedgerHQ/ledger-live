@@ -1,0 +1,39 @@
+{
+  "name": "@features/platform-aggregated-assets",
+  "version": "0.1.0",
+  "private": true,
+  "description": "App-facing assets-data runtime: hooks over the DADA API, cache selectors, asset discovery and currency selection",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage --passWithNoTests",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-redux": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-redux": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -23,7 +23,5 @@
     "src/supportedFeatures.ts"
   ],
   "ignore": [],
-  "ignoreUnused": [
-    "@ledgerhq/errors"
-  ]
+  "ignoreUnused": []
 }

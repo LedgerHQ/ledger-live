@@ -1,0 +1,9 @@
+{
+  "name": "@tools/danger",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "@commitlint/lint": "21.2.0",
+    "danger": "13.0.10"
+  }
+}

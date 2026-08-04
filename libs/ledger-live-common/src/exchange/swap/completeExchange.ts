@@ -31,7 +31,7 @@ import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
@@ -67,7 +67,7 @@ export function enrichSwapDeserializationError(
   error: unknown,
 ): CompleteExchangeError | undefined {
   // Duck-type on `name` + `statusCode` rather than `instanceof TransportStatusError`, matching
-  // the rest of this file and the repo-wide migration off `@ledgerhq/errors` class checks (#19849,
+  // the rest of this file and the repo-wide migration off shared error class checks (#19849,
   // which dropped the `TransportStatusError` import from here).
   const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
   if (

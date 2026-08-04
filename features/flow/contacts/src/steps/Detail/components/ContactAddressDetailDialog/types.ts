@@ -9,6 +9,12 @@ export type ContactAddressDetailDialogLabels = Readonly<{
   formatNetworkTag: (networkName: string) => string;
 }>;
 
+export type ContactAddressDetailDialogNativeLabels = ContactAddressDetailDialogLabels &
+  Readonly<{
+    copyAddress: string;
+    share: string;
+  }>;
+
 export type ContactAddressDetailDialogProps = Readonly<{
   isOpen: boolean;
   contactName: string;
@@ -17,3 +23,13 @@ export type ContactAddressDetailDialogProps = Readonly<{
   labels: ContactAddressDetailDialogLabels;
   onClose: () => void;
 }>;
+
+export type ContactAddressDetailDialogNativeProps = Omit<
+  ContactAddressDetailDialogProps,
+  "labels"
+> &
+  Readonly<{
+    labels: ContactAddressDetailDialogNativeLabels;
+    bottomInset?: number;
+    onCopyAddress?: (address: string) => void;
+  }>;

@@ -91,7 +91,7 @@ describe("useModularDialogData filters", () => {
     mockedUseAssetsData.mockImplementation(actualUseAssetsData);
   });
 
-  it("should not forward network ids as exact DADA currency ids", () => {
+  it("should forward network ids without treating them as exact currency ids", () => {
     renderHook(() => useModularDialogData(), {
       initialState: {
         modularDialog: {
@@ -112,6 +112,7 @@ describe("useModularDialogData filters", () => {
     expect(mockedUseAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({
         currencyIds: undefined,
+        networkIds: ["ethereum"],
         areCurrenciesFiltered: false,
       }),
     );
@@ -137,6 +138,33 @@ describe("useModularDialogData filters", () => {
     expect(mockedUseAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({
         currencyIds: ["bitcoin"],
+        areCurrenciesFiltered: true,
+      }),
+    );
+  });
+
+  it("should preserve the exact currency filter when network ids are empty", () => {
+    renderHook(() => useModularDialogData(), {
+      initialState: {
+        modularDialog: {
+          searchedValue: undefined,
+          isDebuggingDuplicates: false,
+          flow: "",
+          source: "",
+          isOpen: true,
+          dialogParams: {
+            networkIds: [],
+            currencies: ["bitcoin"],
+            areCurrenciesFiltered: true,
+          },
+        },
+      },
+    });
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currencyIds: ["bitcoin"],
+        networkIds: undefined,
         areCurrenciesFiltered: true,
       }),
     );

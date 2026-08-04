@@ -7,10 +7,10 @@ export type ConsentDrawerTestOptions = {
   hasCompletedOnboarding?: boolean;
   analyticsOptInEnabled?: boolean;
   consentDate?: string | null;
-  privacyPolicyVersion?: number | null;
+  privacyPolicyVersion?: number | string | null;
   analyticsEnabled?: boolean;
   personalizedRecommendationsEnabled?: boolean;
-  analyticsOptInParams?: Partial<{ policyVersion: number; consentValidityDays: number }>;
+  analyticsOptInParams?: Partial<{ policyVersion: number | string }>;
 };
 
 /**
@@ -48,7 +48,6 @@ export function withConsentDrawerState(options: ConsentDrawerTestOptions = {}) {
         enabled: analyticsOptInEnabled,
         params: {
           policyVersion: DEFAULT_POLICY_VERSION,
-          consentValidityDays: 365,
           ...analyticsOptInParams,
         },
       },

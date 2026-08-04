@@ -1,0 +1,37 @@
+{
+  "name": "@features/flow-analytics-consent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Analytics consent decision engine: policy version major/minor semantics plus rolling consent expiry",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./debug": "./src/debug/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/analytics-consent"
+  },
+  "dependencies": {
+    "@domain/entity-analytics-consent": "workspace:*",
+    "@features/platform-feature-flags": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

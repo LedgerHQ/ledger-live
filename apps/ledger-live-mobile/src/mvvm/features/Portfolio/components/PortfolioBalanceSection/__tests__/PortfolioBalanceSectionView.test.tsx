@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { PortfolioBalanceSectionView } from "../PortfolioBalanceSectionView";
 import { PortfolioBalanceSectionViewProps } from "../types";
 

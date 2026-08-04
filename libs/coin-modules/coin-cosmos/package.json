@@ -63,8 +63,7 @@
     "invariant": "^2.2.2",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
-    "semver": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "semver": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

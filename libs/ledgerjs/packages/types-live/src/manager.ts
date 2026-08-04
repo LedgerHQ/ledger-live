@@ -1,5 +1,5 @@
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "./currency";
 
 interface DeviceId {
   exportDeviceIdForPersistence(): string;

@@ -6,10 +6,13 @@ import Animated from "react-native-reanimated";
 import { CarouselFooterButton } from "./CarouselFooterButton";
 import { CarouselProgressIndicator } from "./CarouselProgressIndicator";
 import { CarouselSlideItem } from "./CarouselSlideItem";
-import type { CarouselViewModel } from "../screens/useGenericAwarenessModalDrawerViewModel";
+import type {
+  CarouselViewModel,
+  GenericAwarenessModalCloseHandler,
+} from "../screens/useGenericAwarenessModalDrawerViewModel";
 
 type CarouselLayoutProps = Readonly<{
-  onClose: () => void;
+  onClose: GenericAwarenessModalCloseHandler;
   viewModel: CarouselViewModel;
 }>;
 

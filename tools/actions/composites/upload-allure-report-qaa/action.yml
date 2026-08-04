@@ -26,6 +26,14 @@ inputs:
     required: false
     default: ""
     description: "Git branch the run came from, shown/filterable on the portal."
+  report_attachments:
+    required: false
+    default: ""
+    description: >
+      Path to a directory of report-level attachment files (e.g. CI runner
+      telemetry CSVs). Every file found under it is sent on the qaa-allure
+      `reportAttachments` field and rendered in the report's Global Attachments
+      tab. Missing/empty directory is a no-op.
 outputs:
   report_id:
     description: "ID of the uploaded report."
@@ -51,4 +59,5 @@ runs:
         QAA_ALLURE_HISTORY: ${{ inputs.history_level }}
         QAA_ALLURE_JOB_URL: ${{ inputs.job_url }}
         QAA_ALLURE_BRANCH: ${{ inputs.branch }}
+        QAA_ALLURE_REPORT_ATTACHMENTS: ${{ inputs.report_attachments }}
       run: ${{ github.action_path }}/upload.sh

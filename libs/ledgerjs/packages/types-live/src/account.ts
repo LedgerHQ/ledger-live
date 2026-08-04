@@ -1,9 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "./currency";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";

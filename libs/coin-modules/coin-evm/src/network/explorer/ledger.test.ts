@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import axios from "axios";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";
@@ -21,7 +21,7 @@ jest.mock("@ledgerhq/live-promise");
 );
 
 const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
   },

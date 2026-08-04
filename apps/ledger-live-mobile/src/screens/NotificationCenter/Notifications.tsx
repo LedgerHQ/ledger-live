@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import Swipeable, { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
-import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
+import { LNUpsellBanner, useLNUpsellBannerState } from "LLM/features/LNUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { ContentCardEvent } from "@ledgerhq/live-common/braze/contentCardExtras";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
@@ -184,7 +184,7 @@ export default function NotificationCenter() {
     translation: SharedValue<number>,
   ) => <RightActions item={item} translation={translation} />;
 
-  const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
+  const isLNUpsellBannerShown = useLNUpsellBannerState("notification_center").isShown;
 
   const ListItem = (card: NotificationContentCard) => {
     const time = getTime(card.createdAt);
@@ -248,11 +248,11 @@ export default function NotificationCenter() {
         data={notificationCards}
         keyExtractor={({ id }) => id}
         renderItem={elem => ListItem(elem.item)}
-        ListHeaderComponent={<LNSUpsellBanner location="notification_center" mx={6} my={5} />}
+        ListHeaderComponent={<LNUpsellBanner location="notification_center" mx={6} my={5} />}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         onViewableItemsChanged={handleViewableItemsChanged}
-        ListEmptyComponent={isLNSUpsellBannerShown ? null : <EmptyComponent />}
+        ListEmptyComponent={isLNUpsellBannerShown ? null : <EmptyComponent />}
       />
     </Container>
   );

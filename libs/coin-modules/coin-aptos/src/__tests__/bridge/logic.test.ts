@@ -1,6 +1,10 @@
 import { EntryFunctionPayloadResponse } from "@aptos-labs/ts-sdk";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import {
+  TokenCurrencyIdSchema,
+  CryptoCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
+import {
   decodeTokenAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -462,9 +466,9 @@ describe("Aptos sync logic", () => {
           if (address === "0xd111::staked_coin::stakedaptos") {
             return {
               type: "TokenCurrency" as const,
-              id: "aptos/coin/dstapt::staked_coin::stakedaptos",
+              id: TokenCurrencyIdSchema.parse("aptos/coin/dstapt::staked_coin::stakedaptos"),
               contractAddress: "0xd111::staked_coin::StakedAptos",
-              parentCurrencyId: "aptos",
+              parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
               name: "dstAPT",
               tokenType: "coin",
               ticker: "dstAPT",
@@ -746,9 +750,11 @@ describe("Aptos sync logic", () => {
           if (address === "0x2ebb") {
             return {
               type: "TokenCurrency" as const,
-              id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+              id: TokenCurrencyIdSchema.parse(
+                "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
+              ),
               contractAddress: "0x2ebb",
-              parentCurrencyId: "aptos",
+              parentCurrencyId: CryptoCurrencyIdSchema.parse("aptos"),
               name: "CELLANA",
               tokenType: "fungible_asset",
               ticker: "CELL",

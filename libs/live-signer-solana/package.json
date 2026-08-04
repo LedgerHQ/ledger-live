@@ -33,11 +33,11 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-solana": "catalog:",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-cal-service": "workspace:^",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "@types/bs58": "catalog:",
     "bs58": "catalog:",
@@ -73,6 +73,11 @@
       "import": "./lib-es/index.js",
       "require": "./lib/index.js",
       "default": "./lib/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",

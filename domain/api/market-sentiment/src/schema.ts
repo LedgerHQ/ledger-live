@@ -20,11 +20,3 @@ export const FearAndGreedResponseSchema = z.object({
   data: FearAndGreedDataSchema,
   status: FearAndGreedStatusSchema,
 });
-
-/**
- * Thunk `extraArgument` contract for the market-sentiment api. The app supplies the resolved
- * CoinMarketCap URL at store configuration time, so this package owns no env/config dependency.
- */
-export const MarketSentimentApiExtraSchema = z.object({
-  coinMarketCapApiUrl: z.string().min(1),
-});

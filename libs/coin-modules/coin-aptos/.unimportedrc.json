@@ -2,8 +2,7 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-util"
   ],
   "entry": [
     "src/index.ts",
@@ -14,10 +13,8 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "@ledgerhq/types-cryptoassets",
     "invariant",
-    "got",
-    "@ledgerhq/errors"
+    "got"
   ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",

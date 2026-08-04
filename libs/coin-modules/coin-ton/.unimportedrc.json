@@ -20,8 +20,6 @@
   ],
   "ignoreUnused": [
     "msw",
-    "@ledgerhq/types-cryptoassets",
-    "@ledgerhq/live-env",
-    "@ledgerhq/errors"
+    "@ledgerhq/live-env"
   ]
 }

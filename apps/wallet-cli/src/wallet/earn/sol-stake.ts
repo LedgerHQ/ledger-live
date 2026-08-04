@@ -23,7 +23,7 @@
  * integration contract.
  */
 
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { WalletAdapter } from "../index";
 import type { AccountDescriptor } from "../models";
 import { SolanaTransactionIntentSchema } from "../intents";

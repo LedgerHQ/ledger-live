@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { State } from "~/reducers/types";

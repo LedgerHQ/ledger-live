@@ -9508,13 +9508,13 @@
   },
   "lnsUpsell": {
     "opted_in": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "Get an exclusive 20% off on the latest Ledger signers.",
+      "title": "See more. Sign safer",
+      "description": "Upgrade to any touchscreen signer and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements.",
+      "title": "More security. More control",
+      "description": "Learn more about advanced security features.",
       "cta": "Learn more"
     }
   },
@@ -10203,11 +10203,20 @@
       "validAddress": "Valid address",
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
+      "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable",
       "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
     },
+    "addAddressName": {
+      "title": "Name address",
+      "inputLabel": "Address name",
+      "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "labelTooLong": "This address name is too long."
+    },
     "addAddressFlow": {
-      "name": "Name",
       "review": "Validation",
       "success": "Success"
     },
@@ -10229,6 +10238,16 @@
         "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
         "contactDescription": "Save a wallet address to send to {{name}}"
       }
+    },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copyAddress": "Copy address",
+      "copied": "Copied",
+      "edit": "Edit",
+      "share": "Share",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
     },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",

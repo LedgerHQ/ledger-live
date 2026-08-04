@@ -1,5 +1,5 @@
 import type { Account, AccountRaw, AccountUserData, DerivationMode } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import accountModel from "../logic/accountModel";
 import { importStore } from "./accounts";
 

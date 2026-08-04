@@ -19,11 +19,3 @@ export const AltcoinSeasonIndexResponseSchema = z.object({
   data: AltcoinSeasonIndexDataSchema,
   status: AltcoinSeasonIndexStatusSchema,
 });
-
-/**
- * Thunk `extraArgument` contract for the altcoins-sentiment api. The app supplies the resolved
- * CoinMarketCap URL at store configuration time, so this package owns no env/config dependency.
- */
-export const AltcoinsSentimentApiExtraSchema = z.object({
-  coinMarketCapApiUrl: z.string().min(1),
-});

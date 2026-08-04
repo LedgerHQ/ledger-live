@@ -85,8 +85,8 @@ catalogs:
       specifier: 0.3.0
       version: 0.3.0
     '@ledgerhq/zcash-utils':
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 1.1.1
+      version: 1.1.1
     '@playwright/test':
       specifier: 1.60.0
       version: 1.60.0
@@ -511,6 +511,7 @@ overrides:
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
+  '@ledgerhq/errors': workspace:*
   '@ledgerhq/hw-transport': workspace:*
   '@ledgerhq/context-module': 2.3.1
   tslib: 2.6.2
@@ -525,7 +526,7 @@ overrides:
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
   '@ton/ton>zod': 4.3.6
 
-packageExtensionsChecksum: sha256-ncotzmACiC2rOyyMil4Rrs2djdIDzC2+p16TbkRXDRA=
+packageExtensionsChecksum: sha256-TOUMIYD04Sso33eHAaHi3luSO5Tbf6bgBpAG7b/7AcY=
 
 pnpmfileChecksum: sha256-xLqSS12ZnNWPulG7lBzO/RFXZkVYpafIseIHU3FfiO4=
 
@@ -709,9 +710,6 @@ importers:
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport-node-speculos':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos
@@ -742,6 +740,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -826,6 +827,12 @@ importers:
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell
+      '@devtools/transport-panel':
+        specifier: workspace:*
+        version: link:../../devtools/transport-panel
+      '@devtools/wire':
+        specifier: workspace:*
+        version: link:../../devtools/wire
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -933,7 +940,10 @@ importers:
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
+      '@ledgerhq/coin-zcash':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-zcash
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-react@0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -946,9 +956,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
@@ -1035,7 +1042,7 @@ importers:
         version: link:../../libs/wallet-pnl
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.1.1
       '@lottiefiles/dotlottie-react':
         specifier: 0.17.13
         version: 0.17.13(react@19.1.4)
@@ -1066,6 +1073,9 @@ importers:
       '@segment/analytics-next':
         specifier: 1.81.1
         version: 1.81.1
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
@@ -1557,6 +1567,12 @@ importers:
       '@devtools/shell':
         specifier: workspace:^
         version: link:../../devtools/shell
+      '@devtools/transport-panel':
+        specifier: workspace:*
+        version: link:../../devtools/transport-panel
+      '@devtools/wire':
+        specifier: workspace:*
+        version: link:../../devtools/wire
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -1578,6 +1594,9 @@ importers:
       '@domain/entity-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/altcoins-sentiment
+      '@domain/entity-analytics-consent':
+        specifier: workspace:*
+        version: link:../../domain/entity/analytics-consent
       '@domain/entity-client-identity':
         specifier: workspace:*
         version: link:../../domain/entity/client-identity
@@ -1605,6 +1624,9 @@ importers:
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../domain/entity/pay-card
+      '@features/flow-analytics-consent':
+        specifier: workspace:*
+        version: link:../../features/flow/analytics-consent
       '@features/flow-card':
         specifier: workspace:^
         version: link:../../features/flow/card
@@ -1661,7 +1683,7 @@ importers:
         version: link:../../libs/coin-modules/coin-filecoin
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-multiversx
@@ -1692,9 +1714,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/ethereum-provider':
         specifier: workspace:^
         version: link:../../libs/ethereum-provider
@@ -1842,6 +1861,9 @@ importers:
       '@segment/sovran-react-native':
         specifier: 1.1.3
         version: 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
@@ -2131,6 +2153,9 @@ importers:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
+      '@babel/plugin-transform-flow-strip-types':
+        specifier: 7.27.1
+        version: 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-named-capturing-groups-regex':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
@@ -2140,6 +2165,9 @@ importers:
       '@babel/plugin-transform-optional-chaining':
         specifier: 7.28.5
         version: 7.28.5(@babel/core@7.28.5)
+      '@babel/plugin-transform-private-methods':
+        specifier: 7.27.1
+        version: 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-shorthand-properties':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)
@@ -2202,7 +2230,7 @@ importers:
         version: 18.0.1
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@react-native/codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -2418,7 +2446,7 @@ importers:
         version: link:../../libs/coin-modules/coin-evm
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/coin-solana':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-solana
@@ -2434,9 +2462,6 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.16.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-exchange
@@ -2619,7 +2644,7 @@ importers:
         version: link:../../features/platform/style
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-react@0.1.49(@ledgerhq/lumen-design-core@0.1.23)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.5.11(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -2632,9 +2657,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-app-eth
@@ -2704,6 +2726,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../shared/api-services
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -3470,6 +3495,30 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/api/aggregated-assets:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/api/altcoins-sentiment:
     dependencies:
       '@domain/entity-altcoins-sentiment':
@@ -3478,6 +3527,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -3518,6 +3570,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -3564,6 +3619,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -3610,6 +3668,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -3690,9 +3751,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.6
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -3718,6 +3779,61 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/account-name:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      '@shared/cloud-sync-module':
+        specifier: workspace:^
+        version: link:../../../shared/cloud-sync-module
+      immer:
+        specifier: ^11.0.0
+        version: 11.1.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/aggregated-asset:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -3764,7 +3880,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-
   domain/entity/altcoins-sentiment:
     dependencies:
       zod:
@@ -3774,6 +3889,31 @@ importers:
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/analytics-consent:
+    dependencies:
+      '@shared/schema-primitives':
+        specifier: workspace:*
+        version: link:../../../shared/schema-primitives
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4001,6 +4141,27 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/entity/interest-rate:
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/entity/large-screen-upsell-modal:
     dependencies:
       '@reduxjs/toolkit':
@@ -4063,6 +4224,81 @@ importers:
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/recent-addresses:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      '@shared/cloud-sync-module':
+        specifier: workspace:^
+        version: link:../../../shared/cloud-sync-module
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/starred-account:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+      immer:
+        specifier: ^11.0.0
+        version: 11.1.3
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  domain/entity/wallet-sync:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2
+    devDependencies:
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4192,6 +4428,9 @@ importers:
         specifier: ^9.0.0
         version: 9.0.1
     devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../domain/entity/currency-crypto
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0
@@ -4222,9 +4461,6 @@ importers:
       '@ledgerhq/test-utils':
         specifier: workspace:^
         version: link:../../libs/test-utils
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
@@ -4343,6 +4579,37 @@ importers:
       '@oxlint/binding-win32-x64-msvc':
         specifier: 1.51.0
         version: 1.51.0
+
+  features/flow/analytics-consent:
+    dependencies:
+      '@domain/entity-analytics-consent':
+        specifier: workspace:*
+        version: link:../../../domain/entity/analytics-consent
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../platform/feature-flags
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   features/flow/card:
     dependencies:
@@ -4489,6 +4756,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
+      '@shared/qr-code':
+        specifier: workspace:*
+        version: link:../../../shared/qr-code
     devDependencies:
       '@features/platform-jest-config':
         specifier: workspace:*
@@ -4781,6 +5051,48 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  features/platform/aggregated-assets:
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/platform/currencies:
     dependencies:
       '@domain/api-currency-token':
@@ -4798,6 +5110,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../../shared/api-services
     devDependencies:
       '@shared/feature-flags':
         specifier: workspace:^
@@ -5028,6 +5343,9 @@ importers:
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../domain/entity/currency
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-crypto
       '@ledgerhq/asset-aggregation':
         specifier: workspace:*
         version: link:../asset-aggregation
@@ -5137,13 +5455,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5213,10 +5528,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5295,13 +5607,10 @@ importers:
         version: 3.1.3(got@11.8.5)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5386,10 +5695,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5416,7 +5722,7 @@ importers:
         version: link:../../wallet-btc
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.1.1
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0
@@ -5537,13 +5843,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/hw-app-canton':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-canton
@@ -5619,10 +5922,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5704,10 +6004,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5786,13 +6083,10 @@ importers:
         version: link:../coin-evm
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
@@ -5892,13 +6186,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/concordium-core':
         specifier: workspace:^
         version: link:../../concordium-core
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -5992,10 +6283,7 @@ importers:
         version: 0.12.306
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6086,10 +6374,7 @@ importers:
         version: 5.7.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../../evm-tools
@@ -6177,13 +6462,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6268,13 +6550,10 @@ importers:
         version: 2.78.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6356,10 +6635,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6444,10 +6720,7 @@ importers:
         version: 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6520,13 +6793,10 @@ importers:
         version: 1.2.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6629,10 +6899,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6708,13 +6975,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6781,13 +7045,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6875,10 +7136,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -6939,10 +7197,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7045,13 +7300,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7151,10 +7403,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7248,10 +7497,7 @@ importers:
         version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
@@ -7339,10 +7585,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7412,10 +7655,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7491,13 +7731,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7579,13 +7816,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -7659,6 +7893,94 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
+
+  libs/coin-modules/coin-zcash:
+    dependencies:
+      '@ledgerhq/coin-module-framework':
+        specifier: 'catalog:'
+        version: 4.0.2
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-signer-zcash':
+        specifier: workspace:^
+        version: link:../../live-signer-zcash
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@ledgerhq/wallet-btc':
+        specifier: workspace:^
+        version: link:../../wallet-btc
+      '@ledgerhq/zcash-utils':
+        specifier: 'catalog:'
+        version: 1.1.1
+      '@noble/hashes':
+        specifier: 1.8.0
+        version: 1.8.0
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      bs58:
+        specifier: 'catalog:'
+        version: 4.0.1
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../../disable-network-setup
+      '@ledgerhq/wallet-framework-test-setup':
+        specifier: workspace:^
+        version: link:../../wallet-framework-test-setup
+      '@noble/curves':
+        specifier: 1.9.7
+        version: 1.9.7
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/bs58':
+        specifier: 'catalog:'
+        version: 4.0.4
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+      rimraf:
+        specifier: 4.4.1
+        version: 4.4.1
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   libs/coin-tester:
     dependencies:
@@ -8230,13 +8552,10 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 6.26.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -8476,10 +8795,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.25.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/errors
+        version: 7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -8603,9 +8919,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -8801,9 +9114,6 @@ importers:
 
   libs/domain-service:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -9264,7 +9574,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 0.4.3(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -9279,7 +9589,7 @@ importers:
         version: link:../coin-modules/coin-mina
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/coin-multiversx':
         specifier: workspace:^
         version: link:../coin-modules/coin-multiversx
@@ -9297,7 +9607,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 6.26.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -9315,7 +9625,10 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.25.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+      '@ledgerhq/coin-zcash':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-zcash
       '@ledgerhq/context-module':
         specifier: 2.3.1
         version: 2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
@@ -9337,9 +9650,6 @@ importers:
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../domain-service
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/evm-tools':
         specifier: workspace:^
         version: link:../evm-tools
@@ -9463,6 +9773,9 @@ importers:
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
+      '@ledgerhq/live-signer-zcash':
+        specifier: workspace:^
+        version: link:../live-signer-zcash
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../live-wallet
@@ -9904,13 +10217,13 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+        version: 4.0.2
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../live-config
@@ -9962,6 +10275,9 @@ importers:
       uuid:
         specifier: 11.1.0
         version: 11.1.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
@@ -10109,9 +10425,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10161,9 +10474,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10280,9 +10590,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-canton:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10338,9 +10645,6 @@ importers:
       '@ethersproject/keccak256':
         specifier: ^5.7.0
         version: 5.8.0
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../hw-app-eth
@@ -10387,9 +10691,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10564,9 +10865,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-hedera:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10616,9 +10914,6 @@ importers:
       '@helium/transactions':
         specifier: ^4.7.5
         version: 4.11.1
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10671,9 +10966,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-icon:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10717,9 +11009,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-kaspa:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10849,9 +11138,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -10895,9 +11181,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11110,9 +11393,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11230,9 +11510,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../logs
@@ -11270,9 +11547,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-http:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11356,9 +11630,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11399,9 +11670,6 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../hw-transport
@@ -11445,9 +11713,9 @@ importers:
 
   libs/ledgerjs/packages/hw-transport-vault:
     dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../hw-transport
       '@ledgerhq/hw-transport-http':
         specifier: workspace:^
         version: link:../hw-transport-http
@@ -11513,33 +11781,6 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21)
 
-  libs/ledgerjs/packages/types-cryptoassets:
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21)
-
   libs/ledgerjs/packages/types-devices:
     devDependencies:
       '@swc/core':
@@ -11579,9 +11820,6 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../types-cryptoassets
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../types-devices
@@ -11845,9 +12083,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -12073,6 +12308,9 @@ importers:
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../live-dmk-speculos
+      '@ledgerhq/live-signer-aleo':
+        specifier: workspace:^
+        version: link:../live-signer-aleo
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../live-signer-evm
@@ -12248,9 +12486,9 @@ importers:
       '@ledgerhq/device-signer-kit-aleo':
         specifier: 'catalog:'
         version: 0.4.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12291,9 +12529,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-canton':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-canton
@@ -12340,9 +12575,6 @@ importers:
       '@ledgerhq/coin-celo':
         specifier: workspace:^
         version: link:../coin-modules/coin-celo
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-celo':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-celo
@@ -12395,9 +12627,9 @@ importers:
       '@ledgerhq/device-signer-kit-concordium':
         specifier: 'catalog:'
         version: 0.4.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12435,9 +12667,6 @@ importers:
       '@ledgerhq/device-signer-kit-cosmos':
         specifier: 'catalog:'
         version: 1.0.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos
@@ -12493,12 +12722,15 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.16.0(@ledgerhq/context-module@2.3.1(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2)))(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -12548,9 +12780,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -12600,9 +12829,6 @@ importers:
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-solana':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-solana
@@ -12618,6 +12844,9 @@ importers:
       '@ledgerhq/ledger-trust-service':
         specifier: workspace:^
         version: link:../ledger-services/trust
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../ledger-wallet-framework
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -12676,9 +12905,6 @@ importers:
       '@ledgerhq/device-signer-kit-zcash':
         specifier: 0.4.3
         version: 0.4.3(@ledgerhq/device-management-kit@1.7.1(rxjs@7.8.2))
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -12991,9 +13217,6 @@ importers:
 
   libs/ui/packages/native:
     dependencies:
-      '@ledgerhq/crypto-icons':
-        specifier: 'catalog:'
-        version: 2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-rnative@0.1.52(0aebe1fc8d199b5f7709a0e48177e723))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
       '@ledgerhq/icons-ui':
         specifier: workspace:^
         version: link:../icons
@@ -13055,12 +13278,6 @@ importers:
       '@expo/metro-config':
         specifier: ^0.19.11
         version: 0.19.12
-      '@ledgerhq/lumen-design-core':
-        specifier: 'catalog:'
-        version: 0.1.23
-      '@ledgerhq/lumen-ui-rnative':
-        specifier: 'catalog:'
-        version: 0.1.52(0aebe1fc8d199b5f7709a0e48177e723)
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))
@@ -13078,7 +13295,7 @@ importers:
         version: 0.81.6
       '@react-native/babel-preset':
         specifier: 'catalog:'
-        version: 0.81.6
+        version: 0.81.6(@babel/core@7.28.5)
       '@rsbuild/core':
         specifier: 'catalog:'
         version: 2.0.9
@@ -13102,7 +13319,7 @@ importers:
         version: 10.4.4(@storybook/react@10.4.1(@types/react@19.0.14)(@typescript/typescript6@6.0.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(storybook@10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)(storybook@10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))
       '@storybook/addon-react-native-web':
         specifier: 'catalog:'
-        version: 0.0.29(@react-native/babel-preset@0.81.6)(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.0.29(@react-native/babel-preset@0.81.6(@babel/core@7.28.5))(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@storybook/jest':
         specifier: 'catalog:'
         version: 0.2.3
@@ -13636,10 +13853,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
-        version: 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
+        version: 4.0.2
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network
@@ -13838,6 +14052,43 @@ importers:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
 
+  shared/api-services:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   shared/auth:
     dependencies:
       '@reduxjs/toolkit':
@@ -13874,6 +14125,83 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/cloud-sync:
+    dependencies:
+      base64-js:
+        specifier: '1'
+        version: 1.5.1
+      isomorphic-ws:
+        specifier: 'catalog:'
+        version: 5.0.0(ws@8.18.3)
+      pako:
+        specifier: ^2.0.4
+        version: 2.1.0
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.2.0
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@types/pako':
+        specifier: ^2.0.0
+        version: 2.0.3
+      '@types/ws':
+        specifier: ^8.5.3
+        version: 8.5.10
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/cloud-sync-module:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -13933,6 +14261,48 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  shared/qr-code:
+    devDependencies:
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.52(@ledgerhq/lumen-design-core@0.1.23)(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@testing-library/react-native':
+        specifier: 'catalog:'
+        version: 13.3.3(patch_hash=4f93e75372e62b6dc0f0b2635b62a322b37a3727637bd94a38df1ed8648e2e76)(jest@30.2.0)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react-test-renderer@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-qrcode-svg:
+        specifier: 6.1.1
+        version: 6.1.1(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native-svg:
+        specifier: 'catalog:'
+        version: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-test-renderer:
+        specifier: 'catalog:'
+        version: 19.1.4(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -14222,6 +14592,15 @@ importers:
 
   tools/create-release-hash: {}
 
+  tools/danger:
+    devDependencies:
+      '@commitlint/lint':
+        specifier: 21.2.0
+        version: 21.2.0
+      danger:
+        specifier: 13.0.10
+        version: 13.0.10
+
   tools/pnpm-utils: {}
 
 packages:
@@ -14309,7 +14688,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -15670,12 +16049,6 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
-  '@babel/plugin-transform-private-methods@7.25.9':
-    resolution: {integrity: sha512-D/JUozNpQLAPUVusvqMxyvjzllRaF8/nSrP1s2YGQT/W4LHK4xxsMcHjhOGTS01mp9Hda8nswb+FblLdJornQw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-
   '@babel/plugin-transform-private-methods@7.27.1':
     resolution: {integrity: sha512-10FVt+X55AjRAYI9BrdISN9/AQWHqldOeZDUoLyif1Kn05a56xVBXb8ZouL8pZ9jem8QpXaOt8TS7RHUIS+GPA==}
     engines: {node: '>=6.9.0'}
@@ -16173,6 +16546,10 @@ packages:
     resolution: {integrity: sha512-xjafwKxid8s1K23NFpL8JNo6JnY/ysetKo8kegVM7c8vs+kWLP8VrQq+NbhgVlmCojhEDbzQKp4eRXSjVOGsow==}
     engines: {node: '>=v14'}
 
+  '@commitlint/ensure@21.2.0':
+    resolution: {integrity: sha512-76IF9vDNS13lAzEEik9eKwzt8f9hYhWiwVXZ2AnyLCz5/f511FsEQ3pw1X3/zSQpdRLQU7i5qDMVKyXi1GWjSg==}
+    engines: {node: '>=22.12.0'}
+
   '@commitlint/execute-rule@17.8.1':
     resolution: {integrity: sha512-JHVupQeSdNI6xzA9SqMF+p/JjrHTcrJdI02PwesQIDCIGUrv04hicJgCcws5nzaoZbROapPs0s6zeVHoxpMwFQ==}
     engines: {node: '>=v14'}
@@ -16185,9 +16562,17 @@ packages:
     resolution: {integrity: sha512-UshMi4Ltb4ZlNn4F7WtSEugFDZmctzFpmbqvpyxD3la510J+PLcnyhf9chs7EryaRFJMdAKwsEKfNK0jL/QM4g==}
     engines: {node: '>=v14'}
 
+  '@commitlint/is-ignored@21.2.0':
+    resolution: {integrity: sha512-4/eB0vBN7L88O/oC4ajAEqi7j2ZfNgxl/+11RfAV9YosejZgDXhY2C9VcHnHJhOzPLoSy5P3Mg/46kqeyJfXKw==}
+    engines: {node: '>=22.12.0'}
+
   '@commitlint/lint@17.8.1':
     resolution: {integrity: sha512-aQUlwIR1/VMv2D4GXSk7PfL5hIaFSfy6hSHV94O8Y27T5q+DlDEgd/cZ4KmVI+MWKzFfCTiTuWqjfRSfdRllCA==}
     engines: {node: '>=v14'}
+
+  '@commitlint/lint@21.2.0':
+    resolution: {integrity: sha512-ceO5dp9pLjEZ6y6qbq/uXWXDPykqqlTsyzoQ0NzecpisSJhK3kTy9qzQoPeJuWG/IMNdV1lO0RgmzqoAlSi1uw==}
+    engines: {node: '>=22.12.0'}
 
   '@commitlint/load@17.8.1':
     resolution: {integrity: sha512-iF4CL7KDFstP1kpVUkT8K2Wl17h2yx9VaR1ztTc8vzByWWcbO/WaKwxsnCOqow9tVAlzPfo1ywk9m2oJ9ucMqA==}
@@ -16197,9 +16582,17 @@ packages:
     resolution: {integrity: sha512-6bYL1GUQsD6bLhTH3QQty8pVFoETfFQlMn2Nzmz3AOLqRVfNNtXBaSY0dhZ0dM6A2MEq4+2d7L/2LP8TjqGRkA==}
     engines: {node: '>=v14'}
 
+  '@commitlint/message@21.2.0':
+    resolution: {integrity: sha512-YxGoiXD/HXNXLJPrQwE5poXa+XH0CBEm+mdvbHQP0g6MV/dmJyUFCzPNzZbxL93GvZ70TmtTK0Z0/IBpAqHv8g==}
+    engines: {node: '>=22.12.0'}
+
   '@commitlint/parse@17.8.1':
     resolution: {integrity: sha512-/wLUickTo0rNpQgWwLPavTm7WbwkZoBy3X8PpkUmlSmQJyWQTj0m6bDjiykMaDt41qcUbfeFfaCvXfiR4EGnfw==}
     engines: {node: '>=v14'}
+
+  '@commitlint/parse@21.2.0':
+    resolution: {integrity: sha512-QHWxG4d0PLTF634/AdyZ0MQS+CLn5YOuJlCFhMMlSGKFxzYGUetkHBj18xgBD+6fVzUrA2lrCdi/vlS2f/oYXg==}
+    engines: {node: '>=22.12.0'}
 
   '@commitlint/prompt-cli@17.8.1':
     resolution: {integrity: sha512-dkjxr0ah2R9P/vsz/s128kNEar/5zjr3TN3LOvA8kBiSrrbfF560gnoxAh+KgQ5sAc8lMrG+z4dVYvzSkXyfDQ==}
@@ -16222,9 +16615,17 @@ packages:
     resolution: {integrity: sha512-2b7OdVbN7MTAt9U0vKOYKCDsOvESVXxQmrvuVUZ0rGFMCrCPJWWP1GJ7f0lAypbDAhaGb8zqtdOr47192LBrIA==}
     engines: {node: '>=v14'}
 
+  '@commitlint/rules@21.2.0':
+    resolution: {integrity: sha512-C2yXMNpiB8ETZKfx5JD8+ExgF8vTU1VQMKPSUUYwqKpw9oJWQBrlXBpdU038mj2WPjof7o9UzFpmTyBeGMZwZg==}
+    engines: {node: '>=22.12.0'}
+
   '@commitlint/to-lines@17.8.1':
     resolution: {integrity: sha512-LE0jb8CuR/mj6xJyrIk8VLz03OEzXFgLdivBytoooKO5xLt5yalc8Ma5guTWobw998sbR3ogDd+2jed03CFmJA==}
     engines: {node: '>=v14'}
+
+  '@commitlint/to-lines@21.0.1':
+    resolution: {integrity: sha512-bd1BFII7p1EQZre9Kaj+kKaMFP3cFCdt21K7DItVux9XP5WjLgJ0/Uy1pJJh9aPwVJ6SKg62PxqlZaHI8hQAXw==}
+    engines: {node: '>=22.12.0'}
 
   '@commitlint/top-level@17.8.1':
     resolution: {integrity: sha512-l6+Z6rrNf5p333SHfEte6r+WkOxGlWK4bLuZKbtf/2TXRN+qhrvn1XE63VhD8Oe9oIHQ7F7W1nG2k/TJFhx2yA==}
@@ -16233,6 +16634,14 @@ packages:
   '@commitlint/types@17.8.1':
     resolution: {integrity: sha512-PXDQXkAmiMEG162Bqdh9ChML/GJZo6vU+7F03ALKDK8zYc6SuAr47LjG7hGYRqUOz+WK0dU7bQ0xzuqFMdxzeQ==}
     engines: {node: '>=v14'}
+
+  '@commitlint/types@21.2.0':
+    resolution: {integrity: sha512-7zVFCDB2reMvJH5dmbKnOQPjZEvjdJTH8jc0U/PIPU1r3/+vf5pD1HlfitV2MWsWXrvu7u39iY1lyLUPOaN0Gw==}
+    engines: {node: '>=22.12.0'}
+
+  '@conventional-changelog/template@1.2.1':
+    resolution: {integrity: sha512-TzlTVpKPjaqW6qOYjQcYUDuGsLCNsvFHVBXkYGTAnf5V37jCWrE5haKNXzz0WZUtVHjrpV76L1buANjwXMfT8w==}
+    engines: {node: '>=22'}
 
   '@cosmjs/amino@0.36.2':
     resolution: {integrity: sha512-r4yV1bhl412gwHGlyaUaJHIJnmldtyGsAwyz3oHHVxduiECj06Rv6wqeyLZfQa9W6hU+MlZwy7LabSUkkyGwjA==}
@@ -17787,6 +18196,18 @@ packages:
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
 
+  '@gitbeaker/core@38.12.1':
+    resolution: {integrity: sha512-8XMVcBIdVAAoxn7JtqmZ2Ee8f+AZLcCPmqEmPFOXY2jPS84y/DERISg/+sbhhb18iRy+ZsZhpWgQ/r3CkYNJOQ==}
+    engines: {node: '>=18.0.0'}
+
+  '@gitbeaker/requester-utils@38.12.1':
+    resolution: {integrity: sha512-Rc/DgngS0YPN+AY1s9UnexKSy4Lh0bkQVAq9p7PRbRpXb33SlTeCg8eg/8+A/mrMcHgYmP0XhH8lkizyA5tBUQ==}
+    engines: {node: '>=18.0.0'}
+
+  '@gitbeaker/rest@38.12.1':
+    resolution: {integrity: sha512-9KMSDtJ/sIov+5pcH+CAfiJXSiuYgN0KLKQFg0HHWR2DwcjGYkcbmhoZcWsaOWOqq4kihN1l7wX91UoRxxKKTQ==}
+    engines: {node: '>=18.0.0'}
+
   '@google-cloud/common@5.0.2':
     resolution: {integrity: sha512-V7bmBKYQyu0eVG2BFejuUjlBt+zrya6vtsKdY+JxMM/dNntPF41vZ9+LhOshEUH01zOHEqBSvI7Dad7ZS6aUeA==}
     engines: {node: '>=14.0.0'}
@@ -18468,26 +18889,21 @@ packages:
   '@ledgerhq/coin-hypercore@0.4.3':
     resolution: {integrity: sha512-da1KB1ul/hJS+joTxLrTVab9mn3Gs1ZFSyOaFqPEypBFUHsgyWrQqHs6CH4uzailNhNeLyNY/uIV5SifVErBvw==}
     peerDependencies:
-      '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
       '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-module-framework@4.0.2':
     resolution: {integrity: sha512-uYbsVd6t5qzgSEyINEhfuruTO74wAEi+lpMvAPF67F9gWAsFC7109kxlG1AgRdIQmmW5cCMYaSMt69DrhN0BuQ==}
-    peerDependencies:
-      '@ledgerhq/errors': ^6.33.0
 
   '@ledgerhq/coin-stellar@6.26.4':
     resolution: {integrity: sha512-KZgJHQ2TcK20ZXK+2qM06lS45bi44uk2dXJ69iXK6ZUVBEtWuMrxbvqVjrlrfuFZzZ/EN8bZ468LyRT00yqxQQ==}
     peerDependencies:
-      '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
       '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-xrp@7.25.2':
     resolution: {integrity: sha512-KYEB7D/VZwgiYc4EWMWErPiL5yQDNb2dQZKaMaKChy751gH5AIc6LH2wfLSse5zkn9s6X1r12kAE9GVvWCmZ+w==}
     peerDependencies:
-      '@ledgerhq/errors': ^6.33.0
       '@ledgerhq/live-network': ^2.4.0
       '@ledgerhq/logs': ^6.17.0
 
@@ -18586,15 +19002,6 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.0
       rxjs: 7.8.2
-
-  '@ledgerhq/errors@5.50.0':
-    resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
-
-  '@ledgerhq/errors@6.32.0':
-    resolution: {integrity: sha512-BjjvhLM6UXYUbhllqAduo9PSneLt9FXZ3TBEUFQ3MMSZOCHt0gAgDySLwul99R8fdYWkXBza4DYQjUNckpN2lg==}
-
-  '@ledgerhq/errors@6.36.0':
-    resolution: {integrity: sha512-o2Q5hNvf2TzAzlH8ORAozppRbzixRPYDfmSQrP7FOcM997OEH7qDleXgp/uMpvRdxR/t3CJCG+n0i+bU/oYMKA==}
 
   '@ledgerhq/hw-bolos@6.35.1':
     resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
@@ -18740,8 +19147,8 @@ packages:
   '@ledgerhq/wallet-api-simulator@2.3.2':
     resolution: {integrity: sha512-EJaOBK+DM/R8hb+Mm83yl1Hv9ceU0rPjZK/OcNFw5IT0iU91kFy2j2vDoEcSiDcVeWINUcdENSWo+hPEavSdGg==}
 
-  '@ledgerhq/zcash-utils@1.1.0':
-    resolution: {integrity: sha512-n6NHxMIhrAGkRx7WROQn7CKuyxEfVw8spLgfeLjapqCoqH7WXwY55MbFH43asYz3kWvltMYLNUoIwSkk0jUtGg==}
+  '@ledgerhq/zcash-utils@1.1.1':
+    resolution: {integrity: sha512-leUKDOf4g8cU7UtFw0c9mAONN6xEzZBTF/bAHWPUwHbIqjVDAuJOGnAf31f9E5jYghATgnrCN1OkQ8b7Wg2Aiw==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -19230,11 +19637,23 @@ packages:
   '@octokit/openapi-types@20.0.0':
     resolution: {integrity: sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==}
 
-  '@octokit/openapi-types@22.2.0':
-    resolution: {integrity: sha512-QBhVjcUa9W7Wwhm6DBFu6ZZ+1/t/oYxqc2tp81Pi41YNuJinbFRx8B133qVOrAaBbF7D/m0Et6f9/pZt9Rc+tg==}
+  '@octokit/openapi-types@24.2.0':
+    resolution: {integrity: sha512-9sIH3nSUttelJSXUrmGzl7QUBFul0/mB8HRYl3fOlgHbIWG+WnYDXU3v/2zMtAvuzZ/ed00Ei6on975FhBfzrg==}
+
+  '@octokit/plugin-paginate-rest@11.4.4-cjs.2':
+    resolution: {integrity: sha512-2dK6z8fhs8lla5PaOTgqfCGBxgAv/le+EhPs27KklPhm1bKObpu6lXzwfUEQ16ajXzqNrKMujsFyo9K2eaoISw==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': '5'
 
   '@octokit/plugin-paginate-rest@9.2.1':
     resolution: {integrity: sha512-wfGhE/TAkXZRLjksFXuDZdmGnJQHvtU/joFQdweXUgzo1XwvBCD4o4+75NtFfjfLK5IwLf9vHTfSiU3sLRYpRw==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': '5'
+
+  '@octokit/plugin-request-log@4.0.1':
+    resolution: {integrity: sha512-GihNqNpGHorUrO7Qa9JbAl0dbLnqJVrV8OXe2Zm5/Y4wFkZQDfTreBzVmiRfJVfE4mClXdihHnbpyyO9FSX4HA==}
     engines: {node: '>= 18'}
     peerDependencies:
       '@octokit/core': '5'
@@ -19245,6 +19664,12 @@ packages:
     peerDependencies:
       '@octokit/core': '5'
 
+  '@octokit/plugin-rest-endpoint-methods@13.3.2-cjs.1':
+    resolution: {integrity: sha512-VUjIjOOvF2oELQmiFpWA1aOPdawpyaCUqcEBc/UOUnj3Xp6DJGrJ1+bjUIIDzdHjnFNO6q57ODMfdEZnoBkCwQ==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': ^5
+
   '@octokit/request-error@5.1.1':
     resolution: {integrity: sha512-v9iyEQJH6ZntoENr9/yXxjuezh4My67CBSu9r6Ve/05Iu5gNgnisNWOsoJHTP6k0Rr0+HQIpnH+kyammu90q/g==}
     engines: {node: '>= 18'}
@@ -19253,11 +19678,15 @@ packages:
     resolution: {integrity: sha512-qnB2+SY3hkCmBxZsR/MPCybNmbJe4KAlfWErXq+rBKkQJlbjdJeS85VI9r8UqeLYLvnAenU8Q1okM/0MBsAGXw==}
     engines: {node: '>= 18'}
 
+  '@octokit/rest@20.1.2':
+    resolution: {integrity: sha512-GmYiltypkHHtihFwPRxlaorG5R9VAHuk/vbszVoRTGXnAsY60wYLkh/E2XiFmdZmqrisw+9FaazS1i5SbdWYgA==}
+    engines: {node: '>= 18'}
+
   '@octokit/types@12.6.0':
     resolution: {integrity: sha512-1rhSOfRa6H9w4YwK0yrf5faDaDTb+yLyBUKOCV4xtCDB5VmIPqd/v9yr9o6SAzOAlRxMiRiCic6JVM1/kunVkw==}
 
-  '@octokit/types@13.5.0':
-    resolution: {integrity: sha512-HdqWTf5Z3qwDVlzCrP8UJquMwunpDiMPt5er+QjGzL4hqr/vBVY/MauQgS1xWxCDT1oMx1EULyqxncdCY/NVSQ==}
+  '@octokit/types@13.10.0':
+    resolution: {integrity: sha512-ifLaO34EbbPj0Xgro4G5lP5asESjwHracYJvVaPIyXMuiuXLlhic3S47cBdTb+jfODkTE5YtGCLt3Ay3+J97sA==}
 
   '@open-draft/deferred-promise@2.2.0':
     resolution: {integrity: sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA==}
@@ -20647,6 +21076,8 @@ packages:
   '@react-native/babel-preset@0.81.6':
     resolution: {integrity: sha512-RtIr82ccPoyMLmIC3/vCG96MzRmIT+IzQkjCgTS5b93uAxiER9BS7+d1l7+zD00VanClt6CTBM4K4n6RCnAykg==}
     engines: {node: '>= 20.19.4'}
+    peerDependencies:
+      '@babel/core': '*'
 
   '@react-native/codegen@0.77.3':
     resolution: {integrity: sha512-Q6ZJCE7h6Z3v3DiEZUnqzHbgwF3ZILN+ACTx6qu/x2X1cL96AatKwdX92e0+7J9RFg6gdoFYJgRrW8Q6VnWZsQ==}
@@ -21461,6 +21892,10 @@ packages:
 
   '@sideway/pinpoint@2.0.0':
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
+
+  '@simple-libs/stream-utils@2.0.0':
+    resolution: {integrity: sha512-fCTuZK4QBa+39Oz9l4OGfJfz+GpwCp3AqO7Zch3to99xHPgstVsRFpeQ8LNd2o1Gv8raL2mCFwiaHh7bFSp5DQ==}
+    engines: {node: '>=22'}
 
   '@sinclair/typebox@0.24.51':
     resolution: {integrity: sha512-1P1OROm/rdubP5aFDSZQILU0vrLCJ4fvHt6EoqHEM+2D/G5MK3bIaymUKLit8Js9gbns5UyJnkP/TZROLw4tUA==}
@@ -25261,6 +25696,10 @@ packages:
   argsarray@0.0.1:
     resolution: {integrity: sha512-u96dg2GcAKtpTrBdDoFIM7PjcBA+6rSP0OR94MOReNRyUECL6MtQt5XXmRr4qrftYaef9+l5hcpO5te7sML1Cg==}
 
+  argue-cli@3.1.0:
+    resolution: {integrity: sha512-DhBpBfXL4SS2uC0N922MMajKR3CdrTG0u2or1PNYgXMsrSzViJrbtvT0nCLlLGUI0plam/ZZCs7aAauHtW9thw==}
+    engines: {node: '>=22'}
+
   aria-hidden@1.2.4:
     resolution: {integrity: sha512-y+CcFFwelSXpLZk/7fMB2mUbGtX9lKycf1MWJ7CaTIERyitVlyQx6C+sxcROU2BAJ24OiZyK+8wj2i8AlBoS3A==}
     engines: {node: '>=10'}
@@ -25375,6 +25814,9 @@ packages:
 
   async-limiter@1.0.1:
     resolution: {integrity: sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==}
+
+  async-retry@1.2.3:
+    resolution: {integrity: sha512-tfDb02Th6CE6pJUF2gjW5ZVjsgwlucVXOEQMvEX9JgSJMs9gAX+Nz3xRuJBKuUYjTSYORqvDBORdAQ3LU59g7Q==}
 
   async-retry@1.3.1:
     resolution: {integrity: sha512-aiieFW/7h3hY0Bq5d+ktDBejxuwR78vRu9hDUdR8rNhSaQ29VzPL4AoIRG7D/c7tdenwOcKvgPM6tIxB3cB6HA==}
@@ -26533,6 +26975,10 @@ packages:
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
 
+  colors@1.4.0:
+    resolution: {integrity: sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==}
+    engines: {node: '>=0.1.90'}
+
   colorspace@1.1.4:
     resolution: {integrity: sha512-BgvKJiuVu1igBUF2kEjRCZXol6wiiGbY5ipL/oVPwm0BL9sIpMIzM8IK7vwuxIIzOXMV3Ey5w+vxhm0rR/TN8w==}
 
@@ -26876,6 +27322,10 @@ packages:
     resolution: {integrity: sha512-6qLgrBF4gueoC7AFVHu51nHL9pF9FRjXrH+ceVf7WmAfH3gs+gEYOkvxhjMPjZu57I4AGUGoNTY8V7Hrgf1uqg==}
     engines: {node: '>=14'}
 
+  conventional-changelog-angular@9.2.1:
+    resolution: {integrity: sha512-oWSL6ZhnXbYraOFTK3PgRAQJ8fADDAEv5K6AdeyQPLvjFmhG8+ejL0jZZp/R7vTmGJaBvZEE+sE7dB4bCv7sAw==}
+    engines: {node: '>=22'}
+
   conventional-changelog-conventionalcommits@6.1.0:
     resolution: {integrity: sha512-3cS3GEtR78zTfMzk0AizXKKIdN4OvSh7ibNz6/DPbhWWQu7LqE/8+/GqSodV+sywUR2gpJAdP/1JFf4XtN7Zpw==}
     engines: {node: '>=14'}
@@ -26883,6 +27333,11 @@ packages:
   conventional-commits-parser@4.0.0:
     resolution: {integrity: sha512-WRv5j1FsVM5FISJkoYMR6tPk07fkKT0UodruX4je86V4owk451yjXAKzKAPOs9l7y59E2viHUS9eQ+dfUA9NSg==}
     engines: {node: '>=14'}
+    hasBin: true
+
+  conventional-commits-parser@7.1.1:
+    resolution: {integrity: sha512-B0f42jI++V5Vb7qK+DDw68r0dNxz5hk+RdKUkx2NOi39emc9hsHa3u2M3doF7QQhRFzCrAj7uM90teG+RBTaYQ==}
+    engines: {node: '>=22'}
     hasBin: true
 
   convert-source-map@1.9.0:
@@ -27359,6 +27814,11 @@ packages:
 
   d64@1.0.0:
     resolution: {integrity: sha512-5eNy3WZziVYnrogqgXhcdEmqcDB2IHurTqLcrgssJsfkMVCUoUaZpK6cJjxxvLV2dUm5SuJMNcYfVGoin9UIRw==}
+
+  danger@13.0.10:
+    resolution: {integrity: sha512-qMa/YdfVP/a1HhuvMUsocTO0otgLphuiV5z4G5P7C4+qHvNtCSlzvZm3UuwBut2iwQ/r5NGcwcmD4t+8LjIS0A==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   dargs@7.0.0:
     resolution: {integrity: sha512-2iy1EkLdlBzQGvbweYRFxmFath8+K7+AKB0TlhHWkNuH+TmovaMH/Wp7V7R4u7f4SnX3OgLsU9t1NI9ioDnUpg==}
@@ -28734,6 +29194,9 @@ packages:
   fast-json-parse@1.0.3:
     resolution: {integrity: sha512-FRWsaZRWEJ1ESVNbDWmsAlqDk96gPQezzLghafp5J4GUKjbCz3OkAHuZs5TuPEtkbVQERysLp9xv6c24fBm8Aw==}
 
+  fast-json-patch@3.1.1:
+    resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
+
   fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
 
@@ -29304,7 +29767,7 @@ packages:
   git-raw-commits@2.0.11:
     resolution: {integrity: sha512-VnctFhw+xfj8Va1xtfEqCUD2XDrbAPSJx+hSrE5K7fGdjZruW7XV+QOrN7LF/RJyvspRiD2I0asWsxFp0ya26A==}
     engines: {node: '>=10'}
-    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
+    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -29531,6 +29994,10 @@ packages:
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
+
+  has-flag@5.0.1:
+    resolution: {integrity: sha512-CsNUt5x9LUdx6hnk/E2SZLsDyvfqANZSUq4+D3D8RzDJ2M+HDTIkF60ibS1vHaK55vzgiZw1bEPFG9yH7l33wA==}
+    engines: {node: '>=12'}
 
   has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
@@ -29857,6 +30324,10 @@ packages:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
     engines: {node: '>=10.18'}
 
+  hyperlinker@1.0.0:
+    resolution: {integrity: sha512-Ty8UblRWFEcfSuIaajM34LdPXIhbs1ajEX/BBPv24J+enSVaEVY63xQ6lTO9VRYS5LAoghIG0IDJ+p+IPzKUQQ==}
+    engines: {node: '>=4'}
+
   hyphenate-style-name@1.0.4:
     resolution: {integrity: sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==}
 
@@ -29997,6 +30468,10 @@ packages:
   ini@3.0.1:
     resolution: {integrity: sha512-it4HyVAUTKBc6m8e1iXWvXSTdndF7HbdN713+kvLrymxTaU4AUBWrJ4vEooP+V7fexnVD3LKcBshjGGPefSMUQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+
+  ini@5.0.0:
+    resolution: {integrity: sha512-+N0ngpO3e7cRUWOJAS7qw0IZIVc6XPrW4MlFBdD066F2L4k1L6ker3hLqSq7iXxU5tgS4WGkIUElWn5vogAEnw==}
+    engines: {node: ^18.17.0 || >=20.5.0}
 
   inline-style-prefixer@6.0.4:
     resolution: {integrity: sha512-FwXmZC2zbeeS7NzGjJ6pAiqRhXR0ugUShSNb6GApMl6da0/XGc4MOJsoWAywia52EEWbXNSy0pzkwz/+Y+swSg==}
@@ -31593,6 +32068,9 @@ packages:
   lodash.isnumber@3.0.3:
     resolution: {integrity: sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw==}
 
+  lodash.isobject@3.0.2:
+    resolution: {integrity: sha512-3/Qptq2vr7WeJbB4KHUSKlq8Pl7ASXi3UG6CMbBm8WRtXi8+GHm7mKaU3urfpSEzWe2wCIChs6/sdocUsTKJiA==}
+
   lodash.isplainobject@4.0.6:
     resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
 
@@ -31994,6 +32472,9 @@ packages:
   media-typer@1.1.0:
     resolution: {integrity: sha512-aisnrDP4GNe06UcKFnV5bfMNPBUw4jsLGaWwWfnH3v02GnBuXX2MCVn5RbrWo0j3pczUilYblq7fQ7Nw2t5XKw==}
     engines: {node: '>= 0.8'}
+
+  memfs-or-file-map-to-github-branch@1.3.0:
+    resolution: {integrity: sha512-AzgIEodmt51dgwB3TmihTf1Fh2SmszdZskC6trFHy4v71R5shLmdjJSYI7ocVfFa7C/TE6ncb0OZ9eBg2rmkBQ==}
 
   memfs@3.5.3:
     resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}
@@ -32821,6 +33302,9 @@ packages:
   node-api-version@0.2.1:
     resolution: {integrity: sha512-2xP/IGGMmmSQpI1+O/k72jF/ykvZ89JeuKX3TLJAYPDVLUalrshrLHkeVcCCZqG/eEa635cr8IBYzgnDvM2O8Q==}
 
+  node-cleanup@2.1.2:
+    resolution: {integrity: sha512-qN8v/s2PAJwGUtr1/hYTpNKlD6Y9rc4p8KSmJXyGdYGZsDGKXrGThikLFP9OCHFeLeEpQzPwiAtdIvBLqm//Hw==}
+
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -33191,6 +33675,9 @@ packages:
   outvariant@1.4.3:
     resolution: {integrity: sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==}
 
+  override-require@1.1.1:
+    resolution: {integrity: sha512-eoJ9YWxFcXbrn2U8FKT6RV+/Kj7fiGAB1VvHzbYKt8xM5ZuKZgCGvnHzDxmreEjcBH28ejg5MiOH4iyY1mQnkg==}
+
   own-keys@1.0.1:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
     engines: {node: '>= 0.4'}
@@ -33337,12 +33824,20 @@ packages:
   parse-bmfont-xml@1.1.6:
     resolution: {integrity: sha512-0cEliVMZEhrFDwMh4SxIyVJpqYoOWDJ9P895tFuS+XuNzI5UBmBk5U5O4KuJdTnZpSBI4LFA2+ZiJaiwfSwlMA==}
 
+  parse-diff@0.7.1:
+    resolution: {integrity: sha512-1j3l8IKcy4yRK2W4o9EYvJLSzpAVwz4DXqCewYyx2vEwk2gcf3DBPqc8Fj4XV3K33OYJ08A8fWwyu/ykD/HUSg==}
+
   parse-entities@1.2.2:
     resolution: {integrity: sha512-NzfpbxW/NPrzZ/yYSoQxyqUZMZXIdCfE0OIN4ESsnptHJECoUk3FZktxNuzQf4tjt5UEopnxpYJbvYuxIFDdsg==}
 
   parse-filepath@1.0.2:
     resolution: {integrity: sha512-FwdRXKCohSVeXqwtYonZTXtbGJKrn+HNyWDYVcp5yuJlesTwNH4rsmRZ+GrKAPJ5bLpRxESMeS+Rl0VCHRvB2Q==}
     engines: {node: '>=0.8'}
+
+  parse-github-url@1.0.4:
+    resolution: {integrity: sha512-CEtCOt55fHmd6DpBc/N7H5NC4vJpcquhzzs9Iw2mRj8bVxo1O5TQI5MXKOMO7+yBOqD+5dKCCRK4Kj1KskZc6Q==}
+    engines: {node: '>= 0.10'}
+    hasBin: true
 
   parse-json@4.0.0:
     resolution: {integrity: sha512-aOIos8bujGN93/8Ox/jPLh7RwVnPEysynVFE+fQZyg6jKELEHwzgKdLRFHUgXJL6kylijVSBC4BvN9OmsB48Rw==}
@@ -33351,6 +33846,9 @@ packages:
   parse-json@5.2.0:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
     engines: {node: '>=8'}
+
+  parse-link-header@2.0.0:
+    resolution: {integrity: sha512-xjU87V0VyHZybn2RrCX5TIFGxTVZE6zqqZWMPlIKiSKuWh/X5WZdt+w1Ki1nXB+8L/KtL+nZ4iq+sfI6MrhhMw==}
 
   parse-ms@4.0.0:
     resolution: {integrity: sha512-TXfryirbmq34y8QBwgqCVLi+8oA3oWx2eAnSn62ITyEhEYaWRlVZ2DvMM9eZbMs/RfxPu/PK/aBLyGj4IrqMHw==}
@@ -33561,6 +34059,9 @@ packages:
   pino@10.1.0:
     resolution: {integrity: sha512-0zZC2ygfdqvqK8zJIr1e+wT1T/L+LF6qvqvbzEQ6tiMAoTqEVK9a1K3YRu8HEUvGEvNqZyPJTtb2sNIoTkB83w==}
     hasBin: true
+
+  pinpoint@1.1.0:
+    resolution: {integrity: sha512-+04FTD9x7Cls2rihLlo57QDCcHoLBGn5Dk51SwtFBWkUWLxZaBXyNVpCw1S+atvE7GmnFjeaRZ0WLq3UYuqAdg==}
 
   pirates@3.0.2:
     resolution: {integrity: sha512-c5CgUJq6H2k6MJz72Ak1F5sN9n9wlSlJyEnwvpm9/y3WB4E3pHBDT2c6PEiS1vyJvq2bUxUAIu0EGf8Cx4Ic7Q==}
@@ -34133,6 +34634,10 @@ packages:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
     engines: {node: '>=18'}
 
+  prettyjson@1.2.5:
+    resolution: {integrity: sha512-rksPWtoZb2ZpT5OVgtmy0KHVM+Dca3iVwWY9ifwhcexfjebtgjg3wmrUt9PvJ59XIYBcknQeYHD8IAnVlh9lAw==}
+    hasBin: true
+
   proc-log@2.0.1:
     resolution: {integrity: sha512-Kcmo2FhfDTXdcbfDH76N7uBYHINxc/8GW7UAVuVP9I+Va3uHSerrnKV6dLooga/gh7GlgzuCCr/eoldnL1muGw==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
@@ -34316,7 +34821,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -35060,6 +35564,10 @@ packages:
   readdirp@5.0.0:
     resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
     engines: {node: '>= 20.19.0'}
+
+  readline-sync@1.4.10:
+    resolution: {integrity: sha512-gNva8/6UAe8QYepIQH/jQ2qn91Qj0B9sYjMBBs3QOB8F2CXcKgLxQaJRP76sWVRQt+QU+8fAkCbCvjjMFu7Ycw==}
+    engines: {node: '>= 0.8.0'}
 
   readline@1.3.0:
     resolution: {integrity: sha512-k2d6ACCkiNYz222Fs/iNze30rRJ1iIicW7JuX/7/cozvih6YCkFZH+J6mAFDVgv0dRBaAyr4jDqC95R2y4IADg==}
@@ -36422,6 +36930,10 @@ packages:
     resolution: {integrity: sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A==}
     engines: {node: '>=14.0.0'}
 
+  supports-color@10.2.2:
+    resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
+    engines: {node: '>=18'}
+
   supports-color@2.0.0:
     resolution: {integrity: sha512-KKNVtd6pCYgPIKU4cp2733HWYCpplQhddZLBUryaAHou723x+FRzQ5Df824Fj+IyyuiQTRoub4SnIFfIcrp70g==}
     engines: {node: '>=0.8.0'}
@@ -36445,6 +36957,10 @@ packages:
   supports-hyperlinks@2.3.0:
     resolution: {integrity: sha512-RpsAZlpWcDwOPQA22aCH4J0t7L8JmAvsCxfOSEwm7cQs3LshN36QaTkwd70DnBOXDWGssw2eUoc8CaRWT0XunA==}
     engines: {node: '>=8'}
+
+  supports-hyperlinks@4.5.0:
+    resolution: {integrity: sha512-ZW2OvfeCXrNTbLakPUzjQG922EeGCOteFSVoek5DKStTh898wf7zgtuFlzQN8HfZCxC3Eh02yJVrRW51hADf+w==}
+    engines: {node: '>=20'}
 
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
@@ -37192,8 +37708,8 @@ packages:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
 
-  undici@6.19.2:
-    resolution: {integrity: sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==}
+  undici@6.21.1:
+    resolution: {integrity: sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==}
     engines: {node: '>=18.17'}
 
   undici@7.18.2:
@@ -38100,6 +38616,9 @@ packages:
 
   x-is-string@0.1.0:
     resolution: {integrity: sha512-GojqklwG8gpzOVEVki5KudKNoq7MbbjYZCbyWzEz7tyPA7eleiE0+ePwOWQQRb5fm86rD3S8Tc0tSFf3AOv50w==}
+
+  xcase@2.0.1:
+    resolution: {integrity: sha512-UmFXIPU+9Eg3E9m/728Bii0lAIuoc+6nbrNUKaRPJOFp91ih44qqGlWtxMB6kXFrRD6po+86ksHM5XHCfk6iPw==}
 
   xcode@3.0.1:
     resolution: {integrity: sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==}
@@ -40389,6 +40908,16 @@ snapshots:
       regexpu-core: 6.2.0
       semver: 6.3.1
 
+  '@babel/helper-define-polyfill-provider@0.6.5':
+    dependencies:
+      '@babel/helper-compilation-targets': 7.27.2
+      '@babel/helper-plugin-utils': 7.27.1
+      debug: 4.4.3
+      lodash.debounce: 4.0.8
+      resolve: 1.22.12
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/helper-define-polyfill-provider@0.6.5(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40463,6 +40992,14 @@ snapshots:
       '@babel/types': 7.29.0
 
   '@babel/helper-plugin-utils@7.27.1': {}
+
+  '@babel/helper-remap-async-to-generator@7.27.1':
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.27.3
+      '@babel/helper-wrap-function': 7.27.1
+      '@babel/traverse': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/helper-remap-async-to-generator@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -40611,6 +41148,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-proposal-export-default-from@7.25.9':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-proposal-export-default-from@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40697,9 +41238,17 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-syntax-dynamic-import@7.8.3':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-syntax-dynamic-import@7.8.3(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-syntax-export-default-from@7.25.9':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-syntax-export-default-from@7.25.9(@babel/core@7.28.5)':
@@ -40710,6 +41259,10 @@ snapshots:
   '@babel/plugin-syntax-flow@7.26.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-syntax-flow@7.27.1':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-syntax-flow@7.27.1(@babel/core@7.28.5)':
@@ -40854,6 +41407,14 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-async-generator-functions@7.28.0':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/helper-remap-async-to-generator': 7.27.1
+      '@babel/traverse': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/plugin-transform-async-generator-functions@7.28.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40869,6 +41430,14 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/plugin-transform-async-to-generator@7.27.1':
+    dependencies:
+      '@babel/helper-module-imports': 7.27.1
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/helper-remap-async-to-generator': 7.27.1
     transitivePeerDependencies:
       - supports-color
 
@@ -40889,6 +41458,10 @@ snapshots:
   '@babel/plugin-transform-block-scoping@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-block-scoping@7.28.5':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-block-scoping@7.28.5(@babel/core@7.28.5)':
@@ -40960,6 +41533,11 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/template': 7.28.6
 
+  '@babel/plugin-transform-computed-properties@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/template': 7.28.6
+
   '@babel/plugin-transform-computed-properties@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -40970,6 +41548,13 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-destructuring@7.28.5':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/traverse': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/plugin-transform-destructuring@7.28.5(@babel/core@7.28.5)':
     dependencies:
@@ -41023,11 +41608,23 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-flow-strip-types@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/plugin-syntax-flow': 7.27.1
+
   '@babel/plugin-transform-flow-strip-types@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-flow': 7.27.1(@babel/core@7.28.5)
+
+  '@babel/plugin-transform-for-of@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/plugin-transform-for-of@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -41040,6 +41637,14 @@ snapshots:
   '@babel/plugin-transform-function-name@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-compilation-targets': 7.27.2
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/traverse': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/plugin-transform-function-name@7.27.1':
+    dependencies:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/traverse': 7.29.0
@@ -41065,9 +41670,17 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-literals@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-literals@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-logical-assignment-operators@7.28.5':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-logical-assignment-operators@7.28.5(@babel/core@7.28.5)':
@@ -41121,6 +41734,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-transform-named-capturing-groups-regex@7.27.1':
+    dependencies:
+      '@babel/helper-create-regexp-features-plugin': 7.27.1
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-named-capturing-groups-regex@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41141,6 +41759,10 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-numeric-separator@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-numeric-separator@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41152,6 +41774,16 @@ snapshots:
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
+
+  '@babel/plugin-transform-object-rest-spread@7.28.4':
+    dependencies:
+      '@babel/helper-compilation-targets': 7.27.2
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/plugin-transform-destructuring': 7.28.5
+      '@babel/plugin-transform-parameters': 7.27.7
+      '@babel/traverse': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/plugin-transform-object-rest-spread@7.28.4(@babel/core@7.28.5)':
     dependencies:
@@ -41171,6 +41803,10 @@ snapshots:
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
     transitivePeerDependencies:
       - supports-color
+
+  '@babel/plugin-transform-optional-catch-binding@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-optional-catch-binding@7.27.1(@babel/core@7.28.5)':
     dependencies:
@@ -41197,15 +41833,18 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-parameters@7.27.7':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-parameters@7.27.7(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
-  '@babel/plugin-transform-private-methods@7.25.9(@babel/core@7.28.5)':
+  '@babel/plugin-transform-private-methods@7.27.1':
     dependencies:
-      '@babel/core': 7.28.5
-      '@babel/helper-create-class-features-plugin': 7.28.5(@babel/core@7.28.5)
+      '@babel/helper-create-class-features-plugin': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
     transitivePeerDependencies:
       - supports-color
@@ -41223,6 +41862,14 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-create-class-features-plugin': 7.28.5(@babel/core@7.28.5)
+      '@babel/helper-plugin-utils': 7.27.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/plugin-transform-private-property-in-object@7.27.1':
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.27.3
+      '@babel/helper-create-class-features-plugin': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
     transitivePeerDependencies:
       - supports-color
@@ -41246,6 +41893,10 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-react-display-name@7.28.0':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-react-display-name@7.28.0(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41258,9 +41909,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-transform-react-jsx-self@7.25.9':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-react-jsx-self@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-react-jsx-source@7.25.9':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-react-jsx-source@7.25.9(@babel/core@7.28.5)':
@@ -41275,6 +41934,16 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
+      '@babel/types': 7.29.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@babel/plugin-transform-react-jsx@7.27.1':
+    dependencies:
+      '@babel/helper-annotate-as-pure': 7.27.3
+      '@babel/helper-module-imports': 7.27.1
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/plugin-syntax-jsx': 7.27.1
       '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
@@ -41296,6 +41965,10 @@ snapshots:
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-plugin-utils': 7.27.1
 
+  '@babel/plugin-transform-regenerator@7.28.4':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+
   '@babel/plugin-transform-regenerator@7.28.4(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41311,6 +41984,17 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-runtime@7.25.9':
+    dependencies:
+      '@babel/helper-module-imports': 7.27.1
+      '@babel/helper-plugin-utils': 7.27.1
+      babel-plugin-polyfill-corejs2: 0.4.14
+      babel-plugin-polyfill-corejs3: 0.10.6
+      babel-plugin-polyfill-regenerator: 0.6.5
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@babel/plugin-transform-runtime@7.25.9(@babel/core@7.28.5)':
     dependencies:
@@ -41341,6 +42025,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@babel/plugin-transform-spread@7.27.1':
+    dependencies:
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@babel/plugin-transform-spread@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
@@ -41352,6 +42043,10 @@ snapshots:
   '@babel/plugin-transform-sticky-regex@7.25.9(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
+      '@babel/helper-plugin-utils': 7.27.1
+
+  '@babel/plugin-transform-sticky-regex@7.27.1':
+    dependencies:
       '@babel/helper-plugin-utils': 7.27.1
 
   '@babel/plugin-transform-sticky-regex@7.27.1(@babel/core@7.28.5)':
@@ -42203,6 +42898,11 @@ snapshots:
       lodash.startcase: 4.4.0
       lodash.upperfirst: 4.3.1
 
+  '@commitlint/ensure@21.2.0':
+    dependencies:
+      '@commitlint/types': 21.2.0
+      es-toolkit: 1.47.0
+
   '@commitlint/execute-rule@17.8.1': {}
 
   '@commitlint/format@17.8.1':
@@ -42215,12 +42915,24 @@ snapshots:
       '@commitlint/types': 17.8.1
       semver: 7.5.4
 
+  '@commitlint/is-ignored@21.2.0':
+    dependencies:
+      '@commitlint/types': 21.2.0
+      semver: 7.8.1
+
   '@commitlint/lint@17.8.1':
     dependencies:
       '@commitlint/is-ignored': 17.8.1
       '@commitlint/parse': 17.8.1
       '@commitlint/rules': 17.8.1
       '@commitlint/types': 17.8.1
+
+  '@commitlint/lint@21.2.0':
+    dependencies:
+      '@commitlint/is-ignored': 21.2.0
+      '@commitlint/parse': 21.2.0
+      '@commitlint/rules': 21.2.0
+      '@commitlint/types': 21.2.0
 
   '@commitlint/load@17.8.1':
     dependencies:
@@ -42245,11 +42957,19 @@ snapshots:
 
   '@commitlint/message@17.8.1': {}
 
+  '@commitlint/message@21.2.0': {}
+
   '@commitlint/parse@17.8.1':
     dependencies:
       '@commitlint/types': 17.8.1
       conventional-changelog-angular: 6.0.0
       conventional-commits-parser: 4.0.0
+
+  '@commitlint/parse@21.2.0':
+    dependencies:
+      '@commitlint/types': 21.2.0
+      conventional-changelog-angular: 9.2.1
+      conventional-commits-parser: 7.1.1
 
   '@commitlint/prompt-cli@17.8.1':
     dependencies:
@@ -42298,7 +43018,16 @@ snapshots:
       '@commitlint/types': 17.8.1
       execa: 5.1.1
 
+  '@commitlint/rules@21.2.0':
+    dependencies:
+      '@commitlint/ensure': 21.2.0
+      '@commitlint/message': 21.2.0
+      '@commitlint/to-lines': 21.0.1
+      '@commitlint/types': 21.2.0
+
   '@commitlint/to-lines@17.8.1': {}
+
+  '@commitlint/to-lines@21.0.1': {}
 
   '@commitlint/top-level@17.8.1':
     dependencies:
@@ -42307,6 +43036,13 @@ snapshots:
   '@commitlint/types@17.8.1':
     dependencies:
       chalk: 4.1.2
+
+  '@commitlint/types@21.2.0':
+    dependencies:
+      conventional-commits-parser: 7.1.1
+      picocolors: 1.1.1
+
+  '@conventional-changelog/template@1.2.1': {}
 
   '@cosmjs/amino@0.36.2':
     dependencies:
@@ -43460,7 +44196,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.4.3
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     transitivePeerDependencies:
@@ -43532,7 +44268,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.16
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     optionalDependencies:
@@ -43610,7 +44346,7 @@ snapshots:
       structured-headers: 0.4.1
       tar: 7.5.16
       terminal-link: 2.1.1
-      undici: 6.19.2
+      undici: 6.21.1
       wrap-ansi: 7.0.0
       ws: 8.21.0
     optionalDependencies:
@@ -44954,6 +45690,22 @@ snapshots:
 
   '@gar/promisify@1.1.3': {}
 
+  '@gitbeaker/core@38.12.1':
+    dependencies:
+      '@gitbeaker/requester-utils': 38.12.1
+      qs: 6.14.1
+      xcase: 2.0.1
+
+  '@gitbeaker/requester-utils@38.12.1':
+    dependencies:
+      qs: 6.14.1
+      xcase: 2.0.1
+
+  '@gitbeaker/rest@38.12.1':
+    dependencies:
+      '@gitbeaker/core': 38.12.1
+      '@gitbeaker/requester-utils': 38.12.1
+
   '@google-cloud/common@5.0.2':
     dependencies:
       '@google-cloud/projectify': 4.0.0
@@ -46261,35 +47013,31 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@0.4.3(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-hypercore@0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-module-framework': 4.0.2
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
 
   '@ledgerhq/coin-module-framework@4.0.2':
     dependencies:
-      bignumber.js: 9.1.2
-
-  '@ledgerhq/coin-module-framework@4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)':
-    dependencies:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@6.26.4(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-stellar@6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-module-framework': 4.0.2
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-xrp@7.25.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-xrp@7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 4.0.2(@ledgerhq/errors@libs+ledgerjs+packages+errors)
+      '@ledgerhq/coin-module-framework': 4.0.2
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
@@ -46341,15 +47089,6 @@ snapshots:
       '@ledgerhq/lumen-ui-rnative': 0.1.52(8f2c508bbb7b9fda5127db56feef203c)
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
-
-  '@ledgerhq/crypto-icons@2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-rnative@0.1.52(0aebe1fc8d199b5f7709a0e48177e723))(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      react: 19.1.4
-    optionalDependencies:
-      '@ledgerhq/lumen-design-core': 0.1.23
-      '@ledgerhq/lumen-ui-rnative': 0.1.52(0aebe1fc8d199b5f7709a0e48177e723)
-      react-dom: 19.1.4(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4)
 
   '@ledgerhq/crypto-icons@2.0.4(@ledgerhq/lumen-design-core@0.1.23)(@ledgerhq/lumen-ui-rnative@0.1.52(e185c177b115a51380796750601a5dcf))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
     dependencies:
@@ -46547,19 +47286,13 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
-  '@ledgerhq/errors@5.50.0': {}
-
-  '@ledgerhq/errors@6.32.0': {}
-
-  '@ledgerhq/errors@6.36.0': {}
-
   '@ledgerhq/hw-bolos@6.35.1':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
-      '@ledgerhq/errors': 5.50.0
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 5.50.0
       u2f-api: 0.2.7
@@ -46589,7 +47322,7 @@ snapshots:
 
   '@ledgerhq/live-network@2.4.3':
     dependencies:
-      '@ledgerhq/errors': 6.36.0
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-promise': 0.2.2
       '@ledgerhq/logs': 6.16.0
@@ -46725,22 +47458,6 @@ snapshots:
       react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
       react-native-worklets: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
 
-  '@ledgerhq/lumen-ui-rnative@0.1.52(0aebe1fc8d199b5f7709a0e48177e723)':
-    dependencies:
-      '@ledgerhq/lumen-design-core': 0.1.23
-      '@ledgerhq/lumen-utils-shared': 0.1.10(react@19.1.4)
-      '@types/react': 19.0.14
-      expo: 54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(expo-modules-core@3.0.29)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-      i18next: 23.10.1
-      react: 19.1.4
-      react-i18next: 14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4)
-      react-native-reanimated: 4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-      react-native-safe-area-context: 5.6.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4)
-    transitivePeerDependencies:
-      - react-dom
-
   '@ledgerhq/lumen-ui-rnative@0.1.52(270d3755349a23492d91ca093f57aa47)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.3.0(react-native-worklets@0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -46817,6 +47534,19 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
+  '@ledgerhq/lumen-ui-rnative@0.1.52(@ledgerhq/lumen-design-core@0.1.23)(@types/react@19.0.14)(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.23
+      '@ledgerhq/lumen-utils-shared': 0.1.10(react@19.1.4)
+      '@types/react': 19.0.14
+      i18next: 23.10.1
+      react: 19.1.4
+      react-i18next: 14.1.3(i18next@23.10.1)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+    transitivePeerDependencies:
+      - react-dom
+
   '@ledgerhq/lumen-ui-rnative@0.1.52(e185c177b115a51380796750601a5dcf)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(9ca1a6d7a3a1152060da488767ca355f)
@@ -46882,7 +47612,7 @@ snapshots:
 
   '@ledgerhq/wallet-api-core@1.35.0(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/errors': 6.36.0
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@stacks/transactions': 6.17.0
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
@@ -46913,7 +47643,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@ledgerhq/zcash-utils@1.1.0': {}
+  '@ledgerhq/zcash-utils@1.1.1': {}
 
   '@leichtgewicht/ip-codec@2.0.5': {}
 
@@ -47071,7 +47801,7 @@ snapshots:
   '@mysten/ledgerjs-hw-app-sui@0.8.0':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/hw-bolos': 6.35.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/ledger-cal-service': 1.15.1
@@ -47504,7 +48234,7 @@ snapshots:
 
   '@octokit/endpoint@9.0.6':
     dependencies:
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       universal-user-agent: 6.0.1
 
   '@octokit/graphql@7.0.2':
@@ -47515,21 +48245,35 @@ snapshots:
 
   '@octokit/openapi-types@20.0.0': {}
 
-  '@octokit/openapi-types@22.2.0': {}
+  '@octokit/openapi-types@24.2.0': {}
+
+  '@octokit/plugin-paginate-rest@11.4.4-cjs.2(@octokit/core@5.1.0)':
+    dependencies:
+      '@octokit/core': 5.1.0
+      '@octokit/types': 13.10.0
 
   '@octokit/plugin-paginate-rest@9.2.1(@octokit/core@5.1.0)':
     dependencies:
       '@octokit/core': 5.1.0
       '@octokit/types': 12.6.0
 
+  '@octokit/plugin-request-log@4.0.1(@octokit/core@5.1.0)':
+    dependencies:
+      '@octokit/core': 5.1.0
+
   '@octokit/plugin-rest-endpoint-methods@10.4.1(@octokit/core@5.1.0)':
     dependencies:
       '@octokit/core': 5.1.0
       '@octokit/types': 12.6.0
 
+  '@octokit/plugin-rest-endpoint-methods@13.3.2-cjs.1(@octokit/core@5.1.0)':
+    dependencies:
+      '@octokit/core': 5.1.0
+      '@octokit/types': 13.10.0
+
   '@octokit/request-error@5.1.1':
     dependencies:
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       deprecation: 2.3.1
       once: 1.4.0
 
@@ -47537,16 +48281,23 @@ snapshots:
     dependencies:
       '@octokit/endpoint': 9.0.6
       '@octokit/request-error': 5.1.1
-      '@octokit/types': 13.5.0
+      '@octokit/types': 13.10.0
       universal-user-agent: 6.0.1
+
+  '@octokit/rest@20.1.2':
+    dependencies:
+      '@octokit/core': 5.1.0
+      '@octokit/plugin-paginate-rest': 11.4.4-cjs.2(@octokit/core@5.1.0)
+      '@octokit/plugin-request-log': 4.0.1(@octokit/core@5.1.0)
+      '@octokit/plugin-rest-endpoint-methods': 13.3.2-cjs.1(@octokit/core@5.1.0)
 
   '@octokit/types@12.6.0':
     dependencies:
       '@octokit/openapi-types': 20.0.0
 
-  '@octokit/types@13.5.0':
+  '@octokit/types@13.10.0':
     dependencies:
-      '@octokit/openapi-types': 22.2.0
+      '@octokit/openapi-types': 24.2.0
 
   '@open-draft/deferred-promise@2.2.0': {}
 
@@ -49434,6 +50185,55 @@ snapshots:
 
   '@react-native/babel-preset@0.81.6':
     dependencies:
+      '@babel/plugin-proposal-export-default-from': 7.25.9
+      '@babel/plugin-syntax-dynamic-import': 7.8.3
+      '@babel/plugin-syntax-export-default-from': 7.25.9
+      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3
+      '@babel/plugin-syntax-optional-chaining': 7.8.3
+      '@babel/plugin-transform-arrow-functions': 7.27.1
+      '@babel/plugin-transform-async-generator-functions': 7.28.0
+      '@babel/plugin-transform-async-to-generator': 7.27.1
+      '@babel/plugin-transform-block-scoping': 7.28.5
+      '@babel/plugin-transform-class-properties': 7.27.1
+      '@babel/plugin-transform-classes': 7.28.4
+      '@babel/plugin-transform-computed-properties': 7.27.1
+      '@babel/plugin-transform-destructuring': 7.28.5
+      '@babel/plugin-transform-flow-strip-types': 7.27.1
+      '@babel/plugin-transform-for-of': 7.27.1
+      '@babel/plugin-transform-function-name': 7.27.1
+      '@babel/plugin-transform-literals': 7.27.1
+      '@babel/plugin-transform-logical-assignment-operators': 7.28.5
+      '@babel/plugin-transform-modules-commonjs': 7.27.1
+      '@babel/plugin-transform-named-capturing-groups-regex': 7.27.1
+      '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1
+      '@babel/plugin-transform-numeric-separator': 7.27.1
+      '@babel/plugin-transform-object-rest-spread': 7.28.4
+      '@babel/plugin-transform-optional-catch-binding': 7.27.1
+      '@babel/plugin-transform-optional-chaining': 7.28.5
+      '@babel/plugin-transform-parameters': 7.27.7
+      '@babel/plugin-transform-private-methods': 7.27.1
+      '@babel/plugin-transform-private-property-in-object': 7.27.1
+      '@babel/plugin-transform-react-display-name': 7.28.0
+      '@babel/plugin-transform-react-jsx': 7.27.1
+      '@babel/plugin-transform-react-jsx-self': 7.25.9
+      '@babel/plugin-transform-react-jsx-source': 7.25.9
+      '@babel/plugin-transform-regenerator': 7.28.4
+      '@babel/plugin-transform-runtime': 7.25.9
+      '@babel/plugin-transform-shorthand-properties': 7.27.1
+      '@babel/plugin-transform-spread': 7.27.1
+      '@babel/plugin-transform-sticky-regex': 7.27.1
+      '@babel/plugin-transform-typescript': 7.28.5
+      '@babel/plugin-transform-unicode-regex': 7.27.1
+      '@babel/template': 7.28.6
+      '@react-native/babel-plugin-codegen': 0.81.6
+      babel-plugin-syntax-hermes-parser: 0.29.1
+      babel-plugin-transform-flow-enums: 0.0.2
+      react-refresh: 0.14.2
+    transitivePeerDependencies:
+      - supports-color
+
+  '@react-native/babel-preset@0.81.6(@babel/core@7.28.5)':
+    dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-proposal-export-default-from': 7.25.9(@babel/core@7.28.5)
       '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.28.5)
@@ -50941,6 +51741,8 @@ snapshots:
   '@sideway/formula@3.0.1': {}
 
   '@sideway/pinpoint@2.0.0': {}
+
+  '@simple-libs/stream-utils@2.0.0': {}
 
   '@sinclair/typebox@0.24.51': {}
 
@@ -52913,11 +53715,11 @@ snapshots:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4)
       storybook: 10.4.1(@testing-library/dom@10.4.1)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
 
-  '@storybook/addon-react-native-web@0.0.29(@react-native/babel-preset@0.81.6)(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
+  '@storybook/addon-react-native-web@0.0.29(@react-native/babel-preset@0.81.6(@babel/core@7.28.5))(babel-plugin-react-native-web@0.19.10)(metro-react-native-babel-preset@0.77.0(@babel/core@7.28.5))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       babel-plugin-react-native-web: 0.19.10
     optionalDependencies:
-      '@react-native/babel-preset': 0.81.6
+      '@react-native/babel-preset': 0.81.6(@babel/core@7.28.5)
       metro-react-native-babel-preset: 0.77.0(@babel/core@7.28.5)
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
@@ -56159,6 +56961,8 @@ snapshots:
 
   argsarray@0.0.1: {}
 
+  argue-cli@3.1.0: {}
+
   aria-hidden@1.2.4:
     dependencies:
       tslib: 2.6.2
@@ -56275,6 +57079,10 @@ snapshots:
   async-exit-hook@2.0.1: {}
 
   async-limiter@1.0.1: {}
+
+  async-retry@1.2.3:
+    dependencies:
+      retry: 0.12.0
 
   async-retry@1.3.1:
     dependencies:
@@ -56512,12 +57320,27 @@ snapshots:
       reselect: 4.1.8
       resolve: 1.22.8
 
+  babel-plugin-polyfill-corejs2@0.4.14:
+    dependencies:
+      '@babel/compat-data': 7.28.5
+      '@babel/helper-define-polyfill-provider': 0.6.5
+      semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
   babel-plugin-polyfill-corejs2@0.4.14(@babel/core@7.28.5):
     dependencies:
       '@babel/compat-data': 7.28.5
       '@babel/core': 7.28.5
       '@babel/helper-define-polyfill-provider': 0.6.5(@babel/core@7.28.5)
       semver: 6.3.1
+    transitivePeerDependencies:
+      - supports-color
+
+  babel-plugin-polyfill-corejs3@0.10.6:
+    dependencies:
+      '@babel/helper-define-polyfill-provider': 0.6.5
+      core-js-compat: 3.43.0
     transitivePeerDependencies:
       - supports-color
 
@@ -56534,6 +57357,12 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-define-polyfill-provider': 0.6.5(@babel/core@7.28.5)
       core-js-compat: 3.43.0
+    transitivePeerDependencies:
+      - supports-color
+
+  babel-plugin-polyfill-regenerator@0.6.5:
+    dependencies:
+      '@babel/helper-define-polyfill-provider': 0.6.5
     transitivePeerDependencies:
       - supports-color
 
@@ -56582,6 +57411,12 @@ snapshots:
       hermes-parser: 0.29.1
 
   babel-plugin-syntax-trailing-function-commas@7.0.0-beta.0: {}
+
+  babel-plugin-transform-flow-enums@0.0.2:
+    dependencies:
+      '@babel/plugin-syntax-flow': 7.27.1
+    transitivePeerDependencies:
+      - '@babel/core'
 
   babel-plugin-transform-flow-enums@0.0.2(@babel/core@7.28.5):
     dependencies:
@@ -56639,7 +57474,7 @@ snapshots:
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-object-rest-spread': 7.25.9(@babel/core@7.28.5)
       '@babel/plugin-transform-parameters': 7.25.9(@babel/core@7.28.5)
-      '@babel/plugin-transform-private-methods': 7.25.9(@babel/core@7.28.5)
+      '@babel/plugin-transform-private-methods': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-private-property-in-object': 7.25.9(@babel/core@7.28.5)
       '@babel/plugin-transform-runtime': 7.25.9(@babel/core@7.28.5)
       '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
@@ -57918,6 +58753,8 @@ snapshots:
 
   colorette@2.0.20: {}
 
+  colors@1.4.0: {}
+
   colorspace@1.1.4:
     dependencies:
       color: 3.2.1
@@ -58118,6 +58955,10 @@ snapshots:
     dependencies:
       compare-func: 2.0.0
 
+  conventional-changelog-angular@9.2.1:
+    dependencies:
+      '@conventional-changelog/template': 1.2.1
+
   conventional-changelog-conventionalcommits@6.1.0:
     dependencies:
       compare-func: 2.0.0
@@ -58128,6 +58969,11 @@ snapshots:
       is-text-path: 1.0.1
       meow: 8.1.2
       split2: 3.2.2
+
+  conventional-commits-parser@7.1.1:
+    dependencies:
+      '@simple-libs/stream-utils': 2.0.0
+      argue-cli: 3.1.0
 
   convert-source-map@1.9.0: {}
 
@@ -58698,6 +59544,42 @@ snapshots:
       d3: 7.9.0
 
   d64@1.0.0: {}
+
+  danger@13.0.10:
+    dependencies:
+      '@gitbeaker/rest': 38.12.1
+      '@octokit/rest': 20.1.2
+      async-retry: 1.2.3
+      chalk: 4.1.2
+      commander: 2.20.3
+      core-js: 3.47.0
+      debug: 4.4.3
+      fast-json-patch: 3.1.1
+      hyperlinker: 1.0.0
+      ini: 5.0.0
+      json5: 2.2.3
+      jsonpointer: 5.0.1
+      jsonwebtoken: 9.0.3
+      lodash.includes: 4.3.0
+      lodash.isobject: 3.0.2
+      lodash.mapvalues: 4.6.0
+      lodash.memoize: 4.1.2
+      memfs-or-file-map-to-github-branch: 1.3.0
+      micromatch: 4.0.8
+      node-cleanup: 2.1.2
+      override-require: 1.1.1
+      parse-diff: 0.7.1
+      parse-github-url: 1.0.4
+      parse-link-header: 2.0.0
+      pinpoint: 1.1.0
+      prettyjson: 1.2.5
+      readline-sync: 1.4.10
+      regenerator-runtime: 0.13.11
+      require-from-string: 2.0.2
+      supports-hyperlinks: 4.5.0
+      undici: 6.21.1
+    transitivePeerDependencies:
+      - supports-color
 
   dargs@7.0.0: {}
 
@@ -60523,6 +61405,8 @@ snapshots:
 
   fast-json-parse@1.0.3: {}
 
+  fast-json-patch@3.1.1: {}
+
   fast-json-stable-stringify@2.1.0: {}
 
   fast-json-stringify@6.4.0:
@@ -61542,6 +62426,8 @@ snapshots:
 
   has-flag@4.0.0: {}
 
+  has-flag@5.0.1: {}
+
   has-property-descriptors@1.0.2:
     dependencies:
       es-define-property: 1.0.1
@@ -61971,6 +62857,8 @@ snapshots:
 
   hyperdyperid@1.2.0: {}
 
+  hyperlinker@1.0.0: {}
+
   hyphenate-style-name@1.0.4: {}
 
   i18next@23.10.1:
@@ -62093,6 +62981,8 @@ snapshots:
   ini@1.3.8: {}
 
   ini@3.0.1: {}
+
+  ini@5.0.0: {}
 
   inline-style-prefixer@6.0.4:
     dependencies:
@@ -62471,7 +63361,7 @@ snapshots:
   iso-filecoin@7.4.7(@typescript/typescript6@6.0.2):
     dependencies:
       '@ipld/dag-cbor': 9.2.7
-      '@ledgerhq/errors': 6.32.0
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@noble/curves': 1.9.7
       '@noble/hashes': 2.0.1
       '@scure/bip32': 1.7.0
@@ -64458,6 +65348,8 @@ snapshots:
 
   lodash.isnumber@3.0.3: {}
 
+  lodash.isobject@3.0.2: {}
+
   lodash.isplainobject@4.0.6: {}
 
   lodash.isstring@4.0.1: {}
@@ -64963,6 +65855,10 @@ snapshots:
   media-typer@0.3.0: {}
 
   media-typer@1.1.0: {}
+
+  memfs-or-file-map-to-github-branch@1.3.0:
+    dependencies:
+      '@octokit/rest': 20.1.2
 
   memfs@3.5.3:
     dependencies:
@@ -66462,6 +67358,8 @@ snapshots:
     dependencies:
       semver: 7.8.1
 
+  node-cleanup@2.1.2: {}
+
   node-domexception@1.0.0: {}
 
   node-fetch-native@1.6.7: {}
@@ -66935,6 +67833,8 @@ snapshots:
 
   outvariant@1.4.3: {}
 
+  override-require@1.1.1: {}
+
   own-keys@1.0.1:
     dependencies:
       get-intrinsic: 1.3.0
@@ -67168,6 +68068,8 @@ snapshots:
       xml-parse-from-string: 1.0.1
       xml2js: 0.5.0
 
+  parse-diff@0.7.1: {}
+
   parse-entities@1.2.2:
     dependencies:
       character-entities: 1.2.4
@@ -67183,6 +68085,8 @@ snapshots:
       map-cache: 0.2.2
       path-root: 0.1.1
 
+  parse-github-url@1.0.4: {}
+
   parse-json@4.0.0:
     dependencies:
       error-ex: 1.3.2
@@ -67194,6 +68098,10 @@ snapshots:
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
+
+  parse-link-header@2.0.0:
+    dependencies:
+      xtend: 4.0.2
 
   parse-ms@4.0.0: {}
 
@@ -67392,6 +68300,8 @@ snapshots:
       safe-stable-stringify: 2.4.3
       sonic-boom: 4.0.1
       thread-stream: 3.0.0
+
+  pinpoint@1.1.0: {}
 
   pirates@3.0.2:
     dependencies:
@@ -67986,6 +68896,11 @@ snapshots:
     dependencies:
       parse-ms: 4.0.0
 
+  prettyjson@1.2.5:
+    dependencies:
+      colors: 1.4.0
+      minimist: 1.2.8
+
   proc-log@2.0.1: {}
 
   proc-log@4.2.0: {}
@@ -68403,16 +69318,6 @@ snapshots:
     dependencies:
       react: 19.1.4
 
-  react-i18next@14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4))(react@19.1.4):
-    dependencies:
-      '@babel/runtime': 7.28.4
-      html-parse-stringify: 3.0.1
-      i18next: 23.10.1
-      react: 19.1.4
-    optionalDependencies:
-      react-dom: 19.1.4(react@19.1.4)
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.1.4)
-
   react-i18next@14.1.3(i18next@23.10.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
       '@babel/runtime': 7.28.4
@@ -68440,6 +69345,15 @@ snapshots:
       react: 19.1.4
     optionalDependencies:
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+
+  react-i18next@14.1.3(i18next@23.10.1)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    dependencies:
+      '@babel/runtime': 7.28.4
+      html-parse-stringify: 3.0.1
+      i18next: 23.10.1
+      react: 19.1.4
+    optionalDependencies:
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
 
   react-i18next@16.5.0(@typescript/typescript6@6.0.2)(i18next@25.7.3(@typescript/typescript6@6.0.2))(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -68715,10 +69629,18 @@ snapshots:
   react-native-qrcode-svg@6.1.1(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
     dependencies:
       prop-types: 15.8.1
-      qrcode: 1.5.3
+      qrcode: 1.5.4
       react: 19.1.4
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
       react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+
+  react-native-qrcode-svg@6.1.1(react-native-svg@15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4):
+    dependencies:
+      prop-types: 15.8.1
+      qrcode: 1.5.4
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)
+      react-native-svg: 15.15.1(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
 
   react-native-randombytes@3.6.1:
     dependencies:
@@ -69386,6 +70308,8 @@ snapshots:
       picomatch: 2.3.1
 
   readdirp@5.0.0: {}
+
+  readline-sync@1.4.10: {}
 
   readline@1.3.0: {}
 
@@ -71260,6 +72184,8 @@ snapshots:
 
   superstruct@2.0.2: {}
 
+  supports-color@10.2.2: {}
+
   supports-color@2.0.0: {}
 
   supports-color@5.5.0:
@@ -71280,6 +72206,11 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
       supports-color: 7.2.0
+
+  supports-hyperlinks@4.5.0:
+    dependencies:
+      has-flag: 5.0.1
+      supports-color: 10.2.2
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
@@ -72157,7 +73088,7 @@ snapshots:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@6.19.2: {}
+  undici@6.21.1: {}
 
   undici@7.18.2: {}
 
@@ -73189,6 +74120,8 @@ snapshots:
       is-wsl: 3.1.0
 
   x-is-string@0.1.0: {}
+
+  xcase@2.0.1: {}
 
   xcode@3.0.1:
     dependencies:

@@ -1,5 +1,3 @@
-import { ProviderErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
-
 import { RawQuoteErrorSchema, RawQuoteSchema } from "../schema";
 import type { RawQuote, RawQuoteError } from "../types";
 
@@ -23,7 +21,9 @@ export function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
 
 export function makeRawQuoteError(overrides: Partial<RawQuoteError> = {}): RawQuoteError {
   return RawQuoteErrorSchema.parse({
-    code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
+    // `ProviderErrorCodes.AMOUNT_OFF_LIMITS`, inlined to keep this a type-only
+    // dependency on the wallet-api contract.
+    code: "amount_off_limits",
     type: "float",
     provider: "okx",
     message: "amount out of range",

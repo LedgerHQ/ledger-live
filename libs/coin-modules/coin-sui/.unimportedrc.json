@@ -31,8 +31,6 @@
     "src/test/testUtils.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/live-env",
-    "@ledgerhq/types-cryptoassets",
-    "@ledgerhq/errors"
+    "@ledgerhq/live-env"
   ]
 }

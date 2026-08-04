@@ -1,4 +1,4 @@
-import { buildTargetUrl, buildTransport, isMatch } from "./wire";
+import { buildTargetUrl, buildTransport, isMatch, isValidWsUrl } from "./wire";
 import type { MessageMap, TransportProtocol, WebSocketLike } from "@devtools/transport";
 
 const protocol: TransportProtocol<MessageMap> = {
@@ -46,6 +46,62 @@ describe("isMatch", () => {
 
   it("should only check keys present in partial, ignoring extra keys in origin", () => {
     expect(isMatch({ a: 1, b: 2, c: 3 }, { b: 2 })).toBe(true);
+  });
+});
+
+describe("isValidWsUrl", () => {
+  it("should return true for a valid ws URL with hostname", () => {
+    expect(isValidWsUrl("ws://localhost:9090")).toBe(true);
+  });
+
+  it("should return true for a valid wss URL", () => {
+    expect(isValidWsUrl("wss://example.com:9090")).toBe(true);
+  });
+
+  it("should return true for a valid IPv4 address", () => {
+    expect(isValidWsUrl("ws://192.168.1.1:9090")).toBe(true);
+  });
+
+  it("should return false for a non-ws protocol", () => {
+    expect(isValidWsUrl("http://localhost:9090")).toBe(false);
+  });
+
+  it("should return false when host is empty", () => {
+    expect(isValidWsUrl("ws://:9090")).toBe(false);
+  });
+
+  it("should return false for a partial IP with a single number", () => {
+    expect(isValidWsUrl("ws://127:9090")).toBe(false);
+  });
+
+  it("should return false for an incomplete IPv4 with trailing dot", () => {
+    expect(isValidWsUrl("ws://192.168.1.:9090")).toBe(false);
+  });
+
+  it("should return false for an IPv4 with an octet out of range", () => {
+    expect(isValidWsUrl("ws://192.168.1.256:9090")).toBe(false);
+  });
+
+  it("should return false for a malformed URL", () => {
+    expect(isValidWsUrl("not-a-url")).toBe(false);
+  });
+
+  it("should return false when only the scheme is present", () => {
+    expect(isValidWsUrl("ws://")).toBe(false);
+  });
+
+  it("should not update transport URL when setHubUrl is called with an invalid URL", () => {
+    const socketFactory = makeSocketFactory();
+    const wire = buildTransport({ ...BASE_OPTIONS, socketFactory }, protocol);
+    const urlBefore = wire.transport.getState().url;
+    wire.setHubUrl("ws://192.168.1.256:9090");
+    expect(wire.transport.getState().url).toBe(urlBefore);
+  });
+
+  it("should not connect on init when the initial hubUrl is invalid", () => {
+    const socketFactory = makeSocketFactory();
+    buildTransport({ ...BASE_OPTIONS, hubUrl: "ws://192.168.1.256:9090", socketFactory }, protocol);
+    expect(socketFactory).not.toHaveBeenCalled();
   });
 });
 

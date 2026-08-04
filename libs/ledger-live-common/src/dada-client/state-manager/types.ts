@@ -17,6 +17,7 @@ export enum AssetCategory {
 export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
+  networkIds?: readonly string[];
   categories?: AssetCategory[];
   useCase?: string;
   product: "llm" | "lld";

@@ -19,6 +19,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/market-sentiment"
   },
   "dependencies": {
+    "@shared/api-services": "workspace:*",
     "@domain/entity-market-sentiment": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"

@@ -144,6 +144,10 @@ export const FF_NEW_SEND_FLOW_DISABLED = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
+  newSendFlowFirstInteractionBanner: { enabled: true },
+} satisfies OptionalFeatureMap;
+
 export const getMergedFeatureFlags = ({
   testFlags,
 }: { testFlags?: OptionalFeatureMap } = {}): OptionalFeatureMap => {
@@ -178,6 +182,7 @@ export const getMergedFeatureFlags = ({
     },
     // default flags for wallet 4.0
     ...FF_LWD_WALLET_40_Q2,
+    ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
     // any flags from env variable (if set)
     ...ffPresetMap[process.env.E2E_DESKTOP_FEATURE_FLAGS || ""],
   };

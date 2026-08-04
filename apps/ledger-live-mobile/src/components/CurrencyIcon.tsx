@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Currency } from "@domain/entity-currency";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { getValidCryptoIconSizeNative } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 
 const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`

@@ -57,6 +57,17 @@ const buildTransaction = (overrides: Partial<Transaction> = {}): Transaction =>
     ...overrides,
   }) as Transaction;
 
+// A zcash account served by coin-zcash carries a slimmer transaction: no
+// utxoStrategy, networkInfo or feePerByte, since ZIP-317 prices the fee per action.
+const buildCoinZcashTransaction = (): Transaction =>
+  ({
+    family: "zcash",
+    amount: new BigNumber(0),
+    recipient: "",
+    transferType: "shielded",
+    feesStrategy: "medium",
+  }) as unknown as Transaction;
+
 const renderFields = ({
   account = buildBitcoinAccount(),
   transaction = buildTransaction(),
@@ -134,6 +145,20 @@ describe("bitcoin SendAmountFields", () => {
         expect(screen.queryByText("Slow")).not.toBeInTheDocument();
       },
     );
+
+    // The hooks above the fee-selector return run for zcash too, so a transaction
+    // without a utxo strategy must not make them throw.
+    it("renders nothing for a coin-zcash transaction, which has no utxo strategy", () => {
+      jest.mocked(useFeesStrategy).mockReturnValue([]);
+
+      renderFields({
+        account: buildZcashAccount(),
+        transaction: buildCoinZcashTransaction(),
+        flagEnabled: true,
+      });
+
+      expect(screen.queryByTestId("send-fee-mode")).not.toBeInTheDocument();
+    });
   });
 
   describe("coin control button", () => {

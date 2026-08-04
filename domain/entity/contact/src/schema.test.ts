@@ -83,20 +83,24 @@ describe("ContactAddressSchema", () => {
     expect(() => ContactAddressValueSchema.parse("   ")).toThrow();
   });
 
-  it("accepts international and MAD-compatible address labels", () => {
-    expect(ContactAddressLabelSchema.parse(" محفظة ")).toBe("محفظة");
-    expect(ContactAddressLabelSchema.parse("Кошелек")).toBe("Кошелек");
-    expect(ContactAddressLabelSchema.parse("Ethér")).toBe("Ethér");
+  it("accepts printable ASCII address labels", () => {
     expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe("Aave v3 1INCH");
     expect(ContactAddressLabelSchema.parse("USDC.e")).toBe("USDC.e");
     expect(ContactAddressLabelSchema.parse("123")).toBe("123");
   });
 
-  it("rejects punctuation-only, emoji, and control-character address labels", () => {
+  it("rejects non-ASCII, punctuation-only, emoji, and control-character address labels", () => {
+    expect(() => ContactAddressLabelSchema.parse("Ethér")).toThrow();
+    expect(() => ContactAddressLabelSchema.parse(" محفظة ")).toThrow();
+    expect(() => ContactAddressLabelSchema.parse("Кошелек")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("---")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum 💎")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum\nWallet")).toThrow();
+  });
+
+  it("rejects address labels longer than 32 characters", () => {
+    expect(() => ContactAddressLabelSchema.parse("a".repeat(33))).toThrow();
   });
 });
 
@@ -121,7 +125,15 @@ describe("contact mock factories", () => {
 
     const contacts = mockPopulatedContacts();
 
-    expect(contacts.map(contact => contact.name)).toEqual(["Me", "Ada", "Ben", "Olive"]);
+    expect(contacts.map(contact => contact.name)).toEqual([
+      "Me",
+      "Ada",
+      "Ben",
+      "Charlie",
+      "Diana",
+      "Olive",
+    ]);
+    expect(contacts[0]?.addresses).toHaveLength(3);
     expect(contacts[2]?.addresses).toHaveLength(2);
   });
 });

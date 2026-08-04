@@ -19,8 +19,7 @@
     "jest-util",
     "jest-get-type",
     "jest-matcher-utils",
-    "jest-message-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-message-util"
   ],
   "ignoreUnimported": [
     "src/bridge/transaction.ts",
@@ -35,7 +34,6 @@
   "ignoreUnused": [
     "@ledgerhq/coin-evm",
     "@ledgerhq/devices",
-    "@ledgerhq/errors",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/live-config",
     "@ledgerhq/logs",

@@ -110,8 +110,7 @@
     "invariant": "^2.2.4",
     "ripple-address-codec": "^5.0.0",
     "ripple-binary-codec": "^1.3.0",
-    "rxjs": "catalog:",
-    "@ledgerhq/errors": "workspace:^"
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",

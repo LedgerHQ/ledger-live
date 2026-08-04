@@ -1,11 +1,16 @@
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  type CryptoCurrency,
+  type TokenCurrency,
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 
 export const MOCK_TOKEN_PROGRAM_ID = "usad_stablecoin.aleo";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
   return {
     type: "CryptoCurrency",
-    id: "aleo",
+    id: CryptoCurrencyIdSchema.parse("aleo"),
     coinType: 683,
     name: "Aleo",
     managerAppName: "Aleo",
@@ -33,9 +38,9 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
 export const getMockedTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
   return {
     type: "TokenCurrency",
-    id: "usad",
+    id: TokenCurrencyIdSchema.parse("usad"),
     contractAddress: MOCK_TOKEN_PROGRAM_ID,
-    parentCurrencyId: "aleo",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("aleo"),
     tokenType: "arc22",
     name: "USAD",
     ticker: "USAD",

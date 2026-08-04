@@ -1,4 +1,5 @@
 import test from "../../fixtures/common";
+import { FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED } from "tests/utils/featureFlagUtils";
 import { expect, Page } from "@playwright/test";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
@@ -47,6 +48,7 @@ test.use({
   userdata:
     "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXTZ1AccountXLM1AccountALGO1AccountXRP",
   featureFlags: {
+    ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
     newSendFlow: {
       enabled: true,
       params: {

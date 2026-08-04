@@ -20,11 +20,15 @@ describe("useContactsCurrencySelectionAdapter", () => {
     jest.mocked(useOpenCurrencyFlow).mockReturnValue({ openCurrencyFlow, cancelCurrencyFlow });
   });
 
-  it("should pass the exact network ids and return the selected currency id", async () => {
-    openCurrencyFlow.mockResolvedValue(getCryptoCurrencyById("ethereum"));
+  it("should pass the exact network ids and return the selected currency details", async () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    openCurrencyFlow.mockResolvedValue(ethereum);
     const { result } = renderHook(() => useContactsCurrencySelectionAdapter());
 
-    await expect(result.current.selectCurrency([ethereumId, bitcoinId])).resolves.toBe(ethereumId);
+    await expect(result.current.selectCurrency([ethereumId, bitcoinId])).resolves.toEqual({
+      currencyId: ethereumId,
+      assetDisplayName: ethereum.name,
+    });
     expect(openCurrencyFlow).toHaveBeenCalledWith([ethereumId, bitcoinId], {
       presentation: "embedded",
     });

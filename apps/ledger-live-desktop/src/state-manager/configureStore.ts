@@ -9,18 +9,21 @@ import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import { calApiExtra } from "@domain/api-currency-token";
-import { cvsApiExtra } from "@domain/api-currency-fiat";
-import { marketSentimentApiExtra } from "@domain/api-market-sentiment";
-import { altcoinsSentimentApiExtra } from "@domain/api-altcoins-sentiment";
+import {
+  calApiExtra,
+  coinMarketCapApiExtra,
+  cvsApiExtra,
+  pushDevicesApiExtra,
+} from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
-import { createIdentitiesSyncMiddleware, pushDevicesApiExtra } from "@domain/api-push-devices";
+import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { canPushDeviceIdsSelector, languageSelector } from "~/renderer/reducers/settings";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags as defaultFetchRemoteFlags } from "~/firebase/remoteConfig";
+import { sleepingListener } from "./sleepingListener";
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -59,10 +62,7 @@ const customCreateStore = ({
               ...cvsApiExtra({
                 countervaluesServiceUrl: getEnv("LEDGER_COUNTERVALUES_API"),
               }),
-              ...marketSentimentApiExtra({
-                coinMarketCapApiUrl: getEnv("CMC_API_URL"),
-              }),
-              ...altcoinsSentimentApiExtra({
+              ...coinMarketCapApiExtra({
                 coinMarketCapApiUrl: getEnv("CMC_API_URL"),
               }),
               ...pushDevicesApiExtra({
@@ -116,7 +116,8 @@ const customCreateStore = ({
             fetchRemoteFlags: fetchRemoteFlags ?? undefined,
             getAppLanguage: languageSelector,
           }),
-        ),
+        )
+        .concat(sleepingListener.middleware),
     devTools: __DEV__,
   });
 

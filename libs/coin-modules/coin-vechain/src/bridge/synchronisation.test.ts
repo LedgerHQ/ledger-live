@@ -3,7 +3,11 @@ import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+  type TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
@@ -34,9 +38,9 @@ describe("scanAccounts", () => {
   beforeAll(() => {
     const vthoToken: TokenCurrency = {
       type: "TokenCurrency",
-      id: "vechain/vip180/vtho",
+      id: TokenCurrencyIdSchema.parse("vechain/vip180/vtho"),
       contractAddress: "0x0000000000000000000000000000456E65726779",
-      parentCurrencyId: "vechain",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("vechain"),
       tokenType: "vip180",
       name: "VeThor",
       ticker: "VTHO",

@@ -1,6 +1,6 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";

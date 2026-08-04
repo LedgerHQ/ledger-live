@@ -129,9 +129,10 @@ describe("createPopulatedContactDetailViewModel", () => {
       TEST_NETWORK_ORDER,
     );
 
-    expect(
-      viewModel.addressGroups.flatMap(group => group.rows.map(row => row.addressId)),
-    ).toEqual(["address-ethereum", "address-polygon"]);
+    expect(viewModel.addressGroups.flatMap(group => group.rows.map(row => row.addressId))).toEqual([
+      "address-ethereum",
+      "address-polygon",
+    ]);
   });
 
   it("groups address rows by network", () => {
@@ -143,7 +144,9 @@ describe("createPopulatedContactDetailViewModel", () => {
     );
 
     expect(viewModel.addressGroups.map(group => group.networkId)).toEqual(["ethereum", "polygon"]);
-    expect(viewModel.addressGroups[0]?.rows.map(row => row.addressId)).toEqual(["address-ethereum"]);
+    expect(viewModel.addressGroups[0]?.rows.map(row => row.addressId)).toEqual([
+      "address-ethereum",
+    ]);
     expect(viewModel.addressGroups[1]?.rows.map(row => row.addressId)).toEqual(["address-polygon"]);
   });
 

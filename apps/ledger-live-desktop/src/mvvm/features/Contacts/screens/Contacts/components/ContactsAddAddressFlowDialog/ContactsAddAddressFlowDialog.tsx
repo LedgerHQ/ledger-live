@@ -2,38 +2,23 @@ import React from "react";
 import { DialogFlow, type DialogFlowScreenRegistry } from "LLD/components/DialogFlow";
 import { ModularDialogFlow } from "LLD/features/ModularDialog/ModularDialogFlow";
 import {
-  ContactsAddAddressEntry,
-  type AddAddressFlowState,
-  type ContactsAddAddressEntryLabels,
+  ContactsAddAddressFlowContent,
+  resolveAddAddressWebFlowStep,
+  shouldUseAddAddressFlowBackNavigation,
+  type AddAddressWebFlowStep,
 } from "@features/flow-contacts";
 import type { ContactsAddAddressFlowDialogProps } from "./types";
 
-type ContactsAddAddressDialogStep = "currency" | "address";
-
-function isEnteringAddress(
-  state: AddAddressFlowState,
-): state is Extract<AddAddressFlowState, { status: "enteringAddress" }> {
-  return state.status === "enteringAddress";
-}
-
-function createAddressContent(
-  state: Extract<AddAddressFlowState, { status: "enteringAddress" }>,
-  labels: ContactsAddAddressEntryLabels,
-  onAddressChange: ContactsAddAddressFlowDialogProps["onAddressChange"],
-): React.JSX.Element {
-  return (
-    <ContactsAddAddressEntry
-      addressEntry={state.addressEntry}
-      labels={labels}
-      onAddressChange={onAddressChange}
-    />
-  );
-}
-
 export function ContactsAddAddressFlowDialog({
   state,
-  labels,
+  entryLabels,
+  nameLabels,
+  reviewLabels,
   onAddressChange,
+  onContinueFromAddressDetails,
+  onAddressLabelChange,
+  onContinueFromName,
+  onContinueFromReview,
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
@@ -44,9 +29,25 @@ export function ContactsAddAddressFlowDialog({
   return (
     <ModularDialogFlow onClose={onClose}>
       {modularDialog => {
-        const isAddressEntry = isEnteringAddress(state);
-        const currentStep: ContactsAddAddressDialogStep = isAddressEntry ? "address" : "currency";
-        const screens: DialogFlowScreenRegistry<ContactsAddAddressDialogStep> = {
+        const currentStep = resolveAddAddressWebFlowStep(state);
+        const flowContent =
+          state.status === "selectingCurrency" ? (
+            modularDialog.content
+          ) : (
+            <ContactsAddAddressFlowContent
+              completionLabels={reviewLabels}
+              entryLabels={entryLabels}
+              nameLabels={nameLabels}
+              onAddressChange={onAddressChange}
+              onAddressLabelChange={onAddressLabelChange}
+              onClose={onClose}
+              onContinueFromAddressDetails={onContinueFromAddressDetails}
+              onContinueFromName={onContinueFromName}
+              onContinueFromReview={onContinueFromReview}
+              state={state}
+            />
+          );
+        const screens: DialogFlowScreenRegistry<AddAddressWebFlowStep> = {
           currency: {
             content: modularDialog.content,
             options: {
@@ -59,12 +60,31 @@ export function ContactsAddAddressFlowDialog({
             },
           },
           address: {
-            content: isAddressEntry
-              ? createAddressContent(state, labels, onAddressChange)
-              : modularDialog.content,
+            content: flowContent,
             options: {
-              dialogHeaderProps: { density: "expanded", title: labels.title },
+              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
               hasBackButton: true,
+            },
+          },
+          name: {
+            content: flowContent,
+            options: {
+              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              hasBackButton: true,
+            },
+          },
+          review: {
+            content: flowContent,
+            options: {
+              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              hasBackButton: true,
+            },
+          },
+          success: {
+            content: flowContent,
+            options: {
+              dialogHeaderProps: { density: "expanded", title: entryLabels.title },
+              hasBackButton: false,
             },
           },
         };
@@ -77,7 +97,7 @@ export function ContactsAddAddressFlowDialog({
               dialogContentProps: { className: "w-400 bg-canvas-sheet pb-0" },
             }}
             isOpen
-            onBack={isAddressEntry ? onBack : modularDialog.onBack}
+            onBack={shouldUseAddAddressFlowBackNavigation(state) ? onBack : modularDialog.onBack}
             onClose={onClose}
             screens={screens}
           />

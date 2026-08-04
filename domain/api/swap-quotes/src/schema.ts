@@ -1,4 +1,3 @@
-import { ProviderErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import { z } from "zod";
 
 export const TradeMethodSchema = z.enum(["fixed", "float"]);
@@ -121,9 +120,11 @@ export const RawQuoteSchema = z.object({
 export const RawQuoteErrorParameterSchema = z.record(z.string(), z.string());
 
 export const RawQuoteErrorSchema = z.object({
-  // The union keeps `ProviderErrorCodes` autocomplete while accepting any code
-  // the aggregator adds.
-  code: z.union([z.enum(ProviderErrorCodes), z.string()]),
+  // Any aggregator code, matching `ProviderErrorCodes | (string & {})`. Kept as
+  // a plain string so this package needs no *runtime* import from
+  // `@ledgerhq/wallet-api-exchange-module` — that would pull in
+  // `wallet-api-client` and, through it, the banned `@ledgerhq/errors`.
+  code: z.string(),
   type: TradeMethodSchema,
   provider: z.string(),
   message: z.string(),

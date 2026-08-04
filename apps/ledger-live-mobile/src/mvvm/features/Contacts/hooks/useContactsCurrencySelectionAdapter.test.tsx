@@ -69,7 +69,7 @@ describe("useContactsCurrencySelectionAdapter", () => {
     });
   });
 
-  it("should return a valid selected currency id", () => {
+  it("should return the selected currency id and display name", () => {
     const onCurrencySelected = jest.fn();
     renderHook(() =>
       useContactsCurrencySelectionAdapter({
@@ -83,7 +83,10 @@ describe("useContactsCurrencySelectionAdapter", () => {
     const onMadCurrencySelected = openDrawer.mock.calls[0]?.[0].onCurrencySelected;
     act(() => onMadCurrencySelected(mockEthCryptoCurrency));
 
-    expect(onCurrencySelected).toHaveBeenCalledWith(mockEthCryptoCurrency.id);
+    expect(onCurrencySelected).toHaveBeenCalledWith({
+      currencyId: mockEthCryptoCurrency.id,
+      assetDisplayName: mockEthCryptoCurrency.name,
+    });
   });
 
   it.each([null, { ...mockEthCryptoCurrency, id: "" }])(

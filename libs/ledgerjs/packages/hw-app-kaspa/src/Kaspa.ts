@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 
 import { publicKeyToAddress } from "./kaspa-util";
 import { KaspaHwTransaction } from "./kaspaHwTransaction";
@@ -75,11 +75,7 @@ export default class Kaspa {
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
 
-    const publicKeyBuffer: Buffer = await this.sendToDevice(
-      INS.GET_ADDRESS,
-      p1,
-      pathBuffer,
-    );
+    const publicKeyBuffer: Buffer = await this.sendToDevice(INS.GET_ADDRESS, p1, pathBuffer);
 
     return {
       publicKey: publicKeyBuffer.toString("hex"),
@@ -102,12 +98,7 @@ export default class Kaspa {
     await this.sendToDevice(INS.SIGN_TX, P1_HEADER, header, P2_MORE);
 
     for (const output of transaction.outputs) {
-      await this.sendToDevice(
-        INS.SIGN_TX,
-        P1_OUTPUTS,
-        output.serialize(),
-        P2_MORE,
-      );
+      await this.sendToDevice(INS.SIGN_TX, P1_OUTPUTS, output.serialize(), P2_MORE);
     }
 
     let signatureBuffer: Buffer | null = null;
@@ -115,17 +106,11 @@ export default class Kaspa {
     for (let i = 0; i < transaction.inputs.length; i++) {
       const p2 = i >= transaction.inputs.length - 1 ? P2_LAST : P2_MORE;
       const input = transaction.inputs[i];
-      signatureBuffer = await this.sendToDevice(
-        INS.SIGN_TX,
-        P1_INPUTS,
-        input.serialize(),
-        p2,
-      );
+      signatureBuffer = await this.sendToDevice(INS.SIGN_TX, P1_INPUTS, input.serialize(), p2);
     }
 
     while (signatureBuffer) {
-      const [hasMore, inputIndex, sigLen, ...signatureAndSighash] =
-        signatureBuffer;
+      const [hasMore, inputIndex, sigLen, ...signatureAndSighash] = signatureBuffer;
       const sigBuf = signatureAndSighash.slice(0, sigLen);
       const sighashLen = signatureAndSighash[64];
       const sighashBuf = signatureAndSighash.slice(65, 65 + sighashLen);
@@ -142,12 +127,8 @@ export default class Kaspa {
         );
       }
 
-      transaction.inputs[inputIndex].setSignature(
-        Buffer.from(sigBuf).toString("hex"),
-      );
-      transaction.inputs[inputIndex].setSighash(
-        Buffer.from(sighashBuf).toString("hex"),
-      );
+      transaction.inputs[inputIndex].setSignature(Buffer.from(sigBuf).toString("hex"));
+      transaction.inputs[inputIndex].setSighash(Buffer.from(sighashBuf).toString("hex"));
 
       // Keep going as long as hasMore is true-ish
       if (!hasMore) {
@@ -169,12 +150,7 @@ export default class Kaspa {
    * @example
    * kaspa.signMessage(message).then(r => r.version)
    */
-  async signMessage(
-    message: string,
-    addressType?: 0 | 1,
-    addressIndex?: number,
-    account?: number,
-  ) {
+  async signMessage(message: string, addressType?: 0 | 1, addressIndex?: number, account?: number) {
     account = account ?? 0x80000000;
     addressIndex = addressIndex ?? 0;
     addressType = addressType ?? 0;
@@ -184,9 +160,7 @@ export default class Kaspa {
     }
 
     if (addressIndex < 0 || addressIndex > 0xffffffff) {
-      throw new Error(
-        "Address index must be an integer in range [0, 0xFFFFFFFF]",
-      );
+      throw new Error("Address index must be an integer in range [0, 0xFFFFFFFF]");
     }
 
     const addressTypeBuf = Buffer.alloc(1);
@@ -210,15 +184,9 @@ export default class Kaspa {
       messageBuffer,
     ]);
 
-    const signatureBuffer = await this.sendToDevice(
-      INS.SIGN_MESSAGE,
-      P1_NON_CONFIRM,
-      payload,
-    );
+    const signatureBuffer = await this.sendToDevice(INS.SIGN_MESSAGE, P1_NON_CONFIRM, payload);
     const [sigLen, ...signatureAndMessageHash] = signatureBuffer;
-    const signature = Buffer.from(
-      signatureAndMessageHash.slice(0, sigLen),
-    ).toString("hex");
+    const signature = Buffer.from(signatureAndMessageHash.slice(0, sigLen)).toString("hex");
     const messageHashLen = signatureAndMessageHash[64];
     const messageHash = Buffer.from(
       signatureAndMessageHash.slice(65, 65 + messageHashLen),
@@ -236,10 +204,7 @@ export default class Kaspa {
    * kaspa.getVersion().then(r => r.version)
    */
   async getVersion() {
-    const [major, minor, patch] = await this.sendToDevice(
-      INS.GET_VERSION,
-      P1_NON_CONFIRM,
-    );
+    const [major, minor, patch] = await this.sendToDevice(INS.GET_VERSION, P1_NON_CONFIRM);
 
     return { version: `${major}.${minor}.${patch}` };
   }
