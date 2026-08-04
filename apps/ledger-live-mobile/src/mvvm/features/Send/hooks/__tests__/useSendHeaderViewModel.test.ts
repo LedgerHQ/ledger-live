@@ -172,15 +172,82 @@ describe("useSendHeaderViewModel", () => {
         accountId: mockAccount.id,
         parentId: undefined,
         transaction: undefined,
-        onScanned: expect.any(Function),
+        onScannedURI: expect.any(Function),
       }),
     );
 
-    const { onScanned } = mockNavigate.mock.calls[0][1] as {
-      onScanned: (address: string) => void;
+    const { onScannedURI } = mockNavigate.mock.calls[0][1] as {
+      onScannedURI: (result: { address: string }) => void;
     };
-    onScanned("0xscanned");
+    onScannedURI({ address: "0xscanned" });
 
     expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+  });
+
+  it("prefills the transaction amount from a scanned EIP681 URI while staying on recipient", () => {
+    const amount = new BigNumber("1000000000000000000");
+    const mockUpdateTransaction = jest.fn();
+    const currentTransaction = {
+      family: "evm",
+      amount: new BigNumber(0),
+      recipient: "",
+      useAllAmount: false,
+    };
+
+    mockedUseSendFlowData.mockReturnValue({
+      uiConfig: {
+        recipientSupportsDomain: true,
+      },
+      recipientSearch: mockRecipientSearch,
+      state: {
+        account: {
+          account: mockAccount,
+          parentAccount: null,
+          currency: mockAccount.currency,
+        },
+        transaction: {
+          transaction: currentTransaction,
+          status: {},
+          bridgeError: null,
+          bridgePending: false,
+        },
+        recipient: null,
+        operation: {
+          optimisticOperation: null,
+          transactionError: null,
+          signed: false,
+        },
+        isLoading: false,
+        flowStatus: "idle",
+      },
+    } as never);
+    mockedUseSendFlowActions.mockReturnValue({
+      close: jest.fn(),
+      transaction: {
+        updateTransaction: mockUpdateTransaction,
+      },
+      setRecipientSearchValue: mockSetRecipientSearchValue,
+      clearRecipientSearch: mockClearRecipientSearch,
+    } as never);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleQrCodeClick();
+
+    const { onScannedURI } = mockNavigate.mock.calls[0][1] as {
+      onScannedURI: (result: { address: string; amount?: BigNumber }) => void;
+    };
+    onScannedURI({ address: "0xscanned", amount });
+
+    expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
+    expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+    const updater = mockUpdateTransaction.mock.calls[0][0];
+    expect(updater(currentTransaction)).toEqual(
+      expect.objectContaining({
+        amount,
+        useAllAmount: false,
+      }),
+    );
+    expect(mockGoBack).not.toHaveBeenCalled();
   });
 });
