@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Advanced",
     "custom" : "Benutzerdefiniert",
+    "defaultNetworkFee" : "Standard-Netzwerkgebühr",
     "fast" : "Schnell",
     "networkFees" : "Netzgebühren",
     "high" : "Hoch",
@@ -540,7 +541,9 @@
       "zcash_title" : "Ledger Nano S™ unterstützt das Swappen von Zcash nicht",
       "zcash_description" : "Zum Swappen von Zcash musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™.",
       "aleo_title" : "Ledger Nano S™ unterstützt das Swappen von Aleo nicht",
-      "aleo_description" : "Zum Swappen von Aleo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+      "aleo_description" : "Zum Swappen von Aleo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "aleo_tokens_title" : "Der Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
+      "aleo_tokens_description" : "Zum Swappen von Sui-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. einen Ledger Nano S Plus™, einen Ledger Nano X™, einen Ledger Flex™ oder einen Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Wallet synchronisieren",
           "description" : "Halte deine Kryptokonten synchronisiert"
-        },
-        "customImage" : {
-          "title" : "Sperrbildschirm anpassen",
-          "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an."
         },
         "discoverWallet" : {
           "title" : "Entdecke, was deine Wallet kann",
@@ -5459,11 +5458,6 @@
           "description" : "Teste alle in Ledger Wallet verwendeten Animationen",
           "longDesc" : "Dieses wie besehen („as-is“) zur Verfügung gestellte Tool ermöglicht es dem Team, die in der App verwendeten Lottie-Animationen zu überprüfen."
         },
-        "testStories" : {
-          "title" : "Storyly-Storys testen",
-          "description" : "Teste alle in Ledger Wallet verwendeten Storys.",
-          "longDesc" : "Dieses wie besehen („as-is“) zur Verfügung gestellte Tool ermöglicht es dem Team, die in der App verwendeten Storily-Storys zu überprüfen."
-        },
         "testStaxPostonboarding" : {
           "title" : "Stax-Post-Onboarding testen",
           "description" : "Alle Stax-Post-Onboarding-Funktionen testen"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "Vielleicht später"
       }
     },
-    "postOnboarding" : {
-      "title" : "Sperrbildschirm anpassen",
-      "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an.",
-      "actionCompletedPopupLabel" : "Gerät personalisiert"
-    },
     "customImageSet" : "Sperrbildschirm angepasst",
     "finishCTA" : "Schließen"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Öffentliches Senden",
+          "transparentToShielded" : "Senden von öffentlich zu privat",
+          "shieldedToTransparent" : "Senden von privat zu öffentlich",
+          "shielded" : "Privates Senden"
+        },
         "transferFrom" : {
           "label" : "Übertragung von",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Privater Saldo",
             "subtitle" : "Abgeschirmt",
             "unavailable" : "Privater Kontostand nicht verfügbar"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (Optional)",
+          "placeholder" : "Memo eingeben",
+          "tooltip" : "Füge dieser abgeschirmten Transaktion eine private Nachricht hinzu. Nur der Empfänger kann sie lesen. Bis zu 512 Byte."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "Privater Kontostand ist nicht synchronisiert",
+            "cta" : "Synchronisierung fortsetzen"
+          },
+          "running" : {
+            "message" : "Privater Kontostand wird synchronisiert ({{progress}}%)",
+            "timeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "Kontostand ist eventuell nicht ganz aktuell",
+            "cta" : "Kontostand synchronisieren"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Selbstüberweisung",
+      "headerAction" : "Konvertieren",
       "headerActionTooltip" : "Du hast kein Guthaben, um eine Selbstüberweisung durchzuführen",
       "modal" : {
-        "title" : "Selbstüberweisung",
+        "title" : "Konvertieren",
         "stepRecipient" : {
           "selectLabel" : "Übertragung von"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "Kontakte",
     "addContact" : "Kontakt hinzufügen",
+    "addAddress" : "Adresse hinzufügen",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Kontaktname",
+      "namingDisclaimer" : "Vermeide zum Schutz deiner Privatsphäre vollständige Vor- und Nachnamen. Verwende einen Spitznamen oder nur einen Vornamen + Initial, z. B. „John S“.",
+      "invalidNameError" : "Sonderzeichen sind nicht erlaubt."
+    },
     "searchPlaceholder" : "Kontakt suchen",
     "searchNoResults" : "Kein Kontakt gefunden",
+    "addressCount_zero" : "0 Adresse",
+    "addressCount_one" : "{{count}} Adresse",
+    "addressCount_other" : "{{count}} Adressen",
     "me" : {
-      "name" : "Ich",
-      "addressCount_zero" : "0 Adresse",
-      "addressCount_one" : "{{count}} Adresse",
-      "addressCount_other" : "{{count}} Adressen"
+      "name" : "Ich"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "Keine gespeicherten Adressen für dich",
+        "contactTitle" : "Keine gespeicherten Adressen für {{name}}",
+        "meDescription" : "Speichere deine Wallet-Adressen, um Krypto beim nächsten Mal über den Namen zu empfangen.",
+        "contactDescription" : "Speichere deren Wallet-Adressen, um beim nächsten Mal über den Namen an sie zu senden."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Senden",
+      "copy" : "Kopieren",
+      "copied" : "Kopiert",
+      "edit" : "Bearbeiten",
+      "delete" : "Löschen",
+      "networkTag" : "{{name}}-Netzwerk"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Deine Kontakte sind mit deinem Ledger Ende-zu-Ende verschlüsselt und werden mit deinen Geräten synchronisiert – nur du kannst sie entsperren.",

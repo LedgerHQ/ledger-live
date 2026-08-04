@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "アドバンス",
     "custom" : "カスタム",
+    "defaultNetworkFee" : "デフォルトのネットワーク手数料",
     "fast" : "高速",
     "networkFees" : "ネットワーク手数料",
     "high" : "高速",
@@ -540,7 +541,9 @@
       "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
       "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "aleo_title" : "Ledger Nano S™は、Aleoのスワップに対応していません",
-      "aleo_description" : "Aleoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+      "aleo_description" : "Aleoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "aleo_tokens_title" : "Ledger Nano S™は、Aleoトークンのスワップに対応していません",
+      "aleo_tokens_description" : "Aleoトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "ウォレットを同期",
           "description" : "暗号資産アカウントを同期したままにする"
-        },
-        "customImage" : {
-          "title" : "ロック画面をカスタマイズ",
-          "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。"
         },
         "discoverWallet" : {
           "title" : "ウォレットで何ができるか探ってみよう",
@@ -5459,11 +5458,6 @@
           "description" : "Ledger Walletで使用される全アニメーションをテストする",
           "longDesc" : "これは、アプリで使用されるLottieアニメーションをチームが検証するためにそのまま提供されるツールです。"
         },
-        "testStories" : {
-          "title" : "Storylyストーリーをテストする",
-          "description" : "Ledger Walletで使用される全ストーリーをテストする",
-          "longDesc" : "これは、アプリで使用されるStorylyのストーリーをチームが検証するためにそのまま提供されるツールです。"
-        },
         "testStaxPostonboarding" : {
           "title" : "Staxオンボーディング後テスト",
           "description" : "Staxオンボーディング後の全機能テスト"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "後で"
       }
     },
-    "postOnboarding" : {
-      "title" : "ロック画面をカスタマイズ",
-      "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。",
-      "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
-    },
     "customImageSet" : "ロック画面がカスタマイズされました",
     "finishCTA" : "閉じる"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "パブリック送信",
+          "transparentToShielded" : "パブリックからプライベートへの送信",
+          "shieldedToTransparent" : "プライベートからパブリックへの送信",
+          "shielded" : "プライベート送信"
+        },
         "transferFrom" : {
           "label" : "転送元",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "プライベート残高",
             "subtitle" : "シールド",
             "unavailable" : "プライベート残高は利用できません"
+          }
+        },
+        "memo" : {
+          "label" : "メモ (任意)",
+          "placeholder" : "メモを入力",
+          "tooltip" : "このシールドトランザクションにプライベートメッセージを添付します。受取人のみが閲覧できます。最大512バイト。"
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "プライベート残高が同期済みではありません",
+            "cta" : "同期を再開"
+          },
+          "running" : {
+            "message" : "プライベート残高を同期中 ({{progress}}％)",
+            "timeRemaining" : "推定残り時間： {{hours}} : {{minutes}}"
+          },
+          "outdated" : {
+            "message" : "残高が最新でない可能性があります",
+            "cta" : "残高を同期"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "自己送金",
+      "headerAction" : "両替",
       "headerActionTooltip" : "自己送金を実行するための資金がありません。",
       "modal" : {
-        "title" : "自己送金",
+        "title" : "両替",
         "stepRecipient" : {
           "selectLabel" : "転送元"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
+    "addAddress" : "アドレスを追加",
+    "addContactDrawer" : {
+      "namePlaceholder" : "連絡先名",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
+      "invalidNameError" : "特殊文字は使用できません。"
+    },
     "searchPlaceholder" : "連絡先を検索",
     "searchNoResults" : "連絡先が見つかりません",
+    "addressCount_zero" : "0件のアドレス",
+    "addressCount_one" : "{{count}}件のアドレス",
+    "addressCount_other" : "{{count}}件のアドレス",
     "me" : {
-      "name" : "自分",
-      "addressCount_zero" : "0アドレス",
-      "addressCount_one" : "{{count}}アドレス",
-      "addressCount_other" : "{{count}}アドレス"
+      "name" : "自分"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "保存済みアドレスはありません",
+        "contactTitle" : "{{name}}の保存済みアドレスはありません",
+        "meDescription" : "次回から名前で暗号資産を受け取れるように、ウォレットアドレスを保存してください。",
+        "contactDescription" : "次回から名前で相手に送信できるように、相手のウォレットアドレスを保存してください。"
+      }
+    },
+    "addressDetail" : {
+      "send" : "送付",
+      "copy" : "コピー",
+      "copied" : "コピー済み",
+      "edit" : "編集",
+      "delete" : "削除",
+      "networkTag" : "{{name}}ネットワーク"
     },
     "ledgerSyncIntroduction" : {
       "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",

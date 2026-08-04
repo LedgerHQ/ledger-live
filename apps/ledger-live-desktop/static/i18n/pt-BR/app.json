@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Avançado",
     "custom" : "Personalizado",
+    "defaultNetworkFee" : "Taxa de rede padrão",
     "fast" : "Rápido",
     "networkFees" : "Taxas de rede",
     "high" : "Alto",
@@ -540,7 +541,9 @@
       "zcash_title" : "A Ledger Nano™ S não é compatível com a troca de Zcash",
       "zcash_description" : "Para trocar Zcash, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano™ S Plus, Ledger Nano™ X, Ledger Flex™ ou Ledger Stax™.",
       "aleo_title" : "A Ledger Nano S™ não é compatível com a troca de Aleo",
-      "aleo_description" : "Para trocar Aleo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "aleo_description" : "Para trocar Aleo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "aleo_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Aleo",
+      "aleo_tokens_description" : "Para trocar tokens Aleo, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Sincronize sua carteira",
           "description" : "Mantenha suas contas cripto sincronizadas"
-        },
-        "customImage" : {
-          "title" : "Personalizar a tela de bloqueio",
-          "description" : "Defina sua arte digital ou foto favorita como tela de bloqueio do seu dispositivo."
         },
         "discoverWallet" : {
           "title" : "Descubra o que sua carteira pode fazer",
@@ -5459,11 +5458,6 @@
           "description" : "Teste todas as animações utilizadas na Ledger Wallet",
           "longDesc" : "Esta é uma ferramenta disponibilizada tal como se encontra para a equipe validar as animações lottie usadas no aplicativo."
         },
-        "testStories" : {
-          "title" : "Testar stories do Storyly",
-          "description" : "Testar todos os stories usadas na Ledger Wallet",
-          "longDesc" : "Esta é uma ferramenta disponibilizada tal como se encontra para a equipe validar stories storyly usados no aplicativo."
-        },
         "testStaxPostonboarding" : {
           "title" : "Testar Pós-Introdução da Stax",
           "description" : "Testar todos os recursos de pós-introdução da Stax"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "Talvez mais tarde"
       }
     },
-    "postOnboarding" : {
-      "title" : "Personalizar a tela de bloqueio",
-      "description" : "Defina sua arte digital ou foto favorita como tela de bloqueio do seu dispositivo.",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado"
-    },
     "customImageSet" : "Tela de bloqueio personalizada",
     "finishCTA" : "Fechar"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Envio Público",
+          "transparentToShielded" : "Envio de Público para Privado",
+          "shieldedToTransparent" : "Envio de Privado para Público",
+          "shielded" : "Envio Privado"
+        },
         "transferFrom" : {
           "label" : "Transferência de",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Saldo privado",
             "subtitle" : "Blindado",
             "unavailable" : "Saldo privado indisponível"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (opcional)",
+          "placeholder" : "Insira um memo",
+          "tooltip" : "Anexe uma mensagem privada a esta transação protegida. Apenas o destinatário pode ler. Até 512 bytes."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "O saldo privado não está sincronizado",
+            "cta" : "Retomar sincronização"
+          },
+          "running" : {
+            "message" : "O saldo privado está sendo sincronizado ({{progress}}%)",
+            "timeRemaining" : "Tempo restante estimado: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "O saldo pode estar um pouco desatualizado",
+            "cta" : "Sincronizar saldo"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Auto transferência",
+      "headerAction" : "Converter",
       "headerActionTooltip" : "Você não tem fundos para realizar uma transferência para si mesmo",
       "modal" : {
-        "title" : "Auto transferência",
+        "title" : "Converter",
         "stepRecipient" : {
           "selectLabel" : "Transferência de"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "Contatos",
     "addContact" : "Adicionar contato",
+    "addAddress" : "Adicionar endereço",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Nome do contato",
+      "namingDisclaimer" : "Por privacidade, evite nomes e sobrenomes completos. Use um apelido ou apenas o primeiro nome + inicial, por exemplo, 'John S'.",
+      "invalidNameError" : "Não são permitidos caracteres especiais."
+    },
     "searchPlaceholder" : "Buscar contato",
     "searchNoResults" : "Nenhum contato encontrado",
+    "addressCount_zero" : "0 endereço",
+    "addressCount_one" : "{{count}} endereço",
+    "addressCount_other" : "{{count}} endereços",
     "me" : {
-      "name" : "Eu",
-      "addressCount_zero" : "0 endereço",
-      "addressCount_one" : "{{count}} endereço",
-      "addressCount_other" : "{{count}} endereços"
+      "name" : "Eu"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "Não há endereços salvos para você",
+        "contactTitle" : "Não há endereços salvos para {{name}}",
+        "meDescription" : "Salve seus endereços de carteira para receber cripto por nome na próxima vez.",
+        "contactDescription" : "Salve os endereços de carteira de outros para enviar-los com nome na próxima vez."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Enviar",
+      "copy" : "Copiar",
+      "copied" : "Copiado",
+      "edit" : "Editar",
+      "delete" : "Excluir",
+      "networkTag" : "Rede {{name}}"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Seus contatos são criptografados de ponta a ponta com sua Ledger e sincronizados entre seus dispositivos, apenas você pode desbloqueá-los.",
