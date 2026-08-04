@@ -7,14 +7,14 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
+test.describe("Portfolio", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
   });
 
   test(
-    "Portfolio happy path: zero balance state, then verify balance and analytics",
+    "Portfolio zero balance state shows quick actions",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -39,7 +39,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   );
 });
 
-test.describe("Portfolio Wallet 4.0 - With Account", () => {
+test.describe("Portfolio", () => {
   // With the Asset Section OFF, a single zero-balance account's countervalue is not resolved,
   // so the Wallet 4.0 balance view stays in its loading state and never renders the "$0.00"
   // total nor the performance pill. Every assertion below depends on that resolved balance,
@@ -51,7 +51,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
   });
 
   test(
-    "Portfolio happy path: with zero-balance account, then verify balance and analytics",
+    "Portfolio with a zero-balance account shows balance and analytics",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -76,14 +76,14 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
   );
 });
 
-test.describe("Portfolio Wallet 4.0 - With Funds", () => {
+test.describe("Portfolio", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
   });
 
   test(
-    "Portfolio happy path: with funds, then verify balance and quick actions",
+    "Portfolio with funds shows balance and quick actions",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -102,14 +102,14 @@ test.describe("Portfolio Wallet 4.0 - With Funds", () => {
   );
 });
 
-test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
+test.describe("Portfolio", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding",
   });
 
   test(
-    "Portfolio no seen device: verify reborn quick actions are displayed",
+    "Portfolio without a seen device shows reborn quick actions",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -118,6 +118,8 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
       },
     },
     async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.portfolio.checkNoDeviceTitleVisibility();
       await app.portfolio.checkConnectButtonVisibility();
       await app.portfolio.checkBuyALedgerButtonVisibility();
@@ -125,7 +127,7 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   );
 });
 
-test.describe("Portfolio Wallet 4.0 - add funded account", () => {
+test.describe("Portfolio", () => {
   const currency = Currency.BTC;
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -134,7 +136,7 @@ test.describe("Portfolio Wallet 4.0 - add funded account", () => {
   });
 
   test(
-    "Portfolio: with zero-balance account, then add funded account and verify balance and quick actions",
+    `[${currency.testLabel}] - Portfolio adds a funded account and updates balance and quick actions`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {

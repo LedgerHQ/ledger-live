@@ -54,7 +54,7 @@ const tooLowAmountForQuoteSwaps: TooLowAmountSwap[] = [
 ];
 
 for (const swap of tooLowAmountForQuoteSwaps) {
-  test.describe(`Swap - with too low amount (throwing UI errors) - ${swap.swap.amount} ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name}`, () => {
+  test.describe("Swap - too low amount", () => {
     setupEnv(true);
 
     const accPair: string[] = [swap.swap.accountToDebit, swap.swap.accountToCredit].map(acc =>
@@ -92,7 +92,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     });
 
     test(
-      `Swap too low quote amounts from ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name} - ${swap.errorMessage}`,
+      `[${swap.swap.accountToDebit.currency.testLabel}-${swap.swap.accountToCredit.currency.testLabel}] - Swap too low quote amount (${swap.swap.amount}): ${swap.errorMessage}`,
       {
         tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
         annotation: {
@@ -136,7 +136,7 @@ const swapEthNeededForNetworkFeesTestConfig = {
   tags: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
 };
 
-test.describe(`Swap - Error message when network fees are above account balance (${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.name} to ${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.name})`, () => {
+test.describe("Swap - network fees above balance", () => {
   setupEnv(true);
 
   const accPair: string[] = [
@@ -176,7 +176,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
 
   // Enable test when "Sponsored" program is over
   test.skip(
-    `Swap - Network fees above account balance`,
+    `[${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToDebit.currency.testLabel}-${swapNetworkFeesAboveAccountBalanceTestConfig.swap.accountToCredit.currency.testLabel}] - Swap network fees above account balance`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
@@ -203,7 +203,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
 
   // Enable once ptxSponsoredTransactions no longer covers this provider/chain pair.
   test.skip(
-    `Swap too low quote amounts from ${swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit.currency.name} to ${swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit.currency.name} - ETH needed for network fees`,
+    `[${swapEthNeededForNetworkFeesTestConfig.swap.accountToDebit.currency.testLabel}-${swapEthNeededForNetworkFeesTestConfig.swap.accountToCredit.currency.testLabel}] - Swap too low quote amount: ETH needed for network fees`,
     {
       tag: swapEthNeededForNetworkFeesTestConfig.tags,
       annotation: {

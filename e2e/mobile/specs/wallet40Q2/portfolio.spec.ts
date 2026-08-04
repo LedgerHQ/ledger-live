@@ -21,7 +21,7 @@ const CURRENCY = ACCOUNT.currency;
 const TICKER = CURRENCY.ticker;
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Portfolio", () => {
+describe("Portfolio", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
@@ -34,14 +34,14 @@ describe("Wallet 4.0 Q2 - Portfolio", () => {
   testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
-  it("check quick action buttons visibility and no balance title", async () => {
+  it("Portfolio zero balance state shows quick actions", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
     await app.portfolio.checkQuickActionBuyButtonVisibility();
     await app.portfolio.checkNoBalanceTitleVisibility();
   });
 
-  it("adds an account and change the app state", async () => {
+  it(`[${ACCOUNT.currency.testLabel}] - Portfolio with a zero-balance account shows balance and analytics`, async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
     await app.modularDrawer.performSearchByTicker(TICKER);
@@ -52,7 +52,7 @@ describe("Wallet 4.0 Q2 - Portfolio", () => {
     await app.mainNavigation.tapWallet40Tab("home");
   });
 
-  it("check quick action buttons visibility and normal balance title", async () => {
+  it("Portfolio with funds shows balance and quick actions", async () => {
     await app.portfolio.checkQuickActionTransferButtonVisibility();
     await app.portfolio.checkQuickActionSwapButtonVisibility();
     await app.portfolio.checkQuickActionBuyButtonVisibility();
@@ -60,26 +60,26 @@ describe("Wallet 4.0 Q2 - Portfolio", () => {
     await app.portfolio.checkPortfolioBalanceAnalyticsPillVisibility();
   });
 
-  it("navigates to the analytics screen", async () => {
+  it("Navigate to the analytics screen", async () => {
     await app.portfolio.tapPortfolioBalanceAnalyticsPill();
     await app.portfolio.expectBalanceToBeVisible();
     await app.common.goToPreviousPage();
   });
 
-  it("navigates to the buy screen", async () => {
+  it("Navigate to the buy screen", async () => {
     await app.portfolio.pressQuickActionBuyButton();
     await app.buySell.expectBuyScreenToBeVisible();
   });
 
   setTeamOwner(Team.SWAP);
-  it("navigates to the swap screen", async () => {
+  it("Navigate to the swap screen", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
 
     await app.portfolio.pressQuickActionSwapButton();
     await app.swapLiveApp.expectSwapLiveApp();
   });
 
-  it("performs the transfer bottom sheet actions", async () => {
+  it("Transfer bottom sheet actions", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.portfolio.pressQuickActionTransferButton();
     await app.portfolio.checkTransferBottomSheetReceiveButtonVisibility();

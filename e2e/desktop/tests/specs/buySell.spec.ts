@@ -47,7 +47,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string }> = [
 ];
 
 for (const asset of assets) {
-  test.describe("Buy / Sell flow from different entry point", () => {
+  test.describe("Buy and sell", () => {
     setupEnv(true);
 
     const { crypto, fiat, operation, amount } = asset.buySell;
@@ -61,7 +61,7 @@ for (const asset of assets) {
     });
 
     test(
-      `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
+      `[${crypto.currency.testLabel}] - Buy entry point from asset page`,
       {
         tag: buildTags({ currencyId: crypto.currency.id }),
         annotation: {
@@ -81,7 +81,7 @@ for (const asset of assets) {
     );
 
     test(
-      `Entry Point - Market page with [${crypto.currency.name}] asset`,
+      `[${crypto.currency.testLabel}] - Buy entry point from market page`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -101,7 +101,7 @@ for (const asset of assets) {
     );
 
     test(
-      `Entry Point - Account page with [${crypto.currency.name}] asset`,
+      `[${crypto.currency.testLabel}] - Buy entry point from account page`,
       {
         tag: buildTags({ currencyId: crypto.currency.id }),
         annotation: {
@@ -131,7 +131,7 @@ for (const asset of assets) {
     );
 
     test(
-      `Buy [${crypto.currency.name}] asset from portfolio page`,
+      `[${crypto.currency.testLabel}] - Buy from portfolio page`,
       {
         tag: buildTags({ currencyId: crypto.currency.id }),
         annotation: {
@@ -184,7 +184,7 @@ const sellAssets: Array<{ buySell: Omit<BuySell, "amount">; xrayTicket: string }
 ];
 
 for (const sellAsset of sellAssets) {
-  test.describe(`Sell flow - [${sellAsset.buySell.crypto.currency.name}]`, () => {
+  test.describe("Buy and sell", () => {
     setupEnv(true);
 
     const { crypto, fiat, operation } = sellAsset.buySell;
@@ -198,7 +198,7 @@ for (const sellAsset of sellAssets) {
     });
 
     test(
-      `Sell [${crypto.currency.name}] asset`,
+      `[${crypto.currency.testLabel}] - Sell`,
       {
         tag: buildTags({ currencyId: crypto.currency.id }),
         annotation: {

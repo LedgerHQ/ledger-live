@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
-  describe("Verify Address", () => {
+  describe("Receive", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -15,7 +15,7 @@ export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], t
     setTeamOwner(Team.COIN_INTEGRATION);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Verify address on ${account.currency.name}`, async () => {
+    it(`[${account.currency.testLabel}] - Verify address`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();

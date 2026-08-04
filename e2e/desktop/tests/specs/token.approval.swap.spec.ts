@@ -26,7 +26,7 @@ const eligibleProviders = [
   SwapProvider.VELORA,
 ];
 
-test.describe("Token approval - flow", () => {
+test.describe("Swap - token approval", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -55,7 +55,7 @@ test.describe("Token approval - flow", () => {
   });
 
   test(
-    "Swap - token approval flow",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [

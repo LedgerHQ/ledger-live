@@ -25,7 +25,7 @@ const accounts = [
 ];
 
 for (const account of accounts) {
-  test.describe("Delete Accounts", () => {
+  test.describe("Delete account", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -35,7 +35,7 @@ for (const account of accounts) {
     });
 
     test(
-      `[${account.account.currency.name}] Delete Account`,
+      `[${account.account.currency.testLabel}] - Delete account`,
       {
         tag: buildTags({
           currencyId: account.account.currency.id,

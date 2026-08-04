@@ -9,7 +9,7 @@ setTeamOwner(Team.WALLET_XP);
 $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 tags.forEach(tag => $Tag(tag));
-describe("DeepLinks Tests", () => {
+describe("Deeplinks", () => {
   const account = Account.ETH_2;
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";
@@ -48,7 +48,7 @@ describe("DeepLinks Tests", () => {
   });
 
   $Tag("@smoke");
-  it("should open Account page", async () => {
+  it("Open the account page from a deeplink", async () => {
     await app.assetAccountsPage.openViaDeeplink();
     await app.accounts.waitForAccountsPageToLoad();
   });
@@ -129,20 +129,20 @@ describe("DeepLinks Tests", () => {
     await app.assetAccountsPage.expectAssetPage(ethereumLong);
   });
 
-  (isSmokeTestRun ? describe.skip : describe)("Open modular drawer via deeplinks", () => {
+  (isSmokeTestRun ? describe.skip : describe)("Deeplinks", () => {
     const TOP_CRYPTO_TICKERS = ["BTC", "ETH", "USDT", "XRP", "BNB"];
 
-    it("should open from Add Account", async () => {
+    it("Open add account from a deeplink", async () => {
       await app.addAccount.openViaDeeplink();
       await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
     });
 
-    it("should open from Receive", async () => {
+    it("Open receive from a deeplink", async () => {
       await app.receive.openViaDeeplink();
       await app.modularDrawer.validateAssetsScreen(TOP_CRYPTO_TICKERS);
     });
 
-    it("should open from Receive in a selected account", async () => {
+    it("Open receive on a selected account from a deeplink", async () => {
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.receive.receiveViaDeeplink(ethereumLong);
       await app.modularDrawer.validateAccountsScreen([account.accountName]);

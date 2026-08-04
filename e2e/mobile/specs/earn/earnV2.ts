@@ -62,7 +62,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
 // --- User States ---
 
 export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe("Earn V2 - Ice cold start", () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -74,7 +74,7 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("displays ice cold start page and CTA opens modular asset drawer", async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 ice cold start page displays correctly`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyIceColdStartPage();
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();
@@ -84,7 +84,7 @@ export function runIceColdStartTest(account: Account, tmsLinks: string[], tags: 
 }
 
 export function runColdStartTest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe(`Earn V2 - Cold start - ${account.currency.ticker}`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -98,7 +98,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`shows ${account.currency.ticker} ready to earn and clicking CTA initiates staking`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForColdStartPage();
       await app.earnV2Dashboard.verifyColdStartPage();
@@ -110,7 +110,7 @@ export function runColdStartTest(account: Account, tmsLinks: string[], tags: str
 }
 
 export function runHotStartTest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe(`Earn V2 - Hot start & Position - ${account.currency.ticker}`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -124,7 +124,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} hot start: rewards summary, position row -> manage -> account page`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 hot start page shows rewards and navigates to account`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyRewardsSummaryBoxes();
@@ -140,7 +140,7 @@ export function runHotStartTest(account: Account, tmsLinks: string[], tags: stri
 // --- Navigation: CTA Flows ---
 
 export function runNativeStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe(`Earn V2 - CTA -> Native staking (${account.currency.ticker})`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -154,7 +154,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} earn CTA initiates staking flow`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates native staking`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       await app.earnV2Dashboard.verifyStakingFlowOpened(account.currency.ticker);
@@ -163,7 +163,7 @@ export function runNativeStakingCTATest(account: Account, tmsLinks: string[], ta
 }
 
 export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe(`Earn V2 - CTA -> Earn staking (${account.currency.ticker})`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -177,7 +177,7 @@ export function runScyStakingCTATest(account: Account, tmsLinks: string[], tags:
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} earn CTA initiates deposit flow`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       await app.earnV2Dashboard.verifyDepositFlowVisible();
@@ -200,7 +200,7 @@ export function runPartnerDappCTATest(
     account.currency.ticker === "ETH"
       ? { ...EARN_V2_FLAGS, ...FF_STAKE_PROGRAMS_MODAL }
       : EARN_V2_FLAGS;
-  describe(`Earn V2 - CTA -> Partner dapp (${account.currency.ticker} / ${providerId})`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -214,7 +214,7 @@ export function runPartnerDappCTATest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} earn CTA -> ${providerId} provider -> dapp`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 staking flow with ${providerId}`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
       if (account.currency.ticker === "ETH") {
@@ -239,7 +239,7 @@ export function runPartnerDappPositionTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Earn V2 - Position -> Partner dapp (${account.currency.ticker})`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -253,7 +253,7 @@ export function runPartnerDappPositionTest(
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} position row -> manage -> dapp`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 position row navigates to dapp`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
@@ -268,7 +268,7 @@ export function runPartnerDappPositionTest(
 // --- Position Row Flows ---
 
 export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe(`Earn V2 - Position -> Withdrawal (${account.currency.ticker}) via manage drawer`, () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -282,7 +282,7 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${account.currency.ticker} position row -> withdraw all -> webview /redeem`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 position row navigates to withdrawal`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.waitForHotStartPage();
       await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
@@ -298,7 +298,7 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
 // --- Inline Add Account ---
 
 export function runInlineAddAccountTest(account: Account, tmsLinks: string[], tags: string[]) {
-  describe("Earn V2 - Inline Add Account", () => {
+  describe("Earn v2", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -310,7 +310,7 @@ export function runInlineAddAccountTest(account: Account, tmsLinks: string[], ta
     setTeamOwner(Team.EARN);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
+    it(`[${account.currency.testLabel}] - Earn v2 inline add account`, async () => {
       await navigateToEarn();
       await app.earnV2Dashboard.verifyIceColdStartPage();
       await app.earnV2Dashboard.clickIceColdStartEarnCTA();
