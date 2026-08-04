@@ -64,30 +64,31 @@ const AccountSelectionContent = ({
 
   const renderFooter = useCallback(() => {
     return (
-      <>
-        {uiUseCase === "perpetuals" && (
-          <Banner
-            appearance="info"
-            title={t("modularDrawer.perpetualsBanner")}
-            lx={{ marginTop: "s16" }}
-          />
-        )}
-        <AddAccountButton label={t("modularDrawer.addAccount")} onClick={onAddNewAccountOnClick} />
-      </>
+      <AddAccountButton label={t("modularDrawer.addAccount")} onClick={onAddNewAccountOnClick} />
     );
   }, [onAddNewAccountOnClick, t, uiUseCase]);
+
+  const [namespace, variant] = uiUseCase?.split(":") ?? [];
+  const isPerps = namespace === "perpetuals";
+  const isPerpsWithoutVariant = isPerps && !variant;
+
+  const headerTitle = isPerpsWithoutVariant
+    ? t("modularDrawer.selectAccountPerpsTitle")
+    : t("modularDrawer.selectAccount");
+
+  const headerDescription = isPerpsWithoutVariant
+    ? t("modularDrawer.selectAccountPerpsDescription")
+    : detailedAccounts.length === 0
+      ? t("modularDrawer.emptyAccounts", { network: asset.name })
+      : undefined;
 
   return (
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
       <BottomSheetHeader
         spacing
-        title={t("modularDrawer.selectAccount")}
-        description={
-          detailedAccounts.length === 0
-            ? t("modularDrawer.emptyAccounts", { network: asset.name })
-            : undefined
-        }
+        title={headerTitle}
+        description={headerDescription}
         density="expanded"
       />
       <BottomSheetVirtualizedList

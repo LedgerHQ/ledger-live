@@ -8686,6 +8686,11 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
+    "selectAccountPerpsTitle": "Select Hyperliquid account",
+    "selectAccountPerpsDescription": "Select an account you want to deposit funds into to place your trades.",
+    "selectDepositCurrencyTitle": "Select asset to deposit",
+    "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
+    "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "accountsAdded": {

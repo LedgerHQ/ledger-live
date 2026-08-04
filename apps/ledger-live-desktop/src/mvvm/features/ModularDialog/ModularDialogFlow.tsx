@@ -20,6 +20,7 @@ import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
 import { MODULAR_DIALOG_STEP, type ModularDialogFlowProps, type ModularDialogStep } from "./types";
+import { parseUiUseCase } from "./utils/parseUiUseCase";
 
 const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
@@ -130,19 +131,37 @@ export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps)
       {renderStepContent(currentStep)}
     </AnimatedScreenWrapper>
   );
-  const description =
+
+  const accountSelectionDescription =
     currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && selectedNetwork?.name && !hasAccounts
       ? t("dialogs.selectAccount.description", {
           network: selectedNetwork.name,
         })
       : undefined;
 
+  const { isPerpsWithoutVariant, hasVariant } = parseUiUseCase(uiUseCase);
+  const { title, description } = ((): { title: string; description?: string } => {
+    if (currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION && hasVariant) {
+      return {
+        title: t("modularAssetDrawer.selectDepositCurrencyTitle"),
+        description: t("modularAssetDrawer.selectDepositCurrencyDescription"),
+      };
+    }
+    if (currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && isPerpsWithoutVariant) {
+      return {
+        title: t("modularAssetDrawer.selectAccountPerpsTitle"),
+        description: t("modularAssetDrawer.selectAccountPerpsDescription"),
+      };
+    }
+    return { title: t(TRANSLATION_KEYS[currentStep]), description: accountSelectionDescription };
+  })();
+
   return (
     <>
       {children({
         content,
         currentStep,
-        title: t(TRANSLATION_KEYS[currentStep]),
+        title,
         description,
         hasBackButton: Boolean(handleBack),
         isOpen,

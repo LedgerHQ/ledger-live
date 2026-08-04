@@ -43,6 +43,7 @@ export type AssetSelectionStepProps = {
   refetch?: () => void;
   loadNext?: () => void;
   assetsSorted?: AssetData[];
+  uiUseCase?: string;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -57,9 +58,20 @@ const AssetSelection = ({
   refetch,
   loadNext,
   assetsSorted,
+  uiUseCase,
 }: Readonly<AssetSelectionStepProps>) => {
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
+
+  const [, variant] = uiUseCase?.split(":") ?? [];
+
+  const headerTitle = variant
+    ? t("modularDrawer.selectDepositCurrencyTitle")
+    : t("modularDrawer.selectAsset");
+
+  const headerDescription = variant
+    ? t("modularDrawer.selectDepositCurrencyDescription")
+    : undefined;
 
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -173,7 +185,8 @@ const AssetSelection = ({
       )}
       <BottomSheetHeader
         spacing
-        title={t("modularDrawer.selectAsset")}
+        title={headerTitle}
+        description={headerDescription}
         testID="modular-drawer-Asset-title"
         density="expanded"
       />

@@ -124,6 +124,7 @@ export function ModularDrawerFlow({
         refetch,
         loadNext,
         assetsSorted,
+        uiUseCase,
       }}
       networksViewModel={{
         onNetworkSelected: handleNetwork,

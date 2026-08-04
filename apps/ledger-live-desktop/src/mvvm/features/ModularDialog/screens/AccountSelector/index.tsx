@@ -36,13 +36,6 @@ export const AccountSelector = ({
 
   const BottomComponent = (
     <>
-      {uiUseCase === "perpetuals" && (
-        <Banner
-          appearance="info"
-          title={t("drawers.selectAccount.perpetualsBanner")}
-          className="mt-16"
-        />
-      )}
       <AddAccountContainer>
         <AddAccountButton onAddAccountClick={onAddAccountClick} />
       </AddAccountContainer>
