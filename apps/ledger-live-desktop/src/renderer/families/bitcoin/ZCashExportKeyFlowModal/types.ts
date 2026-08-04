@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { AccountLike } from "@ledgerhq/types-live";
 import { OpenModal } from "~/renderer/actions/modals";
-import { ZcashSyncState } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 
 export type StepId = "birthday" | "ufvk" | "device" | "confirmation";
 

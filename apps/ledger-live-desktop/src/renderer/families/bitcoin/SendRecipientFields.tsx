@@ -7,7 +7,7 @@ import {
   ZcashAccount,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import type { ZcashTransaction } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { connect } from "react-redux";
