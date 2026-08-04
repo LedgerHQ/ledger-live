@@ -100,7 +100,6 @@
     "selectNoResults" : "{{query}}와 일치하는 결과를 찾을 수 없습니다",
     "sortBy" : "정렬 기준",
     "save" : "저장",
-    "lock" : "잠금",
     "showMore" : "자세히 표시",
     "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
     "back" : "뒤로",
@@ -139,11 +138,8 @@
       "syncing" : "동기화 중...",
       "upToDate" : "동기화됨",
       "outdated" : "일시 중지됨",
-      "error" : "동기화 오류",
       "refresh" : "새로고침",
-      "devTools" : "개발자 도구",
-      "failingSync_one" : "동기화에 실패한 계정:",
-      "failingSync_other" : "동기화에 실패한 계정:"
+      "devTools" : "개발자 도구"
     },
     "exchange" : "교환",
     "info" : "정보",
@@ -306,24 +302,14 @@
   "sidebar" : {
     "card" : "카드",
     "paytab" : "결제",
-    "menu" : "메뉴",
-    "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
-    "manager" : "내 Ledger",
-    "earn" : "수익",
-    "exchange" : "매수 / 매도",
     "swap" : "스왑",
-    "perps" : "무기한 선물",
-    "borrow" : "대출하기",
     "home" : "홈",
     "refer" : "친구 추천",
-    "lend" : "대출",
     "catalog" : "탐색",
-    "market" : "마켓",
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
     "tooltip" : "계정 즐겨찾기"
   },
   "bridge" : {
@@ -1153,18 +1139,9 @@
     }
   },
   "help" : {
-    "title" : "도움말 및 지원",
-    "gettingStarted" : {
-      "title" : "시작하기",
-      "desc" : "여기에서 시작하세요"
-    },
     "status" : {
       "title" : "Ledger 상태",
       "desc" : "시스템 상태를 확인하세요"
-    },
-    "helpCenter" : {
-      "title" : "Ledger 지원",
-      "desc" : "도움 받기"
     },
     "ledgerAcademy" : {
       "title" : "Ledger 아카데미",
@@ -1531,7 +1508,6 @@
     "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
-    "title" : "포트폴리오",
     "header" : "포트폴리오 잔액",
     "emptyAccountTile" : {
       "desc" : "계정을 추가하여 다른 암호화폐를 관리하세요",
@@ -1540,21 +1516,6 @@
     "recentActivity" : "최근 거래",
     "totalBalance" : "총 잔액",
     "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
-    "featuredButtons" : {
-      "buySell" : {
-        "title" : "매수 / 매도",
-        "description" : "신뢰할 수 있는 Ledger 파트너사와 거래"
-      },
-      "swap" : {
-        "title" : "스왑",
-        "description" : "암호화폐 교환",
-        "label" : "인기 있는"
-      },
-      "earn" : {
-        "title" : "스테이킹",
-        "description" : "암호화폐로 더 큰 혜택을 누려보세요"
-      }
-    },
     "recoverBanner" : {
       "subscribeDone" : {
         "title" : "알림: Ledger Recover 구독을 완료하세요",
@@ -1604,25 +1565,6 @@
     "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
     "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다",
     "utxoWarning" : "개인정보 보호를 위해 모든 거래에 대해 새로운 주소가 생성됩니다. 이전 주소는 여전히 유효합니다."
-  },
-  "emptyState" : {
-    "dashboard" : {
-      "title" : "장치에 앱을 설치하세요",
-      "desc" : "내 Ledger로 이동하여 장치에 앱을 설치합니다. 장치에 앱이 설치되면 계정을 추가할 수 있습니다.",
-      "buttons" : {
-        "installApp" : "내 Ledger로 이동",
-        "help" : "도움말"
-      }
-    },
-    "accounts" : {
-      "title" : "계정을 추가하고 시작해보세요",
-      "desc" : "계정을 추가해서 암호화폐를 관리하세요. 장치에 암호화 자산 앱이 설치되어 있어야 합니다",
-      "buttons" : {
-        "addAccount" : "계정 추가",
-        "installApp" : "내 Ledger로 이동하여 앱을 설치합니다",
-        "help" : "도움말"
-      }
-    }
   },
   "genuinecheck" : {
     "deviceInBootloader" : "Bootloader 모드 장치 <1>Continue<1>를 클릭하여 업데이트하세요."
@@ -2335,16 +2277,6 @@
     "successTitle" : "주소가 안전하게 공유되었습니다",
     "connectToNoah" : "Noah에 연결 중",
     "steps" : {
-      "options" : {
-        "fromBank" : {
-          "title" : "은행 이체로 받기",
-          "description" : "Cash-to-Stablecoin 계정을 통해 스테이블코인을 받습니다. 등록이 필요합니다."
-        },
-        "fromCrypto" : {
-          "title" : "암호화폐 주소로 받기",
-          "description" : "다른 지갑에서 암호화폐를 받습니다."
-        }
-      },
       "chooseAccount" : {
         "title" : "계정",
         "label" : "입금할 계정",
@@ -2530,6 +2462,10 @@
     "title" : "{{currency}} 전송",
     "available" : "사용 가능 {{amount}}",
     "to" : "받는 사람:",
+    "addressDisclaimer" : {
+      "accessibilityLabel" : "수령인 주소 정보",
+      "description" : "Ledger 장치가 전체 주소를 안전하게 표시합니다. 원본 소스의 주소와 정확히 일치하는지 확인하세요."
+    },
     "placeholder" : "주소 또는 ENS를 입력하세요",
     "placeholderNoENS" : "주소 입력",
     "recent" : "최근 항목",
@@ -4988,7 +4924,6 @@
   "settings" : {
     "title" : "설정",
     "discreet" : "토글 디스크리트 모드",
-    "helpButton" : "도움말",
     "tabs" : {
       "display" : "일반",
       "currencies" : "암호화폐",
@@ -5543,7 +5478,7 @@
       },
       "tokenBlacklist" : {
         "title" : "숨겨진 토큰",
-        "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
+        "desc" : "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count" : "1개의 토큰",
         "count_other" : "{{count}}개의 토큰"
       },
@@ -5657,9 +5592,6 @@
     }
   },
   "informationCenter" : {
-    "tooltip" : "정보 센터",
-    "ongoingIncidentsTooltip" : "현재 진행 중인 ({{count}})개의 사건이 있습니다",
-    "ongoingIncidentsTooltip_other" : "진행 중 인시던트 {{count}}개",
     "tabs" : {
       "announcements" : "뉴스",
       "announcementsUnseen" : "뉴스 ({{unseenCount}})",
@@ -9036,7 +8968,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo 비공개 잔액 설정하기",
         "description" : "Ledger Wallet은 조회 키(view Key)를 통해 비공개 잔액을 표시하고 타사 서비스를 통해 비공개 트랜잭션을 처리합니다. <0>자세히 알아보기</0>",
-        "bullets" : ["읽기 전용 권한을 통한 비공개 잔액 표시", "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,", "자금 사용이나 서명은 사용자 본인만 가능합니다.", "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,", "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."],
+        "bullets" : ["뷰 키(View key)를 사용하면 Ledger Wallet에서 비공개 잔액을 복호화하여 읽기 전용으로 확인할 수 있습니다.", "Ledger 사이너를 통해 오직 본인만이 서명하고 자산을 사용할 수 있습니다.", "Aleo 트랜잭션에는 영지식 증명이 필요하며, 이를 위해 상당한 컴퓨팅 파워가 요구됩니다.", "빠른 트랜잭션 처리를 위해 증명 생성은 외부 Aleo 네트워크 서비스에서 담당합니다."],
         "cta" : {
           "allow" : "허용",
           "cancel" : "취소"
@@ -9320,10 +9252,37 @@
     "title" : "연락처",
     "addContact" : "연락처 추가",
     "addAddress" : "주소 추가",
+    "addExternalAddress" : "외부 주소 추가",
+    "addAddressEntry" : {
+      "title" : "주소 입력",
+      "addressPlaceholder" : "주소 또는 ENS",
+      "confirmAddress" : "계속해서 검토하기",
+      "validatingAddress" : "주소 확인 중",
+      "validAddress" : "유효한 주소",
+      "invalidAddress" : "유효하지 않은 주소",
+      "domainNotFound" : "도메인을 찾을 수 없음",
+      "sanctionedAddress" : "This address is sanctioned and cannot be used.",
+      "validationUnavailable" : "일시적으로 주소를 확인할 수 없습니다.",
+      "ensDisclaimer" : "이 ENS 이름은 상단에 표시된 주소로 연결됩니다."
+    },
+    "addAddressName" : {
+      "inputLabel" : "Address name",
+      "continueToReview" : "Continue to review",
+      "invalidLabel" : "Special characters are not allowed.",
+      "duplicateLabel" : "This address name is already used for this contact.",
+      "tooLongLabel" : "Address names must be 32 characters or fewer."
+    },
+    "addAddressReview" : {
+      "title" : "Review address",
+      "continue" : "Confirm address",
+      "successTitle" : "Address saved",
+      "close" : "Close"
+    },
     "addContactDrawer" : {
       "namePlaceholder" : "연락처명",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
-      "invalidNameError" : "특수 문자는 허용되지 않습니다."
+      "invalidNameError" : "특수 문자는 허용되지 않습니다.",
+      "duplicateNameError" : "This contact name is already in use."
     },
     "searchPlaceholder" : "연락처 검색",
     "searchNoResults" : "검색된 연락처가 없습니다",
@@ -9334,6 +9293,7 @@
       "name" : "나"
     },
     "detail" : {
+      "meDisplayName" : "{{name}}(내 주소)",
       "emptyState" : {
         "meTitle" : "등록된 주소가 없습니다",
         "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
@@ -9348,6 +9308,29 @@
       "edit" : "편집",
       "delete" : "삭제",
       "networkTag" : "{{name}} 네트워크"
+    },
+    "detailActions" : {
+      "editContact" : "Edit contact",
+      "deleteContact" : "Delete contact"
+    },
+    "editContact" : {
+      "title" : "Edit contact",
+      "namePlaceholder" : "Contact name",
+      "namingDisclaimer" : "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges" : "Apply changes",
+      "invalidNameError" : "Special characters are not allowed."
+    },
+    "deleteContact" : {
+      "title" : "Delete contact?",
+      "description" : "Deleting this contact will erase all associated addresses.",
+      "confirm" : "Delete",
+      "cancel" : "Cancel"
+    },
+    "editSigner" : {
+      "title" : "Confirm on your device",
+      "description" : "Connect and unlock your Ledger device to confirm this change.",
+      "confirm" : "Continue",
+      "cancel" : "Cancel"
     },
     "ledgerSyncIntroduction" : {
       "description" : "연락처는 Ledger 장치를 통해 종단간 암호화되어 모든 장치에 동기화되며, 오직 사용자 본인만 잠금을 해제할 수 있습니다.",
