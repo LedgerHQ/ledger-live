@@ -104,13 +104,10 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.selectAssetInDrawer(account);
   }
 
-  /**
-   * Buy/Sell runs inside the PTX (swap) live app webview. That app occasionally
-   * stays stuck on its loading spinner and never renders the amount screen, so the
-   * crypto selector never appears and the flow times out on a bare `.textContent()`.
-   * Wait for the selector and, if it never shows, reload the webview and retry —
-   * the same recovery the Borrow webview uses (see borrow.page.ts).
-   */
+/**
+ * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
+ * Mirrors the recovery used in borrow.page.ts.
+ */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForCryptoSelectorReady() {
     const readyTimeout = 30_000;
