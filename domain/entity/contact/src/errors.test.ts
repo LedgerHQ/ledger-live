@@ -1,6 +1,7 @@
 import {
   ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
+  DuplicateContactNameError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
@@ -8,6 +9,7 @@ import {
 describe("errors", () => {
   it.each([
     [new InvalidContactNameError(), "InvalidContactNameError"],
+    [new DuplicateContactNameError(), "DuplicateContactNameError"],
     [new InvalidContactAddressLabelError(), "InvalidContactAddressLabelError"],
     [
       new DuplicateContactAddressLabelError(),
