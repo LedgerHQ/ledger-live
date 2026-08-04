@@ -10205,6 +10205,10 @@
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
+      "sanctioned": {
+        "description": "This wallet address is sanctioned by international laws and regulations.",
+        "learnMore": "Learn more"
+      },
       "validationUnavailable": "Address validation is temporarily unavailable",
       "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
     },

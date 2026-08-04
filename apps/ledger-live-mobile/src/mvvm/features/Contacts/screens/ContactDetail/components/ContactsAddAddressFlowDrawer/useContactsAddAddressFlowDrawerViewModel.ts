@@ -1,3 +1,4 @@
+import React from "react";
 import { Platform } from "react-native";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
@@ -7,6 +8,7 @@ import {
 import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useContactsCurrencySelectionAdapter } from "../../../../hooks/useContactsCurrencySelectionAdapter";
+import { ContactsSanctionedAddressBanner } from "./ContactsSanctionedAddressBanner";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
 function resolveDrawerStep(
@@ -71,6 +73,7 @@ export function useContactsAddAddressFlowDrawerViewModel({
               validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
             },
+            sanctionedAddressBanner: React.createElement(ContactsSanctionedAddressBanner),
             bottomOffset,
             onChangeText: onAddressChange,
             onConfirm: onAddressConfirm,

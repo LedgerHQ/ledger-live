@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import type { AddAddressEntryLabels, AddAddressEntryState } from "./types";
@@ -135,6 +136,34 @@ describe("ContactsAddAddressEntry", () => {
     expect(screen.getByTestId("contacts-add-address-input").props.helperText).toBe(
       "Validating address",
     );
+    expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
+  });
+
+  it("should render the sanctioned banner without a redundant helper", () => {
+    render(
+      <ContactsAddAddressEntry
+        addressEntry={{
+          status: "invalid",
+          value: VALID_ADDRESS,
+          resolvedAddress: null,
+          inputMethod: "manual",
+          error: "sanctioned",
+        }}
+        labels={labels}
+        sanctionedAddressBanner={
+          <Text testID="contacts-sanctioned-address-banner">Sanctioned</Text>
+        }
+        onChangeText={jest.fn()}
+        onConfirm={jest.fn()}
+        onQrCodeClick={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-input").props).toMatchObject({
+      helperText: undefined,
+      status: "error",
+    });
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeTruthy();
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
   });
 

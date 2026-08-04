@@ -16,6 +16,7 @@ export function ContactsAddAddressEntryView({
   bottomPadding,
   inputStatus,
   helperText,
+  sanctionedAddressBanner,
   showEnsDisclaimer,
   isConfirmEnabled,
   onAddressChange,
@@ -44,6 +45,7 @@ export function ContactsAddAddressEntryView({
             autoCorrect={false}
             spellCheck={false}
           />
+          {sanctionedAddressBanner}
           {showEnsDisclaimer ? (
             <Banner
               testID="contacts-add-address-ens-disclaimer"
