@@ -28,7 +28,7 @@ const Header = ({ onClose, displayTitle, companionStep }: Props) => {
       width="100vw"
       justifyContent="space-between"
       position="sticky"
-      bg={backgroundColor}
+      bg="background.default"
       top={0}
       left={0}
       zIndex={8}
