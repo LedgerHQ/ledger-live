@@ -1,4 +1,4 @@
-import { AssetsDataWithPagination } from "../types";
+import { AssetsDataWithPagination } from "./types";
 
 const emptyData = (): AssetsDataWithPagination => ({
   cryptoAssets: {},

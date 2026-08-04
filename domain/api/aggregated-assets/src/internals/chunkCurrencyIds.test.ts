@@ -1,4 +1,4 @@
-import { chunkCurrencyIds } from "../chunkCurrencyIds";
+import { chunkCurrencyIds } from "./chunkCurrencyIds";
 
 const makeIds = (n: number, prefix = "cur") => Array.from({ length: n }, (_, i) => `${prefix}${i}`);
 

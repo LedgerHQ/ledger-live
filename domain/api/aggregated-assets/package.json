@@ -39,6 +39,7 @@
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-interest-rate": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
     "@shared/env": "workspace:*"
   },
   "peerDependencies": {

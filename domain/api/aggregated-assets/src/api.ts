@@ -1,287 +1,131 @@
+import { dadaApi } from "@shared/api-services";
 import {
-  createApi,
-  fetchBaseQuery,
-  FetchBaseQueryError,
-  FetchBaseQueryMeta,
-  QueryReturnValue,
-} from "@reduxjs/toolkit/query/react";
-import { getEnv } from "@shared/env";
-import type { RawApiResponse } from "./schema";
-import {
-  AssetsAdditionalData,
-  AssetsData,
   AssetsDataTags,
-  AssetsDataWithPagination,
-  GetAssetsDataParams,
-  GetAssetsByCategoryParams,
   ONE_DAY_IN_SECONDS,
-  PageParam,
+  type AssetsData,
+  type AssetsDataWithPagination,
+  type GetAssetsByCategoryParams,
+  type GetAssetsDataParams,
+  type PageParam,
 } from "./types";
-import { convertApiAssets, transformAssetsResponse } from "./transforms";
+import { transformAssetsResponse } from "./transforms";
+import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
+import { buildAssetsQueryParams, fetchAssetsPage, resolveBaseUrl } from "./requests";
 import { chunkCurrencyIds } from "./internals/chunkCurrencyIds";
 import { deepMergeCryptoAssets } from "./internals/deepMergeCryptoAssets";
+import { emptyAssetsData } from "./internals/emptyAssetsData";
+import { allSettled } from "./internals/allSettled";
 
-const ALLOWED_DADA_HOSTS = new Set(["dada.api.ledger.com", "dada.api.ledger-test.com"]);
-
-type SettledResult<T> = { status: "fulfilled"; value: T } | { status: "rejected"; reason: unknown };
-
-function allSettled<T>(promises: Promise<T>[]): Promise<SettledResult<T>[]> {
-  return Promise.all(
-    promises.map(p =>
-      p
-        .then(value => ({ status: "fulfilled" as const, value }))
-        .catch(reason => ({ status: "rejected" as const, reason })),
-    ),
-  );
-}
-
-function assertDadaApiUrl(url: URL): void {
-  if (!ALLOWED_DADA_HOSTS.has(url.hostname)) {
-    throw new Error(`Blocked request to untrusted host: ${url.hostname}`);
-  }
-}
-
-function emptyAssetsData(): AssetsData {
-  return {
-    cryptoAssets: {},
-    networks: {},
-    cryptoOrTokenCurrencies: {},
-    interestRates: {},
-    markets: {},
-    currenciesOrder: { metaCurrencyIds: [], key: "", order: "" },
-  };
-}
-
-export function buildAssetsQueryParams(
-  queryArg: GetAssetsDataParams,
-  opts?: { pageSize?: number; cursor?: string },
-): Record<string, unknown> {
-  return {
-    pageSize: opts?.pageSize ?? 100,
-    ...(opts?.cursor && { cursor: opts.cursor }),
-    ...(queryArg.useCase && { transaction: queryArg.useCase }),
-    ...(queryArg.currencyIds &&
-      queryArg.currencyIds.length > 0 && {
-        currencyIds: queryArg.currencyIds,
-      }),
-    ...(queryArg.networkIds &&
-      queryArg.networkIds.length > 0 && {
-        networkIds: queryArg.networkIds.join(","),
-      }),
-    ...(queryArg.categories &&
-      queryArg.categories.length > 0 && {
-        categories: queryArg.categories.join(","),
-      }),
-    ...(queryArg.search && { search: queryArg.search }),
-    product: queryArg.product,
-    minVersion: queryArg.version,
-    ...(queryArg.includeTestNetworks && { includeTestNetworks: queryArg.includeTestNetworks }),
-    additionalData: queryArg.additionalData || [
-      AssetsAdditionalData.Apy,
-      AssetsAdditionalData.MarketTrend,
-    ],
-  };
-}
-
-function resolveBaseUrl(queryArg: { isStaging?: boolean }): string {
-  return queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-}
-
-async function fetchAssetsPage(
-  baseUrl: string,
-  queryArg: GetAssetsDataParams,
-): Promise<AssetsData> {
-  const params = buildAssetsQueryParams(queryArg);
-  const url = new URL(`${baseUrl}/assets`);
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) {
-      url.searchParams.set(key, Array.isArray(value) ? value.join(",") : String(value));
-    }
-  }
-
-  assertDadaApiUrl(url);
-  const response = await fetch(url.toString());
-
-  if (!response.ok) {
-    throw new Error(`DADA fetch failed: ${response.status} ${response.statusText}`);
-  }
-
-  const raw: RawApiResponse = await response.json();
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(raw.cryptoOrTokenCurrencies);
-
-  return {
-    ...raw,
-    cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
-  };
-}
-
-async function collectAllByCategory(
-  queryArg: GetAssetsByCategoryParams,
-  extract: (data: RawApiResponse) => string[],
-): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>> {
-  try {
-    const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-    const collected: string[] = [];
-    let cursor: string | undefined;
-
-    do {
-      const url = new URL(`${baseUrl}/assets`);
-      url.searchParams.set("categories", queryArg.category);
-      url.searchParams.set("product", queryArg.product);
-      url.searchParams.set("pageSize", "100");
-      url.searchParams.set("minVersion", queryArg.version);
-      if (cursor) {
-        url.searchParams.set("cursor", cursor);
-      }
-
-      assertDadaApiUrl(url);
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        return {
-          error: {
-            status: response.status,
-            data: `Failed to fetch assets by category: ${response.statusText}`,
+/*
+ * `injectEndpoints` adds this use case's endpoints to the shared DADA service api, and
+ * `enhanceEndpoints` widens its tag union in place — `injectEndpoints` does not accept `tagTypes`.
+ * Both mutate and return the same object, so one reducer, one middleware and one cache slice serve
+ * every use case on this backend.
+ *
+ * That single slice is load-bearing: `createCurrencyDataSelector` hand-scans
+ * `state.assetsDataApi.queries` across every cache entry, which is how interest rates and market
+ * trend fetched by one query reach a caller that ran a different one.
+ */
+export const assetsDataApi = dadaApi
+  .enhanceEndpoints({ addTagTypes: [AssetsDataTags.Assets] })
+  .injectEndpoints({
+    endpoints: build => ({
+      getAssetsData: build.infiniteQuery<AssetsDataWithPagination, GetAssetsDataParams, PageParam>({
+        query: ({ pageParam, queryArg }) => ({
+          url: `${resolveBaseUrl(queryArg)}/assets`,
+          params: buildAssetsQueryParams(queryArg, { cursor: pageParam?.cursor }),
+        }),
+        providesTags: [AssetsDataTags.Assets],
+        transformResponse: transformAssetsResponse,
+        infiniteQueryOptions: {
+          initialPageParam: {
+            cursor: "",
           },
-        };
-      }
-
-      const data: RawApiResponse = await response.json();
-      collected.push(...extract(data));
-      cursor = response.headers.get("x-ledger-next") || undefined;
-    } while (cursor);
-
-    return { data: collected };
-  } catch (error) {
-    return {
-      error: {
-        status: "FETCH_ERROR",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-    };
-  }
-}
-
-export function fetchAllAssetsByCategory(queryArg: GetAssetsByCategoryParams) {
-  return collectAllByCategory(queryArg, data =>
-    Object.values(data.cryptoAssets).map(a => a.ticker),
-  );
-}
-
-export function fetchAllAssetCurrencyIdsByCategory(queryArg: GetAssetsByCategoryParams) {
-  return collectAllByCategory(queryArg, data =>
-    Object.values(data.cryptoAssets).flatMap(meta => Object.values(meta.assetsIds)),
-  );
-}
-
-export const assetsDataApi = createApi({
-  /*
-   * FROZEN. createCurrencyDataSelector hand-scans state.assetsDataApi.queries by string, and
-   * Storybook stories preload this exact key. Renaming it silently returns undefined for every
-   * market and interest-rate lookup, with no type error.
-   */
-  reducerPath: "assetsDataApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "", // Will be overridden in query
-  }),
-  tagTypes: [AssetsDataTags.Assets],
-  endpoints: build => ({
-    getAssetsData: build.infiniteQuery<AssetsDataWithPagination, GetAssetsDataParams, PageParam>({
-      query: ({ pageParam, queryArg }) => ({
-        url: `${resolveBaseUrl(queryArg)}/assets`,
-        params: buildAssetsQueryParams(queryArg, { cursor: pageParam?.cursor }),
-      }),
-      providesTags: [AssetsDataTags.Assets],
-      transformResponse: transformAssetsResponse,
-      infiniteQueryOptions: {
-        initialPageParam: {
-          cursor: "",
+          getNextPageParam: lastPage => {
+            if (lastPage.pagination.nextCursor) {
+              return {
+                cursor: lastPage.pagination.nextCursor,
+              };
+            } else {
+              return undefined;
+            }
+          },
         },
-        getNextPageParam: lastPage => {
-          if (lastPage.pagination.nextCursor) {
-            return {
-              cursor: lastPage.pagination.nextCursor,
-            };
-          } else {
-            return undefined;
-          }
-        },
-      },
-    }),
-    getAssetData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
-      query: queryArg => ({
-        url: `${resolveBaseUrl(queryArg)}/assets`,
-        params: buildAssetsQueryParams(queryArg, { pageSize: 1 }),
       }),
-      providesTags: [AssetsDataTags.Assets],
-      transformResponse: transformAssetsResponse,
-    }),
-    getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-      queryFn: async queryArg => {
-        return fetchAllAssetsByCategory(queryArg);
-      },
-      keepUnusedDataFor: ONE_DAY_IN_SECONDS,
-    }),
-    getAssetCurrencyIdsByCategory: build.query<string[], GetAssetsByCategoryParams>({
-      queryFn: async queryArg => {
-        return fetchAllAssetCurrencyIdsByCategory(queryArg);
-      },
-      keepUnusedDataFor: ONE_DAY_IN_SECONDS,
-    }),
-    getChunkedAssetsData: build.query<AssetsData, GetAssetsDataParams>({
-      queryFn: async queryArg => {
-        try {
-          const chunks = chunkCurrencyIds(queryArg.currencyIds ?? []);
-          const baseUrl = resolveBaseUrl(queryArg);
+      getAssetData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
+        query: queryArg => ({
+          url: `${resolveBaseUrl(queryArg)}/assets`,
+          params: buildAssetsQueryParams(queryArg, { pageSize: 1 }),
+        }),
+        providesTags: [AssetsDataTags.Assets],
+        transformResponse: transformAssetsResponse,
+      }),
+      getAssetsByCategory: build.query<string[], GetAssetsByCategoryParams>({
+        queryFn: async queryArg => {
+          return fetchAllAssetsByCategory(queryArg);
+        },
+        keepUnusedDataFor: ONE_DAY_IN_SECONDS,
+      }),
+      getAssetCurrencyIdsByCategory: build.query<string[], GetAssetsByCategoryParams>({
+        queryFn: async queryArg => {
+          return fetchAllAssetCurrencyIdsByCategory(queryArg);
+        },
+        keepUnusedDataFor: ONE_DAY_IN_SECONDS,
+      }),
+      getChunkedAssetsData: build.query<AssetsData, GetAssetsDataParams>({
+        queryFn: async queryArg => {
+          try {
+            const chunks = chunkCurrencyIds(queryArg.currencyIds ?? []);
+            const baseUrl = resolveBaseUrl(queryArg);
 
-          if (chunks.length === 0) {
-            return { data: emptyAssetsData() };
-          }
+            if (chunks.length === 0) {
+              return { data: emptyAssetsData() };
+            }
 
-          const results = await allSettled(
-            chunks.map(chunkIds =>
-              fetchAssetsPage(baseUrl, { ...queryArg, currencyIds: chunkIds }),
-            ),
-          );
+            const results = await allSettled(
+              chunks.map(chunkIds =>
+                fetchAssetsPage(baseUrl, { ...queryArg, currencyIds: chunkIds }),
+              ),
+            );
 
-          const responses = results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
+            const responses = results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
 
-          if (responses.length === 0) {
-            const firstError = results.find(r => r.status === "rejected");
-            const reason = firstError?.status === "rejected" ? firstError.reason : undefined;
+            if (responses.length === 0) {
+              const firstError = results.find(r => r.status === "rejected");
+              const reason = firstError?.status === "rejected" ? firstError.reason : undefined;
+              return {
+                error: {
+                  status: "FETCH_ERROR",
+                  error: reason instanceof Error ? reason.message : "All DADA chunks failed",
+                },
+              };
+            }
+
+            const merged = responses.reduce<AssetsData>((acc, res) => {
+              deepMergeCryptoAssets(acc.cryptoAssets, res.cryptoAssets);
+              Object.assign(acc.networks, res.networks);
+              Object.assign(acc.cryptoOrTokenCurrencies, res.cryptoOrTokenCurrencies);
+              Object.assign(acc.interestRates, res.interestRates);
+              Object.assign(acc.markets, res.markets);
+              acc.currenciesOrder.metaCurrencyIds.push(...res.currenciesOrder.metaCurrencyIds);
+              return acc;
+            }, emptyAssetsData());
+
+            return { data: merged };
+          } catch (error) {
             return {
               error: {
                 status: "FETCH_ERROR",
-                error: reason instanceof Error ? reason.message : "All DADA chunks failed",
+                error: error instanceof Error ? error.message : "Unknown error",
               },
             };
           }
-
-          const merged = responses.reduce<AssetsData>((acc, res) => {
-            deepMergeCryptoAssets(acc.cryptoAssets, res.cryptoAssets);
-            Object.assign(acc.networks, res.networks);
-            Object.assign(acc.cryptoOrTokenCurrencies, res.cryptoOrTokenCurrencies);
-            Object.assign(acc.interestRates, res.interestRates);
-            Object.assign(acc.markets, res.markets);
-            acc.currenciesOrder.metaCurrencyIds.push(...res.currenciesOrder.metaCurrencyIds);
-            return acc;
-          }, emptyAssetsData());
-
-          return { data: merged };
-        } catch (error) {
-          return {
-            error: {
-              status: "FETCH_ERROR",
-              error: error instanceof Error ? error.message : "Unknown error",
-            },
-          };
-        }
-      },
-      providesTags: [AssetsDataTags.Assets],
-      keepUnusedDataFor: ONE_DAY_IN_SECONDS,
+        },
+        providesTags: [AssetsDataTags.Assets],
+        keepUnusedDataFor: ONE_DAY_IN_SECONDS,
+      }),
     }),
-  }),
-});
+  });
 
 export const {
   useGetAssetsDataInfiniteQuery,

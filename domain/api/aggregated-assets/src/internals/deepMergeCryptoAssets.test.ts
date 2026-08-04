@@ -1,5 +1,5 @@
-import { deepMergeCryptoAssets } from "../deepMergeCryptoAssets";
-import type { CryptoAssetMeta } from "../../entities";
+import { deepMergeCryptoAssets } from "./deepMergeCryptoAssets";
+import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 
 type MetaMap = Record<string, CryptoAssetMeta>;
 

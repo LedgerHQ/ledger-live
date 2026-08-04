@@ -2,7 +2,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
 import type { CurrenciesOrder, NetworkInfo } from "./schema";
-import type { PartialMarketItemResponse } from "./internals/market";
+import type { PartialMarketItemResponse } from "./market";
 
 // Types for transformed API response (after transformation)
 export interface AssetsData {
