@@ -6,8 +6,8 @@ import {
   NativeSyntheticEvent,
 } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
+import { LazyOnboardingBannerView } from "@features/flow-lazy-onboarding-banner";
 import { LNUpsellBanner } from "LLM/features/LNUpsell/components/LNUpsellBanner";
-import { LazyOnboardingBannerView } from "LLM/features/LazyOnboardingBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { width } from "~/helpers/normalizeSize";
