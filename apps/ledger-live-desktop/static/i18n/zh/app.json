@@ -100,7 +100,6 @@
     "selectNoResults" : "未找到与 \"{{query}} \" 匹配的结果",
     "sortBy" : "排序方式",
     "save" : "保存",
-    "lock" : "锁定",
     "showMore" : "显示更多",
     "backToMatchingURL" : "返回 {{appName}}",
     "back" : "返回",
@@ -139,11 +138,8 @@
       "syncing" : "正在同步...",
       "upToDate" : "已同步",
       "outdated" : "已暂停",
-      "error" : "同步错误",
       "refresh" : "刷新",
-      "devTools" : "开发工具",
-      "failingSync_one" : "未同步的账户：",
-      "failingSync_other" : "未同步的账户："
+      "devTools" : "开发工具"
     },
     "exchange" : "兑换",
     "info" : "信息",
@@ -306,24 +302,14 @@
   "sidebar" : {
     "card" : "卡",
     "paytab" : "付款",
-    "menu" : "菜单",
-    "stars" : "已标星账户",
     "accounts" : "账户",
-    "manager" : "我的 Ledger",
-    "earn" : "赚取",
-    "exchange" : "买入 / 卖出",
     "swap" : "互换",
-    "perps" : "永续合约",
-    "borrow" : "借入",
     "home" : "首页",
     "refer" : "推荐好友",
-    "lend" : "借出",
     "catalog" : "探索",
-    "market" : "市场",
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "星标账户以在此显示。",
     "tooltip" : "星标账户"
   },
   "bridge" : {
@@ -1153,18 +1139,9 @@
     }
   },
   "help" : {
-    "title" : "帮助和支持",
-    "gettingStarted" : {
-      "title" : "快速入门",
-      "desc" : "从这里开始"
-    },
     "status" : {
       "title" : "Ledger 状态",
       "desc" : "检查我们的系统状态"
-    },
-    "helpCenter" : {
-      "title" : "Ledger 客服",
-      "desc" : "获得帮助"
     },
     "ledgerAcademy" : {
       "title" : "Ledger 学院",
@@ -1531,7 +1508,6 @@
     "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
-    "title" : "资产组合",
     "header" : "资产组合余额",
     "emptyAccountTile" : {
       "desc" : "添加账户以管理其他加密货币资产",
@@ -1540,21 +1516,6 @@
     "recentActivity" : "近期操作",
     "totalBalance" : "总余额",
     "transactionsPendingConfirmation" : "有些交易尚未确认。这些交易将反映在您的余额中，并在确认后可用。",
-    "featuredButtons" : {
-      "buySell" : {
-        "title" : "买入 / 卖出",
-        "description" : "通过我们值得信赖的服务提供商进行买卖"
-      },
-      "swap" : {
-        "title" : "互换",
-        "description" : "转换加密货币",
-        "label" : "热门"
-      },
-      "earn" : {
-        "title" : "权益质押",
-        "description" : "获得加密货币权益质押奖励"
-      }
-    },
     "recoverBanner" : {
       "subscribeDone" : {
         "title" : "提醒：完成订阅 Ledger Recover 服务",
@@ -1604,25 +1565,6 @@
     "taprootWarning" : "确保发送方支持 taproot",
     "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励",
     "utxoWarning" : "出于隐私原因，每笔交易都会生成一个新地址。以前的地址仍然有效。"
-  },
-  "emptyState" : {
-    "dashboard" : {
-      "title" : "在您的设备上安装应用程序",
-      "desc" : "前往 My Ledger（我的 Ledger）在您的设备上安装应用程序。您的设备上安装应用程序后即可添加账户。",
-      "buttons" : {
-        "installApp" : "前往 My Ledger（我的 Ledger）",
-        "help" : "帮助"
-      }
-    },
-    "accounts" : {
-      "title" : "添加账户以开始",
-      "desc" : "添加账户来开始管理您的加密资产。您必须在您的设备上安装您的加密资产的应用程序。",
-      "buttons" : {
-        "addAccount" : "添加账户",
-        "installApp" : "前往 My Ledger（我的 Ledger）安装应用程序",
-        "help" : "帮助"
-      }
-    }
   },
   "genuinecheck" : {
     "deviceInBootloader" : "设备处于 Bootloader 启动装载模式。点击 <1>Continue</1>（继续）进行更新。"
@@ -2335,16 +2277,6 @@
     "successTitle" : "地址已安全共享",
     "connectToNoah" : "正在连接到 Noah",
     "steps" : {
-      "options" : {
-        "fromBank" : {
-          "title" : "通过银行转账",
-          "description" : "通过现金转稳定币账户接收稳定币需要注册"
-        },
-        "fromCrypto" : {
-          "title" : "通过加密货币地址",
-          "description" : "从另一个钱包接收加密货币。"
-        }
-      },
       "chooseAccount" : {
         "title" : "账户",
         "label" : "信贷账户",
@@ -2530,6 +2462,10 @@
     "title" : "发送 {{currency}}",
     "available" : "可用 {{amount}}",
     "to" : "至：",
+    "addressDisclaimer" : {
+      "accessibilityLabel" : "关于接收者地址",
+      "description" : "您的 Ledger 设备将安全地显示完整地址。请确保其与原始来源的地址一致。"
+    },
     "placeholder" : "请输入地址或 ENS",
     "placeholderNoENS" : "输入地址",
     "recent" : "最近",
@@ -4988,7 +4924,6 @@
   "settings" : {
     "title" : "设置",
     "discreet" : "切换隐藏模式",
-    "helpButton" : "帮助",
     "tabs" : {
       "display" : "常规",
       "currencies" : "加密资产",
@@ -5543,7 +5478,7 @@
       },
       "tokenBlacklist" : {
         "title" : "隐藏代币列表",
-        "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
+        "desc" : "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count" : "1 枚代币",
         "count_other" : "{{count}} 枚代币"
       },
@@ -5657,9 +5592,6 @@
     }
   },
   "informationCenter" : {
-    "tooltip" : "信息中心",
-    "ongoingIncidentsTooltip" : "有 {{count}} 个正在发生的事件",
-    "ongoingIncidentsTooltip_other" : "有 {{count}} 个正在发生的事件",
     "tabs" : {
       "announcements" : "新闻",
       "announcementsUnseen" : "新闻 ({{unseenCount}})",
@@ -9036,7 +8968,7 @@
       "stepViewKeyWarning" : {
         "title" : "设置 Aleo 私密余额",
         "description" : "Ledger Wallet 存储您的查看密钥以显示您的私密余额，并使用第三方服务来处理私密交易。<0>了解更多</0>",
-        "bullets" : ["只读权限，旨在解密您的私密余额", "Ledger 无法发送或使用您的资金", "只有您本人可以签署和使用您的资金", "为确保快速处理，证明生成由第三方证明者服务处理", "证明者无法访问或使用您的资金"],
+        "bullets" : ["查看密钥提供只读权限，以解密您在 Ledger Wallet 内的私密余额", "只有您本人可以通过 Ledger 签署设备签署并使用您的资金", "Aleo 交易需要零知识证明，这需要消耗大量的计算能力", "证明生成由外部 Aleo 网络服务处理，以加速交易"],
         "cta" : {
           "allow" : "允许",
           "cancel" : "取消"
@@ -9320,10 +9252,37 @@
     "title" : "联系人",
     "addContact" : "添加联系人",
     "addAddress" : "添加地址",
+    "addExternalAddress" : "添加外部地址",
+    "addAddressEntry" : {
+      "title" : "输入地址",
+      "addressPlaceholder" : "地址或 ENS",
+      "confirmAddress" : "继续核对",
+      "validatingAddress" : "正在验证地址",
+      "validAddress" : "有效地址",
+      "invalidAddress" : "无效地址",
+      "domainNotFound" : "未找到域名",
+      "sanctionedAddress" : "该地址已被制裁，无法使用。",
+      "validationUnavailable" : "地址验证暂时不可用。",
+      "ensDisclaimer" : "此 ENS 名称解析为上方显示的地址。"
+    },
+    "addAddressName" : {
+      "inputLabel" : "地址名称",
+      "continueToReview" : "继续核对",
+      "invalidLabel" : "不允许使用特殊字符。",
+      "duplicateLabel" : "此地址名称已用于此联系人。",
+      "tooLongLabel" : "地址名称必须为 32 个或更少字符。"
+    },
+    "addAddressReview" : {
+      "title" : "核对地址",
+      "continue" : "确认地址",
+      "successTitle" : "地址已保存",
+      "close" : "关闭"
+    },
     "addContactDrawer" : {
       "namePlaceholder" : "联系人姓名",
       "namingDisclaimer" : "为了保护隐私，请避免使用全名和姓氏。使用昵称或仅使用名字+首字母，例如：“John S” 。",
-      "invalidNameError" : "不允许使用特殊字符。"
+      "invalidNameError" : "不允许使用特殊字符。",
+      "duplicateNameError" : "该联系人名称已被使用。"
     },
     "searchPlaceholder" : "搜索联系人",
     "searchNoResults" : "未找到联系人",
@@ -9334,6 +9293,7 @@
       "name" : "我"
     },
     "detail" : {
+      "meDisplayName" : "{{name}}（我）",
       "emptyState" : {
         "meTitle" : "您还没有已保存的地址",
         "contactTitle" : "{{name}} 还没有已保存的地址",
@@ -9348,6 +9308,29 @@
       "edit" : "编辑",
       "delete" : "删除",
       "networkTag" : "{{name}} 网络"
+    },
+    "detailActions" : {
+      "editContact" : "Edit contact",
+      "deleteContact" : "Delete contact"
+    },
+    "editContact" : {
+      "title" : "Edit contact",
+      "namePlaceholder" : "Contact name",
+      "namingDisclaimer" : "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges" : "Apply changes",
+      "invalidNameError" : "Special characters are not allowed."
+    },
+    "deleteContact" : {
+      "title" : "Delete contact?",
+      "description" : "Deleting this contact will erase all associated addresses.",
+      "confirm" : "Delete",
+      "cancel" : "Cancel"
+    },
+    "editSigner" : {
+      "title" : "Confirm on your device",
+      "description" : "Connect and unlock your Ledger device to confirm this change.",
+      "confirm" : "Continue",
+      "cancel" : "Cancel"
     },
     "ledgerSyncIntroduction" : {
       "description" : "您的联系人信息通过您的 Ledger 进行端到端加密，并在您的设备之间进行同步，只有您自己可以解锁。",
