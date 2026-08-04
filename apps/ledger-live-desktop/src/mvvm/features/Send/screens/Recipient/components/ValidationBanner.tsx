@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
-import { Banner } from "@ledgerhq/lumen-ui-react";
-import { SanctionedAddressBanner } from "@features/platform-address-validation";
+import { Banner, Button } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -35,12 +34,16 @@ export function ValidationBanner(props: ValidationBannerProps) {
 
   if (props.type === "sanctioned") {
     return (
-      <SanctionedAddressBanner
+      <Banner
+        appearance="error"
         title="Flagged address"
         description={t("newSendFlow.sanctioned.description")}
-        actionLabel={t("newSendFlow.sanctioned.helpCenter")}
-        onAction={handleHelpCenter}
-        testID="sanctioned-address-banner"
+        primaryAction={
+          <Button appearance="transparent" size="sm" onClick={handleHelpCenter}>
+            {t("newSendFlow.sanctioned.helpCenter")}
+          </Button>
+        }
+        data-testid="sanctioned-address-banner"
       />
     );
   }
