@@ -40,7 +40,7 @@ const memoApplicationRegistry: Record<string, MemoApplicationFn> = {
       comment: {
         ...currentComment,
         // ton stores the memo as a required string, so a cleared memo is "" and never undefined
-        text: memo == null ? "" : String(memo),
+        text: String(memo ?? ""),
       },
     };
   },
