@@ -100,7 +100,7 @@
     "@dfinity/utils": "2.14.0",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",

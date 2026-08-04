@@ -42,7 +42,7 @@
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@shared/env": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "bigint-buffer": "*",

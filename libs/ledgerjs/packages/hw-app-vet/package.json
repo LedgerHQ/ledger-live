@@ -28,7 +28,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@vechain/sdk-core": "2.0.0"
   },
   "scripts": {

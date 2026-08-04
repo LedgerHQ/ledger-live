@@ -27,7 +27,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/logs": "workspace:^"
+    "@ledgerhq/logs": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

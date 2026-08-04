@@ -55,7 +55,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
     "@taquito/rpc": "^23.0.0-RC.0",
     "@taquito/taquito": "^23.0.0-RC.0",
