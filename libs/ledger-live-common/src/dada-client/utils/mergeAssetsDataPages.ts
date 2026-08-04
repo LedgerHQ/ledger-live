@@ -1,1 +1,1 @@
-export { mergeAssetsDataPages } from "@features/platform-aggregated-assets";
+export { mergeAssetsDataPages } from "@domain/api-aggregated-assets";

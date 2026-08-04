@@ -274,7 +274,6 @@
     "@domain/entity-currency-token": "workspace:^",
     "@domain/entity-currency-unit": "workspace:^",
     "@domain/entity-interest-rate": "workspace:^",
-    "@features/platform-aggregated-assets": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",

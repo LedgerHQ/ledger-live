@@ -1,4 +1,4 @@
-import { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import { AssetsDataWithPagination } from "./types";
 
 const emptyData = (): AssetsDataWithPagination => ({
   cryptoAssets: {},
