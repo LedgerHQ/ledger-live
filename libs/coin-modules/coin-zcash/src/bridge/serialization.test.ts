@@ -74,6 +74,7 @@ describe("bridge/serialization", () => {
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
       ufvk: "ufvk1abc",
       birthday: "2016-10-28",
+      shieldedAddress: null,
       lastSyncTimestamp: 123,
       lastProcessedBlock: 1000,
       transactions: [],
@@ -115,6 +116,7 @@ describe("bridge/serialization", () => {
         estimatedTimeRemaining: { hours: 0, minutes: 0 },
         ufvk: "ufvk1abc",
         birthday: "2016-10-28",
+        shieldedAddress: null,
         lastSyncTimestamp: 123,
         lastProcessedBlock: 1000,
         transactions: transactions as NonNullable<ZcashAccountRaw["privateInfo"]>["transactions"],
@@ -173,5 +175,57 @@ describe("bridge/serialization", () => {
     assignFromAccountRaw(raw, account);
 
     expect(account).not.toHaveProperty("privateInfo");
+  });
+
+  describe("shieldedAddress", () => {
+    it("round-trips a non-null shieldedAddress through assignToAccountRaw / assignFromAccountRaw", () => {
+      const raw = makeBitcoinShapedAccountRaw() as ZcashAccountRaw;
+      raw.privateInfo = {
+        orchardBalance: "0",
+        saplingBalance: "0",
+        ironwoodBalance: "0",
+        syncState: "complete",
+        progress: 100,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        ufvk: "uview1test",
+        birthday: null,
+        shieldedAddress: "u1testaddress",
+        lastSyncTimestamp: null,
+        lastProcessedBlock: null,
+        transactions: [],
+      };
+
+      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      assignFromAccountRaw(raw, account);
+      const rawOut = { id: raw.id } as AccountRaw;
+      assignToAccountRaw(account, rawOut);
+
+      expect((rawOut as ZcashAccountRaw).privateInfo?.shieldedAddress).toBe("u1testaddress");
+    });
+
+    it("falls back to null for accounts serialized before this field existed", () => {
+      const raw = makeBitcoinShapedAccountRaw() as ZcashAccountRaw;
+      // Simulate a raw account that was written before shieldedAddress was introduced.
+      const legacyPrivateInfo = {
+        orchardBalance: "0",
+        saplingBalance: "0",
+        ironwoodBalance: "0",
+        syncState: "ready",
+        progress: 0,
+        estimatedTimeRemaining: { hours: 0, minutes: 0 },
+        ufvk: "uview1test",
+        birthday: null,
+        lastSyncTimestamp: null,
+        lastProcessedBlock: null,
+        transactions: [],
+        // shieldedAddress intentionally absent
+      };
+      raw.privateInfo = legacyPrivateInfo as unknown as NonNullable<ZcashAccountRaw["privateInfo"]>;
+
+      const account = { id: raw.id, currency: { id: "zcash" } } as unknown as Account;
+      assignFromAccountRaw(raw, account);
+
+      expect((account as unknown as ZcashAccount).privateInfo?.shieldedAddress).toBeNull();
+    });
   });
 });

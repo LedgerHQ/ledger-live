@@ -35,6 +35,7 @@ const infoWith = (privateInfo: Partial<ZcashAccount["privateInfo"]>, transparent
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
       ufvk: "uview1key",
       birthday: null,
+      shieldedAddress: null,
       lastSyncTimestamp: null,
       lastProcessedBlock: null,
       transactions: [],
@@ -313,6 +314,31 @@ describe("reduceShieldedSyncResult", () => {
         expect(getSessionReservedNullifiers("acc-1").size).toBe(0);
         expect(getSessionReservedNullifiers("acc-2").has(RESERVED_B)).toBe(true);
       });
+    });
+  });
+
+  describe("shieldedAddress carry-forward", () => {
+    it("preserves a non-null shieldedAddress across a sync cycle", () => {
+      const address = "u1testaddress";
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        emptyChunk,
+        infoWith({ shieldedAddress: address }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.shieldedAddress).toBe(address);
+    });
+
+    it("carries null when no shieldedAddress was stored", () => {
+      const output = reduceShieldedSyncResult(
+        { processedOperations: [], accountUpdate: {} },
+        emptyChunk,
+        infoWith({ shieldedAddress: null }),
+        "acc-1",
+      );
+
+      expect(output.accountUpdate.privateInfo?.shieldedAddress).toBeNull();
     });
   });
 });

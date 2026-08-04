@@ -64,6 +64,7 @@ function makeDeps(overrides?: Partial<ZCashClientDeps>): ZCashClientDeps {
       hours: 0,
       minutes: 0,
     })),
+    deriveShieldedAddress: jest.fn<Promise<string>, [string]>(),
     ...overrides,
   };
 }
@@ -525,6 +526,23 @@ describe("createZCashClientWith", () => {
 
       expect(broadcastTransactionJob).toHaveBeenCalledWith(GRPC_URL, "abcd");
       expect(txid).toBe("dd".repeat(32));
+    });
+  });
+
+  describe("deriveShieldedAddress()", () => {
+    it("delegates to deps.deriveShieldedAddress and returns the result", async () => {
+      const address = "u1testaddress";
+      const deriveShieldedAddress = jest
+        .fn<Promise<string>, [string]>()
+        .mockResolvedValue(address);
+      const client = createZCashClientWith(makeDeps({ deriveShieldedAddress }), {
+        grpcUrl: GRPC_URL,
+      });
+
+      const result = await client.deriveShieldedAddress("uview1testufvk");
+
+      expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1testufvk");
+      expect(result).toBe(address);
     });
   });
 });

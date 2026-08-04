@@ -132,6 +132,7 @@ function makeAccount(overrides: Partial<ZcashAccount> = {}): ZcashAccount {
       estimatedTimeRemaining: { hours: 0, minutes: 0 },
       ufvk: MOCK_UFVK,
       birthday: "2024-01-01",
+      shieldedAddress: null,
       lastSyncTimestamp: Date.now(),
       lastProcessedBlock: 3_000_000,
       transactions: [],

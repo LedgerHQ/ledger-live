@@ -805,6 +805,7 @@ export function reduceShieldedSyncResult(
     estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
+    shieldedAddress: existingPrivateInfo?.shieldedAddress ?? null,
     lastSyncTimestamp: Date.now(),
     lastProcessedBlock,
     transactions: allShieldedTx,
