@@ -34,6 +34,10 @@
       "@ledgerhq/source": "./src/pre-ldls/index.ts",
       "default": "./lib/pre-ldls/index.js"
     },
+    "./assets/icons": {
+      "@ledgerhq/source": "./src/assets/icons.ts",
+      "default": "./lib/assets/icons.js"
+    },
     "./*": {
       "@ledgerhq/source": [
         "./src/*.ts",
@@ -80,8 +84,7 @@
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
-    "styled-system": "catalog:",
-    "stylis": "catalog:"
+    "styled-system": "catalog:"
   },
   "peerDependencies": {
     "react": ">=17",

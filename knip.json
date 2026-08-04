@@ -31,6 +31,7 @@
     "**/scripts/**",
     "**/tools/**",
     "**/*.mock.*",
+    "**/.storybook-web/**",
     "**/.eslintrc.guardrails.js",
     "**/.eslintrc.i18n.js",
     "**/.eslintrc.tailwind.js"
@@ -91,37 +92,8 @@
         "stylis"
       ]
     },
-    "./libs/live-countervalues": {
-      "ignoreDependencies": ["@ledgerhq/live-network"]
-    },
     "./libs/live-wallet": {
       "entry": ["src/walletsync/index.ts", "src/liveqr/cross.ts", "src/liveqr/importAccounts.ts"]
-    },
-    "./libs/hw-ledger-key-ring-protocol": {
-      "ignoreDependencies": ["@ledgerhq/live-env"]
-    },
-    "./libs/ui/packages/native": {
-      "entry": [
-        "src/assets/icons.ts",
-        "src/styles/InvertTheme.tsx",
-        "src/icons/Close.tsx",
-        "storybook/stories/index.ts",
-        "index.js"
-      ],
-      "ignoreDependencies": ["stylis"],
-      "ignore": [".storybook*/*", "storybook/constants/*"]
-    },
-    "./libs/ui/packages/icons": {
-      "ignore": ["index.js"]
-    },
-    "./libs/coin-tester-modules/coin-tester-cosmos": {
-      "ignoreDependencies": ["expect"]
-    },
-    "./features/flow/market-banner": {
-      "entry": ["src/components/MarketBanner/index.native.ts"]
-    },
-    "./features/flow/contacts": {
-      "entry": ["src/jest.native.ts"]
     }
   }
 }
