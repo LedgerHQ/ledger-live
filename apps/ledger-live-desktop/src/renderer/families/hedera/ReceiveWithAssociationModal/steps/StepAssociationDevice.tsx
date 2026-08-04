@@ -11,6 +11,7 @@ import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker"
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import type { StepProps } from "../types";
+import { broadcastLogger } from "~/datadog/logs";
 
 const Result = (
   props:
@@ -46,7 +47,12 @@ export default function StepAssociationDevice(props: StepProps) {
   const mevProtected = useSelector(mevProtectionSelector);
   const action = useTransactionAction();
   const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
-  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig,
+    logger: broadcastLogger,
+  });
 
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
 

@@ -22,6 +22,7 @@ type CommonLogEvent = {
   tokenId?: string;
   isTestnet: boolean;
   isSendMax: boolean;
+  intentType: string;
 };
 
 type ErrorLogEvent = {
@@ -72,6 +73,13 @@ export const useBroadcast = ({
         return Promise.resolve(signedOperation.operation);
       }
 
+      const transactionMode =
+        transaction &&
+        transaction !== null &&
+        "mode" in transaction &&
+        typeof transaction.mode === "string"
+          ? transaction.mode
+          : undefined;
       const commonLogEvent: CommonLogEvent = {
         appVersion: getEnv("LEDGER_CLIENT_VERSION"),
         source: broadcastConfig?.source,
@@ -80,6 +88,7 @@ export const useBroadcast = ({
         isTestnet: Boolean(mainAccount.currency.isTestnetFor),
         isSendMax: Boolean(transaction?.useAllAmount),
         ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
+        intentType: transactionMode ?? signedOperation.operation.type,
       };
 
       return execAndWaitAtLeast(3000, async () => {

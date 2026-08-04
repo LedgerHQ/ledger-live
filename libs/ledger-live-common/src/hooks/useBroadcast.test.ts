@@ -15,6 +15,8 @@ jest.mock("../promise", () => ({
   execAndWaitAtLeast: <A>(_ms: number, cb: () => Promise<A>) => cb(),
 }));
 
+const defaultSignedOperation = { operation: { type: "OUT" } } as any;
+
 describe("useBroadcast", () => {
   const mockBroadcast = jest.fn();
   jest.mocked(getAccountBridge).mockReturnValue({
@@ -74,7 +76,7 @@ describe("useBroadcast", () => {
 
       let value: unknown;
       await act(async () => {
-        value = await result.current({} as any);
+        value = await result.current(defaultSignedOperation);
       });
 
       expect(logger).toHaveBeenCalledWith({
@@ -86,6 +88,7 @@ describe("useBroadcast", () => {
         isTestnet: false,
         isSendMax: true,
         source: { type: "coin-module", name: "ledger-live-desktop" },
+        intentType: "OUT",
       });
       expect(value).toEqual({ id: "operation-id", date: new Date(2026, 3, 24) });
     });
@@ -112,6 +115,7 @@ describe("useBroadcast", () => {
           result.current({
             signature: "signed-transaction",
             rawData: { raw_hex: "raw-hex" },
+            operation: { type: "OUT" },
           } as any),
         ).rejects.toThrow(new Error("Broadcast failed"));
       });
@@ -127,6 +131,7 @@ describe("useBroadcast", () => {
         isSendMax: true,
         source: { type: "coin-module", name: "ledger-live-desktop" },
         txPayload: { signature: "signed-transaction", rawData: { raw_hex: "raw-hex" } },
+        intentType: "OUT",
       });
     });
   });
@@ -152,11 +157,67 @@ describe("useBroadcast", () => {
     );
 
     await act(async () => {
-      await result.current({} as any);
+      await result.current(defaultSignedOperation);
     });
 
     expect(logger).toHaveBeenCalledWith(
       expect.objectContaining({ currencyId: "ethereum_sepolia", isTestnet: true }),
     );
+  });
+
+  it("should log mode as intentType when available in transaction", async () => {
+    const logger = jest.fn();
+    mockBroadcast.mockResolvedValue({ id: "operation-id", date: new Date(2026, 3, 24) });
+    setEnv("LEDGER_CLIENT_VERSION", "llc/test");
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+
+    const account = {
+      id: "main-account-id",
+      type: "Account",
+      currency: { id: "ethereum_sepolia", family: "evm", isTestnetFor: "ethereum" },
+    };
+
+    const { result } = renderHook(() =>
+      useBroadcast({
+        account,
+        parentAccount: account,
+        logger,
+        transaction: { mode: "send" },
+      } as any),
+    );
+
+    await act(async () => {
+      await result.current({ operation: { type: "IN" } });
+    });
+
+    expect(logger).toHaveBeenCalledWith(expect.objectContaining({ intentType: "send" }));
+  });
+
+  it("should log type from operation as intentType when mode is not available in transaction", async () => {
+    const logger = jest.fn();
+    mockBroadcast.mockResolvedValue({ id: "operation-id", date: new Date(2026, 3, 24) });
+    setEnv("LEDGER_CLIENT_VERSION", "llc/test");
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+
+    const account = {
+      id: "main-account-id",
+      type: "Account",
+      currency: { id: "ethereum_sepolia", family: "evm", isTestnetFor: "ethereum" },
+    };
+
+    const { result } = renderHook(() =>
+      useBroadcast({
+        account,
+        parentAccount: account,
+        logger,
+        transaction: {},
+      } as any),
+    );
+
+    await act(async () => {
+      await result.current(defaultSignedOperation);
+    });
+
+    expect(logger).toHaveBeenCalledWith(expect.objectContaining({ intentType: "OUT" }));
   });
 });
