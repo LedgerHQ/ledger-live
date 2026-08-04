@@ -131,7 +131,7 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toEqual([mockUsdtToken]);
+    expect(result[0].assets).toEqual([mockUsdtToken]);
   });
 
   it("should group multiple tokens from the same parent currency", async () => {
@@ -145,8 +145,8 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 
   it("should create separate sections for different parent currencies", async () => {
@@ -160,9 +160,9 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(2);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toEqual([mockUsdtToken]);
+    expect(result[0].assets).toEqual([mockUsdtToken]);
     expect(result[1].parentCurrency.id).toBe("polygon");
-    expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
+    expect(result[1].assets).toEqual([mockMaticUsdtToken]);
   });
 
   it("should filter out null/undefined tokens", async () => {
@@ -178,8 +178,8 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 
   it("should handle complex scenario with mixed parent currencies and null tokens", async () => {
@@ -197,11 +197,11 @@ describe("loadBlacklistedTokenSections", () => {
 
     expect(result).toHaveLength(2);
     expect(result[0].parentCurrency.id).toBe("ethereum");
-    expect(result[0].tokens).toHaveLength(2);
-    expect(result[0].tokens).toEqual([mockUsdtToken, mockUsdcToken]);
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
     expect(result[1].parentCurrency.id).toBe("polygon");
-    expect(result[1].tokens).toHaveLength(1);
-    expect(result[1].tokens).toEqual([mockMaticUsdtToken]);
+    expect(result[1].assets).toHaveLength(1);
+    expect(result[1].assets).toEqual([mockMaticUsdtToken]);
   });
 
   it("should call findTokenById for all token IDs in parallel", async () => {
@@ -214,5 +214,43 @@ describe("loadBlacklistedTokenSections", () => {
     expect(mockFindTokenById).toHaveBeenCalledWith("token1");
     expect(mockFindTokenById).toHaveBeenCalledWith("token2");
     expect(mockFindTokenById).toHaveBeenCalledWith("token3");
+  });
+
+  it("should resolve a native coin id from the registry without a CAL lookup", async () => {
+    const result = await loadBlacklistedTokenSections(["bitcoin"]);
+
+    expect(mockFindTokenById).not.toHaveBeenCalled();
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("bitcoin");
+    expect(result[0].assets).toHaveLength(1);
+    expect(result[0].assets[0].id).toBe("bitcoin");
+  });
+
+  it("should merge a native coin and a token sharing the same parent currency", async () => {
+    mockFindTokenById.mockResolvedValueOnce(mockUsdtToken);
+
+    const result = await loadBlacklistedTokenSections(["ethereum", "ethereum/erc20/usdt"]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
+    expect(result[0].assets).toHaveLength(2);
+    expect(result[0].assets[0].id).toBe("ethereum");
+    expect(result[0].assets[1]).toEqual(mockUsdtToken);
+  });
+
+  it("should isolate a failing token lookup without discarding the other entries", async () => {
+    mockFindTokenById.mockResolvedValueOnce(mockUsdtToken);
+    mockFindTokenById.mockRejectedValueOnce(new Error("CAL unavailable"));
+    mockFindTokenById.mockResolvedValueOnce(mockUsdcToken);
+
+    const result = await loadBlacklistedTokenSections([
+      "ethereum/erc20/usdt",
+      "ethereum/erc20/unknown",
+      "ethereum/erc20/usdc",
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].parentCurrency.id).toBe("ethereum");
+    expect(result[0].assets).toEqual([mockUsdtToken, mockUsdcToken]);
   });
 });
