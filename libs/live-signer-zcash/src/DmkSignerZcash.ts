@@ -13,6 +13,7 @@ import type {
 import { lastValueFrom, type Observable } from "rxjs";
 import {
   UNSUPPORTED_V6_TRANSACTION_ERROR_CODE,
+  UNSUPPORTED_V6_TRANSACTION_ERROR_TAG,
   UnsupportedV6SourceTransaction,
   UserRefusedOnDevice,
 } from "./errors";
@@ -80,7 +81,10 @@ export class DmkSignerZcash implements ZcashSigner {
     if (details.errorCode === "6985") {
       return new UserRefusedOnDevice();
     }
-    if (details.errorCode === UNSUPPORTED_V6_TRANSACTION_ERROR_CODE) {
+    if (
+      details.errorCode === UNSUPPORTED_V6_TRANSACTION_ERROR_CODE ||
+      details._tag === UNSUPPORTED_V6_TRANSACTION_ERROR_TAG
+    ) {
       // The signer kit already phrased the condition and named the installed app
       // version, so its message is surfaced as it is: the `_tag` branch below would
       // otherwise report a bare "UnsupportedV6TransactionError", as opaque as the

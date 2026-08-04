@@ -378,9 +378,8 @@ describe("DmkSignerZcash", () => {
 
       expect(rejection).toBeInstanceOf(UnsupportedV6SourceTransaction);
       expect((rejection as Error).message).toContain("3.0.2");
-      // No 3.0.3 will be released and the version carrying V6 support to users is
-      // not settled, so the message sends nobody after one.
-      expect((rejection as Error).message).not.toContain("3.0.3");
+      // Only the installed version is named: no version to install is advertised.
+      expect((rejection as Error).message).not.toContain("3.8.0");
     });
 
     it("describes the condition itself when the kit reports no message", async () => {
@@ -394,6 +393,22 @@ describe("DmkSignerZcash", () => {
       await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
         name: "UnsupportedV6SourceTransaction",
         message: expect.stringContaining("V6 (Ironwood) source transactions"),
+      });
+    });
+
+    it("still explains the condition when only the kit's error code has drifted", async () => {
+      // Code and tag are matched independently, so renaming one does not send the
+      // user back to a bare tag.
+      mockSignerZcash.signTransaction.mockReturnValue({
+        observable: createErrorStatusObservable({
+          ...unsupportedV6KitError,
+          errorCode: "unsupported_v6_source_transaction",
+        }),
+      });
+
+      await expect(signer.createPaymentTransaction(baseArg)).rejects.toMatchObject({
+        name: "UnsupportedV6SourceTransaction",
+        message: expect.stringContaining("does not support V6 (Ironwood) source transactions"),
       });
     });
 
