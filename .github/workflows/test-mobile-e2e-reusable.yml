@@ -1201,6 +1201,8 @@ jobs:
     continue-on-error: true
     needs: [detox-tests-ios]
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     steps:
       - name: Download Allure Results
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -1209,6 +1211,7 @@ jobs:
           pattern: ios-test-artifacts*
           merge-multiple: true
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -1224,6 +1227,8 @@ jobs:
     continue-on-error: true
     needs: [detox-tests-android]
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     steps:
       - name: Download Allure Results
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -1238,6 +1243,7 @@ jobs:
           path: report-attachments
           pattern: usage-metrics-android-*
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -1318,7 +1324,7 @@ jobs:
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
-    needs: [determine-builds, allure-report-android, allure-report-ios]
+    needs: [determine-builds, allure-report-android, allure-report-ios, qaa-allure-upload-ios, qaa-allure-upload-android]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       REF: ${{ inputs.ref || github.ref_name }}
@@ -1347,20 +1353,18 @@ jobs:
           row1_device: ${{ needs.determine-builds.outputs.ios_device }}
           row1_summary: ${{ needs.allure-report-ios.outputs.summary_message }}
           row1_report_url: ${{ needs.allure-report-ios.outputs.report-url }}
-          row1_report_title: "Allure Report iOS"
-          row1_report_link_text: "Allure Report iOS"
           row1_status: ${{ needs.allure-report-ios.outputs.finalStatus }}
           row1_missing_shards: ${{ needs.allure-report-ios.outputs.missingShards }}
+          row1_qaa_url: ${{ needs.qaa-allure-upload-ios.outputs.report_url }}
           row2_emoji: "🤖"
           row2_label: ${{ env.ANDROID_LABEL }}
           row2_flags: ${{ env.ANDROID_FEATURE_FLAGS }}
           row2_device: ${{ needs.determine-builds.outputs.android_device }}
           row2_summary: ${{ needs.allure-report-android.outputs.summary_message }}
           row2_report_url: ${{ needs.allure-report-android.outputs.report-url }}
-          row2_report_title: "Allure Report Android"
-          row2_report_link_text: "Allure Report Android"
           row2_status: ${{ needs.allure-report-android.outputs.finalStatus }}
           row2_missing_shards: ${{ needs.allure-report-android.outputs.missingShards }}
+          row2_qaa_url: ${{ needs.qaa-allure-upload-android.outputs.report_url }}
 
   merge-ios-timings:
     name: Merge iOS Timing Files

@@ -53,20 +53,16 @@ inputs:
   row1_report_url:
     required: false
     default: ""
-  row1_report_title:
-    description: 'Bold label of the Allure field, e.g. "Allure Report iOS".'
-    required: false
-    default: ""
-  row1_report_link_text:
-    description: "Link text of the Allure field."
-    required: false
-    default: ""
   row1_status:
     description: "'success' when the row passed; any other non-empty value counts as failed."
     required: false
     default: ""
   row1_missing_shards:
     description: "Comma-separated shard ids that produced no results (adds a warning block)."
+    required: false
+    default: ""
+  row1_qaa_url:
+    description: "QAA Allure portal report URL for row 1 (renders a green button). Empty = no button."
     required: false
     default: ""
 
@@ -89,16 +85,13 @@ inputs:
   row2_report_url:
     required: false
     default: ""
-  row2_report_title:
-    required: false
-    default: ""
-  row2_report_link_text:
-    required: false
-    default: ""
   row2_status:
     required: false
     default: ""
   row2_missing_shards:
+    required: false
+    default: ""
+  row2_qaa_url:
     required: false
     default: ""
 
@@ -107,9 +100,6 @@ inputs:
     required: false
     default: ""
   extra_field_url:
-    required: false
-    default: ""
-  extra_field_link_text:
     required: false
     default: ""
 
@@ -135,23 +125,20 @@ runs:
         ROW1_DEVICE: ${{ inputs.row1_device }}
         ROW1_SUMMARY: ${{ inputs.row1_summary }}
         ROW1_REPORT_URL: ${{ inputs.row1_report_url }}
-        ROW1_REPORT_TITLE: ${{ inputs.row1_report_title }}
-        ROW1_REPORT_LINK_TEXT: ${{ inputs.row1_report_link_text }}
         ROW1_STATUS: ${{ inputs.row1_status }}
         ROW1_MISSING_SHARDS: ${{ inputs.row1_missing_shards }}
+        ROW1_QAA_URL: ${{ inputs.row1_qaa_url }}
         ROW2_EMOJI: ${{ inputs.row2_emoji }}
         ROW2_LABEL: ${{ inputs.row2_label }}
         ROW2_FLAGS: ${{ inputs.row2_flags }}
         ROW2_DEVICE: ${{ inputs.row2_device }}
         ROW2_SUMMARY: ${{ inputs.row2_summary }}
         ROW2_REPORT_URL: ${{ inputs.row2_report_url }}
-        ROW2_REPORT_TITLE: ${{ inputs.row2_report_title }}
-        ROW2_REPORT_LINK_TEXT: ${{ inputs.row2_report_link_text }}
         ROW2_STATUS: ${{ inputs.row2_status }}
         ROW2_MISSING_SHARDS: ${{ inputs.row2_missing_shards }}
+        ROW2_QAA_URL: ${{ inputs.row2_qaa_url }}
         EXTRA_FIELD_TITLE: ${{ inputs.extra_field_title }}
         EXTRA_FIELD_URL: ${{ inputs.extra_field_url }}
-        EXTRA_FIELD_LINK_TEXT: ${{ inputs.extra_field_link_text }}
       with:
         script: |
           const path = require("path");
