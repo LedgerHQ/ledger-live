@@ -100,7 +100,6 @@
     "selectNoResults" : "No se encontraron valores que coincidan con «{{query}}»",
     "sortBy" : "Ordenar por",
     "save" : "Guardar",
-    "lock" : "Bloquear",
     "showMore" : "Ver más",
     "backToMatchingURL" : "Volver a {{appName}}",
     "back" : "Atrás",
@@ -139,11 +138,8 @@
       "syncing" : "Sincronizando...",
       "upToDate" : "Sincronizado",
       "outdated" : "En pausa",
-      "error" : "Error de sincronización",
       "refresh" : "Actualizar",
-      "devTools" : "Herramientas para desarrolladores",
-      "failingSync_one" : "Cuenta que no se puede sincronizar:",
-      "failingSync_other" : "Cuentas que no se pueden sincronizar:"
+      "devTools" : "Herramientas para desarrolladores"
     },
     "exchange" : "Cambia",
     "info" : "Info",
@@ -306,24 +302,14 @@
   "sidebar" : {
     "card" : "Tarjeta",
     "paytab" : "Pagar",
-    "menu" : "Menú",
-    "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
-    "manager" : "Mi Ledger",
-    "earn" : "Earn",
-    "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
-    "perps" : "Perpetuos",
-    "borrow" : "Pedir un préstamo",
     "home" : "Inicio",
     "refer" : "Refer a friend",
-    "lend" : "Prestar",
     "catalog" : "Discover",
-    "market" : "Mercado",
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
     "tooltip" : "Destacar cuenta"
   },
   "bridge" : {
@@ -1153,18 +1139,9 @@
     }
   },
   "help" : {
-    "title" : "Ayuda y soporte",
-    "gettingStarted" : {
-      "title" : "Primeros pasos",
-      "desc" : "Comenzar aquí"
-    },
     "status" : {
       "title" : "Estado de Ledger",
       "desc" : "Comprueba el estado de nuestro sistema"
-    },
-    "helpCenter" : {
-      "title" : "Soporte de Ledger",
-      "desc" : "Obtener ayuda"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1531,7 +1508,6 @@
     "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
-    "title" : "Portfolio",
     "header" : "Saldo del portfolio",
     "emptyAccountTile" : {
       "desc" : "Agrega cuentas para gestionar otros activos cripto",
@@ -1540,21 +1516,6 @@
     "recentActivity" : "Operaciones recientes",
     "totalBalance" : "Saldo total",
     "transactionsPendingConfirmation" : "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas.",
-    "featuredButtons" : {
-      "buySell" : {
-        "title" : "Comprar / Vender",
-        "description" : "Compra y vende con nuestros proveedores verificados"
-      },
-      "swap" : {
-        "title" : "Permutar",
-        "description" : "Convierte una cripto en otra",
-        "label" : "Popular"
-      },
-      "earn" : {
-        "title" : "Poner en participación",
-        "description" : "Obtén recompensas por tus cripto"
-      }
-    },
     "recoverBanner" : {
       "subscribeDone" : {
         "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
@@ -1604,25 +1565,6 @@
     "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
     "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación",
     "utxoWarning" : "Por motivos de privacidad, se genera una dirección nueva para cada transacción. Las anteriores siguen siendo válidas."
-  },
-  "emptyState" : {
-    "dashboard" : {
-      "title" : "Instala aplicaciones en tu dispositivo",
-      "desc" : "Ve a Mi Ledger para instalar aplicaciones en tu dispositivo. Podrás agregar cuentas una vez que cuentes con aplicaciones en tu dispositivo.",
-      "buttons" : {
-        "installApp" : "Ir a Mi Ledger",
-        "help" : "Ayuda"
-      }
-    },
-    "accounts" : {
-      "title" : "Agrega una cuenta para comenzar",
-      "desc" : "Agrega una cuenta para empezar a administrar tus activos cripto. Debes tener la aplicación de tu activo cripto instalada en tu dispositivo.",
-      "buttons" : {
-        "addAccount" : "Agregar cuenta",
-        "installApp" : "Ve a Mi Ledger para instalar aplicaciones",
-        "help" : "Ayuda"
-      }
-    }
   },
   "genuinecheck" : {
     "deviceInBootloader" : "Tu dispositivo está en modo Bootloader. Haz clic en <1>Continuar</1> para actualizarlo."
@@ -2335,16 +2277,6 @@
     "successTitle" : "Dirección compartida de forma segura",
     "connectToNoah" : "Conectándote a Noah",
     "steps" : {
-      "options" : {
-        "fromBank" : {
-          "title" : "Mediante transferencia bancaria",
-          "description" : "Recibe monedas estables mediante una cuenta Cash-to-Stablecoin. Es necesario registrarse."
-        },
-        "fromCrypto" : {
-          "title" : "Desde una dirección cripto",
-          "description" : "Recibe cripto de otra wallet."
-        }
-      },
       "chooseAccount" : {
         "title" : "Cuenta",
         "label" : "Cuenta receptora",
@@ -2530,6 +2462,10 @@
     "title" : "Enviar {{currency}}",
     "available" : "Disponibles {{amount}}",
     "to" : "Para:",
+    "addressDisclaimer" : {
+      "accessibilityLabel" : "Acerca de la dirección del receptor",
+      "description" : "Tu dispositivo Ledger mostrará de forma segura la dirección completa. Asegúrate de que coincida con la dirección original."
+    },
     "placeholder" : "Ingresa la dirección o el ENS",
     "placeholderNoENS" : "Ingresar dirección",
     "recent" : "Recientes",
@@ -4988,7 +4924,6 @@
   "settings" : {
     "title" : "Ajustes",
     "discreet" : "Activar o desactivar modo discreto",
-    "helpButton" : "Ayuda",
     "tabs" : {
       "display" : "General",
       "currencies" : "Activos cripto",
@@ -5543,7 +5478,7 @@
       },
       "tokenBlacklist" : {
         "title" : "Tokens ocultos",
-        "desc" : "Puedes ocultar los tokens yendo a la cuenta principal y haciendo clic derecho en el token y seleccionando “Ocultar token”.",
+        "desc" : "Puedes ocultar un activo desde su página de detalles utilizando el menú de opciones, u ocultar un token yendo a la cuenta primaria, haciendo clic derecho en el token y seleccionando \"Ocultar token\".",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
       },
@@ -5657,9 +5592,6 @@
     }
   },
   "informationCenter" : {
-    "tooltip" : "Centro de información",
-    "ongoingIncidentsTooltip" : "Hay {{count}} incidente en curso",
-    "ongoingIncidentsTooltip_other" : "Hay {{count}} incidentes en curso",
     "tabs" : {
       "announcements" : "Noticias",
       "announcementsUnseen" : "Noticias ({{unseenCount}})",
@@ -9036,7 +8968,7 @@
       "stepViewKeyWarning" : {
         "title" : "Configurar saldo privado de Aleo",
         "description" : "Ledger Wallet guarda tu clave de visualización para mostrar tu saldo privado y usa servicios de terceros para procesar las transacciones privadas. <0>Más información</0>",
-        "bullets" : ["Acceso de solo lectura para descifrar tu saldo privado", "Ledger no puede enviar ni gastar tus fondos", "Solo tú puedes firmar y gastar tus fondos", "Para garantizar un procesamiento rápido, un servicio demostrador externo se encarga de generar la prueba", "Los demostradores no pueden acceder a tus fondos ni gastarlos"],
+        "bullets" : ["La clave de visualización permite el acceso de sólo lectura para descifrar tu saldo privado en Ledger Wallet", "Sólo tú puedes firmar y gastar tus fondos a través del dispositivo signer Ledger", "Las transacciones de Aleo requieren pruebas de conocimiento cero, lo que exige una gran potencia de procesamiento", "La generación de pruebas se gestiona mediante un servicio externo de Aleo Network para agilizar las transacciones"],
         "cta" : {
           "allow" : "Permitir",
           "cancel" : "Cancelar"
@@ -9320,10 +9252,37 @@
     "title" : "Contactos",
     "addContact" : "Agregar contacto",
     "addAddress" : "Agregar dirección",
+    "addExternalAddress" : "Añadir dirección externa",
+    "addAddressEntry" : {
+      "title" : "Ingresar dirección",
+      "addressPlaceholder" : "Dirección o ENS",
+      "confirmAddress" : "Continúa para revisar",
+      "validatingAddress" : "Validando la dirección",
+      "validAddress" : "Dirección válida",
+      "invalidAddress" : "Dirección inválida",
+      "domainNotFound" : "Dominio no encontrado",
+      "sanctionedAddress" : "Esta dirección está sancionada y no se puede utilizar.",
+      "validationUnavailable" : "La validación de la dirección no está disponible temporalmente",
+      "ensDisclaimer" : "Este nombre ENS se resuelve en la dirección que se muestra arriba."
+    },
+    "addAddressName" : {
+      "inputLabel" : "Nombre de la dirección",
+      "continueToReview" : "Continuar para revisar",
+      "invalidLabel" : "No se permiten caracteres especiales.",
+      "duplicateLabel" : "Este nombre de dirección ya está en uso para este contacto.",
+      "tooLongLabel" : "Los nombres de las direcciones deben tener 32 caracteres o menos."
+    },
+    "addAddressReview" : {
+      "title" : "Revisar dirección",
+      "continue" : "Confirmar dirección",
+      "successTitle" : "Dirección guardada",
+      "close" : "Cerrar"
+    },
     "addContactDrawer" : {
       "namePlaceholder" : "Nombre del contacto",
       "namingDisclaimer" : "Por privacidad, evita los nombres y apellidos completos. Usa un apodo o sólo el nombre y la inicial, como por ejemplo, \"John S\".",
-      "invalidNameError" : "No se permiten caracteres especiales."
+      "invalidNameError" : "No se permiten caracteres especiales.",
+      "duplicateNameError" : "Este nombre de contacto ya está en uso."
     },
     "searchPlaceholder" : "Buscar contacto",
     "searchNoResults" : "No se encontró ningún contacto",
@@ -9334,6 +9293,7 @@
       "name" : "Yo"
     },
     "detail" : {
+      "meDisplayName" : "{{name}} (Yo)",
       "emptyState" : {
         "meTitle" : "No tienes direcciones guardadas",
         "contactTitle" : "No hay direcciones guardadas para {{name}}",
@@ -9348,6 +9308,29 @@
       "edit" : "Editar",
       "delete" : "Borrar",
       "networkTag" : "Red {{name}}"
+    },
+    "detailActions" : {
+      "editContact" : "Editar contacto",
+      "deleteContact" : "Eliminar contacto"
+    },
+    "editContact" : {
+      "title" : "Editar contacto",
+      "namePlaceholder" : "Nombre del contacto",
+      "namingDisclaimer" : "Por tu privacidad, evita los nombres y apellidos completos. Usa un apodo o solo el nombre y la inicial, por ejemplo, \"John S\".",
+      "applyChanges" : "Aplicar cambios",
+      "invalidNameError" : "No se permiten caracteres especiales."
+    },
+    "deleteContact" : {
+      "title" : "¿Eliminar contacto?",
+      "description" : "Al eliminar este contacto se borrarán todas las direcciones asociadas.",
+      "confirm" : "Borrar",
+      "cancel" : "Cancelar"
+    },
+    "editSigner" : {
+      "title" : "Confirma en tu dispositivo",
+      "description" : "Conecta y desbloquea tu dispositivo Ledger para confirmar este cambio.",
+      "confirm" : "Continuar",
+      "cancel" : "Cancelar"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Tus contactos están cifrados de extremo a extremo con tu Ledger y sincronizados en todos tus dispositivos; solo tú puedes desbloquearlos.",
