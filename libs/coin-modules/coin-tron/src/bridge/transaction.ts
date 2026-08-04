@@ -48,8 +48,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     resource: tr.resource || null,
     duration: tr.duration || 3,
     votes: tr.votes,
-    // All-string sponsoring context: round-trips as-is. Kept undefined when absent (no phantom key).
-    energyProviderInfo: tr.energyProviderInfo ?? undefined,
+    // Sponsoring context: included only when present, so it stays absent for standard crafting.
+    ...(tr.energyProviderInfo ? { energyProviderInfo: tr.energyProviderInfo } : {}),
   };
 };
 
@@ -72,8 +72,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     resource: t.resource || null,
     duration: t.duration || 3,
     votes: t.votes,
-    // All-string sponsoring context: round-trips as-is. Kept undefined when absent (no phantom key).
-    energyProviderInfo: t.energyProviderInfo ?? undefined,
+    // Sponsoring context: included only when present, so it stays absent for standard crafting.
+    ...(t.energyProviderInfo ? { energyProviderInfo: t.energyProviderInfo } : {}),
   };
 };
 

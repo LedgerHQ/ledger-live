@@ -11,8 +11,7 @@ const createTransaction = (): Transaction => ({
   networkInfo: null,
   resource: null,
   votes: [],
-  // No sponsoring context by default → standard crafting. Set by the Send flow when sponsored.
-  energyProviderInfo: undefined,
+  // energyProviderInfo omitted by default (optional) → standard crafting; set by the Send flow.
 });
 
 export default createTransaction;

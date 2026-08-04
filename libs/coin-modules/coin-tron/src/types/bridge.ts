@@ -41,10 +41,8 @@ export type NetworkInfoRaw = {
   energyUsed: string;
   energyLimit: string;
 };
-// Gas-sponsoring (Tronify) context: marks a send as sponsored so the coin-module logic estimates
-// and validates it as energy-rented rather than burning TRX. Set by the front-end Send flow and
-// read by the fee/validation/signing seams. Absent (null/undefined) means standard crafting.
-// The shape is all-string, so it needs no separate Raw variant (it round-trips as-is).
+// Gas-sponsoring (Tronify) context — marks a send as sponsored (LIVE-32775). Absent = standard
+// crafting. All-string, so it round-trips without a separate Raw variant.
 export type EnergyProviderInfo = {
   providerId: string;
   orderId: string;
@@ -56,7 +54,7 @@ export type Transaction = TransactionCommon & {
   networkInfo: NetworkInfo | null | undefined;
   duration: number | null | undefined;
   votes: Vote[];
-  energyProviderInfo?: EnergyProviderInfo | null | undefined;
+  energyProviderInfo?: EnergyProviderInfo | null;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   mode: TronOperationMode;
@@ -65,7 +63,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
   duration: number | null | undefined;
   votes: Vote[];
-  energyProviderInfo?: EnergyProviderInfo | null | undefined;
+  energyProviderInfo?: EnergyProviderInfo | null;
 };
 export type TrongridTxType =
   | "TransferContract"
