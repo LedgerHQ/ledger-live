@@ -1,9 +1,7 @@
 import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import {
-  type LazyOnboardingBannerViewProps,
-  useLazyOnboardingBannerViewModel,
-} from "LLM/features/LazyOnboardingBanner";
+import type { LazyOnboardingBannerViewProps } from "@features/flow-lazy-onboarding-banner";
+import { useLazyOnboardingBannerViewModel } from "LLM/features/LazyOnboardingBanner";
 import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayRecoverBanner";
