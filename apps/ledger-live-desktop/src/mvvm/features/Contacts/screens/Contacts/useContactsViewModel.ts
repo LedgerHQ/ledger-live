@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { v4 as uuid } from "uuid";
@@ -52,7 +52,6 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
 
 export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
-  const hasSavedMockAddress = useRef(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,41 +77,21 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
-  const saveMockAddress = useCallback(() => {
-    if (
-      addAddressFlowState.status !== "reviewingAddress" &&
-      addAddressFlowState.status !== "confirmationRequired"
-    ) {
+  const saveAddressFromReview = useCallback(() => {
+    if (addAddressFlowState.status !== "reviewingAddress") {
       return;
     }
 
-    if (!hasSavedMockAddress.current) {
-      hasSavedMockAddress.current = true;
+    const address = contactAddress({
+      id: `address-${uuid()}`,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
 
-      const address = contactAddress({
-        id: `address-${uuid()}`,
-        currencyId: addAddressFlowState.selectedCurrencyId,
-        label: addAddressFlowState.addressLabel.label,
-        address: addAddressFlowState.addressEntry.resolvedAddress,
-      });
-
-      dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
-    }
-
-    if (addAddressFlowState.status === "reviewingAddress") {
-      continueFromReview();
-      return;
-    }
-
-    completeMockConfirmation();
-  }, [addAddressFlowState, completeMockConfirmation, continueFromReview, dispatch]);
-  useEffect(() => {
-    if (addAddressFlowState.status === "confirmationRequired") {
-      saveMockAddress();
-    } else if (addAddressFlowState.status === "closed") {
-      hasSavedMockAddress.current = false;
-    }
-  }, [addAddressFlowState.status, saveMockAddress]);
+    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    continueFromReview();
+  }, [addAddressFlowState, continueFromReview, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -205,8 +184,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       onContinueFromAddressDetails: continueFromAddressDetails,
       onAddressLabelChange: updateAddressLabel,
       onContinueFromName: continueFromName,
-      onContinueFromReview: saveMockAddress,
-      onCompleteMockConfirmation: saveMockAddress,
+      onContinueFromReview: saveAddressFromReview,
+      onCompleteMockConfirmation: completeMockConfirmation,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
@@ -221,7 +200,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
       updateAddressLabel,
       continueFromAddressDetails,
       continueFromName,
-      saveMockAddress,
+      saveAddressFromReview,
+      completeMockConfirmation,
     ],
   );
   const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =

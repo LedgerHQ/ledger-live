@@ -2,15 +2,9 @@ import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import {
-  resolveEligibleAddressCurrencyIds,
-  type AddAddressFlowState,
-  type AddAddressFlowViewModel,
-  useAddAddressFlowViewModel,
-} from "@features/flow-contacts";
+import { resolveEligibleAddressCurrencyIds } from "@features/flow-contacts";
 import {
   mockContact,
-  mockContactAddress,
   mockMeContact,
   mockPopulatedContacts,
 } from "@domain/entity-contact/schema.mock";
@@ -53,23 +47,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     validateAddress: jest.fn().mockResolvedValue(true),
   }),
 }));
-
-jest.mock("@features/flow-contacts", () => {
-  const actual = jest.requireActual<typeof import("@features/flow-contacts")>(
-    "@features/flow-contacts",
-  );
-
-  return {
-    ...actual,
-    useAddAddressFlowViewModel: jest.fn(actual.useAddAddressFlowViewModel),
-  };
-});
-
-const actualUseAddAddressFlowViewModel =
-  jest.requireActual<typeof import("@features/flow-contacts")>(
-    "@features/flow-contacts",
-  ).useAddAddressFlowViewModel;
-const mockUseAddAddressFlowViewModel = jest.mocked(useAddAddressFlowViewModel);
 
 const contextMenuValue = {
   close: mockClose,
@@ -151,39 +128,16 @@ function ContactsViewModelProbe({
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
         Start Add Address
       </button>
-      <button type="button" onClick={viewModel.addAddressFlowDialog.onCompleteMockConfirmation}>
-        Complete mock confirmation
+      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromReview}>
+        Continue address review
       </button>
     </>
   );
 }
 
-function createMockAddAddressFlowViewModel(
-  state: AddAddressFlowState,
-  completeMockConfirmation = jest.fn(),
-): AddAddressFlowViewModel {
-  const noOp = jest.fn();
-
-  return {
-    state,
-    start: noOp,
-    completeCurrencySelection: noOp,
-    updateAddress: jest.fn().mockResolvedValue(undefined),
-    updateAddressLabel: noOp,
-    confirmAddress: noOp,
-    continueFromAddressDetails: noOp,
-    continueFromName: noOp,
-    continueFromReview: noOp,
-    completeMockConfirmation,
-    goBack: noOp,
-    close: noOp,
-  };
-}
-
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAddAddressFlowViewModel.mockImplementation(actualUseAddAddressFlowViewModel);
   });
 
   it("should not render the Contacts button when lwdContacts is disabled", () => {
@@ -546,76 +500,6 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should persist a mocked confirmation address exactly once", async () => {
-    const address = mockContactAddress({ label: "Exchange" });
-    const completeMockConfirmation = jest.fn();
-    const flow = createMockAddAddressFlowViewModel(
-      {
-        status: "confirmationRequired",
-        selectedContactId: meContactId,
-        existingAddressLabels: [],
-        selectedCurrencyId: address.currencyId,
-        addressEntry: {
-          status: "valid",
-          value: address.address,
-          resolvedAddress: address.address,
-          inputMethod: "manual",
-        },
-        addressLabel: {
-          status: "valid",
-          value: address.label,
-          label: address.label,
-          validationError: null,
-        },
-      },
-      completeMockConfirmation,
-    );
-    mockUseAddAddressFlowViewModel.mockReturnValue(flow);
-
-    const { store, user } = render(
-      <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
-      </MemoryRouter>,
-      {
-        skipRouter: true,
-        initialState: contactsPageInitialState(),
-      },
-    );
-
-    await waitFor(() => {
-      expect(completeMockConfirmation).toHaveBeenCalledTimes(1);
-      expect(store.getState().contacts.contacts[0]?.addresses).toEqual([
-        expect.objectContaining({ label: "Exchange" }),
-      ]);
-    });
-
-    await user.click(screen.getByRole("button", { name: "Complete mock confirmation" }));
-
-    expect(completeMockConfirmation).toHaveBeenCalledTimes(2);
-    expect(store.getState().contacts.contacts[0]?.addresses).toHaveLength(1);
-  });
-
-  it("should ignore a mocked confirmation completion outside an active confirmation", async () => {
-    const completeMockConfirmation = jest.fn();
-    mockUseAddAddressFlowViewModel.mockReturnValue(
-      createMockAddAddressFlowViewModel({ status: "closed" }, completeMockConfirmation),
-    );
-
-    const { user } = render(
-      <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
-      </MemoryRouter>,
-      {
-        skipRouter: true,
-        initialState: contactsPageInitialState(),
-      },
-    );
-
-    await user.click(screen.getByRole("button", { name: "Complete mock confirmation" }));
-
-    expect(completeMockConfirmation).not.toHaveBeenCalled();
-  });
-
   it("should reopen currency selection when going back from address entry", async () => {
     const { store, user } = renderContactsScreen();
 
@@ -635,6 +519,22 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(store.getState().modularDialog.isOpen).toBe(true);
     });
+  });
+
+  it("should ignore review continuation when the address flow is closed", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Continue address review" }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
   });
 
   it("should expose the Add Address session started for Me", async () => {
