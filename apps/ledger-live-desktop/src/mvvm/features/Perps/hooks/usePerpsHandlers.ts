@@ -1,5 +1,6 @@
 import {
   handlers as perpsHandlers,
+  type PerpsDepositUiParams,
   type PerpsSignResult,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -34,12 +35,15 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     [],
   );
 
+  const uiDepositExecute = useCallback((_params: PerpsDepositUiParams) => undefined, []);
+
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
       accounts,
       uiHooks: {
         "signing.execute": uiSigningExecute,
+        "deposit.execute": uiDepositExecute,
       },
     });
-  }, [accounts, uiSigningExecute]);
+  }, [accounts, uiSigningExecute, uiDepositExecute]);
 }

@@ -17,6 +17,27 @@ type AppOption = {
   allowPartialDependencies: boolean;
   skipAppInstallIfNotFound: boolean;
 };
+export type PerpsDepositAmount = {
+  value: string;
+  currencyId: string;
+};
+
+export type PerpsDepositParams = {
+  receiverAccountId: string;
+};
+
+export type PerpsDepositResult = Record<string, never>;
+
+export type PerpsDepositUiParams = {
+  receiverAccount: AccountLike;
+};
+
+export type PerpsDepositReviewParams = PerpsDepositUiParams & {
+  depositAccount: AccountLike;
+  amountSent: PerpsDepositAmount;
+  amountReceived?: PerpsDepositAmount;
+};
+
 export type PerpsUiHooks = {
   "signing.execute": (params: {
     appName: string | undefined;
@@ -26,6 +47,7 @@ export type PerpsUiHooks = {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
+  "deposit.execute": (params: PerpsDepositUiParams) => void;
 };
 
 export type PerpsSignParams = {
@@ -47,23 +69,27 @@ const PERPS_APP_NAME = "Hyperliquid";
 
 export const handlers = ({
   accounts,
-  uiHooks: { "signing.execute": uiSigningExecute },
+  uiHooks: { "signing.execute": uiSigningExecute, "deposit.execute": uiDepositExecute },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
 }) => {
+  const findAccountOrThrow = (walletAccountId: string): AccountLike => {
+    const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+    const account = accounts.find(acc => acc.id === accountId);
+    if (!account) {
+      throw new ServerError(createAccountNotFound(walletAccountId));
+    }
+    return account;
+  };
+
   return {
     "custom.perps.signActions": customWrapper<PerpsSignParams, PerpsSignResult>(async params => {
       if (!params) {
         throw new ServerError(createUnknownError({ message: "params is undefined" }));
       }
 
-      // Retrieve account
-      const realAccountId = getAccountIdFromWalletAccountId(params.accountId);
-      const account = accounts.find(acc => acc.id === realAccountId);
-      if (!account) {
-        throw new ServerError(createAccountNotFound(params.accountId));
-      }
+      const account = findAccountOrThrow(params.accountId);
 
       const derivationPath = getMainAccount(
         account,
@@ -116,6 +142,16 @@ export const handlers = ({
           onCancel: () => reject(new Error("User cancelled signing")),
         });
       });
+    }),
+    "custom.perps.deposit": customWrapper<PerpsDepositParams, PerpsDepositResult>(async params => {
+      if (!params) {
+        throw new ServerError(createUnknownError({ message: "params is undefined" }));
+      }
+
+      const receiverAccount = findAccountOrThrow(params.receiverAccountId);
+
+      uiDepositExecute({ receiverAccount });
+      return {};
     }),
   };
 };
