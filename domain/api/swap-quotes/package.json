@@ -20,7 +20,6 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/swap-quotes"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/auth": "workspace:^",
     "@shared/env": "workspace:*",

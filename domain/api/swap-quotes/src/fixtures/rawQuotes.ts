@@ -21,8 +21,6 @@ export function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
 
 export function makeRawQuoteError(overrides: Partial<RawQuoteError> = {}): RawQuoteError {
   return RawQuoteErrorSchema.parse({
-    // `ProviderErrorCodes.AMOUNT_OFF_LIMITS`, inlined to keep this a type-only
-    // dependency on the wallet-api contract.
     code: "amount_off_limits",
     type: "float",
     provider: "okx",

@@ -3840,9 +3840,6 @@ importers:
 
   domain/api/swap-quotes:
     dependencies:
-      '@ledgerhq/wallet-api-exchange-module':
-        specifier: workspace:^
-        version: link:../../../libs/exchange-module
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2

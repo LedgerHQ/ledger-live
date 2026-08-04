@@ -1,4 +1,3 @@
-import type { QuotesInput } from "@ledgerhq/wallet-api-exchange-module";
 import type { z } from "zod";
 
 import type {
@@ -19,9 +18,11 @@ import type {
   RawQuotePayoutNetworkFeesSchema,
   RawQuoteSchema,
   RawQuoteSlippageInfoSchema,
+  ResolvedQuotesInputSchema,
   RawQuoteTagsSchema,
   RawTokenAllowanceDataSchema,
   TradeMethodSchema,
+  UniswapOrderTypeSchema,
 } from "./schema";
 
 export type TradeMethod = z.infer<typeof TradeMethodSchema>;
@@ -45,17 +46,8 @@ export type RawQuoteAPI = z.infer<typeof RawQuoteApiSchema>;
 export type RawQuoteAPIResponse = z.infer<typeof RawQuoteApiResponseSchema>;
 export type FetchQuotesResult = z.infer<typeof FetchQuotesResultSchema>;
 
-/**
- * A {@link QuotesInput} with the wallet-side lookups already resolved, so the
- * request can be built without access to accounts. Not schema-derived:
- * `QuotesInput` belongs to the published wallet-api wire contract.
- */
-export type ResolvedQuotesInput = QuotesInput & {
-  sendAddress: string;
-  receiveAddress: string;
-  sendCurrencyId: string;
-  receiveCurrencyId: string;
-};
+export type UniswapOrderType = z.infer<typeof UniswapOrderTypeSchema>;
+export type ResolvedQuotesInput = z.infer<typeof ResolvedQuotesInputSchema>;
 
 export type FetchQuotesQueryArgs = {
   providers: string[];

@@ -1,5 +1,28 @@
 import { z } from "zod";
 
+export const UniswapOrderTypeSchema = z.enum(["classic", "uniswapxv2", "all"]);
+
+/**
+ * What the endpoint needs in order to build a `/quote` request, with the
+ * wallet-side lookups already resolved by the caller.
+ *
+ * Declared here rather than imported from the wallet-api `QuotesInput`: that
+ * contract lives in `libs/`, and a domain package must not depend on it. The
+ * caller owns the wallet-api boundary and adapts.
+ */
+export const ResolvedQuotesInputSchema = z.object({
+  amount: z.string(),
+  sendAccountId: z.string(),
+  receiveAccountId: z.string(),
+  sendAddress: z.string(),
+  receiveAddress: z.string(),
+  sendCurrencyId: z.string(),
+  receiveCurrencyId: z.string(),
+  networkFeesCurrencyId: z.string().optional(),
+  slippage: z.number().optional(),
+  uniswapOrderType: UniswapOrderTypeSchema.optional(),
+});
+
 export const TradeMethodSchema = z.enum(["fixed", "float"]);
 
 export const ProviderTypesSchema = z.enum(["DEX", "CEX"]);
@@ -120,10 +143,7 @@ export const RawQuoteSchema = z.object({
 export const RawQuoteErrorParameterSchema = z.record(z.string(), z.string());
 
 export const RawQuoteErrorSchema = z.object({
-  // Any aggregator code, matching `ProviderErrorCodes | (string & {})`. Kept as
-  // a plain string so this package needs no *runtime* import from
-  // `@ledgerhq/wallet-api-exchange-module` — that would pull in
-  // `wallet-api-client` and, through it, the banned `@ledgerhq/errors`.
+  // Any aggregator code; the wallet-api `ProviderErrorCodes` are a subset.
   code: z.string(),
   type: TradeMethodSchema,
   provider: z.string(),

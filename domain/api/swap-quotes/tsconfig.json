@@ -6,12 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
-    "types": ["jest", "node"],
-    // Resolve `@ledgerhq/wallet-api-exchange-module` to its built `.d.ts`
-    // instead of its source: `libs/ledgerjs` compiles with
-    // `noImplicitAny: false`, and dragging that source into a strict package
-    // surfaces errors its own build never sees.
-    "customConditions": []
+    "types": ["jest", "node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "lib"]

@@ -43,14 +43,6 @@ const DEP_CONSTRAINTS = [
 /** Per-package exceptions: { sourceRoot, targetRoot, allowedImport }. Remove when @ledgerhq/live-env moves to ts-libs. */
 const BOUNDARY_EXCEPTIONS = [
   { sourceRoot: "shared/env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
-  // The wallet-api exchange wire contract (`QuotesInput`, `ProviderErrorCodes`).
-  // It lives under libs/ but is a published package, and duplicating a wire
-  // contract would let it drift. Remove when the contract moves out of libs/.
-  {
-    sourceRoot: "domain/api/swap-quotes",
-    targetRoot: "libs/exchange-module",
-    allowedImport: "@ledgerhq/wallet-api-exchange-module",
-  },
 ];
 
 /**
