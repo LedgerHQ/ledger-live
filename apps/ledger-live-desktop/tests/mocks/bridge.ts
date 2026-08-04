@@ -5,6 +5,11 @@ import type {
   TransportBridge,
   UpdaterBridge,
   UpdaterStatusEvent,
+  AppBridge,
+  DialogsBridge,
+  FilesBridge,
+  PowerBridge,
+  StoreBridge,
 } from "~/bridge/contract";
 
 /**
@@ -76,4 +81,35 @@ export const updater: jest.Mocked<UpdaterBridge> = {
 export const deeplink: jest.Mocked<DeeplinkBridge> = {
   open: jest.fn(),
   onOpen: jest.fn((_callback: (url: string) => void) => () => {}),
+};
+
+export const app: jest.Mocked<AppBridge> = {
+  reload: jest.fn(),
+  relaunch: jest.fn(),
+  quit: jest.fn(),
+  show: jest.fn(),
+};
+
+export const dialogs: jest.Mocked<DialogsBridge> = {
+  showSave: jest.fn().mockResolvedValue({ canceled: true }),
+  showOpen: jest.fn().mockResolvedValue({ canceled: true, filePaths: [] }),
+};
+
+export const files: jest.Mocked<FilesBridge> = {
+  saveLogs: jest.fn().mockResolvedValue(undefined),
+  exportOperations: jest.fn().mockResolvedValue(true),
+  openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
+  readLocalManifest: jest.fn().mockResolvedValue(null),
+  writeLocalManifest: jest.fn().mockResolvedValue(false),
+  readDotEnvFile: jest.fn().mockResolvedValue(null),
+};
+
+export const power: jest.Mocked<PowerBridge> = {
+  keepScreenAwake: jest.fn().mockResolvedValue(1),
+  release: jest.fn().mockResolvedValue(undefined),
+};
+
+export const store: jest.Mocked<StoreBridge> = {
+  set: jest.fn(),
+  clear: jest.fn(),
 };
