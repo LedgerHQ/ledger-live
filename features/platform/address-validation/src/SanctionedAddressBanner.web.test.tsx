@@ -14,20 +14,9 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
       description: string;
       primaryAction?: React.ReactNode;
       "data-testid"?: string;
-    }) =>
-      React.createElement(
-        "div",
-        { "data-testid": testID },
-        description,
-        primaryAction
-      ),
-    Button: ({
-      children,
-      onClick,
-    }: {
-      children: React.ReactNode;
-      onClick?: () => void;
-    }) => React.createElement("button", { type: "button", onClick }, children),
+    }) => React.createElement("div", { "data-testid": testID }, description, primaryAction),
+    Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) =>
+      React.createElement("button", { type: "button", onClick }, children),
   };
 });
 
@@ -42,7 +31,7 @@ describe("SanctionedAddressBanner", () => {
         actionLabel="Learn more"
         onAction={onAction}
         testID="sanctioned-address-banner"
-      />
+      />,
     );
 
     expect(screen.getByTestId("sanctioned-address-banner")).toBeVisible();

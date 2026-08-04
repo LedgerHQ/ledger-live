@@ -19,20 +19,10 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
         "Banner",
         { testID },
         React.createElement("Text", undefined, description),
-        primaryAction
+        primaryAction,
       ),
-    Button: ({
-      children,
-      onPress,
-    }: {
-      children: React.ReactNode;
-      onPress?: () => void;
-    }) =>
-      React.createElement(
-        "Button",
-        { onPress },
-        React.createElement("Text", undefined, children)
-      ),
+    Button: ({ children, onPress }: { children: React.ReactNode; onPress?: () => void }) =>
+      React.createElement("Button", { onPress }, React.createElement("Text", undefined, children)),
   };
 });
 
@@ -46,7 +36,7 @@ describe("SanctionedAddressBanner", () => {
         actionLabel="Learn more"
         onAction={onAction}
         testID="sanctioned-address-banner"
-      />
+      />,
     );
 
     expect(screen.getByTestId("sanctioned-address-banner")).toBeTruthy();

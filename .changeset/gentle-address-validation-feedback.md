@@ -1,5 +1,5 @@
 ---
-"@shared/address-validation": minor
+"@features/platform-address-validation": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

@@ -1,8 +1,8 @@
 {
-  "name": "@shared/address-validation",
+  "name": "@features/platform-address-validation",
   "version": "0.1.0",
   "private": true,
-  "description": "Reusable address-validation feedback primitives",
+  "description": "Cross-flow address-validation feedback primitives",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -38,6 +38,7 @@
     }
   },
   "devDependencies": {
+    "@features/platform-jest-config": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",

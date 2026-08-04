@@ -899,6 +899,9 @@ importers:
       '@features/flow-large-screen-upsell':
         specifier: workspace:^
         version: link:../../features/flow/large-screen-upsell
+      '@features/platform-address-validation':
+        specifier: workspace:^
+        version: link:../../features/platform/address-validation
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -1076,9 +1079,6 @@ importers:
       '@segment/analytics-next':
         specifier: 1.81.1
         version: 1.81.1
-      '@shared/address-validation':
-        specifier: workspace:^
-        version: link:../../shared/address-validation
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
@@ -1642,6 +1642,9 @@ importers:
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
+      '@features/platform-address-validation':
+        specifier: workspace:^
+        version: link:../../features/platform/address-validation
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies
@@ -1867,9 +1870,6 @@ importers:
       '@segment/sovran-react-native':
         specifier: 1.1.3
         version: 1.1.3(@react-native-async-storage/async-storage@2.1.2(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4)))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
-      '@shared/address-validation':
-        specifier: workspace:^
-        version: link:../../shared/address-validation
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
@@ -5018,8 +5018,11 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
-  shared/address-validation:
+  features/platform/address-validation:
     devDependencies:
+      '@features/platform-jest-config':
+        specifier: workspace:*
+        version: link:../jest-config
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.49(@ledgerhq/lumen-design-core@0.1.23)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)

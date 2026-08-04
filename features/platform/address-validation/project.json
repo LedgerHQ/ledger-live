@@ -1,5 +1,5 @@
 {
-  "name": "@shared/address-validation",
+  "name": "@features/platform-address-validation",
   "targets": {
     "build": {
       "executor": "nx:noop"
