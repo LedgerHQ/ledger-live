@@ -41,9 +41,11 @@ export const recentAddressesSchema = z.record(
   ),
 );
 
-type DistantRecentAddressesState = z.infer<typeof recentAddressesSchema>;
+export type DistantRecentAddressesState = z.infer<typeof recentAddressesSchema>;
 
-function toDistantState(addressesByCurrency: RecentAddressesState): DistantRecentAddressesState {
+export function toDistantState(
+  addressesByCurrency: RecentAddressesState,
+): DistantRecentAddressesState {
   const state: DistantRecentAddressesState = {};
   Object.keys(addressesByCurrency).forEach(key => {
     state[key] = addressesByCurrency[key].map((entry, index) => ({
@@ -55,7 +57,7 @@ function toDistantState(addressesByCurrency: RecentAddressesState): DistantRecen
   return state;
 }
 
-function toState(addressesByCurrency: DistantRecentAddressesState): RecentAddressesState {
+export function toState(addressesByCurrency: DistantRecentAddressesState): RecentAddressesState {
   const state: RecentAddressesState = {};
   Object.keys(addressesByCurrency).forEach(key => {
     state[key] = [...addressesByCurrency[key]]

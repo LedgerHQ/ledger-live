@@ -1,7 +1,11 @@
 import { z } from "zod";
+import { mapValues } from "@shared/cloud-sync-module";
+
+export { mapValues } from "@shared/cloud-sync-module";
 import { ExtractLocalState, ExtractUpdateEvent, UpdateDiff, WalletSyncDataManager } from "./types";
 
 /**
+ * ctx-carrying counterpart of createAggregator from @shared/cloud-sync-module.
  * an aggregator takes a bunch of WalletSyncDataManager modules and make a top-level WalletSyncDataManager one.
  * In this root WalletSyncDataManager, the data is segmented into JS Object fields (one field = one module)
  * and under modules/ folder: each module implements a WalletSyncDataManager at the field level of the main data.
@@ -78,15 +82,4 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
     },
   };
   return root;
-}
-
-export function mapValues<T extends object, U>(
-  obj: T,
-  fn: (value: T[keyof T], key: keyof T) => U,
-): { [K in keyof T]: U } {
-  const result = {} as { [K in keyof T]: U };
-  for (const key in obj) {
-    result[key] = fn(obj[key], key);
-  }
-  return result;
 }

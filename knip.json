@@ -93,7 +93,14 @@
       ]
     },
     "./libs/live-wallet": {
-      "entry": ["src/walletsync/index.ts", "src/liveqr/cross.ts", "src/liveqr/importAccounts.ts"]
+      "entry": [
+        "src/walletsync/index.ts",
+        "src/liveqr/cross.ts",
+        "src/liveqr/importAccounts.ts",
+        "src/cloudsync/api.ts",
+        "src/cloudsync/cipher.ts",
+        "src/walletsync/entities/recentAddresses.ts"
+      ]
     }
   }
 }

@@ -1,5 +1,28 @@
 import { ZodType, z } from "zod";
 
+/**
+ * CloudSyncDataManager is responsible of the reconciliation of incremental data updates.
+ * We distinguish local data from distant data: local data is client side data whereas distant data is the subset of data that we push to cloud sync (essentially the identifier parts of the data that local data can be restored from).
+ *
+ * (1) we determine if there are changes between local state and latest distant state by `diffLocalToDistant(localState, latestDist)`. This is a synchronous operation.
+ *
+ * (2) when receiving a new distant state from cloud sync, the module must calculate the update to apply to the local state. resolveIncrementalUpdate calculates the update and applyUpdate applies it.
+ *
+ * state transition is done incrementally with a diff, moving from A to B is essentially
+ * - resolveIncrementalUpdate: solving the transition (distA->distB) from stateA (this is asynchronous, for instance we need to fetch data from the blockchain to get a valid Account state)
+ * - applyUpdate: applying that transition update to get to stateB
+ *
+ *  so in other words:
+ *
+ *     stateB = stateA + (distB - distA)
+ *
+ * Glossary:
+ *
+ * LocalState = All the data that the client has locally that the module needs as an input for the reconciliation.
+ * Update = an action payload to express the update mutation that you need to do on the local state after determining an update to do with distant state changes.
+ * Schema = the Schema is a Zod type that allows to validate the data that this module will store in cloud sync data. the `typeof schema`. IMPORTANT: the schema must not change over time.
+ * DistantState = the type that correspond to the Schema. Basically the exact data that we store in cloud sync for that module. (NB: it is automatically inferred from the Schema)
+ */
 export interface CloudSyncDataManager<
   LocalState,
   Update,

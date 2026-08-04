@@ -1,45 +1,17 @@
-import { TrustchainLifecycle } from "@ledgerhq/ledger-key-ring-protocol/types";
-import getCloudSyncApi from "../cloudsync/api";
-import { WSState } from "../store";
-import { makeCipher } from "../cloudsync/cipher";
+import type { TrustchainLifecycle } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { trustchainLifecycle as platformTrustchainLifecycle } from "@features/platform-wallet-sync";
+import type { WSState } from "../store";
 
-export const liveSlug = "live";
+export { liveSlug } from "@features/platform-wallet-sync";
 
 /**
- * implements to provide to TrustchainSdk the glue with cloudsync/walletsync
+ * implements to provide to TrustchainSdk the glue with cloudsync/walletsync.
+ * Deprecated: this only pins the lkrp-typed signature over
+ * @features/platform-wallet-sync, which holds the implementation.
  */
-export function trustchainLifecycle({
-  cloudSyncApiBaseUrl,
-  getCurrentWSState,
-}: {
+export function trustchainLifecycle(opts: {
   cloudSyncApiBaseUrl: string;
   getCurrentWSState: () => WSState;
 }): TrustchainLifecycle {
-  return {
-    onTrustchainRotation: async (trustchainSdk, oldTrustchain, memberCredentials) => {
-      const oldJwt = await trustchainSdk.withAuth(
-        oldTrustchain,
-        memberCredentials,
-        jwt => Promise.resolve(jwt),
-        "refresh",
-      );
-      return async newTrustchain => {
-        const api = getCloudSyncApi(cloudSyncApiBaseUrl);
-        // when trustchain rotates, we need to delete old data to inform members still on the old id
-        await api.deleteData(oldJwt, liveSlug, oldTrustchain);
-        const newJwt = await trustchainSdk.withAuth(
-          newTrustchain,
-          memberCredentials,
-          jwt => Promise.resolve(jwt),
-          "refresh",
-        );
-        // we then need to push back data to a new CloudSync id with the new encryption key
-        const { version, data } = getCurrentWSState();
-        if (!data) return;
-        const cipher = makeCipher(trustchainSdk);
-        const payload = await cipher.encrypt(newTrustchain, data);
-        await api.uploadData(newJwt, liveSlug, version, payload, newTrustchain);
-      };
-    },
-  };
+  return platformTrustchainLifecycle(opts);
 }

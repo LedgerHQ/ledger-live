@@ -22,7 +22,8 @@ export type CreateWalletSyncWatchLoopParams<
 > = {
   watchConfig?: WatchConfig;
   visualConfig?: VisualConfig;
-  walletsync: CloudSyncDataManager<LocalState, Update, Schema>;
+  // the loop only ever diffs, so we ask for nothing more: legacy ctx-carrying managers fit too
+  walletsync: Pick<CloudSyncDataManager<LocalState, Update, Schema>, "diffLocalToDistant">;
   walletSyncSdk: CloudSyncSDKInterface<DistantState>;
   trustchain: Trustchain;
   memberCredentials: MemberCredentials;
