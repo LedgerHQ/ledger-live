@@ -1,4 +1,3 @@
-import { InterestRateSchema } from "@domain/entity-interest-rate";
 import { mergeAssetsDataPages } from "./pagination";
 import type { AssetsDataWithPagination } from "./types";
 
@@ -12,9 +11,6 @@ const makePage = (overrides: Partial<AssetsDataWithPagination> = {}): AssetsData
   pagination: { nextCursor: "" },
   ...overrides,
 });
-
-const rate = (currencyId: string, value: number, type: string) =>
-  InterestRateSchema.parse({ currencyId, rate: value, type, fetchAt: "2026-01-01T00:00:00Z" });
 
 describe("mergeAssetsDataPages", () => {
   it("returns undefined for undefined input", () => {
@@ -42,7 +38,7 @@ describe("mergeAssetsDataPages", () => {
           cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
           networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
           interestRates: {
-            btc: rate("btc", 1, "APY"),
+            btc: { currencyId: "btc", rate: 1, type: "APY", fetchAt: "2026-01-01" },
           },
           markets: { btc: { price: 1 } },
         }),
@@ -50,7 +46,7 @@ describe("mergeAssetsDataPages", () => {
           cryptoAssets: { eth: { id: "eth", ticker: "ETH", name: "Ether", assetsIds: {} } },
           networks: { ethereum: { id: "ethereum", name: "Ethereum" } },
           interestRates: {
-            eth: rate("eth", 2, "APR"),
+            eth: { currencyId: "eth", rate: 2, type: "APR", fetchAt: "2026-01-01" },
           },
           markets: { eth: { price: 2 } },
         }),

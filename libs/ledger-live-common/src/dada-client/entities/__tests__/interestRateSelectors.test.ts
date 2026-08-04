@@ -1,13 +1,13 @@
 import { selectInterestRateByCurrency } from "../interestRateSelectors";
 import type { ApiState } from "../selectorUtils";
-import { InterestRateSchema } from "@domain/entity-interest-rate";
+import type { InterestRate } from "..";
 
-const bitcoinRate = InterestRateSchema.parse({
+const bitcoinRate: InterestRate = {
   currencyId: "bitcoin",
   rate: 4.2,
   type: "APY",
   fetchAt: "2026-07-31T00:00:00.000Z",
-});
+};
 
 function stateWith(pages: Record<string, unknown>[]): ApiState {
   return { assetsDataApi: { queries: { a: { data: { pages } } } } } as ApiState;
