@@ -104,10 +104,10 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.selectAssetInDrawer(account);
   }
 
-/**
- * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
- * Mirrors the recovery used in borrow.page.ts.
- */
+  /**
+   * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
+   * Mirrors the recovery used in borrow.page.ts.
+   */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForCryptoSelectorReady() {
     const readyTimeout = 30_000;
