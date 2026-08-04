@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { dialogs } from "~/renderer/bridge";
 
 /**
  * Single chokepoint for native file dialogs, which are run by the main process.
@@ -11,8 +11,8 @@ import { ipcRenderer } from "electron";
  */
 export const showSaveDialog = (
   options: Electron.SaveDialogOptions,
-): Promise<Electron.SaveDialogReturnValue> => ipcRenderer.invoke("show-save-dialog", options);
+): Promise<Electron.SaveDialogReturnValue> => dialogs.showSave(options);
 
 export const showOpenDialog = (
   options: Electron.OpenDialogOptions,
-): Promise<Electron.OpenDialogReturnValue> => ipcRenderer.invoke("show-open-dialog", options);
+): Promise<Electron.OpenDialogReturnValue> => dialogs.showOpen(options);

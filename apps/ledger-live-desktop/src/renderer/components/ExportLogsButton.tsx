@@ -109,7 +109,9 @@ const ExportLogsBtnInner = ({
       };
     }
 
-    if (path) {
+    // showSaveDialog always resolves to an object, so the previous `if (path)` was
+    // always true. Main already ignores a canceled target; this makes the intent explicit.
+    if (path && !path.canceled) {
       await saveLogs(path);
     }
   }, [accounts, getDateTxt, userId]);

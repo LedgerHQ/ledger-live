@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { ipcRenderer } from "electron";
-import { deeplink } from "~/renderer/bridge";
+import { app, deeplink } from "~/renderer/bridge";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -93,7 +92,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onError,
             onCancel,
           }) => {
-            ipcRenderer.send("show-app", {});
+            app.show();
             dispatch(
               openModal("MODAL_SIGN_MESSAGE", {
                 isACRE: true,
@@ -115,7 +114,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            ipcRenderer.send("show-app", {});
+            app.show();
             dispatch(
               openModal("MODAL_SIGN_TRANSACTION", {
                 isACRE: true,

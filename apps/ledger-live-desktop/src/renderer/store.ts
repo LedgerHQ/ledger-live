@@ -1,22 +1,15 @@
-import { ipcRenderer } from "electron";
 import isEmpty from "lodash/isEmpty";
-import { CHANNELS } from "~/bridge/contract";
-import { bootstrap } from "~/renderer/bridge";
+import { bootstrap, store as storeBridge } from "~/renderer/bridge";
 
 /**
- * Renderer view of the `lld.json` store.
+ * Renderer view of the `lld.json` store, which lives in main. Hydrated once from the
+ * bootstrap snapshot and written through asynchronously.
  *
- * The store itself lives in the main process; this module keeps an in-memory copy,
- * hydrated once from the bootstrap snapshot, and writes through asynchronously.
+ * Reads stay synchronous on purpose: four of the five call sites are in the Recover
+ * onboarding funnel, where a first-render `undefined` would change banner visibility and
+ * redirect behaviour.
  *
- * Reads stay synchronous on purpose. Making them async would only touch five call sites,
- * but four of them are in the Recover onboarding funnel and would become `useState` plus
- * an effect — introducing a first-render `undefined` that changes banner visibility and
- * redirect behaviour. That is a product-behaviour risk not worth taking to satisfy an
- * infrastructure migration.
- *
- * The copy is point-in-time: an out-of-band write to `lld.json` by main would not be seen
- * here. Nothing does that today.
+ * The copy is point-in-time. Nothing writes `lld.json` out of band today.
  */
 const cache = new Map<string, unknown>(Object.entries(bootstrap.store));
 
@@ -29,13 +22,13 @@ export function getStoreValue<T>(key: string, storeId: string): T | undefined {
 }
 
 export function setStoreValue<T>(key: string, value: T, storeId: string) {
-  // Update the local copy first: read-your-writes is load-bearing, because
-  // RecoverSubscriptionStateSection writes values that useRecoverBannerState reads back.
+  // Read-your-writes is load-bearing: RecoverSubscriptionStateSection writes values that
+  // useRecoverBannerState reads straight back.
   cache.set(storeKey(key, storeId), value);
-  ipcRenderer.send(CHANNELS.storeSet, storeKey(key, storeId), value);
+  storeBridge.set(storeKey(key, storeId), value);
 }
 
 export function resetStore() {
   cache.clear();
-  ipcRenderer.send(CHANNELS.storeClear);
+  storeBridge.clear();
 }

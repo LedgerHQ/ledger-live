@@ -4,6 +4,7 @@ import { expose } from "./expose";
 import { db } from "./db";
 import { transport } from "./transport";
 import { deeplink, updater } from "./push";
+import { app, dialogs, files, power, store } from "./shell";
 
 /**
  * Assembles and publishes the `window.ledger` bridge.
@@ -24,6 +25,11 @@ export function installBridge(): void {
     transport,
     updater,
     deeplink,
+    app,
+    dialogs,
+    files,
+    power,
+    store,
   };
 
   // `lld`, not `ledger`: the renderer already installs a `window.ledger` debug handle for
