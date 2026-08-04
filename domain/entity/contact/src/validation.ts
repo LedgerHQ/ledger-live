@@ -1,6 +1,7 @@
 import {
   ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
+  DuplicateContactNameError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
@@ -10,10 +11,15 @@ import {
 } from "./schema";
 import type { ContactAddressLabel, ContactName } from "./types";
 
-export type ContactNameValidationErrorName = InvalidContactNameError["name"];
+export type ContactNameValidationErrorName =
+  | InvalidContactNameError["name"]
+  | DuplicateContactNameError["name"];
 
 export const INVALID_CONTACT_NAME_ERROR_NAME =
   "InvalidContactNameError" satisfies ContactNameValidationErrorName;
+
+export const DUPLICATE_CONTACT_NAME_ERROR_NAME =
+  "DuplicateContactNameError" satisfies ContactNameValidationErrorName;
 
 export type ContactAddressLabelValidationErrorName =
   | InvalidContactAddressLabelError["name"]
@@ -40,7 +46,8 @@ type ContactAddressLabelValidationResult = {
 };
 
 function validateContactNameInput(
-  draftName: string
+  draftName: string,
+  existingNames: readonly ContactName[]
 ): ContactNameValidationResult {
   const parsed = ContactNameInputSchema.safeParse(draftName);
 
@@ -48,28 +55,59 @@ function validateContactNameInput(
     return { validationError: INVALID_CONTACT_NAME_ERROR_NAME, value: null };
   }
 
-  return parsed.data === ""
-    ? { validationError: null, value: null }
-    : { validationError: null, value: parsed.data };
+  if (parsed.data === "") {
+    return { validationError: null, value: null };
+  }
+
+  const validationError = existingNames.some(
+    (name) =>
+      normalizeContactNameForComparison(name) ===
+      normalizeContactNameForComparison(parsed.data)
+  )
+    ? DUPLICATE_CONTACT_NAME_ERROR_NAME
+    : null;
+
+  return { validationError, value: parsed.data };
 }
 
 export function getContactNameValidationError(
-  draftName: string
+  draftName: string,
+  existingNames: readonly ContactName[] = []
 ): ContactNameValidationErrorName | null {
-  return validateContactNameInput(draftName).validationError;
+  return validateContactNameInput(draftName, existingNames).validationError;
 }
 
-export function isValidContactName(draftName: string): boolean {
-  const { validationError, value } = validateContactNameInput(draftName);
+export function isValidContactName(
+  draftName: string,
+  existingNames: readonly ContactName[] = []
+): boolean {
+  const { validationError, value } = validateContactNameInput(
+    draftName,
+    existingNames
+  );
 
   return validationError === null && value !== null;
 }
 
-export function parseContactName(draftName: string): ContactName {
-  const { validationError, value } = validateContactNameInput(draftName);
+export function normalizeContactNameForComparison(name: string): string {
+  return name.trim().normalize("NFC").toLocaleLowerCase("en-US");
+}
+
+export function parseContactName(
+  draftName: string,
+  existingNames: readonly ContactName[] = []
+): ContactName {
+  const { validationError, value } = validateContactNameInput(
+    draftName,
+    existingNames
+  );
 
   if (validationError === INVALID_CONTACT_NAME_ERROR_NAME || value === null) {
     throw new InvalidContactNameError();
+  }
+
+  if (validationError === DUPLICATE_CONTACT_NAME_ERROR_NAME) {
+    throw new DuplicateContactNameError();
   }
 
   return value;

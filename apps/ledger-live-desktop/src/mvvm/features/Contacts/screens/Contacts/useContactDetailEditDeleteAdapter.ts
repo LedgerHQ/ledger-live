@@ -1,5 +1,6 @@
 import {
   ContactIdSchema,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
   type ContactId,
 } from "@domain/entity-contact";
@@ -48,6 +49,7 @@ export function useContactDetailEditDeleteAdapter(
     applyChanges: t("contacts.editContact.applyChanges"),
     nameValidationErrors: {
       [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
+      [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
     },
   };
   const deleteLabels = {

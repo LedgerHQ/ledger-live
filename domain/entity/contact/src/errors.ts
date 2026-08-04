@@ -10,6 +10,10 @@ export class InvalidContactNameError extends ContactError {
   }
 }
 
+export class DuplicateContactNameError extends ContactError {
+  override name = "DuplicateContactNameError" as const;
+}
+
 export class InvalidContactAddressLabelError extends ContactError {
   override name = "InvalidContactAddressLabelError" as const;
 }
