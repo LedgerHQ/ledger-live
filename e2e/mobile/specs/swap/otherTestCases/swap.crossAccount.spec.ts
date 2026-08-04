@@ -14,7 +14,7 @@ const swapCrossAccountTestConfig = {
   fromAccount,
   toAccount,
   dexProviders,
-  tmsLinks: ["LIVE-19543"],
+  tmsLinks: ["B2CQA-4013"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
 };
 

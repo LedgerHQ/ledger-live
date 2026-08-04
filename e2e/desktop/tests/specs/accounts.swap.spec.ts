@@ -20,7 +20,7 @@ import { DEVICE_TAGS, buildSwapTags } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-test.describe("Swap - Default currency when landing on swap", () => {
+test.describe("Swap - default currency", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -53,7 +53,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   });
 
   test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency and previous set up`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap with default currency and previous setup`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080" },
@@ -89,7 +89,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   );
 });
 
-test.describe("Swap - Rejected on device", () => {
+test.describe("Swap - rejected on device", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
 
@@ -123,7 +123,7 @@ test.describe("Swap - Rejected on device", () => {
   });
 
   test(
-    `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: "B2CQA-2212" },
@@ -197,7 +197,7 @@ for (const {
   addressFrom,
   addressTo,
 } of swapWithDifferentSeed) {
-  test.describe("Swap - Using different seed", () => {
+  test.describe("Swap - using a different seed", () => {
     setupEnv(true);
 
     test.use({
@@ -214,7 +214,7 @@ for (const {
     });
 
     test(
-      `Swap using a different seed - ${swap.accountToDebit.currency.name} → ${swap.accountToCredit.currency.name}`,
+      `[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap using a different seed`,
       {
         tag: buildSwapTags({
           debitCurrencyId: swap.accountToDebit.currency.id,
@@ -247,7 +247,7 @@ for (const {
   });
 }
 
-test.describe("Swap a coin for which you have no account yet - from present to not present", () => {
+test.describe("Swap - account not present", () => {
   setupEnv(true);
   const account1 = Account.BTC_NATIVE_SEGWIT_1;
   const account2 = Account.ETH_1;
@@ -269,7 +269,7 @@ test.describe("Swap a coin for which you have no account yet - from present to n
   });
 
   test(
-    "from Account present to Account not present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account present to account not present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -310,7 +310,7 @@ test.describe("Swap a coin for which you have no account yet - from present to n
   );
 });
 
-test.describe("Swap a coin for which you have no account yet - from not present to present", () => {
+test.describe("Swap - account not present", () => {
   setupEnv(true);
   const account1 = Account.ETH_1;
   const account2 = Account.BTC_NATIVE_SEGWIT_1;
@@ -332,7 +332,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
   });
 
   test(
-    "from Account not present to Account present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account not present to account present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -372,7 +372,7 @@ test.describe("Swap a coin for which you have no account yet - from not present 
   );
 });
 
-test.describe("Swap a coin for which you have no account yet - both not present", () => {
+test.describe("Swap - account not present", () => {
   const account1 = Account.ETH_1;
   const account2 = Account.BSC_1;
   const xrayTicket = "B2CQA-3355, B2CQA-3282, B2CQA-3288";
@@ -386,7 +386,7 @@ test.describe("Swap a coin for which you have no account yet - both not present"
   });
 
   test(
-    "from Account not present to Account not present",
+    `[${account1.currency.testLabel}-${account2.currency.testLabel}] - Swap from account not present to account not present`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bsc"],
       annotation: { type: "TMS", description: xrayTicket },
@@ -422,7 +422,7 @@ test.describe("Swap a coin for which you have no account yet - both not present"
   );
 });
 
-test.describe("Swap - Switch You send and You receive currency", () => {
+test.describe("Swap - switch currencies", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03");
   setupEnv(true);
 
@@ -445,7 +445,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
   });
 
   test(
-    "Switch You send and You receive currency",
+    `[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {

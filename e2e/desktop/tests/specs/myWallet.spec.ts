@@ -5,7 +5,7 @@ import { getDescription } from "tests/utils/customJsonReporter";
 import { FF_LWD_WALLET_40_Q2 } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-test.describe("Wallet 4.0 - My Wallet", () => {
+test.describe("My Wallet", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding",

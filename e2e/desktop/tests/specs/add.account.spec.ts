@@ -45,7 +45,7 @@ const currencies: AddAccountTestCase[] = [
 ];
 
 for (const currency of currencies) {
-  test.describe("Add Accounts", () => {
+  test.describe("Add account", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -53,7 +53,7 @@ for (const currency of currencies) {
     });
 
     test(
-      `[${currency.currency.name}] Add account`,
+      `[${currency.currency.testLabel}] - Add account`,
       {
         tag: buildTags({
           currencyId: currency.currency.id,
@@ -117,7 +117,7 @@ for (const currency of currencies) {
   });
 }
 
-test.describe("Add Accounts - Aleo", () => {
+test.describe("Add account", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
@@ -131,7 +131,7 @@ test.describe("Add Accounts - Aleo", () => {
   });
 
   test(
-    `[${Currency.ALEO.name}] Add account`,
+    `[${Currency.ALEO.testLabel}] - Add account`,
     {
       tag: buildTags({ currencyId: Currency.ALEO.id, skipLNS: true }),
       annotation: {

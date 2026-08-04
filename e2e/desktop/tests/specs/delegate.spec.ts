@@ -7,8 +7,12 @@ import { getEnv } from "@shared/env";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
-import { buildTags } from "tests/utils/tagsUtils";
+import {
+  liveDataCommand,
+  liveDataWithAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { FF_STAKE_PROGRAMS_MODAL } from "tests/utils/featureFlagUtils";
+import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
 function setupEnv(disableBroadcast?: boolean) {
   test.use({
@@ -96,7 +100,7 @@ for (const account of e2eDelegationAccounts) {
     });
 
     test(
-      `[${account.delegate.account.currency.name}] Delegate`,
+      `[${account.delegate.account.currency.testLabel}] - Delegate`,
       {
         tag: buildTags({
           currencyId: account.delegate.account.currency.id,
@@ -148,7 +152,7 @@ for (const account of e2eDelegationAccounts) {
   });
 }
 
-test.describe("Delegate without Broadcasting", () => {
+test.describe("Delegate", () => {
   const account = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
   setupEnv(true);
   test.use({
@@ -159,7 +163,7 @@ test.describe("Delegate without Broadcasting", () => {
   });
 
   test(
-    `[${account.account.currency.name}] Delegate without broadcasting`,
+    `[${account.account.currency.testLabel}] - Delegate`,
     {
       tag: buildTags({ currencyId: account.account.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-3023" },
@@ -186,7 +190,7 @@ test.describe("Delegate without Broadcasting", () => {
   );
 });
 
-test.describe("Delegate without Broadcasting", () => {
+test.describe("Delegate", () => {
   const account = new Delegate(Account.MULTIVERS_X_1, "1", "Figment");
   setupEnv(true);
   test.use({
@@ -197,7 +201,7 @@ test.describe("Delegate without Broadcasting", () => {
   });
 
   test(
-    `[${account.account.currency.name}] Delegate without broadcasting`,
+    `[${account.account.currency.testLabel}] - Delegate`,
     {
       tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-3020" },
@@ -231,7 +235,7 @@ test.describe("Delegate without Broadcasting", () => {
   );
 });
 
-test.describe("Delegate without Broadcasting", () => {
+test.describe("Delegate", () => {
   const account = new Delegate(Account.SOL_2, "1", "Ledger by Figment");
   setupEnv(true);
   test.use({
@@ -242,7 +246,7 @@ test.describe("Delegate without Broadcasting", () => {
   });
 
   test(
-    `[${account.account.currency.name}] Delegate without broadcasting`,
+    `[${account.account.currency.testLabel}] - Delegate`,
     {
       tag: buildTags({ currencyId: account.account.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-2742" },
@@ -274,7 +278,7 @@ test.describe("Delegate without Broadcasting", () => {
   );
 });
 
-test.describe("e2e delegation - Celo", () => {
+test.describe("Delegate", () => {
   const account = new Delegate(Account.CELO_1, "0.001", "N/A");
   test.use({
     teamOwner: delegateTeamOwner(account.account.currency.id),
@@ -284,7 +288,7 @@ test.describe("e2e delegation - Celo", () => {
   });
 
   test(
-    "Celo Delegation",
+    `[${account.account.currency.testLabel}] - Lock`,
     {
       tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: {
@@ -315,7 +319,7 @@ test.describe("e2e delegation - Celo", () => {
   );
 
   test(
-    "Celo Vote",
+    `[${account.account.currency.testLabel}] - Vote`,
     {
       tag: buildTags({ currencyId: account.account.currency.id, skipLNS: true }),
       annotation: {
@@ -357,7 +361,7 @@ for (const validator of validators) {
     });
 
     test(
-      `[${validator.delegate.account.currency.name}] - Select validator`,
+      `[${validator.delegate.account.currency.testLabel}] - Select validator`,
       {
         tag: buildTags({
           currencyId: validator.delegate.account.currency.id,
@@ -400,7 +404,7 @@ for (const validator of validators) {
   });
 }
 
-test.describe("Staking flow from different entry point", () => {
+test.describe("Select a validator", () => {
   const delegateAccount = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
   test.use({
     teamOwner: delegateTeamOwner(delegateAccount.account.currency.id),
@@ -410,7 +414,7 @@ test.describe("Staking flow from different entry point", () => {
   });
 
   test(
-    "Staking flow from market entry point",
+    `[${delegateAccount.account.currency.testLabel}] - Delegate from market entry point`,
     {
       tag: buildTags({ currencyId: delegateAccount.account.currency.id }),
       annotation: {
@@ -445,7 +449,7 @@ test.describe("Staking flow from different entry point", () => {
 });
 
 for (const currency of liveApps) {
-  test.describe("LiveApp delegate", () => {
+  test.describe("Select a validator", () => {
     test.use({
       teamOwner: delegateTeamOwner(currency.delegate.account.currency.id),
       userdata: "skip-onboarding-with-last-seen-device",
@@ -454,7 +458,7 @@ for (const currency of liveApps) {
     });
 
     test(
-      `[${currency.delegate.account.currency.name}] - Select validator`,
+      `[${currency.delegate.account.currency.testLabel}] - Select validator`,
       {
         tag: buildTags({ currencyId: currency.delegate.account.currency.id }),
         annotation: { type: "TMS", description: currency.xrayTicket },
@@ -471,3 +475,61 @@ for (const currency of liveApps) {
     );
   });
 }
+
+test.describe("Delegate", () => {
+  const seiDelegationAmount = "1";
+  const seiDelegation = new Delegate(Account.SEI_EVM_1, seiDelegationAmount, "first-available");
+
+  test.use({
+    teamOwner: delegateTeamOwner(seiDelegation.account.currency.id),
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: seiDelegation.account.currency.speculosApp,
+    cliCommands: [liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" })],
+    featureFlags: {
+      evmNativeStaking: {
+        enabled: true,
+        params: { supportedCurrencyIds: ["sei_evm"] },
+      },
+      ...FF_STAKE_PROGRAMS_MODAL,
+    },
+  });
+
+  test(
+    `[${seiDelegation.account.currency.testLabel}] - Delegate`,
+    {
+      tag: [...deviceTagsWithoutLNS(), "@sei_evm", "@family-evm"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-5964",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(seiDelegation.account.accountName);
+
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.evmDelegate.continueFromRewardsInfoIfPresent();
+      await app.evmDelegate.expectValidatorListVisible();
+      await app.evmDelegate.selectFirstValidator();
+      await app.evmDelegate.continueValidatorStep();
+      await app.evmDelegate.setAmountAndContinue(seiDelegationAmount);
+
+      await app.speculos.acceptEnableTransactionCheck();
+
+      await app.evmDelegate.expectDeviceValidationScreen();
+      await app.speculos.signEvmContractTransaction();
+      await app.evmDelegate.expectSuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+
+      await app.delegateDrawer.providerIsVisible(seiDelegation);
+      await app.delegateDrawer.amountValueIsVisible(seiDelegation.account.currency.ticker);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});

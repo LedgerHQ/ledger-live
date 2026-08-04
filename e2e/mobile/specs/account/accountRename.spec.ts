@@ -19,7 +19,7 @@ const tags: string[] = [
   `@family-bitcoin`,
 ];
 tags.forEach(tag => $Tag(tag));
-describe("Account name change", () => {
+describe("Rename account", () => {
   const account = Account.BTC_NATIVE_SEGWIT_1;
   const newAccountName = "New Account Name";
 
@@ -32,7 +32,7 @@ describe("Account name change", () => {
     await app.mainNavigation.waitForWallet40Ready();
   });
 
-  it("should persist Account name change after app restart", async () => {
+  it(`[${account.currency.testLabel}] - Rename account and persist after restart`, async () => {
     await app.accounts.openViaDeeplink();
     await app.common.expectAccountName(account.accountName);
     await app.common.goToAccountByName(account.accountName);

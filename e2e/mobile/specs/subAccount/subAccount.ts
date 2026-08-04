@@ -39,12 +39,12 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Send SPL tokens from 1 account to another", () => {
+  describe("Send - token", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, true);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} Account to ${transaction.accountToCredit.accountName} Account - ${transaction.accountToDebit.currency.name} - E2E test`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.account.navigateToSubAccount(transaction.accountToDebit);
       await app.account.tapSend();
@@ -86,12 +86,12 @@ export function runSendSPLAddressValid(
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Send token - valid address input", () => {
+  describe("Send - token", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - valid address input`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send valid address input`, async () => {
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
@@ -112,12 +112,12 @@ export function runSendSPLAddressInvalid(
   setTeamOwner(Team.COIN_INTEGRATION);
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
-  describe("Send token - invalid address input", () => {
+  describe("Send - token", () => {
     beforeAll(async () => {
       await beforeAllFunction(transaction, false);
     });
 
-    it(`Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToCredit.currency.name} - ${expectedErrorMessage}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}-${transaction.accountToCredit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage}`, async () => {
       await app.send.openViaDeeplink();
       await app.common.performSearch(transaction.accountToDebit.currency.ticker);
       await app.common.selectAccount(transaction.accountToDebit);
@@ -134,7 +134,7 @@ export function runAddSubAccountTest(testConfig: {
   tags: string[];
   networks?: string[];
 }) {
-  describe("Add subAccount without parent", () => {
+  describe("Add sub-account", () => {
     const { asset, tmslinks, tags, networks } = testConfig;
     beforeAll(async () => {
       await app.init({
@@ -147,7 +147,7 @@ export function runAddSubAccountTest(testConfig: {
     setTeamOwner(Team.COIN_INTEGRATION);
     tmslinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Add Sub Account without parent (${asset.currency.speculosApp.name}) - ${asset.currency.ticker}`, async () => {
+    it(`[${asset.currency.testLabel}] - Add sub-account without parent`, async () => {
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
       await app.modularDrawer.performSearchByTicker(asset.currency.ticker);

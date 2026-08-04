@@ -23,14 +23,14 @@ const tags = buildTags({ currencyId: Account.XTZ_1.currency.id });
 // Accounts: XTZ_4 (index 3) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
 // race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
-test.describe("e2e staking - Tezos - earning choice", () => {
+test.describe("Staking - Tezos", () => {
   const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
 
   // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
   test.use({ ...tezosStakeUse(account), env: { DISABLE_TRANSACTION_BROADCAST: "1" } });
 
   test(
-    "Earning choice routes to delegate and stake",
+    `[${account.account.currency.testLabel}] - Earning choice routes to delegate and stake`,
     {
       tag: tags,
       annotation: { type: "TMS", description: "B2CQA-5915" },
@@ -59,13 +59,13 @@ test.describe("e2e staking - Tezos - earning choice", () => {
   );
 });
 
-test.describe("e2e staking - Tezos - stake", () => {
+test.describe("Staking - Tezos", () => {
   const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
   test.use(tezosStakeUse(account));
 
   test(
-    "Stake on a delegated account",
+    `[${account.account.currency.testLabel}] - Stake on a delegated account`,
     {
       tag: tags,
       annotation: { type: "TMS", description: "B2CQA-5917" },
@@ -88,13 +88,13 @@ test.describe("e2e staking - Tezos - stake", () => {
   );
 });
 
-test.describe("e2e staking - Tezos - unstake", () => {
+test.describe("Staking - Tezos", () => {
   const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
 
   test.use(tezosStakeUse(account));
 
   test(
-    "Unstake from a staked account",
+    `[${account.account.currency.testLabel}] - Unstake from a staked account`,
     {
       tag: tags,
       annotation: { type: "TMS", description: "B2CQA-5918" },
@@ -114,14 +114,14 @@ test.describe("e2e staking - Tezos - unstake", () => {
   );
 });
 
-test.describe("e2e staking - Tezos - change validator blocked", () => {
+test.describe("Staking - Tezos", () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   // Assertion-only (never signs).
   test.use(tezosStakeUse(account));
 
   test(
-    "Change validator is blocked while staked",
+    `[${account.account.currency.testLabel}] - Change validator is blocked while staked`,
     {
       tag: tags,
       annotation: { type: "TMS", description: "B2CQA-5919" },
@@ -137,14 +137,14 @@ test.describe("e2e staking - Tezos - change validator blocked", () => {
   );
 });
 
-test.describe("e2e staking - Tezos - end delegation blocked", () => {
+test.describe("Staking - Tezos", () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   // Assertion-only (never signs).
   test.use(tezosStakeUse(account));
 
   test(
-    "Stopping delegation is blocked while staked",
+    `[${account.account.currency.testLabel}] - Stop delegation is blocked while staked`,
     {
       tag: tags,
       annotation: { type: "TMS", description: "B2CQA-5921" },

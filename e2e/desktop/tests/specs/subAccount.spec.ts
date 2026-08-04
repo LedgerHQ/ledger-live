@@ -94,7 +94,7 @@ const shouldSkipLNS = (account: TokenAccount): boolean => {
 };
 
 for (const token of subAccounts) {
-  test.describe("Add subAccount without parent", () => {
+  test.describe("Add sub-account", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -102,7 +102,7 @@ for (const token of subAccounts) {
     });
 
     test(
-      `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      `[${token.account.currency.testLabel}] - Add sub-account without parent`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
@@ -146,7 +146,7 @@ for (const token of subAccounts) {
 }
 
 for (const token of subAccountReceive) {
-  test.describe("Add subAccount when parent exists", () => {
+  test.describe("Add sub-account", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
@@ -154,7 +154,7 @@ for (const token of subAccountReceive) {
     });
 
     test(
-      `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
+      `[${token.account.currency.testLabel}] - Add sub-account when parent exists`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
@@ -195,14 +195,14 @@ for (const token of subAccountReceive) {
 }
 
 for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) {
-  test.describe("Token visible in parent account", () => {
+  test.describe("Add sub-account", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
     });
 
     test(
-      `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      `[${token.account.currency.testLabel}] - Token visible in parent account`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
@@ -252,7 +252,7 @@ const transactionE2E: Array<{
 ];
 
 for (const transaction of transactionE2E) {
-  test.describe("legacy - Send token - E2E", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -269,7 +269,7 @@ for (const transaction of transactionE2E) {
     });
 
     test(
-      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
+      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send`,
       {
         tag: buildTags({ skipLNS: true, extraTags: transaction.extraTags ?? [] }),
         annotation: {
@@ -358,7 +358,7 @@ const transactionsAddressInvalid = [
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("legacy - Send token - invalid address input", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -381,7 +381,7 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
+      `[${transaction.transaction.accountToDebit.currency.testLabel}-${transaction.transaction.accountToCredit.currency.testLabel}] - Send invalid address error: ${transaction.expectedErrorMessage}`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -419,7 +419,7 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("legacy - Send token - valid address input", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -431,7 +431,7 @@ for (const transaction of transactionsAddressValid) {
     });
 
     test(
-      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
+      `[${transaction.transaction.accountToDebit.currency.testLabel}] - Send valid address input`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -492,7 +492,7 @@ const tokenTransactionInvalid = [
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("legacy - Send token (subAccount) - invalid amount input", () => {
+  test.describe("Send - token", () => {
     test.use({
       teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -509,7 +509,7 @@ for (const transaction of tokenTransactionInvalid) {
     });
 
     test(
-      `Send from ${transaction.tx.accountToDebit.accountName} ${transaction.tx.accountToDebit.index} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
+      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send invalid amount error (${transaction.tx.amount})`,
       {
         tag: buildTags({ currencyId: transaction.tx.accountToDebit.currency.id }),
         annotation: {

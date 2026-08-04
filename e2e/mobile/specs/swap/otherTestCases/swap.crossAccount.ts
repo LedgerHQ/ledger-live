@@ -17,7 +17,7 @@ export function runSwapCrossAccountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap cross account warning", () => {
+  describe("Swap - cross account warning", () => {
     beforeAll(async () => {
       await launchApp({ newInstance: true });
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
@@ -40,7 +40,7 @@ export function runSwapCrossAccountTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Should show a visible warning for a cross account swap", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap cross account warning`, async () => {
       const provider = await pickRotatingProvider(providers, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount, [

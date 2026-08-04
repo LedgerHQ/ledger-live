@@ -7,7 +7,7 @@ const transaction = new Transaction(
   "0.00001",
   Fee.MEDIUM,
 );
-runSendValidAddressTest(transaction, ["B2CQA-2725"], "Taproot", [
+runSendValidAddressTest(transaction, ["B2CQA-2725"], "taproot", [
   "@NanoSP",
   "@LNS",
   "@NanoX",

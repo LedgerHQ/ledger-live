@@ -15,7 +15,7 @@ export function runVerifyAddressWarningTest(
 ) {
   const describeFn = options.skip ? describe.skip : describe;
 
-  describeFn("Verify Address warnings", () => {
+  describeFn("Receive", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -27,7 +27,7 @@ export function runVerifyAddressWarningTest(
     setTeamOwner(Team.COIN_INTEGRATION);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Verify address warning for ${account.currency.name}`, async () => {
+    it(`[${account.currency.testLabel}] - Verify address warning`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();
