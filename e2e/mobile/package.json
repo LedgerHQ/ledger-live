@@ -22,7 +22,7 @@
     "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "invariant": "2.2.4",
     "rxjs": "catalog:",
     "uuid": "^9.0.0"

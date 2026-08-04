@@ -70,7 +70,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",

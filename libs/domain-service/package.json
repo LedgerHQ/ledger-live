@@ -73,7 +73,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "eip55": "^2.1.1",

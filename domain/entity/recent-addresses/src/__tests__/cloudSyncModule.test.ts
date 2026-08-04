@@ -1,5 +1,12 @@
 import { recentAddressesSyncModule, recentAddressesSchema } from "../cloudSyncModule";
 import type { RecentAddressesState } from "../schema";
+import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
+
+describeCloudSyncModuleContract("recentAddressesSyncModule contract", recentAddressesSyncModule, {
+  emptyLocalState: {},
+  nonEmptyLocalState: { bitcoin: [{ address: "bc1q", lastUsed: 1000 }] },
+  matchingDistantState: { bitcoin: [{ address: "bc1q", index: 0, lastUsed: 1000 }] },
+});
 
 const addr = (address: string, lastUsed = 1000) => ({ address, lastUsed });
 

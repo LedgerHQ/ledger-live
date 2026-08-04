@@ -26,7 +26,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "events": "^3.3.0"
   },
   "scripts": {

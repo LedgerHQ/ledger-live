@@ -25,7 +25,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-signer-aleo": "workspace:^",
     "@ledgerhq/live-signer-evm": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-device-controller": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

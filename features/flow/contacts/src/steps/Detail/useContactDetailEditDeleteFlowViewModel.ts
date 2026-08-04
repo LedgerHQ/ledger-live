@@ -74,7 +74,9 @@ export function useContactDetailEditDeleteFlowViewModel({
   }, []);
 
   const onSignerCancel = useCallback(() => {
-    setEditUiState("closed");
+    // QueuedBottomSheet calls onClose when isRequestingToBeOpened becomes false — including
+    // after the user confirms and we transition to edit-open. Only cancel when still on signer.
+    setEditUiState(current => (current === "signer-open" ? "closed" : current));
   }, []);
 
   const onEditClose = useCallback(() => {

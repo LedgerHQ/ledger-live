@@ -1,8 +1,10 @@
 import {
+  ContactAddressLabelInputSchema,
   ContactAddressLabelSchema,
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  ContactNameInputSchema,
   ContactNameSchema,
   ContactSchema,
 } from "./schema";
@@ -38,8 +40,10 @@ describe("ContactSchema", () => {
   });
 
   it("accepts international contact names", () => {
-    expect(ContactNameSchema.parse(" E\u0301lodie ")).toBe("E\u0301lodie");
-    expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
+    expect(ContactNameInputSchema.parse(" E\u0301lodie ")).toBe("Élodie");
+    expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe(
+      "Jean-Luc O'Connor"
+    );
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
     expect(ContactNameSchema.parse("مريم")).toBe("مريم");
   });
@@ -71,7 +75,7 @@ describe("ContactAddressSchema", () => {
 
   it("parses a token currency id selected through MAD", () => {
     expect(ContactCurrencyIdSchema.parse("ethereum/erc20/usd-tether")).toBe(
-      "ethereum/erc20/usd-tether",
+      "ethereum/erc20/usd-tether"
     );
   });
 
@@ -84,9 +88,18 @@ describe("ContactAddressSchema", () => {
   });
 
   it("accepts printable ASCII address labels", () => {
-    expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe("Aave v3 1INCH");
+    expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe(
+      "Aave v3 1INCH"
+    );
     expect(ContactAddressLabelSchema.parse("USDC.e")).toBe("USDC.e");
     expect(ContactAddressLabelSchema.parse("123")).toBe("123");
+  });
+
+  it("normalizes address label input before applying the entity schema", () => {
+    expect(ContactAddressLabelInputSchema.parse("  Ethereum  ")).toBe(
+      "Ethereum"
+    );
+    expect(ContactAddressLabelInputSchema.parse("   ")).toBe("");
   });
 
   it("rejects non-ASCII, punctuation-only, emoji, and control-character address labels", () => {
@@ -95,7 +108,9 @@ describe("ContactAddressSchema", () => {
     expect(() => ContactAddressLabelSchema.parse("Кошелек")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("---")).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum 💎")).toThrow();
-    expect(() => ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")).toThrow();
+    expect(() =>
+      ContactAddressLabelSchema.parse("Ethereum 1\uFE0F\u20E3")
+    ).toThrow();
     expect(() => ContactAddressLabelSchema.parse("Ethereum\nWallet")).toThrow();
   });
 
@@ -117,7 +132,10 @@ describe("contact mock factories", () => {
     const contact = mockContactWithMultipleAddresses();
 
     expect(ContactSchema.parse(contact)).toEqual(contact);
-    expect(contact.addresses.map(address => address.currencyId)).toEqual(["polygon", "ethereum"]);
+    expect(contact.addresses.map((address) => address.currencyId)).toEqual([
+      "polygon",
+      "ethereum",
+    ]);
   });
 
   it("builds empty and populated contact lists", () => {
@@ -125,7 +143,7 @@ describe("contact mock factories", () => {
 
     const contacts = mockPopulatedContacts();
 
-    expect(contacts.map(contact => contact.name)).toEqual([
+    expect(contacts.map((contact) => contact.name)).toEqual([
       "Me",
       "Ada",
       "Ben",

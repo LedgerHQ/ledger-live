@@ -33,7 +33,7 @@
     "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",

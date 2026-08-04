@@ -55,7 +55,7 @@
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/react-ui": "workspace:^",

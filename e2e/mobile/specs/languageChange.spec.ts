@@ -45,7 +45,7 @@ const langButtonText = [
 
 const nanoApp = AppInfos.ETHEREUM;
 
-describe("Change Language", () => {
+describe("Settings", () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
@@ -55,7 +55,7 @@ describe("Change Language", () => {
     await app.mainNavigation.waitForWallet40Ready();
   });
 
-  it("should go to General Settings", async () => {
+  it("Open general settings", async () => {
     await app.mainNavigation.navigateToSettings();
     await app.settings.navigateToGeneralSettings();
   });
@@ -65,7 +65,7 @@ describe("Change Language", () => {
     const shouldSkip = isSmokeTestRun && !isSmoke;
 
     l10n.tags.forEach(tag => $Tag(tag));
-    (shouldSkip ? it.skip : it)(`should change selected language to ${l10n.lang}`, async () => {
+    (shouldSkip ? it.skip : it)(`Change app language to ${l10n.lang}`, async () => {
       await app.settingsGeneral.navigateToLanguageSelect();
       await app.settingsGeneral.selectLanguage(l10n.lang);
       await app.settingsGeneral.expectLocalizedText(l10n.localization);

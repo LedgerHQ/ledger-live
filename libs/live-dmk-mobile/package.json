@@ -37,7 +37,7 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-dmk-shared": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
     "purify-ts": "^2.1.0",
     "@shared/env": "workspace:*"

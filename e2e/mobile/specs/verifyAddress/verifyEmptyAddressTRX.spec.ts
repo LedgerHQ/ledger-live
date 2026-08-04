@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 
 setTeamOwner(Team.COIN_INTEGRATION);
-describe("Verify Address warnings", () => {
+describe("Receive", () => {
   const account = Account.TRX_3;
 
   beforeAll(async () => {
@@ -26,7 +26,7 @@ describe("Verify Address warnings", () => {
     "@family-tron",
   ];
   tags.forEach(tag => $Tag(tag));
-  it(`Verify empty address warning for ${account.currency.name}`, async () => {
+  it(`[${account.currency.testLabel}] - Verify address activation warning on empty account`, async () => {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(account.accountName);
     await app.account.tapReceive();

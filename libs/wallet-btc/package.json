@@ -49,7 +49,7 @@
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "bchaddrjs": "^0.5.2",

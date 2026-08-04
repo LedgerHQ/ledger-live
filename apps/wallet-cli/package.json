@@ -74,7 +74,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
     "@napi-rs/keyring": "1.3.0",

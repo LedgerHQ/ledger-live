@@ -61,7 +61,7 @@ const useBorrowOnChainFixture = (): void => {
   });
 };
 
-test.describe("Borrow cold start", () => {
+test.describe("Borrow", () => {
   test.use({
     teamOwner: Team.EARN,
     // Isolated seed with a single ETH account — never used for borrow, so cold start is stable in CI.
@@ -73,7 +73,7 @@ test.describe("Borrow cold start", () => {
   });
 
   test(
-    "Portfolio entry point opens borrow and shows Introducing Crypto Loan modal",
+    `[${coldStartAccount.currency.testLabel}] - Borrow entry point from portfolio shows the crypto loan modal`,
     {
       tag: coldStartTags,
       annotation: { type: "TMS", description: "B2CQA-6062" },
@@ -93,7 +93,7 @@ test.describe("Borrow cold start", () => {
   );
 });
 
-test.describe("Borrow open loan", () => {
+test.describe("Borrow", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Open loan flow requires broadcast to be enabled — run on manual Desktop E2E with enable_broadcast",
@@ -112,7 +112,7 @@ test.describe("Borrow open loan", () => {
   });
 
   test(
-    "Portfolio entry point opens borrow, simulates loan, and completes open-loan execution",
+    `[${openLoanAccount.currency.testLabel}] - Borrow simulates a loan and completes the open-loan execution`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6065" },
@@ -161,7 +161,7 @@ test.describe("Borrow open loan", () => {
   );
 });
 
-test.describe("Borrow repay and withdraw on-chain", () => {
+test.describe("Borrow", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Repay/withdraw flows require broadcast to be enabled — run on manual Desktop E2E with enable_broadcast",
@@ -180,7 +180,7 @@ test.describe("Borrow repay and withdraw on-chain", () => {
   });
 
   test(
-    "Hot start opens repay modal and completes full repay execution",
+    `[${openLoanAccount.currency.testLabel}] - Borrow hot start opens the repay modal and completes full repay`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6073" },
@@ -226,7 +226,7 @@ test.describe("Borrow repay and withdraw on-chain", () => {
   );
 
   test(
-    "Hot start routes a fully-repaid loan to withdraw and completes collateral withdrawal",
+    `[${openLoanAccount.currency.testLabel}] - Borrow hot start routes a repaid loan to withdraw and completes collateral withdrawal`,
     {
       tag: borrowOnChainTags,
       annotation: { type: "TMS", description: "B2CQA-6080" },

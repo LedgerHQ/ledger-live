@@ -194,7 +194,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "blast",
       "blast_sepolia",
       "scroll",
-      "scroll_sepolia",
       "shape",
       "story",
       "etherlink",

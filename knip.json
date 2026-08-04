@@ -98,7 +98,7 @@
       "entry": ["src/walletsync/index.ts", "src/liveqr/cross.ts", "src/liveqr/importAccounts.ts"]
     },
     "./libs/hw-ledger-key-ring-protocol": {
-      "ignoreDependencies": ["@ledgerhq/logs", "@ledgerhq/live-env"]
+      "ignoreDependencies": ["@ledgerhq/live-env"]
     },
     "./libs/ui/packages/native": {
       "entry": [
