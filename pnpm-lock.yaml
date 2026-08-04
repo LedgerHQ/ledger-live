@@ -833,9 +833,6 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
-      '@domain/api-swap-quotes':
-        specifier: workspace:^
-        version: link:../../domain/api/swap-quotes
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -1576,9 +1573,6 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
-      '@domain/api-swap-quotes':
-        specifier: workspace:^
-        version: link:../../domain/api/swap-quotes
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -3849,6 +3843,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../../shared/api-services
       '@shared/auth':
         specifier: workspace:^
         version: link:../../../shared/auth
@@ -9812,6 +9809,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../shared/api-services
       '@shared/auth':
         specifier: workspace:^
         version: link:../../shared/auth
@@ -14054,6 +14054,9 @@ importers:
 
   shared/api-services:
     dependencies:
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../auth
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)

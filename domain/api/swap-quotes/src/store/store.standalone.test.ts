@@ -1,6 +1,8 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
+import { swapApi } from "@shared/api-services";
+
 import { swapQuotesApi } from "../api";
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";

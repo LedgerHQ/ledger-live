@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
+import { swapApi } from "@shared/api-services";
+
 import { makeQuotesInput } from "./fixtures/quotesInput";
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
 import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
@@ -10,12 +12,12 @@ const EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-
 
 function createTestStore(extra: unknown) {
   return configureStore({
-    reducer: { [swapQuotesApi.reducerPath]: swapQuotesApi.reducer },
+    reducer: { [swapApi.reducerPath]: swapApi.reducer },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
         thunk: { extraArgument: extra },
-      }).concat(swapQuotesApi.middleware),
+      }).concat(swapApi.middleware),
   });
 }
 
@@ -248,7 +250,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
       ),
     );
 
-    const keys = Object.keys(store.getState().swapQuotesApi.queries);
+    const keys = Object.keys(store.getState().swapApi.queries);
     expect(keys).toHaveLength(1);
     expect(keys[0]).not.toContain("x-token");
     expect(keys[0]).not.toContain("secret");

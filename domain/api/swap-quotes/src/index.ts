@@ -1,18 +1,10 @@
-export {
-  buildQuotesParams,
-  getSwapQuotesExtra,
-  splitQuotes,
-  swapQuotesApi,
-  swapQuotesApiExtra,
-  transformFetchQuotesResponse,
-} from "./api";
+export { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
 export {
   FetchQuotesResultSchema,
   RawQuoteApiResponseSchema,
   RawQuoteApiSchema,
   RawQuoteErrorSchema,
   RawQuoteSchema,
-  SwapQuotesApiExtraSchema,
 } from "./schema";
 export type {
   FetchQuotesQueryArgs,
@@ -36,6 +28,5 @@ export type {
   RawQuoteTags,
   RawTokenAllowanceData,
   ResolvedQuotesInput,
-  SwapQuotesApiExtra,
   TradeMethod,
 } from "./types";

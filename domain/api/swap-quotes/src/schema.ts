@@ -1,15 +1,5 @@
 import { z } from "zod";
 
-/**
- * This api's slice of the thunk `extraArgument`. The app resolves the config at
- * store setup, so this package owns no env dependency. `parse` fails fast at
- * app init if a value resolved to an empty string.
- */
-export const SwapQuotesApiExtraSchema = z.object({
-  swapApiBaseUrl: z.string().min(1),
-  ledgerClientVersion: z.string().min(1),
-});
-
 export const UniswapOrderTypeSchema = z.enum(["classic", "uniswapxv2", "all"]);
 
 /**

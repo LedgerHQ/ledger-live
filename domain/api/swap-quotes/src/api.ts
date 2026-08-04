@@ -1,34 +1,13 @@
-import {
-  createApi,
-  type BaseQueryFn,
-  type FetchArgs,
-  type FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
-import { createAuthenticatedBaseQuery } from "@shared/auth";
+import { swapApi } from "@shared/api-services";
 
-import { RawQuoteErrorSchema, RawQuoteSchema, SwapQuotesApiExtraSchema } from "./schema";
+import { RawQuoteErrorSchema, RawQuoteSchema } from "./schema";
 import type {
   FetchQuotesQueryArgs,
   FetchQuotesResult,
   RawQuote,
   RawQuoteError,
   ResolvedQuotesInput,
-  SwapQuotesApiExtra,
 } from "./types";
-
-/**
- * Builds this api's slice of the thunk `extraArgument`. RTK leaves
- * `extraArgument` untyped, so this is the one compile- and runtime-checked
- * entry point.
- */
-export function swapQuotesApiExtra(extra: SwapQuotesApiExtra): SwapQuotesApiExtra {
-  return SwapQuotesApiExtraSchema.parse(extra);
-}
-
-export function getSwapQuotesExtra(api: { extra: unknown }): SwapQuotesApiExtra {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return api.extra as SwapQuotesApiExtra;
-}
 
 export function buildQuotesParams(
   providers: string[],
@@ -80,6 +59,7 @@ export function splitQuotes(data: Array<RawQuote | RawQuoteError>): FetchQuotesR
 export function transformFetchQuotesResponse(response: unknown): FetchQuotesResult {
   if (!Array.isArray(response)) return { rawQuotes: [], providerErrors: [] };
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const rows = response as Array<RawQuote | RawQuoteError>;
   const result = splitQuotes(rows);
 
@@ -100,32 +80,14 @@ export function transformFetchQuotesResponse(response: unknown): FetchQuotesResu
   return result;
 }
 
-/** Reads the injected config and delegates to the authenticated base query. */
-const swapQuotesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = (
-  args,
-  api,
-  extraOptions,
-) => {
-  const extra = getSwapQuotesExtra(api);
-  return createAuthenticatedBaseQuery({
-    baseUrl: extra.swapApiBaseUrl,
-    // `fetch` does not inherit the axios default headers the legacy helper got
-    // from `@ledgerhq/live-network`.
-    prepareHeaders: headers => {
-      headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
-      return headers;
-    },
-  })(args, api, extraOptions);
-};
-
 /**
- * Consumed imperatively from the server-side `getQuotes` flow rather than
- * through a hook. HTTP status errors are left as RTK Query errors so the auth
- * adapter's 401/403 refresh-and-retry can fire; the caller maps them.
+ * Swap quotes endpoint, injected into the shared swap aggregator api.
+ *
+ * Consumed imperatively from the server-side `getQuotes` flow rather than through a hook, so no query
+ * hook is exported. HTTP status errors are left as RTK Query errors so the auth adapter's 401/403
+ * refresh-and-retry can fire; the caller maps them.
  */
-export const swapQuotesApi = createApi({
-  reducerPath: "swapQuotesApi",
-  baseQuery: swapQuotesBaseQuery,
+export const swapQuotesApi = swapApi.injectEndpoints({
   endpoints: build => ({
     fetchQuotes: build.query<FetchQuotesResult, FetchQuotesQueryArgs>({
       query: ({ providers, quotesInput, counterValueCurrency, customHeaders }) => ({
@@ -145,3 +107,5 @@ export const swapQuotesApi = createApi({
     }),
   }),
 });
+
+export type SwapQuotesApi = typeof swapQuotesApi;

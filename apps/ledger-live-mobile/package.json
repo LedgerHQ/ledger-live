@@ -95,7 +95,6 @@
     "@domain/api-market-sentiment": "workspace:^",
     "@domain/api-pay-card": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
-    "@domain/api-swap-quotes": "workspace:^",
     "@domain/entity-altcoins-sentiment": "workspace:^",
     "@domain/entity-analytics-consent": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",

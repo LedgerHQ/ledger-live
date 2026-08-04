@@ -4,6 +4,8 @@ import { createTestStore } from "@tests/test-helpers/testUtils";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
+import { swapApi } from "@shared/api-services";
+
 import { swapQuotesApi } from "../state-manager/api";
 import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
@@ -31,7 +33,7 @@ describe("fetchQuotes against a live store", () => {
 
   beforeEach(() => {
     hits = 0;
-    store = createTestStore([swapQuotesApi], {
+    store = createTestStore([swapApi], {
       extra: { ...API_EXTRA, authProvider: unauthenticatedProvider },
     });
     setSwapQuotesStore(store.dispatch);
@@ -88,7 +90,7 @@ describe("fetchQuotes against a live store", () => {
     // `keepUnusedDataFor: 0` schedules the eviction on the next macrotask.
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(store.getState().swapQuotesApi.queries).toEqual({});
+    expect(store.getState().swapApi.queries).toEqual({});
   });
 
   it("returns an empty result when the aggregator answers with an HTTP error", async () => {

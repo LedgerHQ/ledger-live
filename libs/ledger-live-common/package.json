@@ -367,6 +367,7 @@
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:^",
     "@shared/auth": "workspace:^",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:^",

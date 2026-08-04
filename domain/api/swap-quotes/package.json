@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:^",
     "@shared/auth": "workspace:^",
     "zod": "catalog:"
   },

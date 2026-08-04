@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/auth": "workspace:^",
     "zod": "catalog:"
   },
   "peerDependencies": {

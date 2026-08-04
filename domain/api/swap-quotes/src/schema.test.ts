@@ -1,6 +1,6 @@
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
 import { RawQuoteErrorSchema, RawQuoteSchema } from "./schema";
-import { swapQuotesApiExtra, transformFetchQuotesResponse } from "./api";
+import { transformFetchQuotesResponse } from "./api";
 
 describe("RawQuoteSchema", () => {
   it("accepts the fixture", () => {
@@ -49,27 +49,6 @@ describe("transformFetchQuotesResponse validation", () => {
     expect(warn).toHaveBeenCalled();
     warn.mockRestore();
   });
-});
-
-describe("SwapQuotesApiExtraSchema", () => {
-  it("accepts a complete config", () => {
-    expect(
-      swapQuotesApiExtra({ swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "1.2.3" }),
-    ).toEqual({ swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "1.2.3" });
-  });
-
-  it.each(["swapApiBaseUrl", "ledgerClientVersion"] as const)(
-    "throws when %s resolved to an empty string",
-    key => {
-      const config = {
-        swapApiBaseUrl: "https://swap.test",
-        ledgerClientVersion: "1.2.3",
-        [key]: "",
-      };
-
-      expect(() => swapQuotesApiExtra(config)).toThrow();
-    },
-  );
 });
 
 describe("RawQuoteSchema nested shapes", () => {
