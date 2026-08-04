@@ -28,6 +28,10 @@ export function getTransparentBalance(
  * are deliberately excluded so this value matches the spendable "Private
  * balance" shown in the send modal (see ZcashTransferFromSelector) instead of
  * exceeding it by any residual Orchard/Sapling notes.
+ *
+ * Operations are not restricted the same way: they carry the real amount moved
+ * in every pool (see `convertShieldedTransactionsToOperations`), so for an
+ * account holding such notes they do not sum to this balance.
  */
 export function getPrivateBalance(privateInfo: PrivateBalances | undefined | null): BigNumber {
   if (!privateInfo) return new BigNumber(0);

@@ -462,7 +462,7 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(result).toEqual([]);
   });
 
-  it("op.value for Ironwood incoming tx includes only incoming notes", () => {
+  it("op.value for an incoming tx includes only incoming notes", () => {
     const tx: ShieldedTransaction = {
       id: "tx-mixed",
       hex: "00",
@@ -489,7 +489,7 @@ describe("convertShieldedTransactionsToOperations", () => {
   // built in this module and the optimistic operation emitted at signing time. A
   // confirmed operation valued without the fee makes the amount shown in history
   // change the moment the pending operation is replaced.
-  it("op.value for Ironwood outgoing tx covers the outgoing notes plus the fee", () => {
+  it("op.value for an outgoing tx covers the outgoing notes plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "tx-out",
       hex: "00",
@@ -533,7 +533,9 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.fee).toEqual(new BigNumber(15_000));
   });
 
-  it("op.value for an Ironwood z→t send that left no change is still the transparent amount plus the fee", () => {
+  // The send left no change, so no note in any pool attributes it and it is typed
+  // Orchard by default. The transparent bundle is the only place its value appears.
+  it("values a whole-note z→t that left no change at the transparent amount plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "d452101fabff",
       hex: "00",
@@ -549,8 +551,6 @@ describe("convertShieldedTransactionsToOperations", () => {
       },
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
-    // No Ironwood change note → typed as Orchard OUT fallback; value still carries
-    // transparentOut + fee (no deprecated-pool notes to exclude).
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
     expect(op.value).toEqual(new BigNumber(1_000_000));
   });
@@ -574,7 +574,10 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.value).toEqual(new BigNumber(0));
   });
 
-  it("op.value excludes Orchard and Sapling notes so it matches Ironwood-only balance", () => {
+  // `account.balance` counts Ironwood only, so this operation reports 12_000 more
+  // than the balance it lands next to — the deliberate divergence described on
+  // `convertShieldedTransactionsToOperations`.
+  it("op.value counts the deprecated pools the Ironwood-only balance leaves out", () => {
     const tx: ShieldedTransaction = {
       id: "tx-deprecated-pools",
       hex: "00",
@@ -590,10 +593,10 @@ describe("convertShieldedTransactionsToOperations", () => {
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_IRONWOOD_IN");
-    expect(op.value).toEqual(new BigNumber(4_000));
+    expect(op.value).toEqual(new BigNumber(16_000));
   });
 
-  it("op.value is 0 for Orchard-only incoming tx", () => {
+  it("op.value for an Orchard-only incoming tx is the amount received", () => {
     const tx: ShieldedTransaction = {
       id: "tx-orchard-only",
       hex: "00",
@@ -608,10 +611,10 @@ describe("convertShieldedTransactionsToOperations", () => {
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_IN");
-    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.value).toEqual(new BigNumber(1000));
   });
 
-  it("op.value is 0 for Orchard-only outgoing tx", () => {
+  it("op.value for an Orchard-only outgoing tx covers the outgoing notes plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "tx-orchard-out",
       hex: "00",
@@ -629,10 +632,12 @@ describe("convertShieldedTransactionsToOperations", () => {
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
-    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.value).toEqual(new BigNumber(2100));
   });
 
-  it("op.value is 0 for Orchard-only z→t send", () => {
+  // The payment that leaves the account: nothing else records it, since
+  // `mapTxToOperations` emits no transparent operation for an external recipient.
+  it("op.value for an Orchard z→t send is the transparent amount plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "tx-orchard-deshield",
       hex: "00",
@@ -648,7 +653,28 @@ describe("convertShieldedTransactionsToOperations", () => {
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
-    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.value).toEqual(new BigNumber(515_000));
+  });
+
+  // The newest pool present labels the operation, but every pool that moved funds
+  // is counted: the label answers "which protocol", not "how much".
+  it("op.value for a mixed-pool outgoing tx counts the notes of every pool", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-ironwood-out-with-orchard-notes",
+      hex: "00",
+      blockHeight: 3_425_865,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(9_000), memo: "", transfer_type: "outgoing" }],
+        sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(2_000), memo: "", transfer_type: "outgoing" }],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_OUT");
+    expect(op.value).toEqual(new BigNumber(11_100));
   });
 });
 
