@@ -135,6 +135,10 @@
     "AlgorandASANotOptInInRecipient" : {
       "title" : "Le compte bénéficiaire n’a pas activé l’ASA sélectionné."
     },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "Mémo trop long",
+      "description" : "Les mémos Algorand ne peuvent pas dépasser 1 024 bytes. Veuillez raccourcir votre mémo."
+    },
     "BluetoothRequired" : {
       "title" : "Bluetooth désactivé",
       "description" : "Activez le Bluetooth dans les paramètres de votre téléphone (état {{state}})."
@@ -1397,13 +1401,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Voyez plus grand. Économisez {{discount}}%.",
-      "subtitle" : "Profitez d’un écran plus grand, d’une vérification des transactions automatisée, d’une protection renforcée et d’une réduction exclusive de {{discount}}%."
+      "subtitle" : "Profitez d’un écran plus grand, d’une vérification des transactions automatisée, d’une protection renforcée et d’une réduction exclusive de {{discount}}%.",
+      "cta" : "Explorer les signers tactiles"
     },
     "optedOut" : {
-      "title" : "Repérez les pièges d’un coup d’œil",
-      "subtitle" : "Vérifiez les détails de vos transactions sur un écran tactile et repérez les escroqueries grâce à des contrôles de sécurité avancés."
-    },
-    "cta" : "Explorer les signers tactiles"
+      "title" : "Détection des escroqueries",
+      "subtitle" : "Ces fonctionnalités de sécurité avancées permettent de détecter les menaces en temps réel.",
+      "cta" : "En savoir plus"
+    }
   },
   "earn" : {
     "simulator" : {
@@ -2937,7 +2942,7 @@
         "receiveCrypto" : "Recevoir via une adresse crypto",
         "sendCrypto" : "Envoyer des cryptos",
         "bankTransfer" : "Recevoir par virement bancaire",
-        "bankTransferDescription" : "Recevez des stablecoins en réalisant un virement depuis votre banque."
+        "bankTransferDescription" : "Recevez des stablecoins par virement bancaire."
       }
     },
     "recoverBanner" : {
@@ -3071,8 +3076,8 @@
     "pending" : "En attente",
     "options" : {
       "more" : "Options de l’historique des opérations",
-      "hideDustTransactions" : "Masquer les transactions poussières",
-      "showDustTransactions" : "Afficher les transactions poussières",
+      "hideDustTransactions" : "Masquer les petites transactions",
+      "showDustTransactions" : "Afficher les petites transactions",
       "dustTransactionsHiddenDescription" : "Les transactions inférieures à {{threshold}} seront masquées.",
       "dustTransactionsDisplayedDescription" : "Les transactions inférieures à {{threshold}} seront affichées."
     }
@@ -3469,8 +3474,6 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Wallet sur différents téléphones et ordinateurs.",
       "walletSyncDescription" : "Gardez votre portefeuille à jour, même en changeant d’ordinateur ou sur téléphone.",
-      "region" : "Région",
-      "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "password" : "Verrouillage",
       "passwordDesc" : "Définissez un mot de passe pour verrouiller l’application Ledger Wallet.",
       "passwordDescBioCompat" : "Définissez un mot de passe ou votre {{biometricsType}} pour verrouiller l’application Ledger Wallet.",
@@ -3893,7 +3896,7 @@
         },
         "fiat" : {
           "title" : "Via un virement bancaire",
-          "description" : "Recevez des stablecoins en réalisant un virement depuis votre banque.",
+          "description" : "Recevez des stablecoins par virement bancaire.",
           "description_legacy" : "Recevez des stablecoins grâce à un virement. Création de compte requise."
         }
       },
@@ -4289,7 +4292,11 @@
         "monad_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Monad",
         "monad_description" : "Pour échanger des Monad, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
-        "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "aleo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aleo",
+        "aleo_description" : "Pour échanger des Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "aleo_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Aleo",
+        "aleo_tokens_description" : "Pour échanger des tokens Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -4499,6 +4506,28 @@
       "hideFullMessage" : "Masquer le message"
     }
   },
+  "walletApiSignMessage" : {
+    "sign" : {
+      "title" : "Continuez sur votre {{productName}}",
+      "description" : "Consultez les instructions sur son écran sécurisé.",
+      "cancelled" : {
+        "title" : "Action rejetée sur l’appareil",
+        "close" : "Fermer",
+        "retry" : "Réessayer"
+      }
+    }
+  },
+  "walletApiSignTransaction" : {
+    "sign" : {
+      "title" : "Continuez sur votre {{productName}}",
+      "description" : "Consultez les instructions sur son écran sécurisé.",
+      "cancelled" : {
+        "title" : "Action rejetée sur l’appareil",
+        "close" : "Fermer",
+        "retry" : "Réessayer"
+      }
+    }
+  },
   "sync" : {
     "error" : "Erreur de synchronisation",
     "loading" : "Sync"
@@ -4574,6 +4603,16 @@
       "feesAmount" : "Montant des frais ({{unit}})",
       "gasLimit" : "Limite de gaz ({{unit}})",
       "feesPaid" : "Frais payés au réseau pour le traitement de votre transaction",
+      "tronFees" : {
+        "sufficient" : {
+          "title" : "Frais de réseau TRX",
+          "description" : "Vous utiliserez {{energy}} en énergie et {{bandwidth}} en bande passante pour payer les frais de réseau."
+        },
+        "insufficient" : {
+          "title" : "Détail des frais de réseau",
+          "description" : "Vous n’avez pas assez d’énergie et de bande passante pour couvrir ce transfert. Le montant manquant sera couvert en utilisant (brûlant) des TRX."
+        }
+      },
       "insufficientBalanceFees" : "Solde insuffisant pour couvrir les frais de réseau",
       "amountToSend" : "Montant à envoyer ({{currency}})",
       "coinToSend" : "Crypto à envoyer",
@@ -4765,6 +4804,7 @@
       "slow" : "Lent",
       "custom" : "Personnalisé",
       "customFees" : "Modifier les frais",
+      "defaultNetworkFee" : "Frais de réseau par défaut",
       "coinControl" : "Choisir",
       "edit" : {
         "title" : "Choisir une unité"
@@ -6763,6 +6803,12 @@
       }
     }
   },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Dépôt",
+      "OUT" : "Retrait"
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "Gagner des récompenses en déléguant votre compte",
@@ -6955,6 +7001,7 @@
             "allAssetsUsed" : "Tous les actifs sont utilisés.",
             "minAmount" : "Montant minimal : <0>{{min}}</0>",
             "incorrectAmount" : "Montant maximal : <0>{{max}}</0>",
+            "visibilityDelay" : "Retrouvez cette délégation sur votre tableau de bord d’ici {{numberOfMinutes}} minutes.",
             "cta" : "Continuer"
           },
           "verification" : {
@@ -8450,9 +8497,6 @@
   "ApplicationVersion" : "v. {{version}}",
   "analytics" : {
     "title" : "Statistiques",
-    "allocation" : {
-      "title" : "Répartition"
-    },
     "operations" : {
       "title" : "Historique des opérations"
     }
@@ -8797,10 +8841,6 @@
           "title" : "Synchronisez votre wallet",
           "description" : "Gardez vos comptes crypto synchronisés."
         },
-        "customImage" : {
-          "title" : "Personnalisez le fond d’écran",
-          "description" : "Affichez votre image préférée sur l’écran de verrouillage de votre appareil."
-        },
         "recover" : {
           "title" : "Finalisez votre sauvegarde",
           "description" : "Terminez l’activation de Ledger Recover."
@@ -8828,10 +8868,6 @@
         "titleCompleted" : "Crypto achetée",
         "description" : "Faites votre choix parmi plus de 500 cryptos.",
         "popupLabel" : "Crypto achetée"
-      },
-      "customImage" : {
-        "titleCompleted" : "Fond d’écran personnalisé",
-        "popupLabel" : "Fond d’écran personnalisé"
       },
       "recover" : {
         "titleCompleted" : "Sauvegarde sécurisée",
@@ -8880,11 +8916,6 @@
         }
       }
     }
-  },
-  "newsfeed" : {
-    "title" : "Fil d’actualités",
-    "poweredByCryptopanic" : "Propulsé par CryptoPanic",
-    "noPosts" : "Pas de publication pour le moment"
   },
   "deviceConnect" : {
     "title" : "Connectez votre appareil"
@@ -9613,6 +9644,8 @@
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount_one" : "{{count}} compte",
     "accountCount_other" : "{{count}} comptes",
+    "emptyAccounts" : "Vous n’avez pas encore de comptes {{network}}. Veuillez en ajouter un pour continuer.",
+    "addAccount" : "Ajouter un compte",
     "perpetualsBanner" : "Uniquement disponible pour l’USDC sur la blockchain Arbitrum.",
     "errors" : {
       "title" : "Échec de la connexion",
@@ -9979,7 +10012,7 @@
     },
     "bottomSheet" : {
       "title" : "Certaines données de compte n’ont pas pu être chargées",
-      "description" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\nComptes concernés : {{accounts}}",
+      "description" : "Problème temporaire de synchronisation : vos actifs sont en sécurité.\nComptes concernés : {{accounts}}",
       "tryToRefresh" : "Essayer d’actualiser",
       "close" : "Fermer"
     }
@@ -10115,7 +10148,7 @@
       }
     },
     "accountActions" : {
-      "publicToPrivate" : "Transfert interne"
+      "publicToPrivate" : "Échanger"
     },
     "send" : {
       "balanceSelection" : {
@@ -10191,12 +10224,61 @@
   "contacts" : {
     "title" : "Contacts",
     "addContact" : "Ajouter un contact",
+    "addAddress" : "Ajouter une adresse",
+    "addYourAddress" : "Ajouter mon adresse",
     "searchPlaceholder" : "Rechercher un contact",
+    "searchNoResults" : "Aucun contact trouvé",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Nom du contact",
+      "namingDisclaimer" : "Pour une meilleure vie privée, évitez les noms complets et les noms de famille. Utilisez un pseudonyme ou simplement un prénom + initiale, par ex. « Jérôme S ».",
+      "confirmName" : "Confirmer le nom",
+      "invalidNameError" : "Les caractères spéciaux ne sont pas pris en charge."
+    },
+    "addressCount_zero" : "0 adresse",
+    "addressCount_one" : "{{count}} adresse",
+    "addressCount_other" : "{{count}} adresses",
     "me" : {
       "name" : "Moi",
       "addressCount_zero" : "0 adresse",
       "addressCount_one" : "{{count}} adresse",
       "addressCount_other" : "{{count}} adresses"
+    },
+    "detail" : {
+      "ledgerWalletAddresses" : "Adresses Ledger Wallet",
+      "myAddresses" : "Mes adresses",
+      "emptyState" : {
+        "title" : "Aucune adresse pour le moment",
+        "meTitle" : "Enregistrez vos adresses",
+        "meDescription" : "Enregistrez les adresses externes que vous possédez sur d’autres wallets ou des plateformes d’échange. La prochaine fois que vous effectuez un envoi vers une de vos adresses, votre appareil Ledger affichera le nom que vous avez choisi.",
+        "contactDescription" : "Enregistrez une adresse de wallet pour envoyer à {{name}}."
+      }
+    },
+    "ledgerSyncIntroduction" : {
+      "title" : "Activez Ledger Sync pour sauvegarder les contacts",
+      "description" : "Vos contacts sont chiffrés de bout en bout avec votre appareil Ledger et synchronisés sur vos appareils. Vous seul(e) pouvez y accéder.",
+      "activate" : "Activer Ledger Sync",
+      "dismiss" : "Compris",
+      "checkingAccessibilityLabel" : "Vérification du statut de Ledger Sync"
+    },
+    "featureIntroduction" : {
+      "title" : "Découvrez les contacts",
+      "description" : "Votre répertoire crypto : enregistrez les wallets vers lesquels vous transférez des actifs, en un seul endroit.",
+      "primaryAction" : "Explorer",
+      "secondaryAction" : "Plus tard",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Enregistrez vos adresses",
+          "description" : "Conservez un répertoire de vos adresses."
+        },
+        "sendToRightAddress" : {
+          "title" : "Envoyez à la bonne adresse",
+          "description" : "Transférez vos actifs vers le bon wallet."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Confidentialité multi-appareils",
+          "description" : "Chiffré de bout en bout avec Ledger Sync."
+        }
+      }
     }
   }
 }
