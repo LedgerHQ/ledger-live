@@ -24,7 +24,7 @@ import {
   NearStakingThresholdNotMet,
   NearUseAllAmountStakeWarning,
 } from "../../errors";
-import { fetchAccountDetails, getActionCosts } from "../../network";
+import { fetchAccountDetails, getActionCosts, getStakingPositions } from "../../network";
 import { pooledAmount } from "../staking/pooledAmount";
 import { getYoctoThreshold, isImplicitAccount, isValidAddress } from "../../logic";
 import { resolveTarget, type NearIntent } from "./craftTransaction";
@@ -41,6 +41,21 @@ function spendable(balances: Balance[]): bigint {
   const native = balances.find(b => b.asset.type === "native" && b.stake === undefined);
 
   return (native?.value ?? 0n) - (native?.locked ?? 0n);
+}
+
+/**
+ * Whether the sender has an open delegation. `balances` carries staking entries only when built
+ * from this API's own {@link getBalance} — a caller that rebuilds it from the wallet's generic
+ * `Account` model (`extractBalances`) never sets `stake`, so the pool is queried directly as a
+ * fallback, mirroring {@link pooledAmount}.
+ */
+async function hasOpenDelegation(balances: Balance[], sender: string): Promise<boolean> {
+  if (balances.some(b => b.stake !== undefined)) {
+    return true;
+  }
+
+  const { stakingPositions } = await getStakingPositions(sender);
+  return stakingPositions.length > 0;
 }
 
 type RecipientCheck = {
@@ -122,7 +137,7 @@ async function validateSend(
     });
   }
 
-  if (intent.useAllAmount && balances.some(b => b.stake !== undefined)) {
+  if (intent.useAllAmount && (await hasOpenDelegation(balances, intent.sender))) {
     warnings.amount = new NearRecommendUnstake();
   }
 

@@ -22,7 +22,6 @@ export function toStakes(address: string, positions: NearStakingPosition[]): Sta
         actions,
         asset: { type: "native" },
         amount: BigInt(staked.toFixed(0)),
-        amountDeposited: BigInt(staked.toFixed(0)),
       });
     }
 
@@ -35,7 +34,6 @@ export function toStakes(address: string, positions: NearStakingPosition[]): Sta
         actions: [],
         asset: { type: "native" },
         amount: BigInt(pending.toFixed(0)),
-        amountDeposited: BigInt(pending.toFixed(0)),
       });
     }
 
@@ -48,7 +46,6 @@ export function toStakes(address: string, positions: NearStakingPosition[]): Sta
         actions: ["withdraw"],
         asset: { type: "native" },
         amount: BigInt(available.toFixed(0)),
-        amountDeposited: BigInt(available.toFixed(0)),
       });
     }
   }

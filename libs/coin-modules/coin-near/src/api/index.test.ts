@@ -62,10 +62,6 @@ describe("createApi", () => {
     }
   });
 
-  it("declares staking support, which is what makes the framework read validators", () => {
-    expect(api.stakingSupported).toBe(true);
-  });
-
   describe("delegates each method to its implementation", () => {
     const intent = { intentType: "transaction", sender: "sender.near" } as never;
 

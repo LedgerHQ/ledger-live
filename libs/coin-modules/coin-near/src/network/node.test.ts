@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
-import { getGasPrice, getStakingPositions, getValidators } from "./node";
+import { broadcastTransaction, getGasPrice, getStakingPositions, getValidators } from "./node";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 
 const RPC_GAS_PRICE = "123000000";
@@ -229,6 +229,64 @@ describe("node api (indexer-backed calls)", () => {
 
       expect(totalAvailable.toFixed()).toBe("0");
       expect(totalPending.toFixed()).toBe("3000000000000000000000000");
+    });
+  });
+
+  describe("broadcastTransaction", () => {
+    const mockSendTx = (result: unknown, error?: unknown): void => {
+      mockServer.use(
+        http.post(NEAR_BASE_URL_MOCKED, () =>
+          HttpResponse.json({ jsonrpc: "2.0", id: "id", result, error }),
+        ),
+      );
+    };
+
+    it("returns the transaction hash on success", async () => {
+      mockSendTx({ transaction: { hash: "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w" } });
+
+      await expect(broadcastTransaction("signed-tx")).resolves.toBe(
+        "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w",
+      );
+    });
+
+    it("throws when the node responds with no transaction hash", async () => {
+      mockSendTx({ transaction: {} });
+
+      await expect(broadcastTransaction("signed-tx")).rejects.toThrow(
+        "Near: send_tx returned no transaction hash",
+      );
+    });
+
+    it("propagates a non-timeout node error immediately", async () => {
+      mockSendTx(undefined, { cause: { name: "INVALID_TRANSACTION" }, message: "nonce too small" });
+
+      await expect(broadcastTransaction("signed-tx")).rejects.toThrow(
+        "INVALID_TRANSACTION: nonce too small",
+      );
+    });
+
+    it("retries once on a timeout then returns the hash", async () => {
+      let attempts = 0;
+      mockServer.use(
+        http.post(NEAR_BASE_URL_MOCKED, () => {
+          attempts += 1;
+          if (attempts === 1) {
+            return HttpResponse.json({
+              jsonrpc: "2.0",
+              id: "id",
+              error: { cause: { name: "TIMEOUT_ERROR" }, message: "timed out" },
+            });
+          }
+          return HttpResponse.json({
+            jsonrpc: "2.0",
+            id: "id",
+            result: { transaction: { hash: "retried-hash" } },
+          });
+        }),
+      );
+
+      await expect(broadcastTransaction("signed-tx")).resolves.toBe("retried-hash");
+      expect(attempts).toBe(2);
     });
   });
 

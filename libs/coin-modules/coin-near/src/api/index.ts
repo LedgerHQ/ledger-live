@@ -35,11 +35,7 @@ import { validateIntent } from "../logic/transaction/validateIntent";
 
 // CoinModuleApi ("Alpaca") entry point for NEAR. Staking reads are implemented (real pool-contract
 // delegation); getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline throws below for why.
-// `stakingSupported` isn't part of `CoinModuleApi`; declared inline (not via `BridgeApi`, which coin modules can't depend on) so the wallet framework can gate validator sync on it.
-export function createApi(
-  config: NearCoinConfig,
-  _currencyId: string,
-): CoinModuleApi & { stakingSupported: true } {
+export function createApi(config: NearCoinConfig, _currencyId: string): CoinModuleApi {
   setCoinConfig(config);
 
   return {
@@ -77,7 +73,6 @@ export function createApi(
     ): Promise<boolean> => isValidAddress(address),
 
     // --- Staking ---
-    stakingSupported: true,
     getStakes: (address: string, cursor?: Cursor): Promise<Page<Stake>> =>
       getStakes(address, cursor),
     getValidators: (cursor?: Cursor): Promise<Page<Validator>> => getValidators(cursor),

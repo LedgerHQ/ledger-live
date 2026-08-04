@@ -7,8 +7,8 @@ import * as nearAPI from "near-api-js";
 import { getCoinConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
-import { getCurrentNearPreloadData } from "../preload-data";
 import { NearAccount } from "../types";
+import { getActionCosts } from "./protocolConfig";
 import {
   NearAccessKey,
   NearAccountDetails,
@@ -57,7 +57,9 @@ export const getAccount = async (
   const { stakingPositions, totalStaked, totalAvailable, totalPending } =
     await getStakingPositions(address);
 
-  const { storageCost } = getCurrentNearPreloadData();
+  // Read directly from the protocol config rather than the preload cache: a CoinModuleApi caller
+  // never runs the account bridge's preload step, so the cache would still hold its zeroed default.
+  const { storageCost } = await getActionCosts();
 
   const balance = new BigNumber(accountDetails.amount);
   const storageUsage = storageCost.multipliedBy(accountDetails.storage_usage);
@@ -213,7 +215,13 @@ export const broadcastTransaction = async (transaction: string, retries = 6): Pr
     throw new Error((data.error?.cause?.name || "UNKOWWN CAUSE") + ": " + data.error.message);
   }
 
-  return data.result.transaction.hash;
+  const hash = data.result?.transaction?.hash;
+
+  if (!hash) {
+    throw new Error("Near: send_tx returned no transaction hash");
+  }
+
+  return hash;
 };
 
 export const getStakingPositions = async (

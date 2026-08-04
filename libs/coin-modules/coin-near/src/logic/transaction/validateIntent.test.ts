@@ -79,6 +79,7 @@ describe("validateIntent", () => {
       storageCost: new BigNumber("10000000000000000000"),
     });
     (fetchAccountDetails as jest.Mock).mockResolvedValue({ amount: "1", storage_usage: 182 });
+    (getStakingPositions as jest.Mock).mockResolvedValue({ stakingPositions: [] });
   });
 
   describe("transfers", () => {
@@ -200,6 +201,35 @@ describe("validateIntent", () => {
       );
 
       expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+    });
+
+    it("recommends unstaking first even when the caller's balances carry no staking entries", async () => {
+      (getStakingPositions as jest.Mock).mockResolvedValue({
+        stakingPositions: [
+          { validatorId: VALIDATOR, staked: new BigNumber(ABOVE_THRESHOLD.toString()) },
+        ],
+      });
+
+      const result = await validateIntent(
+        sendIntent({ useAllAmount: true }),
+        [nativeBalance(ONE_NEAR * 10n)],
+        FEES,
+      );
+
+      expect(getStakingPositions).toHaveBeenCalledWith(SENDER);
+      expect(result.warnings.amount?.name).toBe("NearRecommendUnstake");
+    });
+
+    it("does not warn to unstake when the sender has no delegation at all", async () => {
+      (getStakingPositions as jest.Mock).mockResolvedValue({ stakingPositions: [] });
+
+      const result = await validateIntent(
+        sendIntent({ useAllAmount: true }),
+        [nativeBalance(ONE_NEAR * 10n)],
+        FEES,
+      );
+
+      expect(result.warnings.amount).toBeUndefined();
     });
   });
 

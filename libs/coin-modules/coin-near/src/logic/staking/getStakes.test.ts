@@ -81,11 +81,11 @@ describe("toStakes", () => {
     expect(stakes).toEqual([]);
   });
 
-  it("reports no rewards, since a staking pool compounds them into the staked balance", () => {
+  it("reports neither rewards nor a deposited split, since a pool compounds rewards into the staked shares and the principal isn't recoverable", () => {
     const [stake] = toStakes(ADDRESS, [position({ staked: ABOVE_THRESHOLD })]);
 
     expect(stake.amountRewarded).toBeUndefined();
-    expect(stake.amountDeposited).toBe(stake.amount);
+    expect(stake.amountDeposited).toBeUndefined();
   });
 });
 
