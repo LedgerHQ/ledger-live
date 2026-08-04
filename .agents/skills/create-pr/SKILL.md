@@ -20,11 +20,11 @@ $TICKET_DESCRIPTION
 
 $CHANGE_TYPE
 
-> Select the type of change: feat | fix | refactor | test | docs | chore
+> Select the type of change. See `docs/contributing/git-conventions.md` for the full list of valid `type` values.
 
 $CHANGE_SCOPE
 
-> What packages are impacted? (e.g., live-mobile, ledger-live-desktop, @ledgerhq/live-common)
+> **Required.** What packages are impacted? (e.g., live-mobile, ledger-live-desktop, @ledgerhq/live-common). See `docs/contributing/git-conventions.md` for scope guidance — a PR title without a scope fails the repo's PR-title check.
 
 $TEST_COVERAGE
 
@@ -129,6 +129,8 @@ Use the `slack-pr-message` skill (`.agents/skills/slack-pr-message/SKILL.md`) to
 
 1. **PR Title**: `{{CHANGE_TYPE}}({{SCOPE}}): {{SHORT_DESCRIPTION}}`
 
+   - The `(scope)` is **required**, never omit it — a PR title without a scope fails the repo's PR-title check (Danger/commitlint).
+   - See `docs/contributing/git-conventions.md` for the full `type` list and scope guidance; do not invent types/scopes outside of it.
    - Example: `feat(mobile): add dark mode toggle`
    - Example: `fix(desktop): resolve transaction signing issue`
 
