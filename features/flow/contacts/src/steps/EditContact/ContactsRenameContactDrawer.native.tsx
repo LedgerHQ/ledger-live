@@ -1,8 +1,8 @@
 import React from "react";
 import { ContactsContactNameDrawerContent } from "../../components/ContactsContactNameDrawer/ContactsContactNameDrawerContent.native";
-import type { ContactsAddContactDrawerProps } from "./types";
+import type { ContactsRenameContactDrawerProps } from "./types";
 
-export function ContactsAddContactDrawer({
+export function ContactsRenameContactDrawer({
   isOpen,
   isConfirmEnabled,
   isSaving,
@@ -13,7 +13,7 @@ export function ContactsAddContactDrawer({
   labels,
   onDraftNameChange,
   onConfirm,
-}: ContactsAddContactDrawerProps): React.JSX.Element {
+}: ContactsRenameContactDrawerProps): React.JSX.Element {
   return (
     <ContactsContactNameDrawerContent
       isOpen={isOpen}
@@ -24,7 +24,8 @@ export function ContactsAddContactDrawer({
       bottomInset={bottomInset}
       keyboardInset={keyboardInset}
       labels={labels}
-      confirmLabel={labels.confirmName}
+      confirmLabel={labels.applyChanges}
+      confirmTestID="contacts-rename-contact-confirm"
       onDraftNameChange={onDraftNameChange}
       onConfirm={onConfirm}
     />

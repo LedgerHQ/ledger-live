@@ -82,6 +82,34 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     expect(result.current.editUiState).toBe("edit-open");
   });
 
+  it("should keep edit dialog open when signer close fires after confirm", () => {
+    const contact = mockContactWithAddress();
+    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts(),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+    act(() => {
+      result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+
+    act(() => {
+      result.current.onSignerCancel();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
   it("should prevent deleting the Me contact", () => {
     const meContact = mockMeContact();
     const Wrapper = makeWrapper([meContact]);

@@ -24,6 +24,8 @@ import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/type
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
+import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
+import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -35,6 +37,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      editDeleteFlow: ContactDetailEditDeleteFlowProps;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -144,6 +147,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }),
     [t],
   );
+  const onDeleteSuccess = useCallback(() => {
+    navigation.navigate(ScreenName.MyWalletContacts);
+  }, [navigation]);
+  const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
   const shouldRedirect = !isEnabled || !contact;
 
   useLayoutEffect(() => {
@@ -199,5 +206,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetail,
     },
+    editDeleteFlow,
   };
 }
