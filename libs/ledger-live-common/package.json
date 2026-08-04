@@ -313,6 +313,7 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
+    "@domain/entity-account-name": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-aptos": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -355,7 +356,6 @@
     "@ledgerhq/live-signer-icp": "workspace:^",
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/live-signer-zcash": "workspace:^",
-    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
@@ -422,6 +422,7 @@
   "devDependencies": {
     "@features/platform-currencies": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

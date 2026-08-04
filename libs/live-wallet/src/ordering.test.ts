@@ -3,7 +3,8 @@
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
-import { WalletState, accountRawToAccountUserData } from "./store";
+import type { AccountNamesState } from "@domain/entity-account-name";
+import { accountRawToAccountUserData } from "./accounts";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raws: AccountRaw[] = [
@@ -91,26 +92,14 @@ setCryptoAssetsStore({
 });
 
 let accounts: Awaited<ReturnType<typeof fromAccountRaw>>[];
-const walletState: WalletState = {
-  accountNames: new Map(),
-  starredAccountIds: new Set(),
-  walletSyncState: {
-    data: null,
-    version: 0,
-  },
-  nonImportedAccountInfos: [],
-  recentAddresses: {},
-};
+const accountNames: AccountNamesState = new Map();
 
 beforeAll(async () => {
   accounts = await Promise.all(raws.map(a => fromAccountRaw(a)));
 
   for (const raw of raws) {
     const r = accountRawToAccountUserData(raw);
-    walletState.accountNames.set(r.id, r.name);
-    for (const id of r.starredIds) {
-      walletState.starredAccountIds.add(id);
-    }
+    accountNames.set(r.id, r.name);
   }
 });
 
@@ -119,11 +108,11 @@ const mockedCalculateCountervalue = <T>(_: unknown, balance: T): T => balance;
 test("Accounts ordering | name asc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "name|asc",
-    walletState,
+    accountNames,
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => walletState.accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
     "A",
     "AA",
     "B",
@@ -134,11 +123,11 @@ test("Accounts ordering | name asc", () => {
 test("Accounts ordering | name desc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "name|desc",
-    walletState,
+    accountNames,
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => walletState.accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
     "CA",
     "C",
     "B",
@@ -149,11 +138,11 @@ test("Accounts ordering | name desc", () => {
 test("Accounts ordering | balance asc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "balance|asc",
-    walletState,
+    accountNames,
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => walletState.accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
     "A",
     "B",
     "C",
@@ -164,11 +153,11 @@ test("Accounts ordering | balance asc", () => {
 test("Accounts ordering | balance desc", () => {
   const compareFn = sortAccountsComparatorFromOrder(
     "balance|desc",
-    walletState,
+    accountNames,
     mockedCalculateCountervalue,
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => walletState.accountNames.get(a.id) || "")).toEqual([
+  expect(sortedAccounts.map(a => accountNames.get(a.id) || "")).toEqual([
     "AA",
     "C",
     "CA",

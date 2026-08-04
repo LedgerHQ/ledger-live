@@ -13,7 +13,7 @@ import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import type { WalletState } from "./wallet";
 import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";

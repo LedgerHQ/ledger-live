@@ -19,20 +19,17 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@domain/entity-account-name": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
-    "@ledgerhq/ledger-key-ring-protocol": "workspace:*",
+    "@domain/entity-recent-addresses": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:*",
+    "@shared/cloud-sync-module": "workspace:*",
     "@shared/env": "workspace:*",
-    "base64-js": "1",
     "bignumber.js": "9",
-    "isomorphic-ws": "catalog:",
     "lodash": "4",
-    "pako": "^2.0.4",
     "rxjs": "catalog:",
     "zod": "catalog:"
   },
@@ -85,6 +82,36 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./accounts": {
+      "@ledgerhq/source": "./src/accounts/index.ts",
+      "require": "./lib/accounts/index.js",
+      "default": "./lib-es/accounts/index.js"
+    },
+    "./addAccounts": {
+      "@ledgerhq/source": "./src/addAccounts.ts",
+      "require": "./lib/addAccounts.js",
+      "default": "./lib-es/addAccounts.js"
+    },
+    "./liveqr/cross": {
+      "@ledgerhq/source": "./src/liveqr/cross.ts",
+      "require": "./lib/liveqr/cross.js",
+      "default": "./lib-es/liveqr/cross.js"
+    },
+    "./liveqr/importAccounts": {
+      "@ledgerhq/source": "./src/liveqr/importAccounts.ts",
+      "require": "./lib/liveqr/importAccounts.js",
+      "default": "./lib-es/liveqr/importAccounts.js"
+    },
+    "./ordering": {
+      "@ledgerhq/source": "./src/ordering.ts",
+      "require": "./lib/ordering.js",
+      "default": "./lib-es/ordering.js"
+    },
+    "./walletSyncComposition": {
+      "@ledgerhq/source": "./src/walletSyncComposition.ts",
+      "require": "./lib/walletSyncComposition.js",
+      "default": "./lib-es/walletSyncComposition.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",

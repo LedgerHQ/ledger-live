@@ -10,7 +10,7 @@ so they stay **linked** (📹) to their Confluence page — the behaviour and it
 > - **Verified by** links a behaviour to a deterministic
 >   [LKRP scenario](./test-strategy.md#deterministic-scenario-tests-lkrp)
 >   (`libs/ledger-key-ring-protocol/tests/scenarios`) or a
->   [WalletSyncDataManager test](./test-strategy.md#walletsyncdatamanager-unit-tests).
+>   [CloudSyncDataManager test](./test-strategy.md#cloudsyncdatamanager-unit-tests).
 >   App-level behaviours are validated manually / in app E2E (**QA**).
 
 ## Trustchain lifecycle

@@ -1,4 +1,5 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { bindCtx } from "@ledgerhq/live-wallet/accounts";
 import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
 import {
   INSTANCES,
@@ -22,6 +23,11 @@ const INITIAL_STATE = {
   },
   ...withFlagOverrides(lldWalletSyncFeatureFlag),
 };
+
+jest.mock("@ledgerhq/live-wallet/accounts", () => {
+  const actual = jest.requireActual("@ledgerhq/live-wallet/accounts");
+  return { ...actual, bindCtx: jest.fn(actual.bindCtx) };
+});
 
 jest.mock("../hooks/useTrustchainSdk", () => ({
   useTrustchainSdk: () => ({
@@ -50,5 +56,15 @@ describe("useWatchWalletSync", () => {
     expect(store.getState().featureFlags.overrides.lldWalletSync?.enabled).toBe(true);
     expect(result.current.visualPending).toBe(true);
     expect(result.current.walletSyncError).toBe(null);
+  });
+
+  it("should bind the accounts sync module with the user's blacklisted token ids", async () => {
+    const blacklistedTokenIds = ["ethereum/erc20/usd_tether__erc20_"];
+    jest.mocked(bindCtx).mockClear();
+    renderHook(() => useWatchWalletSync(), {
+      initialState: { ...INITIAL_STATE, settings: { blacklistedTokenIds } },
+    });
+
+    expect(bindCtx).toHaveBeenCalledWith(expect.objectContaining({ blacklistedTokenIds }));
   });
 });

@@ -2,13 +2,13 @@ import { useSelector } from "react-redux";
 import { useCallback, useMemo } from "react";
 import { PostOnboardingAction, PostOnboardingHubState } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "@features/platform-feature-flags";
-import type { Feature, FeatureId } from "@shared/feature-flags";
+import type { Feature } from "@shared/feature-flags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 
 const getIsFeatureEnabled = (
   action: PostOnboardingAction | undefined,
-  getFeature: (id: FeatureId) => Feature | null,
+  getFeature: (id: NonNullable<PostOnboardingAction["featureFlagId"]>) => Feature | null,
 ) => {
   if (!action) return false;
   if (!action.featureFlagId) return true;
@@ -32,7 +32,11 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
   const postOnboardingContext = usePostOnboardingContext();
   const { getPostOnboardingAction } = postOnboardingContext;
   const flags = useFeatureFlags();
-  const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
+  const getFeature = useCallback(
+    (id: NonNullable<PostOnboardingAction["featureFlagId"]>): Feature | null =>
+      (flags as Record<string, Feature | undefined>)[id] ?? null,
+    [flags],
+  );
   return useMemo(() => {
     if (!getPostOnboardingAction)
       return {

@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
+import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Chip } from "./Chip";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";

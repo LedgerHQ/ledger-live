@@ -1,16 +1,17 @@
+> **Status: FROZEN** — see [MIGRATION.md](./MIGRATION.md) for what moved to DDD packages and what remains here.
+
 ## live-wallet
 
-> [!NOTE]
-> **Status: STABLE** — Production-ready; API is considered stable.
+The goal of this library is to manage account-related user data and provide interim sync modules
+that depend on coin bridges until `@domain/entity-account` exists.
 
-> This library is the top layer of **Ledger Sync** (Cloud Sync SDK, WalletSyncDataManager,
-> watch loop). See the full technical documentation: [`docs/ledger-sync`](../../docs/ledger-sync/README.md).
+**Full Ledger Sync stack documentation:** [`docs/ledger-sync`](../../docs/ledger-sync/README.md)
 
-The goal of this library is to manage the accounts user data states.
+Examples of account user data states (now mostly in `domain/entity/*`):
 
-Examples of accounts user data states are:
-
-- Account's name
-- Account's starred state
+- Account's name → [`domain/entity/account-name`](../../domain/entity/account-name)
+- Account's starred state → [`domain/entity/starred-account`](../../domain/entity/starred-account)
+- Recent receive addresses → [`domain/entity/recent-addresses`](../../domain/entity/recent-addresses)
+- Account list sync + non-imported accounts → [`src/accounts/`](src/accounts/) (interim)
 
 The library provides reducers and actions in the style of Redux, without depending on Redux itself.

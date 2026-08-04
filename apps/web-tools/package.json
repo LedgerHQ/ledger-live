@@ -27,10 +27,16 @@
     "@devtools/protocols": "workspace:*",
     "@shared/api-services": "workspace:*",
     "@domain/api-currency-token": "workspace:*",
+    "@shared/cloud-sync": "workspace:^",
+    "@domain/entity-account-name": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
+    "@domain/entity-recent-addresses": "workspace:^",
+    "@domain/entity-wallet-sync": "workspace:^",
+    "@features/platform-wallet-sync": "workspace:^",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
     "@shared/env": "workspace:*",
+    "@shared/cloud-sync-module": "workspace:*",
     "@devtools/bindings": "workspace:*",
     "@features/platform-currencies": "workspace:*",
     "@features/platform-feature-flags": "workspace:*",
@@ -96,7 +102,8 @@
     "stylis": "catalog:",
     "typescript": "catalog:",
     "utf-8-validate": "^6.0.6",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@rsbuild/core": "catalog:",

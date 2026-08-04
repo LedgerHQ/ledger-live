@@ -857,6 +857,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account-name':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-name
       '@domain/entity-analytics-consent':
         specifier: workspace:*
         version: link:../../domain/entity/analytics-consent
@@ -890,6 +893,15 @@ importers:
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../domain/entity/pay-card
+      '@domain/entity-recent-addresses':
+        specifier: workspace:^
+        version: link:../../domain/entity/recent-addresses
+      '@domain/entity-starred-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/starred-account
+      '@domain/entity-wallet-sync':
+        specifier: workspace:^
+        version: link:../../domain/entity/wallet-sync
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -920,6 +932,9 @@ importers:
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../../libs/asset-aggregation
@@ -1091,6 +1106,9 @@ importers:
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -1603,6 +1621,9 @@ importers:
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
+      '@domain/entity-account-name':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-name
       '@domain/entity-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/altcoins-sentiment
@@ -1636,6 +1657,15 @@ importers:
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../domain/entity/pay-card
+      '@domain/entity-recent-addresses':
+        specifier: workspace:^
+        version: link:../../domain/entity/recent-addresses
+      '@domain/entity-starred-account':
+        specifier: workspace:^
+        version: link:../../domain/entity/starred-account
+      '@domain/entity-wallet-sync':
+        specifier: workspace:^
+        version: link:../../domain/entity/wallet-sync
       '@features/flow-analytics-consent':
         specifier: workspace:*
         version: link:../../features/flow/analytics-consent
@@ -1660,6 +1690,9 @@ importers:
       '@features/platform-style':
         specifier: workspace:^
         version: link:../../features/platform/style
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -1879,6 +1912,9 @@ importers:
       '@shared/auth':
         specifier: workspace:*
         version: link:../../shared/auth
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2633,6 +2669,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:*
         version: link:../../domain/api/currency-token
+      '@domain/entity-account-name':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-name
       '@domain/entity-currency':
         specifier: workspace:^
         version: link:../../domain/entity/currency
@@ -2645,6 +2684,12 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:^
         version: link:../../domain/entity/currency-token
+      '@domain/entity-recent-addresses':
+        specifier: workspace:^
+        version: link:../../domain/entity/recent-addresses
+      '@domain/entity-wallet-sync':
+        specifier: workspace:^
+        version: link:../../domain/entity/wallet-sync
       '@features/platform-currencies':
         specifier: workspace:*
         version: link:../../features/platform/currencies
@@ -2654,6 +2699,9 @@ importers:
       '@features/platform-style':
         specifier: workspace:*
         version: link:../../features/platform/style
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 4.3.0
@@ -2741,6 +2789,12 @@ importers:
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../shared/api-services
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
+      '@shared/cloud-sync-module':
+        specifier: workspace:*
+        version: link:../../shared/cloud-sync-module
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -2837,6 +2891,9 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@rsbuild/core':
         specifier: 'catalog:'
@@ -4287,6 +4344,9 @@ importers:
 
   e2e/desktop:
     dependencies:
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
@@ -4314,6 +4374,9 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.60.0
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -4401,6 +4464,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:^
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-wallet-sync':
+        specifier: workspace:^
+        version: link:../../features/platform/wallet-sync
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0
@@ -4437,6 +4503,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@shared/cloud-sync':
+        specifier: workspace:^
+        version: link:../../shared/cloud-sync
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
@@ -9501,6 +9570,9 @@ importers:
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
+      '@domain/entity-account-name':
+        specifier: workspace:^
+        version: link:../../domain/entity/account-name
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
@@ -9774,9 +9846,6 @@ importers:
       '@ledgerhq/live-signer-zcash':
         specifier: workspace:^
         version: link:../live-signer-zcash
-      '@ledgerhq/live-wallet':
-        specifier: workspace:^
-        version: link:../live-wallet
       '@ledgerhq/logs':
         specifier: 'catalog:'
         version: 6.17.0
@@ -9970,6 +10039,9 @@ importers:
       '@ledgerhq/device-react':
         specifier: workspace:^
         version: link:../device-react
+      '@ledgerhq/live-wallet':
+        specifier: workspace:^
+        version: link:../live-wallet
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -12947,48 +13019,39 @@ importers:
 
   libs/live-wallet:
     dependencies:
+      '@domain/entity-account-name':
+        specifier: workspace:*
+        version: link:../../domain/entity/account-name
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../domain/entity/currency-token
-      '@ledgerhq/ledger-key-ring-protocol':
+      '@domain/entity-recent-addresses':
         specifier: workspace:*
-        version: link:../ledger-key-ring-protocol
+        version: link:../../domain/entity/recent-addresses
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../ledger-wallet-framework
-      '@ledgerhq/live-network':
-        specifier: workspace:*
-        version: link:../live-network
       '@ledgerhq/live-promise':
         specifier: workspace:*
         version: link:../promise
-      '@ledgerhq/logs':
-        specifier: 'catalog:'
-        version: 6.17.0
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
+      '@shared/cloud-sync-module':
+        specifier: workspace:*
+        version: link:../../shared/cloud-sync-module
       '@shared/env':
         specifier: workspace:*
         version: link:../../shared/env
-      base64-js:
-        specifier: '1'
-        version: 1.5.1
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      isomorphic-ws:
-        specifier: 'catalog:'
-        version: 5.0.0(ws@8.17.1)
       lodash:
         specifier: '4'
         version: 4.17.21
-      pako:
-        specifier: ^2.0.4
-        version: 2.1.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -63425,10 +63488,6 @@ snapshots:
     dependencies:
       ws: 7.5.10
 
-  isomorphic-ws@5.0.0(ws@8.17.1):
-    dependencies:
-      ws: 8.17.1
-
   isomorphic-ws@5.0.0(ws@8.18.3):
     dependencies:
       ws: 8.18.3
@@ -66434,7 +66493,7 @@ snapshots:
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
-      metro: 0.83.3(metro-transform-worker@0.83.3)
+      metro: 0.83.3
       metro-babel-transformer: 0.83.3
       metro-cache: 0.83.3
       metro-cache-key: 0.83.3
@@ -66558,54 +66617,6 @@ snapshots:
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro@0.83.3(metro-transform-worker@0.83.3):
-    dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
-      accepts: 1.3.8
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 4.4.3
-      error-stack-parser: 2.1.4
-      flow-enums-runtime: 0.0.6
-      graceful-fs: 4.2.11
-      hermes-parser: 0.32.0
-      image-size: 1.1.1
-      invariant: 2.2.4
-      jest-worker: 29.7.0(metro@0.83.3)
-      jsc-safe-url: 0.2.4
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.83.3
-      metro-cache: 0.83.3
-      metro-cache-key: 0.83.3
-      metro-config: 0.83.3(metro-transform-worker@0.83.3)
-      metro-core: 0.83.3
-      metro-file-map: 0.83.3(metro@0.83.3)
-      metro-resolver: 0.83.3
-      metro-runtime: 0.83.3
-      metro-source-map: 0.83.3
-      metro-symbolicate: 0.83.3
-      metro-transform-plugins: 0.83.3
-      metro-transform-worker: 0.83.3
-      mime-types: 2.1.35
-      nullthrows: 1.1.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      throat: 5.0.0
-      ws: 7.5.10
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 

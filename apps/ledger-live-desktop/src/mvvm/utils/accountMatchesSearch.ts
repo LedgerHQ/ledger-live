@@ -1,6 +1,6 @@
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { accountNameWithDefaultSelector, type WalletState } from "@ledgerhq/live-wallet/store";
+import { accountNameWithDefaultSelector, type WalletState } from "~/renderer/reducers/wallet";
 
 export function accountMatchesSearch(
   walletState: WalletState,

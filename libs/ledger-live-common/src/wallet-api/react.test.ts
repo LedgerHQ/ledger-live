@@ -4,7 +4,7 @@
 import { renderHook, act, cleanup } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
-import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+const walletState = new Map<string, string>();
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
 import type { useWalletAPIServerOptions } from "./react";
@@ -93,7 +93,7 @@ function createDefaultOptions(
 ): useWalletAPIServerOptions {
   const tracking = createMockTracking();
   return {
-    walletState,
+    accountNames: walletState,
     manifest: {
       id: "test-app",
       private: false,

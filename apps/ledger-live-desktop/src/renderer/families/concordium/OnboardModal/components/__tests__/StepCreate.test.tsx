@@ -11,7 +11,8 @@ import {
   createMockStepProps,
 } from "../../__tests__/testUtils";
 
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
+jest.mock("@domain/entity-account-name", () => ({
+  ...jest.requireActual("@domain/entity-account-name"),
   getDefaultAccountNameForCurrencyIndex: jest.fn(
     ({ currency, index }) => `${currency.name} ${index + 1}`,
   ),

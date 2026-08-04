@@ -3,7 +3,10 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { v5 as uuidv5 } from "uuid";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  accountNameWithDefaultSelector,
+  type AccountNamesState,
+} from "@domain/entity-account-name";
 import { loadWalletApiAdapterForFamily } from "../coin-modules/registry";
 import type { Transaction } from "../coin-modules/transaction-types";
 import { isTokenAccount } from "../account";
@@ -31,7 +34,7 @@ export const setWalletApiIdForAccountId = (accountId: string): void => {
 };
 
 export function accountToWalletAPIAccount(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   account: AccountLike,
   parentAccount?: Account | null,
 ): WalletAPIAccount {
@@ -47,7 +50,7 @@ export function accountToWalletAPIAccount(
 
     uuidToAccountId.set(parentWalletApiId, parentAccount.id);
 
-    const parentAccountName = accountNameWithDefaultSelector(walletState, parentAccount);
+    const parentAccountName = accountNameWithDefaultSelector(accountNames, parentAccount);
 
     return {
       id: walletApiId,
@@ -62,7 +65,7 @@ export function accountToWalletAPIAccount(
       readiness: parentAccount.readiness,
     };
   }
-  const name = accountNameWithDefaultSelector(walletState, account);
+  const name = accountNameWithDefaultSelector(accountNames, account);
 
   return {
     id: walletApiId,

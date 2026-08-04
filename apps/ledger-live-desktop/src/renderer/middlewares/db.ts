@@ -13,7 +13,7 @@ import {
   accountUserDataExportSelector,
   walletStateExportShouldDiffer,
   exportWalletState,
-} from "@ledgerhq/live-wallet/store";
+} from "~/renderer/reducers/wallet";
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
@@ -148,7 +148,7 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     }
   }
 
-  if (walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
+  if (oldState.wallet && walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
     setKey("app", "wallet", exportWalletState(newState.wallet));
   }
 

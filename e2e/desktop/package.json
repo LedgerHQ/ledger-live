@@ -23,6 +23,8 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-e2e-shared": "workspace:^",
+    "@shared/cloud-sync": "workspace:^",
+    "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",

@@ -1,4 +1,5 @@
 module.exports = {
+  transformIgnorePatterns: ["node_modules/(?!(@shared|@domain)/)"],
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",

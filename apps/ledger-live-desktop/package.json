@@ -67,7 +67,9 @@
     "@domain/api-pay-card": "workspace:^",
     "@shared/api-services": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
+    "@domain/entity-account-name": "workspace:^",
     "@domain/entity-analytics-consent": "workspace:*",
+    "@shared/cloud-sync": "workspace:^",
     "@domain/entity-contact": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",
@@ -86,6 +88,7 @@
     "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-style": "workspace:^",
+    "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
@@ -106,6 +109,8 @@
     "@domain/entity-pay-card": "workspace:^",
     "@domain/api-market-sentiment": "workspace:^",
     "@domain/entity-market-sentiment": "workspace:^",
+    "@domain/entity-recent-addresses": "workspace:^",
+    "@domain/entity-starred-account": "workspace:^",
     "@domain/api-altcoins-sentiment": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@ledgerhq/crypto-icons": "catalog:",
@@ -220,7 +225,8 @@
     "winston-transport": "4.7.0",
     "write-file-atomic": "5.0.1",
     "ws": "catalog:",
-    "xstate": "catalog:"
+    "xstate": "catalog:",
+    "@domain/entity-wallet-sync": "workspace:^"
   },
   "devDependencies": {
     "@electron/notarize": "3.1.1",
