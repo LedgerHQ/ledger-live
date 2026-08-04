@@ -602,11 +602,12 @@ export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
  *  anything coarser leaves stored transactions inside the next `gt:` window, where they get re-emitted. */
 function consensusTimestampLowerBound(operation: LiveOperation): BigNumber | null {
   const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const pagingToken = extra?.pagingToken ? new BigNumber(extra.pagingToken) : null;
+  const storedTimestamp = extra?.pagingToken ?? extra?.consensusTimestamp;
+  const timestamp = storedTimestamp ? new BigNumber(storedTimestamp) : null;
 
-  if (pagingToken && !pagingToken.isNaN()) return pagingToken;
+  if (timestamp && !timestamp.isNaN()) return timestamp;
 
-  // operations stored by older versions carry no pagingToken, so `date` is floored to the second:
+  // operations stored by even older versions carry neither, so `date` is floored to the second:
   // the next sync can only re-fetch this operation, never skip past it
   const flooredDate = millisToSeconds(operation.date.getTime()).integerValue(BigNumber.ROUND_FLOOR);
 

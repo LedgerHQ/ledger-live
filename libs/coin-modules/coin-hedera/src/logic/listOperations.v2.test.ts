@@ -843,6 +843,7 @@ describe("listOperationsV2", () => {
 
     expect(result.tokenOperations).toEqual([]);
     expect(rewardTimestamp).toBe(mainTimestamp + 1);
+    expect(result.coinOperations[0].extra).not.toHaveProperty("chargedTxFee");
     expect(result.coinOperations).toMatchObject([
       {
         type: "REWARD",
@@ -1933,6 +1934,7 @@ describe("listOperationsV2", () => {
           .map(op => ({ type: op.type, recipients: op.recipients }))
           .sort((a, b) => a.recipients[0].localeCompare(b.recipients[0])),
       ).toEqual([
+        { type: "FEES", recipients: ["0.0.3"] },
         { type: "OUT", recipients: [firstRecipient] },
         { type: "OUT", recipients: [secondRecipient] },
       ]);
@@ -1946,14 +1948,50 @@ describe("listOperationsV2", () => {
       expect(total).toEqual(new BigNumber(2500000));
     });
 
-    it("charges the transaction fee to exactly one of the operations", async () => {
+    it("keeps the fee out of the per-recipient operations and reports it as its own FEES op", async () => {
       const result = await listOperations(listArgs);
 
       const feesCharged = result.coinOperations.filter(op => op.fee.gt(0));
 
       expect(feesCharged).toHaveLength(1);
-      expect(feesCharged[0].fee).toEqual(new BigNumber(500000));
-      expect(feesCharged[0].recipients).toEqual([firstRecipient]);
+      expect(feesCharged[0]).toMatchObject({
+        type: "FEES",
+        value: new BigNumber(500000),
+        fee: new BigNumber(500000),
+        recipients: ["0.0.3"],
+      });
+      expect(result.coinOperations.filter(op => op.type === "OUT").map(op => op.value)).toEqual([
+        new BigNumber(1000000),
+        new BigNumber(1000000),
+      ]);
+    });
+
+    it("keeps the fee inside the OUT value and emits no FEES op when there is a single recipient", async () => {
+      (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+        transactions: [
+          getMockedMirrorTransaction({
+            ...mockTransaction,
+            transfers: [
+              { account: mockMirrorAccount.account, amount: -1500000 },
+              { account: firstRecipient, amount: 1000000 },
+              { account: "0.0.3", amount: 500000 },
+            ],
+          }),
+        ],
+        nextCursor: null,
+      });
+
+      const result = await listOperations(listArgs);
+
+      expect(result.coinOperations).toMatchObject([
+        {
+          id: "hash1:OUT",
+          type: "OUT",
+          value: new BigNumber(1500000),
+          fee: new BigNumber(500000),
+          recipients: [firstRecipient],
+        },
+      ]);
     });
 
     it("assigns a distinct id to every operation of a multi-recipient transaction", async () => {
@@ -1962,7 +2000,123 @@ describe("listOperationsV2", () => {
       const ids = result.coinOperations.map(op => op.id);
 
       expect(new Set(ids).size).toBe(ids.length);
-      expect(ids.sort()).toEqual([`hash1:OUT:${firstRecipient}`, `hash1:OUT:${secondRecipient}`]);
+      expect(ids.sort()).toEqual([
+        "hash1:FEES",
+        `hash1:OUT:${firstRecipient}`,
+        `hash1:OUT:${secondRecipient}`,
+      ]);
+    });
+
+    describe("mainnet 0.0.8835924-1760510873-321619819", () => {
+      const payer = "0.0.8835924";
+      const usdc = "0.0.456858";
+      const sauce = "0.0.5022567";
+      const chargedFee = 1176695;
+
+      const listArgsForPayer = { ...listArgs, address: payer };
+
+      beforeEach(() => {
+        (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
+          transactions: [
+            getMockedMirrorTransaction({
+              consensus_timestamp: "1760510879.300860000",
+              transaction_hash: "hash1",
+              transaction_id: `${payer}-1760510873-321619819`,
+              charged_tx_fee: chargedFee,
+              node: "0.0.15",
+              staking_reward_transfers: [],
+              transfers: [
+                { account: "0.0.15", amount: 55631 },
+                { account: "0.0.801", amount: 1121064 },
+                { account: payer, amount: -3176695 },
+                { account: firstRecipient, amount: 1000000 },
+                { account: secondRecipient, amount: 1000000 },
+              ],
+              token_transfers: [
+                { token_id: usdc, account: payer, amount: -10000 },
+                { token_id: usdc, account: firstRecipient, amount: 10000 },
+                { token_id: sauce, account: payer, amount: -2 },
+                { token_id: sauce, account: firstRecipient, amount: 1 },
+                { token_id: sauce, account: secondRecipient, amount: 1 },
+              ],
+              name: "CRYPTOTRANSFER",
+            }),
+          ],
+          nextCursor: null,
+        });
+      });
+
+      it("emits a FEES operation for the fee and one fee-free OUT per HBAR recipient", async () => {
+        const result = await listOperations(listArgsForPayer);
+
+        expect(
+          result.coinOperations.map(op => ({
+            type: op.type,
+            value: op.value,
+            fee: op.fee,
+            senders: op.senders,
+            recipients: op.recipients,
+          })),
+        ).toEqual([
+          {
+            type: "FEES",
+            value: new BigNumber(chargedFee),
+            fee: new BigNumber(chargedFee),
+            senders: [payer],
+            recipients: ["0.0.15"],
+          },
+          {
+            type: "OUT",
+            value: new BigNumber(1000000),
+            fee: new BigNumber(0),
+            senders: [payer],
+            recipients: [secondRecipient],
+          },
+          {
+            type: "OUT",
+            value: new BigNumber(1000000),
+            fee: new BigNumber(0),
+            senders: [payer],
+            recipients: [firstRecipient],
+          },
+        ]);
+      });
+
+      it("emits one token operation per recipient of each token", async () => {
+        const result = await listOperations(listArgsForPayer);
+
+        expect(
+          result.tokenOperations.map(op => ({
+            contract: op.contract,
+            value: op.value,
+            recipients: op.recipients,
+          })),
+        ).toEqual([
+          { contract: usdc, value: new BigNumber(10000), recipients: [firstRecipient] },
+          { contract: sauce, value: new BigNumber(1), recipients: [secondRecipient] },
+          { contract: sauce, value: new BigNumber(1), recipients: [firstRecipient] },
+        ]);
+      });
+
+      it("adds the coin operation values back up to the total debited from the account", async () => {
+        const result = await listOperations(listArgsForPayer);
+
+        const debited = result.coinOperations.reduce(
+          (total, op) => total.plus(op.value),
+          new BigNumber(0),
+        );
+
+        expect(debited).toEqual(new BigNumber(3176695));
+      });
+
+      it("reports the charged transaction fee on every operation even where Operation.fee is 0", async () => {
+        const result = await listOperations(listArgsForPayer);
+        const operations = [...result.coinOperations, ...result.tokenOperations];
+
+        expect(operations.map(op => op.extra.chargedTxFee)).toEqual(
+          operations.map(() => String(chargedFee)),
+        );
+      });
     });
 
     it("emits both the HBAR and the HTS movement of a multi-asset transaction", async () => {
@@ -2176,11 +2330,8 @@ describe("listOperationsV2", () => {
           .map(op => ({ recipients: op.recipients, value: op.value, fee: op.fee }))
           .sort((a, b) => a.recipients[0].localeCompare(b.recipients[0])),
       ).toEqual([
-        {
-          recipients: [firstRecipient],
-          value: new BigNumber(1500000),
-          fee: new BigNumber(500000),
-        },
+        { recipients: ["0.0.3"], value: new BigNumber(500000), fee: new BigNumber(500000) },
+        { recipients: [firstRecipient], value: new BigNumber(1000000), fee: new BigNumber(0) },
         { recipients: [secondRecipient], value: new BigNumber(1000000), fee: new BigNumber(0) },
       ]);
     });

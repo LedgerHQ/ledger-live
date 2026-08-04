@@ -173,6 +173,8 @@ export type HederaOperationExtra = {
   targetStakingNodeId?: number | null;
   previousStakingNodeId?: number | null;
   stakedAmount?: BigNumber;
+  // unlike `op.fee`, this is identical on every operation of the same hash
+  chargedTxFee?: string;
 };
 
 export type HederaValidator = {

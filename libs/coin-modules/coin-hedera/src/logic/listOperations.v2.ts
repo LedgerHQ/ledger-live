@@ -54,6 +54,7 @@ function getCommonMirrorOperationData(
     consensusTimestamp: rawTx.consensus_timestamp,
     transactionId: rawTx.transaction_id,
     feesPayer,
+    chargedTxFee: fee.toFixed(0),
     ...(memo && { memo }),
   };
 
@@ -93,6 +94,8 @@ function createStakingRewardOperation({
   }
 
   const { hash, date, blockHeight, blockHash } = commonData;
+  // the reward itself is free; the fee belongs to the operation that triggered it
+  const { chargedTxFee: _, ...extra } = commonData.extra;
   const stakingRewardHash = createStakingRewardOperationHash(hash);
   const stakingRewardType: OperationType = "REWARD";
   // offset timestamp by +1ms so that, when operations are sorted newest-first, this reward appears just before the operation that triggered it
@@ -110,7 +113,7 @@ function createStakingRewardOperation({
     date: stakingRewardTimestamp,
     blockHeight,
     blockHash,
-    extra: commonData.extra,
+    extra,
   };
 }
 
@@ -472,7 +475,7 @@ function processCoinTransfers({
   const { senders, recipients, amountByRecipient } = parsed;
   const netAmount = parsed.netAmount ?? new BigNumber(0);
   const fee = commonData.fee;
-  const isPayer = extractFeesPayer(rawTx) === address;
+  const isPayer = commonData.extra.feesPayer === address;
   // an op's `fee` must match what is baked into its `value`, or getOperationValue subtracts it twice
   const ownFee = isPayer ? fee : new BigNumber(0);
 
@@ -559,25 +562,23 @@ function processCoinTransfers({
       return [buildNettedOperation("OUT", netAmount.abs())];
     }
 
-    // mirror's transfer order is not stable, so pick the lowest recipient id for determinism
-    const recipientCarryingFee = amountPerRecipient.reduce(
-      (lowest, transfer) => (transfer.recipient < lowest.recipient ? transfer : lowest),
-      amountPerRecipient[0],
-    ).recipient;
-
-    return amountPerRecipient.map(({ recipient, amount }) => {
-      const operationFee = recipient === recipientCarryingFee ? ownFee : new BigNumber(0);
-      return buildCoinOperation({
+    // no single OUT can carry the fee without overstating what that recipient received
+    const perRecipientOperations = amountPerRecipient.map(({ recipient, amount }) =>
+      buildCoinOperation({
         commonData,
         ledgerAccountId,
         type: "OUT",
-        value: amount.plus(operationFee),
-        fee: operationFee,
+        value: amount,
+        fee: new BigNumber(0),
         senders,
         recipient,
         extra: { ...commonData.extra },
-      });
-    });
+      }),
+    );
+
+    return isPayer && fee.gt(0)
+      ? [buildFeesOperation(), ...perRecipientOperations]
+      : perRecipientOperations;
   };
 
   // mirror nets the payer's row as value+fee, so add the fee back to recover the transfer amount

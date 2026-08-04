@@ -392,6 +392,60 @@ describe("createApi", () => {
       expect(result.items[0].details).toMatchObject({ stakedAmount: 200n });
     });
 
+    it("should report the transaction fee on an op whose own fee is 0", async () => {
+      const splitOutOperation = getMockedOperation({
+        type: "OUT",
+        fee: new BigNumber(0),
+        extra: { chargedTxFee: "1176695" },
+      });
+
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [splitOutOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockAddress, mockOptions);
+
+      expect(result.items[0].tx.fees).toBe(1176695n);
+    });
+
+    it("should report no fee on a REWARD op, whose fee belongs to the op that triggered it", async () => {
+      const rewardOperation = getMockedOperation({
+        type: "REWARD",
+        fee: new BigNumber(0),
+        extra: {},
+      });
+
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [rewardOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockAddress, mockOptions);
+
+      expect(result.items[0].tx.fees).toBe(0n);
+    });
+
+    it("should fall back to the operation fee for ops stored before chargedTxFee existed", async () => {
+      const legacyOperation = getMockedOperation({
+        type: "OUT",
+        fee: new BigNumber(500000),
+        extra: { transactionId: "0.0.111-1234567890-1" },
+      });
+
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [legacyOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockAddress, mockOptions);
+
+      expect(result.items[0].tx.fees).toBe(500000n);
+    });
+
     it("should omit feesPayer when transactionId is absent", async () => {
       const mockOperationWithoutTransactionId = getMockedOperation({
         extra: {},

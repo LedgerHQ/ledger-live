@@ -169,8 +169,8 @@ export function createApi(
           : { type: "native" };
 
         // Prefer inferred payer from operation extra, fallback to transaction_id parsing for legacy ops.
-        let feesPayer = liveOp.extra?.feesPayer;
-        if (!feesPayer && liveOp.extra?.transactionId)
+        let feesPayer = liveOp.extra.feesPayer;
+        if (!feesPayer && liveOp.extra.transactionId)
           feesPayer = extractInitiator(liveOp.extra.transactionId);
 
         // REWARD operations append a suffix to the tx.hash to ensure uniqueness
@@ -196,7 +196,8 @@ export function createApi(
           },
           tx: {
             hash,
-            fees: BigInt(liveOp.fee.toFixed(0)),
+            // it shouldn't come from liveOp.fee, which can be 0 on an op whose fee is reported separately
+            fees: BigInt(liveOp.extra.chargedTxFee ?? liveOp.fee.toFixed(0)),
             ...(feesPayer && { feesPayer }),
             date: liveOp.date,
             block: {
