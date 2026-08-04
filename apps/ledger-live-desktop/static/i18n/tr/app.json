@@ -100,7 +100,6 @@
     "selectNoResults" : "\"{{query}}\" ile eşleşen bir sonuç bulunamadı",
     "sortBy" : "Sıralama türü",
     "save" : "Kaydet",
-    "lock" : "Kilitle",
     "showMore" : "Daha fazla göster",
     "backToMatchingURL" : "{{appName}} sayfasına dön",
     "back" : "Geri",
@@ -139,11 +138,8 @@
       "syncing" : "Senkronize ediliyor...",
       "upToDate" : "Senkronize edildi",
       "outdated" : "Duraklatıldı",
-      "error" : "Senkronizasyon hatası",
       "refresh" : "Yenile",
-      "devTools" : "Geliştirme araçları",
-      "failingSync_one" : "Hesap senkronize edilemiyor:",
-      "failingSync_other" : "Hesaplar senkronize edilemiyor:"
+      "devTools" : "Geliştirme araçları"
     },
     "exchange" : "Takas edin",
     "info" : "Bilgi",
@@ -306,24 +302,14 @@
   "sidebar" : {
     "card" : "Kart",
     "paytab" : "Ödeme yap",
-    "menu" : "Menü",
-    "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
-    "manager" : "My Ledger",
-    "earn" : "Kazan",
-    "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
-    "perps" : "Perpetual işlemler",
-    "borrow" : "Borç al",
     "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
-    "lend" : "Borç ver",
     "catalog" : "Keşfet",
-    "market" : "Piyasa",
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
     "tooltip" : "Hesabı yıldızla"
   },
   "bridge" : {
@@ -1153,18 +1139,9 @@
     }
   },
   "help" : {
-    "title" : "Yardım ve Destek",
-    "gettingStarted" : {
-      "title" : "Başlarken",
-      "desc" : "Buradan başlayın"
-    },
     "status" : {
       "title" : "Ledger Durumu",
       "desc" : "Sistem durumumuzu kontrol edin"
-    },
-    "helpCenter" : {
-      "title" : "Ledger Destek",
-      "desc" : "Yardım alın"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1531,7 +1508,6 @@
     "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
-    "title" : "Portföy",
     "header" : "Portföy bakiyesi",
     "emptyAccountTile" : {
       "desc" : "Diğer kripto varlıklarını yönetmek için hesap ekleyin",
@@ -1540,21 +1516,6 @@
     "recentActivity" : "Son işlemler",
     "totalBalance" : "Toplam bakiye",
     "transactionsPendingConfirmation" : "Bazı işlemler henüz onaylanmadı. Bu işlemler onaylandıktan sonra bakiyenize yansıtılacak ve kullanılabilecek.",
-    "featuredButtons" : {
-      "buySell" : {
-        "title" : "Satın Al / Sat",
-        "description" : "Güvenilir sağlayıcılarımızla alın ve satın"
-      },
-      "swap" : {
-        "title" : "Takas et",
-        "description" : "Kriptolar arası dönüştürme",
-        "label" : "Popüler"
-      },
-      "earn" : {
-        "title" : "Stake et",
-        "description" : "Kriptolarınızla ödüller kazanın"
-      }
-    },
     "recoverBanner" : {
       "subscribeDone" : {
         "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
@@ -1604,25 +1565,6 @@
     "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
     "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
     "utxoWarning" : "Gizlilik nedeniyle her işlem için yeni bir adres oluşturulur. Önceki adresler geçerli olmaya devam eder."
-  },
-  "emptyState" : {
-    "dashboard" : {
-      "title" : "Uygulamaları cihazınıza yükleyin",
-      "desc" : "Cihazınıza uygulama yüklemek için My Ledger'a gidin. Uygulamalar cihazınıza yüklendikten sonra hesap ekleyebilirsiniz.",
-      "buttons" : {
-        "installApp" : "My Ledger'a Git",
-        "help" : "Yardım"
-      }
-    },
-    "accounts" : {
-      "title" : "Başlamak için bir hesap ekleyin",
-      "desc" : "Kripto varlıklarınızı yönetmeye başlamak için bir hesap ekleyin. Kripto varlığınızın uygulamasının cihazınızda yüklü olması gerekir.",
-      "buttons" : {
-        "addAccount" : "Hesap ekle",
-        "installApp" : "Uygulama yüklemek için My Ledger'a gidin",
-        "help" : "Yardım"
-      }
-    }
   },
   "genuinecheck" : {
     "deviceInBootloader" : "Cihaz Bootloader (önyükleyici) modunda. Güncellemek için <1>Devam</1>'a tıklayın."
@@ -2335,16 +2277,6 @@
     "successTitle" : "Adres güvenli şekilde paylaşıldı",
     "connectToNoah" : "Noah’a bağlanıyorsunuz",
     "steps" : {
-      "options" : {
-        "fromBank" : {
-          "title" : "Banka transferiyle",
-          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
-        },
-        "fromCrypto" : {
-          "title" : "Kripto adresiyle",
-          "description" : "Başka bir cüzdandan kripto alın."
-        }
-      },
       "chooseAccount" : {
         "title" : "Hesap",
         "label" : "Alacak hesap",
@@ -2530,6 +2462,10 @@
     "title" : "{{currency}} gönder",
     "available" : "Mevcut: {{amount}}",
     "to" : "Alıcı:",
+    "addressDisclaimer" : {
+      "accessibilityLabel" : "Alıcı adresi hakkında",
+      "description" : "Ledger cihazınız tam adresi güvenli bir şekilde gösterecektir. Bu adresin orijinal kaynaktaki adresle eşleştiğinden emin olun."
+    },
     "placeholder" : "Adres ya da ENS adı girin",
     "placeholderNoENS" : "Adresi girin",
     "recent" : "Son kullanılanlar",
@@ -4988,7 +4924,6 @@
   "settings" : {
     "title" : "Ayarlar",
     "discreet" : "Gizli modu aç/kapat",
-    "helpButton" : "Yardım",
     "tabs" : {
       "display" : "Genel",
       "currencies" : "Kripto varlıklar",
@@ -5543,7 +5478,7 @@
       },
       "tokenBlacklist" : {
         "title" : "Gizlenmiş token'lar",
-        "desc" : "Token'ları gizlemek için ana hesaba gidin, token ismine sağ tıklayın ve 'Token'ı gizle' seçeneğini seçin.",
+        "desc" : "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count" : "1 token",
         "count_other" : "{{count}} token"
       },
@@ -5657,9 +5592,6 @@
     }
   },
   "informationCenter" : {
-    "tooltip" : "Bilgi Merkezi",
-    "ongoingIncidentsTooltip" : "{{count}} devam eden olay var",
-    "ongoingIncidentsTooltip_other" : "{{count}} devam eden olay var",
     "tabs" : {
       "announcements" : "Haberler",
       "announcementsUnseen" : "Haberler ({{unseenCount}})",
@@ -9036,7 +8968,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo gizli bakiyesini belirleyin",
         "description" : "Ledger Wallet, gizli bakiyenizi görüntülemek için görüntüleme anahtarınızı saklar ve gizli işlemleri işlemek için üçüncü taraf hizmetleri kullanır. <0>Daha fazla bilgi edinin</0>",
-        "bullets" : ["Gizli bakiyenizin şifresini çözmek için salt okunur erişim", "Ledger, fonlarınızı gönderemez ve harcayamaz", "Fonlarınızı sadece siz imzalayabilir ve harcayabilirsiniz", "İspat oluşturma süreci, hızlı işleme için üçüncü taraf ispatlayıcı hizmetleri tarafından gerçekleştirilir", "İspatlayıcılar fonlarınıza erişemez ve onları harcayamaz"],
+        "bullets" : ["Görüntüleme anahtarı, Ledger Wallet’taki gizli bakiyenizin şifresini çözmek için salt okunur erişim sağlar.", "Fonlarınızı Ledger imzalayıcı cihaz aracılığıyla sadece siz imzalayabilir ve harcayabilirsiniz.", "Aleo işlemleri, önemli ölçüde işlem gücü gerektiren sıfır bilgi ispatları gerektirir.", "İspat üretimi, işlemleri hızlandırmak için harici Aleo Network hizmeti tarafından gerçekleştirilir."],
         "cta" : {
           "allow" : "İzin ver",
           "cancel" : "İptal et"
@@ -9320,10 +9252,37 @@
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
     "addAddress" : "Adres ekle",
+    "addExternalAddress" : "Harici adres ekle",
+    "addAddressEntry" : {
+      "title" : "Adresi girin",
+      "addressPlaceholder" : "Adres veya ENS",
+      "confirmAddress" : "İnceleme adımına geç",
+      "validatingAddress" : "Adres doğrulanıyor",
+      "validAddress" : "Geçerli adres",
+      "invalidAddress" : "Geçersiz adres",
+      "domainNotFound" : "Alan adı bulunamadı",
+      "sanctionedAddress" : "Bu adres yaptırım listesindedir ve kullanılamaz.",
+      "validationUnavailable" : "Adres doğrulaması geçici olarak kullanılamıyor",
+      "ensDisclaimer" : "Bu ENS adı, yukarıda gösterilen adrese çözümlenir."
+    },
+    "addAddressName" : {
+      "inputLabel" : "Adres adı",
+      "continueToReview" : "İnceleme adımına geç",
+      "invalidLabel" : "Özel karakterler desteklenmez.",
+      "duplicateLabel" : "Bu adres adı bu kişi için zaten kullanılıyor.",
+      "tooLongLabel" : "Adres adları en fazla 32 karakter olmalıdır."
+    },
+    "addAddressReview" : {
+      "title" : "Adresi inceleyin",
+      "continue" : "Adresi onayla",
+      "successTitle" : "Adres kaydedildi",
+      "close" : "Kapat"
+    },
     "addContactDrawer" : {
       "namePlaceholder" : "Kişi adı",
       "namingDisclaimer" : "Gizlilik için ad ve soyadın tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. \"John S\".",
-      "invalidNameError" : "Özel karakterlere izin verilmez."
+      "invalidNameError" : "Özel karakterlere izin verilmez.",
+      "duplicateNameError" : "Bu kişi adı zaten kullanımda."
     },
     "searchPlaceholder" : "Kişi ara",
     "searchNoResults" : "Kişi bulunamadı",
@@ -9334,6 +9293,7 @@
       "name" : "Ben"
     },
     "detail" : {
+      "meDisplayName" : "{{name}} (Ben)",
       "emptyState" : {
         "meTitle" : "Sizin için kayıtlı adres bulunmuyor",
         "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
@@ -9348,6 +9308,29 @@
       "edit" : "Düzenle",
       "delete" : "Sil",
       "networkTag" : "{{name}} Ağı"
+    },
+    "detailActions" : {
+      "editContact" : "Kişiyi düzenle",
+      "deleteContact" : "Kişiyi sil"
+    },
+    "editContact" : {
+      "title" : "Kişiyi düzenle",
+      "namePlaceholder" : "Kişi adı",
+      "namingDisclaimer" : "Gizliliğiniz için ad ve soyadların tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. 'John S.'",
+      "applyChanges" : "Değişiklikleri uygula",
+      "invalidNameError" : "Özel karakterler desteklenmez."
+    },
+    "deleteContact" : {
+      "title" : "Kişi silinsin mi?",
+      "description" : "Bu kişiyi silmek, ilişkili tüm adresleri silecektir.",
+      "confirm" : "Sil",
+      "cancel" : "İptal et"
+    },
+    "editSigner" : {
+      "title" : "Cihazınızda onaylayın",
+      "description" : "Bu değişikliği onaylamak için Ledger cihazınızı bağlayın ve kilidini açın.",
+      "confirm" : "Devam",
+      "cancel" : "İptal et"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",
