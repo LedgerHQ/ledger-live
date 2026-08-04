@@ -1,8 +1,12 @@
+const os = require("os");
 const path = require("path");
 const iosArch = "arm64";
 // Host-keyed so an inherited CI variable cannot select the wrong ABI. Override: E2E_ANDROID_ABI.
-const isAppleSilicon = process.platform === "darwin" && process.arch === "arm64";
-const androidArch = process.env.E2E_ANDROID_ABI || (isAppleSilicon ? "arm64-v8a" : "x86_64");
+// process.arch is "x64" under Rosetta; os.cpus() still reports the host's "Apple ..." brand string.
+const isAppleSiliconHost =
+  process.platform === "darwin" &&
+  (process.arch === "arm64" || (os.cpus()[0]?.model ?? "").startsWith("Apple"));
+const androidArch = process.env.E2E_ANDROID_ABI || (isAppleSiliconHost ? "arm64-v8a" : "x86_64");
 const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 const SCHEME = "ledgerlivemobile";
 
@@ -25,6 +29,14 @@ const getAndroidBinary = type =>
 const getAndroidTestBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/androidTest/${type}/app-${type}-androidTest.apk`);
 
+const DEFAULT_RETRIES = 1;
+// Detox requires a finite number, so anything unparseable falls back to the default. 0 is valid.
+const parseRetries = value => {
+  const raw = (value ?? "").trim();
+  const parsed = Number(raw);
+  return raw && Number.isInteger(parsed) && parsed >= 0 ? parsed : DEFAULT_RETRIES;
+};
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
   testRunner: {
@@ -38,7 +50,7 @@ module.exports = {
     },
     noRetryArgs: ["json", "outputFile"],
     // Local default. CI passes --retries on the CLI, which takes precedence.
-    retries: Number(process.env.E2E_RETRIES || 1),
+    retries: parseRetries(process.env.E2E_RETRIES),
     forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
