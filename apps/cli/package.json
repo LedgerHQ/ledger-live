@@ -29,6 +29,7 @@
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {
+    "@shared/api-services": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:^",
     "@domain/entity-currency-token": "workspace:^",

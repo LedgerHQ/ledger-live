@@ -18,9 +18,9 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/push-devices"
   },
   "dependencies": {
+    "@shared/api-services": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
-    "@reduxjs/toolkit": "catalog:",
-    "zod": "catalog:"
+    "@reduxjs/toolkit": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

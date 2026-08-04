@@ -1,71 +1,42 @@
-import {
-  createApi,
-  fetchBaseQuery,
-  retry,
-  type BaseQueryFn,
-  type FetchArgs,
-  type FetchBaseQueryError,
-} from "@reduxjs/toolkit/query/react";
 import type { FiatCurrency } from "@domain/entity-currency-fiat";
 import { setFiats, setFiatsReady } from "@domain/entity-currency-fiat";
+import { countervaluesApi } from "@shared/api-services";
 import { resolveSupportedFiats } from "./converter";
-import { CvsApiExtraSchema, SupportedFiatsResponseSchema } from "./schema";
-import type { CvsApiExtra } from "./types";
-import { CURRENCY_FIAT_REDUCER_PATH, FIAT_TAGS, MAX_RETRIES } from "./internals";
+import { SupportedFiatsResponseSchema } from "./schema";
+
+/** RTK Query cache tags for the supported-fiats list. */
+export const FIAT_TAGS = ["SupportedFiats"] as const;
 
 /**
- * Builds this package's slice of the thunk `extraArgument`. RTK leaves `extraArgument` untyped, so
- * this is the one compile- and runtime-checked entry point: `parse` fails fast at app init if the
- * Countervalues Service config is incomplete (e.g. an env var resolved to an empty string).
+ * Supported-fiats endpoint, injected into the shared Countervalues Service api.
+ *
+ * `enhanceEndpoints` registers this use case's own cache tags on that api and `injectEndpoints` adds
+ * the endpoint — both mutate and return the same api object, so this reference shares its reducer,
+ * middleware and cache with every other CVS use case, while only this one is typed with the endpoint
+ * below.
  */
-export function cvsApiExtra(extra: CvsApiExtra): CvsApiExtra {
-  return CvsApiExtraSchema.parse(extra);
-}
-
-/** Extracts the {@link CvsApiExtra} from the `extraArgument` of the API. */
-function getCvsExtra(api: { extra: unknown }): CvsApiExtra {
-  return api.extra as CvsApiExtra;
-}
-
-/** Reads the injected {@link CvsApiExtra} and delegates to {@link fetchBaseQuery}. Wrapped in `retry`. */
-const cvsBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = retry(
-  (args, api, extraOptions) => {
-    const extra = getCvsExtra(api);
-    return fetchBaseQuery({
-      baseUrl: extra.countervaluesServiceUrl,
-      prepareHeaders: headers => {
-        headers.set("Accept", "application/json");
-        return headers;
-      },
-    })(args, api, extraOptions);
-  },
-  { maxRetries: MAX_RETRIES },
-);
-
-/** RTK Query API for the Countervalues Service fiat data. */
-export const currencyFiatApi = createApi({
-  reducerPath: CURRENCY_FIAT_REDUCER_PATH,
-  baseQuery: cvsBaseQuery,
-  tagTypes: [...FIAT_TAGS],
-  endpoints: build => ({
-    getSupportedFiats: build.query<FiatCurrency[], void>({
-      query: () => "/v3/supported/fiat",
-      transformResponse: (response: unknown) =>
-        resolveSupportedFiats(SupportedFiatsResponseSchema.parse(response)),
-      providesTags: [...FIAT_TAGS],
-      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
-        try {
-          const { data } = await queryFulfilled;
-          dispatch(setFiats(data));
-        } catch {
-          // CVS unreachable — slice keeps its fallback state
-        } finally {
-          dispatch(setFiatsReady());
-        }
-      },
+export const currencyFiatApi = countervaluesApi
+  .enhanceEndpoints({ addTagTypes: FIAT_TAGS })
+  .injectEndpoints({
+    endpoints: build => ({
+      getSupportedFiats: build.query<FiatCurrency[], void>({
+        query: () => "/v3/supported/fiat",
+        transformResponse: (response: unknown) =>
+          resolveSupportedFiats(SupportedFiatsResponseSchema.parse(response)),
+        providesTags: [...FIAT_TAGS],
+        onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+          try {
+            const { data } = await queryFulfilled;
+            dispatch(setFiats(data));
+          } catch {
+            // CVS unreachable — slice keeps its fallback state
+          } finally {
+            dispatch(setFiatsReady());
+          }
+        },
+      }),
     }),
-  }),
-});
+  });
 
 export const { useGetSupportedFiatsQuery } = currencyFiatApi;
 

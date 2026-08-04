@@ -4,8 +4,9 @@ jest.mock("./converter", () => ({
   resolveSupportedFiats: jest.fn(),
 }));
 
+import { countervaluesApi, cvsApiExtra } from "@shared/api-services";
 import { resolveSupportedFiats } from "./converter";
-import { currencyFiatApi, cvsApiExtra, useGetSupportedFiatsQuery } from "./api";
+import { currencyFiatApi, useGetSupportedFiatsQuery } from "./api";
 import { SupportedFiatsResponseSchema } from "./schema";
 import { fiatByTicker, mockSupportedFiatsResponse } from "./fixtures";
 import { supportedFiatsSlice, selectSupportedFiats } from "@domain/entity-currency-fiat";
@@ -41,7 +42,11 @@ describe("SupportedFiatsResponseSchema", () => {
 
 describe("currencyFiatApi configuration", () => {
   it("has the correct reducer path", () => {
-    expect(currencyFiatApi.reducerPath).toBe("currencyFiatApi");
+    expect(currencyFiatApi.reducerPath).toBe("countervaluesApi");
+  });
+
+  it("is the Countervalues service api, mutated in place by injectEndpoints", () => {
+    expect(currencyFiatApi).toBe(countervaluesApi);
   });
 
   it("exposes the getSupportedFiats endpoint and its hook", () => {
@@ -50,26 +55,14 @@ describe("currencyFiatApi configuration", () => {
   });
 });
 
-describe("cvsApiExtra", () => {
-  it("returns the validated config", () => {
-    expect(cvsApiExtra({ countervaluesServiceUrl: "https://cvs.test" })).toEqual({
-      countervaluesServiceUrl: "https://cvs.test",
-    });
-  });
-
-  it("throws when the url is missing or empty", () => {
-    // @ts-expect-error — countervaluesServiceUrl is required
-    expect(() => cvsApiExtra({})).toThrow();
-    expect(() => cvsApiExtra({ countervaluesServiceUrl: "" })).toThrow();
-  });
-});
-
 describe("currencyFiatApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
+  // Wired the way the apps wire it: the store registers the *service api*, and the endpoint only
+  // exists because importing this package injected it.
   const makeStore = () =>
     configureStore({
-      reducer: { [currencyFiatApi.reducerPath]: currencyFiatApi.reducer },
+      reducer: { [countervaluesApi.reducerPath]: countervaluesApi.reducer },
       middleware: gdm =>
         gdm({
           thunk: {
@@ -77,7 +70,7 @@ describe("currencyFiatApi requests", () => {
               countervaluesServiceUrl: "https://cvs.test",
             }),
           },
-        }).concat(currencyFiatApi.middleware),
+        }).concat(countervaluesApi.middleware),
     });
 
   function mockFetch(body: unknown) {
@@ -120,7 +113,7 @@ describe("onQueryStarted", () => {
   const makeFullStore = () =>
     configureStore({
       reducer: {
-        [currencyFiatApi.reducerPath]: currencyFiatApi.reducer,
+        [countervaluesApi.reducerPath]: countervaluesApi.reducer,
         supportedFiats: supportedFiatsSlice.reducer,
       },
       middleware: gdm =>
@@ -128,7 +121,7 @@ describe("onQueryStarted", () => {
           thunk: {
             extraArgument: cvsApiExtra({ countervaluesServiceUrl: "https://cvs.test" }),
           },
-        }).concat(currencyFiatApi.middleware),
+        }).concat(countervaluesApi.middleware),
     });
 
   afterEach(() => {

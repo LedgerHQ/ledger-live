@@ -1,9 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {
-  altcoinsSentimentApi,
-  altcoinsSentimentApiExtra,
-  useGetAltcoinSeasonIndexLatestQuery,
-} from "./api";
+import { coinMarketCapApiExtra, coinMarketCapApi } from "@shared/api-services";
+import { altcoinsSentimentApi, useGetAltcoinSeasonIndexLatestQuery } from "./api";
 
 const rawResponse = {
   data: { altcoin_index: 42, altcoin_marketcap: 1234567890 },
@@ -18,8 +15,9 @@ const rawResponse = {
 };
 
 describe("altcoinsSentimentApi configuration", () => {
-  it("has the correct reducer path", () => {
-    expect(altcoinsSentimentApi.reducerPath).toBe("altcoinsSentimentApi");
+  it("is the CoinMarketCap service api, mutated in place by injectEndpoints", () => {
+    expect(altcoinsSentimentApi).toBe(coinMarketCapApi);
+    expect(altcoinsSentimentApi.reducerPath).toBe("coinMarketCapApi");
   });
 
   it("exposes the getAltcoinSeasonIndexLatest endpoint and its hook", () => {
@@ -28,32 +26,22 @@ describe("altcoinsSentimentApi configuration", () => {
   });
 });
 
-describe("altcoinsSentimentApiExtra", () => {
-  it("returns the validated config", () => {
-    expect(altcoinsSentimentApiExtra({ coinMarketCapApiUrl: "https://cmc.test" })).toEqual({
-      coinMarketCapApiUrl: "https://cmc.test",
-    });
-  });
-
-  it("throws when the url is missing or empty", () => {
-    // @ts-expect-error — coinMarketCapApiUrl is required
-    expect(() => altcoinsSentimentApiExtra({})).toThrow();
-    expect(() => altcoinsSentimentApiExtra({ coinMarketCapApiUrl: "" })).toThrow();
-  });
-});
-
 describe("altcoinsSentimentApi requests", () => {
   let fetchSpy: jest.SpyInstance;
 
+  // Wired the way the apps wire it: the store registers the *service api*, and the endpoint only
+  // exists because importing this package injected it.
   const makeStore = () =>
     configureStore({
-      reducer: { [altcoinsSentimentApi.reducerPath]: altcoinsSentimentApi.reducer },
+      reducer: {
+        [coinMarketCapApi.reducerPath]: coinMarketCapApi.reducer,
+      },
       middleware: gdm =>
         gdm({
           thunk: {
-            extraArgument: altcoinsSentimentApiExtra({ coinMarketCapApiUrl: "https://cmc.test" }),
+            extraArgument: coinMarketCapApiExtra({ coinMarketCapApiUrl: "https://cmc.test" }),
           },
-        }).concat(altcoinsSentimentApi.middleware),
+        }).concat(coinMarketCapApi.middleware),
     });
 
   afterEach(() => {

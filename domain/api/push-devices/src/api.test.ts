@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { pushDevicesApi, pushDevicesApiExtra, createPushDevicesRequest } from "./api";
+import { pushDevicesApi, pushDevicesApiExtra } from "@shared/api-services";
+import { createPushDevicesRequest, pushDevicesSyncApi } from "./api";
 import { DeviceId } from "@domain/entity-client-identity";
 
 describe("pushDevicesApi configuration", () => {
@@ -8,31 +9,7 @@ describe("pushDevicesApi configuration", () => {
   });
 
   it("exposes the pushDevices mutation endpoint", () => {
-    expect(pushDevicesApi.endpoints.pushDevices).toBeDefined();
-  });
-});
-
-describe("pushDevicesApiExtra", () => {
-  it("returns the validated config", () => {
-    const config = { pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "1.0.0" };
-    expect(pushDevicesApiExtra(config)).toEqual(config);
-  });
-
-  it("accepts empty pushDevicesServiceUrl (sync disabled)", () => {
-    expect(() =>
-      pushDevicesApiExtra({ pushDevicesServiceUrl: "", ledgerClientVersion: "1.0.0" }),
-    ).not.toThrow();
-  });
-
-  it("throws when ledgerClientVersion is empty", () => {
-    expect(() =>
-      pushDevicesApiExtra({ pushDevicesServiceUrl: "https://push.test", ledgerClientVersion: "" }),
-    ).toThrow();
-  });
-
-  it("throws when fields are missing", () => {
-    // @ts-expect-error — both fields required
-    expect(() => pushDevicesApiExtra({})).toThrow();
+    expect(pushDevicesSyncApi.endpoints.pushDevices).toBeDefined();
   });
 });
 
@@ -78,7 +55,7 @@ describe("pushDevicesApi HTTP request", () => {
       middleware: gdm => gdm().concat(pushDevicesApi.middleware),
     });
     const result = await bareStore.dispatch(
-      pushDevicesApi.endpoints.pushDevices.initiate({ equipment_id: "u", devices: [] }),
+      pushDevicesSyncApi.endpoints.pushDevices.initiate({ equipment_id: "u", devices: [] }),
     );
     expect(result.error).toMatchObject({
       status: "CUSTOM_ERROR",
@@ -93,7 +70,7 @@ describe("pushDevicesApi HTTP request", () => {
 
     const store = makeStore();
     await store.dispatch(
-      pushDevicesApi.endpoints.pushDevices.initiate({
+      pushDevicesSyncApi.endpoints.pushDevices.initiate({
         equipment_id: "user-uuid",
         devices: ["device-1"],
       }),

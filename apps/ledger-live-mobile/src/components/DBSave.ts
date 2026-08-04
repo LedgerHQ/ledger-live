@@ -39,6 +39,7 @@ import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
+import { calApi } from "@shared/api-services";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import {
@@ -313,7 +314,7 @@ export const ConfigureDBSaveEffects = () => {
   });
 
   useDBSaveEffect({
-    stateSelector: (state: State) => state.cryptoAssetsApi,
+    stateSelector: (state: State) => state[calApi.reducerPath],
     save: saveCryptoAssetsCacheState,
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,

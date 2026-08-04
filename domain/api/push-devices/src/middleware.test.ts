@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
 import { clearLastFailureTime, setLastFailureTime } from "./internals/middleware";
-import { pushDevicesApi, pushDevicesApiExtra } from "./api";
+import { pushDevicesApi, pushDevicesApiExtra } from "@shared/api-services";
+// Side-effect import: injects the `pushDevices` endpoint the middleware under test dispatches.
+import "./api";
 import { createIdentitiesSyncMiddleware } from "./middleware";
 
 type RootState = {
