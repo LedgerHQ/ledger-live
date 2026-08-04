@@ -89,7 +89,6 @@ function setup(overrides: Overrides = {}) {
     getState: () => state,
     localStateSelector: (s: typeof state) => s.local,
     latestDistantStateSelector: (s: typeof state) => s.distant,
-    isTrustchainRefreshError: (e: unknown) => e instanceof Error && e.name === "NeedsRefresh",
     ...overrides,
   };
 
@@ -345,7 +344,7 @@ describe("createWalletSyncWatchLoop", () => {
 
     it("triggers a trustchain refresh instead of onError for refresh errors", async () => {
       const refreshError = new Error("outdated");
-      refreshError.name = "NeedsRefresh";
+      refreshError.name = "TrustchainEjected";
       const walletSyncSdk = makeSdk({
         pull: jest.fn(async () => {
           throw refreshError;

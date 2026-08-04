@@ -1,69 +1,160 @@
 import { useCallback } from "react";
+import { combineReducers, type Dispatch } from "@reduxjs/toolkit";
 import {
-  HandlersPayloads,
-  WalletHandlers,
-  initialState,
-  WalletState,
-  handlers,
-  accountNameWithDefaultSelector,
-  walletSyncStateSelector,
-} from "@ledgerhq/live-wallet/store";
-import { handleActions } from "redux-actions";
-import { State } from "./types";
+  accountNamesSlice,
+  accountNameSelector as entityAccountNameSelector,
+  accountNameWithDefaultSelector as entityAccountNameWithDefault,
+  setAccountName as setAccountNameRTK,
+  initFromUserData,
+} from "@domain/entity-account-name";
+import {
+  starredAccountsSlice,
+  isStarredAccountSelector as entityIsStarredAccount,
+  setAccountStarred as setAccountStarredRTK,
+  initStarredFromIds,
+} from "@domain/entity-starred-account";
+import { walletSyncSlice, walletSyncUpdate, type WSState } from "@domain/entity-wallet-sync";
+import {
+  nonImportedAccountsSlice,
+  setNonImportedAccounts,
+  type NonImportedAccountInfo,
+} from "@ledgerhq/live-wallet/accounts";
+import { recentAddressesSlice, updateRecentAddresses } from "@domain/entity-recent-addresses";
+import type { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
-import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
-import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
+import type {
+  Account,
+  AccountLike,
+  AccountUserData,
+  RecentAddressesState,
+} from "@ledgerhq/types-live";
+
+const walletReducer = combineReducers({
+  accountNames: accountNamesSlice.reducer,
+  starredAccountIds: starredAccountsSlice.reducer,
+  walletSync: walletSyncSlice.reducer,
+  nonImportedAccountInfos: nonImportedAccountsSlice.reducer,
+  recentAddresses: recentAddressesSlice.reducer,
+});
+
+export type WalletState = ReturnType<typeof walletReducer>;
+
+export const INITIAL_STATE: WalletState = walletReducer(undefined, { type: "@@INIT" });
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
-export function recentAddressesSelector(state: State): RecentAddressesState {
-  return walletSelector(state).recentAddresses;
-}
-export function latestDistantStateSelector(state: State): DistantState | null {
-  return walletSyncStateSelector(walletSelector(state)).data;
+export type ExportedWalletState = {
+  walletSyncState: WSState;
+  nonImportedAccountInfos: NonImportedAccountInfo[];
+  accountsData: {
+    accountNames: Array<[string, string]>;
+    starredAccountIds: string[];
+  };
+  recentAddresses: RecentAddressesState;
+};
+
+export const exportWalletState = (state: WalletState): ExportedWalletState => ({
+  walletSyncState: state.walletSync.walletSyncState,
+  nonImportedAccountInfos: state.nonImportedAccountInfos,
+  accountsData: {
+    accountNames: Array.from(state.accountNames),
+    starredAccountIds: Array.from(state.starredAccountIds),
+  },
+  recentAddresses: state.recentAddresses,
+});
+
+export const walletStateExportShouldDiffer = (a: WalletState, b: WalletState): boolean =>
+  a.walletSync.walletSyncState !== b.walletSync.walletSyncState ||
+  a.nonImportedAccountInfos !== b.nonImportedAccountInfos ||
+  a.accountNames !== b.accountNames ||
+  a.starredAccountIds !== b.starredAccountIds ||
+  a.recentAddresses !== b.recentAddresses;
+
+export const importWalletState =
+  (payload: Partial<ExportedWalletState>) =>
+  (dispatch: Dispatch): void => {
+    if (payload.accountsData?.accountNames) {
+      dispatch(
+        initFromUserData(payload.accountsData.accountNames.map(([id, name]) => ({ id, name }))),
+      );
+    }
+    if (payload.accountsData?.starredAccountIds) {
+      dispatch(initStarredFromIds(payload.accountsData.starredAccountIds));
+    }
+    if (payload.walletSyncState !== undefined) {
+      dispatch(walletSyncUpdate(payload.walletSyncState));
+    }
+    if (payload.nonImportedAccountInfos !== undefined) {
+      dispatch(setNonImportedAccounts(payload.nonImportedAccountInfos));
+    }
+    if (payload.recentAddresses !== undefined) {
+      dispatch(updateRecentAddresses(payload.recentAddresses));
+    }
+  };
+
+// Positional-argument wrappers kept so existing call sites need no change.
+
+export const setAccountName = (accountId: string, name: string) =>
+  setAccountNameRTK({ accountId, name });
+
+export const setAccountStarred = (accountId: string, starred: boolean) =>
+  setAccountStarredRTK({ accountId, starred });
+
+export { updateRecentAddresses };
+
+export const accountNameSelector = (
+  state: WalletState,
+  params: { accountId: string },
+): string | undefined => entityAccountNameSelector(state.accountNames, params);
+
+export const accountNameWithDefaultSelector = (state: WalletState, account: AccountLike): string =>
+  entityAccountNameWithDefault(state.accountNames, account);
+
+export const isStarredAccountSelector = (
+  state: WalletState,
+  params: { accountId: string },
+): boolean => entityIsStarredAccount(state.starredAccountIds, params);
+
+export const accountUserDataExportSelector = (
+  state: WalletState,
+  { account }: { account: Account },
+): AccountUserData => {
+  const starredIds = [account, ...(account.subAccounts || [])]
+    .map(a => a.id)
+    .filter(id => state.starredAccountIds.has(id));
+  return {
+    id: account.id,
+    name: accountNameWithDefaultSelector(state, account),
+    starredIds,
+  };
+};
+
+export function latestDistantStateSelector(state: State): unknown {
+  return walletSelector(state).walletSync.walletSyncState.data;
 }
 
 export function latestDistantVersionSelector(state: State): number {
-  return walletSyncStateSelector(walletSelector(state)).version;
+  return walletSelector(state).walletSync.walletSyncState.version;
+}
+
+export function recentAddressesSelector(state: State): RecentAddressesState {
+  return walletSelector(state).recentAddresses;
 }
 
 const getAccountName = (
   state: State,
   account: AccountLike | null | undefined,
-): string | undefined => {
-  return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
-};
+): string | undefined =>
+  !account ? undefined : entityAccountNameWithDefault(state.wallet.accountNames, account);
 
-/**
- * Hook to get the name of an account (or undefined if account is null/undefined).
- *
- * @param account
- * The account to get the name for.
- *
- * @returns
- * The name of the account.
- */
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,
 ): string | undefined => {
-  const selector = useCallback(
-    (state: State) =>
-      !account ? undefined : accountNameWithDefaultSelector(state.wallet, account),
-    [account],
-  );
+  const selector = useCallback((state: State) => getAccountName(state, account), [account]);
   return useSelector(selector);
 };
 
-/**
- * Hook to get names for a batch of accounts.
- *
- * @param accounts
- * The accounts to get names for.
- *
- * @returns
- * The names of the accounts.
- */
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
 ): (string | undefined)[] => {
@@ -74,20 +165,12 @@ export const useBatchMaybeAccountName = (
   return useSelector(selector, shallowEqual);
 };
 
-/**
- * Hook to get the name of an account.
- *
- * Uses a memoized selector to prevent unnecessary re-renders in react-redux v9.
- */
 export const useAccountName = (account: AccountLike) => {
   const selector = useCallback(
-    (state: State) => accountNameWithDefaultSelector(state.wallet, account),
+    (state: State) => entityAccountNameWithDefault(state.wallet.accountNames, account),
     [account],
   );
   return useSelector(selector);
 };
 
-export default handleActions<WalletState, HandlersPayloads[keyof HandlersPayloads]>(
-  handlers as unknown as WalletHandlers<false>,
-  initialState,
-);
+export default walletReducer;

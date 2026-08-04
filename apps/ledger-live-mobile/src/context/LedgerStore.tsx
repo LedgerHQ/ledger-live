@@ -46,7 +46,7 @@ import { importMarket } from "~/actions/market";
 import { importMarketListConfig } from "~/reducers/market";
 import { importMarketBannerState } from "~/reducers/marketBanner";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { importWalletState } from "@ledgerhq/live-wallet/store";
+import { importWalletState } from "~/reducers/wallet";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
@@ -166,7 +166,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Handle account import with error recovery for async issues
       try {
-        store.dispatch(await importAccountsRaw(accountsData));
+        (await importAccountsRaw(accountsData))(store.dispatch);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);
@@ -199,7 +199,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       store.dispatch(importTrustchainStoreState(trustchainStore));
 
       if (walletStore) {
-        store.dispatch(importWalletState(walletStore));
+        importWalletState(walletStore)(store.dispatch);
       }
 
       if (protect) {

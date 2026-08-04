@@ -14,8 +14,8 @@ jest.mock("~/renderer/components/Select", () => ({
   },
 }));
 
-jest.mock("@ledgerhq/live-wallet/store", () => ({
-  ...jest.requireActual("@ledgerhq/live-wallet/store"),
+jest.mock("~/renderer/reducers/wallet", () => ({
+  ...jest.requireActual("~/renderer/reducers/wallet"),
   accountNameWithDefaultSelector: (_walletState: unknown, account: { id: string }) => account.id,
 }));
 

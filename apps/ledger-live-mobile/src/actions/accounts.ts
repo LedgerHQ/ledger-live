@@ -9,9 +9,10 @@ import type {
 } from "./types";
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
-import { initAccounts } from "@ledgerhq/live-wallet/store";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
+import { initStarredFromIds } from "@domain/entity-starred-account";
+import type { Dispatch } from "redux";
 
 const version = 0; // FIXME this needs to come from user data
 
@@ -47,7 +48,14 @@ export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] 
   const accountsUserData = supported
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);
-  return initAccounts(accounts, accountsUserData);
+  return (dispatch: Dispatch) => {
+    dispatch({
+      type: "INIT_ACCOUNTS",
+      payload: { accounts, accountsUserData },
+    });
+    dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
+    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
+  };
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,

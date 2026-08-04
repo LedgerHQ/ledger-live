@@ -8,7 +8,7 @@ import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@shared/env";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { type AccountNamesState } from "@domain/entity-account-name";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { InfiniteData } from "@reduxjs/toolkit/query/react";
@@ -274,7 +274,7 @@ function useDeviceTransport({ manifest, tracking }) {
 }
 
 export type useWalletAPIServerOptions = {
-  walletState: WalletState;
+  accountNames: AccountNamesState;
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: TrackingAPI;
@@ -288,7 +288,7 @@ export type useWalletAPIServerOptions = {
 };
 
 export function useWalletAPIServer({
-  walletState,
+  accountNames,
   manifest,
   accounts,
   tracking,
@@ -505,7 +505,7 @@ export function useWalletAPIServer({
 
       return result;
     });
-  }, [walletState, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
+  }, [accountNames, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
 
   useEffect(() => {
     server.setHandler("account.list", async ({ currencyIds }) => {
@@ -575,7 +575,7 @@ export function useWalletAPIServer({
           const spendableBalance = await resolveWalletApiSpendableBalance(account, parentAccount);
 
           return {
-            ...accountToWalletAPIAccount(walletState, account, parentAccount),
+            ...accountToWalletAPIAccount(accountNames, account, parentAccount),
             spendableBalance,
           };
         }),
@@ -583,7 +583,7 @@ export function useWalletAPIServer({
 
       return wapiAccounts;
     });
-  }, [walletState, manifest, server, accounts]);
+  }, [accountNames, manifest, server, accounts]);
 
   useEffect(() => {
     if (!uiAccountRequest) return;
@@ -612,7 +612,7 @@ export function useWalletAPIServer({
 
                   tracking.requestAccountSuccess(manifest);
                   resolve({
-                    ...accountToWalletAPIAccount(walletState, account, parentAccount),
+                    ...accountToWalletAPIAccount(accountNames, account, parentAccount),
                     spendableBalance,
                   });
                 } catch (error) {
@@ -634,14 +634,14 @@ export function useWalletAPIServer({
         });
       },
     );
-  }, [walletState, manifest, server, tracking, uiAccountRequest]);
+  }, [accountNames, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;
 
     server.setHandler("account.receive", ({ accountId, tokenCurrency }) =>
       receiveOnAccountLogic(
-        walletState,
+        accountNames,
         { manifest, accounts, tracking },
         accountId,
         (account, parentAccount, accountAddress) =>
@@ -674,7 +674,7 @@ export function useWalletAPIServer({
         tokenCurrency,
       ),
     );
-  }, [walletState, accounts, manifest, server, tracking, uiAccountReceive]);
+  }, [accountNames, accounts, manifest, server, tracking, uiAccountReceive]);
 
   useEffect(() => {
     if (!uiMessageSign) return;

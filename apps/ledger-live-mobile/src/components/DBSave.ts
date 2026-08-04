@@ -1,7 +1,11 @@
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { largeScreenUpsellModalSelector } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import {
+  exportWalletState,
+  walletStateExportShouldDiffer,
+  walletSelector,
+} from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import throttleFn from "lodash/throttle";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -36,7 +40,6 @@ import { exportMarketSelector, exportMarketListConfigSelector } from "~/reducers
 import { marketBannerStoreSelector } from "~/reducers/marketBanner";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
-import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
 import { extractPersistedCALFromState, persistedCALContentEqual } from "@domain/api-currency-token";
 import { calApi } from "@shared/api-services";

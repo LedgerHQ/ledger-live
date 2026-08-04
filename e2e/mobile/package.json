@@ -39,6 +39,8 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-e2e-shared": "workspace:^",
+    "@shared/cloud-sync": "workspace:^",
+    "@features/platform-wallet-sync": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

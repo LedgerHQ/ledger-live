@@ -17,7 +17,7 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
 import { knownDevicesStoreSelector } from "./reducers/knownDevices";
-import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import { ExportedWalletState } from "~/renderer/reducers/wallet";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";

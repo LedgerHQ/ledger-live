@@ -1,4 +1,4 @@
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { Account } from "@ledgerhq/types-live";
 
 export type ExpectedAccountIdentity = {

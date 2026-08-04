@@ -1,10 +1,14 @@
 import timemachine from "timemachine";
 import { of, throwError } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
-import manager, { NonImportedAccountInfo } from "../../modules/accounts";
-import { WalletSyncDataManagerResolutionContext } from "../../types";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { accountDataToAccount } from "../../../liveqr/cross";
+import manager, {
+  bindCtx,
+  NonImportedAccountInfo,
+  CloudSyncDataManagerResolutionContext,
+} from "../cloudSyncModule";
+import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
+import { accountDataToAccount } from "../../liveqr/cross";
 
 timemachine.config({
   dateString: "February 22, 2021 13:12:59",
@@ -63,7 +67,7 @@ function placeholderAccountFromDescriptor(descriptor: AccountDescriptor): Accoun
   return accountDataToAccount({ ...descriptor, balance: "0", name: "" })[0];
 }
 
-const dummyContext: WalletSyncDataManagerResolutionContext = {
+const dummyContext: CloudSyncDataManagerResolutionContext = {
   getAccountBridge: () => ({
     sync: (initial: Account) =>
       initial.id === account4unsupported.id
@@ -112,7 +116,16 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
   },
 };
 
-describe("accountNames' WalletSyncDataManager", () => {
+describeCloudSyncModuleContract(
+  "accounts CloudSyncDataManager contract (via bindCtx)",
+  bindCtx(dummyContext),
+  {
+    emptyLocalState: { list: [], nonImportedAccountInfos: [] },
+    nonEmptyLocalState: { list: [account1, account2], nonImportedAccountInfos: [] },
+  },
+);
+
+describe("accountNames' CloudSyncDataManager", () => {
   it("schema validation", () => {
     expect(manager.schema.parse([])).toEqual([]);
     expect(manager.schema.parse([account1, account2].map(convertAccountToDescriptor))).toEqual(

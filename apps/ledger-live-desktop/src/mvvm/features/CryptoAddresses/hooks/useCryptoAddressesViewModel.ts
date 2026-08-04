@@ -14,7 +14,7 @@ import { CRYPTO_TRACKING_PAGE_NAME } from "../constants";
 import { useCryptoAccountRows } from "../components/Table/hooks/useCryptoAccountRows";
 import { track } from "~/renderer/analytics/segment";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 
 export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel {
   const { t } = useTranslation();

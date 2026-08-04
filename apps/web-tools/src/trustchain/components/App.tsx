@@ -37,15 +37,18 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
-import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
+import { DistantState, trustchainLifecycle } from "./walletSync";
 import { Loading } from "./Loading";
 import { State } from "./types";
 
 const initialState: State = {
   accounts: [],
   nonImportedAccounts: [],
-  walletState: walletInitialState,
+  walletState: {
+    accountNames: new Map(),
+    walletSyncState: { data: null, version: 0 },
+    recentAddresses: {},
+  },
 };
 
 // applicationPath is m/0'/<applicationId>'/<index>'

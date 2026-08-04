@@ -1,7 +1,7 @@
 # 4 · CloudSyncSDK
 
 > Layer 3 of the [Ledger Sync stack](./README.md). Code:
-> [`libs/live-wallet/src/cloudsync`](../../libs/live-wallet/src/cloudsync) ·
+> [`shared/cloud-sync`](../../shared/cloud-sync) ·
 > [backend doc](https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/4161175870).
 
 `CloudSyncSDK` stores and retrieves the **encrypted** wallet-sync data. It is deliberately
@@ -29,7 +29,7 @@ generic SDK hands results back to the [wallet-sync layer](./05-wallet-sync-data-
 ## The cipher layers
 
 Data is JSON, gzip-compressed, encrypted with the Trustchain key, then base64-encoded
-([`cipher.ts`](../../libs/live-wallet/src/cloudsync/cipher.ts)):
+([`cipher.ts`](../../shared/cloud-sync/src/cloudsync/cipher.ts)):
 
 ```mermaid
 flowchart LR

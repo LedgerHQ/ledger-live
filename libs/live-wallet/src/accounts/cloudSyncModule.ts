@@ -21,9 +21,19 @@
  * an exponential backoff strategy to avoid excessive retry attempts.
  */
 import { Account, AccountBridge, BridgeCacheSystem, TransactionCommon } from "@ledgerhq/types-live";
-import { WalletSyncDataManager, WalletSyncDataManagerResolutionContext } from "../types";
+import type { CloudSyncDataManager, UpdateDiff, DistantDiff } from "@shared/cloud-sync-module";
 import { z } from "zod";
-import { accountDataToAccount } from "../../liveqr/cross";
+
+export type CloudSyncDataManagerResolutionContext = {
+  getAccountBridge: <T extends TransactionCommon>(
+    account: Account,
+  ) => AccountBridge<T> | Promise<AccountBridge<T>>;
+  bridgeCache: BridgeCacheSystem;
+  blacklistedTokenIds?: string[];
+};
+import { accountDataToAccount } from "../liveqr/cross";
+import type { NonImportedAccountInfo } from "./schema";
+export type { NonImportedAccountInfo } from "./schema";
 import { Observable, firstValueFrom, reduce } from "rxjs";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 
@@ -38,33 +48,26 @@ const accountDescriptorSchema = z.object({
 
 type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
 
-const schema = z.array(accountDescriptorSchema);
-
-export type NonImportedAccountInfo = {
-  id: string;
-  attempts: number;
-  attemptsLastTimestamp: number;
-  error?: {
-    name: string;
-    message: string;
-  };
+type LocalData = {
+  list: Account[];
+  nonImportedAccountInfos: NonImportedAccountInfo[];
 };
 
-const manager: WalletSyncDataManager<
-  {
-    list: Account[];
-    nonImportedAccountInfos: NonImportedAccountInfo[];
-  },
-  {
-    removed: string[];
-    added: Account[];
-    nonImportedAccountInfos: NonImportedAccountInfo[];
-  },
-  typeof schema
-> = {
+type ManagerUpdate = {
+  removed: string[];
+  added: Account[];
+  nonImportedAccountInfos: NonImportedAccountInfo[];
+};
+
+const schema = z.array(accountDescriptorSchema);
+
+const manager = {
   schema,
 
-  diffLocalToDistant(localData, latestState) {
+  diffLocalToDistant(
+    localData: LocalData,
+    latestState: AccountDescriptor[] | null,
+  ): DistantDiff<AccountDescriptor[]> {
     let hasChanges = false;
 
     // let's figure out the new local accounts
@@ -119,7 +122,12 @@ const manager: WalletSyncDataManager<
     };
   },
 
-  async resolveIncrementalUpdate(ctx, localData, latestState, incomingState) {
+  async resolveIncrementalUpdate(
+    ctx: CloudSyncDataManagerResolutionContext,
+    localData: LocalData,
+    latestState: AccountDescriptor[] | null,
+    incomingState: AccountDescriptor[] | null,
+  ): Promise<UpdateDiff<ManagerUpdate>> {
     if (!incomingState) {
       return { hasChanges: false }; // nothing to do, the data is no longer available
     }
@@ -176,12 +184,8 @@ const manager: WalletSyncDataManager<
       });
     }
 
-    if (!hasChanges) {
-      if (resolved.added.length > 0) {
-        hasChanges = true;
-      } else if (resolved.removed.length > 0) {
-        hasChanges = true;
-      }
+    if (!hasChanges && (resolved.added.length > 0 || resolved.removed.length > 0)) {
+      hasChanges = true;
     }
 
     if (!hasChanges) {
@@ -199,7 +203,7 @@ const manager: WalletSyncDataManager<
     };
   },
 
-  applyUpdate(localData, update) {
+  applyUpdate(localData: LocalData, update: ManagerUpdate): LocalData {
     const existingIds = new Set(localData.list.map(a => a.id));
     const removed = new Set(update.removed);
     const list = [
@@ -264,8 +268,11 @@ export async function integrateNewAccountDescriptor<T extends TransactionCommon>
   bridgeCache: BridgeCacheSystem,
   blacklistedTokenIds?: string[],
 ): Promise<Account> {
-  // FIXME: in future, it should be part of the bridge to accept an AccountDescriptor. today we rely on accountDataToAccount to not duplicates its internal hacks to not break coin implementations but eventually this logic will have to be simplified/unified.
-  const [accountShaped] = accountDataToAccount({ ...accountDescriptor, balance: "0", name: "" });
+  const [accountShaped] = accountDataToAccount({
+    ...accountDescriptor,
+    balance: "0",
+    name: "",
+  });
   const bridge = await getAccountBridge(accountShaped);
   await bridgeCache.prepareCurrency(accountShaped.currency);
   const syncConfig = {
@@ -298,7 +305,7 @@ export type WalletSyncAccountsUpdate = {
 export async function resolveWalletSyncDiffIntoSyncUpdate(
   existingIds: Set<string>,
   diff: WalletSyncDiff,
-  { getAccountBridge, bridgeCache, blacklistedTokenIds }: WalletSyncDataManagerResolutionContext,
+  { getAccountBridge, bridgeCache, blacklistedTokenIds }: CloudSyncDataManagerResolutionContext,
 ): Promise<WalletSyncAccountsUpdate> {
   const failures: WalletSyncAccountsUpdate["failures"] = {};
 
@@ -342,6 +349,25 @@ export function shouldRetryImportAccount(elapsedMs: number, attempts: number) {
   // Clamp the wait time to the maximum value
   waitTime = Math.min(waitTime, maxWaitTime);
   return elapsedMs > waitTime;
+}
+
+export function bindCtx(ctx: CloudSyncDataManagerResolutionContext): CloudSyncDataManager<
+  { list: Account[]; nonImportedAccountInfos: NonImportedAccountInfo[] },
+  {
+    removed: string[];
+    added: Account[];
+    nonImportedAccountInfos: NonImportedAccountInfo[];
+  },
+  typeof schema
+> {
+  return {
+    schema: manager.schema,
+    diffLocalToDistant: (localData, latestState) =>
+      manager.diffLocalToDistant(localData, latestState),
+    applyUpdate: (localData, update) => manager.applyUpdate(localData, update),
+    resolveIncrementalUpdate: (localData, latestState, incomingState) =>
+      manager.resolveIncrementalUpdate(ctx, localData, latestState, incomingState),
+  };
 }
 
 export default manager;
