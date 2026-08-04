@@ -201,6 +201,11 @@ export function collectIronwoodSpendableNotes(
 
 /**
  * Converts raw shielded transactions to BtcOperation format.
+ *
+ * Operation value uses the Ironwood pool only, matching `getPrivateBalance` /
+ * `account.balance`. Orchard and Sapling notes still drive `type` for history
+ * labelling but are excluded from value so ops reconcile with the spendable
+ * private balance.
  */
 export function convertShieldedTransactionsToOperations(
   shieldedTransactions: ShieldedTransaction[],
@@ -208,25 +213,32 @@ export function convertShieldedTransactionsToOperations(
 ): BtcOperation[] {
   return shieldedTransactions.map(tx => {
     const txType = getTxType(tx);
-    const allNotes = [
-      ...(tx.decryptedData?.orchard_outputs ?? []),
-      ...(tx.decryptedData?.sapling_outputs ?? []),
-      ...(tx.decryptedData?.ironwood_outputs ?? []),
-    ];
-    const sumNotes = (transferType: string) =>
-      allNotes
+    const ironwoodNotes = tx.decryptedData?.ironwood_outputs ?? [];
+    const sumIronwoodNotes = (transferType: string) =>
+      ironwoodNotes
         .filter(n => n.transfer_type === transferType)
         .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
 
     const fee = new BigNumber(tx.fee);
     let value = new BigNumber(0);
     if (txType.endsWith("_IN")) {
-      value = sumNotes("incoming");
+      value = sumIronwoodNotes("incoming");
     } else if (txType.endsWith("_OUT")) {
-      // Outgoing value spans both destinations the funds can reach — other shielded
-      // addresses and transparent ones — and includes the fee, the convention the
-      // transparent operations and the optimistic operation both follow.
-      value = sumNotes("outgoing").plus(deshieldedValue(tx)).plus(fee);
+      const hasIronwoodNotes = ironwoodNotes.length > 0;
+      const hasDeprecatedPoolNotes =
+        (tx.decryptedData?.orchard_outputs?.length ?? 0) > 0 ||
+        (tx.decryptedData?.sapling_outputs?.length ?? 0) > 0;
+      if (hasIronwoodNotes || txType === "SHIELDED_TX_IRONWOOD_OUT") {
+        // Outgoing value spans both destinations the funds can reach — other shielded
+        // addresses and transparent ones — and includes the fee, the convention the
+        // transparent operations and the optimistic operation both follow.
+        value = sumIronwoodNotes("outgoing").plus(deshieldedValue(tx)).plus(fee);
+      } else if (!hasDeprecatedPoolNotes) {
+        // Whole-note z→t with no change outputs: pool cannot be recovered from notes,
+        // but transparentOut + fee still belongs in history.
+        value = deshieldedValue(tx).plus(fee);
+      }
+      // Orchard/Sapling outs: value stays 0 (excluded from Ironwood-only balance).
     }
 
     const operation: BtcOperation = {

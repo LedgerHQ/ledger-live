@@ -191,24 +191,12 @@ describe("zcash transaction status, coin-bitcoin adapter vs coin-zcash", () => {
       "no note selected for a shielded send",
       { transferType: "shielded", recipient: U_ADDRESS, selectedNotes: [] },
     ],
+    // A shielded send spends the Ironwood pool, so it is bounded by the Ironwood
+    // balance and must not draw on the deprecated Orchard balance.
     [
-      "an ironwood send",
-      { transferType: "ironwood", recipient: U_ADDRESS, selectedNotes: [note(30_000, 100)] },
-    ],
-    [
-      "an ironwood unshielding send",
+      "a shielded amount the ironwood pool alone cannot cover",
       {
-        transferType: "ironwood-to-transparent",
-        recipient: T_ADDRESS,
-        selectedNotes: [note(30_000, 100)],
-      },
-    ],
-    // The amount is validated against the pool being spent, so an ironwood send
-    // must not be allowed to draw on the orchard balance.
-    [
-      "an ironwood amount the ironwood pool alone cannot cover",
-      {
-        transferType: "ironwood",
+        transferType: "shielded",
         recipient: U_ADDRESS,
         amount: new BigNumber(60_000),
         selectedNotes: [note(30_000, 100), note(20_000, 101)],
@@ -238,26 +226,18 @@ describe("zcash transaction status, coin-bitcoin adapter vs coin-zcash", () => {
 // What prepare resolves -- which notes are spent, the ZIP-317 fee, the change --
 // is what the user signs and what the fee shown in the send modal comes from.
 describe("zcash prepared transaction, coin-bitcoin adapter vs coin-zcash", () => {
+  // Flows where both packages route to the same pool resolve to the identical
+  // prepared transaction, transfer-type label included.
   it.each([
     ["a transparent send", { transferType: "transparent" }],
     ["a shielding send", { transferType: "transparent-to-shielded", recipient: U_ADDRESS }],
-    ["a shielded send", { transferType: "shielded", recipient: U_ADDRESS }],
-    ["an unshielding send", { transferType: "shielded-to-transparent" }],
-    ["an ironwood send", { transferType: "ironwood", recipient: U_ADDRESS }],
-    ["an ironwood unshielding send", { transferType: "ironwood-to-transparent" }],
-    [
-      "a send of everything",
-      { transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true },
-    ],
-    [
-      "an ironwood send of everything",
-      { transferType: "ironwood", recipient: U_ADDRESS, useAllAmount: true },
-    ],
+    // Neither pool can cover it, so each resets to an empty selection under its
+    // own (unchanged) transfer type -- the insufficient-balance path agrees
+    // whichever pool is consulted.
     [
       "more than the account holds",
       { transferType: "shielded", amount: new BigNumber(10_000_000) },
     ],
-    ["more ironwood than the pool holds", { transferType: "ironwood", amount: new BigNumber(1e7) }],
   ])("agrees on the fee, change and spent notes for %s", async (_label, overrides) => {
     const acc = account();
     const tx = transaction(overrides);
@@ -266,6 +246,49 @@ describe("zcash prepared transaction, coin-bitcoin adapter vs coin-zcash", () =>
       await adapter.prepareTransaction?.(acc, tx),
     );
   });
+
+  // coin-zcash routes every shielded-input send to the Ironwood pool: per
+  // ZcashTransferType, "shielded" / "shielded-to-transparent" *denote* Ironwood
+  // spends, whereas the adapter keeps the pool explicit and still reserves those
+  // labels for the deprecated Orchard pool. The adapter's Ironwood transfer
+  // types are the reference coin-zcash was ported from -- they resolve the same
+  // notes, fee and change, and only the transfer-type label differs.
+  const IRONWOOD_EQUIVALENT: Record<string, string> = {
+    shielded: "ironwood",
+    "shielded-to-transparent": "ironwood-to-transparent",
+  };
+
+  // Compare the resolved accounting (spent notes, fee, change, amount) rather
+  // than the whole transaction, since the transfer-type label is deliberately
+  // different on the two sides.
+  const accounting = ({ transferType: _drop, ...rest }: Record<string, unknown>) => rest;
+
+  it.each([
+    ["a shielded send", { transferType: "shielded", recipient: U_ADDRESS }],
+    ["an unshielding send", { transferType: "shielded-to-transparent" }],
+    [
+      "a send of everything",
+      { transferType: "shielded", recipient: U_ADDRESS, useAllAmount: true },
+    ],
+  ])(
+    "routes %s to the Ironwood pool, matching the adapter's Ironwood path",
+    async (_label, overrides) => {
+      const acc = account();
+      const zcashTx = transaction(overrides);
+      const adapterTx = transaction({
+        ...overrides,
+        transferType: IRONWOOD_EQUIVALENT[overrides.transferType as string],
+      });
+
+      const prepared = (await prepareTransaction(acc as never, zcashTx)) as Record<string, unknown>;
+      const reference = (await adapter.prepareTransaction?.(acc, adapterTx)) as Record<
+        string,
+        unknown
+      >;
+
+      expect(accounting(prepared)).toEqual(accounting(reference));
+    },
+  );
 });
 
 describe("zcash max spendable, coin-bitcoin adapter vs coin-zcash", () => {
@@ -274,8 +297,6 @@ describe("zcash max spendable, coin-bitcoin adapter vs coin-zcash", () => {
     ["a shielding send", { transferType: "transparent-to-shielded" }],
     ["a shielded send", { transferType: "shielded" }],
     ["an unshielding send", { transferType: "shielded-to-transparent" }],
-    ["an ironwood send", { transferType: "ironwood" }],
-    ["an ironwood unshielding send", { transferType: "ironwood-to-transparent" }],
   ])("agrees on the maximum spendable for %s", async (_label, overrides) => {
     const acc = account();
     const tx = transaction(overrides);

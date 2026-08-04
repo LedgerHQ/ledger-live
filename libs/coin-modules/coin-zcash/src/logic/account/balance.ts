@@ -20,12 +20,18 @@ export function getTransparentBalance(
   return (utxos ?? []).reduce((sum, utxo) => sum.plus(utxo.value), new BigNumber(0));
 }
 
-/** Private (shielded) balance = orchard + sapling + ironwood. */
+/**
+ * Private (shielded) balance = the Ironwood pool only.
+ *
+ * Ironwood is the only shielded pool that can be spent from the send flow; the
+ * Orchard and Sapling pools are deprecated and their send flows are gone. They
+ * are deliberately excluded so this value matches the spendable "Private
+ * balance" shown in the send modal (see ZcashTransferFromSelector) instead of
+ * exceeding it by any residual Orchard/Sapling notes.
+ */
 export function getPrivateBalance(privateInfo: PrivateBalances | undefined | null): BigNumber {
   if (!privateInfo) return new BigNumber(0);
-  return (privateInfo.orchardBalance ?? new BigNumber(0))
-    .plus(privateInfo.saplingBalance ?? new BigNumber(0))
-    .plus(privateInfo.ironwoodBalance ?? new BigNumber(0));
+  return privateInfo.ironwoodBalance ?? new BigNumber(0);
 }
 
 /** Total balance shown to the user = transparent + private. */

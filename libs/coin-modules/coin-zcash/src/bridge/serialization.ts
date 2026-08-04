@@ -61,19 +61,21 @@ export function fromBitcoinOutputRaw([
 export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw {
   return {
     utxos: r.utxos.map(toBitcoinOutputRaw),
-    walletAccount: r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
+    ...(r.walletAccount && {
+      walletAccount: wallet.exportToSerializedAccountSync(r.walletAccount),
+    }),
   };
 }
 
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
-    walletAccount:
-      r.walletAccount &&
-      wallet.importFromSerializedAccountSync(
+    ...(r.walletAccount && {
+      walletAccount: wallet.importFromSerializedAccountSync(
         r.walletAccount,
         walletBtcCurrencyById(r.walletAccount.params.currency),
       ),
+    }),
   };
 }
 
