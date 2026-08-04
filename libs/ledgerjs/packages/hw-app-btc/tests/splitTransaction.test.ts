@@ -172,7 +172,7 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     expect(tx.extraData?.length).toBe(0);
   });
 
-  test("Zcash NU7 transaction Ironwood (v6)", async () => {
+  test("Zcash NU6.3 transaction Ironwood (v6)", async () => {
     const transport = await openTransportReplayer(RecordStore.fromString(""));
     const btc = new Btc({ transport, currency: "zcash" });
 

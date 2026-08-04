@@ -4,7 +4,7 @@
 
 Fix Zcash sends failing before the device prompt when the coin being spent came from a V6-format transaction.
 
-Spending a coin whose funding transaction is a V6 (NU7 / Ironwood) one failed immediately, with no review screen on the device and `getVarint called with unexpected parameters` in the logs. Like the V4 case, this is decided by which software created the funding transaction, so it looks intermittent while being deterministic.
+Spending a coin whose funding transaction is a V6 (NU6.3 / Ironwood) one failed immediately, with no review screen on the device and `getVarint called with unexpected parameters` in the logs. Like the V4 case, this is decided by which software created the funding transaction, so it looks intermittent while being deterministic.
 
 `splitTransaction` recognized Zcash headers up to V5. A V6 header fell through to the pre-Overwinter layout, so the input count was read off the version group id — `0x98`, meaning 152 inputs — and the parser ran past the end of the buffer and threw before any APDU was built.
 
