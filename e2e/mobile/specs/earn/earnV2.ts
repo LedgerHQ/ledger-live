@@ -299,6 +299,81 @@ export function runPositionToWithdrawalTest(account: Account, tmsLinks: string[]
   });
 }
 
+// --- swapToEarn routing variants ---
+
+// swapToEarn is forwarded to the earn webview URL and the earn app's proxy routes on it, so both
+// branches must be pinned explicitly: inheriting the ambient flag would make which deposit UI is
+// exercised non-deterministic.
+export function runSwapToEarnDisabledDepositTest(
+  account: Account,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Earn v2", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: account.currency.speculosApp,
+        featureFlags: {
+          ...EARN_V2_FLAGS,
+          ...FF_STAKE_PROGRAMS_MODAL,
+          swapToEarn: { enabled: false },
+        },
+        cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
+      });
+    });
+
+    setTeamOwner(Team.EARN);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`[${account.currency.testLabel}] - Earn v2 CTA routes to v1 deposit when swapToEarn is disabled`, async () => {
+      await navigateToEarn();
+      await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+      await app.earnV2Dashboard.verifyV1DepositFlowVisible();
+      // v1 presents a single continue CTA on the amount step; v2 has no such test id.
+      await app.earnV2Dashboard.verifyV1DepositContinueCtaVisible();
+    });
+  });
+}
+
+export function runSwapToEarnEnabledDepositTest(
+  account: Account,
+  providerId: string,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  describe("Earn v2", () => {
+    beforeAll(async () => {
+      await beforeAllFunction({
+        userdata: "skip-onboarding",
+        speculosApp: account.currency.speculosApp,
+        featureFlags: {
+          ...EARN_V2_FLAGS,
+          ...FF_STAKE_PROGRAMS_MODAL,
+          swapToEarn: { enabled: true },
+        },
+        cliCommands: [liveDataWithAddressCommand(account)],
+        speculosForSetupOnly: true,
+      });
+    });
+
+    setTeamOwner(Team.EARN);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    tags.forEach(tag => $Tag(tag));
+    it(`[${account.currency.testLabel}] - Earn v2 CTA routes to v2 deposit when swapToEarn is enabled`, async () => {
+      await navigateToEarn();
+      await app.earnV2Dashboard.clickAssetEarnCta(account.currency.ticker);
+      await app.earnV2Dashboard.verifyV2DepositFlowVisible();
+      await app.earnV2Dashboard.completeV2EthDepositAmountStep("0.02");
+      // The provider must be a "liquid" one: v2 defaults the category filter to liquid below the
+      // protocol-staking threshold, and its segmented control has no per-option test id to reset.
+      await app.earnV2Dashboard.expandV2EthProviderCard(providerId);
+      await app.earnV2Dashboard.verifyV2EthProviderDepositCtaVisible(providerId);
+    });
+  });
+}
+
 // --- Inline Add Account ---
 
 export function runInlineAddAccountTest(account: Account, tmsLinks: string[], tags: string[]) {
