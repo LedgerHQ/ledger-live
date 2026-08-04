@@ -45,12 +45,12 @@ export type BitcoinOutputRaw = [
 
 export type BitcoinResources = {
   utxos: BitcoinOutput[];
-  walletAccount?: WalletAccount | undefined;
+  walletAccount?: WalletAccount;
 };
 
 export type BitcoinResourcesRaw = {
   utxos: BitcoinOutputRaw[];
-  walletAccount?: WalletAccountRaw | undefined;
+  walletAccount?: WalletAccountRaw;
 };
 
 export const initialBitcoinResourcesValue = {
@@ -91,13 +91,15 @@ export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
 
 // ── Transaction types ───────────────────────────────────────────────────
 
+// The private (shielded) send flow spends from the Ironwood pool only: post
+// NU6.3 that is the pool newly shielded value lands in, and Sapling/Orchard send
+// flows are deprecated. So "shielded" (z→z) and "shielded-to-transparent" (z→t)
+// both denote Ironwood-pool spends.
 export type ZcashTransferType =
   | "transparent"
   | "transparent-to-shielded"
   | "shielded-to-transparent"
-  | "shielded"
-  | "ironwood"
-  | "ironwood-to-transparent";
+  | "shielded";
 
 export type Transaction = TransactionCommon & {
   family: "zcash";
@@ -129,8 +131,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   zcashFee?: string;
   changeAmount?: string;
 };
-
-export type ZcashTransaction = Transaction;
 
 export function isZcashTransaction(tx: TransactionCommon & { family?: string }): tx is Transaction {
   return "transferType" in tx && (tx as Transaction).transferType !== undefined;
