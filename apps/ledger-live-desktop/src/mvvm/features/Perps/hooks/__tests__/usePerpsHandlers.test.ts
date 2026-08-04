@@ -23,7 +23,10 @@ describe("usePerpsHandlers", () => {
 
     expect(mockedPerpsHandlers).toHaveBeenCalledWith({
       accounts,
-      uiHooks: { "signing.execute": expect.any(Function) },
+      uiHooks: {
+        "signing.execute": expect.any(Function),
+        "deposit.execute": expect.any(Function),
+      },
     });
   });
 
