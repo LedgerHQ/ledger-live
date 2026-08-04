@@ -9,8 +9,8 @@ import type { GetQuotesArgs } from "../types";
 import type { ResolvedQuotesInput } from "../resolveQuotesInput";
 import type { FetchQuotesResult } from "./types";
 
-// `signal` omitted: RTK Query owns the request lifecycle, so honouring it is
-// impossible and accepting it would be a silent no-op.
+// `signal` omitted: nothing supplies one. If an in-process caller ever needs
+// cancellation, abort the `initiate()` promise below rather than forwarding it.
 type FetchQuotesArgs = Omit<GetQuotesArgs, "data" | "signal"> & {
   data: ResolvedQuotesInput;
 };
