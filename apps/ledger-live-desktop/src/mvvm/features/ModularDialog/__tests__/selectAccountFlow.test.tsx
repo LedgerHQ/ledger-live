@@ -423,7 +423,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
   });
 
-  it("should display perpetuals banner when uiUseCase is perpetuals", async () => {
+  it("should display perpetuals account header when uiUseCase is perpetuals", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
@@ -442,11 +442,61 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await user.click(screen.getByText(/ethereum/i));
     await user.click(screen.getByText(/ethereum/i));
 
-    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
-    expect(screen.getByText(/currently only supported with usdc on arbitrum chain/i)).toBeVisible();
+    expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
+    expect(
+      screen.getAllByText(/select an account you want to deposit funds into/i)[0],
+    ).toBeVisible();
   });
 
-  it("should not display perpetuals banner when uiUseCase is not set", async () => {
+  it("should show deposit asset header when uiUseCase has a variant", async () => {
+    render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        modularDialog: {
+          ...defaultModularDialogState,
+          dialogParams: {
+            ...defaultModularDialogState.dialogParams,
+            uiUseCase: "perpetuals:deposit",
+          },
+        },
+      },
+    });
+
+    expect(screen.getAllByText(/select asset to deposit/i)[0]).toBeVisible();
+    expect(
+      screen.getAllByText(
+        /any supported asset works. it will be swapped automatically if needed/i,
+      )[0],
+    ).toBeVisible();
+  });
+
+  it("should show default account header when uiUseCase has a variant on account step", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [ETH_ACCOUNT],
+        modularDialog: {
+          ...defaultModularDialogState,
+          dialogParams: {
+            ...defaultModularDialogState.dialogParams,
+            uiUseCase: "perpetuals:deposit",
+          },
+        },
+      },
+    });
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await user.click(screen.getByText(/ethereum/i));
+    await user.click(screen.getByText(/ethereum/i));
+
+    expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
+    expect(screen.queryByText(/select trading account/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/currently only supported with usdc on arbitrum chain/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("should not display perpetuals account header when uiUseCase is not set", async () => {
     const { user } = render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
       initialState: {
@@ -460,9 +510,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await user.click(screen.getByText(/ethereum/i));
 
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
-    expect(
-      screen.queryByText(/currently only supported with usdc on arbitrum chain/i),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/select hyperliquid account/i)).not.toBeInTheDocument();
   });
 
   it("should auto focus on search input when autoFocus is true", async () => {
