@@ -1,9 +1,18 @@
 import { act, renderHook } from "@testing-library/react";
 import { contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import { useContacts } from "../../hooks";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactDrawerViewModel } from "./useAddContactDrawerViewModel";
 
+jest.mock("../../hooks", () => ({ useContacts: jest.fn() }));
+
+const mockedUseContacts = jest.mocked(useContacts);
+
 describe("useAddContactDrawerViewModel", () => {
+  beforeEach(() => {
+    mockedUseContacts.mockReturnValue([]);
+  });
+
   it("should save through the injected port, reset the draft, and close", async () => {
     const onSaveSuccess = jest.fn();
     const contactCreation: ContactCreationPort = {

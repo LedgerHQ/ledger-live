@@ -1,26 +1,30 @@
 import {
   ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
+  DuplicateContactNameError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
 import {
+  ContactAddressLabelInputSchema,
+  ContactAddressLabelSchema,
+  ContactNameSchema,
+} from "./schema";
+import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
   getContactAddressLabelValidationError,
   getContactNameValidationError,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
   isValidContactAddressLabel,
   isValidContactName,
   normalizeContactAddressLabelForComparison,
+  normalizeContactNameForComparison,
   parseContactAddressLabel,
   parseContactName,
 } from "./validation";
-import {
-  ContactAddressLabelInputSchema,
-  ContactAddressLabelSchema,
-} from "./schema";
 
 describe("contact name validation", () => {
   it("does not report an error for an empty draft name", () => {
@@ -38,6 +42,18 @@ describe("contact name validation", () => {
     );
   });
 
+  it("reports a duplicate name after trimming, normalizing, and folding case", () => {
+    const existingNames = [ContactNameSchema.parse("Élodie")];
+
+    expect(getContactNameValidationError(" e\u0301LODIE ", existingNames)).toBe(
+      DUPLICATE_CONTACT_NAME_ERROR_NAME
+    );
+    expect(isValidContactName(" e\u0301LODIE ", existingNames)).toBe(false);
+    expect(normalizeContactNameForComparison(" Élodie ")).toBe(
+      normalizeContactNameForComparison("e\u0301LODIE")
+    );
+  });
+
   it("validates trimmed names consistently", () => {
     expect(isValidContactName("  Ben  ")).toBe(true);
     expect(isValidContactName("Olive2")).toBe(false);
@@ -48,8 +64,20 @@ describe("contact name validation", () => {
     expect(() => parseContactName("Olive2")).toThrow(InvalidContactNameError);
   });
 
+  it("parseContactName throws DuplicateContactNameError for an existing name", () => {
+    const existingNames = [ContactNameSchema.parse("Ada")];
+
+    expect(() => parseContactName(" ada ", existingNames)).toThrow(
+      DuplicateContactNameError
+    );
+  });
+
   it("parseContactName returns a parsed name for a valid draft name", () => {
     expect(parseContactName("  Ben  ")).toBe("Ben");
+  });
+
+  it("parseContactName returns a NFC-normalized name", () => {
+    expect(parseContactName(" E\u0301lodie ")).toBe("Élodie");
   });
 });
 
