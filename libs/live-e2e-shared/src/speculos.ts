@@ -584,9 +584,25 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   );
 }
 
+const SWAP_INIT_STALL_HINT =
+  `\nHint: The device Exchange app is ready but Ledger Live never ` +
+  `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +
+  `"⚠️ Swap-init error" attachment.`;
+
+function isExchangeAppReadyStall(screenText: string): boolean {
+  return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
+}
+
 export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> {
   if (!isTouchDevice()) {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
+    try {
+      await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts);
+    } catch (error) {
+      if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
+        error.message += SWAP_INIT_STALL_HINT;
+      }
+      throw error;
+    }
     return;
   }
 
@@ -605,9 +621,8 @@ export async function waitForReviewTransaction(maxAttempts = 60): Promise<void> 
     await sleep(SCREEN_POLL_INTERVAL_MS);
   }
 
-  throw new Error(
-    `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
-  );
+  const base = `Text "${DeviceLabels.REVIEW_TRANSACTION}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`;
+  throw new Error(isExchangeAppReadyStall(texts) ? base + SWAP_INIT_STALL_HINT : base);
 }
 
 export async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
