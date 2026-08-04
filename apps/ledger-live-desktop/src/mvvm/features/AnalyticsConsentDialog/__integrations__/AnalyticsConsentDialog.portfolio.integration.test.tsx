@@ -9,6 +9,7 @@ import { AnalyticsConsentDialog } from "../index";
 const analyticsOptInOverrides = {
   ...FEATURE_FLAGS_INITIAL_STATE.overrides,
   analyticsOptIn: {
+    ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn,
     ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
     enabled: true,
   },
@@ -97,7 +98,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -143,7 +144,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -242,7 +243,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -288,7 +289,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -389,7 +390,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -435,7 +436,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -534,7 +535,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_in",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -580,7 +581,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
           {
             button: "analytics_consent_opt_out",
             page: ANALYTICS_CONSENT_DIALOG_PAGE,
-            privacyPolicyVersion: 1,
+            privacyPolicyVersion: "1.0",
           },
           true,
         );
@@ -648,17 +649,47 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
   });
 
   describe("needs privacy policy version update", () => {
+    const featureFlagsWithMinorBump = {
+      ...featureFlagsWithAnalyticsOptIn,
+      overrides: {
+        ...analyticsOptInOverrides,
+        analyticsOptIn: {
+          ...analyticsOptInOverrides.analyticsOptIn,
+          params: {
+            ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+            policyVersion: "1.1",
+            consentValidityDays:
+              FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+          },
+        },
+      },
+      resolved: {
+        ...FEATURE_FLAGS_DEFAULTS,
+        ...analyticsOptInOverrides,
+        analyticsOptIn: {
+          ...analyticsOptInOverrides.analyticsOptIn,
+          params: {
+            ...FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params,
+            policyVersion: "1.1",
+            consentValidityDays:
+              FEATURE_FLAGS_DEFAULTS.analyticsOptIn.params?.consentValidityDays ?? 365,
+          },
+        },
+      },
+    };
+
     it("should show the privacy update sheet, persist the policy version, and close after Got it", async () => {
+      const consentDate = new Date().toISOString();
       const { user, store } = render(<TestRouter />, {
         initialRoute: "/",
         initialState: {
-          featureFlags: featureFlagsWithAnalyticsOptIn,
+          featureFlags: featureFlagsWithMinorBump,
           settings: baseSettings({
             shareAnalytics: true,
             sharePersonalizedRecommandations: true,
             analyticsConsentInfo: {
-              consentDate: new Date().toISOString(),
-              privacyPolicyVersion: 0,
+              consentDate,
+              privacyPolicyVersion: "1.0",
             },
           }),
         },
@@ -684,7 +715,7 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
         {
           button: "analytics_consent_privacy_got_it",
           page: ANALYTICS_CONSENT_DIALOG_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.1",
         },
         true,
       );
@@ -692,7 +723,8 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
       await waitFor(() => {
         expect(title).not.toBeInTheDocument();
       });
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(store.getState().settings.analyticsConsentInfo.consentDate).toBe(consentDate);
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe("1.1");
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(updateIdentify).toHaveBeenCalledWith({ force: true });
     });

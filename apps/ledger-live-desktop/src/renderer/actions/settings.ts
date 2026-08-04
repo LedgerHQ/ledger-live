@@ -72,11 +72,8 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
     sharePersonalizedRecommandations,
   });
 
-export const setAnalyticsConsentInfo = (privacyPolicyVersion: number) =>
-  saveAnalyticsConsentInfo({
-    consentDate: new Date().toISOString(),
-    privacyPolicyVersion,
-  });
+export const setAnalyticsConsentInfo = (info: AnalyticsConsentInfo) =>
+  saveAnalyticsConsentInfo(info);
 
 /**
  * @deprecated QA / developer tools only. Do not use in production flows.

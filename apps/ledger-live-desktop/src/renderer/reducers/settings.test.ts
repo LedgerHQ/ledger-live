@@ -38,24 +38,40 @@ const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
 const mockStateWithSettings = (
   settings: Partial<SettingsState>,
   analyticsOptInPatch: Partial<Features["analyticsOptIn"]> = {},
-): State => ({
-  ...({} as State),
-  featureFlags: {
-    ...FEATURE_FLAGS_INITIAL_STATE,
-    resolved: {
-      ...FEATURE_FLAGS_INITIAL_STATE.resolved,
-      analyticsOptIn: {
-        ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
-        enabled: true,
-        ...analyticsOptInPatch,
+): State => {
+  const analyticsConsentInfo = settings.analyticsConsentInfo ?? {
+    consentDate:
+      settings.lastAnalyticsConsentDate !== undefined
+        ? settings.lastAnalyticsConsentDate
+        : SETTINGS_INITIAL_STATE.analyticsConsentInfo.consentDate,
+    privacyPolicyVersion:
+      settings.privacyPolicyVersion !== undefined
+        ? settings.privacyPolicyVersion
+        : SETTINGS_INITIAL_STATE.analyticsConsentInfo.privacyPolicyVersion,
+  };
+
+  return {
+    ...({} as State),
+    featureFlags: {
+      ...FEATURE_FLAGS_INITIAL_STATE,
+      resolved: {
+        ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+        analyticsOptIn: {
+          ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
+          enabled: true,
+          ...analyticsOptInPatch,
+        },
       },
     },
-  },
-  settings: {
-    ...SETTINGS_INITIAL_STATE,
-    ...settings,
-  },
-});
+    settings: {
+      ...SETTINGS_INITIAL_STATE,
+      ...settings,
+      analyticsConsentInfo,
+      lastAnalyticsConsentDate: analyticsConsentInfo.consentDate,
+      privacyPolicyVersion: analyticsConsentInfo.privacyPolicyVersion,
+    },
+  };
+};
 
 describe("lastSeenDeviceSelector", () => {
   it("should return the last seen device if the deviceModelId is valid", () => {
@@ -604,14 +620,7 @@ describe("SAVE_SETTINGS action", () => {
 });
 
 describe("trackingEnabledSelector", () => {
-  /** Frozen clock; consent age uses the same `needsConsentRenewal` + `consentValidityDays` path as production. */
   const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
-
-  const addDaysUtc = (date: Date, days: number): Date => {
-    const d = new Date(date.getTime());
-    d.setUTCDate(d.getUTCDate() + days);
-    return d;
-  };
 
   beforeAll(() => {
     jest.useFakeTimers();
@@ -625,17 +634,18 @@ describe("trackingEnabledSelector", () => {
     jest.setSystemTime(FIXED_NOW);
   });
 
-  it("should not track if lastAnalyticsConsentDate is not set", () => {
+  it("should not track if consentDate is not set", () => {
     expect(
       trackingEnabledSelector(
         mockStateWithSettings({
           lastAnalyticsConsentDate: null,
+          privacyPolicyVersion: 1,
         }),
       ),
     ).toBe(false);
   });
 
-  it("should track when privacyPolicyVersion is null if consent date is valid and share toggles are on", () => {
+  it("should not track when privacyPolicyVersion is null even if consent date is set", () => {
     expect(
       trackingEnabledSelector(
         mockStateWithSettings({
@@ -645,11 +655,11 @@ describe("trackingEnabledSelector", () => {
           sharePersonalizedRecommandations: true,
         }),
       ),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   describe("opt-in analytics", () => {
-    it("should track if lastAnalyticsConsentDate is set and share toggles are on", () => {
+    it("should track if consent is up to date and share toggles are on", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings({
@@ -662,80 +672,52 @@ describe("trackingEnabledSelector", () => {
       ).toBe(true);
     });
 
-    it("should not track if lastAnalyticsConsentDate is outside the configured validity window", () => {
-      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -400).toISOString();
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate,
-            privacyPolicyVersion: 1,
-          }),
-        ),
-      ).toBe(false);
-    });
-
-    it("should track if lastAnalyticsConsentDate is exactly on the rolling window boundary", () => {
-      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -365).toISOString();
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate,
-            privacyPolicyVersion: 1,
-          }),
-        ),
-      ).toBe(true);
-    });
-
-    it("should track if lastAnalyticsConsentDate is within the window", () => {
-      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -300).toISOString();
-      expect(
-        trackingEnabledSelector(
-          mockStateWithSettings({
-            shareAnalytics: true,
-            sharePersonalizedRecommandations: true,
-            lastAnalyticsConsentDate,
-            privacyPolicyVersion: 1,
-          }),
-        ),
-      ).toBe(true);
-    });
-
-    it("should track if lastAnalyticsConsentDate is within the window even when privacyPolicyVersion is older than the flag", () => {
-      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -300).toISOString();
+    it("should not track on a major policyVersion bump", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings(
             {
               shareAnalytics: true,
               sharePersonalizedRecommandations: true,
-              lastAnalyticsConsentDate,
-              privacyPolicyVersion: 0,
+              lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+              privacyPolicyVersion: "1.0",
             },
-            { params: { policyVersion: 1, consentValidityDays: 365 } },
+            { params: { policyVersion: "2.0", consentValidityDays: 365 } },
           ),
         ),
-      ).toBe(true);
+      ).toBe(false);
     });
 
-    it("should respect consentValidityDays from resolved flag params", () => {
-      const lastAnalyticsConsentDate = addDaysUtc(FIXED_NOW, -40).toISOString();
+    it("should still track on a minor policyVersion bump (privacy acknowledgement only)", () => {
       expect(
         trackingEnabledSelector(
           mockStateWithSettings(
             {
               shareAnalytics: true,
               sharePersonalizedRecommandations: true,
-              lastAnalyticsConsentDate,
-              privacyPolicyVersion: 1,
+              lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+              privacyPolicyVersion: "1.0",
             },
-            { params: { policyVersion: 1, consentValidityDays: 30 } },
+            { params: { policyVersion: "1.1", consentValidityDays: 365 } },
           ),
         ),
-      ).toBe(false);
+      ).toBe(true);
+    });
+
+    it("should still track when remote policyVersion is invalid if stored consent is otherwise valid", () => {
+      expect(
+        trackingEnabledSelector(
+          mockStateWithSettings(
+            {
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+              lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+              privacyPolicyVersion: "1.0",
+            },
+            { params: { policyVersion: "not-a-version", consentValidityDays: 365 } },
+          ),
+        ),
+      ).toBe(true);
     });
   });
 
