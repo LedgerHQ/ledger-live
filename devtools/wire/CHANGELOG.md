@@ -1,5 +1,11 @@
 # @devtools/wire
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#20329](https://github.com/LedgerHQ/ledger-live/pull/20329) [`d35298f`](https://github.com/LedgerHQ/ledger-live/commit/d35298f0158e124f12fbdf811c5fdc795898e2c0) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - Guard invalid WebSocket URLs before attempting connection to prevent native crash on mobile
+
 ## 0.2.1
 
 ### Patch Changes

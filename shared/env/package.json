@@ -1,6 +1,6 @@
 {
   "name": "@shared/env",
-  "version": "0.1.1",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Shared live-env definitions organized by team",
   "main": "src/index.ts",
