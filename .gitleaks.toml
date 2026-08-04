@@ -19,6 +19,23 @@ keywords = ["seed", "mnemonic", "pass", "recovery", "phrase"]
 id = "generic-api-key"
 
     [[rules.allowlists]]
+    description = "Ignore the throwaway LKRP member keypair shared by unit/integration tests (mocked endpoints only)."
+    regexes = [
+        '''873f500bd20783224f7e78d4f8cce3d2bf69eb8008fbd697d20bbea31a721a03''',
+    ]
+
+    [[rules.allowlists]]
+    condition = "AND"
+    description = "Ignore public base58 blockchain addresses declared as test constants."
+    regexTarget = "line"
+    regexes = [
+        '''(?i)(?:const|let|var)\s+\w*(?:ACCOUNT|ADDRESS|OWNER|MINT|PUBKEY)\w*\s*(?::[^=]+)?=\s*["'][1-9A-HJ-NP-Za-km-z]{32,44}["']''',
+    ]
+    paths = [
+        '''libs/coin-modules/.+\.(?:unit\.)?test\.ts''',
+    ]
+
+    [[rules.allowlists]]
     condition = "AND"
     description = "Ignore public blockchain contract/token addresses by network prefix in tokenId."
     regexTarget = "match"
