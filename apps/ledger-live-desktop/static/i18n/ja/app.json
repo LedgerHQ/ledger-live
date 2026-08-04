@@ -100,7 +100,6 @@
     "selectNoResults" : "{{query}}と一致する結果がありません。",
     "sortBy" : "並び替え",
     "save" : "保存",
-    "lock" : "ロック",
     "showMore" : "さらに表示",
     "backToMatchingURL" : "{{appName}}に戻る",
     "back" : "戻る",
@@ -139,11 +138,8 @@
       "syncing" : "同期中...",
       "upToDate" : "同期済み",
       "outdated" : "中断",
-      "error" : "同期エラー",
       "refresh" : "更新",
-      "devTools" : "開発ツール",
-      "failingSync_one" : "同期に失敗したアカウント：",
-      "failingSync_other" : "同期に失敗したアカウント："
+      "devTools" : "開発ツール"
     },
     "exchange" : "取引",
     "info" : "情報",
@@ -306,24 +302,14 @@
   "sidebar" : {
     "card" : "カード",
     "paytab" : "支払う",
-    "menu" : "メニュー",
-    "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
-    "manager" : "My Ledger",
-    "earn" : "報酬獲得",
-    "exchange" : "購入/売却",
     "swap" : "スワップ",
-    "perps" : "無期限先物",
-    "borrow" : "借入",
     "home" : "ホーム",
     "refer" : "ご友人紹介",
-    "lend" : "レンディング",
     "catalog" : "アプリ一覧",
-    "market" : "マーケット",
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
     "tooltip" : "お気に入りアカウント"
   },
   "bridge" : {
@@ -1153,18 +1139,9 @@
     }
   },
   "help" : {
-    "title" : "ヘルプとサポート",
-    "gettingStarted" : {
-      "title" : "ご利用ガイド",
-      "desc" : "はじめる"
-    },
     "status" : {
       "title" : "Ledgerステータス",
       "desc" : "システムの状態を確認"
-    },
-    "helpCenter" : {
-      "title" : "Ledgerサポート",
-      "desc" : "ヘルプ"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1531,7 +1508,6 @@
     "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
-    "title" : "ポートフォリオ",
     "header" : "ポートフォリオ残高",
     "emptyAccountTile" : {
       "desc" : "アカウントを追加して、他の暗号資産を管理",
@@ -1540,21 +1516,6 @@
     "recentActivity" : "最近の取引",
     "totalBalance" : "総資産",
     "transactionsPendingConfirmation" : "一部のトランザクションはまだ承認されていません。これらは承認後に残高に反映され、使用可能になります。",
-    "featuredButtons" : {
-      "buySell" : {
-        "title" : "購入/売却",
-        "description" : "当社のプロバイダーを使用して暗号資産を売買"
-      },
-      "swap" : {
-        "title" : "スワップ",
-        "description" : "暗号資産を別の暗号資産へ交換",
-        "label" : "人気"
-      },
-      "earn" : {
-        "title" : "ステーキング",
-        "description" : "お持ちの暗号資産で報酬を獲得"
-      }
-    },
     "recoverBanner" : {
       "subscribeDone" : {
         "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
@@ -1604,25 +1565,6 @@
     "taprootWarning" : "送信者がタップルートをサポートしていることを確認する",
     "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。",
     "utxoWarning" : "プライバシー上の理由から、トランザクションごとに新しいアドレスが生成されます。以前のものは引き続き有効です。"
-  },
-  "emptyState" : {
-    "dashboard" : {
-      "title" : "デバイスにアプリをインストールする",
-      "desc" : "My Ledgerに移動して、デバイスにアプリをインストールします。デバイスにアプリを入手後、アカウントを追加できます。",
-      "buttons" : {
-        "installApp" : "My Ledgerに移動",
-        "help" : "ヘルプ"
-      }
-    },
-    "accounts" : {
-      "title" : "アカウントを追加してスタートする",
-      "desc" : "暗号資産の管理を開始するにはアカウントを追加してください。デバイスに暗号資産のアプリがインストールされている必要があります。",
-      "buttons" : {
-        "addAccount" : "アカウントを追加",
-        "installApp" : "My Ledgerに移動して、アプリをインストール",
-        "help" : "ヘルプ"
-      }
-    }
   },
   "genuinecheck" : {
     "deviceInBootloader" : "デバイスはBootloaderモードです。<1>続行</1>をクリックしてアップデートしてください。"
@@ -2335,16 +2277,6 @@
     "successTitle" : "安全に共有されたアドレス",
     "connectToNoah" : "Noahに接続中",
     "steps" : {
-      "options" : {
-        "fromBank" : {
-          "title" : "銀行送金経由",
-          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
-        },
-        "fromCrypto" : {
-          "title" : "暗号資産アドレス経由",
-          "description" : "別のウォレットから暗号資産を受け取る。"
-        }
-      },
       "chooseAccount" : {
         "title" : "アカウント",
         "label" : "受取アカウント",
@@ -2530,6 +2462,10 @@
     "title" : "{{currency}}を送付",
     "available" : "利用可能: {{amount}}",
     "to" : "宛先：",
+    "addressDisclaimer" : {
+      "accessibilityLabel" : "受取アドレスについて",
+      "description" : "Ledgerデバイスにアドレスのすべてが安全に表示されます。元のアドレスと一致していることを確認してください。"
+    },
     "placeholder" : "アドレスまたはENSを入力してください",
     "placeholderNoENS" : "アドレスを入力",
     "recent" : "再送信",
@@ -4988,7 +4924,6 @@
   "settings" : {
     "title" : "設定",
     "discreet" : "非表示モードに切り替える",
-    "helpButton" : "ヘルプ",
     "tabs" : {
       "display" : "一般",
       "currencies" : "暗号資産",
@@ -5543,7 +5478,7 @@
       },
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
-        "desc" : "トークンを非表示にするには、親アカウントに移動し、トークンを右クリックして「トークンを非表示」を選択してください。",
+        "desc" : "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count" : "1トークン",
         "count_other" : "{{count}}トークン"
       },
@@ -5657,9 +5592,6 @@
     }
   },
   "informationCenter" : {
-    "tooltip" : "お知らせ・最新情報",
-    "ongoingIncidentsTooltip" : "{{count}}件の進行中のインシデントがあります",
-    "ongoingIncidentsTooltip_other" : "{{count}}件の進行中のインシデントがあります",
     "tabs" : {
       "announcements" : "最新情報",
       "announcementsUnseen" : "最新情報（{{unseenCount}}）",
@@ -9036,7 +8968,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleoプライベート残高の設定",
         "description" : "Ledger Walletは、プライベート残高を表示するためにお客様の閲覧キーを保存し、プライベートな取引の処理には外部サービスを使用します。<0>詳細を見る</0>",
-        "bullets" : ["プライベート残高を復号するための読み取り専用アクセス権", "Ledgerがお客様の資金を送金または使用することはできません", "お客様の資金の署名と使用ができるのはお客様のみです", "処理の高速化のため、証明の生成は外部のプルーバー（証明）サービスによって行われます", "プルーバーがお客様の資金にアクセスしたり使用したりすることはできません"],
+        "bullets" : ["閲覧キーを使用することで、Ledger Wallet内のプライベート残高を復号するための読み取り専用アクセスが可能になります。", "Ledgerデバイス署名用デバイスを介して、お客様の資金の署名と使用ができるのはお客様のみです。", "Aleoのトランザクションにはゼロ知識証明が必要であり、これには多大な計算能力が必要です。", "トランザクションを迅速化するため、証明の生成は外部のAleo Networkサービスによって処理されます。"],
         "cta" : {
           "allow" : "許可する",
           "cancel" : "キャンセル"
@@ -9320,10 +9252,37 @@
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
     "addAddress" : "アドレスを追加",
+    "addExternalAddress" : "外部アドレスを追加",
+    "addAddressEntry" : {
+      "title" : "アドレスを入力",
+      "addressPlaceholder" : "アドレスまたはENS",
+      "confirmAddress" : "確認を続ける",
+      "validatingAddress" : "アドレスを検証中",
+      "validAddress" : "有効なアドレス",
+      "invalidAddress" : "無効なアドレス",
+      "domainNotFound" : "ドメインが見つかりません",
+      "sanctionedAddress" : "このアドレスは制裁対象となっており、使用できません。",
+      "validationUnavailable" : "アドレスの検証は一時的にご利用いただけません。",
+      "ensDisclaimer" : "このENS名は、上記に表示されているアドレスに解決されます。"
+    },
+    "addAddressName" : {
+      "inputLabel" : "アドレス名",
+      "continueToReview" : "確認に進む",
+      "invalidLabel" : "特殊文字は使用できません。",
+      "duplicateLabel" : "このアドレス名は、すでに使用されています。",
+      "tooLongLabel" : "アドレス名は32文字以下にする必要があります。"
+    },
+    "addAddressReview" : {
+      "title" : "アドレスを確認",
+      "continue" : "アドレスを確認",
+      "successTitle" : "アドレスを保存しました",
+      "close" : "閉じる"
+    },
     "addContactDrawer" : {
       "namePlaceholder" : "連絡先名",
       "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
-      "invalidNameError" : "特殊文字は使用できません。"
+      "invalidNameError" : "特殊文字は使用できません。",
+      "duplicateNameError" : "この連絡先名はすでに使用されています。"
     },
     "searchPlaceholder" : "連絡先を検索",
     "searchNoResults" : "連絡先が見つかりません",
@@ -9334,6 +9293,7 @@
       "name" : "自分"
     },
     "detail" : {
+      "meDisplayName" : "{{name}}（自分）",
       "emptyState" : {
         "meTitle" : "保存済みアドレスはありません",
         "contactTitle" : "{{name}}の保存済みアドレスはありません",
@@ -9348,6 +9308,29 @@
       "edit" : "編集",
       "delete" : "削除",
       "networkTag" : "{{name}}ネットワーク"
+    },
+    "detailActions" : {
+      "editContact" : "連絡先を編集",
+      "deleteContact" : "連絡先を削除"
+    },
+    "editContact" : {
+      "title" : "連絡先を編集",
+      "namePlaceholder" : "連絡先名",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
+      "applyChanges" : "変更を適用",
+      "invalidNameError" : "特殊文字は使用できません。"
+    },
+    "deleteContact" : {
+      "title" : "連絡先を削除しますか？",
+      "description" : "この連絡先を削除すると、関連付けられているすべてのアドレスが消去されます。",
+      "confirm" : "削除",
+      "cancel" : "キャンセル"
+    },
+    "editSigner" : {
+      "title" : "デバイスで確定する",
+      "description" : "この変更を確定するには、Ledgerデバイスを接続してロック解除してください。",
+      "confirm" : "続行",
+      "cancel" : "キャンセル"
     },
     "ledgerSyncIntroduction" : {
       "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
