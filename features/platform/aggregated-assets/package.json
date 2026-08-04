@@ -17,6 +17,9 @@
     "coverage": "jest --coverage --passWithNoTests",
     "unimported": "pnpm knip --directory ../../.. -W features/platform/aggregated-assets"
   },
+  "dependencies": {
+    "@domain/api-aggregated-assets": "workspace:*"
+  },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-redux": ">=9.0.0"
