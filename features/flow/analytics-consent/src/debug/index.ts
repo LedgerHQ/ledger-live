@@ -12,6 +12,11 @@ export {
   type StoredPolicyRef,
 } from "./scenarios";
 export {
+  resolveStoredPolicyInspectorStatus,
+  type InspectorFieldStatus,
+  type InspectorFieldTone,
+} from "./inspector";
+export {
   mapDecisionToQaExpectation,
   REASON_LABEL,
   SCENARIO_GROUPS,
