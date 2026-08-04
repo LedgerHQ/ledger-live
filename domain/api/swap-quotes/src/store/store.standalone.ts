@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import type { AuthProvider } from "@shared/auth";
 
-import { swapQuotesApi } from "../api";
+import { swapQuotesApi, swapQuotesApiExtra } from "../api";
+import type { SwapQuotesApiExtra } from "../types";
 import { setSwapQuotesStore } from "./store";
 
 // Headless consumers have no session. Yielding no token keeps the request
@@ -15,7 +16,7 @@ const unauthenticatedProvider: AuthProvider = {
  * wallet-cli. Desktop and mobile call {@link setSwapQuotesStore} with their own
  * store's dispatch instead.
  */
-export function setupStandaloneSwapQuotesStore() {
+export function setupStandaloneSwapQuotesStore(extra: SwapQuotesApiExtra) {
   const store = configureStore({
     reducer: {
       [swapQuotesApi.reducerPath]: swapQuotesApi.reducer,
@@ -23,7 +24,12 @@ export function setupStandaloneSwapQuotesStore() {
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
-        thunk: { extraArgument: { authProvider: unauthenticatedProvider } },
+        thunk: {
+          extraArgument: {
+            ...swapQuotesApiExtra(extra),
+            authProvider: unauthenticatedProvider,
+          },
+        },
       }).concat(swapQuotesApi.middleware),
   });
 

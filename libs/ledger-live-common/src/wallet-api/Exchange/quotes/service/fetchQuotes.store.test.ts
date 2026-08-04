@@ -1,7 +1,6 @@
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
-import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
@@ -9,12 +8,7 @@ import { swapQuotesApi } from "../state-manager/api";
 import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
 
-let previousBaseUrl: string;
-beforeAll(() => {
-  previousBaseUrl = getEnv("SWAP_API_BASE");
-  setEnv("SWAP_API_BASE", "https://swap.test");
-});
-afterAll(() => setEnv("SWAP_API_BASE", previousBaseUrl));
+const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
@@ -38,7 +32,7 @@ describe("fetchQuotes against a live store", () => {
   beforeEach(() => {
     hits = 0;
     store = createTestStore([swapQuotesApi], {
-      extra: { authProvider: unauthenticatedProvider },
+      extra: { ...API_EXTRA, authProvider: unauthenticatedProvider },
     });
     setSwapQuotesStore(store.dispatch);
   });

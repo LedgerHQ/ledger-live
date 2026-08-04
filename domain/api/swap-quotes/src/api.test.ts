@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "./fixtures/quotesInput";
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
 import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
+
+const EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-3.2.1" };
 
 function createTestStore(extra: unknown) {
   return configureStore({
@@ -104,12 +105,9 @@ describe("transformFetchQuotesResponse", () => {
 describe("swapQuotesApi.fetchQuotes (integration)", () => {
   const server = setupServer();
   let store: ReturnType<typeof createTestStore>;
-  let previousBaseUrl: string;
 
   beforeAll(() => {
     server.listen();
-    previousBaseUrl = getEnv("SWAP_API_BASE");
-    setEnv("SWAP_API_BASE", "https://swap.test");
   });
   afterEach(() => {
     store.dispatch(swapQuotesApi.util.resetApiState());
@@ -117,13 +115,12 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
   });
   afterAll(() => {
     server.close();
-    setEnv("SWAP_API_BASE", previousBaseUrl);
   });
 
   beforeEach(() => {
     // Both apps register a provider, so the missing-provider fallback is not
     // the path production takes.
-    store = createTestStore({ authProvider: unauthenticatedProvider });
+    store = createTestStore({ ...EXTRA, authProvider: unauthenticatedProvider });
   });
 
   function initiate() {
@@ -168,7 +165,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     expect(seen!.headers.get("accept")).toBe("application/json");
   });
 
-  it("sends X-Ledger-Client-Version when the env is set", async () => {
+  it("sends X-Ledger-Client-Version from the injected config", async () => {
     let seen: Request | undefined;
     server.use(
       http.get("https://swap.test/quote", ({ request }) => {
@@ -176,14 +173,8 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
         return HttpResponse.json([]);
       }),
     );
-    const previous = getEnv("LEDGER_CLIENT_VERSION");
-    setEnv("LEDGER_CLIENT_VERSION", "test-3.2.1");
 
-    try {
-      await initiate();
-    } finally {
-      setEnv("LEDGER_CLIENT_VERSION", previous);
-    }
+    await initiate();
 
     expect(seen!.headers.get("X-Ledger-Client-Version")).toBe("test-3.2.1");
   });
@@ -210,7 +201,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
         return HttpResponse.json([]);
       }),
     );
-    const authedStore = createTestStore({ authProvider: tokenProvider("tok-123") });
+    const authedStore = createTestStore({ ...EXTRA, authProvider: tokenProvider("tok-123") });
 
     await authedStore.dispatch(
       swapQuotesApi.endpoints.fetchQuotes.initiate(
@@ -222,7 +213,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     expect(seen!.headers.get("authorization")).toBe("Bearer tok-123");
   });
 
-  it("omits X-Ledger-Client-Version when the env is unset", async () => {
+  it("resolves the request against the injected base url", async () => {
     let seen: Request | undefined;
     server.use(
       http.get("https://swap.test/quote", ({ request }) => {
@@ -233,7 +224,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
 
     await initiate();
 
-    expect(seen!.headers.has("X-Ledger-Client-Version")).toBe(false);
+    expect(new URL(seen!.url).origin).toBe("https://swap.test");
   });
 
   it("keeps customHeaders out of the cache key", async () => {

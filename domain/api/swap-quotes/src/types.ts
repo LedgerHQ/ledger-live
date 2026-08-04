@@ -20,6 +20,7 @@ import type {
   RawQuoteSlippageInfoSchema,
   ResolvedQuotesInputSchema,
   RawQuoteTagsSchema,
+  SwapQuotesApiExtraSchema,
   RawTokenAllowanceDataSchema,
   TradeMethodSchema,
   UniswapOrderTypeSchema,
@@ -46,6 +47,7 @@ export type RawQuoteAPI = z.infer<typeof RawQuoteApiSchema>;
 export type RawQuoteAPIResponse = z.infer<typeof RawQuoteApiResponseSchema>;
 export type FetchQuotesResult = z.infer<typeof FetchQuotesResultSchema>;
 
+export type SwapQuotesApiExtra = z.infer<typeof SwapQuotesApiExtraSchema>;
 export type UniswapOrderType = z.infer<typeof UniswapOrderTypeSchema>;
 export type ResolvedQuotesInput = z.infer<typeof ResolvedQuotesInputSchema>;
 

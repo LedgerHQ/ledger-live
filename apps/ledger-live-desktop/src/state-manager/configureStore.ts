@@ -16,6 +16,7 @@ import {
   pushDevicesApiExtra,
 } from "@shared/api-services";
 import { payCardApiExtra } from "@domain/api-pay-card";
+import { swapQuotesApiExtra } from "@domain/api-swap-quotes";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
@@ -67,6 +68,10 @@ const customCreateStore = ({
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+                ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+              }),
+              ...swapQuotesApiExtra({
+                swapApiBaseUrl: getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
               }),
               ...payCardApiExtra({

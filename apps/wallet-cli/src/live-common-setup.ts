@@ -125,5 +125,8 @@ setFrameworkCryptoAssetsStore(
   }),
 );
 // `getQuotes` needs a store dispatch; wallet-cli has no app Redux store.
-setupStandaloneSwapQuotesStore();
+setupStandaloneSwapQuotesStore({
+  swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+  ledgerClientVersion,
+});
 registerWalletCliDmkTransport();

@@ -833,6 +833,9 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@domain/api-swap-quotes':
+        specifier: workspace:^
+        version: link:../../domain/api/swap-quotes
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -1573,6 +1576,9 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@domain/api-swap-quotes':
+        specifier: workspace:^
+        version: link:../../domain/api/swap-quotes
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -3846,9 +3852,6 @@ importers:
       '@shared/auth':
         specifier: workspace:^
         version: link:../../../shared/auth
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../../shared/env
       zod:
         specifier: 'catalog:'
         version: 4.3.6

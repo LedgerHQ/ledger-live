@@ -1,15 +1,34 @@
-import { createApi } from "@reduxjs/toolkit/query";
+import {
+  createApi,
+  type BaseQueryFn,
+  type FetchArgs,
+  type FetchBaseQueryError,
+} from "@reduxjs/toolkit/query";
 import { createAuthenticatedBaseQuery } from "@shared/auth";
-import { getEnv } from "@shared/env";
 
-import { RawQuoteErrorSchema, RawQuoteSchema } from "./schema";
+import { RawQuoteErrorSchema, RawQuoteSchema, SwapQuotesApiExtraSchema } from "./schema";
 import type {
   FetchQuotesQueryArgs,
   FetchQuotesResult,
   RawQuote,
   RawQuoteError,
   ResolvedQuotesInput,
+  SwapQuotesApiExtra,
 } from "./types";
+
+/**
+ * Builds this api's slice of the thunk `extraArgument`. RTK leaves
+ * `extraArgument` untyped, so this is the one compile- and runtime-checked
+ * entry point.
+ */
+export function swapQuotesApiExtra(extra: SwapQuotesApiExtra): SwapQuotesApiExtra {
+  return SwapQuotesApiExtraSchema.parse(extra);
+}
+
+export function getSwapQuotesExtra(api: { extra: unknown }): SwapQuotesApiExtra {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return api.extra as SwapQuotesApiExtra;
+}
 
 export function buildQuotesParams(
   providers: string[],
@@ -81,11 +100,23 @@ export function transformFetchQuotesResponse(response: unknown): FetchQuotesResu
   return result;
 }
 
-// `fetch` does not inherit the axios default headers `@ledgerhq/live-network` sets.
-function clientVersionHeader(): Record<string, string> {
-  const version = getEnv("LEDGER_CLIENT_VERSION");
-  return version ? { "X-Ledger-Client-Version": version } : {};
-}
+/** Reads the injected config and delegates to the authenticated base query. */
+const swapQuotesBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = (
+  args,
+  api,
+  extraOptions,
+) => {
+  const extra = getSwapQuotesExtra(api);
+  return createAuthenticatedBaseQuery({
+    baseUrl: extra.swapApiBaseUrl,
+    // `fetch` does not inherit the axios default headers the legacy helper got
+    // from `@ledgerhq/live-network`.
+    prepareHeaders: headers => {
+      headers.set("X-Ledger-Client-Version", extra.ledgerClientVersion);
+      return headers;
+    },
+  })(args, api, extraOptions);
+};
 
 /**
  * Consumed imperatively from the server-side `getQuotes` flow rather than
@@ -94,20 +125,13 @@ function clientVersionHeader(): Record<string, string> {
  */
 export const swapQuotesApi = createApi({
   reducerPath: "swapQuotesApi",
-  baseQuery: createAuthenticatedBaseQuery({
-    // The aggregator base URL is resolved per-request (from SWAP_API_BASE) in
-    // each endpoint's `query`, so the static base URL stays empty.
-    baseUrl: "",
-  }),
+  baseQuery: swapQuotesBaseQuery,
   endpoints: build => ({
     fetchQuotes: build.query<FetchQuotesResult, FetchQuotesQueryArgs>({
       query: ({ providers, quotesInput, counterValueCurrency, customHeaders }) => ({
-        url: `${getEnv("SWAP_API_BASE")}/quote`,
+        url: "/quote",
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
-        headers: {
-          ...clientVersionHeader(),
-          ...(customHeaders ?? {}),
-        },
+        headers: { ...(customHeaders ?? {}) },
       }),
       // Keeps a live-app token out of the cache key. Consequence: concurrent
       // requests differing only by `customHeaders` share one in-flight call.

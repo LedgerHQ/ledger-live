@@ -1,6 +1,5 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { getEnv, setEnv } from "@shared/env";
 
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
@@ -8,12 +7,7 @@ import { getSwapQuotesDispatch, resetSwapQuotesStore } from "./store";
 import { swapQuotesApi } from "./api";
 import { setupStandaloneSwapQuotesStore } from "./standaloneStore";
 
-let previousBaseUrl: string;
-beforeAll(() => {
-  previousBaseUrl = getEnv("SWAP_API_BASE");
-  setEnv("SWAP_API_BASE", "https://swap.test");
-});
-afterAll(() => setEnv("SWAP_API_BASE", previousBaseUrl));
+const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
 
 describe("setupStandaloneSwapQuotesStore", () => {
   const server = setupServer();
@@ -30,7 +24,7 @@ describe("setupStandaloneSwapQuotesStore", () => {
   it("registers the store dispatch for getSwapQuotesDispatch", () => {
     expect(() => getSwapQuotesDispatch()).toThrow(/Swap quotes store is not set/);
 
-    const store = setupStandaloneSwapQuotesStore();
+    const store = setupStandaloneSwapQuotesStore(API_EXTRA);
 
     expect(getSwapQuotesDispatch()).toBe(store.dispatch);
   });
@@ -39,7 +33,7 @@ describe("setupStandaloneSwapQuotesStore", () => {
     const rawQuote = makeRawQuote();
     server.use(http.get("https://swap.test/quote", () => HttpResponse.json([rawQuote])));
 
-    setupStandaloneSwapQuotesStore();
+    setupStandaloneSwapQuotesStore(API_EXTRA);
     const dispatch = getSwapQuotesDispatch();
 
     const result = (await dispatch(
