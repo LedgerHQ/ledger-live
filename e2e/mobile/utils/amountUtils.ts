@@ -1,4 +1,3 @@
-import { allure } from "jest-allure2-reporter/api";
 import { escapeRegExp } from "../helpers/commonHelpers";
 
 export type NumberSeparators = { decimal: string; thousands: string };
@@ -29,31 +28,30 @@ export function buildFormattedAmountPattern(separators: NumberSeparators): RegEx
 }
 
 // Matches on the full numeric token (not a loose substring) so a wrongly-formatted number
-// can't slip through. `context` also names the Allure step, so each call site fails independently.
+// can't slip through. `context` is embedded in every thrown message, so a failure identifies
+// which call site it came from without needing a separate Allure step per assertion.
 export function expectFormattedAmount(
   text: string | null,
   separators: NumberSeparators,
   context: string,
 ): void {
-  allure.step(context, () => {
-    const label = ` (${context})`;
-    if (!text) {
-      throw new Error(`Expected a formatted amount but got "${text}"${label}`);
-    }
-    const value = text.trim();
-    const tokens = value.match(NUMERIC_TOKEN_REGEX) ?? [];
-    if (tokens.length === 0) {
-      throw new Error(`No numeric value found in "${value}"${label}`);
-    }
+  const label = ` (${context})`;
+  if (!text) {
+    throw new Error(`Expected a formatted amount but got "${text}"${label}`);
+  }
+  const value = text.trim();
+  const tokens = value.match(NUMERIC_TOKEN_REGEX) ?? [];
+  if (tokens.length === 0) {
+    throw new Error(`No numeric value found in "${value}"${label}`);
+  }
 
-    const strictPattern = buildFormattedAmountPattern(separators);
+  const strictPattern = buildFormattedAmountPattern(separators);
 
-    const matchesExpectedFormat = tokens.some(token => strictPattern.test(token));
-    if (!matchesExpectedFormat) {
-      throw new Error(
-        `None of the numbers in "${value}"${label} are formatted with decimal "${separators.decimal}" ` +
-          `and thousands "${separators.thousands}" (found: ${tokens.join(", ")})`,
-      );
-    }
-  });
+  const matchesExpectedFormat = tokens.some(token => strictPattern.test(token));
+  if (!matchesExpectedFormat) {
+    throw new Error(
+      `None of the numbers in "${value}"${label} are formatted with decimal "${separators.decimal}" ` +
+        `and thousands "${separators.thousands}" (found: ${tokens.join(", ")})`,
+    );
+  }
 }
