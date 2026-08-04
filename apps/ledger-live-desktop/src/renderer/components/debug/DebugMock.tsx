@@ -26,7 +26,7 @@ import {
   type FeatureId,
   type WithFeatureFlags,
 } from "@shared/feature-flags";
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { memoryLogger } from "~/renderer/logger";
 import { getJSONStringifyReplacer } from "~/helpers/saveLogs";
 
@@ -239,8 +239,7 @@ window.saveLogs = async (path: string): Promise<void> => {
     //Uses getJSONStringifyReplacer to replace circular references with "[Circular]"
     const memoryLogsStr = JSON.stringify(memoryLogs, getJSONStringifyReplacer(), 2);
     // Requests the main process to save logs in a file
-    await ipcRenderer.invoke(
-      "save-logs",
+    await files.saveLogs(
       {
         canceled: false,
         filePath: path,

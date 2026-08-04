@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { showSaveDialog } from "~/renderer/dialog";
 import React, { useMemo, useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,7 +44,7 @@ const exportOperations = async (
   callback?: () => void,
 ) => {
   try {
-    const res = await ipcRenderer.invoke("export-operations", path, csv);
+    const res = await files.exportOperations(path, csv);
     if (res && callback) {
       callback();
     }

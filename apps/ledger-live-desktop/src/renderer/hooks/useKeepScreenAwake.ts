@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { power } from "~/renderer/bridge";
 import { useCallback, useEffect, useRef } from "react";
 
 export const useKeepScreenAwake = (enabled: boolean) => {
@@ -6,14 +6,14 @@ export const useKeepScreenAwake = (enabled: boolean) => {
 
   const deactivateKeepAwake = useCallback(async () => {
     if (!Number.isNaN(blockerId.current)) {
-      await ipcRenderer.invoke("deactivate-keep-screen-awake", blockerId.current);
+      await power.release(blockerId.current);
       blockerId.current = Number.NaN;
     }
   }, []);
 
   const activateKeepAwake = useCallback(async () => {
     if (Number.isNaN(blockerId.current)) {
-      blockerId.current = await ipcRenderer.invoke("activate-keep-screen-awake");
+      blockerId.current = await power.keepScreenAwake();
     }
   }, []);
 

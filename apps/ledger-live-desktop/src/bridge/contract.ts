@@ -157,6 +157,51 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
+/** Where a save dialog put the file, as returned by Electron. */
+export type SaveTarget = { canceled: boolean; filePath?: string };
+
+export type AppBridge = {
+  reload(): void;
+  relaunch(): void;
+  quit(): void;
+  /** Brings the main window forward, e.g. when a Live App needs user attention. */
+  show(): void;
+};
+
+export type DialogsBridge = {
+  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+  showOpen(options: Electron.OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
+};
+
+export type FilesBridge = {
+  /**
+   * `logsJson` is pre-stringified by the caller. The in-memory logs contain circular
+   * references and typed arrays that neither the bridge nor Electron's IPC serialiser can
+   * carry, so they are serialised with a custom replacer first — do not "simplify" this
+   * into passing the array.
+   */
+  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
+  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  openUserDataDirectory(): Promise<unknown>;
+  /** Prompts for a manifest and returns its contents; null when cancelled. */
+  readLocalManifest(): Promise<string | null>;
+  /** Prompts for a save location and writes `contents`; false when cancelled. */
+  writeLocalManifest(defaultName: string, contents: string): Promise<boolean>;
+  /** Dev-only. Returns null outside development or for an unknown environment. */
+  readDotEnvFile(environment: string): Promise<string | null>;
+};
+
+export type PowerBridge = {
+  /** Returns a blocker id to pass back to {@link release}. */
+  keepScreenAwake(): Promise<number>;
+  release(blockerId?: number): Promise<void>;
+};
+
+export type StoreBridge = {
+  set(key: string, value: unknown): void;
+  clear(): void;
+};
+
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
@@ -164,6 +209,11 @@ export type LedgerBridge = {
   transport: TransportBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
+  app: AppBridge;
+  dialogs: DialogsBridge;
+  files: FilesBridge;
+  power: PowerBridge;
+  store: StoreBridge;
 };
 
 /**
@@ -197,4 +247,18 @@ export const CHANNELS = {
   updater: "updater",
   /** Bidirectional: main pushes incoming links, the renderer sends outgoing ones. */
   deepLinking: "deep-linking",
+  appReload: "app-reload",
+  appRelaunch: "app-relaunch",
+  appQuit: "app-quit",
+  showApp: "show-app",
+  showSaveDialog: "show-save-dialog",
+  showOpenDialog: "show-open-dialog",
+  saveLogs: "save-logs",
+  exportOperations: "export-operations",
+  openUserDataDirectory: "openUserDataDirectory",
+  readLocalManifest: "read-local-manifest",
+  writeLocalManifest: "write-local-manifest",
+  readDotEnvFile: "read-dotenv-file",
+  keepScreenAwake: "activate-keep-screen-awake",
+  releaseScreenAwake: "deactivate-keep-screen-awake",
 } as const;

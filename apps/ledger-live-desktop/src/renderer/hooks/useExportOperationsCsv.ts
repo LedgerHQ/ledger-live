@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { showSaveDialog } from "~/renderer/dialog";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getEnv } from "@shared/env";
@@ -17,7 +17,7 @@ async function saveOperationsToFile(
   csv: string,
 ): Promise<boolean> {
   try {
-    return await ipcRenderer.invoke("export-operations", path, csv);
+    return await files.exportOperations(path, csv);
   } catch {
     return false;
   }

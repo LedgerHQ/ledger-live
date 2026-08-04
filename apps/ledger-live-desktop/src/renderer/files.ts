@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { files as filesBridge } from "~/renderer/bridge";
 
 /**
  * File operations that the main process performs on the renderer's behalf.
@@ -10,9 +10,8 @@ import { ipcRenderer } from "electron";
  */
 
 /** Prompts for a Live App manifest and returns its contents, or null if cancelled. */
-export const readLocalManifest = (): Promise<string | null> =>
-  ipcRenderer.invoke("read-local-manifest");
+export const readLocalManifest = (): Promise<string | null> => filesBridge.readLocalManifest();
 
 /** Prompts for a save location and writes `contents`. Resolves false if cancelled. */
 export const writeLocalManifest = (defaultName: string, contents: string): Promise<boolean> =>
-  ipcRenderer.invoke("write-local-manifest", defaultName, contents);
+  filesBridge.writeLocalManifest(defaultName, contents);
