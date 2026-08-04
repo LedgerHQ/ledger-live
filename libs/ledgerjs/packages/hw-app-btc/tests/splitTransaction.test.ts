@@ -177,7 +177,7 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     const btc = new Btc({ transport, currency: "zcash" });
 
     // Mainnet 1facde4c098e686a8945bdfbb609e4cc4ebed610194117e7dd7cf2a2d9979a2f, a
-    // deshielding whose two shielded actions live in the Ironwood bundle (ZIP-230).
+    // deshielding whose two shielded actions live in the Ironwood bundle (ZIP-229).
     // Before v6 was recognized, the input count was read off the version group id —
     // 0x98, so 152 inputs — and parsing ran off the end of the buffer, throwing
     // "getVarint called with unexpected parameters" before any APDU was sent.
@@ -203,6 +203,63 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
     // parser does not model, and callers that need it work from the raw bytes.
     expect(tx.sapling).toBeUndefined();
     expect(tx.orchard).toBeUndefined();
+  });
+
+  test("Zcash v6 with a foreign version group id (v6)", async () => {
+    const transport = await openTransportReplayer(RecordStore.fromString(""));
+    const btc = new Btc({ transport, currency: "zcash" });
+
+    // ZIP-229 pins the v6 version group id to 0xd884b698 — 98b684d8 on the wire.
+    // A format sharing the version word but not the version group id is not the
+    // layout read below, so it must be refused instead of misframed.
+    const header = (nVersionGroupId: string) =>
+      "06000080" + nVersionGroupId + "5b16a537" + "00000000" + "21533400";
+    const transparent =
+      "00" + // no transparent inputs
+      "01" + // one transparent output
+      "a8a4b6290f000000" +
+      "19" +
+      "76a914cc0fdf3f5cd0cede1ccba1791d66cc0468051d2188ac";
+
+    expect(() =>
+      btc.splitTransaction(header("99b684d8") + transparent, true, true, ["zcash", "orchard"]),
+    ).toThrow(/unexpected Zcash v6 version group id 99b684d8/);
+
+    const tx = btc.splitTransaction(header("98b684d8") + transparent, true, true, [
+      "zcash",
+      "orchard",
+    ]);
+    expect(tx.nVersionGroupId?.toString("hex")).toBe("98b684d8");
+    expect(tx.inputs.length).toBe(0);
+    expect(tx.outputs?.length).toBe(1);
+  });
+
+  test("v6 header without the zcash additional is not read as Zcash", async () => {
+    const transport = await openTransportReplayer(RecordStore.fromString(""));
+    const btc = new Btc({ transport, currency: "bitcoin" });
+
+    // The v6 header layout belongs to Zcash alone, so it is only claimed when the
+    // caller says so. Otherwise the version word must fall through to the legacy
+    // layout whole, rather than consuming a version group id it never validated.
+    const hex =
+      "06000080" +
+      "01" +
+      "11".repeat(32) +
+      "00000000" +
+      "00" +
+      "ffffffff" +
+      "01" +
+      "0010a5d4e8000000" +
+      "19" +
+      "76a914cc0fdf3f5cd0cede1ccba1791d66cc0468051d2188ac" +
+      "00000000";
+
+    const tx = btc.splitTransaction(hex, false, false, ["bitcoin"]);
+
+    expect(tx.nVersionGroupId?.length).toBe(0);
+    expect(tx.inputs.length).toBe(1);
+    expect(tx.outputs?.length).toBe(1);
+    expect(tx.locktime?.toString("hex")).toBe("00000000");
   });
 
   test("Zcash NU5 transaction Sapling (v5)", async () => {

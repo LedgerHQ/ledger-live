@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type Transport from "@ledgerhq/hw-transport";
 import type { OrchardData, SaplingData, Transaction } from "./types";
-import { MAX_SCRIPT_BLOCK, zCashEncCiphertextSize } from "./constants";
+import { MAX_SCRIPT_BLOCK, zCashEncCiphertextSize, zCashV6Version } from "./constants";
 import { createVarint } from "./varint";
 export async function getTrustedInputRaw(
   transport: Transport,
@@ -113,6 +113,18 @@ export async function getTrustedInput(
   }
 
   if (isZcash) {
+    // The counter stream below is a v4/v5 shape: sapling spends, sapling outputs,
+    // orchard actions. A v6 (ZIP-229) needs a fourth counter for the Ironwood
+    // actions, which this stream cannot express, and splitTransaction leaves a v6
+    // shielded section unparsed by design — so the optional chaining below would
+    // emit three zeroes and no bundles. The device would then read its fourth
+    // CompactSize out of the trailing data and derive a wrong transaction id.
+    if (transaction.version.equals(zCashV6Version)) {
+      throw new Error(
+        "getTrustedInput: Zcash v6 transactions are not supported; sign them through the Zcash signer kit, which consumes the raw transaction bytes",
+      );
+    }
+
     const data = Buffer.concat([
       createVarint(transaction.sapling?.vSpendsSapling.length || 0),
       createVarint(transaction.sapling?.vOutputSapling.length || 0),
