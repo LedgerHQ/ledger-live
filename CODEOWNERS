@@ -40,9 +40,17 @@ apps/ledger-live-desktop/scripts/                        @ledgerhq/platform
 /features/                                               @ledgerhq/platform
 
 # Platform — shared
-shared/feature-flags                                     @ledgerhq/platform
-shared/schema-primitives                                 @ledgerhq/platform
-shared/qr-code                                           @ledgerhq/platform
+/shared/                                                 @ledgerhq/platform
+
+# Platform — shared (explicit overrides)
+/shared/feature-flags                                    @ledgerhq/platform
+/shared/schema-primitives                                @ledgerhq/platform
+/shared/qr-code                                          @ledgerhq/platform
+/shared/api-services/                                    @ledgerhq/platform
+/shared/auth/                                            @ledgerhq/platform
+/shared/cloud-sync/                                      @ledgerhq/platform
+/shared/cloud-sync-module/                               @ledgerhq/platform
+/shared/env/                                             @ledgerhq/platform
 
 # Platform — mobile
 apps/ledger-live-mobile/android/                         @ledgerhq/platform
