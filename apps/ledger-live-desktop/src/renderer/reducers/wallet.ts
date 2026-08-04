@@ -10,12 +10,8 @@ import {
 import { createSelector } from "reselect";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowEqual } from "react-redux";
-import type {
-  Account,
-  AccountLike,
-  AccountUserData,
-  RecentAddressesState,
-} from "@ledgerhq/types-live";
+import type { RecentAddressesState } from "@domain/entity-recent-addresses";
+import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
 import type { State } from ".";
 import type { WalletState } from "./wallet.core";
 

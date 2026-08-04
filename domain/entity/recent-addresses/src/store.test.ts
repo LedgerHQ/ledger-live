@@ -1,5 +1,13 @@
-import { RecentAddressesStore, setupRecentAddressesStore, getRecentAddressesStore } from ".";
-import { RECENT_ADDRESSES_COUNT_LIMIT } from "./recentAddresses";
+import { configureStore } from "@reduxjs/toolkit";
+import { recentAddressesSlice } from "./slice";
+import type { RecentAddressesState } from "./schema";
+import {
+  RECENT_ADDRESSES_COUNT_LIMIT,
+  connectRecentAddressesStore,
+  getRecentAddressesStore,
+  setupRecentAddressesStore,
+  type RecentAddressesStore,
+} from "./store";
 
 describe("RecentAddressesStore", () => {
   const onAddAddressCompleteMock = jest.fn();
@@ -503,5 +511,83 @@ describe("RecentAddressesStore", () => {
     expect(addresses[1]).toMatchObject({ address: addr2, lastUsed: 2000, ensName: undefined });
     expect(addresses[2]).toMatchObject({ address: addr3, lastUsed: 3000, ensName: "three.eth" });
     expect(addresses[3]).toMatchObject({ address: addr4, lastUsed: 4000, ensName: "four.eth" });
+  });
+});
+
+describe("connectRecentAddressesStore", () => {
+  const makeReduxStore = (preloadedState?: RecentAddressesState) =>
+    configureStore({
+      reducer: { recentAddresses: recentAddressesSlice.reducer },
+      preloadedState: preloadedState && { recentAddresses: preloadedState },
+    });
+
+  const selectRecentAddresses = (state: { recentAddresses: RecentAddressesState }) =>
+    state.recentAddresses;
+
+  it("mirrors store mutations back into the redux slice", () => {
+    const reduxStore = makeReduxStore();
+    connectRecentAddressesStore(reduxStore, selectRecentAddresses);
+
+    getRecentAddressesStore().addAddress("ethereum", "0x1", "one.eth");
+
+    expect(reduxStore.getState().recentAddresses.ethereum).toEqual([
+      { address: "0x1", lastUsed: expect.any(Number), ensName: "one.eth" },
+    ]);
+  });
+
+  it("seeds from the preloaded slice state", () => {
+    const reduxStore = makeReduxStore({ ethereum: [{ address: "0x1", lastUsed: 1000 }] });
+    connectRecentAddressesStore(reduxStore, selectRecentAddresses);
+
+    expect(getRecentAddressesStore().getAddresses("ethereum")).toHaveLength(1);
+  });
+
+  // Redux state is frozen by immer, so the store must never mutate it in place.
+  it("keeps accepting addresses across successive dispatches", () => {
+    const reduxStore = makeReduxStore();
+    connectRecentAddressesStore(reduxStore, selectRecentAddresses);
+
+    expect(() => {
+      getRecentAddressesStore().addAddress("ethereum", "0x1");
+      getRecentAddressesStore().addAddress("ethereum", "0x2");
+      getRecentAddressesStore().addAddress("ethereum", "0x1");
+    }).not.toThrow();
+
+    expect(reduxStore.getState().recentAddresses.ethereum.map(entry => entry.address)).toEqual([
+      "0x1",
+      "0x2",
+    ]);
+  });
+
+  it("keeps mutating after the slice state has been frozen by a dispatch", () => {
+    const reduxStore = makeReduxStore({ ethereum: [{ address: "0x1", lastUsed: 1000 }] });
+    connectRecentAddressesStore(reduxStore, selectRecentAddresses);
+
+    expect(() => {
+      getRecentAddressesStore().addAddress("ethereum", "0x2");
+      getRecentAddressesStore().removeAddress("ethereum", "0x1");
+      getRecentAddressesStore().syncAddresses(selectRecentAddresses(reduxStore.getState()));
+    }).not.toThrow();
+
+    expect(reduxStore.getState().recentAddresses.ethereum.map(entry => entry.address)).toEqual([
+      "0x2",
+    ]);
+  });
+
+  it("picks up a late rehydration once, then stops listening", () => {
+    const reduxStore = makeReduxStore();
+    connectRecentAddressesStore(reduxStore, selectRecentAddresses);
+
+    reduxStore.dispatch(
+      recentAddressesSlice.actions.updateRecentAddresses({
+        ethereum: [{ address: "0xLATE", lastUsed: 1000 }],
+      }),
+    );
+
+    expect(
+      getRecentAddressesStore()
+        .getAddresses("ethereum")
+        .map(entry => entry.address),
+    ).toEqual(["0xLATE"]);
   });
 });

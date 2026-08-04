@@ -318,6 +318,7 @@
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/evm-tools": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-recent-addresses": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-aptos": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
