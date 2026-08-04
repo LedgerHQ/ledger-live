@@ -130,6 +130,28 @@ describe("energyRent provider switch", () => {
       });
     });
 
+    it("rounds a duration past the hour windows up to whole days, capped at Tronify's 30", async () => {
+      mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
+
+      const quote = await getEnergyRentQuote({ ...request, durationSeconds: 40 * 86_400 });
+
+      expect(quote.durationSeconds).toBe(30 * 86_400);
+      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        expect.objectContaining({ pledgeDay: "30", pledgeHour: "0", pledgeMinute: "0" }),
+      );
+    });
+
+    it("rounds a sub-day duration past 3h up to a single day", async () => {
+      mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 32000 } as never);
+
+      const quote = await getEnergyRentQuote({ ...request, durationSeconds: 4 * 3600 });
+
+      expect(quote.durationSeconds).toBe(86_400);
+      expect(mockedQueryPreorderInfo).toHaveBeenCalledWith(
+        expect.objectContaining({ pledgeDay: "1", pledgeHour: "0", pledgeMinute: "0" }),
+      );
+    });
+
     it("forwards extraTrx as a string", async () => {
       mockedQueryPreorderInfo.mockResolvedValueOnce({ pledgeNum: 1 } as never);
 

@@ -12,12 +12,6 @@ export type TronifyProviderConfig = {
    * (all except `uploadHash`, which is keyed by the order id alone).
    */
   sourceFlag: string;
-  /**
-   * Optional API key, sent as an auth header when present; omit when requests are
-   * proxied through a Ledger backend that injects credentials.
-   * [assumption] exact header name/scheme to be confirmed with Tronify.
-   */
-  apiKey?: string;
 };
 
 /**

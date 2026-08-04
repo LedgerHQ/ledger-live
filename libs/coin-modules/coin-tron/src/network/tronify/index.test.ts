@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network";
 import coinConfig from "../../config";
 import { EnergyRentProviderNotConfigured } from "../../types/errors";
-import { addTronRentRecord, myPayOrder, queryPreorderInfo, queryTrades, uploadHash } from "./index";
+import { addTronRentRecord, myPayOrder, queryPreorderInfo, uploadHash } from "./index";
 import type { TronifyEnergyOrderParams } from "./types";
 
 jest.mock("@ledgerhq/live-network", () => ({ __esModule: true, default: jest.fn() }));
@@ -11,7 +11,7 @@ const mockedNetwork = network as jest.MockedFunction<typeof network>;
 const TRONIFY_URL = "https://open.tronify.io";
 const SOURCE_FLAG = "ledgerLive";
 
-const setConfig = (tronify?: { url: string; sourceFlag: string; apiKey?: string }) =>
+const setConfig = (tronify?: { url: string; sourceFlag: string }) =>
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
     explorer: { url: "https://tron.coin.ledger.com" },
@@ -96,25 +96,6 @@ describe("tronify network client", () => {
     });
   });
 
-  describe("auth header", () => {
-    it("sends the api-key header only when apiKey is configured", async () => {
-      setConfig({ url: TRONIFY_URL, sourceFlag: SOURCE_FLAG, apiKey: "secret" });
-      mockedNetwork.mockResolvedValueOnce(envelope({}) as never);
-
-      await queryPreorderInfo(orderParams);
-
-      expect(mockedNetwork.mock.calls[0][0]).toMatchObject({ headers: { apikey: "secret" } });
-    });
-
-    it("omits headers when no apiKey is configured", async () => {
-      mockedNetwork.mockResolvedValueOnce(envelope({}) as never);
-
-      await queryPreorderInfo(orderParams);
-
-      expect(mockedNetwork.mock.calls[0][0]).not.toHaveProperty("headers");
-    });
-  });
-
   describe("addTronRentRecord", () => {
     it("returns the created order and unsigned transaction", async () => {
       const data = {
@@ -150,16 +131,6 @@ describe("tronify network client", () => {
       const body = mockedNetwork.mock.calls[0][0].data as Record<string, unknown>;
       expect(body).toEqual({ orderId: "order-1", fromHash: "abc", signedData });
       expect(body).not.toHaveProperty("sourceFlag");
-    });
-  });
-
-  describe("queryTrades", () => {
-    it("injects the sourceFlag into the request body", async () => {
-      mockedNetwork.mockResolvedValueOnce(envelope({ data: [], pagination: {} }) as never);
-
-      await queryTrades({ sort: "0", page: 1, pageSize: 10 });
-
-      expect(mockedNetwork.mock.calls[0][0].data).toMatchObject({ sourceFlag: SOURCE_FLAG });
     });
   });
 

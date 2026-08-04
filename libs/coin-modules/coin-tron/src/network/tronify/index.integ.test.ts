@@ -1,11 +1,11 @@
 import coinConfig from "../../config";
 import { queryPreorderInfo } from "./index";
 
-// Credentials/channel are not committed. Provide them via the integ env to run this suite:
-//   TRONIFY_URL, TRONIFY_SOURCE_FLAG, (optional) TRONIFY_API_KEY
+// The channel name is not committed. Provide it via the integ env to run this suite:
+//   TRONIFY_URL, TRONIFY_SOURCE_FLAG
 // Only queryPreorderInfo is exercised — it is a read-only quote. addTronRentRecord/uploadHash
 // create real, paid orders and must run against a Tronify sandbox (reconciliation Q10).
-const { TRONIFY_URL, TRONIFY_SOURCE_FLAG, TRONIFY_API_KEY } = process.env;
+const { TRONIFY_URL, TRONIFY_SOURCE_FLAG } = process.env;
 const run = TRONIFY_URL && TRONIFY_SOURCE_FLAG ? describe : describe.skip;
 
 const RECEIVER = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -20,7 +20,6 @@ run("tronify queryPreorderInfo [integ]", () => {
         tronify: {
           url: TRONIFY_URL as string,
           sourceFlag: TRONIFY_SOURCE_FLAG as string,
-          apiKey: TRONIFY_API_KEY,
         },
       },
     }));

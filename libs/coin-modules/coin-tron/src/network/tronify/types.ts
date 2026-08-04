@@ -21,11 +21,11 @@ export type TronifyEnergyOrderParams = {
   pledgeAddress: string;
   /** Energy units to rent; Tronify minimum is 15000. */
   pledgeNum: number;
-  /** Rental duration — days (0-30). */
+  /** Rental duration — days "0"-"30"; valid under fastTrade alongside the hour/minute windows. */
   pledgeDay: string;
-  /** Rental duration — hours (0, 1, 3 for fastTrade). */
+  /** Rental duration — hours "0" | "1" | "3". */
   pledgeHour: string;
-  /** Rental duration — minutes (0, 10 for fastTrade). */
+  /** Rental duration — minutes "0" | "10". Day, hour and minute may not all be "0". */
   pledgeMinute: string;
   /** Extra TRX to bundle for bandwidth: "0" (none) or a value in [0.8, 500]. */
   extraTrxNum: string;
@@ -96,29 +96,6 @@ export type UploadHashRequest = {
 
 /** `uploadHash` returns an empty object on success. */
 export type UploadHashData = Record<string, never>;
-
-export type TradesRequest = {
-  /** 0: by time desc, 1: by energy+bandwidth desc, 2: by amount desc, 3: by energy desc. */
-  sort: "0" | "1" | "2" | "3";
-  page: number;
-  pageSize: number;
-};
-
-export type TronifyTradeOrder = {
-  orderId: string;
-  fromAddress: string;
-  pledgeAddress: string;
-  pledgeNum: number;
-  orderPrice: string;
-  orderType: string;
-  pledgeDay: string;
-  createTime: string;
-};
-
-export type TradesData = {
-  data: TronifyTradeOrder[];
-  pagination: TronifyPagination;
-};
 
 export type TronifyPagination = {
   page: number;

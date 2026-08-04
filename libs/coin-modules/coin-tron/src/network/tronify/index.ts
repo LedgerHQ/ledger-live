@@ -7,8 +7,6 @@ import type {
   MyPayOrderData,
   MyPayOrderRequest,
   QueryPreorderInfoData,
-  TradesData,
-  TradesRequest,
   TronifyEnergyOrderParams,
   TronifyResponse,
   UploadHashData,
@@ -16,10 +14,6 @@ import type {
 } from "./types";
 
 const TRONIFY_SUCCESS = 100;
-
-// [assumption] Tronify authenticates API calls with a key header; the exact header name is
-// not documented and must be confirmed. Only sent when `apiKey` is set in coin-config.
-const TRONIFY_API_KEY_HEADER = "apikey";
 
 const ENERGY_ORDER_DEFAULTS = {
   orderType: "ENERGY",
@@ -35,12 +29,11 @@ function getTronifyConfig(): TronifyProviderConfig {
 }
 
 async function post<Body extends object, Data>(endpoint: string, body: Body): Promise<Data> {
-  const { url, apiKey } = getTronifyConfig();
+  const { url } = getTronifyConfig();
   const { data } = await network<TronifyResponse<Data>, Body>({
     method: "POST",
     url: `${url}/api/tronRent/${endpoint}`,
     data: body,
-    ...(apiKey ? { headers: { [TRONIFY_API_KEY_HEADER]: apiKey } } : {}),
   });
 
   if (data.resCode !== TRONIFY_SUCCESS) {
@@ -70,15 +63,6 @@ export async function addTronRentRecord(
 /** Submit the signed (not broadcast) payment; Tronify broadcasts it and delegates energy. */
 export async function uploadHash(request: UploadHashRequest): Promise<UploadHashData> {
   return post("uploadHash", request);
-}
-
-/**
- * List the market's recent orders for the configured channel (paginated). Channel-wide and
- * carries no per-order status — use {@link myPayOrder} to follow a specific order.
- */
-export async function queryTrades(request: TradesRequest): Promise<TradesData> {
-  const { sourceFlag } = getTronifyConfig();
-  return post("trades", { ...request, sourceFlag });
 }
 
 /** List a buyer's own purchase orders, including each order's `orderStatus`. */
