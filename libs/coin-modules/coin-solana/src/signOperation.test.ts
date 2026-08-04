@@ -313,6 +313,56 @@ describe("Testing signOperation", () => {
       });
     });
 
+    // Distinguishable payloads so we can assert *which* serialization is sent to the signer.
+    // The DMK detects full wire-format via VersionedTransaction.deserialize and forwards
+    // co-signer signatures to Transaction Check; sending message-only strips them.
+    const FULL_TX_BYTE = 0xaa;
+    const MESSAGE_BYTE = 0xbb;
+
+    function distinguishableTx(signatures: readonly Buffer[]) {
+      return {
+        serialize: () => Uint8Array.of(FULL_TX_BYTE),
+        message: { serialize: () => Uint8Array.of(MESSAGE_BYTE) },
+        signatures,
+      } as unknown as VersionedTransaction;
+    }
+
+    function buildTupleWith(signatures: readonly Buffer[]) {
+      return [
+        distinguishableTx(signatures),
+        blockhashWithExpiryBlockHeight(),
+        () => distinguishableTx(signatures),
+      ] as const;
+    }
+
+    async function signedBufferFor(signatures: readonly Buffer[]): Promise<Buffer> {
+      const { context, signTransaction } = createSignContext();
+      mockBuildVersionedTransaction.mockResolvedValueOnce([...buildTupleWith(signatures)]);
+
+      await new Promise<void>((resolve, reject) =>
+        buildSignOperation(
+          context,
+          api(),
+        )({
+          account: account(),
+          deviceId: "d1",
+          deviceModelId: DeviceModelId.blue,
+          transaction: transaction("transfer"),
+        }).subscribe({ complete: () => resolve(), error: reject }),
+      );
+
+      return Buffer.from(signTransaction.mock.calls[0][1]);
+    }
+
+    it.each([
+      ["a co-signer signature is present", [Buffer.alloc(64, 2)]],
+      ["signatures are empty", [] as Buffer[]],
+      ["signatures are zero-filled placeholders", [Buffer.alloc(64, 0)]],
+      ["signatures are dummy placeholders", [Buffer.alloc(64, 1)]],
+    ])("sends the full wire-format transaction when %s", async (_label, signatures) => {
+      expect(await signedBufferFor(signatures)).toEqual(Buffer.of(FULL_TX_BYTE));
+    });
+
     it("uses override recentBlockhash in rawData when fetchBlockhash runs before signing", async () => {
       const { context, signTransaction } = createSignContext();
       const testApi = api();
