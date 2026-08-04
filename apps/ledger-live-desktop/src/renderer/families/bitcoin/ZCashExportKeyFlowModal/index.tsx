@@ -4,11 +4,8 @@ import { useDispatch } from "LLD/hooks/redux";
 import {
   ZCASH_ACTIVATION_DATE,
   ZCASH_ACTIVATION_DATE_STRING,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
-import type {
-  ZcashSyncState,
-  ZcashPrivateInfo,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+} from "@ledgerhq/coin-zcash/constants";
+import type { ZcashSyncState, ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import Modal from "~/renderer/components/Modal";
 import logger from "~/renderer/logger";

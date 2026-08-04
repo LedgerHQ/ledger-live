@@ -243,7 +243,9 @@ describe("performTransparentSync", () => {
     });
   });
 
-  it("counts the shielded pools in the balance it reports", async () => {
+  // Only the spendable Ironwood pool is added to the transparent balance; the
+  // deprecated Orchard notes are excluded from the total (see balance.ts).
+  it("counts the spendable Ironwood pool in the balance it reports", async () => {
     getAccountUnspentUtxos.mockResolvedValue([output()]);
     const shielded = info({
       initialAccount: {
@@ -258,7 +260,7 @@ describe("performTransparentSync", () => {
     });
 
     expect((await performTransparentSync(shielded, signerContext)).balance).toEqual(
-      new BigNumber(105_000),
+      new BigNumber(75_000),
     );
   });
 

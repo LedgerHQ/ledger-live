@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { render, screen, fireEvent, withFlagOverrides } from "tests/testSetup";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
@@ -21,6 +21,16 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 }));
 
 const baseAccount = createFixtureAccount();
+
+const makeUtxo = (value: number) => ({
+  hash: "",
+  outputIndex: 0,
+  blockHeight: 1,
+  address: "",
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
 
 const buildAccount = (overrides: Partial<typeof DEFAULT_ZCASH_PRIVATE_INFO> = {}, isZcash = true) =>
   ({
@@ -58,14 +68,14 @@ describe("ZcashTransferFromSelector", () => {
     mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
   });
 
-  it("renders both cards with Public active by default and persists the default to the transaction", () => {
+  it("renders Public and Private cards with Public active by default and persists the default to the transaction", () => {
     const onChange = renderSelector(buildAccount(), {});
 
     expect(screen.getByTestId("zcash-transfer-from-selector")).toBeVisible();
     expect(screen.getByTestId("transfer-from-public")).toBeVisible();
     expect(screen.getByTestId("transfer-from-private")).toBeVisible();
+    expect(screen.queryByTestId("transfer-from-ironwood")).not.toBeInTheDocument();
 
-    // Public default is written to the transaction state once on mount.
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
@@ -77,7 +87,7 @@ describe("ZcashTransferFromSelector", () => {
 
   it("selects Private when the Private card is clicked", () => {
     const onChange = renderSelector(buildAccount({ ufvk: "uview-test" }), {});
-    onChange.mockClear(); // ignore the on-mount default write
+    onChange.mockClear();
 
     fireEvent.click(screen.getByTestId("transfer-from-private"));
 
@@ -94,27 +104,86 @@ describe("ZcashTransferFromSelector", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "public" }));
   });
 
-  it("keeps the Private card clickable in every sync state (never disabled)", () => {
-    const onChange = renderSelector(buildAccount({ syncState: "disabled", ufvk: "uview-test" }), {
-      sender: "public",
-    } as Partial<Transaction>);
-    onChange.mockClear();
-
-    fireEvent.click(screen.getByTestId("transfer-from-private"));
-
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ sender: "private" }));
-  });
-
-  it("shows the unavailable hint on the Private card when no FVK is available", () => {
+  it("disables the Private card and shows why when no FVK is available", () => {
     renderSelector(buildAccount({ ufvk: null }), { sender: "public" } as Partial<Transaction>);
+    expect(screen.getByTestId("transfer-from-private")).toBeDisabled();
     expect(screen.getByTestId("transfer-from-private-unavailable")).toBeInTheDocument();
   });
 
-  it("hides the unavailable hint when an FVK is available", () => {
+  it("enables the Private card and hides the unavailable hint when an FVK is available", () => {
     renderSelector(buildAccount({ ufvk: "uview-test" }), {
       sender: "public",
     } as Partial<Transaction>);
+    expect(screen.getByTestId("transfer-from-private")).not.toBeDisabled();
     expect(screen.queryByTestId("transfer-from-private-unavailable")).not.toBeInTheDocument();
+  });
+
+  it("shows the spendable Ironwood balance on the Private card", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(50_000_000),
+        orchardBalance: new BigNumber(0),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
+  });
+
+  it("shows 0 ZEC on the Private card when the Ironwood balance is 0", () => {
+    renderSelector(
+      buildAccount({
+        ironwoodBalance: new BigNumber(0),
+        orchardBalance: new BigNumber(50_000_000),
+        saplingBalance: new BigNumber(0),
+        ufvk: "uview-test",
+      }),
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0 ZEC/);
+  });
+
+  it("sources the Public balance from UTXOs via getTransparentBalance, ignoring deprecated pools", () => {
+    renderSelector(
+      {
+        ...buildAccount({
+          orchardBalance: new BigNumber(30_000_000),
+          saplingBalance: new BigNumber(20_000_000),
+          ironwoodBalance: new BigNumber(10_000_000),
+          ufvk: "uview-test",
+        }),
+        // Transparent comes from own UTXOs (0.4 ZEC), not balance − ironwood —
+        // same helpers as AccountBalanceSummaryFooter.
+        bitcoinResources: { utxos: [makeUtxo(40_000_000)] },
+        balance: new BigNumber(50_000_000),
+      } as Account,
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-public")).toHaveTextContent(/0\.4 ZEC/);
+  });
+
+  it("does not derive the Public balance by subtracting private from account.balance", () => {
+    renderSelector(
+      {
+        ...buildAccount({
+          ironwoodBalance: new BigNumber(50_000_000),
+          ufvk: "uview-test",
+        }),
+        // Stale provenance: balance − ironwood would wrongly yield 0.4 ZEC;
+        // UTXOs keep Public correct at 0.1 ZEC.
+        balance: new BigNumber(90_000_000),
+        bitcoinResources: { utxos: [makeUtxo(10_000_000)] },
+      } as Account,
+      {},
+    );
+
+    expect(screen.getByTestId("transfer-from-public")).toHaveTextContent(/0\.1 ZEC/);
+    expect(screen.getByTestId("transfer-from-public")).not.toHaveTextContent(/0\.4 ZEC/);
+    expect(screen.getByTestId("transfer-from-private")).toHaveTextContent(/0\.5 ZEC/);
   });
 
   it("renders nothing when the zcashShielded feature flag is off", () => {
