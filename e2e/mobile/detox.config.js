@@ -107,8 +107,8 @@ module.exports = {
       testBinaryPath: getAndroidTestBinary("detoxPreRelease"),
     },
   },
-  // Workers past the first resolve `${configuration.device}${JEST_WORKER_ID}` (jest.environment.ts),
-  // so the numbered aliases have no static reference and their count caps E2E_WORKER_COUNT.
+  // jest.environment.ts resolves `${configuration.device}${JEST_WORKER_ID}` for every extra Jest
+  // worker and throws if the alias is absent; they must cover jest.config.js maxWorkers (3 on CI).
   devices: {
     simulator: {
       type: "ios.simulator",

@@ -12,13 +12,25 @@ const { composeDetoxConfig } = require("detox/src/configuration");
 
 const [configuration = "ios.sim.debug", ...rest] = process.argv.slice(2);
 
+// Detox parses its CLI with yargs, so scalars have to be coerced to match the config it resolves.
+const coerce = value => {
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return /^-?\d+$/.test(value) ? Number(value) : value;
+};
+
 const argv = { configuration };
 for (let i = 0; i < rest.length; i++) {
-  const flag = rest[i];
-  if (!flag.startsWith("--")) continue;
+  const arg = rest[i];
+  if (!arg.startsWith("--")) continue;
+  const eq = arg.indexOf("=");
+  if (eq !== -1) {
+    argv[arg.slice(2, eq)] = coerce(arg.slice(eq + 1));
+    continue;
+  }
   const next = rest[i + 1];
   const hasValue = next !== undefined && !next.startsWith("--");
-  argv[flag.slice(2)] = hasValue ? next : true;
+  argv[arg.slice(2)] = hasValue ? coerce(next) : true;
   if (hasValue) i++;
 }
 
