@@ -49,6 +49,42 @@ describe("bridge utils", () => {
       expect(result).toEqual([expect.objectContaining({ subOperations: [mockedTokenOperation] })]);
     });
 
+    it("nests a token movement under the FEES op only, not under every coin op of the tx", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const feesOperation = getMockedOperation({ id: "fees", hash: "shared", type: "FEES" });
+      const outOperation = getMockedOperation({ id: "out", hash: "shared", type: "OUT" });
+      const mockedTokenOperation = getMockedOperation({
+        hash: "shared",
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+      });
+
+      const result = await prepareOperations([feesOperation, outOperation], [mockedTokenOperation]);
+
+      expect(result.map(op => [op.id, op.subOperations])).toEqual([
+        ["fees", [mockedTokenOperation]],
+        ["out", []],
+      ]);
+    });
+
+    it("anchors on the lowest id, not the first in the array, when the tx has no FEES op", async () => {
+      const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
+      const coinOperations = [
+        getMockedOperation({ id: "b", hash: "shared", type: "OUT" }),
+        getMockedOperation({ id: "a", hash: "shared", type: "OUT" }),
+      ];
+      const mockedTokenOperation = getMockedOperation({
+        hash: "shared",
+        accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
+      });
+
+      const result = await prepareOperations(coinOperations, [mockedTokenOperation]);
+
+      expect(result.map(op => [op.id, op.subOperations])).toEqual([
+        ["b", []],
+        ["a", [mockedTokenOperation]],
+      ]);
+    });
+
     it("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
       const mockedOrphanTokenOperation = getMockedOperation({
@@ -390,6 +426,21 @@ describe("bridge utils", () => {
       });
 
       expect(bridgeCoinOperations).toEqual([expect.objectContaining({ hash: "h1", type: "FEES" })]);
+    });
+
+    it("keeps the fee visible when its token op is hidden but another coin op of the hash remains", () => {
+      const tokenOp = getMockedOperation({ hash: "h1", type: "OUT", contract: "0x999" });
+      const feesOp = getMockedOperation({ hash: "h1", type: "FEES" });
+      const outOp = getMockedOperation({ hash: "h1", type: "OUT", recipients: ["0.0.67890"] });
+
+      const { bridgeCoinOperations } = resolveBridgeOperations({
+        coinOperations: [feesOp, outOp],
+        tokenOperations: [tokenOp],
+        ledgerAccountId,
+        calTokenByAddress: new Map(),
+      });
+
+      expect(bridgeCoinOperations.map(op => op.type)).toEqual(["FEES", "OUT"]);
     });
 
     it("keeps a FEES coin op that has no token op at all", () => {

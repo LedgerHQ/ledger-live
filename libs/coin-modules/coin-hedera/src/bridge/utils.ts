@@ -152,6 +152,9 @@ export function resolveBridgeOperations({
 } {
   const keptTokenOperationHashes = new Set<string>();
   const allTokenOperationHashes = new Set(tokenOperations.map(op => op.hash));
+  const nonFeeCoinOperationHashes = new Set(
+    coinOperations.filter(op => op.type !== "FEES").map(op => op.hash),
+  );
 
   const resolvedTokenOperations = tokenOperations.flatMap(operation => {
     const tokenAddress = operation.contract?.toLowerCase();
@@ -163,13 +166,14 @@ export function resolveBridgeOperations({
     return [{ ...operation, accountId: tokenAccountId }];
   });
 
+  // dropped only when it would be the transaction's only visible row
+  const keepsFeesOperation = (hash: string) =>
+    !allTokenOperationHashes.has(hash) ||
+    keptTokenOperationHashes.has(hash) ||
+    nonFeeCoinOperationHashes.has(hash);
+
   const resolvedCoinOperations = coinOperations
-    .filter(
-      op =>
-        op.type !== "FEES" ||
-        keptTokenOperationHashes.has(op.hash) ||
-        !allTokenOperationHashes.has(op.hash),
-    )
+    .filter(op => op.type !== "FEES" || keepsFeesOperation(op.hash))
     .map(op => ({ ...op, accountId: ledgerAccountId }));
 
   return {
@@ -353,10 +357,12 @@ export const prepareOperations = async (
       coinOperationsByHash[tokenOperation.hash] = mainOperations;
     }
 
-    // ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send
-    for (const mainOperation of mainOperations) {
-      mainOperation.subOperations.push(tokenOperation);
-    }
+    // mirror's transfer order is not stable, so fall back to the lowest id rather than the first op
+    const anchor =
+      mainOperations.find(op => op.type === "FEES") ??
+      mainOperations.reduce((lowest, op) => (op.id < lowest.id ? op : lowest), mainOperations[0]);
+
+    anchor.subOperations.push(tokenOperation);
   }
 
   return preparedCoinOperations;

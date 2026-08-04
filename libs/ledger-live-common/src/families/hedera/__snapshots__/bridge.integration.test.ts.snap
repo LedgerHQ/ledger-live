@@ -406,7 +406,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.17",
       ],
       "senders": [
         "0.0.9870888",
@@ -432,7 +431,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -567,11 +565,9 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.29",
       ],
       "senders": [
         "0.0.7305122",
-        "0.0.800",
       ],
       "type": "IN",
       "value": "23000",
@@ -594,7 +590,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -673,7 +668,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -786,7 +780,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.3003290",
         "0.0.1986018",
         "0.0.1040977",
-        "0.0.29",
       ],
       "senders": [
         "0.0.8217344",
@@ -939,7 +932,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -966,7 +958,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7107424",
@@ -1085,7 +1076,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.3003290",
         "0.0.1986018",
         "0.0.1040977",
-        "0.0.22",
       ],
       "senders": [
         "0.0.8217344",
@@ -1136,7 +1126,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.4",
       ],
       "senders": [
         "0.0.7305122",
@@ -1162,7 +1151,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.507737",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1189,11 +1177,9 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7107424",
-        "0.0.800",
       ],
       "type": "IN",
       "value": "100000000",
@@ -1216,7 +1202,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.6",
       ],
       "senders": [
         "0.0.50571",
@@ -1271,7 +1256,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1298,7 +1282,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7107424",
@@ -1324,7 +1307,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1350,7 +1332,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.19",
       ],
       "senders": [
         "0.0.9870888",
@@ -1481,7 +1462,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.507737",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1532,7 +1512,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1584,7 +1563,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1610,7 +1588,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -1636,7 +1613,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7560245",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1687,7 +1663,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.20",
       ],
       "senders": [
         "0.0.7579210",
@@ -1795,7 +1770,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -1872,7 +1846,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.880760",
@@ -2036,7 +2009,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.34",
       ],
       "senders": [
         "0.0.7305122",
@@ -2062,7 +2034,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.507737",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2300,7 +2271,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.507737",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2376,7 +2346,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2411,7 +2380,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.3003290",
         "0.0.1986018",
         "0.0.1040977",
-        "0.0.15",
       ],
       "senders": [
         "0.0.8217344",
@@ -2437,7 +2405,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -2463,7 +2430,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2489,11 +2455,9 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.2024333",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "1148589",
@@ -2516,7 +2480,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.6391318",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2673,7 +2636,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7579210",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2699,7 +2661,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8313485",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -2964,7 +2925,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7107424",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -3071,7 +3031,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -3150,11 +3109,9 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7107424",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "10187371",
@@ -3178,7 +3135,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7107424",
@@ -3305,7 +3261,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.30",
       ],
       "senders": [
         "0.0.7305122",
@@ -3408,7 +3363,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -3518,7 +3472,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -3544,7 +3497,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.507737",
@@ -3571,7 +3523,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7107424",
@@ -3651,7 +3602,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -3677,7 +3627,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.507737",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -3703,7 +3652,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -3782,11 +3730,9 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.2024333",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "OUT",
       "value": "10148487",
@@ -4077,7 +4023,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -4106,7 +4051,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.8313485",
-        "0.0.800",
       ],
       "type": "IN",
       "value": "10000000",
@@ -4129,7 +4073,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.29",
       ],
       "senders": [
         "0.0.7305122",
@@ -4180,7 +4123,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4207,7 +4149,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -4258,7 +4199,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4334,7 +4274,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.4",
       ],
       "senders": [
         "0.0.7305122",
@@ -4360,7 +4299,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4386,7 +4324,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4412,7 +4349,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4438,7 +4374,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4464,7 +4399,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -4491,7 +4425,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4542,7 +4475,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.34",
       ],
       "senders": [
         "0.0.7305122",
@@ -4648,7 +4580,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4674,7 +4605,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -4700,7 +4630,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4755,7 +4684,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       ],
       "senders": [
         "0.0.1040977",
-        "0.0.800",
       ],
       "type": "IN",
       "value": "100000000",
@@ -4804,7 +4732,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -4939,7 +4866,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.30",
       ],
       "senders": [
         "0.0.7305122",
@@ -5043,7 +4969,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -5069,7 +4994,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -5095,7 +5019,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.1040977",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7305122",
@@ -5150,7 +5073,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7305122",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -5339,7 +5261,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7560245",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -5365,7 +5286,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7578015",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7560245",
@@ -5503,7 +5423,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.7578015",
-        "0.0.3",
       ],
       "senders": [
         "0.0.7560245",
@@ -5636,7 +5555,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8367704",
-        "0.0.30",
       ],
       "senders": [
         "0.0.8313485",
@@ -5713,7 +5631,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8313485",
-        "0.0.4",
       ],
       "senders": [
         "0.0.8367704",
@@ -5749,7 +5666,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.4590927",
         "0.0.4552078",
         "0.0.664803",
-        "0.0.31",
       ],
       "senders": [
         "0.0.8217344",
@@ -5850,7 +5766,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8758518",
-        "0.0.17",
       ],
       "senders": [
         "0.0.8313485",
@@ -6049,7 +5964,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.7611306",
         "0.0.7611305",
         "0.0.7611280",
-        "0.0.4",
       ],
       "senders": [
         "0.0.8217344",
@@ -6100,7 +6014,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.10186715",
-        "0.0.3",
       ],
       "senders": [
         "0.0.8313485",
@@ -6135,7 +6048,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.4590927",
         "0.0.4552078",
         "0.0.664803",
-        "0.0.3",
       ],
       "senders": [
         "0.0.8217344",
@@ -6170,7 +6082,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.7611306",
         "0.0.7611305",
         "0.0.7611280",
-        "0.0.8",
       ],
       "senders": [
         "0.0.8217344",
@@ -6380,7 +6291,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.10096785",
-        "0.0.3",
       ],
       "senders": [
         "0.0.8313485",
@@ -6406,7 +6316,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8313485",
-        "0.0.3",
       ],
       "senders": [
         "0.0.1040977",
@@ -6469,7 +6378,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.4590927",
         "0.0.4552078",
         "0.0.664803",
-        "0.0.6",
       ],
       "senders": [
         "0.0.8217344",
@@ -6529,7 +6437,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
         "0.0.7611306",
         "0.0.7611305",
         "0.0.7611280",
-        "0.0.17",
       ],
       "senders": [
         "0.0.8217344",
@@ -6606,7 +6513,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8313485",
-        "0.0.4",
       ],
       "senders": [
         "0.0.8367704",
@@ -6763,7 +6669,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8367704",
-        "0.0.9",
       ],
       "senders": [
         "0.0.8313485",
@@ -6893,7 +6798,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.8313485",
-        "0.0.5",
       ],
       "senders": [
         "0.0.507737",
@@ -7631,7 +7535,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "internalOperations": [],
       "recipients": [
         "0.0.10096785",
-        "0.0.3",
       ],
       "senders": [
         "0.0.8313485",

@@ -614,6 +614,24 @@ describe("createApi", () => {
       });
     });
 
+    it("should report no fee on a REWARD op, whose fee belongs to the op that triggered it", async () => {
+      const rewardOperation = getMockedOperation({
+        type: "REWARD",
+        fee: new BigNumber(0),
+        extra: {},
+      });
+
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [rewardOperation],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
+
+      expect(result.items[0].tx.fees).toBe(0n);
+    });
+
     it("should omit feesPayer when transactionId is absent", async () => {
       const mockOperationWithoutTransactionId = getMockedOperation({
         extra: {},

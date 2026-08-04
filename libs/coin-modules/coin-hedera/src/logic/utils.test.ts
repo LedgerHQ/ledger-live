@@ -772,6 +772,15 @@ describe("logic utils", () => {
       expect(getSyncCursor(accountWith(operations))).toBe("1625097600.100000000");
     });
 
+    it("keeps nanosecond precision from a legacy consensusTimestamp when no pagingToken was stored", () => {
+      const operation = getMockedOperation({
+        date: new Date("2021-07-01T00:00:00.999Z"),
+        extra: { consensusTimestamp: "1625097600.999888777" },
+      });
+
+      expect(getSyncCursor(accountWith([operation]))).toBe("1625097600.999888777");
+    });
+
     it("takes token operations stored on subAccounts into account", () => {
       const cursor = getSyncCursor(
         accountWith(
