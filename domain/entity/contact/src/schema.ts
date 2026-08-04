@@ -12,10 +12,7 @@ import {
 
 export const ContactIdSchema = NonEmptyStringSchema;
 export const ContactAddressIdSchema = NonEmptyStringSchema;
-export const ContactCurrencyIdSchema = z.union([
-  CryptoCurrencyIdSchema,
-  TokenCurrencyIdSchema,
-]);
+export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCurrencyIdSchema]);
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
@@ -34,7 +31,7 @@ export const ContactNameSchema = z
 export const ContactNameInputSchema = z
   .string()
   .trim()
-  .transform((name) => name.normalize("NFC"))
+  .transform(name => name.normalize("NFC"))
   .pipe(z.union([z.literal(""), ContactNameSchema]));
 
 export const ContactAddressLabelSchema = z
@@ -51,7 +48,7 @@ export const ContactAddressLabelSchema = z
 export const ContactAddressLabelInputSchema = z
   .string()
   .trim()
-  .transform((label) => label.normalize("NFC"))
+  .transform(label => label.normalize("NFC"))
   .pipe(z.union([z.literal(""), ContactAddressLabelSchema]));
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;

@@ -33,11 +33,7 @@ export function ContactsAddContactDialog({
         className="w-[400px] bg-canvas-sheet pb-24"
         data-testid="contacts-add-contact-dialog"
       >
-        <DialogHeader
-          density="expanded"
-          title={labels.title}
-          onClose={onClose}
-        />
+        <DialogHeader density="expanded" title={labels.title} onClose={onClose} />
         <DialogBody className="flex flex-col gap-24 px-24 pb-24 pt-12">
           <ContactNameInput
             value={draftName}

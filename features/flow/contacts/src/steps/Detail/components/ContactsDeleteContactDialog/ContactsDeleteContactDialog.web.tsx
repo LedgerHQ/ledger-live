@@ -39,13 +39,7 @@ export function ContactsDeleteContactDialog({
             </div>
           </div>
           <div className="flex w-full gap-16">
-            <Button
-              appearance="gray"
-              size="lg"
-              isFull
-              onClick={onCancel}
-              disabled={isDeleting}
-            >
+            <Button appearance="gray" size="lg" isFull onClick={onCancel} disabled={isDeleting}>
               {labels.cancel}
             </Button>
             <Button

@@ -8,7 +8,7 @@ import { ContactsAddContactDialog } from "./ContactsAddContactDialog.web";
 import type { ContactsAddContactDialogProps } from "./types";
 
 function createViewModel(
-  overrides: Partial<ContactsAddContactDialogProps> = {}
+  overrides: Partial<ContactsAddContactDialogProps> = {},
 ): ContactsAddContactDialogProps {
   return {
     isOpen: true,
@@ -24,10 +24,8 @@ function createViewModel(
         "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
       confirmName: "Add contact",
       nameValidationErrors: {
-        [INVALID_CONTACT_NAME_ERROR_NAME]:
-          "Special characters are not allowed.",
-        [DUPLICATE_CONTACT_NAME_ERROR_NAME]:
-          "This contact name is already in use.",
+        [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
       },
     },
     onClose: jest.fn(),
@@ -46,12 +44,10 @@ describe("ContactsAddContactDialog", () => {
           draftName: "Cédric",
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
         })}
-      />
+      />,
     );
 
-    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveValue(
-      "Cédric"
-    );
+    expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveValue("Cédric");
     expect(screen.getByTestId("contacts-add-contact-save")).toBeDisabled();
   });
 
@@ -65,7 +61,7 @@ describe("ContactsAddContactDialog", () => {
           isConfirmEnabled: true,
           onDraftNameChange,
         })}
-      />
+      />,
     );
 
     fireEvent.change(screen.getByTestId("contacts-add-contact-name-input"), {

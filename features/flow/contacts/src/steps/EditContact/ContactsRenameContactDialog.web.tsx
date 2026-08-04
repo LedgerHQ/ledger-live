@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-} from "@ledgerhq/lumen-ui-react";
+import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { ContactNameInput } from "../AddContact/components/ContactNameInput/ContactNameInput.web";
 import { ContactsAddContactNamingDisclaimer } from "../AddContact/ContactsAddContactNamingDisclaimer.web";
 import type { ContactsRenameContactDialogProps } from "./types";
@@ -24,9 +18,7 @@ export function ContactsRenameContactDialog({
   onConfirm,
 }: ContactsRenameContactDialogProps): React.ReactNode {
   const nameValidationError =
-    invalidNameError === null
-      ? undefined
-      : labels.nameValidationErrors[invalidNameError];
+    invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
@@ -41,11 +33,7 @@ export function ContactsRenameContactDialog({
         className="w-[400px] bg-canvas-sheet pb-24"
         data-testid="contacts-rename-contact-dialog"
       >
-        <DialogHeader
-          density="expanded"
-          title={labels.title}
-          onClose={onClose}
-        />
+        <DialogHeader density="expanded" title={labels.title} onClose={onClose} />
         <DialogBody className="flex flex-col gap-32 px-24 pb-24">
           <div className="flex flex-col gap-24">
             <ContactNameInput

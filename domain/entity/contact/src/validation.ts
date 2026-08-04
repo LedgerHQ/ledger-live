@@ -5,10 +5,7 @@ import {
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
-import {
-  ContactAddressLabelInputSchema,
-  ContactNameInputSchema,
-} from "./schema";
+import { ContactAddressLabelInputSchema, ContactNameInputSchema } from "./schema";
 import type { ContactAddressLabel, ContactName } from "./types";
 
 export type ContactNameValidationErrorName =
@@ -47,7 +44,7 @@ type ContactAddressLabelValidationResult = {
 
 function validateContactNameInput(
   draftName: string,
-  existingNames: readonly ContactName[]
+  existingNames: readonly ContactName[],
 ): ContactNameValidationResult {
   const parsed = ContactNameInputSchema.safeParse(draftName);
 
@@ -60,9 +57,8 @@ function validateContactNameInput(
   }
 
   const validationError = existingNames.some(
-    (name) =>
-      normalizeContactNameForComparison(name) ===
-      normalizeContactNameForComparison(parsed.data)
+    name =>
+      normalizeContactNameForComparison(name) === normalizeContactNameForComparison(parsed.data),
   )
     ? DUPLICATE_CONTACT_NAME_ERROR_NAME
     : null;
@@ -72,19 +68,16 @@ function validateContactNameInput(
 
 export function getContactNameValidationError(
   draftName: string,
-  existingNames: readonly ContactName[] = []
+  existingNames: readonly ContactName[] = [],
 ): ContactNameValidationErrorName | null {
   return validateContactNameInput(draftName, existingNames).validationError;
 }
 
 export function isValidContactName(
   draftName: string,
-  existingNames: readonly ContactName[] = []
+  existingNames: readonly ContactName[] = [],
 ): boolean {
-  const { validationError, value } = validateContactNameInput(
-    draftName,
-    existingNames
-  );
+  const { validationError, value } = validateContactNameInput(draftName, existingNames);
 
   return validationError === null && value !== null;
 }
@@ -95,12 +88,9 @@ export function normalizeContactNameForComparison(name: string): string {
 
 export function parseContactName(
   draftName: string,
-  existingNames: readonly ContactName[] = []
+  existingNames: readonly ContactName[] = [],
 ): ContactName {
-  const { validationError, value } = validateContactNameInput(
-    draftName,
-    existingNames
-  );
+  const { validationError, value } = validateContactNameInput(draftName, existingNames);
 
   if (validationError === INVALID_CONTACT_NAME_ERROR_NAME || value === null) {
     throw new InvalidContactNameError();
@@ -113,21 +103,19 @@ export function parseContactName(
   return value;
 }
 
-export function normalizeContactAddressLabelForComparison(
-  label: string
-): string {
+export function normalizeContactAddressLabelForComparison(label: string): string {
   return label.toLocaleLowerCase("en-US");
 }
 
 function validateContactAddressLabelInput(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[]
+  existingLabels: readonly ContactAddressLabel[],
 ): ContactAddressLabelValidationResult {
   const parsed = ContactAddressLabelInputSchema.safeParse(draftLabel);
 
   if (!parsed.success) {
     const validationError = parsed.error.issues.some(
-      (issue) => issue.message === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME
+      issue => issue.message === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
     )
       ? CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME
       : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
@@ -139,12 +127,9 @@ function validateContactAddressLabelInput(
     return { validationError: null, value: null };
   }
 
-  const comparisonLabel = normalizeContactAddressLabelForComparison(
-    parsed.data
-  );
+  const comparisonLabel = normalizeContactAddressLabelForComparison(parsed.data);
   const validationError = existingLabels.some(
-    (label) =>
-      normalizeContactAddressLabelForComparison(label) === comparisonLabel
+    label => normalizeContactAddressLabelForComparison(label) === comparisonLabel,
   )
     ? DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME
     : null;
@@ -154,32 +139,25 @@ function validateContactAddressLabelInput(
 
 export function getContactAddressLabelValidationError(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabelValidationErrorName | null {
-  return validateContactAddressLabelInput(draftLabel, existingLabels)
-    .validationError;
+  return validateContactAddressLabelInput(draftLabel, existingLabels).validationError;
 }
 
 export function isValidContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): boolean {
-  const { validationError, value } = validateContactAddressLabelInput(
-    draftLabel,
-    existingLabels
-  );
+  const { validationError, value } = validateContactAddressLabelInput(draftLabel, existingLabels);
 
   return validationError === null && value !== null;
 }
 
 export function parseContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabel {
-  const { validationError, value } = validateContactAddressLabelInput(
-    draftLabel,
-    existingLabels
-  );
+  const { validationError, value } = validateContactAddressLabelInput(draftLabel, existingLabels);
 
   if (validationError === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME) {
     throw new ContactAddressLabelTooLongError();

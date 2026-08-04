@@ -69,13 +69,7 @@ export function ContactConfirmationBottomSheet({
             >
               {labels.confirm}
             </Button>
-            <Button
-              appearance="gray"
-              size="lg"
-              isFull
-              disabled={confirmLoading}
-              onPress={onCancel}
-            >
+            <Button appearance="gray" size="lg" isFull disabled={confirmLoading} onPress={onCancel}>
               {labels.cancel}
             </Button>
           </Box>

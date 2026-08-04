@@ -34,9 +34,7 @@ describe("createAddContactViewModel", () => {
   });
 
   it("disables save for a normalized duplicate name", () => {
-    expect(
-      createAddContactViewModel(" ada ", [ContactNameSchema.parse("Ada")])
-    ).toMatchObject({
+    expect(createAddContactViewModel(" ada ", [ContactNameSchema.parse("Ada")])).toMatchObject({
       invalidNameError: DUPLICATE_CONTACT_NAME_ERROR_NAME,
       isSaveEnabled: false,
     });

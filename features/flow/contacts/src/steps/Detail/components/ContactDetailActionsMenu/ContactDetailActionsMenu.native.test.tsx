@@ -44,9 +44,7 @@ describe("ContactDetailActionsMenu", () => {
   it("should call action handlers when menu items are pressed", () => {
     const onEdit = jest.fn();
     const onDelete = jest.fn();
-    render(
-      <ContactDetailActionsMenu {...defaultProps} onEdit={onEdit} onDelete={onDelete} />,
-    );
+    render(<ContactDetailActionsMenu {...defaultProps} onEdit={onEdit} onDelete={onDelete} />);
 
     fireEvent.press(screen.getByTestId("contacts-detail-edit-action"));
     fireEvent.press(screen.getByTestId("contacts-detail-delete-action"));

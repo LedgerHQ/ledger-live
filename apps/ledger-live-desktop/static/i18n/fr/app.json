@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Avancé",
     "custom" : "Personnalisé",
+    "defaultNetworkFee" : "Frais de réseau par défaut",
     "fast" : "Rapide",
     "networkFees" : "Frais de réseau",
     "high" : "Élevé",
@@ -540,7 +541,9 @@
       "zcash_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Zcash",
       "zcash_description" : "Pour échanger des Zcash, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "aleo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aleo",
-      "aleo_description" : "Pour échanger des Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "aleo_description" : "Pour échanger des Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "aleo_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Aleo",
+      "aleo_tokens_description" : "Pour échanger des tokens Aleo, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Synchronisez votre wallet",
           "description" : "Gardez vos comptes crypto synchronisés."
-        },
-        "customImage" : {
-          "title" : "Personnalisez le fond d’écran",
-          "description" : "Affichez-y votre image préférée."
         },
         "discoverWallet" : {
           "title" : "Explorez votre wallet",
@@ -5459,11 +5458,6 @@
           "description" : "Testez toutes les animations utilisées dans Ledger Wallet.",
           "longDesc" : "Il s’agit d’un outil fourni tel quel pour permettre à l’équipe de valider les animations Lottie utilisées dans l’application."
         },
-        "testStories" : {
-          "title" : "Tester les animations Storyly",
-          "description" : "Testez toutes les animations utilisées dans Ledger Wallet.",
-          "longDesc" : "Il s’agit d’un outil fourni tel quel pour permettre à l’équipe de valider les stories Storyly utilisées dans l’application."
-        },
         "testStaxPostonboarding" : {
           "title" : "Tester le Post-Onboarding du Ledger Stax",
           "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding du Ledger Stax"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "Plus tard"
       }
     },
-    "postOnboarding" : {
-      "title" : "Personnalisez le fond d’écran",
-      "description" : "Affichez votre image préférée sur l’écran de verrouillage de votre appareil.",
-      "actionCompletedPopupLabel" : "Appareil personnalisé"
-    },
     "customImageSet" : "Fond d’écran personnalisé",
     "finishCTA" : "Fermer"
   },
@@ -8908,7 +8897,7 @@
       "cta" : "Transactions"
     },
     "activityIndicator" : {
-      "errorToolTip" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\n Comptes concernés : {{accounts}} Cliquez pour réessayer",
+      "errorToolTip" : "Problème temporaire de synchronisation : vos actifs sont en sécurité.\n Comptes concernés : {{accounts}}. Cliquez pour réessayer",
       "emptyErrorToolTip" : "Vos actifs sont en sécurité. Il s’agit d’un problème temporaire de synchronisation.\n Cliquez pour réessayer",
       "upToDate" : "Portefeuille à jour",
       "lastSync" : "Dernière synchro : {{timeAgo}}. Cliquez pour actualiser",
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Envoi public",
+          "transparentToShielded" : "Envoi public vers privé",
+          "shieldedToTransparent" : "Envoi privé vers public",
+          "shielded" : "Envoi privé"
+        },
         "transferFrom" : {
           "label" : "Transfert de",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Solde privé",
             "subtitle" : "Protégé",
             "unavailable" : "Solde privé indisponible"
+          }
+        },
+        "memo" : {
+          "label" : "Mémo (facultatif)",
+          "placeholder" : "Saisissez un mémo",
+          "tooltip" : "Joignez un message privé à cette transaction protégée (shielded). Seul le bénéficiaire peut le lire. 512 bytes max."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "Le solde privé n’est pas synchronisé",
+            "cta" : "Reprendre"
+          },
+          "running" : {
+            "message" : "Solde privé en cours de synchronisation ({{progress}}%)",
+            "timeRemaining" : "Temps restant estimé : {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "Le solde peut ne pas être à jour",
+            "cta" : "Synchroniser"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Transfert interne",
+      "headerAction" : "Échanger",
       "headerActionTooltip" : "Vous n’avez pas d’actifs pour effectuer un transfert vers votre propre adresse.",
       "modal" : {
-        "title" : "Transfert interne",
+        "title" : "Échanger",
         "stepRecipient" : {
           "selectLabel" : "Transfert de"
         }
@@ -9235,8 +9249,8 @@
     "actionsBar" : {
       "csv" : "Exporter",
       "more" : "Options de l’historique des opérations",
-      "hideDustTransactions" : "Masquer les transactions poussières",
-      "showDustTransactions" : "Afficher les transactions poussières",
+      "hideDustTransactions" : "Masquer les petites transactions",
+      "showDustTransactions" : "Afficher les petites transactions",
       "dustTransactionsDescription" : "Les transactions inférieures à {{threshold}} seront masquées.",
       "dustTransactionsDisplayedDescription" : "Les transactions inférieures à {{threshold}} seront affichées."
     },
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "Contacts",
     "addContact" : "Ajouter un contact",
+    "addAddress" : "Ajouter une adresse",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Nom du contact",
+      "namingDisclaimer" : "Pour une meilleure vie privée, évitez les noms complets et les noms de famille. Utilisez un pseudonyme ou simplement un prénom + initiale, par ex. « Jérôme S ».",
+      "invalidNameError" : "Les caractères spéciaux ne sont pas pris en charge."
+    },
     "searchPlaceholder" : "Rechercher un contact",
     "searchNoResults" : "Aucun contact trouvé",
+    "addressCount_zero" : "0 adresse",
+    "addressCount_one" : "{{count}} adresse",
+    "addressCount_other" : "{{count}} adresses",
     "me" : {
-      "name" : "Moi",
-      "addressCount_zero" : "0 adresse",
-      "addressCount_one" : "{{count}} adresse",
-      "addressCount_other" : "{{count}} adresses"
+      "name" : "Moi"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "Aucune adresse enregistrée pour vous",
+        "contactTitle" : "Aucune adresse enregistrée pour {{name}}",
+        "meDescription" : "Enregistrez vos adresses de wallet pour recevoir des cryptos plus facilement grâce à un nom personnalisé.",
+        "contactDescription" : "Enregistrez des adresses de wallet pour envoyer des cryptos plus facilement grâce à un nom personnalisé."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Envoyer",
+      "copy" : "Copier",
+      "copied" : "Copié",
+      "edit" : "Modifier",
+      "delete" : "Supprimer",
+      "networkTag" : "Réseau {{name}}"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Vos contacts sont chiffrés de bout en bout avec votre appareil Ledger et synchronisés sur vos appareils. Vous seul(e) pouvez y accéder.",
