@@ -7,7 +7,6 @@
     "src/analytics/featureFlagHelpers/onboardingCounterfeitWarning.ts",
     "src/analytics/featureFlagHelpers/wallet40.ts",
     "src/analytics/fundsReceived.ts",
-    "src/analyticsConsent/index.ts",
     "src/apps/filtering.ts",
     "src/apps/formatting.ts",
     "src/apps/hw.ts",

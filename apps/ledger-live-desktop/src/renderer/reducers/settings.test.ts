@@ -682,7 +682,7 @@ describe("trackingEnabledSelector", () => {
               lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
               privacyPolicyVersion: "1.0",
             },
-            { params: { policyVersion: "2.0", consentValidityDays: 365 } },
+            { params: { policyVersion: "2.0" } },
           ),
         ),
       ).toBe(false);
@@ -698,7 +698,7 @@ describe("trackingEnabledSelector", () => {
               lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
               privacyPolicyVersion: "1.0",
             },
-            { params: { policyVersion: "1.1", consentValidityDays: 365 } },
+            { params: { policyVersion: "1.1" } },
           ),
         ),
       ).toBe(true);
@@ -714,7 +714,7 @@ describe("trackingEnabledSelector", () => {
               lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
               privacyPolicyVersion: "1.0",
             },
-            { params: { policyVersion: "not-a-version", consentValidityDays: 365 } },
+            { params: { policyVersion: "not-a-version" } },
           ),
         ),
       ).toBe(true);

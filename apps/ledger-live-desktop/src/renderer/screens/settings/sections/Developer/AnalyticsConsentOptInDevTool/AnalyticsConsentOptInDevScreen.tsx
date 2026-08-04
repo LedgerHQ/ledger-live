@@ -25,7 +25,6 @@ const COPY = {
   title: "Analytics opt-in consent — QA",
   readSection: "Current settings (read-only)",
   currentPrivacyVersion: (version: string) => `App current privacy policy version: ${version}`,
-  currentConsentValidityDays: (days: string) => `App current consent validity (days): ${days}`,
   storedPrivacyVersion: (version: string) => `Stored privacy policy version: ${version}`,
   consentDate: (value: string) => `Consent date (raw): ${value}`,
   decision: (value: string) => `Shared decision: ${value}`,
@@ -55,13 +54,6 @@ const formatConsentDate = (value: string | null) => {
   return value;
 };
 
-function readConsentValidityDays(feature: { params?: unknown } | null | undefined): string {
-  const params = feature?.params;
-  if (!params || typeof params !== "object") return "n/a";
-  const days = (params as { consentValidityDays?: unknown }).consentValidityDays;
-  return days == null ? "n/a" : String(days);
-}
-
 export function AnalyticsConsentOptInDevScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,7 +63,6 @@ export function AnalyticsConsentOptInDevScreen() {
   const analyticsOptInFeature = useFeature("analyticsOptIn");
   const { currentPolicyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
   const decision = getAnalyticsConsentDecision(consentInfo, { currentPolicyVersion });
-  const consentValidityDays = readConsentValidityDays(analyticsOptInFeature);
 
   const shouldOfferModal =
     Boolean(analyticsOptInFeature?.enabled) && hasCompletedOnboarding && decision.kind !== "none";
@@ -146,9 +137,6 @@ export function AnalyticsConsentOptInDevScreen() {
           <div className="flex flex-col gap-8">
             <p className="body-2 leading-relaxed text-muted">
               {COPY.currentPrivacyVersion(currentPolicyVersion?.normalized ?? "null")}
-            </p>
-            <p className="body-2 leading-relaxed text-muted">
-              {COPY.currentConsentValidityDays(consentValidityDays)}
             </p>
             <p className="body-2 leading-relaxed text-muted">
               {COPY.decision(`${decision.kind} (${decision.reason})`)}
