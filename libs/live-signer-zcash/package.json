@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-zcash": "0.4.3",
+    "@ledgerhq/device-signer-kit-zcash": "0.5.0",
     "rxjs": "catalog:"
   },
   "devDependencies": {
