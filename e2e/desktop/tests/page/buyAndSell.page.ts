@@ -98,11 +98,40 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
+    await this.waitForCryptoSelectorReady();
     if (await this.isCorrectAssetAlreadySelected(account)) return;
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.cryptoCurrencySelector)).toBeEnabled();
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
+  }
+
+  /**
+   * Buy/Sell runs inside the PTX (swap) live app webview. That app occasionally
+   * stays stuck on its loading spinner and never renders the amount screen, so the
+   * crypto selector never appears and the flow times out on a bare `.textContent()`.
+   * Wait for the selector and, if it never shows, reload the webview and retry —
+   * the same recovery the Borrow webview uses (see borrow.page.ts).
+   */
+  @step("Wait for the Buy/Sell web app to finish loading")
+  private async waitForCryptoSelectorReady() {
+    const readyTimeout = 30_000;
+    const maxReloads = 2;
+    const webview = await this.getWebView();
+    const selector = webview.getByTestId(this.cryptoCurrencySelector);
+
+    for (let attempt = 0; ; attempt++) {
+      try {
+        await expect(selector).toBeVisible({ timeout: readyTimeout });
+        return;
+      } catch {
+        if (attempt >= maxReloads) {
+          throw new Error(
+            `Buy/Sell web app did not render the crypto selector "${this.cryptoCurrencySelector}" ` +
+              `after ${maxReloads + 1} attempts — webview stuck loading.`,
+          );
+        }
+        await webview.reload();
+      }
+    }
   }
 
   private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
