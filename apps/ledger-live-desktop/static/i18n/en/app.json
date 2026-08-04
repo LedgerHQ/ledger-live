@@ -9563,5 +9563,19 @@
       }
     },
     "disclaimer": "This data is provided for informational purposes only and is not financial advice. Not to be used for tax purposes."
+  },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
+    "inputSubText": "Swap and deposit via SwapKit",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyDescription": "No account",
+    "review": "Review",
+    "formErrors": {
+      "enterAmount": "Enter an amount",
+      "minDeposit": "Minimum deposit is $5",
+      "amountExceedsBalance": "Amount exceeds available balance"
+    }
   }
 }

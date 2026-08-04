@@ -1,0 +1,134 @@
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { AmountInput, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useTranslation } from "~/context/Locale";
+import { AmountKeypad } from "./components/AmountKeypad";
+import { DepositAccountSelector } from "./components/DepositAccountSelector";
+import { RatioPicker } from "./components/RatioPicker";
+import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
+
+function AmountMessage({
+  submitError,
+  depositAmount,
+}: Pick<PerpsDepositViewModel, "submitError" | "depositAmount">) {
+  const { t } = useTranslation();
+
+  if (submitError?.isVisible) {
+    return (
+      <Text typography="body3" lx={{ color: "error" }} testID="perps-deposit-form-error">
+        {t(submitError.labelKey)}
+      </Text>
+    );
+  }
+
+  if (depositAmount > 0) {
+    return (
+      <Text typography="body3" lx={{ color: "base" }}>
+        {t("perpsDeposit.inputSubText")}
+      </Text>
+    );
+  }
+
+  return null;
+}
+
+export function PerpsDepositView({
+  headerDescription,
+  amountText,
+  depositAmount,
+  formattedDepositAmount,
+  counterValueCode,
+  maxIntegerLength,
+  maxDecimalLength,
+  pressAmountKey,
+  setDepositAmount,
+  depositCurrencyTicker,
+  depositCurrencyLedgerId,
+  depositAccountName,
+  depositAccountCounterValue,
+  maxAmount,
+  selectMax,
+  submitError,
+  canReview,
+  exceedsBalance,
+  missingAccount,
+  pickDepositAccount,
+  handleReview,
+}: Readonly<PerpsDepositViewModel>) {
+  const { t } = useTranslation();
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+        backgroundColor: theme.colors.bg.base,
+      },
+    }),
+    [],
+  );
+
+  return (
+    <SafeAreaView edges={["bottom"]} style={styles.root}>
+      <Box lx={{ flex: 1, paddingHorizontal: "s16", gap: "s16" }}>
+        <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+          {headerDescription}
+        </Text>
+
+        <Box lx={{ flex: 1, justifyContent: "center", alignItems: "center", gap: "s8" }}>
+          <AmountInput
+            value={amountText}
+            currencyText={counterValueCode}
+            maxIntegerLength={maxIntegerLength}
+            maxDecimalLength={maxDecimalLength}
+            autoFocus
+            showSoftInputOnFocus={false}
+            isInvalid={submitError?.isVisible ?? false}
+            testID="perps-deposit-amount-input"
+          />
+          <Text typography="body3" lx={{ color: "muted" }}>
+            {t("perpsDeposit.inputDepositAmount", {
+              value: formattedDepositAmount,
+              currencyTicker: depositCurrencyTicker,
+            })}
+          </Text>
+          <AmountMessage
+            submitError={submitError}
+            depositAmount={depositAmount}
+          />
+        </Box>
+
+        <DepositAccountSelector
+          ticker={depositCurrencyTicker}
+          ledgerId={depositCurrencyLedgerId}
+          accountName={depositAccountName}
+          counterValue={depositAccountCounterValue}
+          exceedsBalance={exceedsBalance}
+          missingAccount={missingAccount}
+          onSelect={pickDepositAccount}
+        />
+
+        <RatioPicker
+          maxValue={maxAmount}
+          value={depositAmount}
+          onChange={setDepositAmount}
+          onMax={selectMax}
+        />
+
+        <AmountKeypad onKeyPress={pressAmountKey} />
+      </Box>
+
+      <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>
+        <Button
+          appearance="base"
+          size="lg"
+          lx={{ width: "full" }}
+          disabled={!canReview }
+          onPress={handleReview}
+          testID="perps-deposit-review-cta"
+        >
+          {t("perpsDeposit.review")}
+        </Button>
+      </Box>
+    </SafeAreaView>
+  );
+}
