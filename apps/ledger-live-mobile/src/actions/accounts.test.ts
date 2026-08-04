@@ -1,5 +1,6 @@
 import type { Account, AccountRaw, AccountUserData, DerivationMode } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import accountModel from "../logic/accountModel";
 import { importStore } from "./accounts";
 
@@ -22,7 +23,29 @@ function fakeTuple(
     derivationMode: derivationMode as DerivationMode,
     name: `name-${id}`,
   } as unknown as Account;
-  const userData = { id, name: `custom-${id}` } as unknown as AccountUserData;
+  const userData = { id, name: `custom-${id}`, starredIds: [] } as unknown as AccountUserData;
+  return [account, userData];
+}
+
+/** An account the user starred but never renamed: its name is the default one. */
+function starredTupleWithDefaultName(
+  id: string,
+  currencyId: string,
+  index = 0,
+): [Account, AccountUserData] {
+  const account = {
+    id,
+    type: "Account",
+    currency: getCryptoCurrencyById(currencyId),
+    derivationMode: "" as DerivationMode,
+    index,
+    name: `name-${id}`,
+  } as unknown as Account;
+  const userData = {
+    id,
+    name: getDefaultAccountName(account),
+    starredIds: [id],
+  } as unknown as AccountUserData;
   return [account, userData];
 }
 
@@ -78,5 +101,12 @@ describe("importStore", () => {
     });
 
     expect(action.payload.accounts.map((a: Account) => a.id)).toEqual(["btc-segwit"]);
+  });
+
+  it("does not leak default names into the account names payload", async () => {
+    mockDecode.mockResolvedValueOnce(starredTupleWithDefaultName("btc-default", "bitcoin"));
+
+    const action = await importStore({ active: [{ data: { id: "btc-default" } as AccountRaw }] });
+    expect(action.payload.accountsUserData.map((u: AccountUserData) => u.id)).toEqual([]);
   });
 });
