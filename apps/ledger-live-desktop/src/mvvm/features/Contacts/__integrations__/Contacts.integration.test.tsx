@@ -479,7 +479,22 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-add-address-confirm"));
     await user.click(screen.getByTestId("contacts-add-address-review-continue"));
 
-    expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
+      ).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("Exchange"),
+      ).toBeVisible();
+    });
   });
 
   it("should expose the Add Address session started for Me", async () => {

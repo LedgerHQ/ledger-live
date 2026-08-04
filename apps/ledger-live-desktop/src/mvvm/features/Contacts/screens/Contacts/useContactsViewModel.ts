@@ -1,10 +1,13 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { v4 as uuid } from "uuid";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  addAddress,
+  contactAddress,
   type ContactId,
 } from "@domain/entity-contact";
 import {
@@ -32,6 +35,7 @@ import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurr
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
+import { useDispatch } from "LLD/hooks/redux";
 import type {
   ContactsAddAddressFlowDialogProps,
   ContactsAddAddressReviewLabels,
@@ -47,6 +51,8 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {
+  const dispatch = useDispatch();
+  const hasCompletedMockConfirmation = useRef(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,6 +78,31 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
+  const completeMockAddressConfirmation = useCallback(() => {
+    if (addAddressFlowState.status !== "confirmationRequired") {
+      hasCompletedMockConfirmation.current = false;
+      return;
+    }
+
+    if (hasCompletedMockConfirmation.current) {
+      return;
+    }
+
+    hasCompletedMockConfirmation.current = true;
+
+    const address = contactAddress({
+      id: `address-${uuid()}`,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
+
+    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    completeMockConfirmation();
+  }, [addAddressFlowState, completeMockConfirmation, dispatch]);
+  useEffect(() => {
+    completeMockAddressConfirmation();
+  }, [completeMockAddressConfirmation]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -100,7 +131,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onBackAddAddress = useCallback(() => {
     if (
       addAddressFlowState.status === "namingAddress" ||
-      addAddressFlowState.status === "reviewingAddress"
+      addAddressFlowState.status === "reviewingAddress" ||
+      addAddressFlowState.status === "confirmationRequired"
     ) {
       goBackAddAddress();
       return;
@@ -164,7 +196,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       onAddressLabelChange: updateAddressLabel,
       onContinueFromName: continueFromName,
       onContinueFromReview: continueFromReview,
-      onCompleteMockConfirmation: completeMockConfirmation,
+      onCompleteMockConfirmation: completeMockAddressConfirmation,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
     }),
@@ -180,7 +212,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       continueFromAddressDetails,
       continueFromName,
       continueFromReview,
-      completeMockConfirmation,
+      completeMockAddressConfirmation,
     ],
   );
   const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =
