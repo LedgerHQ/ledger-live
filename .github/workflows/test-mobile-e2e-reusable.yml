@@ -7,18 +7,23 @@ run-name: >
 # NB: test_filter is intentionally reduced to a bounded "filtered"/"all" token rather than embedded verbatim.
 # It is free-text and can be very long; the concurrency group name must stay under 400 characters.
 concurrency:
-  # Broadcast runs (enable_broadcast) share ONE group regardless of tests_type, so separate
-  # iOS-Only / Android-Only dispatches QUEUE instead of overlapping —
-  # they would otherwise race on the same on-chain accounts across machines, which no per-run
-  # mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
+  # Broadcast runs (enable_broadcast, and the Wednesday/Friday broadcast nightlies) share ONE group
+  # regardless of tests_type, so separate iOS-Only / Android-Only dispatches QUEUE instead of
+  # overlapping — they would otherwise race on the same on-chain accounts across machines, which no
+  # per-run mechanism can prevent. Non-broadcast runs keep the original per-ref/tests_type group.
   group: >-
-    ${{ (inputs.enable_broadcast || (github.event_name == 'schedule' && github.event.schedule == '0 0 * * 1,3,5')) && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' || github.event.schedule == '0 0 * * 5') && 'mobile-e2e-broadcast' || format('mobile-e2e-{0}-{1}-{2}-{3}', github.ref_name, inputs.ref || github.sha, github.event_name == 'schedule' && github.event.schedule || inputs.tests_type, inputs.test_filter && 'filtered' || 'all') }}
   cancel-in-progress: false
 
 on:
   schedule:
-    - cron: "0 0 * * 1,3,5"
-    - cron: "0 0 * * 2,4"
+    # One broadcast nightly per platform: iOS on Wednesday, Android on Friday. Both platforms still
+    # run every weekday, only broadcast rotates — a single broadcasting platform per run keeps the
+    # shared QAA on-chain accounts free of allowance/nonce races (desktop broadcasts on Monday).
+    # These cron expressions are matched verbatim in the env block below — keep both in sync.
+    - cron: "0 0 * * 3"
+    - cron: "0 0 * * 5"
+    - cron: "0 0 * * 1,2,4"
   workflow_dispatch:
     inputs:
       ref:
@@ -219,10 +224,13 @@ env:
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
   USERDATA_CACHE_ENABLED: ${{ !inputs.production_firebase }}
   E2E_GENERATED_USERDATA_DIR: ${{ !inputs.production_firebase && format('{0}/e2e/userdata/generated', github.workspace) || '' }}
-  # True only when a single run covers BOTH platforms (tests_type = "iOS & Android").
-  # broadcastRotation.ts uses it to pin each broadcast swap flow to one platform per run,
-  # avoiding the shared-EOA nonce race; single-platform runs keep full coverage. (QAA-1411)
-  E2E_BOTH_PLATFORMS: ${{ inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
+  # Broadcast on explicit request, or on the platform's own broadcast nightly (see the schedule above).
+  IOS_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' }}
+  ANDROID_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 5' }}
+  # True only when BOTH platforms broadcast in the same run, which the nightlies never do: only an
+  # explicit enable_broadcast dispatch covering both platforms. broadcastRotation.ts then pins each
+  # broadcast swap flow to one platform per run, avoiding the shared-EOA nonce race. (QAA-1411)
+  E2E_BOTH_PLATFORMS: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
@@ -337,7 +345,6 @@ jobs:
           IOS_DEVICE: ${{ steps.devices.outputs.ios_device }}
           ANDROID_DEVICE: ${{ steps.devices.outputs.android_device }}
           BUILD_TYPE: ${{ inputs.production_firebase && 'production' || 'testing' }}
-          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
           SMOKE_TESTS: ${{ inputs.smoke_tests }}
           TEST_EXECUTION_ANDROID: ${{ inputs.test_execution_android || '(not provided)' }}
           TEST_EXECUTION_IOS: ${{ inputs.test_execution_ios || '(not provided)' }}
@@ -369,7 +376,8 @@ jobs:
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
           echo "- **Test Execution ticket ID (iOS):** $TEST_EXECUTION_IOS"
           echo "- **Firebase env to target:** $BUILD_TYPE"
-          echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+          echo "- **Broadcast enabled (iOS):** $IOS_BROADCAST_ENABLED"
+          echo "- **Broadcast enabled (Android):** $ANDROID_BROADCAST_ENABLED"
           echo "- **Slack notification:** $SLACK_NOTIF_STATUS"
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
@@ -701,7 +709,7 @@ jobs:
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
+          enable_broadcast: ${{ env.IOS_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
       - name: Get iOS device info
@@ -954,7 +962,7 @@ jobs:
       - name: Set DISABLE_TRANSACTION_BROADCAST
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
+          enable_broadcast: ${{ env.ANDROID_BROADCAST_ENABLED }}
           build_type: ${{ inputs.production_firebase == true && 'js' || 'testing' }}
 
       - name: Get Android device info

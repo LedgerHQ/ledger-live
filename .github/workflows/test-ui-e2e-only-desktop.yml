@@ -4,8 +4,12 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 1 * * 1,3,5"
-    - cron: "0 1 * * 2,4"
+    # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
+    # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
+    # broadcast from the shared QAA accounts on the same day.
+    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    - cron: "0 1 * * 1"
+    - cron: "0 1 * * 2-5"
   workflow_dispatch:
     inputs:
       ref:
@@ -141,6 +145,8 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
+  E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 
 jobs:
   prepare-devices:
@@ -285,7 +291,7 @@ jobs:
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
+          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
       - name: Build Playwright grep filter from inputs
@@ -307,7 +313,7 @@ jobs:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
           BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
           TEST_EXECUTION: ${{ inputs.test_execution || '(not provided)' }}
-          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
           REPEAT_EACH: ${{ inputs.repeat_each }}
           WORKFLOW_REF: ${{ github.workflow_ref }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
