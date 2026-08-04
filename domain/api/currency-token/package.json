@@ -18,6 +18,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/currency-token"
   },
   "dependencies": {
+    "@shared/api-services": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",

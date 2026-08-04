@@ -6,7 +6,7 @@ import type { BitcoinAccountBridge } from "@ledgerhq/coin-bitcoin/bridge/js";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";

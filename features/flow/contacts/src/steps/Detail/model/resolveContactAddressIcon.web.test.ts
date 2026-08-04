@@ -16,11 +16,7 @@ describe("resolveContactAddressIconProps", () => {
     });
 
     expect(
-      resolveContactAddressIconProps(
-        nativeAddress.currencyId,
-        nativeAddress.label,
-        ethereum.id,
-      ),
+      resolveContactAddressIconProps(nativeAddress.currencyId, nativeAddress.label, ethereum.id),
     ).toEqual({
       ledgerId: ethereum.id,
       ticker: ethereum.ticker,
@@ -36,11 +32,7 @@ describe("resolveContactAddressIconProps", () => {
     });
 
     expect(
-      resolveContactAddressIconProps(
-        nativeAddress.currencyId,
-        nativeAddress.label,
-        polygon.id,
-      ),
+      resolveContactAddressIconProps(nativeAddress.currencyId, nativeAddress.label, polygon.id),
     ).toEqual({
       ledgerId: "ethereum",
       ticker: "ETH",
@@ -50,11 +42,7 @@ describe("resolveContactAddressIconProps", () => {
 
   it("falls back to the address label for unknown currency ids", () => {
     expect(
-      resolveContactAddressIconProps(
-        unknownAddress.currencyId,
-        unknownAddress.label,
-        ethereum.id,
-      ),
+      resolveContactAddressIconProps(unknownAddress.currencyId, unknownAddress.label, ethereum.id),
     ).toEqual({
       ledgerId: unknownAddress.currencyId,
       ticker: unknownAddress.label,

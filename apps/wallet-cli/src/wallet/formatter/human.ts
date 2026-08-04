@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { findCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Unit } from "@domain/entity-currency-unit";
 import type { CryptoAssetsStore, OperationType } from "@ledgerhq/types-live";
 import { colors } from "../../shared/ui";

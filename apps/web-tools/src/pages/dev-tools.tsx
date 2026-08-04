@@ -29,7 +29,7 @@ export default function DevToolsPage() {
       <div style={{ height: "100vh" }}>
         <DevTools
           config={config}
-          sidebarFooter={
+          footer={
             <TransportPanel
               transport={wire.transport}
               hubUrl={wireState.hubUrl}

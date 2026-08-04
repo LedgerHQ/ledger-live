@@ -1,0 +1,189 @@
+name: "E2E Slack report"
+description: "Build and post the Slack test-results message for an e2e run (mobile or desktop) to one or two channels."
+
+inputs:
+  token:
+    description: "Slack bot token used to post the message."
+    required: true
+  channel:
+    description: "Slack channel ID to post to."
+    required: true
+  secondary_channel:
+    description: "Optional second channel ID to also post the same message to. Leave empty to post once."
+    required: false
+    default: ""
+  product:
+    description: 'Product label in the header, e.g. "Ledger Live Mobile E2E".'
+    required: true
+  ref:
+    description: "Git ref under test (shown in the header)."
+    required: true
+  smoke_tests:
+    description: "'true' to append the ' (Smoke Tests)' suffix to the header."
+    required: false
+    default: "false"
+  header_devices:
+    description: 'Device portion of the header, e.g. "iOS:nanoX / Android:pixel" or "nanoSP + stax".'
+    required: true
+  run_url:
+    description: "Full URL of the workflow run (for the Workflow link)."
+    required: true
+
+  # --- Result rows. A row is included only when its label is non-empty. ---
+  # Row 1 (mobile: iOS · desktop: device 1)
+  row1_emoji:
+    required: false
+    default: ""
+  row1_label:
+    description: 'Row label, e.g. "iOS" or "linux" or "linux (nanoSP)". Empty = omit this row.'
+    required: false
+    default: ""
+  row1_flags:
+    description: "Feature-flag set shown in the result line."
+    required: false
+    default: ""
+  row1_device:
+    description: 'Rendered as " · <device>" after the flags (mobile). Leave empty on desktop.'
+    required: false
+    default: ""
+  row1_summary:
+    description: "Allure summary message; falls back to 'No test results' when empty."
+    required: false
+    default: ""
+  row1_report_url:
+    required: false
+    default: ""
+  row1_report_title:
+    description: 'Bold label of the Allure field, e.g. "Allure Report iOS".'
+    required: false
+    default: ""
+  row1_report_link_text:
+    description: "Link text of the Allure field."
+    required: false
+    default: ""
+  row1_status:
+    description: "'success' when the row passed; any other non-empty value counts as failed."
+    required: false
+    default: ""
+  row1_missing_shards:
+    description: "Comma-separated shard ids that produced no results (adds a warning block)."
+    required: false
+    default: ""
+
+  # Row 2 (mobile: Android · desktop: device 2)
+  row2_emoji:
+    required: false
+    default: ""
+  row2_label:
+    required: false
+    default: ""
+  row2_flags:
+    required: false
+    default: ""
+  row2_device:
+    required: false
+    default: ""
+  row2_summary:
+    required: false
+    default: ""
+  row2_report_url:
+    required: false
+    default: ""
+  row2_report_title:
+    required: false
+    default: ""
+  row2_report_link_text:
+    required: false
+    default: ""
+  row2_status:
+    required: false
+    default: ""
+  row2_missing_shards:
+    required: false
+    default: ""
+
+  # --- Optional extra field, appended as its own section (e.g. desktop Xray link). ---
+  extra_field_title:
+    required: false
+    default: ""
+  extra_field_url:
+    required: false
+    default: ""
+  extra_field_link_text:
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build Slack payload
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        PAYLOAD_PATH: ${{ runner.temp }}/e2e-slack-payload.json
+        SECONDARY_PAYLOAD_PATH: ${{ runner.temp }}/e2e-slack-payload-secondary.json
+        CHANNEL: ${{ inputs.channel }}
+        SECONDARY_CHANNEL: ${{ inputs.secondary_channel }}
+        PRODUCT: ${{ inputs.product }}
+        REF: ${{ inputs.ref }}
+        SMOKE_TESTS: ${{ inputs.smoke_tests }}
+        HEADER_DEVICES: ${{ inputs.header_devices }}
+        RUN_URL: ${{ inputs.run_url }}
+        ROW1_EMOJI: ${{ inputs.row1_emoji }}
+        ROW1_LABEL: ${{ inputs.row1_label }}
+        ROW1_FLAGS: ${{ inputs.row1_flags }}
+        ROW1_DEVICE: ${{ inputs.row1_device }}
+        ROW1_SUMMARY: ${{ inputs.row1_summary }}
+        ROW1_REPORT_URL: ${{ inputs.row1_report_url }}
+        ROW1_REPORT_TITLE: ${{ inputs.row1_report_title }}
+        ROW1_REPORT_LINK_TEXT: ${{ inputs.row1_report_link_text }}
+        ROW1_STATUS: ${{ inputs.row1_status }}
+        ROW1_MISSING_SHARDS: ${{ inputs.row1_missing_shards }}
+        ROW2_EMOJI: ${{ inputs.row2_emoji }}
+        ROW2_LABEL: ${{ inputs.row2_label }}
+        ROW2_FLAGS: ${{ inputs.row2_flags }}
+        ROW2_DEVICE: ${{ inputs.row2_device }}
+        ROW2_SUMMARY: ${{ inputs.row2_summary }}
+        ROW2_REPORT_URL: ${{ inputs.row2_report_url }}
+        ROW2_REPORT_TITLE: ${{ inputs.row2_report_title }}
+        ROW2_REPORT_LINK_TEXT: ${{ inputs.row2_report_link_text }}
+        ROW2_STATUS: ${{ inputs.row2_status }}
+        ROW2_MISSING_SHARDS: ${{ inputs.row2_missing_shards }}
+        EXTRA_FIELD_TITLE: ${{ inputs.extra_field_title }}
+        EXTRA_FIELD_URL: ${{ inputs.extra_field_url }}
+        EXTRA_FIELD_LINK_TEXT: ${{ inputs.extra_field_link_text }}
+      with:
+        script: |
+          const path = require("path");
+          const fs = require("fs");
+          const { modelFromEnv, buildSlackPayload } = require(
+            path.join(process.env.ACTION_PATH, "build-slack-payload.js"),
+          );
+          const payload = buildSlackPayload(modelFromEnv(process.env));
+          fs.writeFileSync(
+            process.env.PAYLOAD_PATH,
+            JSON.stringify({ ...payload, channel: process.env.CHANNEL }),
+            "utf-8",
+          );
+          if (process.env.SECONDARY_CHANNEL) {
+            fs.writeFileSync(
+              process.env.SECONDARY_PAYLOAD_PATH,
+              JSON.stringify({ ...payload, channel: process.env.SECONDARY_CHANNEL }),
+              "utf-8",
+            );
+          }
+
+    - name: Post to Slack channel
+      uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ inputs.token }}
+        payload-file-path: ${{ runner.temp }}/e2e-slack-payload.json
+
+    - name: Post to secondary Slack channel
+      if: ${{ inputs.secondary_channel != '' }}
+      uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+      with:
+        method: chat.postMessage
+        token: ${{ inputs.token }}
+        payload-file-path: ${{ runner.temp }}/e2e-slack-payload-secondary.json

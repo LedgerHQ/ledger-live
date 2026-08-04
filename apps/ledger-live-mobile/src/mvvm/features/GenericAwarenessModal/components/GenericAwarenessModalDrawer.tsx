@@ -12,12 +12,13 @@ import {
 } from "@ledgerhq/live-common/genericAwarenessModal";
 import type {
   CarouselViewModel,
+  GenericAwarenessModalCloseHandler,
   PromptViewModel,
 } from "../screens/useGenericAwarenessModalDrawerViewModel";
 
 type GenericAwarenessModalDrawerViewProps = Readonly<{
   isOpen: boolean;
-  onClose: () => void;
+  onClose: GenericAwarenessModalCloseHandler;
   data: GenericAwarenessModalContentCard | undefined;
   bottomInset: number;
   featureIntroViewModel: FeatureIntroViewModel | undefined;

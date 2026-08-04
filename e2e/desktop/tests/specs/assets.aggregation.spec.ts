@@ -17,8 +17,8 @@ import { DEVICE_TAGS } from "tests/utils/tagsUtils";
  *
  */
 
-test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", () => {
-  test.describe("Scenario 1: Asset aggregation on portfolio", () => {
+test.describe("Asset aggregation", () => {
+  test.describe("Portfolio aggregation", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "portfolioWithManyStablecoins",
@@ -26,7 +26,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Aggregated assets show a single row per asset and list holding addresses per network",
+      `[${Currency.ETH_USDC.testLabel}] - Aggregated assets show one row per asset and list holding addresses`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -55,7 +55,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 2: Asset market and detail", () => {
+  test.describe("Asset detail", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -63,7 +63,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Asset detail shows market info, balance, addresses, add-address and transaction history",
+      `[${Currency.BTC.testLabel}] - Asset detail shows market info, balances, addresses and transaction history`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -102,7 +102,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 3: Star assets", () => {
+  test.describe("Star assets", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -110,7 +110,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Star an asset from its detail page and filter the market list by starred",
+      `[${Currency.BTC.testLabel}] - Star an asset and filter the market list by starred`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {
@@ -156,7 +156,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     );
   });
 
-  test.describe("Scenario 4: Address detail", () => {
+  test.describe("Address detail", () => {
     test.use({
       teamOwner: Team.WALLET_XP,
       userdata: "1AccountBTC1AccountETH",
@@ -164,7 +164,7 @@ test.describe("Wallet 4.0 - Asset Aggregation / Asset Market / Asset Detail", ()
     });
 
     test(
-      "Opening a holding address shows the address detail page",
+      `[${Currency.ETH.testLabel}] - Opening a holding address shows the address detail page`,
       {
         tag: [...DEVICE_TAGS],
         annotation: {

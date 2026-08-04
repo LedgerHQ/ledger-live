@@ -1,4 +1,5 @@
 import test from "tests/fixtures/common";
+import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
@@ -28,6 +29,7 @@ test.describe("Swap - feedback link", () => {
     );
   });
   test.use({
+    teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: exchangeAppInfo,
     featureFlags: {
@@ -53,7 +55,7 @@ test.describe("Swap - feedback link", () => {
     ],
   });
   test(
-    "displays feedback link from success drawer",
+    `[${kycFromAccount.currency.testLabel}-${kycToAccount.currency.testLabel}] - Swap feedback link from success drawer`,
     {
       tag: swapUiTags,
       annotation: {

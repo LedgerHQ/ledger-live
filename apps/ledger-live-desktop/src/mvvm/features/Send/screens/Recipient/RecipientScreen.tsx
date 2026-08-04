@@ -4,6 +4,7 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import React, { useCallback, useMemo, useRef } from "react";
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
+import { useRecipientScanner } from "../../context/RecipientScannerContext";
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../../utils/tracking";
 import { RecipientAddressModal } from "./components/RecipientAddressModal";
@@ -12,6 +13,7 @@ export function RecipientScreen() {
   const { state, uiConfig } = useSendFlowData();
   const { transaction, close } = useSendFlowActions();
   const { navigation } = useFlowWizard();
+  const { isScannerOpen } = useRecipientScanner();
 
   const account = state.account.account;
   const parentAccount = state.account.parentAccount ?? undefined;
@@ -47,7 +49,8 @@ export function RecipientScreen() {
     [transaction, state.recipient, navigation],
   );
 
-  if (!account || !currency) {
+  // While scanning, the camera panel rendered by the header is the only body content
+  if (!account || !currency || isScannerOpen) {
     return null;
   }
 

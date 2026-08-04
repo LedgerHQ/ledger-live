@@ -11,7 +11,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { isValidAddress } from "./validateAddress";
 import { estimateFees } from "./transaction/estimateFees";
 import { NotEnoughEGLDForFees } from "../errors";

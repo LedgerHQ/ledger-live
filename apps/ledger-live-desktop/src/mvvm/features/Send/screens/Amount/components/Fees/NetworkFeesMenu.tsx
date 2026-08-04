@@ -26,6 +26,8 @@ import type { FeeSelectorOption } from "../../types";
 type FeesDisplay = Readonly<{
   label: string;
   value: string;
+  /** Native fee amount shown after `value`, set only when fees are read-only. */
+  secondaryValue: string | null;
   strategyLabel: string;
 }>;
 
@@ -41,7 +43,12 @@ type NetworkFeesMenuProps = Readonly<{
 }>;
 
 export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) {
-  const { label: feesLabel, value: feesValue, strategyLabel: feesStrategyLabel } = display;
+  const {
+    label: feesLabel,
+    value: feesValue,
+    secondaryValue: feesSecondaryValue,
+    strategyLabel: feesStrategyLabel,
+  } = display;
   const { options, selectedId, canOpen } = feeSelector;
   const { t } = useTranslation();
   const { state } = useSendFlowData();
@@ -88,7 +95,12 @@ export function NetworkFeesMenu({ display, feeSelector }: NetworkFeesMenuProps) 
           <span className="body-3">{feesLabel}</span>
           {informationIcon}
         </span>
-        <span className="body-3 text-base">{feesValue}</span>
+        <span className="flex items-center gap-4">
+          <span className="body-3 text-base">{feesValue}</span>
+          {feesSecondaryValue ? (
+            <span className="body-3 text-muted">{feesSecondaryValue}</span>
+          ) : null}
+        </span>
       </div>
     );
   }

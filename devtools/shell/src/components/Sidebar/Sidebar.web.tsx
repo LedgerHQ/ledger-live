@@ -19,7 +19,7 @@ function SidebarView({
   onSelectTool,
   onHome,
   onClose,
-  sidebarFooter,
+  footer,
 }: SidebarViewProps) {
   return (
     <nav
@@ -69,7 +69,7 @@ function SidebarView({
           />
         ))}
       </ul>
-      {sidebarFooter}
+      {footer}
     </nav>
   );
 }
@@ -80,7 +80,7 @@ interface SidebarProps {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
-  sidebarFooter?: ReactNode;
+  footer?: ReactNode;
 }
 
 export function Sidebar(props: SidebarProps) {

@@ -30,7 +30,6 @@
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-cosmos": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-cosmos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@zondax/ledger-cosmos-js": "3.0.3",

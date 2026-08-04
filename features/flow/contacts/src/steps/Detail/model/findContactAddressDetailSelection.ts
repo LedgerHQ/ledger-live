@@ -1,8 +1,5 @@
 import type { ContactAddressId } from "@domain/entity-contact";
-import type {
-  ContactDetailAddressNetworkGroup,
-  ContactDetailAddressRow,
-} from "../types";
+import type { ContactDetailAddressNetworkGroup, ContactDetailAddressRow } from "../types";
 
 export type ContactAddressDetailSelection = Readonly<{
   row: ContactDetailAddressRow;

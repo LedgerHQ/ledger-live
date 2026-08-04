@@ -70,7 +70,7 @@ jobs:
           touch libs/coverage/lcov.info
           touch libs/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:libs --parallel=4 -- --maxWorkers=2
 
           for package_json in $(find ./libs -name "package.json"); do
             lib=$(dirname "$package_json")
@@ -95,7 +95,7 @@ jobs:
           touch features/coverage/lcov.info
           touch features/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:features --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:features --parallel=4 -- --maxWorkers=2
 
           for package_json in $(find ./features -name "package.json" -not -path "*/node_modules/*"); do
             pkg=$(dirname "$package_json")
@@ -118,7 +118,7 @@ jobs:
           touch shared/coverage/lcov.info
           touch shared/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:shared --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:shared --parallel=4 -- --maxWorkers=2
 
           for package_json in $(find ./shared -name "package.json" -not -path "*/node_modules/*" -not -path "*/coverage/*"); do
             pkg=$(dirname "$package_json")
@@ -141,7 +141,7 @@ jobs:
           touch domain/coverage/lcov.info
           touch domain/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:domain --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:domain --parallel=4 -- --maxWorkers=2
 
           for package_json in $(find ./domain -name "package.json" -not -path "*/node_modules/*" -not -path "*/coverage/*"); do
             pkg=$(dirname "$package_json")
@@ -164,7 +164,7 @@ jobs:
           touch devtools/coverage/lcov.info
           touch devtools/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:devtools --parallel=4 -- --runInBand=1
+          pnpm exec nx run-many -t coverage --projects=tag:scope:devtools --parallel=4 -- --maxWorkers=2
 
           for package_json in $(find ./devtools -name "package.json" -not -path "*/node_modules/*" -not -path "*/coverage/*"); do
             pkg=$(dirname "$package_json")

@@ -1,0 +1,37 @@
+name: "Stop Resource Usage Sampler"
+description: "Stops the background usage sampler and uploads the collected CSV as a build artifact"
+inputs:
+  sampler_pid:
+    description: "PID returned by start-usage-sampler"
+    required: true
+  csv_path:
+    description: "Path to the CSV written by start-usage-sampler"
+    required: true
+  artifact_name:
+    description: "Name for the uploaded usage-metrics artifact"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Stop sampler
+      id: stop
+      shell: bash
+      run: |
+        kill "${{ inputs.sampler_pid }}" 2>/dev/null || true
+        # Only upload when the sampler actually produced a CSV — skip silently
+        # otherwise so a sampler that never started adds no failing/noisy step.
+        if [ -n "${{ inputs.csv_path }}" ] && [ -f "${{ inputs.csv_path }}" ]; then
+          echo "csv_exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "csv_exists=false" >> "$GITHUB_OUTPUT"
+          echo "::notice title=usage-sampler::No usage-metrics CSV found; skipping upload."
+        fi
+
+    - name: Upload usage metrics artifact
+      if: steps.stop.outputs.csv_exists == 'true'
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ inputs.csv_path }}
+        if-no-files-found: error

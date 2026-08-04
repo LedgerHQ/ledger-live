@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { findCryptoCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByTicker } from "@domain/entity-currency-crypto";
 
 function getTimeAgoCode(date: Date): string {
   const now = new Date();

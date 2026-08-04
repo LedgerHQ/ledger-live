@@ -1,5 +1,7 @@
+const TRUNCATED_ADDRESS_VISIBLE_LENGTH = 8 + 3 + 8;
+
 export function truncateContactAddress(address: string): string {
-  if (address.length <= 10) {
+  if (address.length <= TRUNCATED_ADDRESS_VISIBLE_LENGTH) {
     return address;
   }
 

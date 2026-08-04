@@ -662,7 +662,7 @@ export default function DebugContentCards() {
       ];
     }
     const presetByPlacement: Partial<Record<QaConsolePlacement, BuilderPreset>> = {
-      [ContentCardLocation.TopWallet]: "topWalletHero",
+      [ContentCardLocation.TopWallet]: "topWalletHardwareCarousel",
       [ContentCardLocation.Wallet]: "walletCarousel",
       [ContentCardLocation.Asset]: "asset",
       [ContentCardLocation.MyLedger]: "myLedger",

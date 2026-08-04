@@ -19,7 +19,7 @@ export function runPortfolioTransactionsHistoryTest(
   tags: string[],
   operationRowAccountName?: string,
 ) {
-  (isQ2WithOperationsList() ? describe.skip : describe)("Portfolio transaction history", () => {
+  (isQ2WithOperationsList() ? describe.skip : describe)("Portfolio", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
@@ -31,7 +31,7 @@ export function runPortfolioTransactionsHistoryTest(
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.ticker}] Transaction history displayed when user added his accounts`, async () => {
+    it(`[${account.currency.testLabel}] - Transaction history is displayed after adding accounts`, async () => {
       await app.portfolio.checkTransactionHistorySection();
       await app.portfolio.selectAndClickOnLastOperation(/(Fees|Sent).*/i, operationRowAccountName);
       await app.operationDetails.checkTransactionDetailsVisibility(account.accountName);
@@ -40,7 +40,7 @@ export function runPortfolioTransactionsHistoryTest(
 }
 
 export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string[]) {
-  describe("Portfolio charts and assets", () => {
+  describe("Portfolio", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "speculos-tests-app",
@@ -50,7 +50,7 @@ export function runPortfolioChartsAndAssetsTest(tmsLinks: string[], tags: string
     setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(link => $TmsLink(link));
     tags.forEach(tag => $Tag(tag));
-    it("Charts and assets section are displayed when user added his accounts", async () => {
+    it("Charts and assets section are displayed after adding accounts", async () => {
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.checkQuickActionButtonsVisibility();
       await app.portfolio.checkAssetAllocationSection();

@@ -77,6 +77,26 @@ describe("API", () => {
     });
   });
 
+  it("getAccountInfo returns tron account resources", async () => {
+    const info = await module.getAccountInfo!("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1");
+
+    expect(info).toMatchObject({
+      type: "tron",
+      energyLimit: expect.any(Number),
+      energy: expect.any(Number),
+      bandwidth: expect.any(Number),
+    });
+    // available amounts and the limit are never negative
+    const { energyLimit, energy, bandwidth } = info as {
+      energyLimit: number;
+      energy: number;
+      bandwidth: number;
+    };
+    expect(energyLimit).toBeGreaterThanOrEqual(0);
+    expect(energy).toBeGreaterThanOrEqual(0);
+    expect(bandwidth).toBeGreaterThanOrEqual(0);
+  });
+
   it("getBlockInfo returns valid block info", async () => {
     const lastBlockInfo = await module.lastBlock();
     const blockHeight = lastBlockInfo.height - 10;

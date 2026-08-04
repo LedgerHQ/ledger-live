@@ -1,12 +1,6 @@
 import React from "react";
 import { TileButton } from "@ledgerhq/lumen-ui-react";
-import {
-  ArrowUp,
-  Check,
-  Copy,
-  PenEdit,
-  Trash,
-} from "@ledgerhq/lumen-ui-react/symbols";
+import { ArrowUp, Check, Copy, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
 import type { ContactAddressDetailDialogLabels } from "./types";
 
 type ContactAddressDetailActionsProps = Readonly<{

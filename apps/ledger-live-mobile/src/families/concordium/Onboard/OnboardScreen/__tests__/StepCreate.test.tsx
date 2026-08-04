@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";

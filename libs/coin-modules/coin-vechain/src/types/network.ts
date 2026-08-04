@@ -79,3 +79,37 @@ export interface QueryResponse {
   reverted: boolean;
   vmError: string;
 }
+
+/** Thor `GET /blocks/{revision}` transfer (VET or VIP180 event, when `expanded=true`). */
+export interface ApiResponseBlockTransfer {
+  sender: string;
+  recipient: string;
+  amount: string;
+}
+
+/** A single clause output, part of an expanded block transaction. */
+export interface ApiResponseBlockOutput {
+  contractAddress: string | null;
+  events: EventLog[];
+  transfers: ApiResponseBlockTransfer[];
+}
+
+/** An expanded transaction, as returned by Thor `GET /blocks/{revision}?expanded=true`. */
+export interface ApiResponseBlockTransaction {
+  id: string;
+  origin: string;
+  gasPayer?: string;
+  gasUsed: number;
+  paid: string;
+  reverted: boolean;
+  outputs: ApiResponseBlockOutput[];
+}
+
+/** Thor `GET /blocks/{revision}` response. */
+export interface ApiResponseBlock {
+  id: string;
+  number: number;
+  timestamp: number;
+  /** Transaction ids (`string[]`) when `expanded=false`, full transactions when `expanded=true`. */
+  transactions: unknown[];
+}

@@ -1,5 +1,5 @@
-import { NotEnoughGas } from "@ledgerhq/errors";
 import {
+  NotEnoughGas,
   SolanaMemoIsTooLong,
   SolanaRecipientAccountNotFunded,
   SolanaStakeAccountAmountTooLow,

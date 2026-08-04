@@ -3,16 +3,16 @@ import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
-import { NearTransaction } from "./sdk.types";
+import { NearTransaction, NearV3Response } from "./sdk.types";
 
 const fetchTransactions = async (address: string): Promise<NearTransaction[]> => {
   const currencyConfig = getCoinConfig();
 
-  const response = await liveNetwork<{ txns: NearTransaction[] }>({
-    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v1/account/${address}/txns-only`,
+  const response = await liveNetwork<NearV3Response<NearTransaction[]>>({
+    url: `${currencyConfig.infra.API_NEARBLOCKS_INDEXER}/v3/accounts/${address}/txns`,
   });
 
-  return response.data.txns || [];
+  return response.data.data ?? [];
 };
 
 function isSender(transaction: NearTransaction, address: string): boolean {
@@ -35,10 +35,10 @@ function getOperationType(transaction: NearTransaction, address: string): Operat
 }
 
 function getOperationValue(transaction: NearTransaction, type: OperationType): BigNumber {
-  const amount = transaction.actions?.at(0)?.deposit || 0;
+  const amount = transaction.actions_agg?.deposit || 0;
 
   if (type === "OUT") {
-    return new BigNumber(amount).plus(transaction.outcomes_agg.transaction_fee);
+    return new BigNumber(amount).plus(transaction.outcomes_agg?.transaction_fee || 0);
   }
 
   return new BigNumber(amount);
@@ -54,17 +54,20 @@ async function transactionToOperation(
   return {
     id: encodeOperationId(accountId, transaction.transaction_hash, type),
     accountId,
-    fee: new BigNumber(transaction.outcomes_agg.transaction_fee || 0),
+    fee: new BigNumber(transaction.outcomes_agg?.transaction_fee || 0),
     value: getOperationValue(transaction, type),
     type,
     hash: transaction.transaction_hash,
-    blockHash: transaction.included_in_block_hash,
-    blockHeight: transaction.block.block_height,
+    blockHash: transaction.block?.block_hash,
+    blockHeight:
+      transaction.block?.block_height !== undefined
+        ? Number(transaction.block.block_height)
+        : undefined,
     date: new Date(parseFloat(transaction.block_timestamp) / 1000000),
     extra: {},
     senders: transaction.signer_account_id ? [transaction.signer_account_id] : [],
     recipients: transaction.receiver_account_id ? [transaction.receiver_account_id] : [],
-    hasFailed: !transaction.outcomes.status,
+    hasFailed: transaction.outcomes?.status === false,
   };
 }
 

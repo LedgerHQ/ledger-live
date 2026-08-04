@@ -2,8 +2,8 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
-  UnresponsiveDeviceError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UnresponsiveDeviceError } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import type {
   DeviceId,

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getFiatCurrencyByTicker } from "../../currencies";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";

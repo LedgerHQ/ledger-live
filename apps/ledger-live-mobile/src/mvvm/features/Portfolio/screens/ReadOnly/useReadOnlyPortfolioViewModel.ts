@@ -5,11 +5,11 @@ import { useAdjustedSafeAreaInsets } from "LLM/hooks/useNavigationBarHeights";
 import { useRefreshAccountsOrderingAfterInteractions } from "~/actions/general";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePortfolioAnalyticsOptInPrompt";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
-import { useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
+import { useLNUpsellBannerState } from "LLM/features/LNUpsell";
 
 interface UseReadOnlyPortfolioViewModelResult {
   safeAreaTop: number;
-  isLNSUpsellBannerShown: boolean;
+  isLNUpsellBannerShown: boolean;
   source: string | undefined;
   onBackFromUpdate: () => void;
 }
@@ -19,7 +19,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
   navigate: (name: string, params?: object) => void;
 }): UseReadOnlyPortfolioViewModelResult => {
   const { top: safeAreaTop } = useAdjustedSafeAreaInsets();
-  const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
+  const isLNUpsellBannerShown = useLNUpsellBannerState("wallet").isShown;
 
   usePortfolioAnalyticsOptInPrompt();
 
@@ -41,7 +41,7 @@ const useReadOnlyPortfolioViewModel = (navigation: {
 
   return {
     safeAreaTop,
-    isLNSUpsellBannerShown,
+    isLNUpsellBannerShown,
     source,
     onBackFromUpdate,
   };

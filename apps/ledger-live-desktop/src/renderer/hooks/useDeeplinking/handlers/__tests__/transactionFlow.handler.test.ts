@@ -1,16 +1,17 @@
 import { Account } from "@ledgerhq/types-live";
-import {
-  getCryptoCurrencyById,
-  findCryptoCurrencyByKeyword,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, findCryptoCurrencyByKeyword } from "@domain/entity-currency-crypto";
 import { closeAllModal, openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { sendHandler, receiveHandler, delegateHandler } from "../transactionFlow.handler";
 import { createMockContext } from "./test-utils";
 
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
+  findCryptoCurrencyByKeyword: jest.fn(),
+}));
+
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
-  findCryptoCurrencyByKeyword: jest.fn(),
   parseCurrencyUnit: jest.fn((unit, amount) => amount),
 }));
 

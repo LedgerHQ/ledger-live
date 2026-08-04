@@ -1,6 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import {
@@ -67,8 +68,12 @@ describe("bridge utils", () => {
 
   describe("mergeSubAccounts", () => {
     it("returns newSubAccounts if no initial account exists", () => {
-      const mockedTokenCurrency1 = getMockedHTSTokenCurrency({ id: "token1" });
-      const mockedTokenCurrency2 = getMockedHTSTokenCurrency({ id: "token2" });
+      const mockedTokenCurrency1 = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token1"),
+      });
+      const mockedTokenCurrency2 = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token2"),
+      });
       const mockedTokenAccount1 = getMockedTokenAccount(mockedTokenCurrency1, { id: "ta1" });
       const mockedTokenAccount2 = getMockedTokenAccount(mockedTokenCurrency2, { id: "ta2" });
       const initialAccount = undefined;
@@ -112,8 +117,10 @@ describe("bridge utils", () => {
     });
 
     it("adds new sub accounts that are not present in initial account", () => {
-      const existingToken = getMockedHTSTokenCurrency({ id: "token1" });
-      const newToken = getMockedHTSTokenCurrency({ id: "token2" });
+      const existingToken = getMockedHTSTokenCurrency({
+        id: TokenCurrencyIdSchema.parse("token1"),
+      });
+      const newToken = getMockedHTSTokenCurrency({ id: TokenCurrencyIdSchema.parse("token2") });
       const existingTokenAccount = getMockedTokenAccount(existingToken, { id: "ta1" });
       const newTokenAccount = getMockedTokenAccount(newToken, { id: "ta2" });
       const mockedAccount = getMockedAccount({ subAccounts: [existingTokenAccount] });

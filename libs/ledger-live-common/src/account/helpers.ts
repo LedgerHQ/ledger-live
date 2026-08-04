@@ -1,6 +1,6 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { TokenCurrency } from "@domain/entity-currency-token";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 export { filterAccountsExcludingBlacklisted } from "./filterAccountsExcludingBlacklisted";
@@ -24,31 +24,42 @@ export {
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 /**
- * Load blacklisted tokens and organize them into sections by parent currency
- * @param tokenIds - Array of token IDs to load
- * @returns Array of sections with parent currency and tokens
+ * Load blacklisted (hidden) assets and organize them into sections by parent currency.
+ * Hidden ids can be native coins (grouped under themselves) as well as tokens (grouped
+ * under their parent). Token lookups are isolated so one failure keeps the rest of the list.
  */
 export async function loadBlacklistedTokenSections(
-  tokenIds: string[],
-): Promise<Array<{ parentCurrency: CryptoCurrency; tokens: TokenCurrency[] }>> {
-  const tokens = await Promise.all(
-    tokenIds.map(tokenId => getCryptoAssetsStore().findTokenById(tokenId)),
+  assetIds: string[],
+): Promise<Array<{ parentCurrency: CryptoCurrency; assets: CryptoOrTokenCurrency[] }>> {
+  const resolved = await Promise.all(
+    assetIds.map(async (assetId): Promise<CryptoOrTokenCurrency | undefined> => {
+      const coin = findCryptoCurrencyById(assetId);
+      if (coin) {
+        return coin;
+      }
+      return getCryptoAssetsStore()
+        .findTokenById(assetId)
+        .catch(() => undefined);
+    }),
   );
 
-  const sections: Array<{ parentCurrency: CryptoCurrency; tokens: TokenCurrency[] }> = [];
+  const sections: Array<{ parentCurrency: CryptoCurrency; assets: CryptoOrTokenCurrency[] }> = [];
 
-  for (const token of tokens) {
-    if (token) {
-      const parentCurrency = getCryptoCurrencyById(token.parentCurrencyId);
-      const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
-      if (index < 0) {
-        sections.push({
-          parentCurrency,
-          tokens: [token],
-        });
-      } else {
-        sections[index].tokens.push(token);
-      }
+  for (const asset of resolved) {
+    if (!asset) continue;
+
+    const parentCurrency =
+      asset.type === "TokenCurrency" ? findCryptoCurrencyById(asset.parentCurrencyId) : asset;
+    if (!parentCurrency) continue;
+
+    const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
+    if (index < 0) {
+      sections.push({
+        parentCurrency,
+        assets: [asset],
+      });
+    } else {
+      sections[index].assets.push(asset);
     }
   }
 

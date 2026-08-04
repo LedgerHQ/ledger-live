@@ -50,6 +50,7 @@ type AmountInputProps = Readonly<{
 type FeesProps = Readonly<{
   feesRowLabel: string;
   feesRowValue: string;
+  feesRowSecondaryValue: string | null;
   feesRowStrategyLabel: string;
   showNetworkFees: boolean;
   selectedFeeStrategy: string | null;

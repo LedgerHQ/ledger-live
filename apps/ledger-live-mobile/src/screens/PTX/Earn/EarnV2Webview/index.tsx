@@ -16,6 +16,7 @@ import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 import type { WebviewState } from "~/components/Web3AppWebview/types";
 import { useEarnIntentFlowPresentation } from "../useEarnIntentFlowPresentation";
+import { shouldDisplayEarnBackgroundCanvas } from "~/components/RootNavigator/getEarnScreenOptions";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -23,6 +24,7 @@ type Props = {
   isLwm40Enabled?: boolean;
   hideMainNavigator?: boolean;
   appManifestNotFoundError: Error;
+  shouldDisplayBackgroundCanvas?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -36,15 +38,17 @@ export const EarnV2Webview = ({
   isLwm40Enabled,
   hideMainNavigator,
   appManifestNotFoundError,
+  shouldDisplayBackgroundCanvas,
 }: Props) => {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
   const { theme: lumenTheme } = useLumenTheme();
   const canvasColor = lumenTheme.colors.bg.canvas;
-  const isSimulateIntent = inputs?.intent === "simulate";
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
   const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
     useWalletFeaturesConfig("mobile");
+
+  const isSwapToEarnEnabled = useFeature("swapToEarn")?.enabled ?? false;
 
   const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
 
@@ -76,10 +80,15 @@ export const EarnV2Webview = ({
     webviewUrl,
     webviewUrlRef,
     canvasColor,
+    isSwapToEarnEnabled,
   });
 
   const inIntentFlow = !!hideMainNavigator && intentFlowState !== false;
   const showsBackground = isPtxUiMinV2 && !inIntentFlow;
+
+  const displayBackgroundCanvas =
+    shouldDisplayBackgroundCanvas ??
+    shouldDisplayEarnBackgroundCanvas(inputs?.intent, isSwapToEarnEnabled);
 
   const webviewInputs = {
     ...inputs,
@@ -96,7 +105,7 @@ export const EarnV2Webview = ({
   return (
     <View
       testID="earn-screen"
-      style={[styles.container, isSimulateIntent && { backgroundColor: canvasColor }]}
+      style={[styles.container, displayBackgroundCanvas && { backgroundColor: canvasColor }]}
     >
       {showsBackground && <LiveAppBackground type="earn" scrollY={scrollY} />}
       <View style={styles.contentContainer} pointerEvents="box-none">

@@ -5,8 +5,7 @@ import { getStakes } from "./getStakes";
 function mkStakes(delegations: unknown[], unbondings: unknown[]): CosmosAPI {
   return {
     getCurrency: () => ({ id: "cosmos", units: [{}, { code: "uatom" }] }),
-    getDelegations: jest.fn().mockResolvedValue(delegations),
-    getUnbondings: jest.fn().mockResolvedValue(unbondings),
+    getStakingPositions: jest.fn().mockResolvedValue({ delegations, unbondings }),
   } as unknown as CosmosAPI;
 }
 
@@ -32,7 +31,7 @@ describe("logic/staking/getStakes", () => {
     expect(s.delegate).toBe("cosmosvaloper1v");
     expect(s.amountDeposited).toBe(1000000n);
     expect(s.amountRewarded).toBe(2500n);
-    expect(s.amount).toBe(1002500n);
+    expect(s.amount).toBe(1000000n); // principal only
     expect(s.actions).toContain("claim_reward");
     expect(s.actions).toContain("undelegate");
   });

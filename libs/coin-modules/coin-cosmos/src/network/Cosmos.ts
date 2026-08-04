@@ -1,4 +1,4 @@
-import { SequenceNumberError } from "@ledgerhq/errors";
+import { SequenceNumberError } from "../errors";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
@@ -115,37 +115,12 @@ export class CosmosAPI {
         this.getWithdrawAddress(address),
       ]);
 
-      let staking = { delegations, redelegations, unbondings };
-
-      if (this.chainInstance.epochedStaking) {
-        staking.unbondings = staking.unbondings.map(u =>
-          u.creationHeight === undefined
-            ? u
-            : {
-                ...u,
-                completionDate: estimateEpochedUnbondingCompletion(
-                  u.creationHeight,
-                  blockHeight,
-                  this.chainInstance.unbondingPeriod,
-                ),
-              },
-        );
-
-        const queued = await fetchQueuedStakingMessages(
-          this.defaultEndpoint,
-          address,
-          currency.units[1].code,
-        );
-        // at or past the boundary the queued msgs have already executed into `delegations`
-        // (the queue runs in the boundary block's EndBlocker), so merging would double-count
-        if (queued && queued.messages.length > 0 && blockHeight < queued.epochBoundary) {
-          staking = mergeQueuedMessages(staking, queued.messages, {
-            blockHeight,
-            epochBoundary: queued.epochBoundary,
-            unbondingPeriodDays: this.chainInstance.unbondingPeriod,
-          });
-        }
-      }
+      const staking = await this.mergeQueuedStaking(
+        { delegations, redelegations, unbondings },
+        address,
+        currency,
+        blockHeight,
+      );
 
       return {
         accountInfo,
@@ -165,6 +140,97 @@ export class CosmosAPI {
         throw new Error(`Error during ${currency.id} synchronization: ${error.message}`);
       }
     }
+  };
+
+  /**
+   * Merge Babylon's queued x/epoching staking into the base staking. `blockHeight` is optional —
+   * getAccountInfo passes its own to avoid a second getHeight.
+   */
+  private mergeQueuedStaking = async (
+    staking: {
+      delegations: CosmosDelegation[];
+      redelegations: CosmosRedelegation[];
+      unbondings: CosmosUnbonding[];
+    },
+    address: string,
+    currency: CryptoCurrency,
+    blockHeight?: number,
+  ): Promise<{
+    delegations: CosmosDelegation[];
+    redelegations: CosmosRedelegation[];
+    unbondings: CosmosUnbonding[];
+  }> => {
+    if (!this.chainInstance.epochedStaking) return staking;
+    const denom = currency.units[1]?.code;
+    if (!denom) return staking;
+    const [height, queued] = await Promise.all([
+      blockHeight !== undefined ? Promise.resolve(blockHeight) : this.getHeight(),
+      fetchQueuedStakingMessages(this.defaultEndpoint, address, denom),
+    ]);
+    // re-anchor epoched unbondings to the fast-unbonding estimate — the chain's completion_time is the
+    // full unbonding period and wrong for the fast path; skip when creation_height is missing.
+    const reanchored = {
+      ...staking,
+      unbondings: staking.unbondings.map(u =>
+        u.creationHeight === undefined
+          ? u
+          : {
+              ...u,
+              completionDate: estimateEpochedUnbondingCompletion(
+                u.creationHeight,
+                height,
+                this.chainInstance.unbondingPeriod,
+              ),
+            },
+      ),
+    };
+    // at/after the boundary the queue already executed into the base staking — merging double-counts
+    if (queued && queued.messages.length > 0 && height < queued.epochBoundary) {
+      return mergeQueuedMessages(reanchored, queued.messages, {
+        blockHeight: height,
+        epochBoundary: queued.epochBoundary,
+        unbondingPeriodDays: this.chainInstance.unbondingPeriod,
+      });
+    }
+    return reanchored;
+  };
+
+  getStakingPositions = async (
+    address: string,
+    currency: CryptoCurrency,
+  ): Promise<{ delegations: CosmosDelegation[]; unbondings: CosmosUnbonding[] }> => {
+    const [delegations, unbondings] = await Promise.all([
+      this.getDelegations(address, currency),
+      this.getUnbondings(address),
+    ]);
+    const merged = await this.mergeQueuedStaking(
+      { delegations, redelegations: [], unbondings },
+      address,
+      currency,
+    );
+    return { delegations: merged.delegations, unbondings: merged.unbondings };
+  };
+
+  /**
+   * Executed + (epoched chains only) queued x/epoching redelegations.
+   * Fetches delegations only when epoched — the queued-redelegate merge needs them to clamp.
+   */
+  getRedelegationsWithQueued = async (
+    address: string,
+    currency: CryptoCurrency,
+  ): Promise<CosmosRedelegation[]> => {
+    const executed = await this.getRedelegations(address);
+    if (!this.chainInstance.epochedStaking) return executed;
+    const [delegations, unbondings] = await Promise.all([
+      this.getDelegations(address, currency),
+      this.getUnbondings(address),
+    ]);
+    const merged = await this.mergeQueuedStaking(
+      { delegations, redelegations: executed, unbondings },
+      address,
+      currency,
+    );
+    return merged.redelegations;
   };
 
   private getCosmosSDKVersion = async (): Promise<string> => {

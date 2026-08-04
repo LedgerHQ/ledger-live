@@ -31,7 +31,7 @@
     "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-aleo": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "rxjs": "catalog:"
   },
   "scripts": {
@@ -62,6 +62,11 @@
       "import": "./lib-es/index.js",
       "require": "./lib/index.js",
       "default": "./lib/index.js"
+    },
+    "./errors": {
+      "@ledgerhq/source": "./src/errors.ts",
+      "require": "./lib/errors.js",
+      "default": "./lib-es/errors.js"
     },
     "./lib-es/*": "./lib-es/*.js",
     "./lib/*": "./lib/*.js",

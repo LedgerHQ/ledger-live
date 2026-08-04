@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
 import { concatMap, delay, scan, distinctUntilChanged, throttleTime } from "rxjs/operators";
-import { DeviceInOSUExpected } from "@ledgerhq/errors";
+import { DeviceInOSUExpected } from "../errors";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import flash from "./flash";

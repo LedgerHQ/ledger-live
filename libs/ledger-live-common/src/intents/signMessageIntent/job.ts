@@ -1,4 +1,5 @@
-import { TransportStatusError, UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Observable, type Subscription } from "rxjs";

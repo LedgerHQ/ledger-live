@@ -4,7 +4,7 @@ import {
   type MarketStateSlice,
 } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";

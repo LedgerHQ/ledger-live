@@ -1,6 +1,6 @@
 import { z } from "zod";
 import network from "@ledgerhq/live-network";
-import { JWT } from "./types";
+import type { JWT } from "./types";
 import {
   type KeycloakToken,
   KeycloakTokenResponseSchema,
@@ -20,6 +20,7 @@ export const APIJWTSchema = z.object({
 export type APIJWT = z.infer<typeof APIJWTSchema>;
 
 export const ChallengeJsonSchema = z.object({
+  payloadType: z.optional(z.number().int()),
   version: z.number().int(),
   challenge: z.object({
     data: z.hex().min(1),

@@ -22,6 +22,7 @@ import {
 import {
   ContentCardLocation,
   ContentCardsLayout,
+  ContentCardsType,
   LandingPageUseCase,
 } from "~/dynamicContent/types";
 import type { BrazeContentCard } from "~/dynamicContent/types";
@@ -116,6 +117,8 @@ describe("Content Cards QA console helpers", () => {
     ] as const;
     const categoryPresets = [
       "topWalletHero",
+      "topWalletHardwareCarousel",
+      "topWalletHeroCarousel",
       "topWalletAction",
       "myLedger",
       "landingPageCategory",
@@ -151,12 +154,54 @@ describe("Content Cards QA console helpers", () => {
 
   it("should give every Top wallet preset the same 'alwayson' category id, so they land under one category like prod", () => {
     const hero = buildDebugContentCard(buildPresetCardBuilderValues("topWalletHero", 1000));
+    const hardwareCarousel = buildDebugContentCard(
+      buildPresetCardBuilderValues("topWalletHardwareCarousel", 1200),
+    );
+    const heroCarousel = buildDebugContentCard(
+      buildPresetCardBuilderValues("topWalletHeroCarousel", 1500),
+    );
     const action = buildDebugContentCard(buildPresetCardBuilderValues("topWalletAction", 2000));
 
     expect(hero.category?.categoryId).toBe("alwayson");
+    expect(hardwareCarousel.category?.categoryId).toBe("alwayson");
+    expect(heroCarousel.category?.categoryId).toBe("alwayson");
     expect(action.category?.categoryId).toBe("alwayson");
     expect(hero.warnings).toEqual([]);
+    expect(hardwareCarousel.warnings).toEqual([]);
+    expect(heroCarousel.warnings).toEqual([]);
     expect(action.warnings).toEqual([]);
+  });
+
+  it("should build a Top wallet hardware carousel preset matching prod Braze keys", () => {
+    const result = buildDebugContentCard(
+      buildPresetCardBuilderValues("topWalletHardwareCarousel", 1000),
+    );
+
+    expect(result.category).toMatchObject({
+      categoryId: "alwayson",
+      location: ContentCardLocation.TopWallet,
+      title: "Touchscreen offers",
+      cardsType: ContentCardsType.smallSquare,
+      cardsLayout: ContentCardsLayout.carousel,
+      isDismissable: true,
+    });
+    expect(result.cards[0].extras).toMatchObject({
+      categoryId: "alwayson",
+      title: "Ledger Stax",
+      tag: "30% off",
+    });
+  });
+
+  it("should build a Top wallet hero carousel preset with hero cards in carousel layout", () => {
+    const result = buildDebugContentCard(
+      buildPresetCardBuilderValues("topWalletHeroCarousel", 1000),
+    );
+
+    expect(result.category).toMatchObject({
+      categoryId: "alwayson",
+      cardsType: ContentCardsType.hero,
+      cardsLayout: ContentCardsLayout.carousel,
+    });
   });
 
   it("should block invalid builder payloads unless add anyway is explicit", () => {

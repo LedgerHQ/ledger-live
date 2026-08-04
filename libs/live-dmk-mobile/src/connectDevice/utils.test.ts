@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
+import { PeerRemovedPairing } from "../errors";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 
 import { BaseConnectionErrorTypes, ConnectionErrorTypes } from "./types";

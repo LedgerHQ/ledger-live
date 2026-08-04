@@ -1,14 +1,15 @@
 import { Divider } from "@ledgerhq/lumen-ui-react";
-import { TransportStateIndicator } from "./components/TransportStateIndicator/TransportStateIndicator";
-import { useSyncExternalStore, useState } from "react";
-import { TransportPanelContent } from "./components/TransportPanelContent/TransportPanelContent.web";
+import { TransportStateIndicator } from "./components/TransportStateIndicator";
+import { useState } from "react";
+import { TransportPanelContent } from "./components/TransportPanelContent";
 import { ChevronDown, ChevronUp } from "@ledgerhq/lumen-ui-react/symbols";
 import type { MessageMap } from "@devtools/transport";
 import type { TransportPanelProps } from "./types";
+import { useTransportState } from "./hooks";
 
 export function TransportPanel<M extends MessageMap>(props: TransportPanelProps<M>) {
   const { transport } = props;
-  const state = useSyncExternalStore(transport.subscribe, transport.getState, transport.getState);
+  const state = useTransportState(transport);
   const [isExpanded, setIsExpanded] = useState(false);
   return (
     <div>

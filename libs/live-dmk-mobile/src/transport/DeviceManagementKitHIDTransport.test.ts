@@ -16,7 +16,7 @@ import {
   activeDeviceSessionSubject,
 } from "./DeviceManagementKitHIDTransport";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 
 function createMockDMK(): DeviceManagementKit {
   const mock = {

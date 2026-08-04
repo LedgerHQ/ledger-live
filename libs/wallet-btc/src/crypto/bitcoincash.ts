@@ -1,7 +1,7 @@
 import bchaddr from "bchaddrjs";
 import { address as btcAddress } from "bitcoinjs-lib";
 import type { BitcoinJS } from "coininfo";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "../errors";
 import Base from "./base";
 
 // a mock explorer class that just use js objects

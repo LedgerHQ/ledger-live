@@ -16,7 +16,7 @@
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 const CHUNK_SIZE = 250;
 const CLA = 0x55;
 const APP_KEY = "CSM";

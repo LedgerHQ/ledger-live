@@ -2,7 +2,7 @@ import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getKey } from "~/renderer/storage";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";

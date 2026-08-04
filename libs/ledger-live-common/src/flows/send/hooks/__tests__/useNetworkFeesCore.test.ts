@@ -16,11 +16,11 @@ import type { SendFlowUiConfig } from "../../types";
 jest.mock("../../../../bridge/descriptor/send/features");
 jest.mock("../../../../bridge/useAccountBridge");
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit");
-jest.mock("../useFeePresetFiatValuesCore", () => ({
-  useFeePresetFiatValuesCore: jest.fn(() => ({
-    slow: "$1.00",
-    medium: "$2.00",
-    fast: "$3.00",
+jest.mock("../useFeePresetValuesCore", () => ({
+  useFeePresetValuesCore: jest.fn(() => ({
+    slow: { fiat: "$1.00", crypto: "0.00001 BTC" },
+    medium: { fiat: "$2.00", crypto: "0.00002 BTC" },
+    fast: { fiat: "$3.00", crypto: "0.00003 BTC" },
   })),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
@@ -31,9 +31,9 @@ jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
 const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockedUseAccountBridge = jest.mocked(useAccountBridge);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
-const mockedUseFeePresetFiatValuesCore = jest.requireMock(
-  "../useFeePresetFiatValuesCore",
-).useFeePresetFiatValuesCore;
+const mockedUseFeePresetValuesCore = jest.requireMock(
+  "../useFeePresetValuesCore",
+).useFeePresetValuesCore;
 
 const btcUnit: Unit = { name: "Bitcoin", code: "BTC", magnitude: 8 };
 const usdUnit: Unit = { name: "US Dollar", code: "USD", magnitude: 2 };
@@ -118,6 +118,7 @@ describe("useNetworkFeesCore", () => {
     transaction?: Partial<Transaction>;
     status?: Partial<TransactionStatus>;
     uiConfig?: Partial<SendFlowUiConfig>;
+    displayMode?: "fiat" | "crypto";
   }) =>
     renderHook(() =>
       useNetworkFeesCore({
@@ -126,76 +127,137 @@ describe("useNetworkFeesCore", () => {
         transaction: buildTransaction(overrides?.transaction),
         status: { ...mockStatus, ...overrides?.status },
         uiConfig: { ...mockUiConfig, ...overrides?.uiConfig },
-        transactionActions: { updateTransaction: mockUpdateTransaction } as never,
+        transactionActions: {
+          updateTransaction: mockUpdateTransaction,
+        } as never,
         fiatUnit: usdUnit,
         accountUnit: btcUnit,
+        displayMode: overrides?.displayMode ?? "fiat",
         calculateCountervalue: mockCalculateCountervalue,
       }),
     );
 
-  it("returns selected preset fiat value when a non-custom strategy is selected", () => {
+  /** No presets, no custom fees, no coin control: the read-only fee case (SOL, XRP, TRX). */
+  const readOnlyFees = {
+    hasFeePresets: false,
+    hasCustomFees: false,
+    hasCoinControl: false,
+  };
+
+  it("prefers the selected preset's own estimate over the transaction status", () => {
     const { result } = renderCore({ transaction: { feesStrategy: "medium" } });
 
     expect(result.current.selectedFeeStrategy).toBe("medium");
-    expect(result.current.selectedPresetFiatValue).toBe("$2.00");
+    expect(result.current.feesRowValue).toBe("$2.00");
   });
 
-  it("returns null selectedPresetFiatValue for custom strategy", () => {
-    const { result } = renderCore({ transaction: { feesStrategy: "custom" } });
+  it("shows the selected preset's native amount in crypto mode", () => {
+    const { result } = renderCore({
+      transaction: { feesStrategy: "medium" },
+      displayMode: "crypto",
+    });
 
-    expect(result.current.selectedPresetFiatValue).toBeNull();
+    expect(result.current.feesRowValue).toBe("0.00002 BTC");
+  });
+
+  it("falls back to the status estimate for the custom strategy", () => {
+    const { result } = renderCore({
+      transaction: { feesStrategy: "custom" },
+      uiConfig: { hasCustomFees: true },
+    });
+
+    expect(result.current.feesRowValue).toBe("FORMATTED_10");
   });
 
   it("formats estimated fees for display", () => {
     const { result } = renderCore();
 
-    expect(result.current.displayFeesValue).toBe("FORMATTED_10");
-    expect(result.current.formattedEstimatedFeesFiat).toBe("FORMATTED_10");
+    expect(result.current.feesRowValue).toBe("FORMATTED_10");
   });
 
   it("returns '-' when estimated fees are zero", () => {
-    const { result } = renderCore({ status: { estimatedFees: new BigNumber(0) } });
-
-    expect(result.current.displayFeesValue).toBe("-");
-  });
-
-  it("shows fiat • crypto (incl. a zero fee) when the coin opts into showFeeCurrencyAmount", () => {
-    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
-
-    const { result: nonZero } = renderCore();
-    expect(nonZero.current.showFeeCurrencyAmount).toBe(true);
-    expect(nonZero.current.displayFeesValue).toBe("FORMATTED_10 • FORMATTED_1000");
-
-    const { result: zero } = renderCore({ status: { estimatedFees: new BigNumber(0) } });
-    expect(zero.current.displayFeesValue).toBe("FORMATTED_0 • FORMATTED_0");
-  });
-
-  it("falls back to the default display for a zero fee while the transaction has errors", () => {
-    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
-
     const { result } = renderCore({
-      status: { estimatedFees: new BigNumber(0), errors: { recipient: new Error("bad") } },
+      status: { estimatedFees: new BigNumber(0) },
     });
 
-    expect(result.current.displayFeesValue).toBe("-");
+    expect(result.current.feesRowValue).toBe("-");
   });
 
-  it("still shows the combined value for a known (non-zero) fee despite a transaction error", () => {
-    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+  it("follows the display mode when fees are editable", () => {
+    const { result: fiat } = renderCore({ displayMode: "fiat" });
+    expect(fiat.current.feesRowValue).toBe("FORMATTED_10");
+    expect(fiat.current.feesRowSecondaryValue).toBeNull();
 
+    const { result: crypto } = renderCore({ displayMode: "crypto" });
+    expect(crypto.current.feesRowValue).toBe("FORMATTED_1000");
+    expect(crypto.current.feesRowSecondaryValue).toBeNull();
+  });
+
+  it.each(["fiat", "crypto"] as const)(
+    "shows both values (incl. a zero fee) when fees are read-only, in %s mode",
+    displayMode => {
+      const { result: nonZero } = renderCore({
+        uiConfig: readOnlyFees,
+        displayMode,
+      });
+      expect(nonZero.current.feesRowValue).toBe("FORMATTED_10");
+      expect(nonZero.current.feesRowSecondaryValue).toBe("FORMATTED_1000");
+
+      const { result: zero } = renderCore({
+        uiConfig: readOnlyFees,
+        displayMode,
+        status: { estimatedFees: new BigNumber(0) },
+      });
+      expect(zero.current.feesRowValue).toBe("FORMATTED_0");
+      expect(zero.current.feesRowSecondaryValue).toBe("FORMATTED_0");
+    },
+  );
+
+  it("falls back to the single-value display for a zero fee while the transaction has errors", () => {
     const { result } = renderCore({
-      status: { estimatedFees: new BigNumber(1_000), errors: { amount: new Error("too much") } },
+      uiConfig: readOnlyFees,
+      status: {
+        estimatedFees: new BigNumber(0),
+        errors: { recipient: new Error("bad") },
+      },
     });
 
-    expect(result.current.displayFeesValue).toBe("FORMATTED_10 • FORMATTED_1000");
+    expect(result.current.feesRowValue).toBe("-");
+    expect(result.current.feesRowSecondaryValue).toBeNull();
   });
 
-  it("falls back to the default display for a non-finite estimate", () => {
-    mockedSendFeatures.showFeeCurrencyAmount.mockReturnValue(true);
+  it("still shows both values for a known (non-zero) fee despite a transaction error", () => {
+    const { result } = renderCore({
+      uiConfig: readOnlyFees,
+      status: {
+        estimatedFees: new BigNumber(1_000),
+        errors: { amount: new Error("too much") },
+      },
+    });
 
-    const { result } = renderCore({ status: { estimatedFees: new BigNumber(NaN) } });
+    expect(result.current.feesRowValue).toBe("FORMATTED_10");
+    expect(result.current.feesRowSecondaryValue).toBe("FORMATTED_1000");
+  });
 
-    expect(result.current.displayFeesValue).toBe("-");
+  it("falls back to the single-value display for a non-finite estimate", () => {
+    const { result } = renderCore({
+      uiConfig: readOnlyFees,
+      status: { estimatedFees: new BigNumber(NaN) },
+    });
+
+    expect(result.current.feesRowValue).toBe("-");
+    expect(result.current.feesRowSecondaryValue).toBeNull();
+  });
+
+  it.each([
+    ["presets", { hasFeePresets: true, hasCustomFees: false, hasCoinControl: false }],
+    ["custom fees only", { hasFeePresets: false, hasCustomFees: true, hasCoinControl: false }],
+    ["coin control only", { hasFeePresets: false, hasCustomFees: false, hasCoinControl: true }],
+  ] as const)("treats fees as editable with %s", (_label, uiConfig) => {
+    const { result } = renderCore({ uiConfig });
+
+    expect(result.current.feesRowValue).toBe("FORMATTED_10");
+    expect(result.current.feesRowSecondaryValue).toBeNull();
   });
 
   it("calls updateTransaction when selecting a preset fee strategy id", () => {
@@ -206,7 +268,9 @@ describe("useNetworkFeesCore", () => {
     });
 
     expect(mockUpdateTransaction).toHaveBeenCalled();
-    expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, { feesStrategy: "fast" });
+    expect(bridgeUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+      feesStrategy: "fast",
+    });
   });
 
   it("calls updateTransaction with the descriptor's default-strategy patch when selecting the default id", () => {
@@ -216,7 +280,11 @@ describe("useNetworkFeesCore", () => {
     });
 
     const { result } = renderCore({
-      uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      uiConfig: {
+        hasFeePresets: false,
+        hasCustomFees: true,
+        hasDefaultStrategy: true,
+      },
       transaction: { feesStrategy: "custom" },
     });
 
@@ -236,7 +304,11 @@ describe("useNetworkFeesCore", () => {
     mockedSendFeatures.getDefaultStrategyPatch.mockReturnValue(null);
 
     const { result } = renderCore({
-      uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+      uiConfig: {
+        hasFeePresets: false,
+        hasCustomFees: true,
+        hasDefaultStrategy: true,
+      },
       transaction: { feesStrategy: "custom" },
     });
 
@@ -255,7 +327,7 @@ describe("useNetworkFeesCore", () => {
 
     renderCore();
 
-    expect(mockedUseFeePresetFiatValuesCore).toHaveBeenCalledWith(
+    expect(mockedUseFeePresetValuesCore).toHaveBeenCalledWith(
       expect.objectContaining({
         fallbackPresetIds: ["slow", "medium", "fast"],
         shouldEstimateWithBridge: true,
@@ -266,7 +338,7 @@ describe("useNetworkFeesCore", () => {
   it("disables preset fiat values when presets are hidden by ui config", () => {
     renderCore({ uiConfig: { hasFeePresets: false } });
 
-    expect(mockedUseFeePresetFiatValuesCore).toHaveBeenCalledWith(
+    expect(mockedUseFeePresetValuesCore).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: false,
       }),
@@ -275,14 +347,18 @@ describe("useNetworkFeesCore", () => {
 
   describe("hasCustomFees / hasCoinControl mirror uiConfig", () => {
     it("mirrors true values", () => {
-      const { result } = renderCore({ uiConfig: { hasCustomFees: true, hasCoinControl: true } });
+      const { result } = renderCore({
+        uiConfig: { hasCustomFees: true, hasCoinControl: true },
+      });
 
       expect(result.current.hasCustomFees).toBe(true);
       expect(result.current.hasCoinControl).toBe(true);
     });
 
     it("mirrors false values", () => {
-      const { result } = renderCore({ uiConfig: { hasCustomFees: false, hasCoinControl: false } });
+      const { result } = renderCore({
+        uiConfig: { hasCustomFees: false, hasCoinControl: false },
+      });
 
       expect(result.current.hasCustomFees).toBe(false);
       expect(result.current.hasCoinControl).toBe(false);
@@ -290,12 +366,13 @@ describe("useNetworkFeesCore", () => {
   });
 
   describe("feeStrategyOptions", () => {
-    it("builds preset options preserving order with fiat + legend sublabels", () => {
+    it("builds preset options preserving order with fiat + crypto + legend sublabels", () => {
       const { result } = renderCore({ uiConfig: { hasFeePresets: true } });
 
       expect(result.current.feeStrategyOptions.map(o => o.id)).toEqual(["slow", "medium", "fast"]);
       expect(result.current.feeStrategyOptions.every(o => o.kind === "preset")).toBe(true);
       expect(result.current.feeStrategyOptions[1].sublabelFiat).toBe("$2.00");
+      expect(result.current.feeStrategyOptions[1].sublabelCrypto).toBe("0.00002 BTC");
     });
 
     it("falls back to fallbackPresetIds when feePresetOptions is empty", () => {
@@ -310,17 +387,31 @@ describe("useNetworkFeesCore", () => {
 
     it("builds a single default option when the descriptor declares hasDefaultStrategy", () => {
       const { result } = renderCore({
-        uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: true },
+        uiConfig: {
+          hasFeePresets: false,
+          hasCustomFees: true,
+          hasDefaultStrategy: true,
+        },
       });
 
       expect(result.current.feeStrategyOptions).toEqual([
-        { id: "default", kind: "default", sublabelFiat: null, sublabelLegend: null },
+        {
+          id: "default",
+          kind: "default",
+          sublabelFiat: null,
+          sublabelCrypto: null,
+          sublabelLegend: null,
+        },
       ]);
     });
 
     it("is empty when there are no presets and the descriptor has no default strategy", () => {
       const { result } = renderCore({
-        uiConfig: { hasFeePresets: false, hasCustomFees: false, hasDefaultStrategy: false },
+        uiConfig: {
+          hasFeePresets: false,
+          hasCustomFees: false,
+          hasDefaultStrategy: false,
+        },
       });
 
       expect(result.current.feeStrategyOptions).toEqual([]);
@@ -328,7 +419,11 @@ describe("useNetworkFeesCore", () => {
 
     it("is empty when custom fees exist but the descriptor has no default strategy", () => {
       const { result } = renderCore({
-        uiConfig: { hasFeePresets: false, hasCustomFees: true, hasDefaultStrategy: false },
+        uiConfig: {
+          hasFeePresets: false,
+          hasCustomFees: true,
+          hasDefaultStrategy: false,
+        },
       });
 
       expect(result.current.feeStrategyOptions).toEqual([]);
@@ -336,7 +431,11 @@ describe("useNetworkFeesCore", () => {
 
     it("never includes custom or coinControl entries", () => {
       const { result } = renderCore({
-        uiConfig: { hasFeePresets: true, hasCustomFees: true, hasCoinControl: true },
+        uiConfig: {
+          hasFeePresets: true,
+          hasCustomFees: true,
+          hasCoinControl: true,
+        },
       });
 
       expect(result.current.feeStrategyOptions.some(o => (o.kind as string) === "custom")).toBe(
@@ -371,11 +470,18 @@ describe("useNetworkFeesCore", () => {
     for (const { hasFeePresets, hasCustomFees, hasDefaultStrategy } of boolCombos) {
       for (const hasCoinControl of coinControlCombos) {
         for (const feesStrategy of feesStrategies) {
-          const label = `hasFeePresets=${hasFeePresets} hasCustomFees=${hasCustomFees} hasCoinControl=${hasCoinControl} hasDefaultStrategy=${hasDefaultStrategy} feesStrategy=${feesStrategy ?? "undefined"}`;
+          const label = `hasFeePresets=${hasFeePresets} hasCustomFees=${hasCustomFees} hasCoinControl=${hasCoinControl} hasDefaultStrategy=${hasDefaultStrategy} feesStrategy=${
+            feesStrategy ?? "undefined"
+          }`;
 
           it(`[${label}] satisfies the selection + presence invariants`, () => {
             const { result } = renderCore({
-              uiConfig: { hasFeePresets, hasCustomFees, hasCoinControl, hasDefaultStrategy },
+              uiConfig: {
+                hasFeePresets,
+                hasCustomFees,
+                hasCoinControl,
+                hasDefaultStrategy,
+              },
               transaction: { feesStrategy },
             });
 

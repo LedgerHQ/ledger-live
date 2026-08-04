@@ -827,7 +827,7 @@ async function getScrollAdditionalFees(
   currency: CryptoCurrency,
   transaction: string,
 ): Promise<BigNumber> {
-  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+  if (currency.id !== "scroll") {
     return new BigNumber(0);
   }
 

@@ -44,6 +44,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | EVM explorer (Etherscan proxy) | `proxyetherscan.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
 | EVM explorer (Blockscout proxy) | `proxyblockscout.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
 | EVM dApp RPC | `eth-dapps.api.live.ledger.com` | [coin-config](/libs/ledger-live-common/src/families/evm/config.ts) | prod |
+| A4 indexer (L2 backend) | `explorers.api.vault.ledger.com`<br>_path: `/a4`; pre-prod: `explorers.api.live.ppr.ledger-test.com`; staging: `explorers.api.live.stg.ledger-test.com`_ | [env](/shared/env/src/definitions/team-coin-integration/index.ts) | prod / staging |
 | Aptos node | `apt.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Aptos indexer | `apt.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Algorand explorer/indexer | `algorand.coin.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -116,6 +117,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | NFT metadata | `nft.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Wallet icons / avatars CDN | `lw-icons.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Sanctioned addresses (compliance) | `compliance.ledger.com` | [env](/libs/env/src/env.ts) | prod |
+| Ledger API authentication (Keycloak) | `global.api.prd.ledger.com`<br>path: `/keycloak`; staging: `global.api.stg.ledger-test.com` | [env](/shared/env/src/definitions/team-platform/index.ts) | prod / staging |
 | Ledger Button tracking | `ledgerb.api.ledger.com` | [code](/libs/ledger-live-common/src/wallet-api/utils/ledgerButtonTracking.ts) | prod |
 | **Live Devices** | | | |
 | Manager API | `manager.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
@@ -150,7 +152,7 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | NEAR fallback RPC | `rpc.mainnet.near.org` | [code](/libs/ledger-live-common/src/families/near/config.ts) | prod |
 | ICON testnet | `solidwallet.io` | [env](/libs/env/src/env.ts) | testnet |
 | Zcash testnet (lightwalletd) | `testnet.zec.rocks`<br>_public community endpoint; no Ledger-hosted Zcash testnet_ | [code](/libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/constants.ts) | testnet |
-| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
+| Cosmos LCDs (third-party) | `api.mainnet.desmos.network`, `rest.core.persistence.one`, `lcd.quicksilver.zone`, `api.nyx.nodes.guru`, `verona-api.polkachu.com`, `zenrock.api.m.anode.team` | [code](/libs/coin-modules/coin-cosmos/src/config.ts) | prod |
 | 0G validators (ExploreMe) | `api.0g.exploreme.pro` | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | Somnia validator names | `staking.somnia.network`<br>_display-name overlay for on-chain validators (`/api/validator-names`)_ | [code](/libs/coin-modules/coin-evm/src/staking/contracts.ts) | prod |
 | ICP gateway | `ic0.app` | [code](/libs/coin-modules/coin-internet_computer/src/consts.ts) | prod |

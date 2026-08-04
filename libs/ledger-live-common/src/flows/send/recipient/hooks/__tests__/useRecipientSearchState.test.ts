@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { renderHook } from "@testing-library/react";
 import type { AddressSearchResult } from "../../types";
 import { useRecipientSearchState } from "../useRecipientSearchState";

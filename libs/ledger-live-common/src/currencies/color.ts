@@ -12,7 +12,7 @@ export type ColorableCurrency = {
 };
 
 // Looser parameter type for getCurrencyColor: id is optional because the
-// function never reads it, and legacy types-cryptoassets FiatCurrency has no id.
+// function never reads it, and the legacy FiatCurrency has no id.
 type ColorableCurrencyInput = Omit<ColorableCurrency, "id"> & { id?: string };
 
 export function getCurrencyColor(currency: ColorableCurrencyInput | Currency): string {

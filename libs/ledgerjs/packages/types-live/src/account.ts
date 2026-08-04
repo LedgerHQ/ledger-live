@@ -1,9 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "./currency";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -84,6 +80,18 @@ export type Address = {
 };
 
 /**
+ * Whether an account is fully operational, as a generic cross-chain projection.
+ * `ready` is false when a chain-specific precondition is unmet (e.g. a Tezos account
+ * whose public key is not yet revealed on-chain), with `reason` describing why.
+ * Populated per-family during sync via `BridgeApi.getAccountReadiness`; left undefined
+ * for families that don't provide it (consumers treat undefined as ready/unknown).
+ */
+export type AccountReadiness = {
+  ready: boolean;
+  reason?: string;
+};
+
+/**
  * Account type is the main level account of a blockchain currency.
  * Each family maybe need an extra field, to solve this, you can have some subtyping like this:
 
@@ -122,6 +130,8 @@ export type Account = {
   freshAddressPath: string;
   // says if the account essentially "exists". an account has been used in the past, but for some reason the blockchain finds it empty (no ops, no balance,..)
   used: boolean;
+  // generic, cross-chain readiness projection (see AccountReadiness)
+  readiness?: AccountReadiness;
   // account balance in satoshi
   balance: BigNumber;
   // part of the balance that can effectively be spent
@@ -213,6 +223,7 @@ export type AccountRaw = {
   name?: string;
   starred?: boolean;
   used?: boolean;
+  readiness?: AccountReadiness;
   balance: string;
   spendableBalance?: string;
   blockHeight: number;

@@ -204,7 +204,6 @@ npm install @ledgerhq/wallet-api-acre-module
 - `@ledgerhq/wallet-api-client`: Core Wallet API client functionality
 - `@ledgerhq/wallet-api-core`: Core types and utilities
 - `@ledgerhq/types-live`: Ledger Live type definitions
-- `@ledgerhq/types-cryptoassets`: Cryptocurrency type definitions
 
 ## Testing
 

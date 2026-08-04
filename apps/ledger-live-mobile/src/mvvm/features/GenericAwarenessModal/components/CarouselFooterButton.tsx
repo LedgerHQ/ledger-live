@@ -10,10 +10,11 @@ import {
   resolveCarouselNavigationButtonLabel,
   type GenericAwarenessModalCarouselSlide,
 } from "@ledgerhq/live-common/genericAwarenessModal";
+import type { GenericAwarenessModalCloseHandler } from "../screens/useGenericAwarenessModalDrawerViewModel";
 
 type CarouselFooterButtonProps = Readonly<{
   slides: GenericAwarenessModalCarouselSlide[];
-  onClose: () => void;
+  onClose: GenericAwarenessModalCloseHandler;
   onNavigationPress: (slideIndex: number, button: string, isLastSlide: boolean) => void;
   onPrimaryPress: (slideIndex: number) => void;
   onMalformedUrl: (slideIndex: number) => void;
@@ -80,7 +81,7 @@ export function CarouselFooterButton({
     onPrimaryPress(slideIndex);
 
     if (!actionLink) {
-      onClose();
+      onClose({ logDismiss: false });
       return;
     }
 
@@ -89,7 +90,7 @@ export function CarouselFooterButton({
     try {
       await Linking.openURL(actionLink);
       if (!isExternalLink) {
-        requestAnimationFrame(onClose);
+        requestAnimationFrame(() => onClose({ logDismiss: false }));
       }
     } catch {
       onMalformedUrl(slideIndex);

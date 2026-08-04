@@ -2,7 +2,7 @@
 // Skips full bridge sync — uses direct API calls instead.
 
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { createLocalEvmApi } from "@ledgerhq/live-common/families/evm/coinModuleApi";
 import evmBridge from "@ledgerhq/live-common/families/evm/bridge/api";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
@@ -33,7 +33,7 @@ export class CoinFrameworkAdapter {
     const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
 
     const tokenBalances = await Promise.all(
-      tokenAssets.map(async ({ asset, value }) => {
+      tokenAssets.map(async ({ asset, value }): Promise<Balance | null> => {
         const token = await bridgeApi.getTokenFromAsset?.(asset);
         if (!token) return null;
         return { assetId: token.id, balance: BigNumberStrSchema.parse(String(value)) };

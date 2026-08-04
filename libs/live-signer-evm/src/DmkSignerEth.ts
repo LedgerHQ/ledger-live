@@ -19,11 +19,8 @@ import {
 import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  EthAppPleaseEnableContractData,
-  LockedDeviceError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { EthAppPleaseEnableContractData } from "./errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import type { EvmAddress, EvmSigner, EvmSignerEvent } from "./types";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services/types";
 import {

@@ -66,15 +66,14 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       });
     });
 
-    it("should keep drawer closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
-      const oldIso = subDays(FIXED_NOW, 365).toISOString();
+    it("should keep drawer closed when consent exists however old the consent date is", async () => {
+      const oldIso = subDays(FIXED_NOW, 3650).toISOString();
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: false,
           personalizedRecommendationsEnabled: false,
           privacyPolicyVersion: 1,
           consentDate: oldIso,
-          analyticsOptInParams: { consentValidityDays: 730 },
         }),
       });
       await waitFor(() => {
@@ -115,7 +114,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(s.analyticsEnabled).toBe(true);
       expect(s.personalizedRecommendationsEnabled).toBe(true);
       expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe("1.0");
       expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
       expect(result.current.phase).toBe("closed");
       expect(track).toHaveBeenCalledWith(
@@ -123,7 +122,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_in",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.0",
         },
         true,
       );
@@ -153,7 +152,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_out",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.0",
         },
         true,
       );
@@ -244,7 +243,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_in",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.0",
         },
         true,
       );
@@ -278,7 +277,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_out",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.0",
         },
         true,
       );
@@ -287,28 +286,28 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
   });
 
   describe("needs privacy policy version update", () => {
-    it("should open privacy when policy is stale, consent is current, and analytics is on", async () => {
+    const withMinorBump = (consentDate: string) =>
+      withConsentDrawerState({
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+        privacyPolicyVersion: 1,
+        consentDate,
+        analyticsOptInParams: { policyVersion: "1.1" },
+      });
+
+    it("should open privacy when only the minor version is newer and consent is current", async () => {
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-        overrideInitialState: withConsentDrawerState({
-          analyticsEnabled: true,
-          personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: 0,
-          consentDate: new Date().toISOString(),
-        }),
+        overrideInitialState: withMinorBump(new Date().toISOString()),
       });
       await waitFor(() => {
         expect(result.current.phase).toBe("privacy");
       });
     });
 
-    it("should close drawer after privacy got it when consent is still valid", async () => {
+    it("should store the acknowledged version without refreshing the consent date", async () => {
+      const consentDate = subDays(FIXED_NOW, 100).toISOString();
       const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-        overrideInitialState: withConsentDrawerState({
-          analyticsEnabled: true,
-          personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: 0,
-          consentDate: new Date().toISOString(),
-        }),
+        overrideInitialState: withMinorBump(consentDate),
       });
       await waitFor(() => {
         expect(result.current.phase).toBe("privacy");
@@ -320,73 +319,83 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
       expect(result.current.phase).toBe("closed");
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(store.getState().settings.analyticsConsentInfo).toEqual({
+        consentDate,
+        privacyPolicyVersion: "1.1",
+      });
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith(
         "button_clicked",
         {
           button: "analytics_consent_privacy_got_it",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: 1,
+          privacyPolicyVersion: "1.1",
         },
         true,
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
 
-    it("should treat date-style flag policyVersion as current for privacy ack", async () => {
-      const dateStyleFlagPolicyVersion = 20260531;
-      const storedPrivacyPolicyVersion = dateStyleFlagPolicyVersion - 1;
+    it("should ask for a full renewal when a date-style flag policyVersion is bumped", async () => {
+      const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
+        overrideInitialState: withConsentDrawerState({
+          analyticsEnabled: true,
+          personalizedRecommendationsEnabled: true,
+          privacyPolicyVersion: 20260530,
+          consentDate: new Date().toISOString(),
+          analyticsOptInParams: { policyVersion: 20260531 },
+        }),
+      });
+      await waitFor(() => {
+        expect(result.current.phase).toBe("consentReconfirm");
+      });
+    });
+
+    it("should keep the drawer closed when the remote policy version is invalid", async () => {
+      const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
+        overrideInitialState: withConsentDrawerState({
+          analyticsEnabled: true,
+          personalizedRecommendationsEnabled: true,
+          privacyPolicyVersion: 1,
+          consentDate: new Date().toISOString(),
+          analyticsOptInParams: { policyVersion: 1.2 },
+        }),
+      });
+      await waitFor(() => {
+        expect(result.current.phase).toBe("closed");
+      });
+    });
+
+    it("should keep the acknowledged version when the remote policy version is invalid", async () => {
       const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: storedPrivacyPolicyVersion,
-          consentDate: new Date().toISOString(),
-          analyticsOptInParams: {
-            policyVersion: dateStyleFlagPolicyVersion,
-            consentValidityDays: 365,
-          },
+          privacyPolicyVersion: "2.1",
+          consentDate: null,
+          analyticsOptInParams: { policyVersion: "v3" },
         }),
       });
       await waitFor(() => {
-        expect(result.current.phase).toBe("privacy");
+        expect(result.current.phase).toBe("consentReconfirm");
       });
 
       await act(async () => {
-        await result.current.onPrivacyGotIt();
+        await result.current.applyOptIn();
       });
 
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
-        dateStyleFlagPolicyVersion,
-      );
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe("2.1");
     });
   });
 
-  describe("when time-based renewal applies (consent older than validity window)", () => {
-    it("should open consentFresh when consent is stale by time and analytics is off", async () => {
-      const oldIso = subDays(FIXED_NOW, 366).toISOString();
-      const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
-        overrideInitialState: withConsentDrawerState({
-          analyticsEnabled: false,
-          personalizedRecommendationsEnabled: false,
-          privacyPolicyVersion: 1,
-          consentDate: oldIso,
-        }),
-      });
-      await waitFor(() => {
-        expect(result.current.phase).toBe("consentFresh");
-      });
-    });
-
-    it("should open consentReconfirm when consent is stale by time even if both toggles are on (renewal first)", async () => {
-      const oldIso = subDays(FIXED_NOW, 366).toISOString();
+  describe("when the stored consent date is corrupted", () => {
+    it("should open consentReconfirm rather than trusting an unparseable date", async () => {
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
           privacyPolicyVersion: 1,
-          consentDate: oldIso,
+          consentDate: "yesterday",
         }),
       });
       await waitFor(() => {

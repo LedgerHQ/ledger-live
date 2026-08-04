@@ -7,7 +7,7 @@ import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@shared/env";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
@@ -24,6 +24,7 @@ import {
   setWalletApiIdForAccountId,
   resolveWalletApiSpendableBalance,
 } from "./converters";
+import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
@@ -1256,10 +1257,14 @@ export function useWalletAPIServer({
       try {
         return await accountGetPublicKeyLogic({ manifest, accounts, tracking }, accountId);
       } catch (error) {
-        // Surface a native message, then let the RPC reject as before. Match by name so it holds
-        // even if the error loses its prototype (e.g. serialized across a transport).
+        // Surface a native message, then let the RPC reject as before. Match by name (not just
+        // instanceof, per createCustomErrorClass) so it holds even if the error loses its
+        // prototype (e.g. serialized to a plain object across a transport).
         const isPublicKeyUnavailable =
-          (error as { name?: string } | null | undefined)?.name === "AccountPublicKeyUnavailable";
+          error instanceof AccountPublicKeyUnavailable ||
+          (typeof error === "object" &&
+            error !== null &&
+            (error as { name?: unknown }).name === "AccountPublicKeyUnavailable");
         if (isPublicKeyUnavailable && uiAccountPublicKeyUnavailable) {
           try {
             const localAccountId = getAccountIdFromWalletAccountId(accountId);

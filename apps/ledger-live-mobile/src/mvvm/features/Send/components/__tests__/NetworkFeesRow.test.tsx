@@ -44,7 +44,9 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => ({
 }));
 jest.mock("@ledgerhq/lumen-ui-rnative/styles", () => ({
   useStyleSheet: (createStyles: (theme: { spacings: Record<string, number> }) => unknown) =>
-    createStyles({ spacings: { s4: 4, s8: 8, s10: 10, s12: 12, s16: 16, s24: 24 } }),
+    createStyles({
+      spacings: { s4: 4, s8: 8, s10: 10, s12: 12, s16: 16, s24: 24 },
+    }),
 }));
 jest.mock("~/context/Locale", () => ({
   useTranslation: () => ({
@@ -53,9 +55,13 @@ jest.mock("~/context/Locale", () => ({
   }),
 }));
 jest.mock("../../context/SendFlowContext", () => ({
-  useSendFlowData: () => ({ state: { account: { account: null, parentAccount: null } } }),
+  useSendFlowData: () => ({
+    state: { account: { account: null, parentAccount: null } },
+  }),
 }));
-jest.mock("~/analytics", () => ({ useAnalytics: () => ({ track: jest.fn() }) }));
+jest.mock("~/analytics", () => ({
+  useAnalytics: () => ({ track: jest.fn() }),
+}));
 jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
   getSendFlowTrackingProperties: () => ({}),
 }));
@@ -63,37 +69,59 @@ jest.mock("@ledgerhq/ledger-wallet-framework/tracking/send", () => ({
 const baseViewModel: NetworkFeesViewModel = {
   label: "Network fees",
   value: "0 TRX",
+  secondaryValue: null,
   strategyLabel: "",
-  showFeeCurrencyAmount: false,
   selectedFeeStrategy: null,
   displayOptions: [],
   canOpenSelector: false,
   networkFeesInfo: null,
 };
 
+const editableViewModel: NetworkFeesViewModel = {
+  ...baseViewModel,
+  canOpenSelector: true,
+  displayOptions: [
+    {
+      id: "medium",
+      kind: "preset",
+      label: "Medium option",
+      sublabel: null,
+      selected: true,
+      onSelect: jest.fn(),
+    },
+  ],
+};
+
 describe("NetworkFeesRow fee value", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("shows the value followed by the strategy label by default", () => {
+  it("shows the value followed by the strategy label when the fee is editable", () => {
     render(
-      <NetworkFeesRow viewModel={{ ...baseViewModel, value: "$0.12", strategyLabel: "Medium" }} />,
+      <NetworkFeesRow
+        viewModel={{
+          ...editableViewModel,
+          value: "$0.12",
+          strategyLabel: "Medium",
+        }}
+      />,
     );
     expect(screen.getByText("$0.12")).toBeOnTheScreen();
     expect(screen.getByText("Medium")).toBeOnTheScreen();
   });
 
-  it("shows the fiat • crypto value alone (no strategy label) when showFeeCurrencyAmount is set", () => {
+  it("shows both values and no strategy label when the fee is read-only", () => {
     render(
       <NetworkFeesRow
         viewModel={{
           ...baseViewModel,
-          value: "$0.00 • 0 TRX",
+          value: "$0.10",
+          secondaryValue: "0.00056 SOL",
           strategyLabel: "Medium",
-          showFeeCurrencyAmount: true,
         }}
       />,
     );
-    expect(screen.getByText("$0.00 • 0 TRX")).toBeOnTheScreen();
+    expect(screen.getByText("$0.10")).toBeOnTheScreen();
+    expect(screen.getByText("0.00056 SOL")).toBeOnTheScreen();
     expect(screen.queryByText("Medium")).toBeNull();
   });
 });

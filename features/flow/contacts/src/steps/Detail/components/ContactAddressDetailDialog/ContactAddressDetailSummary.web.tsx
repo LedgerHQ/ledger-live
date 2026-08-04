@@ -17,11 +17,7 @@ export function ContactAddressDetailSummary({
   network,
   formatNetworkTag,
 }: ContactAddressDetailSummaryProps): React.ReactNode {
-  const iconProps = resolveContactAddressIconProps(
-    row.currencyId,
-    row.label,
-    network.networkId,
-  );
+  const iconProps = resolveContactAddressIconProps(row.currencyId, row.label, network.networkId);
 
   return (
     <div className="flex flex-col items-center gap-32">

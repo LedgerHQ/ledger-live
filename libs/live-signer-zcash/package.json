@@ -29,7 +29,6 @@
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-signer-kit-zcash": "0.5.0",
-    "@ledgerhq/errors": "workspace:^",
     "rxjs": "catalog:"
   },
   "devDependencies": {

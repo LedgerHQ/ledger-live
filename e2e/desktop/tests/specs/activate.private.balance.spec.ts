@@ -12,7 +12,7 @@ const accounts = [
 
 for (const account of accounts) {
   // TODO: Activate when next app is available
-  test.describe.skip("Activate Private Balance", () => {
+  test.describe.skip("Activate private balance", () => {
     test.use({
       teamOwner: Team.BST,
       userdata: "skip-onboarding-with-last-seen-device",
@@ -26,7 +26,7 @@ for (const account of accounts) {
     });
 
     test(
-      `[${account.account.currency.name}] Activate Private Balance`,
+      `[${account.account.currency.testLabel}] - Activate private balance`,
       {
         tag: buildTags({ currencyId: account.account.currency.id }),
         annotation: {

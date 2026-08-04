@@ -15,7 +15,7 @@ import {
   takeUntil,
 } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "../errors";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,

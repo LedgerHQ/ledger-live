@@ -1,7 +1,4 @@
-import {
-  selectContactById,
-  type ContactId,
-} from "@domain/entity-contact";
+import { selectContactById, type ContactId } from "@domain/entity-contact";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { ContactAddressCurrencyPort } from "./model/ports";

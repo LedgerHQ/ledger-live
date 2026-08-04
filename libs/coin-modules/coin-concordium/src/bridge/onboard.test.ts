@@ -1,9 +1,7 @@
-import {
-  ConcordiumSessionExpiredError,
-  LockedDeviceError,
-  TransportStatusError,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
+import { LockedDeviceError } from "../errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { ConcordiumSessionExpiredError } from "../types";
 import { firstValueFrom, toArray } from "rxjs";
 import { AccountOnboardStatus, ConcordiumPairingStatus } from "../types";
 import {
@@ -247,7 +245,7 @@ describe("onboard", () => {
       // GIVEN
       setupSuccessfulMocks();
       const { signCredentialDeployment } = jest.requireMock("../signer");
-      const transportError = new TransportStatusError(0x5515);
+      const transportError = new TransportStatusError(0x5515, { canBeMappedToChildError: false });
       signCredentialDeployment.mockRejectedValueOnce(transportError);
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);

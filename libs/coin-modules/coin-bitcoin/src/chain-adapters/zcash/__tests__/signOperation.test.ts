@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 import { Observable, firstValueFrom, lastValueFrom, toArray } from "rxjs";
 import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { setZcashShieldedEnabled } from "../constants";
 import { ZcashUtxoNotInAccount } from "../../../errors";
 // Transaction lives in src/types.ts (coin-bitcoin), not in chain-adapters/types.ts
@@ -607,7 +607,7 @@ describe("signOperation — error handling", () => {
     const account = makeAccount();
     const tx = makeTx("shielded");
     // The real DmkSignerZcash.mapError maps device errorCode 6985 to a
-    // UserRefusedOnDevice instance (@ledgerhq/errors). Reject with that concrete
+    // UserRefusedOnDevice instance (@ledgerhq/ledger-wallet-framework/errors). Reject with that concrete
     // type — a generic Error whose message is the string "UserRefusedOnDevice"
     // would pass a substring assertion even if the orchestration stringified or
     // re-wrapped the typed error.

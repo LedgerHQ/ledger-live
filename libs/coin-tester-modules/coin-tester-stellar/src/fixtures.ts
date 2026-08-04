@@ -4,6 +4,10 @@ import { StrKey } from "@stellar/stellar-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
+import {
   getDerivationScheme,
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
@@ -62,9 +66,9 @@ const USDC_ASSET_MAGNITUDE = 7;
 
 export const USDC_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: `stellar/asset/${USDC_ASSET_CODE}:${ISSUER_ADDRESS}`,
+  id: TokenCurrencyIdSchema.parse(`stellar/asset/${USDC_ASSET_CODE}:${ISSUER_ADDRESS}`),
   contractAddress: ISSUER_ADDRESS,
-  parentCurrencyId: "stellar",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("stellar"),
   tokenType: "stellar",
   name: USDC_ASSET_CODE,
   ticker: USDC_ASSET_CODE,

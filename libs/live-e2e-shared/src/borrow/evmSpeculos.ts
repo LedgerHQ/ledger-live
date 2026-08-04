@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JsonRpcProvider, Signature, Transaction } from "ethers";
+import { JsonRpcProvider, Signature, Transaction, isError } from "ethers";
 import { filter, firstValueFrom } from "rxjs";
 import { getEnv } from "@shared/env";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
@@ -120,6 +120,20 @@ export class EvmSpeculosExecutor {
     return value;
   }
 
+  private async waitForConfirmation(
+    response: Awaited<ReturnType<JsonRpcProvider["broadcastTransaction"]>>,
+  ): Promise<string> {
+    try {
+      const receipt = await response.wait(1);
+      return receipt?.hash ?? response.hash;
+    } catch (error) {
+      if (isError(error, "TRANSACTION_REPLACED") && error.receipt?.status === 1) {
+        return error.receipt.hash;
+      }
+      throw error;
+    }
+  }
+
   /**
    * Builds an EIP-1559 tx from a partner `signablePayload`, signs it on
    * Speculos, and (unless `dryRun`) broadcasts it. Missing gas/nonce/fee
@@ -170,8 +184,8 @@ export class EvmSpeculosExecutor {
     if (dryRun) return { signedHex };
 
     const response = await this.provider.broadcastTransaction(signedHex);
-    await response.wait(1);
-    return { signedHex, hash: response.hash };
+    const hash = await this.waitForConfirmation(response);
+    return { signedHex, hash };
   }
 
   /** Releases the RPC provider's sockets — call when reused inside a test worker. */

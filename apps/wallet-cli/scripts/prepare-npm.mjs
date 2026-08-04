@@ -101,7 +101,10 @@ async function prepareMainPackage() {
 
   await rm(packageDirectory, { recursive: true, force: true });
   await mkdir(packageDirectory, { recursive: true });
-  await writeFile(path.join(packageDirectory, "package.json"), `${JSON.stringify(publishPackage, null, 2)}\n`);
+  await writeFile(
+    path.join(packageDirectory, "package.json"),
+    `${JSON.stringify(publishPackage, null, 2)}\n`,
+  );
   await copyFile(path.join(root, "LICENSE"), path.join(packageDirectory, "LICENSE"));
   await copyFile(
     path.join(root, "THIRD_PARTY_NOTICES.md"),
@@ -134,7 +137,10 @@ async function preparePlatformBinaries() {
     await copyFile(source, target);
     await rm(packageDirectory, { recursive: true, force: true });
     await mkdir(path.join(packageDirectory, "bin"), { recursive: true });
-    await writeFile(path.join(packageDirectory, "package.json"), `${JSON.stringify(publishPackage, null, 2)}\n`);
+    await writeFile(
+      path.join(packageDirectory, "package.json"),
+      `${JSON.stringify(publishPackage, null, 2)}\n`,
+    );
     await copyFile(source, path.join(packageDirectory, platform.bin["wallet-cli"]));
     await copyFile(path.join(root, "LICENSE"), path.join(packageDirectory, "LICENSE"));
     await copyFile(

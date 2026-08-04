@@ -24,7 +24,7 @@
     "@ledgerhq/live-dmk-speculos": "workspace:*",
     "@shared/env": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/logs": "workspace:*"
+    "@ledgerhq/logs": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

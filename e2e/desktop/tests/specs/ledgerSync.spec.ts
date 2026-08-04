@@ -42,7 +42,7 @@ function initializeTrustchain() {
     LedgerSyncCliHelper.pushLedgerSyncData,
   ];
 }
-test.describe(`[${app.name}] Sync Accounts`, () => {
+test.describe("Ledger Sync", () => {
   setupSeed();
   test.use({
     teamOwner: Team.WALLET_XP,
@@ -66,7 +66,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   });
 
   test(
-    "Sync instances, rename and delete accounts, delete instance then delete the backup",
+    "Sync instances, rename and delete accounts, then delete the backup",
     {
       tag: deviceTagsWithoutLNS(),
       annotation: {

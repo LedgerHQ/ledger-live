@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import type { TFunction } from "i18next";

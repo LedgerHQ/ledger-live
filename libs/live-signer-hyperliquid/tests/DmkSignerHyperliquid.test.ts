@@ -1,7 +1,7 @@
 import { of, throwError } from "rxjs";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { SignerHyperliquidBuilder } from "@ledgerhq/device-signer-kit-hyperliquid";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { DmkSignerHyperliquid, Action } from "../src/DmkSignerHyperliquid";
 
 jest.mock("@ledgerhq/device-signer-kit-hyperliquid");

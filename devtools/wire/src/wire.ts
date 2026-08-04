@@ -29,6 +29,22 @@ export type Wire<M extends MessageMap> = {
   setHubUrl(hubUrl: string): void;
 };
 
+export function isValidWsUrl(url: string): boolean {
+  try {
+    const { protocol } = new URL(url);
+    if (protocol !== "ws:" && protocol !== "wss:") return false;
+    const rawHostname = /^wss?:\/\/([^/:?#]*)/.exec(url)?.[1] ?? "";
+    if (rawHostname.length === 0) return false;
+    if (/^[\d.]+$/.test(rawHostname)) {
+      const parts = rawHostname.split(".");
+      return parts.length === 4 && parts.every(p => p.length > 0 && Number(p) <= 255);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function buildTargetUrl(options: WireTransportOptions): string {
   return identityUrl(options.hubUrl, {
     role: options.role,
@@ -50,7 +66,9 @@ export function buildTransport<M extends MessageMap>(
     { url: buildTargetUrl(config), origin: config.id, socketFactory: config.socketFactory },
     protocol,
   );
-  transport.connect();
+  if (isValidWsUrl(config.hubUrl)) {
+    transport.connect();
+  }
 
   let state: WireState = { hubUrl: config.hubUrl, role: config.role, target: config.target };
   const listeners = new Set<() => void>();
@@ -60,7 +78,9 @@ export function buildTransport<M extends MessageMap>(
     Object.assign(config, patch);
     state = { ...state, ...patch };
     listeners.forEach(l => l());
-    transport.setUrl(buildTargetUrl(config));
+    if (isValidWsUrl(config.hubUrl)) {
+      transport.setUrl(buildTargetUrl(config));
+    }
   }
 
   return {

@@ -2,6 +2,7 @@ import {
   createNativeStackNavigator,
   type NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
+import { BottomSheetModalProvider } from "@ledgerhq/lumen-ui-rnative";
 import { type DevToolsBaseProps } from "./DevTools.types";
 import { DevToolsProvider, DevToolsShellProvider } from "../context";
 import { useDevToolsViewModel } from "./useDevToolsViewModel";
@@ -16,19 +17,21 @@ export interface DevToolsProps extends DevToolsBaseProps {
 
 const Stack = createNativeStackNavigator<DevToolsParamList>();
 
-export function DevTools({ config = [], screenOptions }: DevToolsProps) {
-  const { shell } = useDevToolsViewModel({ config });
+export function DevTools({ config = [], footer, screenOptions }: DevToolsProps) {
+  const { shell } = useDevToolsViewModel({ config, footer });
 
   return (
-    <DevToolsProvider value={config}>
-      <DevToolsShellProvider value={shell}>
-        <Stack.Navigator screenOptions={screenOptions}>
-          <Stack.Screen name="categories" component={CategoriesScreen} />
-          <Stack.Screen name="tools" component={ToolsScreen} />
-          <Stack.Screen name="tool" component={ToolScreen} />
-        </Stack.Navigator>
-      </DevToolsShellProvider>
-    </DevToolsProvider>
+    <BottomSheetModalProvider>
+      <DevToolsProvider value={config}>
+        <DevToolsShellProvider value={shell}>
+          <Stack.Navigator screenOptions={screenOptions}>
+            <Stack.Screen name="categories" component={CategoriesScreen} />
+            <Stack.Screen name="tools" component={ToolsScreen} />
+            <Stack.Screen name="tool" component={ToolScreen} />
+          </Stack.Navigator>
+        </DevToolsShellProvider>
+      </DevToolsProvider>
+    </BottomSheetModalProvider>
   );
 }
 

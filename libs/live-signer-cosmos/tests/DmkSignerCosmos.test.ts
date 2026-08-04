@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { DmkSignerCosmos } from "../src/DmkSignerCosmos";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { of, throwError } from "rxjs";
 
 jest.mock("@ledgerhq/device-signer-kit-cosmos", () => ({

@@ -20,6 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@ledgerhq/asset-aggregation": "workspace:*",
     "@ledgerhq/live-common": "workspace:*"
   },

@@ -18,6 +18,7 @@ function createDependencies(overrides: Partial<ContactsAddressValidationDependen
     validateDomain: jest.fn().mockReturnValue(true),
     resolveEnsDomain: jest.fn().mockResolvedValue(null),
     validateNetworkAddress,
+    isAddressSanctioned: jest.fn().mockResolvedValue(false),
     ...overrides,
   } satisfies ContactsAddressValidationDependencies;
 
@@ -50,6 +51,18 @@ describe("createContactsAddressValidationService", () => {
     await expect(
       service.validateAddress({ currencyId: ETHEREUM.id, address: "invalid" }),
     ).resolves.toEqual({ status: "invalid_format", isDomain: false });
+  });
+
+  it("should expose sanctioned after a valid raw address validation", async () => {
+    const { dependencies } = createDependencies({
+      isAddressSanctioned: jest.fn().mockResolvedValue(true),
+    });
+    const service = createContactsAddressValidationService(dependencies);
+
+    await expect(
+      service.validateAddress({ currencyId: ETHEREUM.id, address: RAW_ADDRESS }),
+    ).resolves.toEqual({ status: "sanctioned", isDomain: false });
+    expect(dependencies.isAddressSanctioned).toHaveBeenCalledWith(ETHEREUM, RAW_ADDRESS);
   });
 
   it("should use a token parent network and check domain support on the token", async () => {
@@ -135,6 +148,21 @@ describe("createContactsAddressValidationService", () => {
       network: ETHEREUM,
       address: RESOLVED_ADDRESS,
     });
+  });
+
+  it("should check the resolved ENS address for sanctions", async () => {
+    const { dependencies } = createDependencies({
+      supportsDomain: jest.fn().mockReturnValue(true),
+      isEnsDomain: jest.fn().mockResolvedValue(true),
+      resolveEnsDomain: jest.fn().mockResolvedValue(RESOLVED_ADDRESS),
+      isAddressSanctioned: jest.fn().mockResolvedValue(true),
+    });
+    const service = createContactsAddressValidationService(dependencies);
+
+    await expect(
+      service.validateAddress({ currencyId: ETHEREUM.id, address: "ledger.eth" }),
+    ).resolves.toEqual({ status: "sanctioned", isDomain: true });
+    expect(dependencies.isAddressSanctioned).toHaveBeenCalledWith(ETHEREUM, RESOLVED_ADDRESS);
   });
 
   it("should expose domain_not_found when an ENS domain has no resolution", async () => {
