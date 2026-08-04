@@ -74,6 +74,7 @@ libs/oxc-live-libs/                                      @ledgerhq/platform
 devtools/transport/                                      @ledgerhq/platform
 devtools/protocols/                                      @ledgerhq/platform
 devtools/wire/                                           @ledgerhq/platform
+devtools/relay/                                          @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
