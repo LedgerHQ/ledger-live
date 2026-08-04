@@ -22,7 +22,7 @@ type CommonLogEvent = {
   tokenId?: string;
   isTestnet: boolean;
   isSendMax: boolean;
-  intentType: string;
+  intentType?: string;
 };
 
 type ErrorLogEvent = {

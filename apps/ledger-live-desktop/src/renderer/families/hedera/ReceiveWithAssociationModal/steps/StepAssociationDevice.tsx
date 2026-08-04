@@ -51,6 +51,7 @@ export default function StepAssociationDevice(props: StepProps) {
     account,
     parentAccount,
     broadcastConfig,
+    transaction,
     logger: broadcastLogger,
   });
 
