@@ -130,6 +130,42 @@ export type DeeplinkBridge = {
   onOpen(callback: (url: string) => void): Unsubscribe;
 };
 
+/** Where a save dialog put the file, as returned by Electron. */
+export type SaveTarget = { canceled: boolean; filePath?: string };
+
+export type AppBridge = {
+  reload(): void;
+  relaunch(): void;
+  quit(): void;
+  show(): void;
+};
+
+export type DialogsBridge = {
+  showSave(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+};
+
+export type FilesBridge = {
+  /**
+   * `logsJson` is pre-stringified by the caller. The in-memory logs contain circular
+   * references and typed arrays that neither the bridge nor Electron's IPC serialiser can
+   * carry, so they are serialised with a custom replacer first — do not "simplify" this
+   * into passing the array.
+   */
+  saveLogs(target: SaveTarget, logsJson: string): Promise<void>;
+  exportOperations(target: SaveTarget, csv: string): Promise<boolean>;
+  openUserDataDirectory(): Promise<unknown>;
+};
+
+export type PowerBridge = {
+  keepScreenAwake(): Promise<number>;
+  release(blockerId?: number): Promise<void>;
+};
+
+export type StoreBridge = {
+  set(key: string, value: unknown): void;
+  clear(): void;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -142,6 +178,11 @@ export type LedgerBridge = {
   transport: TransportBridge;
   updater: UpdaterBridge;
   deeplink: DeeplinkBridge;
+  app: AppBridge;
+  dialogs: DialogsBridge;
+  files: FilesBridge;
+  power: PowerBridge;
+  store: StoreBridge;
   cardSession: CardSessionBridge;
 };
 
@@ -167,5 +208,15 @@ export const CHANNELS = {
   transportListenUnsubscribe: "transport:listen:unsubscribe",
   updater: "updater",
   deepLinking: "deep-linking",
+  appReload: "app-reload",
+  appRelaunch: "app-relaunch",
+  appQuit: "app-quit",
+  showApp: "show-app",
+  showSaveDialog: "show-save-dialog",
+  saveLogs: "save-logs",
+  exportOperations: "export-operations",
+  openUserDataDirectory: "openUserDataDirectory",
+  keepScreenAwake: "activate-keep-screen-awake",
+  releaseScreenAwake: "deactivate-keep-screen-awake",
   cardSessionBootstrap: "card-session:bootstrap",
 } as const;
