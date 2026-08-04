@@ -16,8 +16,8 @@ catalogs:
       specifier: 30.2.0
       version: 30.2.0
     '@ledgerhq/coin-hypercore':
-      specifier: 0.4.3
-      version: 0.4.3
+      specifier: 0.4.4
+      version: 0.4.4
     '@ledgerhq/coin-module-framework':
       specifier: 4.0.2
       version: 4.0.2
@@ -9532,7 +9532,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
+        version: 0.4.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -14689,7 +14689,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -18887,14 +18887,19 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-hypercore@0.4.3':
-    resolution: {integrity: sha512-da1KB1ul/hJS+joTxLrTVab9mn3Gs1ZFSyOaFqPEypBFUHsgyWrQqHs6CH4uzailNhNeLyNY/uIV5SifVErBvw==}
+  '@ledgerhq/coin-hypercore@0.4.4':
+    resolution: {integrity: sha512-Uswmvyh7RzFOSHdbw0XrXeobfyPbhI0VkcefhUc59zHyCAEVbJgh7Rq6xde6JzAJdYck+rWWU2rDJDGXYCsMFw==}
     peerDependencies:
-      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/coin-module-framework@4.0.2':
     resolution: {integrity: sha512-uYbsVd6t5qzgSEyINEhfuruTO74wAEi+lpMvAPF67F9gWAsFC7109kxlG1AgRdIQmmW5cCMYaSMt69DrhN0BuQ==}
+
+  '@ledgerhq/coin-module-framework@4.3.0':
+    resolution: {integrity: sha512-ntj6HbhI6fV30sW7qDSyAVxE/U9Gy3QpGnkgMqsFLoZ469aJxIdA1gDyimv4MkvjXv3czmTpYtvs03BSXB7J+g==}
+    peerDependencies:
+      '@ledgerhq/live-network': ^3.0.0
 
   '@ledgerhq/coin-stellar@6.26.4':
     resolution: {integrity: sha512-KZgJHQ2TcK20ZXK+2qM06lS45bi44uk2dXJ69iXK6ZUVBEtWuMrxbvqVjrlrfuFZzZ/EN8bZ468LyRT00yqxQQ==}
@@ -23279,7 +23284,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.1.4
       react-dom: 19.1.4
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -25613,7 +25618,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -29763,7 +29768,7 @@ packages:
   git-raw-commits@2.0.11:
     resolution: {integrity: sha512-VnctFhw+xfj8Va1xtfEqCUD2XDrbAPSJx+hSrE5K7fGdjZruW7XV+QOrN7LF/RJyvspRiD2I0asWsxFp0ya26A==}
     engines: {node: '>=10'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -34817,6 +34822,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -47009,9 +47015,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
+  '@ledgerhq/coin-hypercore@0.4.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 4.0.2
+      '@ledgerhq/coin-module-framework': 4.3.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': link:libs/ledgerjs/packages/logs
@@ -47019,6 +47025,12 @@ snapshots:
   '@ledgerhq/coin-module-framework@4.0.2':
     dependencies:
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      bignumber.js: 9.1.2
+
+  '@ledgerhq/coin-module-framework@4.3.0(@ledgerhq/live-network@libs+live-network)':
+    dependencies:
+      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-stellar@6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@libs+ledgerjs+packages+logs)':
