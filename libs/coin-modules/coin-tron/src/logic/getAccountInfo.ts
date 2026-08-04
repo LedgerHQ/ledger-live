@@ -1,4 +1,4 @@
-import { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
+import type { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
 import { getTronAccountNetwork } from "../network";
 
