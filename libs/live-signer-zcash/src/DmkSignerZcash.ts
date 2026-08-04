@@ -11,7 +11,11 @@ import type {
   SignPcztTransactionResult,
 } from "./types";
 import { lastValueFrom, type Observable } from "rxjs";
-import { UserRefusedOnDevice } from "./errors";
+import {
+  UNSUPPORTED_V6_TRANSACTION_ERROR_CODE,
+  UnsupportedV6SourceTransaction,
+  UserRefusedOnDevice,
+} from "./errors";
 import {
   DeviceActionStatus,
   type DeviceActionState,
@@ -70,11 +74,22 @@ export class DmkSignerZcash implements ZcashSigner {
   private mapError<E extends { _tag: string }>(error: E): Error {
     // A task can also reject with an untagged value, down to a primitive, so
     // nothing here may assume an object shape (LIVE-35215).
-    const details: { errorCode?: unknown; _tag?: unknown } =
+    const details: { errorCode?: unknown; _tag?: unknown; message?: unknown } =
       typeof error === "object" && error !== null ? error : {};
 
     if (details.errorCode === "6985") {
       return new UserRefusedOnDevice();
+    }
+    if (details.errorCode === UNSUPPORTED_V6_TRANSACTION_ERROR_CODE) {
+      // The signer kit already phrased the condition and named the installed app
+      // version, so its message is surfaced as it is: the `_tag` branch below would
+      // otherwise report a bare "UnsupportedV6TransactionError", as opaque as the
+      // "ZcashAppCommandError" this case used to end up as (LIVE-35358).
+      return new UnsupportedV6SourceTransaction(
+        typeof details.message === "string" && details.message.length > 0
+          ? details.message
+          : undefined,
+      );
     }
     if (typeof details._tag === "string" && details._tag.length > 0) {
       return new Error(details._tag);
