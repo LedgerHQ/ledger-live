@@ -8225,9 +8225,6 @@ importers:
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
-      expect:
-        specifier: 'catalog:'
-        version: 30.2.0
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -9333,9 +9330,6 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/live-env':
-        specifier: workspace:*
-        version: link:../env
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -13243,9 +13237,6 @@ importers:
       styled-system:
         specifier: 'catalog:'
         version: 5.1.5
-      stylis:
-        specifier: 'catalog:'
-        version: 4.0.0
     devDependencies:
       '@babel/core':
         specifier: 7.28.5

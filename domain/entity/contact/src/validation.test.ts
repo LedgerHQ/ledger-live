@@ -52,6 +52,18 @@ describe("contact name validation", () => {
     );
   });
 
+  it("reports a duplicate name after trimming, normalizing, and folding case", () => {
+    const existingNames = [ContactNameSchema.parse("Élodie")];
+
+    expect(getContactNameValidationError(" e\u0301LODIE ", existingNames)).toBe(
+      DUPLICATE_CONTACT_NAME_ERROR_NAME,
+    );
+    expect(isValidContactName(" e\u0301LODIE ", existingNames)).toBe(false);
+    expect(normalizeContactNameForComparison(" Élodie ")).toBe(
+      normalizeContactNameForComparison("e\u0301LODIE"),
+    );
+  });
+
   it("validates trimmed names consistently", () => {
     expect(isValidContactName("  Ben  ")).toBe(true);
     expect(isValidContactName("Olive2")).toBe(false);
