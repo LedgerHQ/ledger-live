@@ -68,7 +68,7 @@ const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
 const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
 // Derived from timeout + interval so the budget can't silently drift if either changes.
-const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+export const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
