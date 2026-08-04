@@ -19,6 +19,7 @@ export function ContactsAddAddressFlowDialog({
   onAddressLabelChange,
   onContinueFromName,
   onContinueFromReview,
+  onCompleteMockConfirmation,
   onBack,
   onClose,
 }: ContactsAddAddressFlowDialogProps): React.JSX.Element | null {
@@ -44,6 +45,7 @@ export function ContactsAddAddressFlowDialog({
               onContinueFromAddressDetails={onContinueFromAddressDetails}
               onContinueFromName={onContinueFromName}
               onContinueFromReview={onContinueFromReview}
+              onCompleteMockConfirmation={onCompleteMockConfirmation}
               state={state}
             />
           );

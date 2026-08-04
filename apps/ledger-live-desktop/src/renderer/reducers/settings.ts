@@ -46,11 +46,14 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import type { AnalyticsConsentInfo } from "@domain/entity-analytics-consent";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 import { selectFeature } from "@shared/feature-flags";
+
+export type { AnalyticsConsentInfo };
 
 /* Initial state */
 
@@ -59,11 +62,6 @@ export type VaultSigner = {
   host: string;
   workspace: string;
   token: string;
-};
-
-export type AnalyticsConsentInfo = {
-  consentDate: string | null;
-  privacyPolicyVersion: number | null;
 };
 
 export type SettingsState = {
@@ -147,7 +145,7 @@ export type SettingsState = {
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   lastAnalyticsConsentDate: string | null;
-  privacyPolicyVersion: number | null;
+  privacyPolicyVersion: number | string | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -810,18 +808,16 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the consent window must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
 
   if (analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(s.lastAnalyticsConsentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      analyticsConsentInfoSelector(state),
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }

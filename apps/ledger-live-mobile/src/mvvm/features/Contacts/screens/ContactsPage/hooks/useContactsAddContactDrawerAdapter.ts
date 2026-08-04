@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 import { v4 as uuid } from "uuid";
-import { addContact, contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import {
+  addContact,
+  contact,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import {
   type ContactCreationPort,
   type ContactsAddContactDrawerLabels,
@@ -44,6 +49,7 @@ export function useContactsAddContactDrawerAdapter(
       confirmName: t("contacts.addContactDrawer.confirmName"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
       },
     }),
     [t],

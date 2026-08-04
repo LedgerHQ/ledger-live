@@ -23,6 +23,16 @@ export class PageLogCollector {
   private readonly requestsMap: Map<Request, NetworkLog> = new Map();
 
   private targetPage: Page | null = null;
+  private readonly attachedPages: WeakSet<Page> = new WeakSet<Page>();
+
+  // Swap-init failure signatures (QAA-1326): used to surface the root cause when swap-init stalls.
+  private static readonly SWAP_INIT_ERROR_SIGNATURES = [
+    "custom.exchange.swap",
+    "CompleteExchangeError",
+    "PayloadStepError",
+    "FeeNotLoaded",
+    "SWAP_NOT_CREATED_ERROR",
+  ];
 
   private readonly onConsole = (msg: ConsoleMessage) => {
     this.consoleLogs.push({
@@ -107,15 +117,14 @@ export class PageLogCollector {
   }
 
   attachWebview(electronApp: ElectronApplication): void {
-    electronApp.on("window", (page: Page) => {
-      if (this.targetPage) return;
-
-      // The webview is the second window the app opens; revisit this if that assumption changes.
-      const windows = electronApp.windows();
-      if (windows.length <= 1) return;
-
+    const [mainWindow] = electronApp.windows();
+    const attachIfWebview = (page: Page) => {
+      if (page === mainWindow || this.attachedPages.has(page)) return;
+      this.attachedPages.add(page);
       this.attach(page);
-    });
+    };
+    electronApp.windows().forEach(attachIfWebview);
+    electronApp.on("window", attachIfWebview);
   }
 
   getFormattedConsoleLogs(): string {
@@ -124,6 +133,78 @@ export class PageLogCollector {
     return this.consoleLogs
       .map(entry => `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.text}`)
       .join("\n");
+  }
+
+  /**
+   * Extract the swap-init failure (custom.exchange.swap request/response) from the captured
+   * webview console, formatted for readability: `%c` console styling stripped, the embedded
+   * JSON payload pretty-printed, and the noisy minified renderer stacks dropped. Null when none.
+   */
+  getSwapInitError(): string | null {
+    const matches = this.consoleLogs.filter(entry =>
+      PageLogCollector.SWAP_INIT_ERROR_SIGNATURES.some(sig => entry.text.includes(sig)),
+    );
+    if (matches.length === 0) return null;
+
+    const step = PageLogCollector.deriveSwapInitStep(matches);
+    const body = matches.map(entry => PageLogCollector.formatSwapInitEntry(entry)).join("\n\n");
+    return step ? `Step: ${step}\n\n${body}` : body;
+  }
+
+  private static deriveSwapInitStep(matches: ConsoleLog[]): string | null {
+    const text = matches.map(entry => entry.text).join(" ");
+    if (text.includes("PayloadStepError") || text.includes("swap002")) {
+      return "PAYLOAD (Backend Swap Payload Retrieval)";
+    }
+    if (text.includes("CompleteExchangeError")) {
+      const deviceStep = text.match(/"step"\s*:\s*"([^"]+)"/)?.[1] ?? "INIT";
+      return `device Exchange app (${deviceStep})`;
+    }
+    return null;
+  }
+
+  private static formatSwapInitEntry(entry: ConsoleLog): string {
+    const header = `[${entry.timestamp}] [${entry.level.toUpperCase()}]`;
+    const jsonStart = entry.text.indexOf("{");
+    if (jsonStart === -1) {
+      return `${header} ${PageLogCollector.stripConsoleStyling(entry.text)}`;
+    }
+
+    const label = PageLogCollector.stripConsoleStyling(entry.text.slice(0, jsonStart));
+    const rawJson = entry.text.slice(jsonStart);
+    try {
+      const pretty = JSON.stringify(PageLogCollector.dropStacks(JSON.parse(rawJson)), null, 2);
+      return `${header} ${label}\n${pretty}`;
+    } catch {
+      // Not valid JSON (e.g. a plain log line) — keep the cleaned text as-is.
+      return `${header} ${label} ${rawJson}`;
+    }
+  }
+
+  /** Remove `%c` console format tokens and their CSS style arguments, keeping the label text. */
+  private static stripConsoleStyling(text: string): string {
+    return text
+      .replace(/%c/g, "")
+      .replace(/background:[^;]*;?/gi, "")
+      .replace(/color:\s*#[0-9a-f]{3,8};?/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  /** Recursively drop `stack` properties — the minified renderer stacks are noise for triage. */
+  private static dropStacks(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      return value.map(item => PageLogCollector.dropStacks(item));
+    }
+    if (value !== null && typeof value === "object") {
+      const result: Record<string, unknown> = {};
+      for (const [key, val] of Object.entries(value)) {
+        if (key === "stack") continue;
+        result[key] = PageLogCollector.dropStacks(val);
+      }
+      return result;
+    }
+    return value;
   }
 
   getFormattedNetworkLogs(): string {

@@ -1,4 +1,9 @@
-import { addContact, contact, INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import {
+  addContact,
+  contact,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import {
   type ContactCreationPort,
   type ContactsAddContactDialogLabels,
@@ -32,7 +37,10 @@ export function useAddContactDialogAdapter(
     }),
     [dispatch],
   );
-  const dialogViewModel = useAddContactDrawerViewModel({ contactCreation, onSaveSuccess });
+  const dialogViewModel = useAddContactDrawerViewModel({
+    contactCreation,
+    onSaveSuccess,
+  });
   const labels = useMemo<ContactsAddContactDialogLabels>(
     () => ({
       title: t("contacts.addContact"),
@@ -41,6 +49,7 @@ export function useAddContactDialogAdapter(
       confirmName: t("contacts.addContact"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.invalidNameError"),
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
       },
     }),
     [t],

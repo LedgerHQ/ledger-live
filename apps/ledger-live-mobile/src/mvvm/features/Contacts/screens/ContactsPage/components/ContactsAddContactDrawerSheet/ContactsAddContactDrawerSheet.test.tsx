@@ -32,6 +32,7 @@ function createViewModel(
       confirmName: "Confirm name",
       nameValidationErrors: {
         InvalidContactNameError: "Special characters are not allowed.",
+        DuplicateContactNameError: "This contact name is already in use.",
       },
     },
     onOpen: jest.fn(),

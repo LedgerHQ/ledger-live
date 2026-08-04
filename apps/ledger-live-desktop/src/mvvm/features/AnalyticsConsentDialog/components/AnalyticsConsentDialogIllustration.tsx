@@ -1,7 +1,7 @@
 import React from "react";
 import { Spot } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
-import type { AnalyticsConsentPhase } from "@ledgerhq/live-common/analyticsConsent/index";
+import type { AnalyticsConsentPhase } from "@features/flow-analytics-consent";
 
 export type AnalyticsConsentDialogIllustrationProps = Readonly<{
   phase: AnalyticsConsentPhase;

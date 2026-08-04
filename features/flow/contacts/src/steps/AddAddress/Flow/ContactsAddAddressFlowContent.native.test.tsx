@@ -37,13 +37,6 @@ const nameLabels: AddAddressNameLabels = {
     [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: "Name is too long",
   },
 };
-const labels = {
-  review: "Review address",
-  success: "Address added",
-  continue: "Continue",
-  done: "Done",
-};
-
 function createProps(
   step: ContactsAddAddressFlowContentProps["step"],
 ): ContactsAddAddressFlowContentProps {
@@ -72,9 +65,6 @@ function createProps(
       onChangeText: jest.fn(),
       onContinue: jest.fn(),
     },
-    labels,
-    onContinueFromReview: jest.fn(),
-    onFinish: jest.fn(),
   };
 }
 
@@ -91,19 +81,5 @@ describe("ContactsAddAddressFlowContent", () => {
 
     fireEvent.press(screen.getByTestId("contacts-add-address-name-continue"));
     expect(nameProps.addressNameProps?.onContinue).toHaveBeenCalledTimes(1);
-  });
-
-  it("should render review and success content with their flow transitions", () => {
-    const reviewProps = createProps("review");
-    const { rerender } = render(<ContactsAddAddressFlowContent {...reviewProps} />);
-
-    fireEvent.press(screen.getByTestId("contacts-add-address-review-screen-continue"));
-    expect(reviewProps.onContinueFromReview).toHaveBeenCalledTimes(1);
-
-    const successProps = createProps("success");
-    rerender(<ContactsAddAddressFlowContent {...successProps} />);
-
-    fireEvent.press(screen.getByTestId("contacts-add-address-success-screen-continue"));
-    expect(successProps.onFinish).toHaveBeenCalledTimes(1);
   });
 });
