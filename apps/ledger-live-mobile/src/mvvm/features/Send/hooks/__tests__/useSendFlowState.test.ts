@@ -41,7 +41,12 @@ const mockBusinessLogicResult = {
     setSuccess: jest.fn(),
     resetStatus: jest.fn(),
   },
-  uiConfig: { hasFeePresets: false, hasCustomFees: false, hasCoinControl: false },
+  uiConfig: {
+    hasFeePresets: false,
+    hasCustomFees: false,
+    hasCoinControl: false,
+    hasDefaultStrategy: false,
+  },
   recipientSearch: { value: "", setValue: jest.fn(), clear: jest.fn() },
   recipient: null,
   setAccountAndNavigate: jest.fn(),

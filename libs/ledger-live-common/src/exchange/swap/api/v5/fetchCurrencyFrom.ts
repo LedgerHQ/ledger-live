@@ -3,7 +3,7 @@ import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5CurrenciesToAndFrom";
 import { fetchCurrencyFromMock } from "./__mocks__/fetchCurrencyFrom.mocks";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 type Props = {
   baseUrl?: string;

@@ -1,7 +1,15 @@
 import React, { useCallback, memo } from "react";
-import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
+import {
+  DotIndicator,
+  TableRow,
+  TableCell,
+  TableCellItem,
+  TableCellContent,
+  TableCellContentTitle,
+} from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
@@ -10,7 +18,6 @@ import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { getOperationTypeI18nKey } from "~/renderer/helpers/operationTypeI18nKey";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -48,50 +55,51 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
   return (
     <TableRow clickable onClick={handleClick} data-testid={`history-operation-row-${operation.id}`}>
       <TableCell data-testid="history-operation-type">
-        <TableCellContent
-          leadingContent={
-            cryptoCurrency ? (
-              <TransactionalIcon
-                operationType={operation.type}
-                isPending={item.isPending}
-                hasFailed={operation.hasFailed}
-                currency={cryptoCurrency}
-                mediaSize={40}
-                network={
-                  !shouldDisplayAggregatedAssets && isToken
-                    ? cryptoCurrency.parentCurrencyId
-                    : undefined
-                }
-              />
-            ) : undefined
-          }
-          title={
-            <div className="inline-flex items-center gap-12">
-              {typeLabel}
-              {isUnread && (
-                <DotIndicator appearance="base" size="lg" data-testid="unread-indicator" />
-              )}
-            </div>
-          }
-        />
+        <TableCellItem>
+          {cryptoCurrency ? (
+            <TransactionalIcon
+              operationType={operation.type}
+              isPending={item.isPending}
+              hasFailed={operation.hasFailed}
+              currency={cryptoCurrency}
+              mediaSize={40}
+              network={
+                !shouldDisplayAggregatedAssets && isToken
+                  ? cryptoCurrency.parentCurrencyId
+                  : undefined
+              }
+            />
+          ) : null}
+          <TableCellContent>
+            <TableCellContentTitle>
+              <div className="inline-flex items-center gap-12">
+                {typeLabel}
+                {isUnread && (
+                  <DotIndicator appearance="base" size="lg" data-testid="unread-indicator" />
+                )}
+              </div>
+            </TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
       <TableCell align="end" data-testid="history-operation-address">
-        <TableCellContent
-          align="end"
-          title={
-            <div className="inline-flex items-center gap-4">
-              <OperationCounterpartyLabel item={item} prefix={addressPrefix} />
-              {iconCurrency && (
-                <SquaredCryptoIcon
-                  ledgerId={iconCurrency.id}
-                  ticker={iconCurrency.ticker}
-                  size={20}
-                  network={iconNetwork}
-                />
-              )}
-            </div>
-          }
-        />
+        <TableCellItem align="end">
+          <TableCellContent>
+            <TableCellContentTitle>
+              <div className="inline-flex items-center gap-4">
+                <OperationCounterpartyLabel item={item} prefix={addressPrefix} />
+                {iconCurrency && (
+                  <SquaredCryptoIcon
+                    ledgerId={iconCurrency.id}
+                    ticker={iconCurrency.ticker}
+                    size={20}
+                    network={iconNetwork}
+                  />
+                )}
+              </div>
+            </TableCellContentTitle>
+          </TableCellContent>
+        </TableCellItem>
       </TableCell>
       <TableCell align="end" data-testid="history-operation-amount">
         <BalanceCell

@@ -169,6 +169,8 @@ describe("setupZcashNativeHost", () => {
         ZCASH_IPC.buildTransaction,
         ZCASH_IPC.finalizeTransaction,
         ZCASH_IPC.broadcastTransaction,
+        ZCASH_IPC.transactionDetails,
+        ZCASH_IPC.buildIronwoodTransaction,
       ].sort(),
     );
     expect(typeof mockRegistry.beforeQuit).toBe("function");
@@ -283,6 +285,40 @@ describe("one-shot transaction handlers", () => {
       txid: "dd",
     });
     await expect(promise).resolves.toBe("dd");
+  });
+
+  it("transactionDetails forwards and resolves with the fees, in request order", async () => {
+    setupZcashNativeHost();
+    const args = {
+      requestId: "req-fees",
+      grpcUrl: "u",
+      network: "mainnet",
+      requests: [{ txid: "aa", height: 3_426_175, prevouts: [] }],
+    };
+    const promise = getHandler(ZCASH_IPC.transactionDetails)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    expect(mockRegistry.posted).toContainEqual({ type: "transaction-details", args });
+
+    const results = [{ txid: "aa", fee: "55000", payees: ["u1payee"] }];
+    emitUtilityMessage({ type: "transaction-details-result", requestId: "req-fees", results });
+    await expect(promise).resolves.toEqual(results);
+  });
+
+  it("transactionDetails rejects on a utility error reply", async () => {
+    setupZcashNativeHost();
+    const args = { requestId: "req-fees", grpcUrl: "u", network: "mainnet", requests: [] };
+    const promise = getHandler(ZCASH_IPC.transactionDetails)(event(), args) as Promise<unknown>;
+    emitSpawn();
+    await flush();
+
+    emitUtilityMessage({
+      type: "transaction-details-error",
+      requestId: "req-fees",
+      message: "gRPC unreachable",
+    });
+    await expect(promise).rejects.toThrow("gRPC unreachable");
   });
 
   it("broadcastTransaction rejects on a utility error reply", async () => {

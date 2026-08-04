@@ -6,9 +6,9 @@ export type { FormattedNumber, FormattedQuoteValues };
 
 /**
  * Minimal per-currency metadata required by {@link formatQuote}. Deliberately
- * narrower than `CryptoCurrency` / `TokenCurrency` from
- * `@ledgerhq/cryptoassets` so the helper stays a pure function and can be
- * driven from fixtures without wallet-wide resolvers in tests.
+ * narrower than the full `CryptoCurrency` / `TokenCurrency` shapes so the
+ * helper stays a pure function and can be driven from fixtures without
+ * wallet-wide resolvers in tests.
  *
  * - `id` is the Ledger currency id (e.g. `"ethereum"`, `"ethereum/erc20/usd__coin"`).
  *   Used as the key into {@link FormatQuoteInput.spotPrices}.
@@ -26,8 +26,7 @@ export type CurrencyMeta = {
 /**
  * User's preferred counter-value fiat. Deliberately flat so callers can
  * resolve it once (via `findFiatCurrencyByTicker` + `units[0]`) and pass it
- * down; keeping the helper decoupled from `@ledgerhq/cryptoassets` makes
- * parity testing trivial.
+ * down; keeping the helper self-contained makes parity testing trivial.
  */
 export type FiatMeta = {
   ticker: string;

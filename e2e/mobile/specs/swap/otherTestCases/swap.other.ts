@@ -5,7 +5,7 @@ import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "../../..
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";

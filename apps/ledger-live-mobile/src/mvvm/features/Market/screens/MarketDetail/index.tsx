@@ -5,7 +5,7 @@ import {
   MarketCurrencyData,
 } from "@ledgerhq/live-common/market/utils/types";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { counterValueFormatter, getDateFormatter } from "LLM/features/Market/utils";
 import React, { memo, useMemo, useState } from "react";

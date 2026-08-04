@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { themeSelector } from "~/renderer/actions/general";
 
 import animation1Dark from "../animations/1_Dark.lottie";

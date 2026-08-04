@@ -5,6 +5,26 @@ import type { NetworkFeesViewModel } from "../../types";
 
 const dismiss = jest.fn();
 
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ bottom: 0, top: 0, left: 0, right: 0 }),
+}));
+jest.mock("LLM/components/InfoState", () => {
+  const RN = jest.requireActual<typeof import("react-native")>("react-native");
+  return {
+    InfoState: ({
+      title,
+      description,
+    }: {
+      title?: React.ReactNode;
+      description?: React.ReactNode;
+    }) => (
+      <RN.View>
+        {title ? <RN.Text>{title}</RN.Text> : null}
+        {description ? <RN.Text>{description}</RN.Text> : null}
+      </RN.View>
+    ),
+  };
+});
 jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const RN = jest.requireActual<typeof import("react-native")>("react-native");
   return {
@@ -45,10 +65,9 @@ const baseViewModel: NetworkFeesViewModel = {
   value: "0 TRX",
   strategyLabel: "",
   showFeeCurrencyAmount: false,
-  showFeePresets: false,
   selectedFeeStrategy: null,
-  feePresetLabelsOptions: [],
-  onSelectFeeStrategy: jest.fn(),
+  displayOptions: [],
+  canOpenSelector: false,
   networkFeesInfo: null,
 };
 

@@ -1,8 +1,8 @@
 import type { ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/index";
-import { decodeMemoFromCbor } from "@ledgerhq/concordium-core";
 import { log } from "@ledgerhq/logs";
 import { getTransactions } from "../../network/proxyClient";
 import type { RawOperation, TransactionQueryParams, WalletProxyTransaction } from "../../types";
+import { decodeMemo } from "./memo";
 
 const DEFAULT_PAGE_SIZE = 100;
 
@@ -44,11 +44,7 @@ export function parseTransaction(tx: WalletProxyTransaction, address: string): R
 
   let memo: string | undefined;
   if (tx.details.memo) {
-    try {
-      memo = decodeMemoFromCbor(Buffer.from(tx.details.memo, "hex"));
-    } catch {
-      log("concordium", `Failed to decode memo for tx ${tx.transactionHash}`);
-    }
+    memo = decodeMemo(tx.details.memo, tx.transactionHash);
   }
 
   return {

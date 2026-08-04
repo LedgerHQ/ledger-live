@@ -41,7 +41,7 @@ jobs:
           application: ${{ github.event.inputs.application }}
 
       - name: Checkout Repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
@@ -73,7 +73,7 @@ jobs:
           git add .
 
       - name: commit
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
           repo: ${{ github.repository }}
@@ -90,8 +90,9 @@ jobs:
         if: ${{ github.event.inputs.tag_version == 'latest' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
         run: |
-          git checkout ${{ github.event.inputs.ref }}
+          git checkout "$INPUT_REF"
           git checkout -b support/hotfix-merge-conflicts
           git push origin support/hotfix-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
@@ -111,8 +112,9 @@ jobs:
         if: ${{ github.event.inputs.tag_version == 'latest' && steps.release-merge.outcome == 'failure' && steps.release-merge.outputs.status == '409' }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
         run: |
-          git checkout ${{ github.event.inputs.ref }}
+          git checkout "$INPUT_REF"
           git checkout -b support/hotfix-release-merge-conflicts
           git push origin support/hotfix-release-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
@@ -152,7 +154,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

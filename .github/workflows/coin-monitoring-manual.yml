@@ -21,13 +21,20 @@ on:
 jobs:
   run-monitoring:
     runs-on: [ledger-live-4xlarge]
+    permissions:
+      id-token: write
+      contents: read
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
         id: monitoring
         timeout-minutes: 120

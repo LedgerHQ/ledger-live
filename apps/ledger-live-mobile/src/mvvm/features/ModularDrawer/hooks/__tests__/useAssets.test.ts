@@ -23,7 +23,7 @@ describe("useAssets", () => {
 
     const assets = result.current.assetsSorted?.map(a => a.asset);
     const expectedAssetsWithoutMetaCurrencyId = expectedAssetsSortedFromMock.map(asset => {
-      const { metaCurrencyId, ...assetWithoutMetaCurrencyId } = asset;
+      const { metaCurrencyId: _metaCurrencyId, ...assetWithoutMetaCurrencyId } = asset;
       return assetWithoutMetaCurrencyId;
     });
 
@@ -31,5 +31,28 @@ describe("useAssets", () => {
 
     expect(result.current.sortedCryptoCurrencies.length).toBeGreaterThan(0);
     expect(result.current.sortedCryptoCurrencies[0].id).toBe("bitcoin");
+  });
+
+  it("keeps native assets and tokens available on allowed parent networks", async () => {
+    const { result } = renderHook(() => useAssets({ networkIds: ["ethereum"] }));
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.sortedCryptoCurrencies.map(currency => currency.id)).toEqual(
+      expect.arrayContaining([
+        "ethereum",
+        "ethereum/erc20/usd_tether__erc20_",
+        "ethereum/erc20/usd__coin",
+      ]),
+    );
+    expect(
+      result.current.assetsSorted?.every(asset =>
+        asset.networks.every(currency =>
+          currency.type === "TokenCurrency"
+            ? currency.parentCurrencyId === "ethereum"
+            : currency.id === "ethereum",
+        ),
+      ),
+    ).toBe(true);
   });
 });

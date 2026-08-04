@@ -1,8 +1,10 @@
 import { useToolsFromConfig, useDevToolsStorage } from "../hooks";
 import type { Category, DevToolsConfig, Tool, ToolId } from "@devtools/registry";
+import type { ReactNode } from "react";
 
 interface DevToolsInput {
   config: DevToolsConfig;
+  sidebarFooter?: ReactNode;
 }
 
 export interface DevToolsViewProps {
@@ -11,9 +13,10 @@ export interface DevToolsViewProps {
   recentToolIds: ToolId[];
   onSelectTool: (id: ToolId) => void;
   onClearTool: () => void;
+  sidebarFooter?: ReactNode;
 }
 
-export function useDevToolsViewModel({ config }: DevToolsInput): DevToolsViewProps {
+export function useDevToolsViewModel({ config, sidebarFooter }: DevToolsInput): DevToolsViewProps {
   const { activeTool, setActiveToolId, clearActiveTool, categories } = useToolsFromConfig(
     config,
     "web",
@@ -26,5 +29,6 @@ export function useDevToolsViewModel({ config }: DevToolsInput): DevToolsViewPro
     recentToolIds,
     onSelectTool: setActiveToolId,
     onClearTool: clearActiveTool,
+    sidebarFooter,
   };
 }

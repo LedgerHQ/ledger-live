@@ -44,7 +44,7 @@ describe("network utils", () => {
   const mockCurrency = getMockedCurrency();
 
   beforeAll(() => {
-    hederaCoinConfig.setCoinConfig(getMockedConfig);
+    hederaCoinConfig.setCoinConfig(() => getMockedConfig());
   });
 
   beforeEach(() => {

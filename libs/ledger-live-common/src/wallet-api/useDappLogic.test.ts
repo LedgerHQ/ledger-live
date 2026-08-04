@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
 import { AppBranch, AppPlatform, Visibility } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 jest.mock("./converters", () => ({
@@ -30,7 +30,7 @@ jest.mock("../bridge", () => ({
   }),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockReturnValue(true),
   changes: { subscribe: jest.fn() },
 }));
@@ -72,7 +72,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore", () => ({
 
 const mockCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",
@@ -204,7 +204,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     // Re-establish the default mock return values for this suite.
-    const { getEnv } = jest.requireMock("@ledgerhq/live-env");
+    const { getEnv } = jest.requireMock("@shared/env");
     getEnv.mockReturnValue(true);
     const { getCryptoAssetsStore } = jest.requireMock(
       "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",
@@ -346,7 +346,7 @@ describe("useDappLogic — onDappMessage async paths", () => {
 describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    const { getEnv } = jest.requireMock("@ledgerhq/live-env");
+    const { getEnv } = jest.requireMock("@shared/env");
     getEnv.mockReturnValue(true);
     const { getCryptoAssetsStore } = jest.requireMock(
       "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",

@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import api from "./index";
 import type { CurrenciesPerProvider, RampCatalog } from "../types";
 
@@ -6,7 +6,7 @@ jest.mock("@ledgerhq/live-network", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn((key: string) => {
     if (key === "MOCK") return false;
     if (key === "BUY_API_BASE") return "https://buy.example.com";

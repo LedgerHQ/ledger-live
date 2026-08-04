@@ -9,7 +9,7 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { DeviceConnectionComponentLWMView } from "./DeviceConnectionComponentLWMView";
 import type { DeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
@@ -35,14 +35,14 @@ function renderView(
   callbacks: Partial<Omit<DeviceConnectionComponentLWMViewModel, "state">> = {},
 ) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <DeviceConnectionComponentLWMView
         state={state}
         platform={callbacks.platform ?? "android"}
         onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
         onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
       />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 

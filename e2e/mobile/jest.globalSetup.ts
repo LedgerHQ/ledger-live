@@ -1,3 +1,4 @@
+import "@shared/env";
 import { globalSetup } from "detox/runners/jest";
 import { log } from "detox";
 import { session as detoxSession, config as detoxConfig } from "detox/internals";

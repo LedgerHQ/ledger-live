@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Text, Box } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 import { Pressable, StyleSheet } from "react-native";

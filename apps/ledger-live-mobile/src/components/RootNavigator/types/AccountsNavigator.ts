@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { CryptoVariant } from "LLM/features/Crypto/screens/CryptoScreen/types";

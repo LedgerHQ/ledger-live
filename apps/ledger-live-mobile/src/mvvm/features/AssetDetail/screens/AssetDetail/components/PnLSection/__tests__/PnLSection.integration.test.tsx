@@ -24,7 +24,7 @@ const emptyDistributionItem: DistributionItem = {
 };
 
 const withPnl = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
+  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
 
 describe("AssetDetail PnLSection", () => {
   it("renders the section when the pnl flag is on and the asset has accounts", () => {

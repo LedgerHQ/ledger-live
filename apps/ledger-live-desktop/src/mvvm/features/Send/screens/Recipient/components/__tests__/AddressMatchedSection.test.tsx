@@ -98,6 +98,7 @@ describe("AddressMatchedSection", () => {
       ],
       bridgeErrors: undefined,
       bridgeWarnings: undefined,
+      hasBridgeValidationResult: true,
     };
 
     render(
@@ -139,6 +140,7 @@ describe("AddressMatchedSection", () => {
       ],
       bridgeErrors: undefined,
       bridgeWarnings: undefined,
+      hasBridgeValidationResult: true,
     };
 
     render(

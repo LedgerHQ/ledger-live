@@ -30,7 +30,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        if [ "${{ inputs.production }}" = "true" ]; then
+        if [ "${INPUTS_PRODUCTION}" = "true" ]; then
           npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
           npx vercel build --prod --token=$VERCEL_TOKEN
         else
@@ -42,6 +42,7 @@ runs:
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
         VERCEL_TELEMETRY_DISABLED: 1
+        INPUTS_PRODUCTION: ${{ inputs.production }}
       working-directory: ${{ inputs.working-directory }}
 
     - name: Deploy
@@ -49,7 +50,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        if [ "${{ inputs.production }}" = "true" ]; then
+        if [ "${INPUTS_PRODUCTION}" = "true" ]; then
           DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --yes --prod --token=$VERCEL_TOKEN)
         else
           DEPLOYMENT_URL=$(npx vercel deploy --prebuilt --yes --token=$VERCEL_TOKEN)
@@ -64,4 +65,5 @@ runs:
         VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
         VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
         VERCEL_TELEMETRY_DISABLED: 1
+        INPUTS_PRODUCTION: ${{ inputs.production }}
       working-directory: ${{ inputs.working-directory }}

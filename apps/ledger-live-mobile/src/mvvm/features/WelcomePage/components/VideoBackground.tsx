@@ -9,6 +9,7 @@ type VideoBackgroundProps = {
   videoSource: ReactVideoSource;
   titleKey: string;
   isOnStage?: boolean;
+  restartKey?: number;
   onVideoLoad?: (data: OnLoadData) => void;
   onVideoEnd?: () => void;
 };
@@ -22,6 +23,7 @@ export function VideoBackground({
   videoSource,
   titleKey,
   isOnStage = false,
+  restartKey = 0,
   onVideoLoad,
   onVideoEnd,
 }: Readonly<VideoBackgroundProps>) {
@@ -34,6 +36,12 @@ export function VideoBackground({
       videoRef.current?.seek(0);
     }
   }, [isOnStage]);
+
+  useEffect(() => {
+    if (isOnStage && restartKey > 0) {
+      videoRef.current?.seek(0);
+    }
+  }, [isOnStage, restartKey]);
 
   return (
     <View style={[styles.container, { display: isOnStage ? "flex" : "none" }]}>

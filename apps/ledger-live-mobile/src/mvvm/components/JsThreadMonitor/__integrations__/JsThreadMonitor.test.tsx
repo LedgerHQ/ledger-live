@@ -1,14 +1,14 @@
 import React from "react";
 import { AppState } from "react-native";
 import { render, act } from "@tests/test-renderer";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { JsThreadMonitor } from "../index";
 
 const mockRemove = jest.fn();
 
 let mockNow = 0;
 
-jest.mock("@ledgerhq/live-common/hooks/useEnv", () => ({
+jest.mock("@features/platform-env", () => ({
   __esModule: true,
   default: jest.fn(),
 }));

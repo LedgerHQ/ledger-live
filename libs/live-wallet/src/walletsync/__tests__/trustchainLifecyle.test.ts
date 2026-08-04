@@ -3,7 +3,7 @@ import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 import { emptyState, convertLocalToDistantState } from "../__mocks__";
 import { trustchainLifecycle } from "..";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 describe("trustchainLifecycle", () => {
   let removedCount = 0;

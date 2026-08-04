@@ -20,7 +20,8 @@ const sendRestrictions = [
       "Send must not branch on `.family`. Move family-specific behavior behind the send flow/families contract.",
   },
   {
-    selector: "CallExpression[callee.property.name='includes'] MemberExpression[property.name='family']",
+    selector:
+      "CallExpression[callee.property.name='includes'] MemberExpression[property.name='family']",
     message:
       "Send must not check `.family` with includes(). Move family-specific behavior behind the send flow/families contract.",
   },

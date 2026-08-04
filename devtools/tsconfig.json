@@ -5,6 +5,7 @@
     { "path": "./feature-flags/" },
     { "path": "./registry" },
     { "path": "./transport" },
+    { "path": "./transport-panel" },
     { "path": "./protocols" }
   ]
 }

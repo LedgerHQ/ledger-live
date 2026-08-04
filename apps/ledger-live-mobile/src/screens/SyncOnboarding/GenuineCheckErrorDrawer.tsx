@@ -5,7 +5,6 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen, track } from "~/analytics";
 import GenericErrorView from "~/components/GenericErrorView";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
-import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import type { SyncOnboardingScreenProps } from "LLM/features/Onboarding/screens/SyncOnboardingCompanion/types";
@@ -60,11 +59,12 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
+  const eName = (error as { name?: string })?.name;
 
   // Depending from where the device was not recognized we can a FirmwareNotRecognized or a simple Error
   const isNotFoundEntity =
     error &&
-    (error instanceof FirmwareNotRecognized ||
+    (eName === "FirmwareNotRecognized" ||
       (error instanceof Error && error.message === "not found entity"));
 
   const onGoToSettings = useCallback(() => {
@@ -85,7 +85,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const screenName = isNotFoundEntity
     ? "Error: Device OS version not recognized"
     : error
-      ? `Error: ${isDmkError(error) ? error._tag : (error as Error).name}`
+      ? `Error: ${isDmkError(error) ? error._tag : eName}`
       : "Error: unknown error";
 
   const handleRetry = () => {
@@ -140,7 +140,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
         />
         <Button
           type="main"
-          mt={(error as unknown as Error) instanceof BluetoothRequired ? 6 : 8}
+          mt={eName === "BluetoothRequired" ? 6 : 8}
           mb={7}
           size={"large"}
           onPress={handleRetry}

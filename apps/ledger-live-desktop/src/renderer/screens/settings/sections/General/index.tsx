@@ -10,7 +10,7 @@ import ThemeSelect from "./ThemeSelect";
 import WalletSync from "./WalletSync";
 import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
-import SentryLogsButton from "./SentryLogsButton";
+import ReportBugsButton from "./ReportBugsButton";
 import ShareAnalyticsButton from "./ShareAnalyticsButton";
 import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
 import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
@@ -117,7 +117,7 @@ const SectionGeneral = () => {
           title={t("settings.profile.reportErrors")}
           desc={t("settings.profile.reportErrorsDesc")}
         >
-          <SentryLogsButton />
+          <ReportBugsButton />
         </Row>
         {lldAnalyticsOptInPromptFlag?.enabled ? (
           <>

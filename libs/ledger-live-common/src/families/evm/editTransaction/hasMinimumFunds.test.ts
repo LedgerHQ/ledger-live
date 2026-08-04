@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
@@ -6,7 +6,7 @@ import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/utils";
 import { hasMinimumFundsToCancel, hasMinimumFundsToSpeedUp } from "./hasMinimumFunds";
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn(),
 }));
 jest.mock("@ledgerhq/coin-evm/logic");

@@ -3,7 +3,7 @@ import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
 
 export class MyWalletPage extends AppPage {
-  private readonly avatarTrigger = this.page.getByRole("button", { name: "My Wallet" });
+  private readonly avatarTrigger = this.page.getByRole("button", { name: /^my wallet$/i });
   private readonly popoverActionsList = this.page.getByTestId("my-wallet-actions-list");
   private readonly myWalletPopover = this.page
     .getByRole("dialog")

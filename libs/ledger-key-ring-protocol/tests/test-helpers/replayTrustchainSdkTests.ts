@@ -2,7 +2,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
 import { ScenarioOptions } from "./types";
 import { getSdk } from "../../src";

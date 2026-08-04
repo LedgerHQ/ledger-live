@@ -1,5 +1,8 @@
 "use strict";
 
+// Loads @shared/env so env defaults are accessible in tests.
+require("@shared/env");
+
 const {
   getCryptoCurrencyById,
   findCryptoCurrencyById,

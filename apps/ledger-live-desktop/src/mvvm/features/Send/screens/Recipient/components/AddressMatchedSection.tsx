@@ -1,5 +1,6 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -44,10 +45,10 @@ export function AddressMatchedSection({
     return null;
   }
 
-  const formattedAddress = formatAddress(resolvedAddress ?? searchValue, {
-    prefixLength: 5,
-    suffixLength: 5,
-  });
+  const formattedAddress = formatAddress(
+    resolvedAddress ?? searchValue,
+    SEND_ADDRESS_FORMAT_OPTIONS,
+  );
 
   const getENSDisplayTitle = (): string => {
     return `${ensName} (${formattedAddress})`;

@@ -1,5 +1,6 @@
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export enum ModularDrawerStep {
   Asset = "Asset",
@@ -8,6 +9,9 @@ export enum ModularDrawerStep {
 }
 
 export const MODULAR_DRAWER_KEY = "modularDrawer";
+
+export type ModularDrawerCompletionMode = "currency";
+export type ModularDrawerPresentation = "drawer" | "embedded";
 
 export type DrawerExtras = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -24,13 +28,39 @@ export type DrawerBaseParams = {
   uiUseCase?: string;
 };
 
-export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
+type AccountOrDeviceDrawerCompletion = {
+  completionMode?: never;
+  presentation?: "drawer";
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
-} & TExtras;
+  onCurrencySelected?: never;
+};
 
-export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
+type CurrencyDrawerCompletion = {
+  completionMode: "currency";
+  presentation?: ModularDrawerPresentation;
+  onAccountSelected?: never;
+  onCurrencySelected: (currency: CryptoOrTokenCurrency | null) => void;
+};
+
+export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
+  (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) &
+  TExtras;
+
+type AccountOrDeviceDrawerRemoteCompletion = {
   callbackId?: string;
-} & TExtras;
+  completionMode?: never;
+  presentation?: "drawer";
+};
+
+type CurrencyDrawerRemoteCompletion = {
+  callbackId?: string;
+  completionMode: "currency";
+  presentation?: ModularDrawerPresentation;
+};
+
+export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
+  (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) &
+  TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (
   params?: DrawerParams<TExtras>,

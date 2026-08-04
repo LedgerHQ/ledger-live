@@ -23,6 +23,7 @@
     "@ledgerhq/types-cryptoassets"
   ],
   "ignoreUnimported": [
+    "src/errors.ts",
     "src/network/gateway.ts",
     "src/network/mock-network.ts",
     "src/network/types.ts",

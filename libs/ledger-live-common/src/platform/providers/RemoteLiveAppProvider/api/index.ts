@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import qs from "qs";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { FilterParams } from "../../../filters";
 import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";

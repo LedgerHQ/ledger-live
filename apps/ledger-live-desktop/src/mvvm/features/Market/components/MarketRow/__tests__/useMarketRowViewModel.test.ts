@@ -57,7 +57,6 @@ function renderViewModel(
         size: 56,
         start: 112,
         currency: bitcoinCurrency,
-        counterCurrency: "usd",
         locale: "en",
         range: "24h",
         isStarred: false,

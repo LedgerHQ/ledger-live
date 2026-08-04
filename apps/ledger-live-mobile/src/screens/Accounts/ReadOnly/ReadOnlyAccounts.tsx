@@ -5,7 +5,8 @@ import { useFocusEffect } from "@react-navigation/native";
 
 import { useTranslation } from "~/context/Locale";
 
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import TrackScreen from "~/analytics/TrackScreen";
 
 import ReadOnlyAccountRow from "./ReadOnlyAccountRow";

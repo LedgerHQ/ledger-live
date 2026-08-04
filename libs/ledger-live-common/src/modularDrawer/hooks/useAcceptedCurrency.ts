@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { isCurrencySupported } from "../../currencies";
 import { useCurrenciesUnderFeatureFlag } from "./useCurrenciesUnderFeatureFlag";
 

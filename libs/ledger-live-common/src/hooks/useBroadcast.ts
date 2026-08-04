@@ -9,7 +9,7 @@ import type {
   TransactionSource,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { execAndWaitAtLeast } from "../promise";

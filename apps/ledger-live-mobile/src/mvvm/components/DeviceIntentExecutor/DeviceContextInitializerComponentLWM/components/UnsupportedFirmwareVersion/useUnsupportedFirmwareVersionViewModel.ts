@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type Params = Readonly<{
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
   onCancel: () => void;
 }>;
 
-export function useUnsupportedFirmwareVersionViewModel({ device, sourceFlow, onCancel }: Params) {
+export function useUnsupportedFirmwareVersionViewModel({ device, onCancel }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openMyLedgerFirmwareUpdate } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -19,18 +19,20 @@ export function useUnsupportedFirmwareVersionViewModel({ device, sourceFlow, onC
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.UpdateFirmware,
+      extraProperties: analyticsProperties,
     });
     openMyLedgerFirmwareUpdate();
-  }, [openMyLedgerFirmwareUpdate, sourceFlow, modelId]);
+  }, [analyticsProperties, openMyLedgerFirmwareUpdate, sourceFlow, modelId]);
 
   const onCancelWithTracking = useCallback(() => {
     trackConnectAppButtonClicked({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onCancel();
-  }, [onCancel, sourceFlow, modelId]);
+  }, [analyticsProperties, onCancel, sourceFlow, modelId]);
 
   return {
     onCancel: onCancelWithTracking,

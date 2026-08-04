@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetType } from "../../../../types";
 import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import SkeletonList from "../../../../components/SkeletonList";

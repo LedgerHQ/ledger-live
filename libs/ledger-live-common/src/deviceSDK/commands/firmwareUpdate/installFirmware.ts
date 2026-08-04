@@ -1,9 +1,9 @@
 import { Observable, of, throwError } from "rxjs";
 import URL from "url";
-import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { FinalFirmware, OsuFirmware, DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { catchError, filter, map } from "rxjs/operators";
@@ -11,7 +11,6 @@ import {
   ManagerFirmwareNotEnoughSpaceError,
   UserRefusedFirmwareUpdate,
   DeviceOnDashboardExpected,
-  ManagerDeviceLockedError,
 } from "@ledgerhq/errors";
 import { LOG_TYPE, UnresponsiveCmdEvent } from "../core";
 
@@ -122,7 +121,7 @@ export function installFirmwareCommand(
 const remapSocketUnresponsiveError: (
   e: Error,
 ) => Observable<InstallFirmwareCommandEvent> | Observable<never> = (e: Error) => {
-  if (e instanceof ManagerDeviceLockedError) {
+  if ((e as { name?: string })?.name === "ManagerDeviceLocked") {
     return of({ type: "unresponsive" });
   }
 
@@ -137,10 +136,11 @@ const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => 
     return throwError(() => new DeviceOnDashboardExpected());
   }
 
+  const statusCode = (e as { statusCode?: number }).statusCode;
   const status =
-    e instanceof TransportStatusError
-      ? e.statusCode.toString(16)
-      : (e as Error).message.slice((e as Error).message.length - 4);
+    (e as { name?: string })?.name === "TransportStatusError" && statusCode !== undefined
+      ? statusCode.toString(16)
+      : (e as { message?: string })?.message?.slice(-4);
 
   switch (status) {
     case "6a84":

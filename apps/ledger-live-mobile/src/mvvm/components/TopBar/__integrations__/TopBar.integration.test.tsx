@@ -111,7 +111,7 @@ describe("TopBar navigation", () => {
   it("should navigate to GlobalSearch when the search icon is pressed and asset discoverability is enabled", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
       overrideInitialState: withFlagOverrides({
-        lwmWallet40: { enabled: true, params: { assetDiscoverability: true } },
+        lwmWallet40: { params: { assetDiscoverability: true } },
       }),
     });
 
@@ -131,7 +131,7 @@ describe("TopBar navigation", () => {
   it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
     const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
       overrideInitialState: withFlagOverrides({
-        lwmWallet40: { enabled: true, params: { operationsList: true } },
+        lwmWallet40: { params: { operationsList: true } },
       }),
     });
 

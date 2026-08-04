@@ -1,6 +1,10 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
 /*
  * When the transferID/Memo is non number
  */
-export const InvalidMemoICP = createCustomErrorClass("InvalidMemoICP");
+export class InvalidMemoICP extends Error {
+  override name = "InvalidMemoICP";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "InvalidMemoICP");
+    if (fields) Object.assign(this, fields);
+  }
+}

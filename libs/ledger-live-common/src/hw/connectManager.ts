@@ -1,11 +1,6 @@
 import { Observable, concat, concatWith, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
-import {
-  TransportStatusError,
-  DeviceOnDashboardExpected,
-  StatusCodes,
-  LockedDeviceError,
-} from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/errors";
 import { isCharonSupported } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -103,21 +98,21 @@ const cmd = (transport: Transport, { request }: Input): Observable<ConnectManage
           );
         }),
         catchError((e: unknown) => {
-          if (e instanceof LockedDeviceError) {
+          const eName = (e as { name?: string })?.name;
+          if (eName === "LockedDeviceError") {
             return of({
               type: "lockedDevice",
             } as ConnectManagerEvent);
           } else if (
-            e instanceof DeviceOnDashboardExpected ||
-            (e &&
-              e instanceof TransportStatusError &&
+            eName === "DeviceOnDashboardExpected" ||
+            (eName === "TransportStatusError" &&
               [
                 StatusCodes.CLA_NOT_SUPPORTED,
                 StatusCodes.INS_NOT_SUPPORTED,
                 StatusCodes.UNKNOWN_APDU,
                 0x6e01, // No StatusCodes definition
                 0x6d01, // No StatusCodes definition
-              ].includes(e.statusCode))
+              ].includes((e as { statusCode: number }).statusCode))
           ) {
             return from(getAppAndVersion(transport)).pipe(
               concatMap(appAndVersion => {

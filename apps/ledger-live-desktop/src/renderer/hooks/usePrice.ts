@@ -1,5 +1,6 @@
 import { useCalculate } from "@ledgerhq/live-countervalues-react/index";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
+import { Unit } from "@domain/entity-currency-unit";
 import BigNumber from "bignumber.js";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector } from "../reducers/settings";

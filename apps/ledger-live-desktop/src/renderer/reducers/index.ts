@@ -17,7 +17,7 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";

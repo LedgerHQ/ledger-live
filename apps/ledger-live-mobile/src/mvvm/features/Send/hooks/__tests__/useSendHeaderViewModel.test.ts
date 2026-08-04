@@ -3,6 +3,7 @@ import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react-native";
+import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 import { useSendFlowActions, useSendFlowData } from "../../context/SendFlowContext";
@@ -51,12 +52,19 @@ const mockRecipientSearch = {
 };
 
 describe("useSendHeaderViewModel", () => {
+  const mockNavigate = jest.fn();
+  const mockGoBack = jest.fn();
+  const mockCanGoBack = jest.fn(() => false);
+  const mockClearRecipientSearch = jest.fn();
+  const mockSetRecipientSearchValue = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockedUseNavigation.mockReturnValue({
-      canGoBack: jest.fn(() => false),
-      goBack: jest.fn(),
+      canGoBack: mockCanGoBack,
+      goBack: mockGoBack,
+      navigate: mockNavigate,
     } as never);
     mockedUseMaybeAccountName.mockReturnValue("Base 1");
     mockedUseSendAmountDisplayMode.mockReturnValue({
@@ -106,8 +114,8 @@ describe("useSendHeaderViewModel", () => {
       transaction: {
         updateTransaction: jest.fn(),
       },
-      setRecipientSearchValue: jest.fn(),
-      clearRecipientSearch: jest.fn(),
+      setRecipientSearchValue: mockSetRecipientSearchValue,
+      clearRecipientSearch: mockClearRecipientSearch,
     } as never);
   });
 
@@ -150,5 +158,29 @@ describe("useSendHeaderViewModel", () => {
     renderHook(() => useSendHeaderViewModel());
 
     expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+  });
+
+  it("navigates to ScanRecipient and fills the search with the scanned address", () => {
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    result.current.handleQrCodeClick();
+
+    expect(mockClearRecipientSearch).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      ScreenName.ScanRecipient,
+      expect.objectContaining({
+        accountId: mockAccount.id,
+        parentId: undefined,
+        transaction: undefined,
+        onScanned: expect.any(Function),
+      }),
+    );
+
+    const { onScanned } = mockNavigate.mock.calls[0][1] as {
+      onScanned: (address: string) => void;
+    };
+    onScanned("0xscanned");
+
+    expect(mockSetRecipientSearchValue).toHaveBeenCalledWith("0xscanned");
   });
 });

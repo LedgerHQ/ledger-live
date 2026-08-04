@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { SharedValue } from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
 import GraphCard from "~/components/GraphCard";

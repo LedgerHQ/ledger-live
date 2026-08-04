@@ -135,6 +135,8 @@ const iconsComponent = {
   SHIELDED_TX_SAPLING_OUT: IconSend,
   SHIELDED_TX_ORCHARD_IN: IconReceive,
   SHIELDED_TX_ORCHARD_OUT: IconSend,
+  SHIELDED_TX_IRONWOOD_IN: IconReceive,
+  SHIELDED_TX_IRONWOOD_OUT: IconSend,
   SHIELDED_TX_INTERNAL: IconCheck,
 };
 class ConfirmationCheck extends PureComponent<{

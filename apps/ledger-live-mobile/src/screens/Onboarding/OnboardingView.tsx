@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from "react-native";
 import { useNavigation, StackActions } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 import { Flex, Text, ScrollListContainer } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 
 const hitSlop = {

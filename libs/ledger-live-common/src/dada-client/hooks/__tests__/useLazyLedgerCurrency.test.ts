@@ -5,14 +5,14 @@
 import { renderHook } from "@testing-library/react";
 import { useLazyLedgerCurrency } from "../useLazyLedgerCurrency";
 import { assetsDataApi } from "../../state-manager/api";
-import useEnv from "../../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 import {
   mockAssetsData,
   mockBitcoinAssetsData,
   mockUsdcAssetsData,
 } from "../../__mocks__/assets.mock";
 
-jest.mock("../../../hooks/useEnv");
+jest.mock("@features/platform-env");
 
 jest.mock("../../state-manager/api", () => ({
   assetsDataApi: {

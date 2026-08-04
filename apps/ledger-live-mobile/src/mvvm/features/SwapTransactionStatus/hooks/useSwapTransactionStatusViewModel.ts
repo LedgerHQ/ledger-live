@@ -4,7 +4,7 @@ import {
   useSwapTransactionStatusDisplayViewModel,
   type SwapTransactionStatusTransactionExplorerBuilder,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import byFamiliesOperationDetails from "~/generated/operationDetails";

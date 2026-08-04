@@ -5,7 +5,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { TrackScreen } from "~/analytics";
 import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-mobile";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { WaitingForSelectedDeviceState } from "./WaitingForSelectedDeviceState";
 
@@ -41,9 +41,9 @@ function renderState(device: KnownDevice) {
   };
 
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <WaitingForSelectedDeviceState state={state} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 

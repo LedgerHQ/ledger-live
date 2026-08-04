@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { isSelfTransferTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";

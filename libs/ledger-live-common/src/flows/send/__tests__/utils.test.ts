@@ -2,6 +2,7 @@ import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
   saveRecentSendRecipient,
+  SEND_ADDRESS_FORMAT_OPTIONS,
 } from "../utils";
 import { getMainAccount, getRecentAddressesStore } from "../../../account/index";
 import type { Transaction } from "../../../coin-modules/transaction-types";
@@ -56,37 +57,35 @@ describe("saveRecentSendRecipient", () => {
   });
 });
 
+const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
+
 describe("getRecipientDisplayValue", () => {
   it("should return empty for null recipient", () => {
     expect(getRecipientDisplayValue(null)).toBe("");
   });
 
   it("should return formatted address without ENS", () => {
-    expect(getRecipientDisplayValue({ address: "0x1234567890abcdef" })).toBe("0x123...bcdef");
+    expect(getRecipientDisplayValue({ address: ADDRESS })).toBe("0x123456...12345678");
+  });
+
+  it("should keep 8 characters on each side of the ellipsis by default", () => {
+    expect(SEND_ADDRESS_FORMAT_OPTIONS).toEqual({ prefixLength: 8, suffixLength: 8 });
+  });
+
+  it("should return the address untouched when shorter than the ellipsis threshold", () => {
+    expect(getRecipientDisplayValue({ address: "0x1234567890abcdef" })).toBe("0x1234567890abcdef");
   });
 
   it("should use custom options for formatting", () => {
     expect(
-      getRecipientDisplayValue(
-        { address: "0x1234567890abcdef" },
-        { prefixLength: 4, suffixLength: 4 },
-      ),
-    ).toBe("0x12...cdef");
+      getRecipientDisplayValue({ address: ADDRESS }, { prefixLength: 4, suffixLength: 4 }),
+    ).toBe("0x12...5678");
   });
 
   it("should return ENS name with formatted address when ENS exists", () => {
-    expect(
-      getRecipientDisplayValue({ address: "0x1234567890abcdef", ensName: "vitalik.eth" }),
-    ).toBe("vitalik.eth (0x123...bcdef)");
-  });
-
-  it("should support custom prefix/suffix length", () => {
-    expect(
-      getRecipientDisplayValue(
-        { address: "0x1234567890abcdef" },
-        { prefixLength: 4, suffixLength: 4 },
-      ),
-    ).toBe("0x12...cdef");
+    expect(getRecipientDisplayValue({ address: ADDRESS, ensName: "vitalik.eth" })).toBe(
+      "vitalik.eth (0x123456...12345678)",
+    );
   });
 });
 

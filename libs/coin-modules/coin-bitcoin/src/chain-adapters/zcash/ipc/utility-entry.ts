@@ -21,6 +21,8 @@ import {
   buildTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  transactionDetailsJob,
+  buildIronwoodTransactionJob,
 } from "../native-engine/engine";
 import type {
   CancelSyncArgs,
@@ -33,7 +35,9 @@ import type {
 import type {
   BuildTransactionArgs,
   FinalizeTransactionArgs,
+  TransactionDetailsArgs,
   BroadcastTransactionArgs,
+  BuildIronwoodTransactionArgs,
 } from "../types";
 
 /**
@@ -157,6 +161,23 @@ async function handleBuildTransaction(port: ParentPort, args: BuildTransactionAr
   }
 }
 
+async function handleBuildIronwoodTransaction(
+  port: ParentPort,
+  args: BuildIronwoodTransactionArgs,
+): Promise<void> {
+  const { requestId, ...jobArgs } = args;
+  try {
+    const result = await buildIronwoodTransactionJob(jobArgs);
+    send(port, { type: "build-ironwood-transaction-result", requestId, result });
+  } catch (err) {
+    send(port, {
+      type: "build-ironwood-transaction-error",
+      requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 async function handleFinalizeTransaction(
   port: ParentPort,
   args: FinalizeTransactionArgs,
@@ -184,6 +205,27 @@ async function handleBroadcastTransaction(
   } catch (err) {
     send(port, {
       type: "broadcast-transaction-error",
+      requestId: args.requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+async function handleTransactionDetails(
+  port: ParentPort,
+  args: TransactionDetailsArgs,
+): Promise<void> {
+  try {
+    const results = await transactionDetailsJob(
+      args.grpcUrl,
+      args.requests,
+      args.network,
+      args.ufvk,
+    );
+    send(port, { type: "transaction-details-result", requestId: args.requestId, results });
+  } catch (err) {
+    send(port, {
+      type: "transaction-details-error",
       requestId: args.requestId,
       message: err instanceof Error ? err.message : String(err),
     });
@@ -218,6 +260,12 @@ export function bootstrapUtility(port: ParentPort): void {
         break;
       case "broadcast-transaction":
         void handleBroadcastTransaction(port, message.args);
+        break;
+      case "transaction-details":
+        void handleTransactionDetails(port, message.args);
+        break;
+      case "build-ironwood-transaction":
+        void handleBuildIronwoodTransaction(port, message.args);
         break;
       default: {
         const exhaustive: never = message;

@@ -14,7 +14,7 @@ import {
 import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import type { State } from "~/reducers/types";
 import { useDeviceContextInitializerComponentLWMViewModel } from "../useDeviceContextInitializerComponentLWMViewModel";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import type { InitializationInput } from "../../types";
 
 jest.mock("@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase", () => ({
@@ -62,7 +62,9 @@ function withDeprecationDoNotRemind(deprecationDoNotRemind = ["Ethereum"]) {
       },
     }),
     innerWrapper: ({ children }: { children?: React.ReactNode }) => (
-      <SourceFlowProvider value="my_ledger">{children}</SourceFlowProvider>
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+        {children}
+      </DeviceIntentTrackingProvider>
     ),
   };
 }
@@ -106,7 +108,6 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
         wired: false,
       }),
     );
-    expect(result.current.sourceFlow).toBe("my_ledger");
   });
 
   it("should start ensureAppReadyUseCase with connection, input and dismissed deprecations", () => {

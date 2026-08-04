@@ -1,10 +1,7 @@
 import React from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { TransferDrawerView } from "./TransferDrawerView";
-import { TransferDrawerViewLegacy } from "./TransferDrawerViewLegacy";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
 
 type Props = Readonly<{
@@ -25,23 +22,9 @@ export const TransferDrawer = ({ currency, ledgerIds }: Props = {}) => {
     currency,
     ledgerIds,
   });
-  const { isEnabled } = useWalletFeaturesConfig("mobile");
-
-  if (isEnabled) {
-    return (
-      <QueuedDrawerBottomSheet
-        isForcingToBeOpened={isOpen}
-        enableDynamicSizing
-        onClose={handleClose}
-      >
-        <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
-      </QueuedDrawerBottomSheet>
-    );
-  }
-
   return (
-    <QueuedDrawerGorhom isRequestingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
-      <TransferDrawerViewLegacy actions={actions} title={title} />
-    </QueuedDrawerGorhom>
+    <QueuedBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
+      <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
+    </QueuedBottomSheet>
   );
 };

@@ -92,7 +92,10 @@ export function useAmountInput({
 
   const amountValue = inputMode === "fiat" ? fiatInputValue : cryptoInputValue;
   const currencyText =
-    inputMode === "fiat" ? (counterValueCurrency.symbol ?? fiatUnit.code) : accountUnit.code;
+    inputMode === "fiat"
+      ? (("symbol" in counterValueCurrency ? counterValueCurrency.symbol : undefined) ??
+        fiatUnit.code)
+      : accountUnit.code;
   const currencyPosition: "left" | "right" = inputMode === "fiat" ? "left" : "right";
 
   const secondaryValue = useMemo(() => {

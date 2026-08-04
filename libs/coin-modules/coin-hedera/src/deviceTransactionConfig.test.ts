@@ -146,6 +146,29 @@ describe("getDeviceTransactionConfig", () => {
         },
       ]);
     });
+
+    it("should not include fees field when estimated fees are zero for staking transaction", async () => {
+      const transaction = getMockedTransaction({
+        mode: HEDERA_TRANSACTION_MODES.ClaimRewards,
+        amount: new BigNumber(0),
+      });
+
+      const status = createMockStatus(new BigNumber(0));
+
+      const fields = await getDeviceTransactionConfig({
+        account: mockAccount,
+        transaction,
+        status,
+      });
+
+      expect(fields).toEqual([
+        {
+          type: "text",
+          label: "Method",
+          value: "Claim Rewards",
+        },
+      ]);
+    });
   });
 
   describe("token associate transactions", () => {

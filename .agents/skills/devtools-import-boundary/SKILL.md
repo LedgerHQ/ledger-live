@@ -19,6 +19,7 @@ Every `@devtools/*` package is **self-contained**. The only permitted cross-pack
 | `@devtools/wire` | `@devtools/transport`, `@devtools/protocols` |
 | `@devtools/protocols` | `@devtools/transport` only |
 | `@devtools/relay` | `@devtools/transport` only |
+| `@devtools/transport-panel` | `@devtools/transport` only |
 | `@devtools/<tool>` | *none* |
 
 All other `@devtools/*` → `@devtools/*` imports are forbidden.

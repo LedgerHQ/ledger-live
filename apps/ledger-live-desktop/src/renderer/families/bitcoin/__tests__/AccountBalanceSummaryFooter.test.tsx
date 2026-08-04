@@ -1,10 +1,10 @@
 import React from "react";
-import { Observable } from "rxjs";
+import { Observable, Subscriber } from "rxjs";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
-import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
@@ -206,11 +206,15 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     });
 
     const updater = jest.fn();
+    // Keep the sync observable open so the subscription stays registered until we
+    // explicitly complete it. This lets us assert the subscription is stored
+    // before the hook's `complete()` handler removes it.
+    let syncSubscriber: Subscriber<(account: unknown) => unknown> | undefined;
     const syncMock = jest.fn(
       () =>
         new Observable<(account: unknown) => unknown>(subscriber => {
+          syncSubscriber = subscriber;
           subscriber.next(updater);
-          subscriber.complete();
         }),
     );
     mockedGetAccountBridge.mockReturnValue({
@@ -225,6 +229,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
           currency: { id: "zcash" } as CryptoCurrency,
           privateInfo: {
             ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ufvk: "test-ufvk",
             syncState: "ready",
           },
         }}
@@ -238,19 +243,27 @@ describe("Bitcoin Account Balance Summary Footer", () => {
     expect(mockedGetAccountBridge).toHaveBeenCalledWith(
       expect.objectContaining({ id: account.id }),
     );
+    await waitFor(() => {
+      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_SHIELDED,
+      });
+    });
     expect(store.getState().shieldedSyncSubscriptions).toEqual([
       {
         accountId: account.id,
         subscription: expect.objectContaining({ unsubscribe: expect.any(Function) }),
       },
     ]);
+
+    // Completing the sync should log and drop the stored subscription.
+    act(() => {
+      syncSubscriber?.complete();
+    });
     await waitFor(() => {
-      expect(syncMock).toHaveBeenCalledWith(expect.objectContaining({ id: account.id }), {
-        paginationConfig: {},
-        syncType: SYNC_TYPE_SHIELDED,
-      });
       expect(logSpy).toHaveBeenCalledWith(`Zcash shielded sync completed on account ${account.id}`);
     });
+    expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
   });
 
   it("should stop shielded sync and remove subscription when clicking stop sync button", async () => {

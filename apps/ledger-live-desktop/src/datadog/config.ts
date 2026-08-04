@@ -1,4 +1,4 @@
-import anonymizer from "~/sentry/anonymizer";
+import anonymizer from "~/datadog/anonymizer";
 import { shouldIgnoreErrorMessage } from "./ignoreErrors";
 
 export type ShouldSendCallback = () => boolean;

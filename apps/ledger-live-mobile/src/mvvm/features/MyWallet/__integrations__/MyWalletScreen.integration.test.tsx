@@ -28,7 +28,7 @@ jest.mock("@features/flow-contacts", () => {
       </Pressable>
     ),
     ContactsAddContactHeaderButton: () => null,
-    ContactsPage: () => (
+    ContactsListView: () => (
       <View testID="contacts-screen">
         <Text>Contacts</Text>
       </View>

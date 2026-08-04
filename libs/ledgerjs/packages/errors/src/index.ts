@@ -14,14 +14,14 @@
  */
 
 import {
-  serializeError,
-  deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
   LedgerErrorConstructor,
 } from "./helpers";
 
-export { serializeError, deserializeError, createCustomErrorClass, addCustomErrorDeserializer };
+export { createCustomErrorClass, addCustomErrorDeserializer };
+// Kept for wallet-api-core@1.35.0 (external) which imports these; remove once it's updated upstream
+export { serializeError, deserializeError } from "./helpers";
 
 export const AccountNameRequiredError = createCustomErrorClass("AccountNameRequired");
 export const AccountNotSupported = createCustomErrorClass("AccountNotSupported");
@@ -259,9 +259,6 @@ export const DisabledTransactionBroadcastError = createCustomErrorClass(
 
 export const InvalidParameterError = createCustomErrorClass("InvalidParameterError");
 
-// Represents the type of all the classes created with createCustomErrorClass
-export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
-
 /**
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
@@ -448,8 +445,5 @@ export class DeviceMangementKitError extends Error {
     Object.setPrototypeOf(this, DeviceMangementKitError.prototype);
   }
 }
-
-// Represents the type of the class TransportStatusError and its children
-export type TransportStatusErrorClassType = typeof TransportStatusError | typeof LockedDeviceError;
 
 addCustomErrorDeserializer("TransportStatusError", e => new TransportStatusError(e.statusCode));

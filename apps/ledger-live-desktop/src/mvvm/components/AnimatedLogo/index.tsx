@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import Lottie from "react-lottie";
 import { useAnimationData } from "./useAnimationData";
 

@@ -7,7 +7,7 @@ import { AppOp, State, Action, ListAppsResult, AppsDistribution, SkipReason } fr
 import { findCryptoCurrency, findCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { NoSuchAppOnProvider } from "../errors";
 import { App } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 
 const RESERVED_BLOCKS = 1;
@@ -155,7 +155,7 @@ export const reducer = (state: State, action: Action): State => {
 
         /*
           const error = event.error;
-          if (error instanceof ManagerDeviceLockedError) {
+          if ((error as { name?: string })?.name === "ManagerDeviceLocked") {
             return {
               ...state,
               currentError: {

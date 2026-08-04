@@ -1,7 +1,7 @@
 import VersionNumber from "react-native-version-number";
 import { useReceiveNetworkLedgerIds as useSharedReceiveNetworkLedgerIds } from "@ledgerhq/asset-detail";
 import type { ReceiveNetworkLedgerIdsInput } from "@ledgerhq/asset-detail";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { useFeature } from "@features/platform-feature-flags";
 
 type Params = Omit<

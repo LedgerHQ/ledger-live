@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { TrackScreen, track } from "~/analytics";
-import { SourceFlowProvider } from "../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../utils/DeviceIntentTrackingContext";
 import { PAGE_DEVICE_ACTION } from "../utils/trackDeviceIntent";
 import { InvalidOperation } from "./InvalidOperation";
 
@@ -19,9 +19,9 @@ const mockedTrack = jest.mocked(track);
 
 function renderState(props: Partial<React.ComponentProps<typeof InvalidOperation>> = {}) {
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <InvalidOperation onClose={jest.fn()} error={null} {...props} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 

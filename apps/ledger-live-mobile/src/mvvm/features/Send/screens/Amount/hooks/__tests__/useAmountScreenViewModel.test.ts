@@ -26,13 +26,10 @@ jest.mock("../../../../hooks/useNetworkFees", () => ({
   useNetworkFees: jest.fn(() => ({
     label: "Network fees",
     value: "0.25 EUR",
-    showNetworkFees: true,
-    showFeePresets: false,
+    strategyLabel: "Medium",
     selectedFeeStrategy: null,
-    onSelectFeeStrategy: jest.fn(),
-    feePresetLabelsOptions: [],
-    fiatByPreset: {},
-    legendByPreset: {},
+    displayOptions: [],
+    canOpenSelector: false,
   })),
 }));
 

@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { version } from "../../../package.json";
 import { HttpManagerApiRepository } from "@ledgerhq/device-core";
 

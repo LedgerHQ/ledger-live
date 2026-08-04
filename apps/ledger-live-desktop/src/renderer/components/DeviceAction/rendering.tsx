@@ -8,7 +8,8 @@ import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { Account, ABTestingVariants } from "@ledgerhq/types-live";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -20,25 +21,13 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import {
-  FirmwareNotRecognized,
-  LockedDeviceError,
-  UpdateYourApp,
-  LatestFirmwareVersionRequired,
-  WrongDeviceForAccount,
-  DisconnectedDevice,
-  UnsupportedFeatureError,
-} from "@ledgerhq/errors";
+import { WrongDeviceForAccount, DisconnectedDevice } from "@ledgerhq/errors";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { useFeature } from "@features/platform-feature-flags";
-import {
-  DeviceNotOnboarded,
-  NoSuchAppOnProvider,
-  TransactionRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
+import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
@@ -926,6 +915,7 @@ export const renderError = ({
   currencyName?: string;
 }) => {
   let tmpError = error;
+  const eName = (error as { name?: string })?.name;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
   if (
@@ -933,9 +923,9 @@ export const renderError = ({
     ("name" in error && error.name === "AlreadySendingApduError")
   ) {
     return renderAlreadySendingApduError({ t, onRetry, inlineRetry });
-  } else if (tmpError instanceof LockedDeviceError) {
+  } else if (eName === "LockedDeviceError") {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
-  } else if (tmpError instanceof DeviceNotOnboarded) {
+  } else if (eName === "DeviceNotOnboarded") {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
   } else if (isCounterfeitError(tmpError)) {
     return (
@@ -944,12 +934,12 @@ export const renderError = ({
       />
     );
   } else if (
-    tmpError instanceof FirmwareNotRecognized ||
+    eName === "FirmwareNotRecognized" ||
     isInvalidGetFirmwareMetadataResponseError(tmpError)
   ) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
-  } else if (tmpError instanceof CompleteExchangeError) {
-    if (tmpError.title === "userRefused") {
+  } else if (eName === "CompleteExchangeError") {
+    if ((tmpError as CompleteExchangeError).title === "userRefused") {
       tmpError = new TransactionRefusedOnDevice();
     }
   } else if (isDmkError(error) && error._tag === "DeviceDeprecationError") {
@@ -960,16 +950,16 @@ export const renderError = ({
         coinName={currencyName}
       />
     );
-  } else if (tmpError instanceof NoSuchAppOnProvider) {
+  } else if (eName === "NoSuchAppOnProvider") {
     return (
       <NoSuchAppOnProviderErrorComponent
-        error={tmpError}
+        error={tmpError as Error}
         productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
         learnMoreLink={learnMoreLink}
         learnMoreTextKey={learnMoreTextKey}
       />
     );
-  } else if (tmpError instanceof UnsupportedFeatureError) {
+  } else if (eName === "UnsupportedFeatureError") {
     return <UnsupportedFeatureErrorComponent />;
   } else if (isDisconnectedWhileSendingApduError(tmpError)) {
     tmpError = new DisconnectedDevice();
@@ -1014,8 +1004,8 @@ export const renderError = ({
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
-            updateApp={tmpError instanceof UpdateYourApp}
-            firmwareUpdate={tmpError instanceof LatestFirmwareVersionRequired}
+            updateApp={eName === "UpdateYourApp"}
+            firmwareUpdate={eName === "LatestFirmwareVersionRequired"}
           />
         ) : (
           <>

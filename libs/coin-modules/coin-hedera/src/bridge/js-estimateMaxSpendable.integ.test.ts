@@ -25,7 +25,7 @@ describe("js-estimateMaxSpendable", () => {
     estimatedFees = { crypto };
   });
 
-  test("estimateMaxSpendable returns balance minus fee", async () => {
+  it("estimateMaxSpendable returns balance minus fee", async () => {
     const mockedAccount = getMockedAccount();
 
     const result = await bridge.accountBridge.estimateMaxSpendable({
@@ -37,7 +37,7 @@ describe("js-estimateMaxSpendable", () => {
     expect(result).toEqual(expected);
   });
 
-  test("estimateMaxSpendable returns 0 if balance < estimated fees", async () => {
+  it("estimateMaxSpendable returns 0 if balance < estimated fees", async () => {
     const mockedAccount = getMockedAccount({ balance: estimatedFees.crypto.tinybars.minus(1) });
 
     const result = await bridge.accountBridge.estimateMaxSpendable({
@@ -47,7 +47,7 @@ describe("js-estimateMaxSpendable", () => {
     expect(result).toEqual(new BigNumber(0));
   });
 
-  test("estimateMaxSpendable returns token balance for token account", async () => {
+  it("estimateMaxSpendable returns token balance for token account", async () => {
     const mockedTokenCurrency = getMockedHTSTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const mockedAccount = getMockedAccount({ subAccounts: [mockedTokenAccount] });

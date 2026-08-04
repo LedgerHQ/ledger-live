@@ -48,6 +48,7 @@ export function CoinControlScreenInner({
     bridgeError,
     uiConfig,
     transactionActions,
+    onSelectCustomFees,
   });
 
   const onAmountChange = useCallback(
@@ -80,7 +81,6 @@ export function CoinControlScreenInner({
         onGetFunds={onGetFunds}
         isCustomPickingStrategy={viewModel.isCustomPickingStrategy}
         onToggleUtxoExclusion={viewModel.onToggleUtxoExclusion}
-        onSelectCustomFees={onSelectCustomFees}
         hasAmount={viewModel.hasAmount}
       />
     </>

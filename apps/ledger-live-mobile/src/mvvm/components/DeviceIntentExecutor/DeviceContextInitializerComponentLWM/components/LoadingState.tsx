@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Trans } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import ModalLock from "~/components/ModalLock";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import type { InitializerDevice } from "../types";
-import type { SourceFlow } from "../../utils/SourceFlowContext";
 import { LoadingContent } from "./LoadingContent";
 import { OverrideDeviceIntentExecutorHeader } from "../../components/OverrideDeviceIntentExecutorHeader";
 
 type LoadingStateProps = Readonly<{
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
 }>;
 
 /**
@@ -20,7 +18,7 @@ type LoadingStateProps = Readonly<{
  */
 const LOADING_PAGE_EVENT_DWELL_MS = 250;
 
-export function LoadingState({ device, sourceFlow }: LoadingStateProps) {
+export function LoadingState({ device }: LoadingStateProps) {
   const [dwellElapsed, setDwellElapsed] = useState(false);
 
   useEffect(() => {
@@ -35,12 +33,10 @@ export function LoadingState({ device, sourceFlow }: LoadingStateProps) {
         <Box lx={{ height: "s64" }} />
       </OverrideDeviceIntentExecutorHeader>
       {dwellElapsed && (
-        <TrackScreen
+        <TrackDIEScreen
           category={PAGE_CONNECT_APP.Loading}
-          sourceFlow={sourceFlow}
           modelId={device.modelId}
           refreshSource
-          deviceUxV2
         />
       )}
       <LoadingContent

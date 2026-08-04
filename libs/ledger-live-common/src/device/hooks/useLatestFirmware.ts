@@ -1,5 +1,5 @@
 import { getProviderId } from "../../manager/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useGetLatestFirmware } from "@ledgerhq/device-react";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { DeviceInfoEntity, HttpManagerApiRepository } from "@ledgerhq/device-core";

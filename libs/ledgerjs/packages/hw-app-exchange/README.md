@@ -17,11 +17,30 @@ Ledger Hardware Wallet Exchange app.
 
 #### Table of Contents
 
-*   [resolveTransactionType](#resolvetransactiontype)
+*   [SwapPayloadFieldExceedsLimit](#swappayloadfieldexceedslimit)
     *   [Parameters](#parameters)
+*   [resolveTransactionType](#resolvetransactiontype)
+    *   [Parameters](#parameters-1)
 *   [OkStatus](#okstatus)
 *   [decodePayloadProtobuf](#decodepayloadprotobuf)
-    *   [Parameters](#parameters-1)
+    *   [Parameters](#parameters-2)
+*   [findSwapPayloadSpecViolation](#findswappayloadspecviolation)
+    *   [Parameters](#parameters-3)
+
+### SwapPayloadFieldExceedsLimit
+
+**Extends Error**
+
+Thrown when a decoded swap payload field is larger than what the Exchange
+device app can store. It lets us surface a precise reason (which field, its
+limit and the actual size) instead of the device's generic
+DESERIALIZATION\_FAILED (0x6a81) status, which is opaque for investigations.
+
+#### Parameters
+
+*   `field` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `actual` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ### resolveTransactionType
 
@@ -51,6 +70,28 @@ deprecated use `decodeSwapPayload` instead
 *   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SwapPayload>**&#x20;
+
+### findSwapPayloadSpecViolation
+
+Decodes a raw swap payload (hex or base64) and returns the first field that
+exceeds the Exchange device app's protobuf size limits as a precise
+`SwapPayloadFieldExceedsLimit`, or `undefined` when everything fits (or the
+payload cannot be decoded locally).
+
+This is meant to *enrich* the device's opaque DESERIALIZATION\_FAILED (0x6a81)
+with an actionable reason (e.g. an oversized `payin_extra_id`) — it must never
+gate the flow. The device stays the source of truth, so if these (hardcoded)
+limits ever drift from the app we simply return `undefined` and keep the
+device's own error.
+
+nanopb reserves one byte for the NUL terminator on `string` fields, so their
+usable content limit is `max_size - 1`; `bytes` fields use the full `max_size`.
+
+#### Parameters
+
+*   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **([SwapPayloadFieldExceedsLimit](#swappayloadfieldexceedslimit) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ## Integration test
 

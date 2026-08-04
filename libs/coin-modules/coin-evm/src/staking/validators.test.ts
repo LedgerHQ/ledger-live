@@ -324,8 +324,8 @@ describe("staking/validators", () => {
     it.each([
       ["sei_evm", true],
       ["monad", true],
-      ["zero_gravity", false],
       ["somnia", true],
+      ["zero_gravity", false],
       ["unknown_chain", false],
     ])("%s returns %s", (currencyId, expected) => {
       expect(hasChainRewards(currencyId)).toEqual(expected);

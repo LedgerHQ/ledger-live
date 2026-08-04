@@ -16,6 +16,7 @@ function DevToolsView({
   onSelectTool,
   onClearTool,
   onClose,
+  sidebarFooter,
 }: DevToolsViewProps & { onClose?: () => void }) {
   return (
     <div data-testid="devtools" className="flex flex-col h-full bg-canvas text-base">
@@ -31,6 +32,7 @@ function DevToolsView({
           onSelectTool={onSelectTool}
           onHome={onClearTool}
           onClose={onClose}
+          sidebarFooter={sidebarFooter}
         />
 
         <Divider orientation="vertical" />
@@ -56,10 +58,10 @@ function DevToolsView({
   );
 }
 
-export const DevTools = ({ config = [], onClose }: DevToolsProps) => {
+export const DevTools = ({ config = [], onClose, sidebarFooter }: DevToolsProps) => {
   return (
     <DevToolsProvider value={config}>
-      <DevToolsView {...useDevToolsViewModel({ config })} onClose={onClose} />
+      <DevToolsView {...useDevToolsViewModel({ config, sidebarFooter })} onClose={onClose} />
     </DevToolsProvider>
   );
 };

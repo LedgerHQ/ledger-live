@@ -353,6 +353,49 @@ describe("JsonCommandOutput", () => {
     expect(line).toMatchObject({ status: "success", output: "/tmp/out.txt" });
   });
 
+  it("emits swapExecuteFullResult with both display-unit and atomic amounts plus the rate", () => {
+    const out = createCommandOutput("json", {
+      command: "swap execute",
+      network: "ethereum",
+    });
+
+    out.swapExecuteFullResult({
+      from: "ethereum",
+      to: "bitcoin",
+      provider: "changelly",
+      amount: "0.1 ETH",
+      transactionId: "tx-123",
+      payload: {
+        swapId: "swap-abc",
+        payinAddress: "0x000000000000000000000000000000000000dead",
+      } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+      operationHash: "0xopHash",
+      swapId: "swap-abc",
+      amountExpectedTo: "0.0025",
+      amountExpectedToAtomic: "250000",
+      magnitudeAwareRate: "2500000",
+    });
+
+    const lines = parseLines();
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      status: "success",
+      command: "swap execute",
+      network: "ethereum",
+      from: "ethereum",
+      to: "bitcoin",
+      provider: "changelly",
+      transactionId: "tx-123",
+      operationHash: "0xopHash",
+      swapId: "swap-abc",
+      // The normalization fix: both the human-readable and the raw atomic amount are exposed,
+      // alongside the magnitude-aware rate.
+      amountExpectedTo: "0.0025",
+      amountExpectedToAtomic: "250000",
+      magnitudeAwareRate: "2500000",
+    });
+  });
+
   it("emits swap quote unavailability as an NDJSON error envelope", () => {
     const out = createCommandOutput("json", {
       command: "swap quote",

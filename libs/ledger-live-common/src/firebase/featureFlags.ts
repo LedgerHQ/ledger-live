@@ -1,5 +1,5 @@
 import semver from "semver";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { formatToFirebaseFeatureId } from "@features/platform-feature-flags";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";

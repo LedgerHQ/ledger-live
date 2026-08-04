@@ -3,7 +3,7 @@ import { isDmkError, type DmkError } from "@ledgerhq/live-dmk-mobile";
 import type { FinalStateType, EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import type { InitializerDevice } from "../../types";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
-import type { SourceFlow } from "../../../utils/SourceFlowContext";
+import { useDeviceIntentTracking } from "../../../utils/DeviceIntentTrackingContext";
 import { CONNECT_APP_BUTTON, trackConnectAppButtonClicked } from "../../../utils/trackDeviceIntent";
 
 type FinalErrorState = Extract<EnsureAppReadyState, { type: FinalStateType.Error }>;
@@ -11,11 +11,11 @@ type FinalErrorState = Extract<EnsureAppReadyState, { type: FinalStateType.Error
 type Params = Readonly<{
   state: FinalErrorState;
   device: InitializerDevice;
-  sourceFlow: SourceFlow;
   onCancel: () => void;
 }>;
 
-export function useFinalErrorViewModel({ state, device, sourceFlow, onCancel }: Params) {
+export function useFinalErrorViewModel({ state, device, onCancel }: Params) {
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { openSupport } = useInitializerActions(device);
   const modelId = device.modelId;
 
@@ -24,18 +24,20 @@ export function useFinalErrorViewModel({ state, device, sourceFlow, onCancel }: 
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onCancel();
-  }, [onCancel, sourceFlow, modelId]);
+  }, [analyticsProperties, onCancel, sourceFlow, modelId]);
 
   const onContactSupport = useCallback(() => {
     trackConnectAppButtonClicked({
       sourceFlow,
       modelId,
       button: CONNECT_APP_BUTTON.ContactLedgerSupport,
+      extraProperties: analyticsProperties,
     });
     openSupport();
-  }, [openSupport, sourceFlow, modelId]);
+  }, [analyticsProperties, openSupport, sourceFlow, modelId]);
 
   return {
     error: getTranslatedErrorInput(state.error),

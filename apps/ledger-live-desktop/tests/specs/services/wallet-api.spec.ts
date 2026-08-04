@@ -135,6 +135,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("Ethereum 3")).toContainText("71.8174 USDT");
     await drawer.back();
+    await drawer.waitForAccountTitleToDisappear();
     await expect(drawer.selectAssetTitle).toBeVisible();
 
     await drawer.selectCurrency("bitcoin");

@@ -52,7 +52,7 @@ jobs:
             ledger-live
             ledger-live-build
 
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 2
@@ -69,7 +69,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: 3.3.0
 
@@ -80,7 +80,7 @@ jobs:
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs,@ledgerhq/live-e2e-shared
 
       - name: authenticate with npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           registry-url: "https://registry.npmjs.org"
 
@@ -123,8 +123,10 @@ jobs:
 
       - name: tag desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+        env:
+          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
+          git tag "@ledgerhq/live-desktop@$DESKTOP_VERSION"
 
       - name: generate mobile changelog
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
@@ -138,28 +140,36 @@ jobs:
 
       - name: tag mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+        env:
+          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
         run: |
-          git tag live-mobile@${{ steps.mobile-version.outputs.version }}
+          git tag "live-mobile@$MOBILE_VERSION"
 
       - name: push changes
+        env:
+          TARGET_REF: ${{ inputs.ref }}
         run: |
-          git push origin ${{ inputs.ref }} --tags
+          git push origin "$TARGET_REF" --tags
 
       - name: create desktop github release
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESKTOP_VERSION: ${{ steps.desktop-version.outputs.version }}
+          DESKTOP_CHANGELOG_PATH: ${{ steps.desktop-changelog.outputs.path }}
         run: |
-          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
+          gh release create "@ledgerhq/live-desktop@$DESKTOP_VERSION" -F "$DESKTOP_CHANGELOG_PATH"
 
       - name: create mobile github release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MOBILE_VERSION: ${{ steps.mobile-version.outputs.version }}
+          MOBILE_CHANGELOG_PATH: ${{ steps.mobile-changelog.outputs.path }}
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
-          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
+          gh release create "live-mobile@$MOBILE_VERSION" -F "$MOBILE_CHANGELOG_PATH"
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
         with:
@@ -175,7 +185,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         with:
@@ -199,7 +209,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

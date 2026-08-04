@@ -29,10 +29,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v2
+    - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
       with:
         version: 10.24.0
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: 24.14.0
         cache: pnpm
@@ -52,14 +52,17 @@ runs:
         DD_APP_KEY: ${{ inputs.DD_APP_KEY }}
         DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
         SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
+        INPUTS_MONITOR_FILTER_ISOLATED: ${{ inputs.MONITOR_FILTER_ISOLATED }}
+        INPUTS_MONITOR_FILTER_CURRENCIES: ${{ inputs.MONITOR_FILTER_CURRENCIES }}
+        INPUTS_MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}
       run: |
         ISOLATED_FLAG=""
-        if [ "${{ inputs.MONITOR_FILTER_ISOLATED }}" = "true" ]; then
+        if [ "${INPUTS_MONITOR_FILTER_ISOLATED}" = "true" ]; then
           ISOLATED_FLAG="--isolated"
         fi
 
         pnpm coin:modules:monitoring start monitor \
-        --currencies "${{ inputs.MONITOR_FILTER_CURRENCIES }}"  \
-        --account-types "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}" \
+        --currencies "${INPUTS_MONITOR_FILTER_CURRENCIES}"  \
+        --account-types "${INPUTS_MONITOR_FILTER_ACCOUNT_TYPES}" \
         $ISOLATED_FLAG
       shell: bash

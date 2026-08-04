@@ -1,22 +1,10 @@
-import {
-  TransportStatusError,
-  UserRefusedDeviceNameChange,
-  UserRefusedOnDevice,
-  LatestFirmwareVersionRequired,
-  UnsupportedFeatureError,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
-  NoSuchAppOnProvider,
-} from "@ledgerhq/live-common/errors";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppAndVersion, DeviceDeprecationRules } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -533,8 +521,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
-      const noImage = (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      const refused = error?.name === "UserRefusedOnDevice";
+      const noImage = error?.name === "ImageDoesNotExistOnDevice";
       if (refused || noImage) {
         return renderError({
           t,
@@ -652,30 +640,30 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     // into another handled case.
     if (
       device &&
-      (error instanceof DeviceNotOnboarded ||
-        ((error as unknown) instanceof TransportStatusError &&
+      (error?.name === "DeviceNotOnboarded" ||
+        (error?.name === "TransportStatusError" &&
           ((error as Error).message.includes("0x6d06") ||
             (error as Error).message.includes("0x6d07"))))
     ) {
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
-    if (error instanceof LatestFirmwareVersionRequired) {
+    if (error?.name === "LatestFirmwareVersionRequired") {
       return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
     }
 
-    if (error instanceof UnsupportedFeatureError) {
+    if (error?.name === "UnsupportedFeatureError") {
       return <UnsupportedFeatureComponent error={error} />;
     }
 
-    if (error instanceof NoSuchAppOnProvider && device?.modelId === DeviceModelId.nanoS) {
+    if (error?.name === "NoSuchAppOnProvider" && device?.modelId === DeviceModelId.nanoS) {
       // This should be only happening for Nano S devices, but in order to make sure we don't miss any
       // use case for other devices we keep the check and will consider to remove it later after complete
       // checks.
       return <NanoSNotSupportedComponent />;
     }
 
-    if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
+    if (error?.name === "UserRefusedDeviceNameChange") {
       return renderError({
         t,
         navigation,

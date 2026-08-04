@@ -129,7 +129,7 @@ export const createAction = (
             if (
               productName &&
               e.type === "error" &&
-              e.error instanceof UserRefusedDeviceNameChange
+              (e.error as { name?: string })?.name === "UserRefusedDeviceNameChange"
             ) {
               e.error = new UserRefusedDeviceNameChange(undefined, {
                 productName,

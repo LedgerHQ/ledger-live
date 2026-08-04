@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { formatPerGranularity, inferCurrencyAPIID, pairId } from "../helpers";
 import type { BatchStrategySolver, CounterValuesAPI, TrackingPair } from "../types";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@ledgerhq/ledger-wallet-framework/types";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 

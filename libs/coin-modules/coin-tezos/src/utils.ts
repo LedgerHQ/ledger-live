@@ -2,7 +2,7 @@ import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taquito/utils";
 import coinConfig from "./config";
-import type { APIAccount } from "./network/types";
+import { type APIAccount, hasManagerKey } from "./network/types";
 import type { TezosOperationMode } from "./types/model";
 
 /**
@@ -231,6 +231,13 @@ export function createFallbackEstimation() {
   };
 }
 
+/**
+ * Whether an account has nothing on-chain that would spare a recipient the allocation
+ * (storage) burn. Manager-key accounts (`user`/`delegate`) with a zero balance and truly
+ * non-existent (`empty`) accounts count as empty. A registered baker (`delegate`) is always
+ * allocated on-chain, so a zero-balance one is unusual — but keying on `hasManagerKey` keeps
+ * the reveal/storage logic consistent for both wallet and baker recipients.
+ */
 export function hasEmptyBalance(account: APIAccount) {
-  return (account.type === "user" && account.balance === 0) || account.type === "empty";
+  return (hasManagerKey(account) && account.balance === 0) || account.type === "empty";
 }

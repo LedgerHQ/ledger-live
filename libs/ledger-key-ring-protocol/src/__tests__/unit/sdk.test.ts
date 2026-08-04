@@ -1,6 +1,6 @@
 import { DefaultBodyType, http, HttpResponse, PathParams, StrictRequest } from "msw";
 import { setupServer } from "msw/node";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "@ledgerhq/live-network/errors";
 import {
   CommandBlock,
   crypto,
@@ -9,7 +9,7 @@ import {
   SoftwareDevice,
   StreamTree,
 } from "@ledgerhq/hw-ledger-key-ring-protocol";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { PutCommandsRequest } from "../../api";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { SDK } from "../../sdk";

@@ -1,6 +1,6 @@
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { NotEnoughBalanceSwap, NotEnoughGasSwap } from "@ledgerhq/errors";
+import { NotEnoughBalanceSwap, NotEnoughGasSwap } from "../../../errors";
 import { Account } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";

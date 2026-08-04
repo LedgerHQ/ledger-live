@@ -25,8 +25,8 @@ describe("getRecipientDisplayValue", () => {
 
     expect(getRecipientDisplayValue(recipient)).toBe("0x1234...5678");
     expect(mockedFormatAddress).toHaveBeenCalledWith(recipient.address, {
-      prefixLength: 5,
-      suffixLength: 5,
+      prefixLength: 8,
+      suffixLength: 8,
     });
   });
 
@@ -39,8 +39,8 @@ describe("getRecipientDisplayValue", () => {
 
     expect(getRecipientDisplayValue(recipient)).toBe("vitalik.eth (0x1234...5678)");
     expect(mockedFormatAddress).toHaveBeenCalledWith(recipient.address, {
-      prefixLength: 5,
-      suffixLength: 5,
+      prefixLength: 8,
+      suffixLength: 8,
     });
   });
 

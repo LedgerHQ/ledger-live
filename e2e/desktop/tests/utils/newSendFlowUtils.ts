@@ -71,6 +71,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
   for (const entry of entries) {
     const tx = entry.transaction;
     const family = getFamilyByCurrencyId(tx.accountToDebit.currency.id);
+    const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
 
     test.describe(tx.accountToDebit.accountName, () => {
       test.use({
@@ -89,7 +90,9 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
       test(
         `Send ${tx.amount} ${tx.accountToDebit.currency.ticker}${
           tx.accountToDebit.derivationMode ? ` [${tx.accountToDebit.derivationMode}]` : ""
-        } from ${tx.accountToDebit.accountName} to ${tx.accountToCredit.accountName}`,
+        }${validMemoTag ? " with memo" : ""} from ${tx.accountToDebit.accountName} to ${
+          tx.accountToCredit.accountName
+        }`,
         {
           tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
           annotation: { type: "TMS", description: entry.xrayTicket },
@@ -126,7 +129,12 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           await app.newSendFlow.typeAddress(recipientAddress);
 
           if (requiresMemoStep) {
-            await app.newSendFlow.skipMemo();
+            if (validMemoTag) {
+              await app.newSendFlow.typeMemo(validMemoTag);
+              await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+            } else {
+              await app.newSendFlow.skipMemo();
+            }
           } else {
             await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
           }
@@ -142,6 +150,12 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           await app.newSendFlow.waitForSignature();
           await app.speculos.signSendTransaction(tx);
           await app.newSendFlow.waitForSuccessConfirmation();
+
+          await app.newSendFlow.clickViewDetails();
+          await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+          if (validMemoTag && tx.accountToDebit.currency.id === Currency.SOL.id) {
+            await app.sendDrawer.expectMemoVisible(validMemoTag);
+          }
         },
       );
     });

@@ -1,7 +1,6 @@
-import { CoinType } from "@ledgerhq/types-cryptoassets";
-import type { CryptoCurrency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, FiatCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
-// Minimal currency fixtures so tests don't depend on @ledgerhq/cryptoassets.
+// Minimal currency fixtures so tests don't pull the full currency registry.
 // Only the fields consumed by the countervalues logic and the account mocks are populated.
 
 const bitcoin: CryptoCurrency = {
@@ -10,7 +9,7 @@ const bitcoin: CryptoCurrency = {
   name: "Bitcoin",
   ticker: "BTC",
   managerAppName: "Bitcoin",
-  coinType: CoinType.BTC,
+  coinType: 0,
   scheme: "bitcoin",
   color: "#ffae35",
   family: "bitcoin",
@@ -27,7 +26,7 @@ const ethereum: CryptoCurrency = {
   name: "Ethereum",
   ticker: "ETH",
   managerAppName: "Ethereum",
-  coinType: CoinType.ETH,
+  coinType: 60,
   scheme: "ethereum",
   color: "#0ebdcd",
   family: "evm",

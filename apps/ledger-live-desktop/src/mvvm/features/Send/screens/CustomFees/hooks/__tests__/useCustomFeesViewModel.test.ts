@@ -4,7 +4,7 @@ import { act } from "@testing-library/react";
 import { renderHook } from "tests/testSetup";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useCustomFeesViewModel } from "../useCustomFeesViewModel";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 

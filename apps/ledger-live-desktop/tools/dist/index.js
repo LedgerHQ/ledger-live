@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const SentryCli = require("@sentry/cli");
 const yargs = require("yargs");
 const Listr = require("listr");
 const verboseRenderer = require("listr-verbose-renderer");
@@ -11,11 +10,6 @@ const healthChecksTasks = require("./health-checks");
 require("dotenv").config();
 
 let execa;
-
-const releaseSentryDSN =
-  "https://5729b6ee405f416a8998ae4d43c87d58@o118392.ingest.sentry.io/6488660";
-const prereleaseSentryDSN =
-  "https://5514716222674afd816b0961d7b4378c@o118392.ingest.sentry.io/6488659";
 
 const rootFolder = "../../";
 const defaultDatadogSite = "datadoghq.eu";
@@ -105,7 +99,6 @@ const buildTasks = args => [
       }
       const baseEnv = args.release
         ? {
-            SENTRY_URL: releaseSentryDSN,
             DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
             DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
             DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
@@ -113,7 +106,6 @@ const buildTasks = args => [
           }
         : args.pre
           ? {
-              SENTRY_URL: prereleaseSentryDSN,
               DATADOG_APPLICATION_ID: process.env.DATADOG_APPLICATION_ID,
               DATADOG_CLIENT_TOKEN: process.env.DATADOG_CLIENT_TOKEN,
               DATADOG_SITE: process.env.DATADOG_SITE || defaultDatadogSite,
@@ -130,35 +122,6 @@ const buildTasks = args => [
               }
             : {};
       await exec("pnpm", ["run", "build:js"], { env: { ...process.env, ...baseEnv } });
-    },
-  },
-  {
-    title: "Upload to Sentry",
-    // Source maps are uploaded by the CDN build; the MAS re-package must not re-upload.
-    enabled: () => (args.release || args.pre) && !args.mas,
-    task: async () => {
-      const cli = new SentryCli(
-        args.release
-          ? "sentry.release.properties"
-          : args.pre
-            ? "sentry.prerelease.properties"
-            : null,
-        {
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-        },
-      );
-      await cli.releases.uploadSourceMaps(pkg.version, {
-        urlPrefix: "app:///.webpack",
-        include: [".webpack"],
-      });
-      await cli.releases.setCommits(pkg.version, { auto: true }).catch(e => {
-        console.error(e);
-        console.log(
-          "Sentry setCommits failed – The failure was ignored because " +
-            "it can be flawky and it was made optional in our builds. " +
-            "We will investigate why and eventually remove this failsafe.",
-        );
-      });
     },
   },
   {

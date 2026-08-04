@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import semver from "semver";
-import { useEnv } from "../env.react";
+import { useEnv } from "@features/platform-env";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { getAppsCatalogForDevice } from "../device/use-cases/getAppsCatalogForDevice";

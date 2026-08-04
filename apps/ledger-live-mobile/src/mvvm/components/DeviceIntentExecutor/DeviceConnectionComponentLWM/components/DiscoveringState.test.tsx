@@ -8,7 +8,7 @@ import {
   type ConnectDeviceUIState,
   type DisplayedDevice,
 } from "@ledgerhq/live-dmk-mobile";
-import { SourceFlowProvider } from "../../utils/SourceFlowContext";
+import { DeviceIntentTrackingProvider } from "../../utils/DeviceIntentTrackingContext";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DiscoveringState } from "./DiscoveringState";
 
@@ -53,9 +53,9 @@ function renderState(devices: DisplayedDevice[]) {
   };
 
   return render(
-    <SourceFlowProvider value="my_ledger">
+    <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
       <DiscoveringState state={state} />
-    </SourceFlowProvider>,
+    </DeviceIntentTrackingProvider>,
   );
 }
 

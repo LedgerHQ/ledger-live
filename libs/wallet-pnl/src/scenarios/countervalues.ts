@@ -1,4 +1,4 @@
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import type {
   CounterValuesState,

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
 import counterValueFormatter from "../../../market/utils/countervalueFormatter";

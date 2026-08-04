@@ -1,9 +1,9 @@
 import React from "react";
 import type { InvalidOperationComponent } from "@ledgerhq/device-intent";
 import { Trans } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { InfoState } from "LLM/components/InfoState";
-import { useSourceFlow } from "../utils/SourceFlowContext";
+import { TrackDIEScreen } from "./TrackDIEScreen";
+import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 import {
   DEVICE_ACTION_BUTTON,
   PAGE_DEVICE_ACTION,
@@ -29,23 +29,19 @@ const devBanner = __DEV__
  * state, signalling a caller-side orchestration bug. Not expected in production.
  */
 export const InvalidOperation: InvalidOperationComponent = ({ onClose }) => {
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const handleClose = () => {
     trackDeviceActionButtonClicked({
       sourceFlow,
       button: DEVICE_ACTION_BUTTON.Close,
+      extraProperties: analyticsProperties,
     });
     onClose();
   };
 
   return (
     <>
-      <TrackScreen
-        category={PAGE_DEVICE_ACTION.InvalidState}
-        sourceFlow={sourceFlow}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_DEVICE_ACTION.InvalidState} refreshSource />
       <InfoState
         preset="error"
         size="hug"

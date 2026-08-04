@@ -6,7 +6,7 @@ import { AppManifest, DAppTrackingData, DiscoverDB, WalletAPITransaction } from 
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";

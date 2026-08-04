@@ -1,20 +1,35 @@
 import { act, renderHook } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { PostOnboardingActionId, type PostOnboardingHubState } from "@ledgerhq/types-live";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { getLumenSymbolForActionId } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/utils";
 import { useFinishOnboardingWidgetViewModel } from "LLD/features/FinishOnboarding/FinishOnboardingWidget/useFinishOnboardingWidgetViewModel";
+import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
 
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
+jest.mock("LLD/features/FinishOnboarding/hooks/useFinishOnboardingState");
 
-const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
+const mockedUseFinishOnboardingState = jest.mocked(useFinishOnboardingState);
 
-function buildHubState(overrides: Partial<PostOnboardingHubState> = {}): PostOnboardingHubState {
+const deviceStep = {
+  id: PostOnboardingActionId.deviceOnboarded,
+  title: "postOnboarding.dialog.actions.deviceOnboarded.title",
+  description: "",
+  completed: true,
+  lumenSymbol: getLumenSymbolForActionId(PostOnboardingActionId.deviceOnboarded),
+  shouldCompleteOnStart: false,
+  startAction: () => {},
+};
+
+function buildFinishState(
+  overrides: Partial<ReturnType<typeof useFinishOnboardingState>> = {},
+): ReturnType<typeof useFinishOnboardingState> {
   return {
     deviceModelId: DeviceModelId.nanoX,
-    lastActionCompleted: null,
-    actionsState: [],
     postOnboardingInProgress: false,
+    steps: [deviceStep],
+    completedStepsAmount: 1,
+    totalStepsAmount: 1,
+    allStepsCompleted: true,
     ...overrides,
   };
 }
@@ -23,12 +38,12 @@ describe("useFinishOnboardingWidgetViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.mocked(track).mockClear();
-    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState());
+    mockedUseFinishOnboardingState.mockReturnValue(buildFinishState());
   });
 
-  it("should expose postOnboardingInProgress from the hub state", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(
-      buildHubState({ postOnboardingInProgress: true }),
+  it("should expose postOnboardingInProgress from useFinishOnboardingState", () => {
+    mockedUseFinishOnboardingState.mockReturnValue(
+      buildFinishState({ postOnboardingInProgress: true }),
     );
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
@@ -36,38 +51,22 @@ describe("useFinishOnboardingWidgetViewModel", () => {
     expect(result.current.postOnboardingInProgress).toBe(true);
   });
 
-  it("should derive completedActionsAmount as completed count + 1 and totalActionsAmount as filtered length + 1 (buyCrypto excluded from scope)", () => {
-    const actionsState = [
-      { id: PostOnboardingActionId.deviceOnboarded, completed: true },
-      { id: PostOnboardingActionId.assetsTransfer, completed: true },
-      { id: PostOnboardingActionId.buyCrypto, completed: false },
-    ] as PostOnboardingHubState["actionsState"];
-
-    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
-
-    const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
-
-    expect(result.current.completedActionsAmount).toBe(3);
-    expect(result.current.totalActionsAmount).toBe(3);
-  });
-
-  it("should use amount 1 / 2 when a single non-buyCrypto action is not completed", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(
-      buildHubState({
-        actionsState: [
-          { id: PostOnboardingActionId.personalizeMock, completed: false },
-        ] as PostOnboardingHubState["actionsState"],
+  it("should expose stepper amounts from useFinishOnboardingState", () => {
+    mockedUseFinishOnboardingState.mockReturnValue(
+      buildFinishState({
+        completedStepsAmount: 3,
+        totalStepsAmount: 3,
       }),
     );
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
 
-    expect(result.current.completedActionsAmount).toBe(1);
-    expect(result.current.totalActionsAmount).toBe(2);
+    expect(result.current.completedStepsAmount).toBe(3);
+    expect(result.current.totalStepsAmount).toBe(3);
   });
 
   it("should call track when handleOpenFinishOnboardingDialog runs", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState());
+    mockedUseFinishOnboardingState.mockReturnValue(buildFinishState());
 
     const { result } = renderHook(() => useFinishOnboardingWidgetViewModel());
 

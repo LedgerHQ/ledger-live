@@ -9,7 +9,6 @@ import { FiatCurrencySchema, type FiatCurrency } from "./schema";
  * ```ts
  * export const usd = fiat({
  *   type: "FiatCurrency",
- *   id: "usd",
  *   name: "US Dollar",
  *   ticker: "USD",
  *   symbol: "$",

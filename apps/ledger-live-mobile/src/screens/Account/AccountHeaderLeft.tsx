@@ -8,7 +8,7 @@ import type { AccountsNavigatorParamList } from "~/components/RootNavigator/type
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

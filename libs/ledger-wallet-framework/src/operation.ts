@@ -165,6 +165,7 @@ export const OPERATION_TYPE_IN_FAMILY = [
   "WITHDRAW",
   "SHIELDED_TX_SAPLING_IN",
   "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_IRONWOOD_IN",
 ];
 export const OPERATION_TYPE_OUT_FAMILY = [
   "OUT",
@@ -184,6 +185,7 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "UPDATE_ACCOUNT",
   "SHIELDED_TX_SAPLING_OUT",
   "SHIELDED_TX_ORCHARD_OUT",
+  "SHIELDED_TX_IRONWOOD_OUT",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",
@@ -267,7 +269,7 @@ export const isAddressPoisoningOperation = (
   // Fallback to environment variable if no families are provided to be retro-compatible
   const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES")
     .split(",")
-    .map(s => s.trim());
+    .map((s: string) => s.trim());
 
   return impactedFamilies.includes(family);
 };

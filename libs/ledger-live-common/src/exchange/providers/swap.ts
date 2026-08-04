@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
 import calService, { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";

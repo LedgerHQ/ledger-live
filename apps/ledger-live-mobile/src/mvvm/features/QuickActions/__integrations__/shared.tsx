@@ -3,10 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { screen, within, withFlagOverrides } from "@tests/test-renderer";
 import { QuickActionsCtas } from "../components/QuickActionsCtas";
 import { TransferDrawer } from "../screens/TransferDrawer";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { State } from "~/reducers/types";
 import { ScreenName } from "~/const";
 import { QUICK_ACTIONS_TEST_IDS } from "../testIds";
@@ -122,9 +121,6 @@ export const overrideStateReadOnly = (state: State): State => {
 
 export const overrideStateWithFundsVariant = withFlagOverrides(
   {
-    lwmWallet40: {
-      enabled: true,
-    },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
   overrideStateWithFunds,
@@ -132,9 +128,6 @@ export const overrideStateWithFundsVariant = withFlagOverrides(
 
 export const overrideStateWithoutFundsVariant = withFlagOverrides(
   {
-    lwmWallet40: {
-      enabled: true,
-    },
     lwmQuickActionsCtasVariant: { enabled: true },
   },
   overrideStateWithoutFunds,

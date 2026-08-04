@@ -15,6 +15,7 @@ module.exports = {
     ],
   },
   testEnvironment: "jsdom",
+  setupFiles: ["<rootDir>/jest-env-setup.js"],
   testPathIgnorePatterns: ["lib/", "lib-es/", "helpers/"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [

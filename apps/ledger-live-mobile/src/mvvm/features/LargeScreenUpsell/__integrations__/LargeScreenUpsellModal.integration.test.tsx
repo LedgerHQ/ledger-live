@@ -134,6 +134,14 @@ describe("LargeScreenUpsellModal on Portfolio (integration)", () => {
     await waitFor(() => {
       expect(screen.getByTestId("large-screen-upsell-modal-drawer")).toBeVisible();
     });
+
+    expect(screen.getByText("Spot scams before signing")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Learn more about advanced security features that enable real-time threat detection.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByText("Learn more")).toBeVisible();
   });
 
   it("should track the modal view with shared analytics properties when it auto-opens", async () => {

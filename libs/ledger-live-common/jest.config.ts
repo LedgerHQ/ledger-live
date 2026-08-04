@@ -19,6 +19,7 @@ const esmDeps = ["ky", "@mysten", "@scure", "@noble"];
 // (see .github/workflows/test-integration-weekly.yml).
 const weeklyIntegrationTests = [
   "src/families/cosmos/lastBlock.integration.test.ts",
+  "src/families/cosmos/datasets/cosmos.integration.test.ts",
   "src/families/cosmos/datasets/persistence.integration.test.ts",
   "src/families/cosmos/datasets/stargaze.integration.test.ts",
   "src/families/cosmos/datasets/quicksilver.integration.test.ts",

@@ -7,11 +7,11 @@ import {
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
 import { InfoState } from "LLM/components/InfoState";
-import { TrackScreen } from "~/analytics";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { useTranslation } from "~/context/Locale";
 import { urls } from "~/utils/urls";
-import { useSourceFlow } from "../../utils/SourceFlowContext";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
+import { useDeviceIntentTracking } from "../../utils/DeviceIntentTrackingContext";
 import {
   CONNECT_DEVICE_BUTTON,
   getTrackingSubError,
@@ -66,7 +66,7 @@ export function ConnectionErrorState({
   state,
 }: Readonly<ConnectionErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const bleForgetDeviceUrl = useLocalizedUrl(urls.errors.BleForgetDevice);
   const pairingIssuesUrl = useLocalizedUrl(urls.pairingIssues);
   const productName = t("deviceIntentExecutor.connectDevice.common.ledgerDevice");
@@ -77,14 +77,12 @@ export function ConnectionErrorState({
   }, [state.error]);
 
   const trackingScreen = (
-    <TrackScreen
+    <TrackDIEScreen
       category={PAGE_CONNECT_DEVICE.ConnectionError}
-      sourceFlow={sourceFlow}
       modelId={state.device.deviceModelId}
       transport={getTrackingTransport(state.device.transport)}
       subError={getTrackingSubError(state.error.type)}
       refreshSource
-      deviceUxV2
     />
   );
 
@@ -96,6 +94,7 @@ export function ConnectionErrorState({
         trackConnectDeviceButtonClicked({
           sourceFlow,
           button: CONNECT_DEVICE_BUTTON.Retry,
+          extraProperties: analyticsProperties,
         });
         state.retry();
       },
@@ -110,6 +109,7 @@ export function ConnectionErrorState({
         trackConnectDeviceButtonClicked({
           sourceFlow,
           button: CONNECT_DEVICE_BUTTON.GetHelp,
+          extraProperties: analyticsProperties,
         });
         Linking.openURL(url).catch(() => undefined);
       },
@@ -160,6 +160,7 @@ export function ConnectionErrorState({
             trackConnectDeviceButtonClicked({
               sourceFlow,
               button: CONNECT_DEVICE_BUTTON.GetHelp,
+              extraProperties: analyticsProperties,
             });
             Linking.openURL(bleForgetDeviceUrl).catch(() => undefined);
           }}
@@ -167,6 +168,7 @@ export function ConnectionErrorState({
             trackConnectDeviceButtonClicked({
               sourceFlow,
               button: CONNECT_DEVICE_BUTTON.Retry,
+              extraProperties: analyticsProperties,
             });
             state.retry();
           }}

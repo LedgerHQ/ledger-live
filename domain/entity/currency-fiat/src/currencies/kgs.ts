@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const kgs = fiat({
   type: "FiatCurrency",
-  id: "kgs",
   ticker: "KGS",
   name: "Kyrgyzstani Som",
   symbol: "сом",

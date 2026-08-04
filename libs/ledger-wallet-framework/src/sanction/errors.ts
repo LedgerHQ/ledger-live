@@ -1,5 +1,9 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
-
-export const AddressesSanctionedError = createCustomErrorClass<{
+export class AddressesSanctionedError extends Error {
+  override name = "AddressesSanctionedError";
   addresses: string[];
-}>("AddressesSanctionedError");
+  constructor(message?: string, fields?: { addresses: string[] }, options?: ErrorOptions) {
+    super(message || "AddressesSanctionedError", options);
+    this.addresses = fields?.addresses ?? [];
+    if (fields) Object.assign(this, fields);
+  }
+}

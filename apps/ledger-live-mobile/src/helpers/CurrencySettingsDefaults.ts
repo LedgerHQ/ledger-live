@@ -1,4 +1,4 @@
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import type { ConfirmationDefaults, UnitDefaults } from "../types/common";
 
 export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & UnitDefaults => {

@@ -5,6 +5,7 @@
   "arrowParens": "avoid",
   "sortPackageJson": false,
   "ignorePatterns": [
+    "**/*.md",
     "**/*.json",
     "src/generated/**"
   ]

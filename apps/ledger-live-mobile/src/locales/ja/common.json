@@ -135,6 +135,10 @@
     "AlgorandASANotOptInInRecipient" : {
       "title" : "送付先アカウントは、選択したASAをオプトインしていません。"
     },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "メモが長すぎます。",
+      "description" : "Algorandのメモは1024バイトを超えることはできません。メモを短縮してください。"
+    },
     "BluetoothRequired" : {
       "title" : "Bluetoothが無効です。",
       "description" : "スマートフォンの設定でBluetoothを有効にしてください。({{state}}状態)"
@@ -1397,13 +1401,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "詳細を表示。数回のタップで取引。{{discount}}％OFF",
-      "subtitle" : "大画面、スマートなトランザクション、強化された保護を限定{{discount}}％OFFでお楽しみください。"
+      "subtitle" : "大画面、スマートなトランザクション、強化された保護を限定{{discount}}％OFFでお楽しみください。",
+      "cta" : "タッチスクリーン搭載の署名用デバイスを探索"
     },
     "optedOut" : {
-      "title" : "詐欺を見抜く。すべての詳細を確認する",
-      "subtitle" : "タッチスクリーン搭載の署名用デバイスで操作をしっかりと確認し、高度なセキュリティチェックで詐欺を検知しましょう。"
-    },
-    "cta" : "タッチスクリーン搭載の署名用デバイスを詳しく見る"
+      "title" : "署名前に詐欺を見抜く",
+      "subtitle" : "リアルタイムの脅威検出を可能にする、高度なセキュリティ機能について確認しましょう。",
+      "cta" : "詳細はこちら"
+    }
   },
   "earn" : {
     "simulator" : {
@@ -3469,8 +3474,6 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
       "walletSyncDescription" : "PCを買い替えた時やスマホを使用する際も、ポートフォリオを常に最新の状態に保てます。",
-      "region" : "地域",
-      "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "password" : "アプリロック",
       "passwordDesc" : "Ledger Walletアプリをロックするためのパスワードを設定します。",
       "passwordDescBioCompat" : "パスワードまたは{{biometricsType}}を設定して、Ledger Walletアプリをロックします。",
@@ -4289,7 +4292,11 @@
         "monad_title" : "Ledger Nano S™はMonadのスワップに対応していません",
         "monad_description" : "Monadをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "zcash_title" : "Ledger Nano S™はZcashのスワップに対応していません",
-        "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+        "zcash_description" : "Zcashをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "aleo_title" : "Ledger Nano S™は、Aleoのスワップに対応していません",
+        "aleo_description" : "Aleoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "aleo_tokens_title" : "Ledger Nano S™は、Aleoトークンのスワップに対応していません",
+        "aleo_tokens_description" : "Aleoトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -4499,6 +4506,28 @@
       "hideFullMessage" : "メッセージ全体を非表示にする"
     }
   },
+  "walletApiSignMessage" : {
+    "sign" : {
+      "title" : "{{productName}}で続ける",
+      "description" : "画面に表示される手順に従ってください。",
+      "cancelled" : {
+        "title" : "デバイス上で操作が却下されました。",
+        "close" : "閉じる",
+        "retry" : "再試行"
+      }
+    }
+  },
+  "walletApiSignTransaction" : {
+    "sign" : {
+      "title" : "{{productName}}で続ける",
+      "description" : "画面に表示される手順に従ってください。",
+      "cancelled" : {
+        "title" : "デバイス上で操作が却下されました。",
+        "close" : "閉じる",
+        "retry" : "再試行"
+      }
+    }
+  },
   "sync" : {
     "error" : "同期エラー",
     "loading" : "Sync"
@@ -4574,6 +4603,16 @@
       "feesAmount" : "手数料金額 ({{unit}})",
       "gasLimit" : "ガス制限（{{unit}}）",
       "feesPaid" : "トランザクションを処理するためにネットワークへ支払われる手数料です",
+      "tronFees" : {
+        "sufficient" : {
+          "title" : "TRXネットワーク手数料",
+          "description" : "ネットワーク手数料の支払いには、{{energy}}のエネルギーと{{bandwidth}}のバンド幅を使用します。"
+        },
+        "insufficient" : {
+          "title" : "ネットワーク手数料の内訳",
+          "description" : "この送金を行うのに十分なエネルギーとバンド幅がありません。不足分はTRXをバーンすることで補われます。"
+        }
+      },
       "insufficientBalanceFees" : "ネットワーク手数料をカバーするための残高が不足しています",
       "amountToSend" : "送金金額 ({{currency}})",
       "coinToSend" : "送付するコイン",
@@ -4765,6 +4804,7 @@
       "slow" : "低速",
       "custom" : "カスタム",
       "customFees" : "手数料を手動設定",
+      "defaultNetworkFee" : "デフォルトのネットワーク手数料",
       "coinControl" : "コインコントロール",
       "edit" : {
         "title" : "単位を選択"
@@ -6763,6 +6803,12 @@
       }
     }
   },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "入金",
+      "OUT" : "出金"
+    }
+  },
   "tezos" : {
     "AccountHeader" : {
       "title" : "アカウントをデリゲートすることで報酬を得ることができます。",
@@ -6955,6 +7001,7 @@
             "allAssetsUsed" : "全ての資産を使用中",
             "minAmount" : "最低金額: <0>{{min}}</0>",
             "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "visibilityDelay" : "このデリゲーションがデリゲーションボードに反映されるまでに、最大{{numberOfMinutes}}分かかる場合があります。",
             "cta" : "続行"
           },
           "verification" : {
@@ -8450,9 +8497,6 @@
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "アナリティクス",
-    "allocation" : {
-      "title" : "配分"
-    },
     "operations" : {
       "title" : "取引履歴"
     }
@@ -8797,10 +8841,6 @@
           "title" : "ウォレットを同期",
           "description" : "暗号資産アカウントの同期を維持する"
         },
-        "customImage" : {
-          "title" : "ロック画面をカスタマイズ",
-          "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。"
-        },
         "recover" : {
           "title" : "バックアップの保護を完了",
           "description" : "Ledger Recoverの有効化を完了してください"
@@ -8828,10 +8868,6 @@
         "titleCompleted" : "購入済み暗号資産",
         "description" : "500種類以上のコインやトークンから選択。",
         "popupLabel" : "暗号資産を購入しました"
-      },
-      "customImage" : {
-        "titleCompleted" : "ロック画面がカスタマイズされました",
-        "popupLabel" : "ロック画面のカスタマイズに成功しました"
       },
       "recover" : {
         "titleCompleted" : "バックアップ保護完了",
@@ -8880,11 +8916,6 @@
         }
       }
     }
-  },
-  "newsfeed" : {
-    "title" : "ニュースフィード",
-    "poweredByCryptopanic" : "Powered by Cryptopanic",
-    "noPosts" : "現在表示できる投稿がありません"
   },
   "deviceConnect" : {
     "title" : "デバイスを接続"
@@ -9613,6 +9644,8 @@
     "emptyAssetList" : "資産が見つかりません",
     "accountCount_one" : "{{count}}アカウント",
     "accountCount_other" : "{{count}}アカウント",
+    "emptyAccounts" : "{{network}}アカウントがまだありません。続行するために追加してください。",
+    "addAccount" : "アカウントを追加",
     "perpetualsBanner" : "現在、ArbitrumチェーンのUSDCでのみサポートされています。",
     "errors" : {
       "title" : "接続に失敗しました。",
@@ -10115,7 +10148,7 @@
       }
     },
     "accountActions" : {
-      "publicToPrivate" : "自己送金"
+      "publicToPrivate" : "両替"
     },
     "send" : {
       "balanceSelection" : {
@@ -10191,12 +10224,61 @@
   "contacts" : {
     "title" : "お問い合せ",
     "addContact" : "連絡先を追加",
+    "addAddress" : "アドレスを追加",
+    "addYourAddress" : "アドレスを追加",
     "searchPlaceholder" : "連絡先を検索",
+    "searchNoResults" : "連絡先が見つかりません",
+    "addContactDrawer" : {
+      "namePlaceholder" : "連絡先名",
+      "namingDisclaimer" : "プライバシー保護のため、フルネームや姓の入力は避けてください。ニックネーム、または名前＋イニシャルなどをご使用ください。例：「John S」",
+      "confirmName" : "名前を確定",
+      "invalidNameError" : "特殊文字は使用できません。"
+    },
+    "addressCount_zero" : "0件のアドレス",
+    "addressCount_one" : "{{count}}件のアドレス",
+    "addressCount_other" : "{{count}}件のアドレス",
     "me" : {
       "name" : "自分",
       "addressCount_zero" : "0アドレス",
       "addressCount_one" : "{{count}}アドレス",
       "addressCount_other" : "{{count}}アドレス"
+    },
+    "detail" : {
+      "ledgerWalletAddresses" : "Ledger Walletアドレス",
+      "myAddresses" : "マイアドレス",
+      "emptyState" : {
+        "title" : "まだアドレスがありません",
+        "meTitle" : "自分のアドレスを保存",
+        "meDescription" : "取引や他のウォレットで所有している外部アドレスを保存します。次回ご自身に送金する際、設定した名前がお使いのLedgerデバイスに表示されます。",
+        "contactDescription" : "{{name}}に送信するためのウォレットアドレスを保存"
+      }
+    },
+    "ledgerSyncIntroduction" : {
+      "title" : "連絡先を保存するにはLedger Syncをオンにする",
+      "description" : "連絡先はLedgerによってエンドツーエンドで暗号化され、デバイス間で同期されます。これをロック解除できるのはあなただけです。",
+      "activate" : "Ledger Syncをオンにする",
+      "dismiss" : "了解",
+      "checkingAccessibilityLabel" : "Ledger Syncのステータスを確認中"
+    },
+    "featureIntroduction" : {
+      "title" : "「連絡先」のご紹介",
+      "description" : "暗号資産用のアドレス帳 — 送信先のウォレットをすべて1か所に保存。",
+      "primaryAction" : "「連絡先」を試す",
+      "secondaryAction" : "後で",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "アドレスを一度保存するだけ",
+          "description" : "送信先のアドレスを1か所で管理。"
+        },
+        "sendToRightAddress" : {
+          "title" : "正しいアドレスに送信",
+          "description" : "資金は常に正しいウォレットに届きます。"
+        },
+        "privateAcrossDevices" : {
+          "title" : "デバイス間でプライバシーを保護",
+          "description" : "Ledger Syncによりエンドツーエンドで暗号化。"
+        }
+      }
     }
   }
 }

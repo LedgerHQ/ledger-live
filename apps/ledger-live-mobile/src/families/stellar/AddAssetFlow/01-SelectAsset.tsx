@@ -8,7 +8,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
@@ -21,7 +21,7 @@ import Info from "~/icons/Info";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { useTokensData } from "@features/platform-currencies";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 

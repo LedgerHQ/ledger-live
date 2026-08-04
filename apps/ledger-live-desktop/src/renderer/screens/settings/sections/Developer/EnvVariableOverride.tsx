@@ -1,4 +1,4 @@
-import { setEnvUnsafe } from "@ledgerhq/live-env";
+import { setEnvUnsafe } from "@shared/env";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/lumen-ui-react";

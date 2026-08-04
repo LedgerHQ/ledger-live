@@ -23,7 +23,7 @@ import { log } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useNavigate } from "react-router";
-import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkDown } from "@ledgerhq/live-common/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { urls } from "~/config/urls";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";

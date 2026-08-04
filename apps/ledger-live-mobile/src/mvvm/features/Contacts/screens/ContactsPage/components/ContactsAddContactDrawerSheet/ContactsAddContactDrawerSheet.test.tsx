@@ -22,6 +22,7 @@ function createViewModel(
     isConfirmEnabled: false,
     isSaving: false,
     draftName: "",
+    avatarInitial: "",
     invalidNameError: null,
     labels: {
       title: "Add contact",

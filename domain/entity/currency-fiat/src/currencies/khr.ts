@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const khr = fiat({
   type: "FiatCurrency",
-  id: "khr",
   ticker: "KHR",
   name: "Cambodian Riel",
   symbol: "៛",

@@ -1401,13 +1401,14 @@
   "largeScreenUpsellModal": {
     "optedIn": {
       "title": "See more. Tap less. Save {{discount}}%",
-      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off."
+      "subtitle": "Enjoy a larger screen, smarter transaction reviews, enhanced protection, and an exclusive {{discount}}% off.",
+      "cta": "Explore touchscreen signers"
     },
     "optedOut": {
-      "title": "Spot scams. See every detail",
-      "subtitle": "Review clearly on a touchscreen signer and spot scams with advanced security checks."
-    },
-    "cta": "Explore touchscreen signers"
+      "title": "Spot scams before signing",
+      "subtitle": "Learn more about advanced security features that enable real-time threat detection.",
+      "cta": "Learn more"
+    }
   },
   "earn": {
     "simulator": {
@@ -3473,8 +3474,6 @@
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Wallet crypto accounts across different phones and computers.",
       "walletSyncDescription": "Keep your portfolio up to date when switching computers or use a phone",
-      "region": "Region",
-      "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "App lock",
       "passwordDesc": "Set a password to lock the Ledger Wallet app.",
       "passwordDescBioCompat": "Set a password or {{biometricsType}} to lock the Ledger Wallet app.",
@@ -4295,7 +4294,9 @@
         "zcash_title": "Ledger Nano S™ does not support swapping Zcash",
         "zcash_description": "To swap Zcash, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "aleo_title": "Ledger Nano S™ does not support swapping Aleo",
-        "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "aleo_description": "To swap Aleo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "aleo_tokens_title": "Ledger Nano S™ does not support swapping Aleo tokens",
+        "aleo_tokens_description": "To swap Aleo tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4503,6 +4504,28 @@
     "eip712": {
       "showFullMessage": "Show full message",
       "hideFullMessage": "Hide full message"
+    }
+  },
+  "walletApiSignMessage": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
+    }
+  },
+  "walletApiSignTransaction": {
+    "sign": {
+      "title": "Continue on your {{productName}}",
+      "description": "Follow the instructions displayed on your Secure Screen",
+      "cancelled": {
+        "title": "Operation rejected on device",
+        "close": "Close",
+        "retry": "Retry"
+      }
     }
   },
   "sync": {
@@ -4781,6 +4804,7 @@
       "slow": "Slow",
       "custom": "Custom",
       "customFees": "Custom fees",
+      "defaultNetworkFee": "Default network fee",
       "coinControl": "Coin control",
       "edit": {
         "title": "Choose unit"
@@ -8479,9 +8503,6 @@
   "ApplicationVersion": "v{{version}}",
   "analytics": {
     "title": "Analytics",
-    "allocation": {
-      "title": "Allocation"
-    },
     "operations": {
       "title": "Transaction history"
     }
@@ -8826,10 +8847,6 @@
           "title": "Sync your wallet",
           "description": "Keep your crypto accounts synced"
         },
-        "customImage": {
-          "title": "Customize the lock screen",
-          "description": "Display your favorite digital art or photo as your device’s lock screen."
-        },
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
@@ -8857,10 +8874,6 @@
         "titleCompleted": "Crypto bought",
         "description": "Choose from 500+ coins and tokens.",
         "popupLabel": "Crypto bought"
-      },
-      "customImage": {
-        "titleCompleted": "Lock screen customized",
-        "popupLabel": "Lock screen customized successfully"
       },
       "recover": {
         "titleCompleted": "Backup secured",
@@ -8909,11 +8922,6 @@
         }
       }
     }
-  },
-  "newsfeed": {
-    "title": "Newsfeed",
-    "poweredByCryptopanic": "Powered by Cryptopanic",
-    "noPosts": "No posts available currently"
   },
   "deviceConnect": {
     "title": "Connect device"
@@ -9642,6 +9650,8 @@
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
+    "emptyAccounts": "You don't have {{network}} accounts yet. Please add one to continue",
+    "addAccount": "Add account",
     "perpetualsBanner": "Currently only supported with USDC on Arbitrum chain.",
     "errors": {
       "title": "Connection failed",
@@ -10150,7 +10160,7 @@
       }
     },
     "accountActions": {
-      "publicToPrivate": "Self transfer"
+      "publicToPrivate": "Convert"
     },
     "send": {
       "balanceSelection": {
@@ -10226,6 +10236,8 @@
   "contacts": {
     "title": "Contacts",
     "addContact": "Add contact",
+    "addAddress": "Add address",
+    "addYourAddress": "Add your address",
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
     "addContactDrawer": {
@@ -10243,12 +10255,42 @@
       "addressCount_one": "{{count}} address",
       "addressCount_other": "{{count}} addresses"
     },
+    "detail": {
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
+      "myAddresses": "My addresses",
+      "emptyState": {
+        "title": "No address yet",
+        "meTitle": "Save your own addresses",
+        "meDescription": "Save the external addresses you own on exchanges or other wallets. Next time you send to yourself, your Ledger device will show the name you chose.",
+        "contactDescription": "Save a wallet address to send to {{name}}"
+      }
+    },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
       "activate": "Turn on Ledger Sync",
       "dismiss": "Got it",
       "checkingAccessibilityLabel": "Checking Ledger Sync status"
+    },
+    "featureIntroduction": {
+      "title": "Introducing Contacts",
+      "description": "Your address book for crypto — save the wallets you send to, all in one place.",
+      "primaryAction": "Try contacts",
+      "secondaryAction": "Maybe later",
+      "highlights": {
+        "saveAddresses": {
+          "title": "Save addresses once",
+          "description": "Keep the addresses you send to in one place."
+        },
+        "sendToRightAddress": {
+          "title": "Send to the right address",
+          "description": "Funds reach the right wallet every time."
+        },
+        "privateAcrossDevices": {
+          "title": "Private across your devices",
+          "description": "End-to-end encrypted with Ledger Sync."
+        }
+      }
     }
   }
 }

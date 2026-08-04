@@ -59,9 +59,9 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setSentryLogs = (sentryLogs: boolean) =>
+export const setCrashReporting = (crashReporting: boolean) =>
   saveSettings({
-    sentryLogs,
+    crashReporting,
   });
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({

@@ -5,7 +5,7 @@ import { performanceTracker } from "LLM/storage/utils/performance";
 import { STORAGE_TYPE } from "LLM/storage/constants";
 import FloatingDebugButton from "~/components/FloatingDebugButton";
 import { Flex, IconsLegacy, Switch, Text, Divider } from "@ledgerhq/native-ui";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);

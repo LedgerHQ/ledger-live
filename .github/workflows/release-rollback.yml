@@ -51,7 +51,7 @@ jobs:
             ledger-live-build
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: LedgerHQ/${{ env.REPO }}
           ref: refs/tags/${{ env.RESTORE_TAG }}
@@ -73,7 +73,9 @@ jobs:
           git push -u origin rollback
 
       - name: Override base version
-        run: pnpm version --new-version ${{ inputs.replacement-version-number }} --no-git-tag-version
+        env:
+          NEW_VERSION: ${{ inputs.replacement-version-number }}
+        run: pnpm version --new-version "$NEW_VERSION" --no-git-tag-version
         working-directory: ${{ inputs.application == 'live-desktop' && 'apps/ledger-live-desktop' || 'apps/ledger-live-mobile' }}
 
       - name: Create version bump changeset
@@ -110,7 +112,7 @@ jobs:
           mv apps/ledger-live-desktop/RELEASE_NOTES.md.tmp apps/ledger-live-desktop/RELEASE_NOTES.md
 
       - name: Commit version bump
-        uses: planetscale/ghcommit-action@v0.2.9
+        uses: planetscale/ghcommit-action@c6125dee9e9c0daebc4adea9f68ead8293414174 # v0.2.9
         with:
           commit_message: "chore(version): :package: patch bump for rollback [skip ci]"
           repo: ${{ github.repository }}
@@ -124,7 +126,7 @@ jobs:
           echo "tag-name=${{ env.APP_NAME }}@${{ inputs.application == 'live-desktop' && steps.desktop-version.outputs.version || steps.mobile-version.outputs.version }}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -140,7 +142,7 @@ jobs:
             });
 
       - name: Delete rollback branch
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -151,7 +153,7 @@ jobs:
             });
             console.log('Successfully deleted rollback branch');
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: Trigger release build for desktop
         if: ${{ inputs.application == 'live-desktop' }}
         with:
@@ -167,7 +169,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: Trigger release build for mobile
         if: ${{ inputs.application == 'live-mobile' }}
         with:

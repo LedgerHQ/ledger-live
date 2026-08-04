@@ -123,7 +123,7 @@ export type ChainAPI = Readonly<{
 
 // Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
 const remapErrors = (e: unknown) => {
-  if (e instanceof NetworkError) {
+  if ((e as { name?: string })?.name === "NetworkError") {
     throw e;
   }
 

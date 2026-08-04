@@ -3,6 +3,7 @@ import {
   getConsensusInfo,
   getBlockInfoByHash,
   getBlocksAtHeight,
+  getBlockTransactionEvents,
   getAccountsByPublicKey,
   getAccountBalance,
   getAccountNonce,
@@ -173,6 +174,30 @@ describe("proxyClient", () => {
         expect.objectContaining({
           method: "GET",
           url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/blocksAtHeight/1000",
+        }),
+      );
+    });
+  });
+
+  describe("getBlockTransactionEvents", () => {
+    it("should fetch block transaction events by block hash", async () => {
+      const mockResponse = [
+        {
+          hash: "aa".repeat(32),
+          sender: "3U6m951FWryY56SKFFHgMLGVHtJtk4VaxN7V2F9hjkR7Sg1FUx",
+          cost: "601",
+          result: { outcome: "success", events: [] },
+        },
+      ];
+      mockNetwork.mockResolvedValue({ data: mockResponse });
+
+      const result = await getBlockTransactionEvents(currencyId, "abc123");
+
+      expect(result).toEqual(mockResponse);
+      expect(mockNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: "GET",
+          url: "https://ccd-wallet-proxy-testnet.coin.ledger-test.com/v0/blockTransactionEvents/abc123",
         }),
       );
     });

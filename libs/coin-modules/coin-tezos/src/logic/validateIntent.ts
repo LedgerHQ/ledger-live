@@ -12,7 +12,8 @@ import {
 } from "@ledgerhq/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
-import type { APIAccount } from "../network/types";
+import type { APIManagerAccount } from "../network/types";
+import { hasManagerKey } from "../network/types";
 import {
   InvalidAddressBecauseAlreadyDelegated,
   MustDelegateBeforeStaking,
@@ -27,8 +28,6 @@ import {
 } from "../utils";
 import { estimateFees } from "./estimateFees";
 import type { TezosOperationMode } from "../types/model";
-
-type APIUserAccount = Extract<APIAccount, { type: "user" }>;
 
 function resolveValidationOperationMode(intent: TransactionIntent): TezosOperationMode {
   switch (intent.type) {
@@ -82,9 +81,13 @@ function validateBasicSendParams(intent: TransactionIntent): Record<string, Erro
 
 function validateStakeConstraints(
   intent: TransactionIntent,
-  senderInfo: APIUserAccount,
+  senderInfo: APIManagerAccount,
 ): Record<string, Error> {
-  if (!senderInfo.delegate?.address) {
+  // Staking requires an active delegate. A registered baker (`type: "delegate"`) is its own
+  // baker (self-delegated) so it is always eligible, even though tzkt reports no `delegate`
+  // field for it; only plain wallets without a delegate must delegate first.
+  const isSelfBaker = senderInfo.type === "delegate";
+  if (!isSelfBaker && !senderInfo.delegate?.address) {
     return { amount: new MustDelegateBeforeStaking() };
   }
   if (intent.useAllAmount) {
@@ -96,7 +99,7 @@ function validateStakeConstraints(
 
 function validateUnstakeConstraints(
   intent: TransactionIntent,
-  senderInfo: APIUserAccount,
+  senderInfo: APIManagerAccount,
 ): Record<string, Error> {
   const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
   if (stakedBalance <= 0n) {
@@ -121,7 +124,7 @@ function validateFinalizeUnstakeConstraints(finalizable: bigint): Record<string,
 
 function validateTransactionConstraints(
   intent: TransactionIntent,
-  senderInfo: APIUserAccount,
+  senderInfo: APIManagerAccount,
   finalizable: bigint,
 ): Record<string, Error> {
   switch (intent.type) {
@@ -187,7 +190,7 @@ function calculateNativeSendMaxAmountForUser(
  */
 function calculateAmounts(
   intent: TransactionIntent,
-  senderInfo: APIUserAccount,
+  senderInfo: APIManagerAccount,
   estimatedFees: bigint,
   estimatedAmount: bigint | undefined,
   tokenBalanceForSendMax?: bigint,
@@ -252,7 +255,7 @@ function validateBalanceCoverage(
 
 async function estimateFeesForIntent(
   intent: TransactionIntent,
-  senderInfo: APIUserAccount,
+  senderInfo: APIManagerAccount,
 ): Promise<{
   estimatedFees: bigint;
   estimatedAmount: bigint | undefined;
@@ -345,7 +348,7 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
 
   try {
     const senderInfo = await api.getAccountByAddress(intent.sender);
-    if (senderInfo.type !== "user") throw new Error("unexpected account type");
+    if (!hasManagerKey(senderInfo)) throw new Error("unexpected account type");
 
     // Finalizable amount lives on /v1/staking/unstake_requests, not the account
     // endpoint; only `finalize_unstake` validation needs it.

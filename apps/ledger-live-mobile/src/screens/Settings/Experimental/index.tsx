@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { isEnvDefault } from "@ledgerhq/live-env";
+import { isEnvDefault } from "@shared/env";
 
 import { Alert } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";

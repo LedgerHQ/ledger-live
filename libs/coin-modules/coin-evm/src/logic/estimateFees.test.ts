@@ -581,6 +581,44 @@ describe("estimateFees", () => {
     });
   });
 
+  it("keeps legacy type when custom gasPrice is paired with orphaned EIP-1559 zeros", async () => {
+    // createTransaction seeds maxFeePerGas/maxPriorityFeePerGas as BigNumber(0).
+    // Those zeros are truthy objects and used to flip the tx to type 2 after a
+    // custom legacy fee confirm (e.g. Ethereum Classic).
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    nodeApiMock.getTransactionCount.mockResolvedValue(42);
+
+    const result = await estimateFees(
+      mockCurrency,
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+      } as SendTransactionIntent<MemoNotSupported, BufferTxData>,
+      {
+        feesStrategy: "custom",
+        gasPrice: 1_000_000_000n,
+        maxFeePerGas: 0n,
+        maxPriorityFeePerGas: 0n,
+      },
+    );
+
+    expect(result.parameters).toEqual(
+      expect.objectContaining({
+        gasPrice: 1_000_000_000n,
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+        nextBaseFee: null,
+        type: 0,
+      }),
+    );
+    expect(result.value).toBe(21_000_000_000_000n); // 21000 * 1e9
+  });
+
   it("uses custom gas limit from customFeesParameters", async () => {
     nodeApiMock.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber("20000000000"),

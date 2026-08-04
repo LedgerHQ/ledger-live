@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { getSwapTransactionStatusSectionItems } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { StatusRow } from "./StatusRow";
 
 const TRANSACTION_STATUS_TRANSLATION_PREFIX = "swap2.modals.transactionStatus";

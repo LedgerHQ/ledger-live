@@ -50,4 +50,6 @@ export abstract class Component extends PageHolder {
   }
 }
 
-export abstract class AppPage extends Component {}
+export abstract class AppPage extends Component {
+  readonly pageView = (pageId: string) => this.page.getByTestId(`page-view-${pageId}`);
+}

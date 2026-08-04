@@ -34,12 +34,10 @@ export interface NavigationBarHeights {
 }
 
 /**
- * Hook to calculate navigation bar heights for Wallet 4.0 screens.
+ * Hook to calculate navigation bar heights
  *
  * Returns top and bottom offsets to account for navigation bars (TopBar + TabBar).
  * Used primarily for PTX WebView screens that need proper content padding.
- *
- * @throws {Error} If the `lwmWallet40` feature flag is not enabled
  *
  * @example
  * ```tsx

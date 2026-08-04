@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const vnd = fiat({
   type: "FiatCurrency",
-  id: "vnd",
   ticker: "VND",
   name: "Vietnamese Dong",
   symbol: "₫",

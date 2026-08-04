@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 
 export function formatSmallestUnitSignedFiatVariation(
   value: number,

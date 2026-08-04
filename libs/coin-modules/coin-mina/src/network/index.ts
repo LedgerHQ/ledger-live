@@ -1,4 +1,3 @@
-import { LedgerAPI5xx } from "@ledgerhq/errors";
 import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 
@@ -53,14 +52,13 @@ const isAbortOrTimeoutError = (error: unknown): error is Error & { code?: string
 
 const RETRYABLE_HTTP_STATUS_CODES = new Set([502, 503, 504]);
 
-type LedgerAPI5xxInstance = InstanceType<typeof LedgerAPI5xx>;
-
 const isRetryableServerError = (
   error: unknown,
-): error is LedgerAPI5xxInstance & { status: number } =>
-  error instanceof LedgerAPI5xx &&
-  typeof (error as LedgerAPI5xxInstance & { status?: number }).status === "number" &&
-  RETRYABLE_HTTP_STATUS_CODES.has((error as LedgerAPI5xxInstance & { status: number }).status);
+): error is { name: string; message: string; status: number } =>
+  (error as { name?: string })?.name === "LedgerAPI5xx" &&
+  typeof (error as { message?: string }).message === "string" &&
+  typeof (error as { status?: number }).status === "number" &&
+  RETRYABLE_HTTP_STATUS_CODES.has((error as { status: number }).status);
 
 const backoffDelay = (attempt: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));

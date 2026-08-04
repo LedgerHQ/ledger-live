@@ -29,27 +29,34 @@ runs:
 
   steps:
     - id: branch-name
-      uses: tj-actions/branch-names@v6
+      uses: tj-actions/branch-names@6c999acf206f5561e19f46301bb310e9e70d8815 # v6
     - name: Set report path
       id: report-path
       shell: bash
       run: |
         REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
         BRANCH="${{ steps.branch-name.outputs.current_branch }}"
-        SUFFIX="${{ inputs.report_path_suffix || inputs.platform }}"
+        SUFFIX="${INPUTS_REPORT_PATH_SUFFIX:-$INPUTS_PLATFORM}"
         if [ "${{ github.repository }}" != "LedgerHQ/ledger-live" ]; then
           PATH_VALUE="${REPO_NAME}-${BRANCH}-${SUFFIX}"
         else
           PATH_VALUE="${BRANCH}-${SUFFIX}"
         fi
         echo "path=${PATH_VALUE}" >> "$GITHUB_OUTPUT"
+      env:
+        INPUTS_REPORT_PATH_SUFFIX: ${{ inputs.report_path_suffix }}
+        INPUTS_PLATFORM: ${{ inputs.platform }}
     - name: Compress PNG files
       shell: bash
-      run: ${{ github.action_path }}/compress-pngs.sh "${{ inputs.path }}"
+      run: ${{ github.action_path }}/compress-pngs.sh "${INPUTS_PATH}"
+      env:
+        INPUTS_PATH: ${{ inputs.path }}
     - name: Build Allure upload dir
       id: prepare
       shell: bash
-      run: ${{ github.action_path }}/build-allure-upload-dir.sh "${{ inputs.path }}" "${{ runner.temp }}/allure-upload"
+      run: ${{ github.action_path }}/build-allure-upload-dir.sh "${INPUTS_PATH}" "${{ runner.temp }}/allure-upload"
+      env:
+        INPUTS_PATH: ${{ inputs.path }}
     - name: Upload allure results
       id: upload-results
       uses: LedgerHQ/actions/allure/upload@815ffa9c111f5f0947ff73c9b12067d787bf34e0 # main @ 2026-06-25

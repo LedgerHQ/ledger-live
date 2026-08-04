@@ -7,7 +7,7 @@ Domain API client for **token currencies**, backed by the Crypto Asset List (CAL
 endpoints and helpers, typed on the Zod-first `@domain/entity-currency-token` entity. Owns no
 env/config/logging dependency.
 
-Relocation of `libs/ledgerjs/packages/cryptoassets/src/cal-client/*` and `api-token-converter.ts`.
+Relocated from the legacy CAL client (`cal-client/*` and `api-token-converter.ts`).
 
 - `schema.ts` — Zod schema for the CAL `/v1/tokens` response (`ApiTokenResponseSchema`), reusing
   `UnitSchema` from `@domain/entity-currency-unit`.

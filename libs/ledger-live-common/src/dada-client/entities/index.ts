@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { PartialMarketItemResponse } from "../../market/utils/types";
 
 // Raw DADA API wire-format shapes for currency assets

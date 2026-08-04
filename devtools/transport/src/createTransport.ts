@@ -25,6 +25,7 @@ export function createTransport<M extends MessageMap>(
   let socket: WebSocketLike | null = null;
   let status: ConnectionStatus = "idle";
   let url = config.url;
+  let origin = config.origin;
   let seq = 0;
   let lastError: Error | undefined;
   let history: ReadonlyArray<Envelope<M>> = [];
@@ -34,6 +35,7 @@ export function createTransport<M extends MessageMap>(
     return {
       status,
       url,
+      origin,
       history,
       lastError,
     };

@@ -1,7 +1,23 @@
-import { createCustomErrorClass } from "@ledgerhq/errors";
+export class NotEnoughVTHO extends Error {
+  override name = "NotEnoughVTHO";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughVTHO");
+    if (fields) Object.assign(this, fields);
+  }
+}
 
-export const NotEnoughVTHO = createCustomErrorClass("NotEnoughVTHO");
-export const MustBeVechain = createCustomErrorClass("MustBeVechain");
-export const ImpossibleToCalculateAmountAndFees = createCustomErrorClass(
-  "ImpossibleToCalculateAmountAndFees",
-);
+export class MustBeVechain extends Error {
+  override name = "MustBeVechain";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "MustBeVechain");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ImpossibleToCalculateAmountAndFees extends Error {
+  override name = "ImpossibleToCalculateAmountAndFees";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ImpossibleToCalculateAmountAndFees");
+    if (fields) Object.assign(this, fields);
+  }
+}

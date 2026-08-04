@@ -14,11 +14,20 @@ type NavigationProps = StackNavigatorProps<BaseNavigatorStackParamList, ScreenNa
 const ScanRecipient = ({ route, navigation }: NavigationProps) => {
   const { account, parentAccount } = useAccountScreen(route);
   const bridge = useAccountBridgeOrNull<Transaction>(account ?? null, parentAccount);
+  const onScanned = route.params?.onScanned;
 
   const onResult = useCallback(
     (result: string) => {
+      const { amount, address, currency: _currency, ...rest } = decodeURIScheme(result);
+
+      // New Send flow: hand the address back to the caller and dismiss the scanner.
+      if (onScanned) {
+        onScanned(address);
+        navigation.goBack();
+        return;
+      }
+
       if (!account || !bridge) return;
-      const { amount, address, currency, ...rest } = decodeURIScheme(result);
       const transaction = route.params?.transaction;
       if (!transaction) return;
       const patch: Record<string, unknown> = {};
@@ -47,7 +56,7 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         },
       });
     },
-    [account, bridge, navigation, parentAccount, route.params],
+    [account, bridge, navigation, onScanned, parentAccount, route.params],
   );
 
   useEffect(() => {

@@ -16,12 +16,12 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        N="${{ inputs.worker_count }}"
+        N="${INPUTS_WORKER_COUNT}"
         if ! [[ "$N" =~ ^[1-9][0-9]*$ ]]; then
           echo "::error::worker_count must be a positive integer, got: $N"
           exit 1
         fi
-        ROOT="${{ inputs.artifacts_root }}"
+        ROOT="${INPUTS_ARTIFACTS_ROOT}"
         mkdir -p "$ROOT"
         LOG_FILE="$ROOT/simulator-boot.log"
         nohup bash -c "
@@ -38,3 +38,7 @@ runs:
         echo '✅ All simulators booted'
         " > "$LOG_FILE" 2>&1 &
         echo "ℹ️ Simulator boot started in background (log: $LOG_FILE)."
+
+      env:
+        INPUTS_WORKER_COUNT: ${{ inputs.worker_count }}
+        INPUTS_ARTIFACTS_ROOT: ${{ inputs.artifacts_root }}

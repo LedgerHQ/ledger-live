@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import fs from "fs";
-import { UpdateFetchFileFail } from "@ledgerhq/errors";
+import { UpdateFetchFileFail } from "../../errors";
 import network from "@ledgerhq/live-network/network";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";

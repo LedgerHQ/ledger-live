@@ -5,9 +5,8 @@ import {
   type ConnectDeviceUIState,
   type DisplayedDevice,
 } from "@ledgerhq/live-dmk-mobile";
-import { TrackScreen } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
-import { useSourceFlow } from "../../utils/SourceFlowContext";
+import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DeviceListItem } from "./DeviceListItem";
 
@@ -23,16 +22,10 @@ function getDeviceKey(device: DisplayedDevice, index: number): string {
 
 export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): React.ReactNode {
   const { t } = useTranslation();
-  const sourceFlow = useSourceFlow();
 
   return (
     <Box lx={{ width: "full", gap: "s16", paddingHorizontal: "s8" }}>
-      <TrackScreen
-        category={PAGE_CONNECT_DEVICE.Discovering}
-        sourceFlow={sourceFlow}
-        refreshSource
-        deviceUxV2
-      />
+      <TrackDIEScreen category={PAGE_CONNECT_DEVICE.Discovering} refreshSource />
       <Text typography="heading4SemiBold" lx={{ color: "base", textAlign: "left" }}>
         {t("deviceIntentExecutor.connectDevice.states.discovering.title")}
       </Text>

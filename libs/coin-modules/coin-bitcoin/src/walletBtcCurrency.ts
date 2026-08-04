@@ -6,7 +6,7 @@ import type { WalletBtcCurrency } from "@ledgerhq/wallet-btc/crypto/types";
 /**
  * Resolve a wallet-btc currency descriptor from a Ledger CryptoCurrency.
  *
- * wallet-btc is dependency-inverted: it no longer reads @ledgerhq/cryptoassets or
+ * wallet-btc is dependency-inverted: it no longer reads the currency registry or
  * @ledgerhq/live-env. coin-bitcoin (which legitimately depends on both) resolves the
  * explorer id and endpoint here and injects them into wallet-btc.
  */

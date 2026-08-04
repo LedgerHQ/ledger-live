@@ -60,8 +60,7 @@ export function isDatadogAvailable(): boolean {
 
 /**
  * Initialize Datadog RUM in the renderer process.
- * Call only when lldDatadog.enabled and sentryLogs (user opt-in) are true.
- * Uses datadogId from the identities store (same segment as Sentry).
+ * Call only when lldDatadog.enabled and crashReporting (user opt-in) are true.
  */
 export async function initDatadog(
   shouldSend: () => boolean,
@@ -73,6 +72,8 @@ export async function initDatadog(
         traceSampleRate?: number;
         allowedTracingUrls?: string[];
         profilingSampleRate?: number;
+        trackUserInteractions?: boolean;
+        trackResources?: boolean;
       }
     | undefined,
   store: Store<State>,
@@ -105,8 +106,8 @@ export async function initDatadog(
       allowedTracingUrls,
       ...(profilingSampleRate !== undefined && { profilingSampleRate }),
       trackViewsManually: true,
-      trackUserInteractions: true,
-      trackResources: true,
+      trackUserInteractions: params?.trackUserInteractions ?? true,
+      trackResources: params?.trackResources ?? true,
       beforeSend: buildBeforeSend(shouldSend),
       sessionPersistence: "local-storage",
     });

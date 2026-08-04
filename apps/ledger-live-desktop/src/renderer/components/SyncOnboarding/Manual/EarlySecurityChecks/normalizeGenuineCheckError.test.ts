@@ -1,4 +1,4 @@
-import { GenuineCheckFailed, NetworkDown } from "@ledgerhq/errors";
+import { GenuineCheckFailed, NetworkDown } from "@ledgerhq/live-common/errors";
 import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
 
 describe("normalizeGenuineCheckError", () => {

@@ -1,4 +1,4 @@
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import perFamily from "~/generated/MemoTagInput";
 import { MEMO_TAG_COINS } from "../constants";

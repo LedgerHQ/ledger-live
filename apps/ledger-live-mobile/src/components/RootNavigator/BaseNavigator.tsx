@@ -36,7 +36,6 @@ import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
 import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
@@ -468,15 +467,6 @@ export default function BaseNavigator() {
           name={NavigatorName.PasswordModifyFlow}
           component={PasswordModifyFlowNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.AnalyticsAllocation}
-          component={AnalyticsAllocation}
-          options={{
-            title: t("analytics.allocation.title"),
-            headerRight: () => null,
-            animation: "slide_from_bottom",
-          }}
         />
         <Stack.Screen
           name={ScreenName.AnalyticsOperations}

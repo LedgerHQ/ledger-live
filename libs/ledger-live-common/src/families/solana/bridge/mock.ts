@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { ChainAPI, Config, getChainAPI, logged } from "@ledgerhq/coin-solana/network/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { PubKeyDisplayMode, SolanaSigner } from "@ledgerhq/coin-solana/signer";

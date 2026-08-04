@@ -10,7 +10,6 @@ import {
   type MatchedDevice,
 } from "@ledgerhq/live-dmk-shared";
 import { isPeerRemovedPairingError } from "../errors";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
 import { BaseConnectionErrorTypes, ConnectionErrorTypes, MobileConnectionError } from "./types";
 import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
@@ -66,7 +65,10 @@ export const createConnectionError = (error: unknown): MobileConnectionError => 
     };
   }
 
-  if (error instanceof PeerRemovedPairing || isPeerRemovedPairingError(error)) {
+  if (
+    (error as { name?: string })?.name === "PeerRemovedPairing" ||
+    isPeerRemovedPairingError(error)
+  ) {
     return {
       type: ConnectionErrorTypes.BlePairingPeerRemovedPairing,
     };

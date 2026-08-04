@@ -306,7 +306,7 @@ export async function craftStandardTransaction(
 const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
   const tokenInfo =
     subAccount && subAccount.type === "TokenAccount"
-      ? drop(subAccount.token.id.split("/"), 1)
+      ? drop(String(subAccount.token.id).split("/"), 1)
       : [undefined, undefined];
   return tokenInfo;
 };

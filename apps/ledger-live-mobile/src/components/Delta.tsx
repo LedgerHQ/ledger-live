@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { Unit } from "@domain/entity-currency-unit";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/native-ui/assets/icons";

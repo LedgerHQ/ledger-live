@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { ChangeEventHandler } from "react";
+import type { ChangeEventHandler, ReactNode } from "react";
 import type { Category, Tool, ToolId } from "@devtools/registry";
 import { useAccordion } from "../../hooks";
 import type { IconComponent } from "../../categoryConfig";
@@ -12,6 +12,7 @@ interface SidebarInput {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
+  sidebarFooter?: ReactNode;
 }
 
 export interface SidebarViewProps {
@@ -26,6 +27,7 @@ export interface SidebarViewProps {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
+  sidebarFooter?: ReactNode;
 }
 
 export function useSidebarViewModel({
@@ -34,6 +36,7 @@ export function useSidebarViewModel({
   onSelectTool,
   onHome,
   onClose,
+  sidebarFooter,
 }: SidebarInput): SidebarViewProps {
   const [query, setQuery] = useState("");
 
@@ -65,5 +68,6 @@ export function useSidebarViewModel({
     onSelectTool,
     onHome,
     onClose,
+    sidebarFooter,
   };
 }

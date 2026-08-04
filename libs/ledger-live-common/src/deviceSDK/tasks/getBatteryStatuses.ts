@@ -1,4 +1,4 @@
-import { DisconnectedDevice, StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { DisconnectedDevice, StatusCodes } from "@ledgerhq/errors";
 import type { DeviceId } from "@ledgerhq/types-live";
 
 import { Observable, concat, of, throwError } from "rxjs";
@@ -67,7 +67,10 @@ function internalGetBatteryStatusesTask({
           return { type: "data" as const, batteryStatus };
         }),
         catchError((err: Error) => {
-          if (err instanceof TransportStatusError && err.statusCode === StatusCodes.UNKNOWN_APDU)
+          if (
+            (err as { name?: string; statusCode?: number }).name === "TransportStatusError" &&
+            (err as { statusCode?: number }).statusCode === StatusCodes.UNKNOWN_APDU
+          )
             return of<GetBatteryStatusesTaskEvent>({ type: "taskError", error: "UnknownApdu" });
 
           return throwError(() => err);

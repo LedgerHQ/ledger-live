@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useModularDrawerController } from "../ModularDrawer";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";

@@ -115,6 +115,40 @@ const fetchStakeForValidator = async (
 
   if (amount === 0n) return null;
 
+  const [rewardsResult, delegatorSharesResult, commissionResult] = await Promise.allSettled([
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("rewards", []) }),
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("delegatorShares", []) }),
+    provider.call({ to: validatorAddress, data: iface.encodeFunctionData("commissionRate", []) }),
+  ]);
+
+  let amountRewarded: bigint | undefined;
+  if (
+    rewardsResult.status === "fulfilled" &&
+    rewardsResult.value !== "0x" &&
+    delegatorSharesResult.status === "fulfilled" &&
+    delegatorSharesResult.value !== "0x" &&
+    commissionResult.status === "fulfilled" &&
+    commissionResult.value !== "0x"
+  ) {
+    const [totalPendingRewards] = iface.decodeFunctionResult("rewards", rewardsResult.value);
+    const [totalShares] = iface.decodeFunctionResult(
+      "delegatorShares",
+      delegatorSharesResult.value,
+    );
+    const [rawCommissionPpm] = iface.decodeFunctionResult("commissionRate", commissionResult.value);
+    if (
+      typeof totalPendingRewards === "bigint" &&
+      typeof totalShares === "bigint" &&
+      typeof rawCommissionPpm === "bigint" &&
+      totalShares > 0n
+    ) {
+      const commissionPpm = rawCommissionPpm > 1_000_000n ? 1_000_000n : rawCommissionPpm;
+      const netRewards =
+        (totalPendingRewards * (1_000_000n - commissionPpm) * shares) / totalShares / 1_000_000n;
+      if (netRewards > 0n) amountRewarded = netRewards;
+    }
+  }
+
   return {
     uid: `${validatorAddress}-${delegatorAddress}`,
     address: delegatorAddress,
@@ -123,6 +157,7 @@ const fetchStakeForValidator = async (
     asset,
     amount,
     actions: [],
+    ...(typeof amountRewarded === "bigint" ? { amountRewarded } : {}),
     details: { contractAddress: validatorAddress, validator: validatorAddress, shares },
   };
 };

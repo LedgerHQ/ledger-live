@@ -15,6 +15,7 @@
     "**/*.test.{js,jsx,ts,tsx}"
   ],
   "ignoreUnimported": [
+    "src/errors.ts",
     "src/test/fixtures.ts",
     "src/test/helpers/msw-fixtures.ts",
     "src/test/helpers/msw-setup.ts",
@@ -28,7 +29,6 @@
     "jest-util"
   ],
   "ignoreUnused": [
-    "lodash",
-    "@ledgerhq/cryptoassets"
+    "lodash"
   ]
 }

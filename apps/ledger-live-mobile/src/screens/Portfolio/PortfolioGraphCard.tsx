@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Box } from "@ledgerhq/native-ui";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";

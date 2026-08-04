@@ -50,7 +50,8 @@
         ".storybook/electronStub.js",
         ".storybook/fsStub.js",
         ".storybook/settingsMock.ts",
-        "src/renderer/mockServiceWorker.js"
+        "src/renderer/mockServiceWorker.js",
+        "src/errors.ts"
       ],
       "ignoreDependencies": [
         "prop-types",
@@ -97,7 +98,8 @@
       "entry": ["src/useDebounce.ts", "src/useThrottledFunction.ts"]
     },
     "./libs/live-countervalues": {
-      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"]
+      "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"],
+      "ignoreDependencies": ["@ledgerhq/live-network"]
     },
     "./libs/live-countervalues-react": {
       "entry": ["src/index.tsx", "src/portfolio.tsx"]
@@ -218,6 +220,9 @@
     "./shared/feature-flags": {
       "entry": ["src/index.ts"]
     },
+    "./shared/live-env": {
+      "entry": ["src/index.ts"]
+    },
     "./features/flow/market-banner": {
       "entry": ["src/index.ts", "src/components/MarketBanner/index.native.ts"]
     },
@@ -228,6 +233,9 @@
       "entry": ["src/index.ts", "src/index.native.ts", "src/jest.native.ts"]
     },
     "./features/flow/fear-and-greed": {
+      "entry": ["src/index.ts"]
+    },
+    "./features/platform/env": {
       "entry": ["src/index.ts"]
     },
     "./features/platform/feature-flags": {

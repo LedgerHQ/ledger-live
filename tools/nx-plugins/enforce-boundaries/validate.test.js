@@ -462,6 +462,41 @@ test("multiple violations across different layers are all reported", t => {
   assert.equal(violations.length, 3);
 });
 
+test("findViolations: BOUNDARY_EXCEPTIONS skips an otherwise-forbidden edge", () => {
+  const graph = {
+    nodes: {
+      "shared/live-env": { data: { root: "shared/live-env", tags: ["scope:shared"] } },
+      "libs/env": { data: { root: "libs/env", tags: ["scope:libs", "scope:libs-non-ui"] } },
+    },
+    dependencies: {
+      "shared/live-env": [{ target: "libs/env" }],
+      "libs/env": [],
+    },
+  };
+  const exceptions = [
+    { sourceRoot: "shared/live-env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+  ];
+  assert.deepEqual(findViolations(graph, exceptions), []);
+  // Without the exception it would fire:
+  assert.equal(findViolations(graph, []).length, 1);
+});
+
+test("findSourceImportViolations: BOUNDARY_EXCEPTIONS suppresses allowed import", t => {
+  const root = makeTmpWorkspace({
+    "shared/live-env/src/index.ts": 'import { injectDefinitions } from "@ledgerhq/live-env";',
+    "shared/other/src/index.ts": 'import { getEnv } from "@ledgerhq/live-env";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/live-env"]);
+  const exceptions = [
+    { sourceRoot: "shared/live-env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+  ];
+  const violations = findSourceImportViolations(root, legacy, exceptions);
+  // shared/other is NOT excepted — only shared/live-env is
+  assert.equal(violations.length, 1);
+  assert.ok(violations[0].file.includes("shared/other"));
+});
+
 test("no violations in a clean workspace", t => {
   const root = makeTmpWorkspace({
     "shared/a/src/index.ts": "export const x = 1;",

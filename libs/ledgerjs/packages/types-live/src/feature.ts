@@ -5,7 +5,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
-import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
@@ -187,7 +186,6 @@ export type Features = CurrencyFeatures & {
   mixpanelAnalytics: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
-  npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
@@ -202,7 +200,6 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
-  storyly: Feature_Storyly;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
   protectServicesDesktop: Feature_ProtectServicesDesktop;
@@ -216,7 +213,6 @@ export type Features = CurrencyFeatures & {
   evmNativeStaking: Feature_EvmNativeStaking;
   editBitcoinTx: Feature_EditBitcoinTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
-  newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
@@ -527,19 +523,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
   };
 }>;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["storyly"]` from `@shared/feature-flags` instead. */
-export type Feature_Storyly = Feature<{
-  stories: {
-    [key in StorylyInstanceID]: StorylyInstanceType;
-  };
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["newsfeedPage"]` from `@shared/feature-flags` instead. */
-export type Feature_NewsfeedPage = Feature<{
-  cryptopanicApiKey: string;
-  whitelistedLocales: string[];
-}>;
-
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["protectServicesMobile"]` from `@shared/feature-flags` instead. */
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
@@ -637,34 +620,6 @@ export type Feature_FirebaseEnvironmentReadOnly = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ldmkTransport"]` from `@shared/feature-flags` instead. */
 export type Feature_LdmkTransport = Feature<{
   warningVisible: boolean;
-}>;
-
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["npsRatingsPrompt"]` from `@shared/feature-flags` instead. */
-export type Feature_NpsRatingsPrompt = Feature<{
-  conditions: {
-    disappointed_delay: {
-      seconds: number;
-    };
-    minimum_accounts_number: number;
-    minimum_app_starts_number: number;
-    minimum_duration_since_app_first_start: {
-      seconds: number;
-    };
-    minimum_number_of_app_starts_since_last_crash: number;
-    not_now_delay: {
-      seconds: number;
-    };
-    satisfied_then_not_now_delay: {
-      seconds: number;
-    };
-  };
-  happy_moments: {
-    route_name: string;
-    timer: number;
-    type: string;
-  }[];
-  support_email: string;
-  typeform_url: string;
 }>;
 
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["ratingsPrompt"]` from `@shared/feature-flags` instead. */

@@ -1,4 +1,4 @@
-import { getEnv, changes } from "@ledgerhq/live-env";
+import { getEnv, changes } from "@shared/env";
 import { setNetworkState } from "@ledgerhq/live-network";
 
 /**

@@ -133,7 +133,7 @@ const AccountScreenInner = ({
     setGraphCardEndPosition(y + height / 10);
   }, []);
 
-  const { secondaryActions } = useAccountActions({ account, parentAccount });
+  const { mainActions, secondaryActions } = useAccountActions({ account, parentAccount, colors });
 
   let currencyConfig: CurrencyConfig | undefined = undefined;
   try {
@@ -158,6 +158,7 @@ const AccountScreenInner = ({
     onSwitchAccountCurrency,
     onAccountCardLayout,
     colors,
+    mainActions,
     secondaryActions,
     t,
   });

@@ -8,7 +8,6 @@
     "proxy-from-env"
   ],
   "ignoreUnused": [
-    "@ledgerhq/cryptoassets",
     "@ledgerhq/devices"
   ],
   "ignoreUnimported": [

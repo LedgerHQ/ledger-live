@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
 import CustomCALRefInput from "./CustomCALRefInput";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 describe("CustomCALRefInput", () => {
   it("does not display any custom CAL ref", () => {

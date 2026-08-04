@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
@@ -229,7 +229,19 @@ jest.mock("react-redux", () => {
 
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
-jest.mock("@gorhom/bottom-sheet", () => mockGorhomBottomSheet);
+// Upstream mock's dismiss() is a no-op that never fires onDismiss, breaking any
+// queued-drawer cleanup that relies on it. Patched locally until the fix is merged:
+// https://github.com/gorhom/react-native-bottom-sheet/pull/2714
+// TODO: remove this override once @gorhom/bottom-sheet ships the fix.
+jest.mock("@gorhom/bottom-sheet", () => {
+  class BottomSheetModal extends mockGorhomBottomSheet.BottomSheetModal {
+    dismiss() {
+      super.dismiss();
+      this.props?.onDismiss?.();
+    }
+  }
+  return { ...mockGorhomBottomSheet, BottomSheetModal };
+});
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",

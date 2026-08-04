@@ -15,7 +15,7 @@ import {
 import { Download, Information, LifeRing, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useMyWalletHelpViewModel } from "./useMyWalletHelpViewModel";
 import { HelpListItem } from "./components/HelpListItem";
 
@@ -96,7 +96,7 @@ export function MyWalletHelpScreen() {
         </Box>
       </ScrollView>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isClearCacheDrawerOpen}
         onClose={onClearCacheDrawerClose}
         enableDynamicSizing
@@ -126,7 +126,7 @@ export function MyWalletHelpScreen() {
             </Button>
           </Box>
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </>
   );
 }

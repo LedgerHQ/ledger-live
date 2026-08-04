@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TextInput as RNTextInput } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { BigNumber } from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";

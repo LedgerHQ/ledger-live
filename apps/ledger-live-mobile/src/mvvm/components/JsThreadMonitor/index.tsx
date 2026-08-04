@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import useEnv from "@features/platform-env";
 import FloatingDebugButton from "~/components/FloatingDebugButton";
 import { useJsThreadMonitor } from "./useJsThreadMonitor";
 

@@ -467,6 +467,71 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
   });
 
+  it("swapExecuteFullResult() prints the display-unit amount without the decoded-payload wording", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
+    try {
+      const out = createCommandOutput("human", { command: "swap execute", network: "ethereum" });
+      out.swapExecuteFullResult({
+        from: "ethereum",
+        to: "bitcoin",
+        provider: "changelly",
+        amount: "0.1 ETH",
+        transactionId: "tx-123",
+        payload: {
+          swapId: "swap-abc",
+          payinAddress: "0x000000000000000000000000000000000000dead",
+        } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+        operationHash: "0xopHash",
+        swapId: "swap-abc",
+        // Human output only surfaces the display-unit amount; the atomic value and rate stay in JSON.
+        amountExpectedTo: "0.0025",
+        amountExpectedToAtomic: "250000",
+        magnitudeAwareRate: "2500000",
+      });
+    } finally {
+      restore();
+    }
+    // Labels are bold: strip ANSI so assertions hold whether or not colors are enabled
+    // (colors.bold() is a no-op without a TTY, but wraps the label in escape codes with one).
+    // eslint-disable-next-line no-control-regex
+    const joined = writes.join("").replace(/\x1b\[[0-9;]*m/g, "");
+    expect(joined).toContain("Amount expected to: 0.0025");
+    // The label was reworded — the old "(decoded payload)" hint must be gone.
+    expect(joined).not.toContain("(decoded payload)");
+    expect(joined).toContain("Operation hash: 0xopHash");
+    // Atomic amount and rate are JSON-only and must not leak into the human summary.
+    expect(joined).not.toContain("250000");
+  });
+
+  it("swapExecuteFullResult() omits the amount and hash lines when they are absent", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
+    try {
+      const out = createCommandOutput("human", { command: "swap execute", network: "ethereum" });
+      out.swapExecuteFullResult({
+        from: "ethereum",
+        to: "bitcoin",
+        provider: "changelly",
+        amount: "0.1 ETH",
+        transactionId: "tx-123",
+        payload: {
+          swapId: "swap-abc",
+          payinAddress: "0x000000000000000000000000000000000000dead",
+        } as unknown as Parameters<typeof out.swapExecuteFullResult>[0]["payload"],
+      });
+    } finally {
+      restore();
+    }
+    // eslint-disable-next-line no-control-regex
+    const joined = writes.join("").replace(/\x1b\[[0-9;]*m/g, "");
+    expect(joined).toContain("From: ethereum");
+    expect(joined).not.toContain("Amount expected to:");
+    expect(joined).not.toContain("Operation hash:");
+  });
+
   describe("ring human output", () => {
     let writes: string[] = [];
     let stderrWrites: string[] = [];

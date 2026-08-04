@@ -3,7 +3,6 @@ import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
-import { overrideInitialStateWithFeatureFlag } from "LLM/features/Portfolio/__integrations__/shared";
 import * as analytics from "~/analytics";
 import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
@@ -57,7 +56,7 @@ function IntegrationNavigator() {
 
 const composePortfolioOverrides =
   (extra: Parameters<typeof withConsentDrawerState>[0]) => (state: State) =>
-    withConsentDrawerState(extra)(overrideInitialStateWithFeatureFlag(state));
+    withConsentDrawerState(extra)(state);
 
 const ANALYTICS_CONSENT_DRAWER_PAGE = "Analytics consent drawer";
 const FRESH_CONSENT_TITLE = "Help us improve Ledger";

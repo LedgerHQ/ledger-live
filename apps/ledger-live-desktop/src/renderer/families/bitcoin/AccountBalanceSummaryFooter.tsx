@@ -16,27 +16,16 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { openModal } from "~/renderer/actions/modals";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import {
-  ZcashPrivateInfo,
-  ZcashSyncState,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
-import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
+import type { ZcashSyncState } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
 import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
 } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { from, switchMap } from "rxjs";
-import {
-  removeShieldedSubscription,
-  selectShieldedSubscriptions,
-  upsertShieldedSubscription,
-} from "~/renderer/reducers/shieldedSyncSubscriptions";
+import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
+import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -230,12 +219,8 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  // Save sync state to the account
-  const saveSyncState = useCallback(
-    (info: Partial<ZcashPrivateInfo>) => {
-      dispatch(syncStateUpdater(account as ZcashAccount, info));
-    },
-    [account, dispatch],
+  const { saveSyncState, startShieldedSync, stopShieldedSync } = useZcashShieldedSync(
+    account as ZcashAccount,
   );
 
   const updateSyncState = () => {
@@ -266,53 +251,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         break;
     }
   };
-
-  const startShieldedSync = useCallback(() => {
-    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
-      return;
-    }
-
-    saveSyncState({
-      syncState: "running",
-      progress: 0,
-    });
-
-    const syncConfig = {
-      paginationConfig: {},
-      syncType: SYNC_TYPE_SHIELDED,
-    };
-
-    const shieldedSync = from(Promise.resolve(getAccountBridge(account as ZcashAccount)))
-      .pipe(switchMap(bridge => bridge.sync(account as ZcashAccount, syncConfig)))
-      .subscribe({
-        next(accountUpdater) {
-          dispatch(updateAccountWithUpdater(account.id, accountUpdater));
-        },
-        error(err) {
-          console.warn("Zcash shielded sync error:", err);
-        },
-        complete() {
-          console.log(`Zcash shielded sync completed on account ${account.id}`);
-        },
-      });
-    dispatch(upsertShieldedSubscription({ accountId: account.id, subscription: shieldedSync }));
-  }, [account, dispatch, saveSyncState]);
-
-  const stopShieldedSync = useCallback(() => {
-    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") {
-      return;
-    }
-
-    const subscriptionToStop = shieldedSubscriptions.find(s => s.accountId === account.id);
-    if (subscriptionToStop) {
-      subscriptionToStop.subscription.unsubscribe();
-      dispatch(removeShieldedSubscription(account.id));
-    }
-    saveSyncState({
-      syncState: "stopped",
-      progress: 0,
-    });
-  }, [account, dispatch, shieldedSubscriptions, saveSyncState]);
 
   // Check if sync is outdated
   const outdatedSyncCheck = useCallback(() => {

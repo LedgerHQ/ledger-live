@@ -1,7 +1,7 @@
 // Wire the framework currencies resolver before `./fixtures` is imported below: this file runs in
 // `setupFiles` (before `setupFilesAfterEnv`), and fixtures.ts resolves currencies at module-eval.
 import "@ledgerhq/wallet-framework-test-setup";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { MOCK_API } from "./fixtures";
 
 global.console = require("console");

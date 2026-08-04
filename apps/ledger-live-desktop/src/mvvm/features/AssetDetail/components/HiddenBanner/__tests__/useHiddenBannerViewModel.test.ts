@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { track } from "~/renderer/analytics/segment";
 import { useHiddenBannerViewModel } from "../useHiddenBannerViewModel";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 const btc = getCryptoCurrencyById("bitcoin");
 

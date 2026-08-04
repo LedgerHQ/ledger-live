@@ -17,17 +17,19 @@ jobs:
     name: "Analyze and notify"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Analyze E2E requirements
         id: analyze
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          AFFECTED_PATHS_JSON: ${{ toJSON(inputs.affected_paths) }}
         with:
           script: |
-            const pathsInput = ${{ toJSON(inputs.affected_paths) }};
+            const pathsInput = JSON.parse(process.env.AFFECTED_PATHS_JSON || 'null');
             const paths = String(pathsInput || "")
               .split(/\r?\n|,/)
               .map(path => path.trim())
@@ -91,7 +93,7 @@ jobs:
 
       - name: Post PR comment
         if: steps.analyze.outputs.needs_e2e == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const desktop = '${{ steps.analyze.outputs.desktop }}' === 'true';

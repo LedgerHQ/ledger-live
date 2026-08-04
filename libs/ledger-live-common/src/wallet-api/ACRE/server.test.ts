@@ -1,6 +1,7 @@
 import { handlers } from "./server";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import BigNumber from "bignumber.js";
 import { AppPlatform, AppBranch, Visibility } from "../types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -12,6 +13,7 @@ jest.mock("@ledgerhq/wallet-api-server", () => ({
 }));
 
 jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getCryptoCurrencyById: jest.fn(),
 }));
 
@@ -28,7 +30,7 @@ jest.mock("../../bridge", () => ({
   getAccountBridge: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn(),
   changes: { subscribe: jest.fn() },
 }));
@@ -73,7 +75,7 @@ const mockManifest = {
 
 const mockEthereumCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: CryptoCurrencyIdSchema.parse("ethereum"),
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",
@@ -97,9 +99,9 @@ const mockEthereumCurrency: CryptoCurrency = {
 
 const mockTokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
-  id: "ethereum/erc20/acre_btc",
+  id: TokenCurrencyIdSchema.parse("ethereum/erc20/acre_btc"),
   contractAddress: "0x1234567890123456789012345678901234567890",
-  parentCurrencyId: "ethereum",
+  parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
   tokenType: "erc20",
   name: "ACRE Bitcoin",
   ticker: "acreBTC",

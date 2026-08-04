@@ -24,5 +24,7 @@ export {
   decodeSellPayload,
   decodeFundPayload,
 };
+export { findSwapPayloadSpecViolation } from "./SwapUtils";
+export { SwapPayloadFieldExceedsLimit } from "./errors";
 
 export default Exchange;

@@ -10,7 +10,8 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "~/context/hooks";
@@ -312,6 +313,8 @@ export function useAddressValidation({
       matchedAccounts,
       bridgeErrors: filteredBridgeErrors,
       bridgeWarnings: bridgeValidation.warnings,
+      isBridgeLoading: bridgeValidation.isLoading && bridgeValidation.status === null,
+      hasBridgeValidationResult: bridgeValidation.status !== null,
     };
   }, [
     validationState,
@@ -328,11 +331,16 @@ export function useAddressValidation({
     addressForBridgeValidation,
     bridgeValidation.errors,
     bridgeValidation.warnings,
+    bridgeValidation.isLoading,
+    bridgeValidation.status,
   ]);
 
   return {
     result,
-    isLoading: validationState.status === "loading" || domainIsLoading,
+    isLoading:
+      validationState.status === "loading" ||
+      domainIsLoading ||
+      (bridgeValidation.isLoading && bridgeValidation.status === null),
     validateAddress,
   };
 }

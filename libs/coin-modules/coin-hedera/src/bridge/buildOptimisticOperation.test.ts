@@ -54,15 +54,18 @@ describe("buildOptimisticOperation", () => {
     expect(op.recipients).toContain("0.0.5678");
   });
 
-  it("builds optimistic operation for HTS token", async () => {
-    const mockedTokenCurrency = getMockedHTSTokenCurrency();
+  it.each([
+    ["HTS", getMockedHTSTokenCurrency, new BigNumber(2000)],
+    ["ERC20", getMockedERC20TokenCurrency, new BigNumber(2500)],
+  ] as const)("builds optimistic operation for %s token", async (_, getMockedCurrency, maxFee) => {
+    const mockedTokenCurrency = getMockedCurrency();
     const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
     const parentAccount = getMockedAccount({ subAccounts: [tokenAccount] });
     const mockedTransaction = getMockedTransaction({
       subAccountId: tokenAccount.id,
       amount: new BigNumber(123),
       recipient: "0.0.9999",
-      maxFee: new BigNumber(2000),
+      maxFee,
     });
 
     const op = await buildOptimisticOperation({
@@ -72,41 +75,41 @@ describe("buildOptimisticOperation", () => {
     const subOp = (op.subOperations ?? [])[0];
 
     expect(op.type).toBe("FEES");
-    expect(op.value).toEqual(mockedTransaction.maxFee);
+    expect(op.value).toEqual(maxFee);
     expect(op.subOperations).toHaveLength(1);
     expect(subOp.type).toBe("OUT");
     expect(subOp.value).toEqual(new BigNumber(123));
-    expect(subOp.fee).toEqual(mockedTransaction.maxFee);
+    expect(subOp.fee).toEqual(maxFee);
     expect(subOp.accountId).toBe(tokenAccount.id);
     expect(subOp.recipients).toContain("0.0.9999");
   });
 
-  it("builds optimistic operation for ERC20 token", async () => {
-    const mockedTokenCurrency = getMockedERC20TokenCurrency();
-    const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
-    const parentAccount = getMockedAccount({ subAccounts: [tokenAccount] });
-    const mockedTransaction = getMockedTransaction({
-      subAccountId: tokenAccount.id,
-      amount: new BigNumber(123),
-      recipient: "0.0.9999",
-      maxFee: new BigNumber(2500),
-    });
+  it.each([
+    ["HTS", getMockedHTSTokenCurrency, "HTS transfer with memo"],
+    ["ERC20", getMockedERC20TokenCurrency, "ERC20 transfer with memo"],
+  ] as const)(
+    "includes memo in %s token sub-operation extra when memo is set",
+    async (_, getMockedCurrency, memo) => {
+      const mockedTokenCurrency = getMockedCurrency();
+      const tokenAccount = getMockedTokenAccount(mockedTokenCurrency);
+      const parentAccount = getMockedAccount({ subAccounts: [tokenAccount] });
+      const mockedTransaction = getMockedTransaction({
+        subAccountId: tokenAccount.id,
+        amount: new BigNumber(50),
+        recipient: "0.0.9999",
+        maxFee: new BigNumber(1000),
+        memo,
+      });
 
-    const op = await buildOptimisticOperation({
-      account: parentAccount,
-      transaction: mockedTransaction,
-    });
-    const subOp = (op.subOperations ?? [])[0];
+      const op = await buildOptimisticOperation({
+        account: parentAccount,
+        transaction: mockedTransaction,
+      });
 
-    expect(op.type).toBe("FEES");
-    expect(op.value).toEqual(mockedTransaction.maxFee);
-    expect(op.subOperations).toHaveLength(1);
-    expect(subOp.type).toBe("OUT");
-    expect(subOp.value).toEqual(new BigNumber(123));
-    expect(subOp.fee).toEqual(mockedTransaction.maxFee);
-    expect(subOp.accountId).toBe(tokenAccount.id);
-    expect(subOp.recipients).toContain("0.0.9999");
-  });
+      const subOp = (op.subOperations ?? [])[0];
+      expect(subOp.extra).toEqual({ memo });
+    },
+  );
 
   it("builds optimistic operation for delegate transaction", async () => {
     const mockedAccount = getMockedAccount();

@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const vef = fiat({
   type: "FiatCurrency",
-  id: "vef",
   ticker: "VEF",
   name: "Venezuelan Bolívar (2008–2018)",
   symbol: "Bs. F.",

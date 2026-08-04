@@ -27,7 +27,7 @@ jobs:
             ledger-live-build
 
       - name: Checkout Repo
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: develop
           fetch-depth: 1
@@ -49,7 +49,7 @@ jobs:
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-nx-cache: "true"
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: 3.3.0
 
@@ -89,7 +89,7 @@ jobs:
         #NPM publishing - to be removed when all is migrated
 
       - name: authenticate with npm
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         if: ${{ vars.ARTIFACTORY_PUBLISH_URL == '' }}
         with:
           registry-url: "https://registry.npmjs.org"
@@ -120,7 +120,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           overwrite: true
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly build of desktop
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -135,7 +135,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly build of mobile
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -150,7 +150,7 @@ jobs:
               }
             });
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger nightly wallet-cli sign and JFrog publish
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
@@ -176,7 +176,7 @@ jobs:
     steps:
       - name: post to a Slack channel
         id: slack
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage

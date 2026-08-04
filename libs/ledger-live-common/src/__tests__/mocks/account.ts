@@ -1,7 +1,7 @@
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "@ledgerhq/live-countervalues/portfolio";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@shared/env";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");

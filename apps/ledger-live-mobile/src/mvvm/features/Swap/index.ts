@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "~/context/hooks";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { isAccount, isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";

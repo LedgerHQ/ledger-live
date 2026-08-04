@@ -3,7 +3,7 @@ import {
   AppInteractionRequiredStateType,
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
-import { TrackScreen } from "~/analytics";
+import { TrackDIEScreen } from "../../../components/TrackDIEScreen";
 import { PAGE_CONNECT_APP } from "../../../utils/trackDeviceIntent";
 import type { BaseInitializerStateProps } from "../../types";
 import { OutdatedAppWarningView } from "./OutdatedAppWarningView";
@@ -13,16 +13,14 @@ type OutdatedAppWarningProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: AppInteractionRequiredStateType.OutdatedAppWarning }>
 >;
 
-export function OutdatedAppWarning({ state, device, sourceFlow }: OutdatedAppWarningProps) {
-  const viewModel = useOutdatedAppWarningViewModel({ state, device, sourceFlow });
+export function OutdatedAppWarning({ state, device }: OutdatedAppWarningProps) {
+  const viewModel = useOutdatedAppWarningViewModel({ state, device });
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_CONNECT_APP.OutdatedAppWarning}
-        sourceFlow={sourceFlow}
         modelId={device.modelId}
         refreshSource
-        deviceUxV2
       />
       <OutdatedAppWarningView {...viewModel} />
     </>

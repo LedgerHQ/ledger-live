@@ -10,7 +10,7 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 
 type Props = Readonly<{
@@ -31,7 +31,7 @@ export function ChartOptionsSheetView({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       testID={ASSET_DETAIL_TEST_IDS.chartOptionsSheet}
       isRequestingToBeOpened={isOpen}
       enableDynamicSizing
@@ -51,6 +51,6 @@ export function ChartOptionsSheetView({
           </ListItemLeading>
         </ListItem>
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

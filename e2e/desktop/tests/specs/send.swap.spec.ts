@@ -245,6 +245,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,
           );
+          await app.swapDrawer.closeDrawer();
+          await app.swapDrawer.waitForDrawerToBeHidden();
+          await app.swap.expectSelectedAssetDisplayed(fromAccount.currency.ticker);
         }
       },
     );

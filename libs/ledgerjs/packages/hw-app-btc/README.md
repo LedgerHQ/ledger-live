@@ -224,7 +224,7 @@ Get an XPUB with a ledger device
 
 *   `arg` **{path: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpubVersion: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}** derivation parameter*   path: a BIP 32 path of the account level. (e.g. The derivation path `84'/0'/0'`
         follows the `purpose' / coin_type' / account'` standard, with purpose=84, coin\_type=0, account=0)
-    *   xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts
+    *   xpubVersion: the XPUBVersion of the coin used. (refer to @domain/entity-currency-crypto
         for the XPUBVersion value if needed)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** XPUB of the account

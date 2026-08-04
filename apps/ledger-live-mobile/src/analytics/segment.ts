@@ -25,7 +25,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { userIdSelector, isDummyUserId } from "@domain/entity-client-identity";
 import {
@@ -38,7 +38,6 @@ import {
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
-  userNpsSelector,
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
@@ -382,8 +381,6 @@ const extraProperties = async (store: AppStore) => {
 
   const accountsWithFunds = getAccountsWithFunds(accounts);
 
-  const nps = userNpsSelector(state);
-
   const stakingProviders = analyticsFeatureFlagMethod?.("ethStakingProviders");
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
@@ -461,7 +458,6 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
-    nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     stablecoinYield,
     bitcoinYield,

@@ -1,3 +1,4 @@
+export type { Unit } from "./types";
 export {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,

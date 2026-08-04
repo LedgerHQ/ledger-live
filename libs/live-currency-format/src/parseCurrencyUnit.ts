@@ -1,4 +1,4 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "./types";
 import { BigNumber } from "bignumber.js";
 
 // parse a value that was formatted with formatCurrencyUnit

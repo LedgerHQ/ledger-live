@@ -15,7 +15,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   InitializationInput,
   InitializerConfig
 > = ({ connectionResult, deviceInitializationInput, onContextInitialized, config, onClose }) => {
-  const { state, device, sourceFlow } = useDeviceContextInitializerComponentLWMViewModel({
+  const { state, device } = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,
     onContextInitialized,
@@ -23,12 +23,7 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   });
 
   return (
-    <DeviceContextInitializerComponentLWMView
-      state={state}
-      device={device}
-      sourceFlow={sourceFlow}
-      onCancel={onClose}
-    />
+    <DeviceContextInitializerComponentLWMView state={state} device={device} onCancel={onClose} />
   );
 };
 

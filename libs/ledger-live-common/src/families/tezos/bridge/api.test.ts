@@ -1,5 +1,7 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
 beforeAll(() => {
@@ -19,9 +21,11 @@ beforeAll(() => {
       ) {
         const usdt: TokenCurrency = {
           type: "TokenCurrency",
-          id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+          id: TokenCurrencyIdSchema.parse(
+            "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+          ),
           contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-          parentCurrencyId: "tezos",
+          parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
           tokenType: "fa2",
           name: "Tether USD",
           ticker: "USDt",
@@ -38,9 +42,11 @@ beforeAll(() => {
       ) {
         const wusdc: TokenCurrency = {
           type: "TokenCurrency",
-          id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+          id: TokenCurrencyIdSchema.parse(
+            "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+          ),
           contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-          parentCurrencyId: "tezos",
+          parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
           tokenType: "fa2",
           name: "Wrapped USDC",
           ticker: "wUSDC",
@@ -69,9 +75,11 @@ describe("generic-coin-framework Tezos token", () => {
         }),
       ).resolves.toMatchObject({
         type: "TokenCurrency",
-        id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        ),
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-        parentCurrencyId: "tezos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
         name: "Tether USD",
         ticker: "USDt",
@@ -86,7 +94,9 @@ describe("generic-coin-framework Tezos token", () => {
           assetOwner: "tz1VUmqS38E45KZevtphpVF4cKiK1YJ1P9eL",
         }),
       ).resolves.toMatchObject({
-        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        ),
         name: "Wrapped USDC",
         ticker: "wUSDC",
       });
@@ -130,9 +140,11 @@ describe("generic-coin-framework Tezos token", () => {
     it("produces assetReference with :0 for single-asset tokens", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/tether_usd_kt1xntn74butxhfdtbmm2bgzaqfhpbvkwr8o",
+        ),
         contractAddress: "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o",
-        parentCurrencyId: "tezos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
         name: "Tether USD",
         ticker: "USDt",
@@ -153,9 +165,11 @@ describe("generic-coin-framework Tezos token", () => {
     it("produces assetReference with :tokenId for multi-asset tokens", () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        ),
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-        parentCurrencyId: "tezos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
         name: "Wrapped USDC",
         ticker: "wUSDC",
@@ -176,9 +190,11 @@ describe("generic-coin-framework Tezos token", () => {
     it("round-trips: getAssetFromToken → getTokenFromAsset", async () => {
       const token: TokenCurrency = {
         type: "TokenCurrency",
-        id: "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        id: TokenCurrencyIdSchema.parse(
+          "tezos/fa2/wrapped_usdc_kt18fp5rctw7mbwdmzfwjlduhs5mejmagdsz_17",
+        ),
         contractAddress: "KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ",
-        parentCurrencyId: "tezos",
+        parentCurrencyId: CryptoCurrencyIdSchema.parse("tezos"),
         tokenType: "fa2",
         name: "Wrapped USDC",
         ticker: "wUSDC",

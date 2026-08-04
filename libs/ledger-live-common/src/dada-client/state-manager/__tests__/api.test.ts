@@ -5,9 +5,9 @@ import {
 } from "../api";
 import { AssetCategory } from "../types";
 import type { RawApiResponse } from "../../entities";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn().mockReturnValue("https://dada.api.ledger.com/v1"),
 }));
 

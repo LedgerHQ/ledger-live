@@ -72,6 +72,8 @@ export type OperationType =
   | "SHIELDED_TX_SAPLING_OUT"
   | "SHIELDED_TX_ORCHARD_IN"
   | "SHIELDED_TX_ORCHARD_OUT"
+  | "SHIELDED_TX_IRONWOOD_IN"
+  | "SHIELDED_TX_IRONWOOD_OUT"
   | "SHIELDED_TX_INTERNAL";
 
 export type OperationExtra = unknown;

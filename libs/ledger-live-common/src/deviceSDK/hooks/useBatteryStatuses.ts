@@ -7,7 +7,7 @@ import {
   initialState,
 } from "../actions/getBatteryStatuses";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
-import { useEnv } from "../../env.react";
+import { useEnv } from "@features/platform-env";
 
 export type UseBatteryStatusesArgs = {
   deviceId?: string;

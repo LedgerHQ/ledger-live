@@ -5,7 +5,7 @@ import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { BlurView } from "@sbaiahmed1/react-native-blur";
 import { useTheme } from "styled-components/native";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useReduceTransparencyEnabled } from "~/hooks/useReduceTransparencyEnabled";
 

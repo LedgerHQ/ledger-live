@@ -3,7 +3,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import useQuickActions from "~/hooks/useQuickActions";
 import { useNavigation } from "@react-navigation/core";
 import { useTranslation } from "~/context/Locale";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";

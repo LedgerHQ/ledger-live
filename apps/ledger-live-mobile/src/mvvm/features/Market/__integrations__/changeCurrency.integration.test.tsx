@@ -2,10 +2,15 @@ import * as React from "react";
 import { screen, renderWithReactQuery } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 import { State, supportedCountervaluesData } from "~/reducers/types";
-
 const SUPPORTED_CURRENCIES = [
   {
-    currency: { name: "Euro", symbol: "€", ticker: "EUR", type: "FiatCurrency", units: [] },
+    currency: {
+      name: "Euro",
+      symbol: "€",
+      ticker: "EUR",
+      type: "FiatCurrency",
+      units: [],
+    },
     label: "Euro - EUR",
     ticker: "EUR",
     value: "EUR",

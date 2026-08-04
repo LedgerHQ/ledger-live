@@ -23,7 +23,26 @@ describe("getPrivateBalance", () => {
     const privateInfo = {
       orchardBalance: new BigNumber(5000),
       saplingBalance: new BigNumber(2000),
+      ironwoodBalance: new BigNumber(0),
     };
+    expect(getPrivateBalance(privateInfo)).toEqual(new BigNumber(7000));
+  });
+
+  it("includes ironwoodBalance in the total", () => {
+    const privateInfo = {
+      orchardBalance: new BigNumber(3000),
+      saplingBalance: new BigNumber(1000),
+      ironwoodBalance: new BigNumber(4000),
+    };
+    expect(getPrivateBalance(privateInfo)).toEqual(new BigNumber(8000));
+  });
+
+  it("treats a missing ironwoodBalance as zero (backward compat)", () => {
+    const privateInfo = {
+      orchardBalance: new BigNumber(5000),
+      saplingBalance: new BigNumber(2000),
+      // ironwoodBalance intentionally absent — old persisted shape
+    } as Parameters<typeof getPrivateBalance>[0];
     expect(getPrivateBalance(privateInfo)).toEqual(new BigNumber(7000));
   });
 });
@@ -33,11 +52,21 @@ describe("computeZcashBalance", () => {
     expect(computeZcashBalance(new BigNumber(4200), undefined)).toEqual(new BigNumber(4200));
   });
 
-  it("returns transparent + private", () => {
+  it("returns transparent + private (orchard + sapling)", () => {
     const privateInfo = {
       orchardBalance: new BigNumber(5000),
       saplingBalance: new BigNumber(2000),
+      ironwoodBalance: new BigNumber(0),
     };
     expect(computeZcashBalance(new BigNumber(10000), privateInfo)).toEqual(new BigNumber(17000));
+  });
+
+  it("includes ironwoodBalance in the total", () => {
+    const privateInfo = {
+      orchardBalance: new BigNumber(5000),
+      saplingBalance: new BigNumber(2000),
+      ironwoodBalance: new BigNumber(3000),
+    };
+    expect(computeZcashBalance(new BigNumber(10000), privateInfo)).toEqual(new BigNumber(20000));
   });
 });

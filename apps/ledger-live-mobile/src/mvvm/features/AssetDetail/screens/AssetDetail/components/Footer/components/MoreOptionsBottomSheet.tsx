@@ -1,5 +1,5 @@
 import React from "react";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import {
   BottomSheetHeader,
   BottomSheetView,
@@ -39,7 +39,7 @@ export function MoreOptionsBottomSheet({
   });
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={onClose}
       enableDynamicSizing
@@ -57,6 +57,6 @@ export function MoreOptionsBottomSheet({
           </ListItem>
         ))}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

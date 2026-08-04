@@ -26,7 +26,6 @@ module.exports = defineConfig({
     define: {
       __DEV__: JSON.stringify(true),
       global: "globalThis",
-      __SENTRY_URL__: JSON.stringify(null),
     },
   },
   resolve: {

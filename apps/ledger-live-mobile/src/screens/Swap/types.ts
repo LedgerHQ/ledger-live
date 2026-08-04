@@ -1,6 +1,8 @@
 import type { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike, SwapOperation } from "@ledgerhq/types-live";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";

@@ -1,0 +1,8 @@
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        # Internal org actions are trusted at tag/branch ref granularity
+        LedgerHQ/*: ref-pin
+        # All third-party actions must be pinned to a full SHA
+        "*": hash-pin

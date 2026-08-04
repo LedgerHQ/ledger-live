@@ -8,10 +8,13 @@ import {
   getAccountCurrency,
   getParentAccount,
   isTokenAccount,
+  isSendDisabledForFamily,
+  isReceiveDisabledForFamily,
 } from "@ledgerhq/live-common/account/index";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -35,11 +38,6 @@ type useAssetActionsProps = {
   accounts?: AccountLikeArray;
 };
 
-function getParentCurrencyId(currency?: CryptoCurrency | TokenCurrency): string | undefined {
-  if (!currency) return undefined;
-  return currency.type === "TokenCurrency" ? currency.parentCurrencyId : currency.id;
-}
-
 const iconBuy = IconsLegacy.PlusMedium;
 const iconSell = IconsLegacy.MinusMedium;
 const iconSwap = IconsLegacy.BuyCryptoMedium;
@@ -47,6 +45,11 @@ const iconReceive = IconsLegacy.ArrowBottomMedium;
 const iconSend = IconsLegacy.ArrowTopMedium;
 const iconAddAccount = IconsLegacy.WalletMedium;
 const iconStake = IconsLegacy.CoinsMedium;
+
+function getParentCurrencyId(currency?: CryptoCurrency | TokenCurrency): string | undefined {
+  if (!currency) return undefined;
+  return currency.type === "TokenCurrency" ? currency.parentCurrencyId : currency.id;
+}
 
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
@@ -93,6 +96,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const parentCurrencyId = getParentCurrencyId(currency);
   const family = parentCurrencyId ? getFamilyByCurrencyId(parentCurrencyId) : undefined;
   const assetId = !currency ? accountCurrency?.id : currency.id;
+  // Gating family; falls back to the account currency when no currency is passed.
+  const actionsParentId =
+    parentCurrencyId ?? (accountCurrency ? getParentCurrencyId(accountCurrency) : undefined);
+  const actionsFamily = actionsParentId ? getFamilyByCurrencyId(actionsParentId) : undefined;
+  const canReceiveAsset = !actionsFamily || !isReceiveDisabledForFamily(actionsFamily);
+  const canSendAsset = !actionsFamily || !isSendDisabledForFamily(actionsFamily);
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
   const { handleOpenStakeDrawer } = useOpenStakeDrawer({
@@ -243,22 +252,30 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 ]
               : []),
-            {
-              id: "receive",
-              label: t("transfer.receive.title"),
-              Icon: iconReceive,
-              customHandler: handleOpenReceiveDrawer,
-            },
-            {
-              id: "send",
-              label: t("transfer.send.title"),
-              Icon: iconSend,
-              navigationParams: [NavigatorName.SendFunds, getScreenDescriptor()] as const,
-              disabled: areAccountsBalanceEmpty,
-              modalOnDisabledClick: {
-                component: ZeroBalanceDisabledModalContent,
-              },
-            },
+            ...(canReceiveAsset
+              ? [
+                  {
+                    id: "receive",
+                    label: t("transfer.receive.title"),
+                    Icon: iconReceive,
+                    customHandler: handleOpenReceiveDrawer,
+                  },
+                ]
+              : []),
+            ...(canSendAsset
+              ? [
+                  {
+                    id: "send",
+                    label: t("transfer.send.title"),
+                    Icon: iconSend,
+                    navigationParams: [NavigatorName.SendFunds, getScreenDescriptor()] as const,
+                    disabled: areAccountsBalanceEmpty,
+                    modalOnDisabledClick: {
+                      component: ZeroBalanceDisabledModalContent,
+                    },
+                  },
+                ]
+              : []),
             ...additionalAssetActions.map(additionalAction => ({
               disabled: areAccountsBalanceEmpty,
               ...additionalAction,
@@ -287,6 +304,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     hasAccounts,
     readOnlyModeEnabled,
     availableOnSwap,
+    canReceiveAsset,
+    canSendAsset,
     defaultAccount,
     parentAccount,
     canStakeCurrency,

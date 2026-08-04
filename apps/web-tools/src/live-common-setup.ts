@@ -4,25 +4,19 @@ import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
-import { setCryptoCurrenciesStore, setFiatCurrenciesStore } from "@ledgerhq/cryptoassets";
 import { buildCryptoAssetsStore } from "@features/platform-currencies";
 import { store } from "./store";
 import {
-  CRYPTO_CURRENCIES_REGISTRY,
-  CRYPTO_CURRENCY_ALIASES,
   getCryptoCurrencyById,
   findCryptoCurrencyById,
   findCryptoCurrencyByScheme,
   listCryptoCurrencies,
   hasCryptoCurrencyId,
 } from "@domain/entity-currency-crypto";
-import { FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
-// The domain registries are the runtime source of truth for currency data.
-setCryptoCurrenciesStore(Object.values(CRYPTO_CURRENCIES_REGISTRY), CRYPTO_CURRENCY_ALIASES);
-setFiatCurrenciesStore(Object.values(FIAT_CURRENCIES_REGISTRY));
+// The domain registry is the runtime source of truth for currency data.
 setCurrenciesResolver({
   getCryptoCurrencyById,
   findCryptoCurrencyById,

@@ -1,6 +1,6 @@
 import React from "react";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { Box, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStatusSectionViewModel } from "../../hooks/useStatusSectionViewModel";
 import { StatusRow } from "./StatusRow";

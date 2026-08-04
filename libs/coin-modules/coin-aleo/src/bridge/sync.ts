@@ -272,7 +272,7 @@ export async function performPrivateSync({
     });
 
     // this error means that the current provableApi configuration is invalid and needs to be reset
-    if (err instanceof AleoApiConfigurationResetError) {
+    if ((err as { name?: string })?.name === "AleoApiConfigurationResetError") {
       throw err;
     }
 
@@ -602,7 +602,10 @@ export function createPrivateSyncObservable(
       .catch(err => {
         releaseLock();
 
-        if (err instanceof AleoApiConfigurationResetError && initialAccount?.aleoResources) {
+        if (
+          (err as { name?: string })?.name === "AleoApiConfigurationResetError" &&
+          initialAccount?.aleoResources
+        ) {
           // set `provableApi` to null before surfacing the error so the next sync cycle starts fresh re-registration
           subscriber.next({
             operations: initialAccount.operations,

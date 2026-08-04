@@ -13,7 +13,7 @@ import useBridgeTransaction, {
   shouldSyncBeforeTx,
 } from "./useBridgeTransaction";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 

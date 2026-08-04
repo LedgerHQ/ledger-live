@@ -1,3 +1,4 @@
+import "@shared/env";
 import {
   cleanupAllSpeculos,
   attachSpeculinhoLogsToAllure,

@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { Box, Text, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useModularDrawerController } from "../hooks/useModularDrawerController";
 import FeatureFlagDetails from "~/screens/FeatureFlagsSettings/FeatureFlagDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import { Alert } from "react-native";
-import { useTheme } from "styled-components/native";
 import { SectionCard, ToggleRow, PickerField, Divider } from "./components";
 import {
   assetLeftOptions,
@@ -23,7 +22,6 @@ import { getElement, makeOnValueChange } from "./utils";
 
 function ModularDrawerScreenDebug() {
   const { openDrawer } = useModularDrawerController();
-  const { colors } = useTheme();
 
   const [enableAccountSelection, setEnableAccountSelection] = useState(true);
   const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(true);
@@ -68,13 +66,13 @@ function ModularDrawerScreenDebug() {
   ]);
 
   return (
-    <Flex flex={1}>
+    <Box lx={{ flex: 1 }}>
       <ScrollView
         style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         <SectionCard>
-          <Text variant="body" color="neutral.c80" lineHeight="20px">
+          <Text typography="body2" lx={{ color: "muted" }}>
             {
               "Test the Modular Drawer with different configurations. Adjust settings below to explore various behaviors and features."
             }
@@ -156,37 +154,35 @@ function ModularDrawerScreenDebug() {
         </SectionCard>
 
         <SectionCard title="Current Configuration">
-          <Flex rowGap={2}>
-            <Text variant="body" color="neutral.c80">
-              <Text fontWeight="semiBold">{"Account Selection:"}</Text>
+          <Box lx={{ rowGap: "s4" }}>
+            <Text typography="body2" lx={{ color: "muted" }}>
+              <Text typography="body2SemiBold">{"Account Selection:"}</Text>
               {enableAccountSelection ? " Enabled" : " Disabled"}
             </Text>
-            <Text variant="body" color="neutral.c80">
-              <Text fontWeight="semiBold">{"Selection Callback:"}</Text>
+            <Text typography="body2" lx={{ color: "muted" }}>
+              <Text typography="body2SemiBold">{"Selection Callback:"}</Text>
               {enableOnAccountSelected ? " Enabled" : " Disabled"}
             </Text>
-          </Flex>
+          </Box>
         </SectionCard>
       </ScrollView>
 
-      <Flex
-        px={4}
-        pb={16}
-        pt={2}
-        backgroundColor="background.main"
+      <Box
+        lx={{ paddingHorizontal: "s12", paddingTop: "s4", backgroundColor: "canvas" }}
         style={{
-          shadowColor: colors.neutral.c100,
+          paddingBottom: 16,
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
           elevation: 5,
         }}
       >
-        <Button size="large" type="main" onPress={handleToggleDrawer}>
+        <Button size="lg" appearance="accent" isFull onPress={handleToggleDrawer}>
           {"Open Modular Drawer"}
         </Button>
-      </Flex>
-    </Flex>
+      </Box>
+    </Box>
   );
 }
 

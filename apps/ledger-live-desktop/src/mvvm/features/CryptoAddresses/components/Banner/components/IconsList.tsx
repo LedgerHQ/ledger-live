@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import useTheme from "~/renderer/hooks/useTheme";
 

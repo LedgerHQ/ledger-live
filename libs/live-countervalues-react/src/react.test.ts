@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  CountervaluesProvider,
-  useTrackingPairForAccounts,
-  type CountervaluesBridge,
-} from ".";
+import { CountervaluesProvider, useTrackingPairForAccounts, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act, render, waitFor } from "@testing-library/react";
 import {
@@ -16,7 +12,11 @@ import type {
   CounterValuesState,
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
-import type { Currency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  Currency,
+  FiatCurrency,
+  TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues/logic"),

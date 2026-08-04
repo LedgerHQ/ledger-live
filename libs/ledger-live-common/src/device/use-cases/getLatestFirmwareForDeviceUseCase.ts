@@ -1,7 +1,7 @@
 // From libs/ledger-live-common/src/manager/api.ts
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { getProviderId } from "../../manager/index";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { type ManagerApiRepository, getLatestFirmwareForDevice } from "@ledgerhq/device-core";
 

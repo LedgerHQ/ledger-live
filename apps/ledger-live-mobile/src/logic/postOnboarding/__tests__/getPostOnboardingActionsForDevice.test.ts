@@ -29,9 +29,26 @@ describe("getPostOnboardingActionsForDevice", () => {
     },
   );
 
+  it.each([DeviceModelId.stax, DeviceModelId.europa, DeviceModelId.apex])(
+    "should not include customImage for %s in real and mock lists",
+    deviceModelId => {
+      const actions = getPostOnboardingActionsForDevice(deviceModelId);
+      const mockActions = getPostOnboardingActionsForDevice(deviceModelId, true);
+
+      expect(actions.some(action => action.id === PostOnboardingActionId.customImage)).toBe(false);
+      expect(mockActions.some(action => action.id === PostOnboardingActionId.customImageMock)).toBe(
+        false,
+      );
+    },
+  );
+
   it("should return discoverWallet from getPostOnboardingAction", () => {
     expect(getPostOnboardingAction(PostOnboardingActionId.discoverWallet)?.id).toBe(
       PostOnboardingActionId.discoverWallet,
     );
+  });
+
+  it("should not return customImage from getPostOnboardingAction", () => {
+    expect(getPostOnboardingAction(PostOnboardingActionId.customImage)).toBeUndefined();
   });
 });

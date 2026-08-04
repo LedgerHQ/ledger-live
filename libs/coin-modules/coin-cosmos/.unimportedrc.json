@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/deviceTransactionConfig.ts",
     "src/CosmosValidatorsManager.ts",

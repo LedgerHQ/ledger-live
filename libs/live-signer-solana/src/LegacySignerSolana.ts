@@ -7,7 +7,7 @@ import {
   SolanaSigner,
 } from "@ledgerhq/coin-solana/signer";
 import Solana from "@ledgerhq/hw-app-solana";
-import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/devices";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
@@ -25,8 +25,12 @@ import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/errors";
 const MIN_VERSION = "1.9.2";
 const MANAGER_APP_NAME = "Solana";
 
-function isPKIUnsupportedError(err: unknown): err is TransportStatusError {
-  return err instanceof TransportStatusError && err.message.includes("0x6a81");
+function isPKIUnsupportedError(err: unknown): boolean {
+  const errName = (err as { name?: string })?.name;
+  return (
+    errName === "TransportStatusError" &&
+    !!(err as { message?: string })?.message?.includes("0x6a81")
+  );
 }
 
 async function tryLoadPKI(...args: Parameters<typeof loadPKI>) {

@@ -1,5 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import customAddAccountFlowByFamily from "~/generated/customAddAccountFlow";
 import type { ScanDeviceAccountsNavigationProps } from "../screens/ScanDeviceAccounts/types";
 import type {

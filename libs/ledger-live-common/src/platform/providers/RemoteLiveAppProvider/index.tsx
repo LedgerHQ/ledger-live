@@ -6,7 +6,7 @@ import api from "./api";
 import { FilterParams } from "../../filters";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { AppManifest, Visibility } from "../../../wallet-api/types";
-import useEnv from "../../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,

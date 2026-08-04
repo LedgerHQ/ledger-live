@@ -53,11 +53,11 @@ type CurrencyCommon = {
  */
 export type TokenCurrency = CurrencyCommon & {
   type: "TokenCurrency";
-  id: string;
+  id: any;
   ledgerSignature?: string;
   contractAddress: string;
   // id of the currency it belongs to. e.g. 'ethereum'
-  parentCurrencyId: string;
+  parentCurrencyId: any;
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string;
 };
@@ -95,7 +95,7 @@ export type BitcoinLikeInfo = {
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
   // unique internal id of a crypto currency
-  id: CryptoCurrencyId;
+  id: any;
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit
   forkedFrom?: string;
   // name of the app as shown in the Manager

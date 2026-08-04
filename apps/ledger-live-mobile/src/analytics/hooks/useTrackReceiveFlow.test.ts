@@ -2,13 +2,13 @@ import { renderHook } from "@testing-library/react-native";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
 import { track } from "../segment";
 import {
-  UserRefusedAddress,
-  UserRefusedOnDevice,
   TransportRaceCondition,
   LockedDeviceError,
   CantOpenDevice,
   TransportError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { UserRefusedAddress } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 describe("useTrackReceiveFlow", () => {

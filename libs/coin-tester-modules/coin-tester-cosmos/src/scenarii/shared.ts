@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { setupServer } from "msw/node";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
@@ -83,6 +84,7 @@ export function makeCosmosScenario(
 
   // Populated in setup() before getTransactions() runs. Closure-scoped per
   // scenario, so two scenarios never share state.
+  const mockServer = setupServer();
   let recipientAddress = "";
   let validatorAddress = "";
 
@@ -221,6 +223,13 @@ export function makeCosmosScenario(
     getTransactions,
 
     beforeAll: async account => {
+      mockServer.listen({
+        onUnhandledRequest: request => {
+          const hostname = new URL(request.url).hostname;
+          if (["127.0.0.1", "localhost"].includes(hostname)) return;
+          throw new Error(`Unhandled request: ${request.method} ${request.url}`);
+        },
+      });
       // entrypoint.sh funds the dev account with 1,000,000 units at genesis. The
       // chain leaves it marginally under that after genesis processing (a small,
       // deterministic overhead), so assert it's funded with effectively the full
@@ -231,6 +240,7 @@ export function makeCosmosScenario(
     },
 
     teardown: async () => {
+      mockServer.close();
       await kill();
     },
   };

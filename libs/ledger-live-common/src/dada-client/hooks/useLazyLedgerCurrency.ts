@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { assetsDataApi } from "../state-manager/api";
-import useEnv from "../../hooks/useEnv";
+import useEnv from "@features/platform-env";
 import { selectCurrency } from "../utils/currencySelection";
 
 interface Currency {

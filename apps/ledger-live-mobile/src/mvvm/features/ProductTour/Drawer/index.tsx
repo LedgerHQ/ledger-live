@@ -6,7 +6,7 @@ import { LayoutChangeEvent, Platform, StyleSheet, View, useWindowDimensions } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetView, IconButton } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useTranslation } from "~/context/Locale";
 import { TrackScreen } from "~/analytics";
 import { useProductTourControls } from "../context/ProductTourControlsContext";
@@ -40,7 +40,7 @@ export const ProductTourDrawer = () => {
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
 
-  // QueuedDrawerBottomSheet already injects the Android bottom safe-area spacer, so only iOS adds it.
+  // QueuedBottomSheet already injects the Android bottom safe-area spacer, so only iOS adds it.
   const bottomSafeArea = Platform.OS === "ios" ? bottomInset : 0;
 
   // Max content height before the sheet clips it; the layout pass resizes the slides area to fit.
@@ -69,7 +69,7 @@ export const ProductTourDrawer = () => {
   return (
     // Outer ForceTheme styles the sheet itself (background/handle resolved via useTheme).
     <ForceTheme selectedPalette={"dark"}>
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isDrawerOpen}
         onClose={closeProductTour}
         noCloseButton
@@ -127,7 +127,7 @@ export const ProductTourDrawer = () => {
             </BottomSheetView>
           </ForceTheme>
         ) : null}
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </ForceTheme>
   );
 };

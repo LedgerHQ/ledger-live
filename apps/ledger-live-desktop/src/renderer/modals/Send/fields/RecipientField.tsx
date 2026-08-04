@@ -3,7 +3,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import type { TFunction } from "i18next";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@features/platform-feature-flags";
@@ -38,8 +38,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   );
 
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") || {};
-  const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
+  const isCurrencySupported = params?.supportedCurrencyIds?.includes(account.currency.id) || false;
 
   useEffect(() => {
     if (value !== "" && value !== transaction.recipient) {

@@ -1,7 +1,7 @@
 import React from "react";
 import Lottie, { LottieProps } from "react-lottie";
 import { Flex } from "@ledgerhq/react-ui";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 const Animation = ({
   className = "",
   animation,

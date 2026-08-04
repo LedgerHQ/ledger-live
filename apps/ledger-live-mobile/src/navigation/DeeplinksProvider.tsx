@@ -54,6 +54,7 @@ import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink
 import { handleBackupHubDeeplink } from "./deeplinks/handleBackupHubDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
+import { getActionFromAssetDetailDeeplinkState } from "LLM/features/AssetDetail/utils/getActionFromAssetDetailDeeplinkState";
 
 const themes: {
   [key: string]: Theme;
@@ -609,6 +610,7 @@ export const DeeplinksProvider = ({
             sub.remove();
           };
         },
+        getActionFromState: getActionFromAssetDetailDeeplinkState,
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerwallet://${path}`);
           const { hostname, searchParams, pathname } = url;

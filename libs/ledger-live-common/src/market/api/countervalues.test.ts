@@ -7,7 +7,7 @@ jest.mock("@ledgerhq/live-network", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-env", () => ({
+jest.mock("@shared/env", () => ({
   getEnv: jest.fn((key: string) => {
     if (key === "LEDGER_COUNTERVALUES_API") return "https://countervalues.example.com";
     return "";

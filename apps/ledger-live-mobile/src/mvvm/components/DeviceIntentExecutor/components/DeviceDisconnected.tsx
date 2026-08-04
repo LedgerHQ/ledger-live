@@ -1,9 +1,9 @@
 import React from "react";
 import type { DeviceDisconnectedComponent } from "@ledgerhq/device-intent";
 import { Trans } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import { InfoState } from "LLM/components/InfoState";
-import { useSourceFlow } from "../utils/SourceFlowContext";
+import { TrackDIEScreen } from "./TrackDIEScreen";
+import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 import {
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
@@ -16,7 +16,7 @@ import {
  * device-context initialization, intent execution, or while idle).
  */
 export const DeviceDisconnected: DeviceDisconnectedComponent = ({ device, onRetry, onClose }) => {
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { modelId, transport } = getConnectedDeviceTrackingProperties(device);
   const handleRetry = () => {
     trackDeviceActionButtonClicked({
@@ -24,6 +24,7 @@ export const DeviceDisconnected: DeviceDisconnectedComponent = ({ device, onRetr
       button: DEVICE_ACTION_BUTTON.Retry,
       modelId,
       transport,
+      extraProperties: analyticsProperties,
     });
     onRetry();
   };
@@ -33,19 +34,18 @@ export const DeviceDisconnected: DeviceDisconnectedComponent = ({ device, onRetr
       button: DEVICE_ACTION_BUTTON.Close,
       modelId,
       transport,
+      extraProperties: analyticsProperties,
     });
     onClose();
   };
 
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_DEVICE_ACTION.Disconnected}
-        sourceFlow={sourceFlow}
         modelId={modelId}
         transport={transport}
         refreshSource
-        deviceUxV2
       />
       <InfoState
         preset="error"

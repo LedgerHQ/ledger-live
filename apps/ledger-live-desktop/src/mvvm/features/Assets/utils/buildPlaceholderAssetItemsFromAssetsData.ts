@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
 import type { AssetTableItem } from "../types";

@@ -17,6 +17,7 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { getPreloadStrategy, preload, hydrate } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
+import { buildResilientIterateResult } from "./scanResilience";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,
@@ -31,9 +32,11 @@ import { validateAddress } from "./validateAddress";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CeloSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
+  const getAddressFn = getAddressWrapper(getAddress);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    getAddressFn: getAddressWrapper(getAddress),
+    getAddressFn,
+    buildIterateResult: buildResilientIterateResult(getAddressFn),
   });
 
   return {

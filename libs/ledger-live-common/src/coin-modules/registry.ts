@@ -1,6 +1,6 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { CoinModuleLoader, MockAccountModule } from "./types";
 import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
 
@@ -11,12 +11,12 @@ const loaders = new Map<string, CoinModuleLoader>();
 const loaderCaches: Array<() => void> = [];
 
 // Caches derived from the registered loaders' supportedCoins, invalidated on registry change.
-let supportedIds: Set<CryptoCurrencyId> | null = null;
+let supportedIds: Set<string> | null = null; // TO BE REPLACED soon by branded id
 let supportedCurrencies: CryptoCurrency[] | null = null;
 
-function getSupportedIds(): Set<CryptoCurrencyId> {
+function getSupportedIds(): Set<string> {
   if (!supportedIds) {
-    const ids = new Set<CryptoCurrencyId>();
+    const ids = new Set<string>();
     for (const loader of loaders.values()) {
       for (const id of loader.supportedCoins) ids.add(getCryptoCurrencyById(id).id);
     }

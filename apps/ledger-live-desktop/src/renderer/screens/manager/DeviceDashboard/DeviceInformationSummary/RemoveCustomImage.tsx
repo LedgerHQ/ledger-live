@@ -7,7 +7,6 @@ import removeImage from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { useTranslation } from "react-i18next";
 import { clearLastSeenCustomImage } from "~/renderer/actions/settings";
-import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(removeImage);
@@ -40,14 +39,14 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
   const onError = useCallback(
     (error: Error) => {
       setError(error);
-      if (error instanceof ImageDoesNotExistOnDevice) {
+      if (error?.name === "ImageDoesNotExistOnDevice") {
         dispatch(clearLastSeenCustomImage());
       }
     },
     [dispatch],
   );
 
-  const showRetry = error && !(error instanceof ImageDoesNotExistOnDevice);
+  const showRetry = error && error?.name !== "ImageDoesNotExistOnDevice";
 
   return (
     <Flex

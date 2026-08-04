@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const omr = fiat({
   type: "FiatCurrency",
-  id: "omr",
   ticker: "OMR",
   name: "Omani Rial",
   symbol: "﷼",

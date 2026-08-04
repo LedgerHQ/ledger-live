@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { DistributionItem } from "@ledgerhq/types-live";
 
 /** Minimal distribution item for stakeable assets the user does not hold yet. */

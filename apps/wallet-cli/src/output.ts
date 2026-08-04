@@ -162,7 +162,11 @@ export interface CommandOutput {
     payload: SwapPayloadResponse;
     operationHash?: string;
     swapId?: string;
+    /** Display units. */
     amountExpectedTo?: string;
+    /** Atomic units. */
+    amountExpectedToAtomic?: string;
+    /** Atomic-to over atomic-from. */
     magnitudeAwareRate?: string;
   }): void;
 
@@ -496,15 +500,14 @@ class HumanCommandOutput implements CommandOutput {
     operationHash?: string;
     swapId?: string;
     amountExpectedTo?: string;
+    amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
   }): void {
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
     writeStdout(`${colors.bold("To:")} ${args.to}\n`);
     this.swapExecutePayloadResult(args);
     if (args.amountExpectedTo) {
-      writeStdout(
-        `${colors.bold("Amount expected to (decoded payload):")} ${args.amountExpectedTo}\n`,
-      );
+      writeStdout(`${colors.bold("Amount expected to:")} ${args.amountExpectedTo}\n`);
     }
     if (args.operationHash) {
       writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
@@ -852,6 +855,7 @@ class JsonCommandOutput implements CommandOutput {
     operationHash?: string;
     swapId?: string;
     amountExpectedTo?: string;
+    amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
   }): void {
     this._writeNdjson(
@@ -865,6 +869,7 @@ class JsonCommandOutput implements CommandOutput {
         operationHash: args.operationHash,
         swapId: args.swapId,
         amountExpectedTo: args.amountExpectedTo,
+        amountExpectedToAtomic: args.amountExpectedToAtomic,
         magnitudeAwareRate: args.magnitudeAwareRate,
       }),
     );

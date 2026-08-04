@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "../src/errors";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Sui from "../src/Sui";
 

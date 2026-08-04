@@ -103,12 +103,14 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
         <View style={styles.addressInputContainer}>
           {viewModel.isRecipientStep ? (
             <AddressInput
+              testID="recipient-input"
               prefix={t("send.newSendFlow.to")}
               value={viewModel.recipientSearch.value}
               onChangeText={viewModel.recipientSearch.setValue}
               onClear={viewModel.clearRecipientSearch}
               onQrCodeClick={viewModel.handleQrCodeClick}
               placeholder={viewModel.recipientPlaceholder}
+              autoFocus
             />
           ) : (
             <>

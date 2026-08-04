@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";

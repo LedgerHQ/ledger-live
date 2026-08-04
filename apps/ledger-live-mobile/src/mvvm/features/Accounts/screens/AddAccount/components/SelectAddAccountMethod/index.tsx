@@ -3,7 +3,8 @@ import { useTranslation } from "~/context/Locale";
 import useSelectAddAccountMethodViewModel from "./useSelectAddAccountMethodViewModel";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import ActionRow from "LLM/components/ActionRow";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 
 type ViewProps = {
   isWalletSyncEnabled: boolean | undefined;

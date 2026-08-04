@@ -5,7 +5,7 @@ import {
   closeReceiveOptionsDrawer,
   receiveOptionsDrawerStateSelector,
 } from "~/reducers/receiveOptionsDrawer";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 /**
  * Hook to manage the global state of the Receive Options Drawer.
  *

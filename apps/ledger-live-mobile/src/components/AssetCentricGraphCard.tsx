@@ -8,7 +8,7 @@ import Animated, {
   useAnimatedStyle,
   SharedValue,
 } from "react-native-reanimated";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import { Portfolio } from "@ledgerhq/types-live";
 import { useTimeRange } from "~/actions/settings";
 import Delta from "./Delta";

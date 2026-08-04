@@ -42,36 +42,23 @@ jobs:
       paths: ${{ steps.nx-affected.outputs.paths }}
     steps:
       - name: Checkout head branch
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Fetch base branch
+        env:
+          BASE_BRANCH: ${{ inputs.base_branch }}
         run: |
-          git fetch origin ${{ inputs.base_branch }} --depth=1
+          git fetch --depth=1 origin -- "$BASE_BRANCH"
 
-      # Debug: refs and merge-base (remove after diagnosing CI vs local mismatch)
-      - name: Debug refs and merge-base for nx affected
-        if: ${{ inputs.affected_debug }}
-        run: |
-          echo "=== Refs after checkout + fetch ==="
-          git branch -a
-          echo "=== HEAD commit ==="
-          git rev-parse HEAD
-          echo "=== Local base branch ref (${{ inputs.base_branch }}) ==="
-          git rev-parse ${{ inputs.base_branch }} 2>/dev/null || echo "(ref not found)"
-          echo "=== origin/${{ inputs.base_branch }} (remote-tracking) ==="
-          git rev-parse origin/${{ inputs.base_branch }} 2>/dev/null || echo "(ref not found)"
-          echo "=== Merge base: HEAD vs local ${{ inputs.base_branch }} ==="
-          git merge-base HEAD ${{ inputs.base_branch }} 2>/dev/null || echo "(merge-base failed)"
-          echo "=== Merge base: HEAD vs origin/${{ inputs.base_branch }} ==="
-          git merge-base HEAD origin/${{ inputs.base_branch }} 2>/dev/null || echo "(merge-base failed)"
-          echo "=== Base ref passed to composite: origin/${{ inputs.base_branch }} ==="
-
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: clean-refs
+        env:
+          HEAD_BRANCH_INPUT: ${{ inputs.head_branch }}
+          BASE_BRANCH_INPUT: ${{ inputs.base_branch }}
         with:
           script: |
-            const head_branch = "${{ inputs.head_branch }}";
-            const base_branch = "${{ inputs.base_branch }}";
+            const head_branch = process.env.HEAD_BRANCH_INPUT;
+            const base_branch = process.env.BASE_BRANCH_INPUT;
 
             const newHeadBranch = head_branch.replace("refs/heads/", "");
             const newBaseBranch = base_branch.replace("refs/heads/", "");
@@ -81,12 +68,12 @@ jobs:
             core.setOutput("base_ref", "origin/" + newBaseBranch);
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: ".nvmrc"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 10.24.0
 

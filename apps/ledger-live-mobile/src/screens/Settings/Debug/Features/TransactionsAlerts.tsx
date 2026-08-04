@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
 import { useFeature } from "@features/platform-feature-flags";
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import styled from "styled-components/native";
 import { useSelector } from "~/context/hooks";
@@ -35,22 +35,37 @@ export default function DebugTransactionsAlerts() {
   );
 
   const [chainsData, setChainsData] = useState<Record<string, ChainwatchAccount | undefined>>({});
+  const [hasChainwatchError, setHasChainwatchError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (chainwatchBaseUrl) {
+      setHasChainwatchError(false);
       getSupportedChainsAccounts(
         userId.exportUserIdForChainwatch(),
         chainwatchBaseUrl,
         supportedChains,
-      ).then((results: (ChainwatchAccount | undefined)[]) => {
-        const data: Record<string, ChainwatchAccount | undefined> = {};
-        for (let i = 0; i < results.length; i++) {
-          const chainId = supportedChains[i].ledgerLiveId;
-          data[chainId] = results[i];
-        }
-        setChainsData(data);
-      });
+      )
+        .then((results: (ChainwatchAccount | undefined)[]) => {
+          if (cancelled) return;
+          const data: Record<string, ChainwatchAccount | undefined> = {};
+          for (let i = 0; i < results.length; i++) {
+            const chainId = supportedChains[i].ledgerLiveId;
+            data[chainId] = results[i];
+          }
+          setChainsData(data);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setChainsData({});
+          setHasChainwatchError(true);
+        });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [chainwatchBaseUrl, supportedChains, userId]);
 
   return (
@@ -60,6 +75,11 @@ export default function DebugTransactionsAlerts() {
           <Alert type="info">
             <Text>See your addresses that are registered in chainwatch</Text>
           </Alert>
+          {hasChainwatchError ? (
+            <Alert type="error">
+              <Text>Unable to fetch Chainwatch accounts</Text>
+            </Alert>
+          ) : null}
           <Flex flexDirection="column" alignItems="flex-start" flexWrap="wrap" mt={4}>
             {featureTransactionsAlerts?.enabled ? (
               <TagEnabled mx={2}>Feature Flag On</TagEnabled>

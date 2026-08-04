@@ -16,7 +16,7 @@ import {
   TEZOS_RPC,
 } from "../flextesa";
 import { indexBlocks, initMswHandlers, resetIndexer } from "../indexer";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 global.console = require("console");
 jest.setTimeout(600_000);

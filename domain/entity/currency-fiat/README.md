@@ -12,16 +12,9 @@ Zod-first canonical schema and static registry for the `FiatCurrency` domain ent
 - Provide **mock factories** for use in tests
 - Expose a **`supportedFiatsSlice`** (RTK slice + `selectSupportedFiats` selector) that holds the runtime-supported fiat list populated by the CVS API, with an OFAC-filtered fallback
 
-## Source of truth & dual maintenance
+## Source of truth
 
-This registry is the **primary** source of truth for fiat-currency data. During the migration off
-`@ledgerhq/cryptoassets`, the legacy registry (`libs/ledgerjs/packages/cryptoassets/src/fiats.ts`) still
-ships to external consumers, so the two are **dual-maintained**: when you add or edit a currency, update
-**both** this registry and the legacy `byTicker` map until legacy is dropped.
-
-A CI parity test — `libs/ledgerjs/packages/cryptoassets/src/fiats.domain-parity.test.ts` — fails if the
-two diverge (a missing/extra currency, or any changed field), so neither can drift unnoticed. After
-changing legacy you can re-sync this registry by re-running the generator (see [Codegen](#codegen)). The
+This registry is the **sole** source of truth for fiat-currency data — add or edit a currency here. The
 legacy entry carries no `id`; the domain `id` is the lower-cased ticker (e.g. `USD` → `usd`), and the
 parity test compares on that.
 
@@ -80,8 +73,7 @@ const usd = fiat({
 
 ## Registry
 
-`FIAT_CURRENCIES_REGISTRY` is seeded to parity with the legacy `@ledgerhq/cryptoassets` fiat list and
-covers every fiat ticker it ships (163 currencies). Each currency lives in its own file under
+`FIAT_CURRENCIES_REGISTRY` covers 163 fiat currencies. Each currency lives in its own file under
 `src/currencies/` (named by its `id`, the lower-cased ticker) and is exported via
 `src/currencies/index.ts`.
 
@@ -102,16 +94,6 @@ src/
   currencies/
     index.ts      barrel export
     usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by id)
-scripts/
-  generate-currencies.mts   codegen — run when the legacy fiat list changes
-```
-
-## Codegen
-
-Currency files are generated from the legacy fiat list and committed. To regenerate:
-
-```sh
-NODE_OPTIONS="--conditions=@ledgerhq/source" npx tsx scripts/generate-currencies.mts
 ```
 
 ## Testing

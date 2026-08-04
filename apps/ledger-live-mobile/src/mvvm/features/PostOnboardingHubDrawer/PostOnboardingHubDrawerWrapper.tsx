@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { TrackScreen } from "~/analytics";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
@@ -33,7 +33,7 @@ export function PostOnboardingHubDrawerWrapper() {
 
   return (
     <>
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={canOpenPostOnboardingHubDrawer}
         onClose={closePostOnboardingHubDrawer}
       >
@@ -63,7 +63,7 @@ export function PostOnboardingHubDrawerWrapper() {
             />
           </>
         ) : null}
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
       <ActivationDrawer
         startingStep={Steps.Activation}
         isOpen={isActivationDrawerVisible}

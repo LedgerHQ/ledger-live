@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { ApyType } from "../../../dada-client/types/trend";
 import { useInterestRatesByCurrencies } from "../../../dada-client/hooks/useInterestRatesByCurrencies";
 import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";

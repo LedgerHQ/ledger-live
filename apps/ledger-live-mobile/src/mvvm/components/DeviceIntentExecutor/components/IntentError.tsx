@@ -2,10 +2,10 @@ import React from "react";
 import type { ErrorComponent } from "@ledgerhq/device-intent";
 import { isDmkError } from "@ledgerhq/live-dmk-mobile/errors";
 import { Trans } from "~/context/Locale";
-import { TrackScreen } from "~/analytics";
 import TranslatedError from "~/components/TranslatedError";
 import { InfoState } from "LLM/components/InfoState";
-import { useSourceFlow } from "../utils/SourceFlowContext";
+import { TrackDIEScreen } from "./TrackDIEScreen";
+import { useDeviceIntentTracking } from "../utils/DeviceIntentTrackingContext";
 import {
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
@@ -34,7 +34,7 @@ const devBanner = __DEV__
  */
 export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error }) => {
   const errorIsTranslatable = error && (isDmkError(error) || error instanceof Error);
-  const sourceFlow = useSourceFlow();
+  const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
   const { modelId, transport } = getConnectedDeviceTrackingProperties(device);
   const handleRetry = () => {
     trackDeviceActionButtonClicked({
@@ -42,6 +42,7 @@ export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error })
       button: DEVICE_ACTION_BUTTON.Retry,
       modelId,
       transport,
+      extraProperties: analyticsProperties,
     });
     onRetry();
   };
@@ -51,19 +52,18 @@ export const IntentError: ErrorComponent = ({ device, onRetry, onClose, error })
       button: DEVICE_ACTION_BUTTON.Close,
       modelId,
       transport,
+      extraProperties: analyticsProperties,
     });
     onClose();
   };
 
   return (
     <>
-      <TrackScreen
+      <TrackDIEScreen
         category={PAGE_DEVICE_ACTION.UnknownIntentError}
-        sourceFlow={sourceFlow}
         modelId={modelId}
         transport={transport}
         refreshSource
-        deviceUxV2
       />
       <InfoState
         preset="error"

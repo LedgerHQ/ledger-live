@@ -40,7 +40,7 @@ async function runInternalTxSources(
     try {
       return await fetchers[source](height);
     } catch (error) {
-      if (error instanceof SourceUnavailableError) {
+      if ((error as { name?: string })?.name === "SourceUnavailableError") {
         hadUnavailableSource = true;
         continue;
       }

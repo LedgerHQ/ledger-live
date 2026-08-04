@@ -1,6 +1,5 @@
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useFeature } from "@features/platform-feature-flags";
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type SupportedEditTxFeature = "editBitcoinTx" | "editEvmTx";
@@ -15,7 +14,7 @@ export function useEditTxFeatureFlag({ featureKey, account, parentAccount }: Pro
   const { enabled, params } = useFeature(featureKey) ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
   const isCurrencySupported = Boolean(
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId),
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id),
   );
 
   return {

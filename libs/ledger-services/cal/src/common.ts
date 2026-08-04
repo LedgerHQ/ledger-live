@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@shared/env";
 
 export type ServiceOption = {
   env?: "prod" | "test";
@@ -8,7 +8,7 @@ export type ServiceOption = {
 export const DEFAULT_OPTION: ServiceOption = {
   env: "prod",
   signatureKind: "prod",
-  ref: getEnv("CAL_REF") || undefined,
+  ref: String(getEnv("CAL_REF") ?? "") || undefined,
 };
 export const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 

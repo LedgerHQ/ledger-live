@@ -1,5 +1,6 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import {
   Banner,
   BottomSheet,
@@ -14,6 +15,7 @@ import {
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
 import React, { useCallback } from "react";
+import { Keyboard } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { AccountRowWithBalance } from "./AccountRowWithBalance";
 import { AddressListItem } from "./AddressListItem";
@@ -40,6 +42,7 @@ export function AddressMatchedSection({
   const formatRelativeDate = useFormatRelativeDate();
   const helpSheetRef = useBottomSheetRef();
   const openHelpSheet = useCallback(() => {
+    Keyboard.dismiss();
     helpSheetRef.current?.present();
   }, [helpSheetRef]);
 
@@ -59,10 +62,10 @@ export function AddressMatchedSection({
     return null;
   }
 
-  const formattedAddress = formatAddress(resolvedAddress ?? searchValue, {
-    prefixLength: 5,
-    suffixLength: 5,
-  });
+  const formattedAddress = formatAddress(
+    resolvedAddress ?? searchValue,
+    SEND_ADDRESS_FORMAT_OPTIONS,
+  );
 
   const getENSDisplayTitle = (): string => {
     return `${ensName} (${formattedAddress})`;
@@ -78,7 +81,7 @@ export function AddressMatchedSection({
   };
 
   return (
-    <Box lx={{ flex: 1, flexDirection: "column" }}>
+    <Box lx={{ flexDirection: "column" }}>
       <Subheader lx={{ marginBottom: "s12", marginHorizontal: "s8" }}>
         <SubheaderRow>
           <SubheaderTitle>{t("send.newSendFlow.addressMatched")}</SubheaderTitle>
@@ -94,6 +97,7 @@ export function AddressMatchedSection({
               onSelect={() => onSelect(account.freshAddress)}
               showSendTo
               disabled={isSanctioned || hasBridgeError}
+              testID="new-send-flow-address-confirm"
             />
           ))}
 
@@ -106,6 +110,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(resolvedAddress ?? searchValue, ensName)}
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -113,16 +118,17 @@ export function AddressMatchedSection({
         {hasRecentMatch && !hasMatchedAccounts && !hasENS && (
           <AddressListItem
             address={matchedRecentAddress?.address ?? searchValue}
-            name={formatAddress(matchedRecentAddress?.address ?? searchValue, {
-              prefixLength: 5,
-              suffixLength: 5,
-            })}
+            name={formatAddress(
+              matchedRecentAddress?.address ?? searchValue,
+              SEND_ADDRESS_FORMAT_OPTIONS,
+            )}
             description={getRecentDescription()}
             onSelect={() =>
               onSelect(matchedRecentAddress?.address ?? searchValue, matchedRecentAddress?.ensName)
             }
             showSendTo
             disabled={isSanctioned || hasBridgeError}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -135,6 +141,7 @@ export function AddressMatchedSection({
             onSelect={() => onSelect(searchValue)}
             showSendTo
             disabled={false}
+            testID="new-send-flow-address-confirm"
           />
         )}
 
@@ -158,7 +165,7 @@ export function AddressMatchedSection({
               appearance="info"
               description={t("send.newSendFlow.firstInteraction.description")}
               primaryAction={
-                <Button appearance="transparent" size="sm" onPress={openHelpSheet}>
+                <Button appearance="gray" size="sm" onPress={openHelpSheet}>
                   {t("send.newSendFlow.firstInteraction.learnMore")}
                 </Button>
               }

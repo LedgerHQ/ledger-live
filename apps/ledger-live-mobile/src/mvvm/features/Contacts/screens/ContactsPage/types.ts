@@ -1,7 +1,7 @@
 import type {
   ContactsAddContactDrawerProps,
   ContactsLedgerSyncIntroductionContentProps,
-  ContactsPageNativeProps,
+  ContactsListViewNativeProps,
 } from "@features/flow-contacts";
 
 type ContactsLedgerSyncIntroductionPresentationProps = Pick<
@@ -9,13 +9,13 @@ type ContactsLedgerSyncIntroductionPresentationProps = Pick<
   "title" | "activateLabel" | "onActivate"
 >;
 
-export type ContactsPageViewModel = Omit<ContactsPageNativeProps, "onAddContact"> &
+export type ContactsPageViewModel = Omit<ContactsListViewNativeProps, "onAddContact"> &
   Readonly<{
     ledgerSyncIntroductionContent: ContactsLedgerSyncIntroductionPresentationProps;
   }>;
 
 export type ContactsPageContentProps = ContactsPageViewModel &
-  Pick<ContactsPageNativeProps, "onAddContact"> &
+  Pick<ContactsListViewNativeProps, "onAddContact"> &
   Readonly<{
     addContactDrawer: ContactsAddContactDrawerProps;
   }>;

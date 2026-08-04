@@ -3,7 +3,7 @@ import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "@react-navigation/native";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import Circle from "~/components/Circle";
 import IconInfo from "~/icons/Info";

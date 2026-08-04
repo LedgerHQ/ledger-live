@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import { getOperatingSystemSupportStatus, supportStatusForOS } from "./os";
 
 describe("supportStatusForOS", () => {

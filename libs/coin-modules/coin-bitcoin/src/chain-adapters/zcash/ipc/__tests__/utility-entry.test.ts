@@ -13,6 +13,7 @@ const mockStartSyncJob = jest.fn();
 const mockBuildTransactionJob = jest.fn();
 const mockFinalizeTransactionJob = jest.fn();
 const mockBroadcastTransactionJob = jest.fn();
+const mockTransactionDetailsJob = jest.fn();
 
 jest.mock("../../native-engine/engine", () => ({
   getChainTipJob: (...args: unknown[]) => mockGetChainTipJob(...args),
@@ -21,6 +22,7 @@ jest.mock("../../native-engine/engine", () => ({
   buildTransactionJob: (...args: unknown[]) => mockBuildTransactionJob(...args),
   finalizeTransactionJob: (...args: unknown[]) => mockFinalizeTransactionJob(...args),
   broadcastTransactionJob: (...args: unknown[]) => mockBroadcastTransactionJob(...args),
+  transactionDetailsJob: (...args: unknown[]) => mockTransactionDetailsJob(...args),
 }));
 
 import { bootstrapUtility } from "../utility-entry";
@@ -336,5 +338,47 @@ describe("bootstrapUtility — existing sync/chain handlers", () => {
     const { posted, dispatch } = makePort();
     dispatch({ type: "totally-unknown" } as unknown as UtilityInboundMessage);
     expect(posted).toEqual([]);
+  });
+});
+
+describe("bootstrapUtility — transaction-details", () => {
+  const args = {
+    requestId: "req-fees",
+    grpcUrl: "https://grpc.example.com",
+    network: "mainnet",
+    requests: [{ txid: "aa", height: 3_426_175, prevouts: [] }],
+    ufvk: "uview1test",
+  };
+
+  it("runs transactionDetailsJob and posts what it resolved", async () => {
+    const results = [{ txid: "aa", fee: "55000", payees: ["u1payee"] }];
+    mockTransactionDetailsJob.mockResolvedValue(results);
+
+    const { posted, dispatch } = makePort();
+    dispatch({ type: "transaction-details", args });
+    await flush();
+
+    // The viewing key must reach the engine: without it the payees stay encrypted.
+    expect(mockTransactionDetailsJob).toHaveBeenCalledWith(
+      args.grpcUrl,
+      args.requests,
+      args.network,
+      args.ufvk,
+    );
+    expect(posted).toEqual([
+      { type: "transaction-details-result", requestId: "req-fees", results },
+    ]);
+  });
+
+  it("posts a transaction-details-error on failure", async () => {
+    mockTransactionDetailsJob.mockRejectedValue(new Error("gRPC unreachable"));
+
+    const { posted, dispatch } = makePort();
+    dispatch({ type: "transaction-details", args });
+    await flush();
+
+    expect(posted).toEqual([
+      { type: "transaction-details-error", requestId: "req-fees", message: "gRPC unreachable" },
+    ]);
   });
 });

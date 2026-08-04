@@ -1,6 +1,7 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "../../../currencies/index";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import {
   findSwapSendOperation,
@@ -33,7 +34,7 @@ const ton = getCryptoCurrencyById("ton");
 const hedera = getCryptoCurrencyById("hedera");
 const usdcPolygon: TokenCurrency = {
   type: "TokenCurrency",
-  id: "polygon/erc20/usd_coin",
+  id: TokenCurrencyIdSchema.parse("polygon/erc20/usd_coin"),
   parentCurrencyId: polygon.id,
   tokenType: "erc20",
   contractAddress: "0x3c499c542cef5e3811e1192ce70d8cc03d5c3359",

@@ -10,7 +10,6 @@
     "INDEX_URL": "readonly",
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly",
-    "__SENTRY_URL__": "readonly",
     "__APP_VERSION__": "readonly",
     "__GIT_REVISION__": "readonly",
     "__PRERELEASE__": "readonly",

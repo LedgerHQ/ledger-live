@@ -1,10 +1,12 @@
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { BlockingStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
+import React from "react";
 import { track } from "~/analytics";
 import { useInitializerActions } from "../../hooks/useInitializerActions";
 import { useDeviceOutOfStorageSpaceViewModel } from "./useDeviceOutOfStorageSpaceViewModel";
 import type { InitializerDevice } from "../../types";
+import { DeviceIntentTrackingProvider } from "../../../utils/DeviceIntentTrackingContext";
 
 jest.mock("~/analytics", () => {
   const actual = jest.requireActual("~/analytics");
@@ -20,6 +22,11 @@ const mockedTrack = jest.mocked(track);
 const mockedUseInitializerActions = jest.mocked(useInitializerActions);
 const SOURCE_FLOW = "my_ledger";
 const openMyLedger = jest.fn();
+const wrapper = ({ children }: React.PropsWithChildren) => (
+  <DeviceIntentTrackingProvider value={{ sourceFlow: SOURCE_FLOW }}>
+    {children}
+  </DeviceIntentTrackingProvider>
+);
 
 const device: InitializerDevice = {
   id: "device-id",
@@ -46,9 +53,9 @@ describe("useDeviceOutOfStorageSpaceViewModel", () => {
   });
 
   it("GIVEN a device WHEN rendering THEN it exposes the view handlers", () => {
-    const { result } = renderHook(() =>
-      useDeviceOutOfStorageSpaceViewModel({ state, device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useDeviceOutOfStorageSpaceViewModel({ state, device }), {
+      wrapper,
+    });
 
     expect(result.current).toEqual(
       expect.objectContaining({
@@ -58,9 +65,9 @@ describe("useDeviceOutOfStorageSpaceViewModel", () => {
   });
 
   it("GIVEN missing apps WHEN opening My Ledger THEN it tracks Manage Apps and forwards the app search query", () => {
-    const { result } = renderHook(() =>
-      useDeviceOutOfStorageSpaceViewModel({ state, device, sourceFlow: SOURCE_FLOW }),
-    );
+    const { result } = renderHook(() => useDeviceOutOfStorageSpaceViewModel({ state, device }), {
+      wrapper,
+    });
 
     act(() => {
       result.current.onOpenMyLedger();

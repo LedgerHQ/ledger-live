@@ -2,7 +2,6 @@ import { of, Observable } from "rxjs";
 import { scan, catchError, tap } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
-import { TransportStatusError } from "@ledgerhq/errors";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
@@ -18,7 +17,7 @@ import type {
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { bridge as ACREBridge } from "../../families/bitcoin/ACRESetup";
 
 type State = {
@@ -92,7 +91,8 @@ const reducer = (state: State, e: Event): State => {
     case "error": {
       const { error } = e;
       const transactionSignError =
-        error instanceof TransportStatusError && error.statusCode === 0x6985
+        (error as { name?: string; statusCode?: number }).name === "TransportStatusError" &&
+        (error as { statusCode?: number }).statusCode === 0x6985
           ? new TransactionRefusedOnDevice()
           : error;
       return { ...initialState, transactionSignError };

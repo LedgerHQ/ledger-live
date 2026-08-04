@@ -2,7 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "@testing-library/react-native";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/send/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";

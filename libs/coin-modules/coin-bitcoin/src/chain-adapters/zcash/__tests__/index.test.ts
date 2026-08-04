@@ -62,6 +62,7 @@ describe("zcash chain adapter — privateInfo serialization", () => {
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance: new BigNumber(1234),
     orchardBalance: new BigNumber(5678),
+    ironwoodBalance: new BigNumber(0),
     syncState: "complete",
     progress: 100,
     estimatedTimeRemaining: { hours: 0, minutes: 0 },

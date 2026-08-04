@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { track } from "~/renderer/analytics/segment";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
-import { usePostOnboardingFinishProgress } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/usePostOnboardingFinishProgress";
+import { useFinishOnboardingState } from "LLD/features/FinishOnboarding/hooks/useFinishOnboardingState";
 
 const TRACK_BUTTON_CLICKED_PROPERTY = {
   button: "Post onboarding widget",
@@ -11,16 +10,15 @@ const TRACK_BUTTON_CLICKED_PROPERTY = {
 
 export type FinishOnboardingWidgetViewProps = {
   readonly postOnboardingInProgress: boolean;
-  readonly completedActionsAmount: number;
-  readonly totalActionsAmount: number;
+  readonly completedStepsAmount: number;
+  readonly totalStepsAmount: number;
   readonly handleOpenFinishOnboardingDialog: () => void;
 };
 
 export function useFinishOnboardingWidgetViewModel(): FinishOnboardingWidgetViewProps {
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
-  const { deviceModelId, actionsState, postOnboardingInProgress } = usePostOnboardingHubState();
-  const { completedActionsAmount, totalActionsAmount } =
-    usePostOnboardingFinishProgress(actionsState);
+  const { deviceModelId, postOnboardingInProgress, completedStepsAmount, totalStepsAmount } =
+    useFinishOnboardingState();
 
   const handleOpenFinishOnboardingDialog = useCallback(() => {
     track("button_clicked", {
@@ -33,14 +31,14 @@ export function useFinishOnboardingWidgetViewModel(): FinishOnboardingWidgetView
   return useMemo(
     () => ({
       postOnboardingInProgress,
-      completedActionsAmount,
-      totalActionsAmount,
+      completedStepsAmount,
+      totalStepsAmount,
       handleOpenFinishOnboardingDialog,
     }),
     [
       postOnboardingInProgress,
-      completedActionsAmount,
-      totalActionsAmount,
+      completedStepsAmount,
+      totalStepsAmount,
       handleOpenFinishOnboardingDialog,
     ],
   );

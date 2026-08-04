@@ -21,7 +21,6 @@
   "dependencies": {
     "@domain/entity-currency-unit": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
-    "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

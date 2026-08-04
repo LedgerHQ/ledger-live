@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
 import { ScreenName } from "~/const";

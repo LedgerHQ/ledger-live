@@ -6,7 +6,7 @@ import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/oper
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { meaningfulPercentage } from "@ledgerhq/live-countervalues/portfolio";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import type { AccountLike, ValueChange } from "@ledgerhq/types-live";
 
 export function computeAllTimeValueChangeFromFirstReceive(

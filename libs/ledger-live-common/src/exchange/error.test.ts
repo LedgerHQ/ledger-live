@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import {
   CompleteExchangeError,
   convertTransportError,

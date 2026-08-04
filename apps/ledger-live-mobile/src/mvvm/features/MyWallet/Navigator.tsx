@@ -11,6 +11,7 @@ import {
 import { MyWalletScreen } from "./index";
 import { MyWalletHelpScreen } from "./screens/Help";
 import { ContactsScreen } from "LLM/features/Contacts";
+import { ContactDetailScreen } from "LLM/features/Contacts/screens/ContactDetail";
 import { MyWalletNavigatorStackParamList } from "./types";
 import { MyWalletHeaderTrailing } from "./views/Header";
 
@@ -55,6 +56,15 @@ export default function MyWalletNavigator() {
         options={{
           headerShown: true,
           title: t("contacts.title"),
+          ...stackNavigationConfig,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.MyWalletContactDetail}
+        component={ContactDetailScreen}
+        options={{
+          headerShown: true,
+          title: "",
           ...stackNavigationConfig,
         }}
       />

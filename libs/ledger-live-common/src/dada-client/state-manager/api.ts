@@ -6,10 +6,22 @@ import {
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
 import type { ApiAsset } from "../entities";
-import type { CryptoOrTokenCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { convertApiToken } from "@domain/api-currency-token";
 import { RawApiResponse, AssetsData } from "../entities";
+import { getEnv } from "@shared/env";
+import {
+  AssetsAdditionalData,
+  AssetsDataTags,
+  AssetsDataWithPagination,
+  GetAssetsDataParams,
+  GetAssetsByCategoryParams,
+  ONE_DAY_IN_SECONDS,
+  PageParam,
+} from "./types";
+import { chunkCurrencyIds } from "../utils/chunkCurrencyIds";
+import { deepMergeCryptoAssets } from "../utils/deepMergeCryptoAssets";
 
 function convertApiAssets(
   apiAssets: Record<string, ApiAsset>,
@@ -26,7 +38,7 @@ function convertApiAssets(
       } else {
         result[key] = {
           type: "CryptoCurrency" as const,
-          id: asset.id as CryptoCurrencyId,
+          id: CryptoCurrencyIdSchema.parse(asset.id),
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,
@@ -46,18 +58,6 @@ function convertApiAssets(
   }
   return result;
 }
-import { getEnv } from "@ledgerhq/live-env";
-import {
-  AssetsAdditionalData,
-  AssetsDataTags,
-  AssetsDataWithPagination,
-  GetAssetsDataParams,
-  GetAssetsByCategoryParams,
-  ONE_DAY_IN_SECONDS,
-  PageParam,
-} from "./types";
-import { chunkCurrencyIds } from "../utils/chunkCurrencyIds";
-import { deepMergeCryptoAssets } from "../utils/deepMergeCryptoAssets";
 
 const ALLOWED_DADA_HOSTS = new Set(["dada.api.ledger.com", "dada.api.ledger-test.com"]);
 
