@@ -1,7 +1,5 @@
-import { ipcRenderer } from "electron";
 import isEmpty from "lodash/isEmpty";
-import { CHANNELS } from "~/bridge/contract";
-import { bootstrap } from "~/renderer/bridge";
+import { bootstrap, store as storeBridge } from "~/renderer/bridge";
 
 type StoreObject = Record<string, unknown>;
 
@@ -58,10 +56,10 @@ export function getStoreValue<T>(key: string, storeId: string): T | undefined {
 export function setStoreValue<T>(key: string, value: T, storeId: string) {
   const path = storePath(key, storeId);
   if (path.length > 0) cache = writePath(cache, path, value);
-  ipcRenderer.send(CHANNELS.storeSet, storeKey(key, storeId), value);
+  storeBridge.set(storeKey(key, storeId), value);
 }
 
 export function resetStore() {
   cache = {};
-  ipcRenderer.send(CHANNELS.storeClear);
+  storeBridge.clear();
 }

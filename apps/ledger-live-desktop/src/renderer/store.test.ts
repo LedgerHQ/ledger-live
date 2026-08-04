@@ -1,5 +1,4 @@
-import { ipcRenderer } from "electron";
-import { CHANNELS } from "~/bridge/contract";
+import { store as storeBridge } from "~/renderer/bridge";
 import { getStoreValue, resetStore, setStoreValue } from "./store";
 
 jest.mock("~/renderer/bridge", () => ({
@@ -11,6 +10,7 @@ jest.mock("~/renderer/bridge", () => ({
       "protect-STATE": "",
     }),
   },
+  store: { set: jest.fn(), clear: jest.fn() },
 }));
 
 describe("renderer store", () => {
@@ -28,7 +28,7 @@ describe("renderer store", () => {
     setStoreValue("layout.size", "large", "my-app");
 
     expect(getStoreValue("layout.size", "my-app")).toBe("large");
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.storeSet, "my-app-layout.size", "large");
+    expect(storeBridge.set).toHaveBeenCalledWith("my-app-layout.size", "large");
   });
 
   it("should read an escaped dot as part of the key, like electron-store", () => {
@@ -39,7 +39,7 @@ describe("renderer store", () => {
     setStoreValue("c\\.d", "value", "my-app");
 
     expect(getStoreValue("c\\.d", "my-app")).toBe("value");
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.storeSet, "my-app-c\\.d", "value");
+    expect(storeBridge.set).toHaveBeenCalledWith("my-app-c\\.d", "value");
   });
 
   it("should create objects for numeric segments, like electron-store", () => {
@@ -76,6 +76,6 @@ describe("renderer store", () => {
     resetStore();
 
     expect(getStoreValue("theme.mode", "my-app")).toBeUndefined();
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.storeClear);
+    expect(storeBridge.clear).toHaveBeenCalled();
   });
 });

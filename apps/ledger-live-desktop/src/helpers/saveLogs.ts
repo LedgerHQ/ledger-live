@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+import { files } from "~/renderer/bridge";
 import { memoryLogger } from "~/renderer/logger";
 
 export function getJSONStringifyReplacer(): (key: string, value: unknown) => unknown {
@@ -44,7 +44,7 @@ export const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
     );
 
     // Requests the main process to save logs in a file
-    await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
+    await files.saveLogs(path, memoryLogsStr);
   } catch (error) {
     console.warn("Failed to save logs:", error);
   }

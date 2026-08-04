@@ -6,6 +6,11 @@ import {
   type DeeplinkBridge,
   type UpdaterBridge,
   type UpdaterStatusEvent,
+  type AppBridge,
+  type DialogsBridge,
+  type FilesBridge,
+  type PowerBridge,
+  type StoreBridge,
 } from "~/bridge/contract";
 
 export const bootstrap: Bootstrap = {
@@ -40,10 +45,7 @@ export const db: jest.Mocked<DbBridge> = {
   cleanCache: jest.fn().mockResolvedValue(undefined),
 };
 
-/**
- * `on*` methods return an unsubscribe closure, so the doubles must return one too —
- * consumers call the result on unmount and would otherwise crash.
- */
+// `on*` must return an unsubscribe closure.
 export const updater: jest.Mocked<UpdaterBridge> = {
   init: jest.fn(),
   quitAndInstall: jest.fn(),
@@ -53,6 +55,33 @@ export const updater: jest.Mocked<UpdaterBridge> = {
 export const deeplink: jest.Mocked<DeeplinkBridge> = {
   open: jest.fn(),
   onOpen: jest.fn((_callback: (url: string) => void) => () => {}),
+};
+
+export const app: jest.Mocked<AppBridge> = {
+  reload: jest.fn(),
+  relaunch: jest.fn(),
+  quit: jest.fn(),
+  show: jest.fn(),
+};
+
+export const dialogs: jest.Mocked<DialogsBridge> = {
+  showSave: jest.fn().mockResolvedValue({ canceled: true }),
+};
+
+export const files: jest.Mocked<FilesBridge> = {
+  saveLogs: jest.fn().mockResolvedValue(undefined),
+  exportOperations: jest.fn().mockResolvedValue(true),
+  openUserDataDirectory: jest.fn().mockResolvedValue(undefined),
+};
+
+export const power: jest.Mocked<PowerBridge> = {
+  keepScreenAwake: jest.fn().mockResolvedValue(1),
+  release: jest.fn().mockResolvedValue(undefined),
+};
+
+export const store: jest.Mocked<StoreBridge> = {
+  set: jest.fn(),
+  clear: jest.fn(),
 };
 
 export const cardSession: CardSessionBridge = {
