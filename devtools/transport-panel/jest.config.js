@@ -16,6 +16,7 @@ module.exports = {
       },
     ],
   },
+  testTimeout: 30_000,
   moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
   testPathIgnorePatterns: ["\\.native\\.test\\."],
   modulePaths: ["<rootDir>"],

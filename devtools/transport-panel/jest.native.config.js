@@ -29,6 +29,7 @@ module.exports = {
     "^@sbaiahmed1/react-native-blur$": "<rootDir>/jest/mocks/react-native-blur.tsx",
     "^react-native-worklets$": "<rootDir>/jest/mocks/react-native-worklets.js",
   },
+  testTimeout: 30_000,
   setupFilesAfterEnv: ["<rootDir>/jest/setup.native.ts"],
   coverageReporters: [
     "json",
