@@ -23,6 +23,7 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
+import InstallSetOfApps from "~/renderer/components/OnboardingAppInstall/InstallSetOfApps";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -75,6 +76,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     null | "enter" | "exit"
   >(null);
   const [fwUpdateInterrupted, setFwUpdateInterrupted] = useState<FinalFirmware | null>(null);
+  const [appsToRestoreAfterFwUpdate, setAppsToRestoreAfterFwUpdate] = useState<string[]>([]);
+  const [isRestoringAppsAfterFwUpdate, setIsRestoringAppsAfterFwUpdate] = useState(false);
 
   // True when the device reported isOnboarded=true during polling. Used to bypass
   // the exit toggle after ESC (the device was never put into ESC mode via toggle).
@@ -124,6 +127,25 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     setIsInitialRunOfSecurityChecks(false);
     notifyOnboardingEarlyCheckShouldReset();
   }, [notifyOnboardingEarlyCheckShouldReset]);
+
+  const handleFirmwareUpdateClose = useCallback(
+    (appsToRestore: readonly string[]) => {
+      if (appsToRestore.length > 0) {
+        setAppsToRestoreAfterFwUpdate([...appsToRestore]);
+        setIsRestoringAppsAfterFwUpdate(true);
+        return;
+      }
+
+      restartChecksAfterUpdate();
+    },
+    [restartChecksAfterUpdate],
+  );
+
+  const handleAppsRestoreComplete = useCallback(() => {
+    setIsRestoringAppsAfterFwUpdate(false);
+    setAppsToRestoreAfterFwUpdate([]);
+    restartChecksAfterUpdate();
+  }, [restartChecksAfterUpdate]);
 
   useEffect(() => {
     if (lockedDevice) {
@@ -307,6 +329,21 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         })}
       </Flex>
     );
+  } else if (isRestoringAppsAfterFwUpdate && lastSeenDevice) {
+    stepContent = (
+      <Flex height="100%" width="100%" justifyContent="center" alignItems="center" px={8}>
+        <Flex width="100%" maxWidth="432px">
+          <InstallSetOfApps
+            device={lastSeenDevice}
+            dependencies={appsToRestoreAfterFwUpdate}
+            setHeaderLoader={() => {}}
+            onComplete={handleAppsRestoreComplete}
+            onCancel={handleAppsRestoreComplete}
+            onError={handleAppsRestoreComplete}
+          />
+        </Flex>
+      </Flex>
+    );
   } else if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
       <EarlySecurityChecks
@@ -314,6 +351,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         isDeviceConnected={!!device}
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
+        onFirmwareUpdateClose={handleFirmwareUpdateClose}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
         setFwUpdateInterrupted={setFwUpdateInterrupted}
         fwUpdateInterrupted={fwUpdateInterrupted}
