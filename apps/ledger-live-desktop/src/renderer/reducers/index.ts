@@ -30,7 +30,7 @@ import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import { payCardSlice, type PayCardState } from "@domain/entity-pay-card";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
