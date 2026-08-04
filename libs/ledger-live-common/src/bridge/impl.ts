@@ -35,7 +35,7 @@ import {
   buildTransactionFailureEvent,
   buildTransactionSuccessEvent,
   getStakeTarget,
-  getTransactionType,
+  getRawTransactionType,
   emitTransactionEvent,
 } from "@ledgerhq/transaction-observability";
 
@@ -239,7 +239,7 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
     // Wide transaction observability: emit a sign-stage failure for every family/route.
-    // Sign-stage has the rich `transaction` (→ transactionType) but not `broadcastConfig`
+    // Sign-stage has the rich `transaction` (→ earnTransactionType) but not `broadcastConfig`
     // (→ no flow/manifestId; those are known at broadcast). A user abandoning the sign
     // modal is an unsubscribe, not an error, so it is not observed here (see hw/actions).
     signOperation: (arg0: Parameters<typeof bridge.signOperation>[0]) =>
@@ -251,8 +251,8 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
                 account: arg0.account,
                 mainAccount: arg0.account,
                 flow: TransactionFlow.Unknown,
-                transactionType: getTransactionType(
-                  arg0.transaction as unknown as Parameters<typeof getTransactionType>[0],
+                rawTransactionType: getRawTransactionType(
+                  arg0.transaction as unknown as Parameters<typeof getRawTransactionType>[0],
                 ),
                 validators: getStakeTarget(
                   arg0.transaction as unknown as Parameters<typeof getStakeTarget>[0],
@@ -266,7 +266,7 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
         }),
       ),
     // Broadcast-stage is fully attributed via `broadcastConfig.source` (flow + manifestId).
-    // `transactionType` here is the on-chain operation type (e.g. "DELEGATE" for native
+    // `earnTransactionType` here is the on-chain operation type (e.g. "DELEGATE" for native
     // staking, "OUT" for a send) since the rich transaction is not available at broadcast.
     broadcast: async (arg0: Parameters<typeof bridge.broadcast>[0]) => {
       const { flow, manifestId } = attributeBroadcastSource(arg0.broadcastConfig?.source);
@@ -276,7 +276,7 @@ export async function wrapAccountBridge<T extends TransactionCommon>(
         flow,
         manifestId,
         source: arg0.broadcastConfig?.source,
-        transactionType: arg0.signedOperation.operation.type,
+        rawTransactionType: arg0.signedOperation.operation.type,
       });
       try {
         const operation = await bridge.broadcast(arg0);

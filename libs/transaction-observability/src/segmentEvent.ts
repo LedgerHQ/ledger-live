@@ -5,44 +5,63 @@ export type SegmentTrackEvent = {
   properties: Record<string, unknown>;
 };
 
-// Distinct event names per lifecycle point — kept separate from the existing
-// `WalletAPI …` / `Platform …` / `dApp …` events so they don't double-count.
-const EVENT_NAMES: Record<string, string> = {
-  "started:sign": "Transaction Sign Started",
-  "failure:sign": "Transaction Sign Failed",
-  "success:broadcast": "Transaction Broadcast Success",
-  "failure:broadcast": "Transaction Broadcast Failed",
-};
+// Same names and vocabulary as the Earn live-app emits, so both sides of the funnel
+// join in Mixpanel. `stage` carries where in the lifecycle the outcome happened.
+const EARN_TRANSACTION_COMPLETED = "earn_transaction_completed";
+const EARN_TRANSACTION_FAILED = "earn_transaction_failed";
+
+// The Earn live-app emits earn_transaction_* for its own wallet-api flows, and it has
+// richer context (protocol, receipt token). Emitting here too would double-count.
+const APP_OWNED_MANIFEST_IDS = new Set(["earn"]);
 
 /**
- * Maps a transaction {@link LogEvent} to a Segment/Mixpanel `track` call.
+ * Maps a transaction {@link LogEvent} to a Segment/Mixpanel `track` call, or `null`
+ * when the event does not belong in the earn funnel.
  *
- * Returns `null` for combinations we don't emit an event for (so the observer can skip).
- * Deliberately omits the raw `error` object and `txPayload.signature` — no raw signatures
- * in product analytics; failure reason is conveyed by `errorCategory` + `errorName`.
+ * Deliberately omits the raw `error` object and `txPayload.signature` — no raw
+ * signatures or error messages in product analytics; the failure reason is carried by
+ * `error_category` + `error_reason`.
  */
 export function toSegmentTrackEvent(event: LogEvent): SegmentTrackEvent | null {
-  const name = EVENT_NAMES[`${event.status}:${event.stage}`];
-  if (!name) return null;
+  // The bridge seam sees every transaction, including plain sends and swaps. Only a
+  // recognised staking/yield action belongs in the earn funnel.
+  if (!event.earnTransactionType) return null;
 
+  if (event.manifestId && APP_OWNED_MANIFEST_IDS.has(event.manifestId)) return null;
+
+  // A completed/failed schema has no place for the funnel-top `started` signal.
+  if (event.status !== "success" && event.status !== "failure") return null;
+
+  const isSuccess = event.status === "success";
   const properties: Record<string, unknown> = {
-    flow: event.flow,
+    // Matches the `flow` the Earn live-app sets, so both halves of the funnel join on
+    // the same property. Ledger Wallet's `track` has no base-property channel, so it
+    // goes here — nothing in its globals provides or overwrites `flow`.
+    flow: "earn",
     stage: event.stage,
-    currencyId: event.currencyId,
+    status: isSuccess ? "success" : "failed",
+    transaction_type: event.earnTransactionType,
+    raw_transaction_type: event.rawTransactionType,
+    // The asset the user recognises, plus the chain it settles on.
+    input_currency: (event.tokenTicker ?? event.currencyTicker).toLowerCase(),
+    network: event.currencyId,
     family: event.family,
-    isTestnet: event.isTestnet,
-    isSendMax: event.isSendMax,
-    ...(event.productFlow ? { productFlow: event.productFlow } : {}),
-    ...(event.tokenId ? { tokenId: event.tokenId } : {}),
-    ...(event.transactionType ? { transactionType: event.transactionType } : {}),
+    // Technical route (native send, wallet-api, dApp) — distinct from the `flow` above,
+    // which is the product funnel.
+    tx_pathway: event.flow,
+    is_testnet: event.isTestnet,
+    is_send_max: event.isSendMax,
+    ...(event.manifestId ? { provider: event.manifestId } : {}),
     ...(event.validators?.length ? { validators: event.validators } : {}),
-    ...(event.manifestId ? { manifestId: event.manifestId } : {}),
   };
 
-  if (event.status === "failure") {
-    properties.errorCategory = event.errorCategory;
-    properties.errorName = event.error.name;
+  if (!isSuccess) {
+    properties.error_category = event.errorCategory;
+    properties.error_reason = event.error.name;
   }
 
-  return { event: name, properties };
+  return {
+    event: isSuccess ? EARN_TRANSACTION_COMPLETED : EARN_TRANSACTION_FAILED,
+    properties,
+  };
 }

@@ -9,7 +9,7 @@ import {
   buildTransactionStartedEvent,
   buildTransactionAbandonedEvent,
   getStakeTarget,
-  getTransactionType,
+  getRawTransactionType,
   emitTransactionEvent,
 } from "@ledgerhq/transaction-observability";
 import type { Transaction, TransactionStatus } from "../../coin-modules/transaction-types";
@@ -173,8 +173,8 @@ export const createAction = (
           mainAccount,
           flow: manifestId ? TransactionFlow.WalletApiSignAndBroadcast : TransactionFlow.Send,
           manifestId,
-          transactionType: getTransactionType(
-            transaction as unknown as Parameters<typeof getTransactionType>[0],
+          rawTransactionType: getRawTransactionType(
+            transaction as unknown as Parameters<typeof getRawTransactionType>[0],
           ),
           validators: getStakeTarget(
             transaction as unknown as Parameters<typeof getStakeTarget>[0],

@@ -1,4 +1,4 @@
-import { setEnv } from "@ledgerhq/live-env";
+import { setEnv } from "@shared/env";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import {
@@ -11,9 +11,8 @@ import {
   buildTransactionStartedEvent,
   buildTransactionSuccessEvent,
   classifyTransactionError,
-  deriveProductFlow,
   getStakeTarget,
-  getTransactionType,
+  getRawTransactionType,
 } from "./logEvent";
 
 const mainAccount = {
@@ -39,7 +38,7 @@ describe("buildTransactionCommonEvent", () => {
         flow: TransactionFlow.WalletApiSignAndBroadcast,
         manifestId: "some-dapp",
         source: { type: "live-app", name: "some-dapp" },
-        transactionType: "approve",
+        rawTransactionType: "approve",
         isSendMax: true,
       }),
     ).toEqual({
@@ -49,21 +48,37 @@ describe("buildTransactionCommonEvent", () => {
       source: { type: "live-app", name: "some-dapp" },
       currencyId: "ethereum",
       family: "evm",
-      transactionType: "approve",
+      earnTransactionType: "approve",
+      rawTransactionType: "approve",
       isTestnet: false,
       isSendMax: true,
     });
   });
 
-  it("derives productFlow from a staking transactionType", () => {
+  it("normalizes the raw action per family and keeps the raw value", () => {
+    const solanaAccount = {
+      type: "Account",
+      currency: { id: "solana", family: "solana" },
+    } as unknown as Account;
+    const event = buildTransactionCommonEvent({
+      account: solanaAccount,
+      mainAccount: solanaAccount,
+      flow: TransactionFlow.Send,
+      rawTransactionType: "stake.createAccount",
+    });
+    expect(event.earnTransactionType).toBe("delegate");
+    expect(event.rawTransactionType).toBe("stake.createAccount");
+  });
+
+  it("leaves earnTransactionType undefined for a non-staking action but keeps the raw value", () => {
     const event = buildTransactionCommonEvent({
       account: mainAccount,
       mainAccount,
       flow: TransactionFlow.Send,
-      transactionType: "DELEGATE",
+      rawTransactionType: "swap",
     });
-    expect(event.transactionType).toBe("DELEGATE");
-    expect(event.productFlow).toBe("stake");
+    expect(event.earnTransactionType).toBeUndefined();
+    expect(event.rawTransactionType).toBe("swap");
   });
 
   it("adds tokenId for token accounts and omits empty optionals", () => {
@@ -74,7 +89,7 @@ describe("buildTransactionCommonEvent", () => {
     });
     expect(event.tokenId).toBe("ethereum/erc20/usdc");
     expect(event.manifestId).toBeUndefined();
-    expect(event.transactionType).toBeUndefined();
+    expect(event.earnTransactionType).toBeUndefined();
     expect(event.isSendMax).toBe(false);
   });
 });
@@ -197,28 +212,6 @@ describe("classifyTransactionError", () => {
   });
 });
 
-describe("deriveProductFlow", () => {
-  it.each([
-    ["delegate", "stake"],
-    ["DELEGATE", "stake"],
-    ["bond", "stake"],
-    ["freeze", "stake"],
-    ["undelegate", "unstake"],
-    ["unbond", "unstake"],
-    ["redelegate", "restake"],
-    ["claimReward", "claim"],
-    ["send", "send"],
-    ["OUT", "send"],
-  ])("maps %s -> %s", (input, expected) => {
-    expect(deriveProductFlow(input)).toBe(expected);
-  });
-
-  it("returns undefined for unrecognised or missing types", () => {
-    expect(deriveProductFlow("approve")).toBeUndefined();
-    expect(deriveProductFlow(undefined)).toBeUndefined();
-  });
-});
-
 describe("getStakeTarget", () => {
   it("reads Cardano poolId as a single-element list", () => {
     const tx = { family: "cardano", mode: "delegate", poolId: "pool123" } as never;
@@ -257,19 +250,19 @@ describe("getStakeTarget", () => {
   });
 });
 
-describe("getTransactionType", () => {
+describe("getRawTransactionType", () => {
   it("returns undefined when no transaction", () => {
-    expect(getTransactionType(undefined)).toBeUndefined();
+    expect(getRawTransactionType(undefined)).toBeUndefined();
   });
 
   it("reads mode for families that expose one (cosmos)", () => {
     const tx = { family: "cosmos", mode: "delegate" } as unknown as WalletAPITransaction;
-    expect(getTransactionType(tx)).toBe("delegate");
+    expect(getRawTransactionType(tx)).toBe("delegate");
   });
 
   it("returns 'send' for families without a discriminator (bitcoin)", () => {
     const tx = { family: "bitcoin" } as unknown as WalletAPITransaction;
-    expect(getTransactionType(tx)).toBe("send");
+    expect(getRawTransactionType(tx)).toBe("send");
   });
 
   it("reads solana model.kind", () => {
@@ -277,6 +270,6 @@ describe("getTransactionType", () => {
       family: "solana",
       model: { kind: "token.transfer" },
     } as unknown as WalletAPITransaction;
-    expect(getTransactionType(tx)).toBe("token.transfer");
+    expect(getRawTransactionType(tx)).toBe("token.transfer");
   });
 });

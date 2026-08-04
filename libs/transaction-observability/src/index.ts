@@ -2,9 +2,8 @@ export {
   TransactionFlow,
   TransactionStage,
   ErrorCategory,
-  deriveProductFlow,
   toError,
-  getTransactionType,
+  getRawTransactionType,
   getStakeTarget,
   classifyTransactionError,
   buildTransactionCommonEvent,
@@ -14,10 +13,11 @@ export {
   buildTransactionFailureEvent,
   type LogEvent,
   type TransactionLogger,
-  type ProductFlow,
   type BuildTransactionCommonEventParams,
   type BuildTransactionFailureParams,
 } from "./logEvent";
+
+export { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 
 export {
   setTransactionObserver,

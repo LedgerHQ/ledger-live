@@ -5,8 +5,10 @@ import type {
   SignedOperation,
   TransactionSource,
 } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
+// @shared/env (not @ledgerhq/live-env) so the env definitions are guaranteed injected.
+import { getEnv } from "@shared/env";
 import { DAPP_SELECTORS } from "@ledgerhq/evm-tools/selectors/index";
+import { deriveEarnTransactionType, type EarnTransactionType } from "./earnTransactionType";
 
 /**
  * Identifies which pathway emitted the transaction log event.
@@ -65,13 +67,21 @@ type CommonLogEvent = {
   currencyId: string;
   family: string;
   tokenId?: string;
-  /** Family-specific transaction type/mode. Only populated when a rich transaction is available. */
-  transactionType?: string;
+  /** Tickers, so analytics can report the asset the user recognises ("ETH", "USDC"). */
+  currencyTicker: string;
+  tokenTicker?: string;
   /**
-   * Human product action derived from `transactionType` (stake / unstake / restake / claim / send).
-   * Distinct from `flow` (the technical origin/pathway). Undefined for unrecognised actions.
+   * Normalized action (delegate / undelegate / deposit / redeem / …), derived per family.
+   * Distinct from `flow` (the technical origin/pathway). Undefined when the transaction is
+   * not a recognised staking/vault action — e.g. a plain send or a swap.
    */
-  productFlow?: ProductFlow;
+  earnTransactionType?: EarnTransactionType;
+  /**
+   * The family-specific value `earnTransactionType` was derived from — a family `mode`,
+   * Solana `model.kind`, TON `payload.type`, or an EVM selector name. Kept for
+   * drill-down and to measure how often the normalization misses.
+   */
+  rawTransactionType?: string;
   /**
    * Delegation target(s) — validator addresses / staking pool id(s) — read from the transaction.
    * Only available at the sign stage (the transaction is not passed to broadcast). Public ids,
@@ -81,54 +91,6 @@ type CommonLogEvent = {
   isTestnet: boolean;
   isSendMax: boolean;
 };
-
-/** Human-facing product action, for funnel analytics. */
-export type ProductFlow = "stake" | "unstake" | "restake" | "claim" | "send";
-
-// Family verb allowlists (lower-cased). Grown from real `transactionType` values
-// (family `mode`, Solana `model.kind`, EVM selector, on-chain operation type).
-const STAKE_VERBS = new Set([
-  "delegate",
-  "bond",
-  "freeze",
-  "lock",
-  "stake",
-  "nominate",
-  "optin",
-  "supply",
-  "deposit",
-]);
-const UNSTAKE_VERBS = new Set([
-  "undelegate",
-  "unbond",
-  "unfreeze",
-  "unlock",
-  "unstake",
-  "redeem",
-  "withdraw",
-  "withdrawunbonded",
-]);
-const RESTAKE_VERBS = new Set(["redelegate", "rebond", "restake"]);
-const CLAIM_VERBS = new Set([
-  "claimreward",
-  "claimrewards",
-  "claimrewardcompound",
-  "claim",
-  "withdrawexpireunfreeze",
-]);
-const SEND_VERBS = new Set(["send", "transfer", "out"]);
-
-/** Map a family-specific `transactionType` to a small, stable product action. */
-export function deriveProductFlow(transactionType?: string): ProductFlow | undefined {
-  if (!transactionType) return undefined;
-  const t = transactionType.toLowerCase();
-  if (RESTAKE_VERBS.has(t)) return "restake";
-  if (STAKE_VERBS.has(t)) return "stake";
-  if (UNSTAKE_VERBS.has(t)) return "unstake";
-  if (CLAIM_VERBS.has(t)) return "claim";
-  if (SEND_VERBS.has(t)) return "send";
-  return undefined;
-}
 
 type FailureLogEvent = {
   status: "failure";
@@ -169,15 +131,17 @@ export function toError(err: unknown): Error {
   }
 }
 
-// EVM call-data function selector → human name (e.g. "approve", "swap"), "transfer" fallback.
+// EVM call-data function selector → solidity function name (e.g. "approve", "deposit").
 // Reimplemented here (was ledger-live-common's `getTxType`) so this package stays free of a
 // ledger-live-common dependency; it only reads `tx.data` (a Buffer), which the wallet-api
 // ethereum transaction also carries.
-function evmTxType(tx: { data?: { toString(encoding: "hex"): string } | null }): string {
-  const fallback = "transfer";
-  if (!tx?.data) return fallback;
+//
+// No call data means the transaction really is a plain transfer; call data we have no
+// selector for is reported as "unknown" so the selector-map miss rate stays measurable.
+function evmTxType(tx: { data?: { length: number; toString(encoding: "hex"): string } | null }) {
+  if (!tx?.data?.length) return "transfer";
   const selector = `0x${tx.data.toString("hex").substring(0, 8)}`;
-  return DAPP_SELECTORS[selector] ?? fallback;
+  return DAPP_SELECTORS[selector] ?? "unknown";
 }
 
 /**
@@ -191,14 +155,16 @@ function evmTxType(tx: { data?: { toString(encoding: "hex"): string } | null }):
  *
  * Returns `undefined` when no rich transaction is available (signRaw / signPsbt / ACRE / legacy platform).
  */
-export function getTransactionType(
+export function getRawTransactionType(
   tx: WalletAPITransaction | undefined | null,
 ): string | undefined {
   if (!tx) return undefined;
 
   switch (tx.family) {
     case "ethereum":
-      return evmTxType(tx as unknown as { data?: { toString(encoding: "hex"): string } | null });
+      return evmTxType(
+        tx as unknown as { data?: { length: number; toString(encoding: "hex"): string } | null },
+      );
     case "solana":
       return tx.model?.kind;
     case "ton":
@@ -329,7 +295,8 @@ export type BuildTransactionCommonEventParams = {
   flow: TransactionFlow;
   manifestId?: string;
   source?: TransactionSource;
-  transactionType?: string;
+  /** Family-specific action; normalized into `earnTransactionType` on the event. */
+  rawTransactionType?: string;
   validators?: string[];
   isSendMax?: boolean;
 };
@@ -341,24 +308,28 @@ export function buildTransactionCommonEvent({
   flow,
   manifestId,
   source,
-  transactionType,
+  rawTransactionType,
   validators,
   isSendMax = false,
 }: BuildTransactionCommonEventParams): CommonLogEvent {
-  const productFlow = deriveProductFlow(transactionType);
+  const family = mainAccount.currency.family;
+  const earnTransactionType = deriveEarnTransactionType(family, rawTransactionType);
   return {
     appVersion: getEnv("LEDGER_CLIENT_VERSION"),
     flow,
     currencyId: mainAccount.currency.id,
-    family: mainAccount.currency.family,
+    family,
+    currencyTicker: mainAccount.currency.ticker,
     isTestnet: Boolean(mainAccount.currency.isTestnetFor),
     isSendMax,
     ...(manifestId ? { manifestId } : {}),
     ...(source ? { source } : {}),
-    ...(transactionType ? { transactionType } : {}),
-    ...(productFlow ? { productFlow } : {}),
+    ...(earnTransactionType ? { earnTransactionType } : {}),
+    ...(rawTransactionType ? { rawTransactionType } : {}),
     ...(validators?.length ? { validators } : {}),
-    ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
+    ...(account.type === "TokenAccount"
+      ? { tokenId: account.token.id, tokenTicker: account.token.ticker }
+      : {}),
   };
 }
 

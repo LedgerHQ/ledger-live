@@ -19,10 +19,11 @@ import {
   type LogEvent,
 } from "@ledgerhq/transaction-observability";
 
+// Cardano so the family-aware normalization of the raw action is exercised end to end.
 const account = {
   id: "acc",
   type: "Account",
-  currency: { id: "bitcoin", family: "bitcoin" },
+  currency: { id: "cardano", family: "cardano" },
 } as unknown as Account;
 
 const signedOperation = { signature: "sig", operation: { type: "DELEGATE" } } as never;
@@ -63,10 +64,13 @@ describe("wrapAccountBridge — transaction observability seam", () => {
     expect(events[0]).toMatchObject({
       status: "success",
       stage: TransactionStage.Broadcast,
-      currencyId: "bitcoin",
-      family: "bitcoin",
+      currencyId: "cardano",
+      family: "cardano",
       flow: "send",
-      transactionType: "DELEGATE",
+      // The on-chain op type "DELEGATE" normalizes to the canonical action…
+      earnTransactionType: "delegate",
+      // …and the raw value is kept for drill-down.
+      rawTransactionType: "DELEGATE",
     });
   });
 
@@ -115,7 +119,8 @@ describe("wrapAccountBridge — transaction observability seam", () => {
       stage: TransactionStage.Sign,
       errorCategory: ErrorCategory.UserDeviceRefused,
       flow: "unknown",
-      transactionType: "delegate",
+      earnTransactionType: "delegate",
+      rawTransactionType: "delegate",
     });
   });
 
