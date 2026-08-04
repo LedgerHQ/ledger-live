@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { assetsDataApi } from "../api";
+import { InterestRateSchema } from "@domain/entity-interest-rate";
 import type { RawApiResponse } from "../../entities";
 
 jest.mock("@shared/env", () => ({
@@ -111,7 +112,12 @@ describe("transformAssetsResponse, via getAssetData", () => {
       cryptoAssets: { btc: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} } },
       networks: { bitcoin: { id: "bitcoin", name: "Bitcoin" } },
       interestRates: {
-        bitcoin: { currencyId: "bitcoin", rate: 4.2, type: "APY", fetchAt: "2026-07-31" },
+        bitcoin: InterestRateSchema.parse({
+          currencyId: "bitcoin",
+          rate: 4.2,
+          type: "APY",
+          fetchAt: "2026-07-31T00:00:00Z",
+        }),
       },
       markets: { bitcoin: { price: 65000 } },
     });
