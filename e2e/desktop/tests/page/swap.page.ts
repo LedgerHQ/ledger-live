@@ -42,6 +42,8 @@ export class SwapPage extends WebViewAppPage {
   private readonly noQuotesPlaceholder = "quotes-error-state";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
+  private readonly toAccountAmountInput = "to-account-amount-input";
+  private readonly fromAccountAmountInactive = "from-account-amount-inactive";
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
@@ -152,6 +154,19 @@ export class SwapPage extends WebViewAppPage {
   @step("Click Continue button")
   async clickContinueButton() {
     await this.continueBtn.click();
+  }
+
+  @step("Get quote card amount texts for $0")
+  async getQuoteAmountTexts(providerUiName: string) {
+    const webview = await this.getWebView();
+    const provider = SwapProvider.getNameByUiName(providerUiName);
+    const amount = await webview
+      .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .textContent();
+    const fiatAmount = await webview
+      .locator(this.providerContainerInfoSelector(provider, "fiatAmount-label"))
+      .textContent();
+    return { amount, fiatAmount };
   }
 
   @step("Check quotes container infos")
@@ -330,7 +345,11 @@ export class SwapPage extends WebViewAppPage {
   async checkBestOffer() {
     const quoteContainers = await this.getAllSwapProviders();
     const quotes = await this.extractQuotesAndFees(quoteContainers);
-    const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+    const bestOffer = quotes.reduce<{
+      rate: number;
+      fees: number;
+      quote: string;
+    } | null>(
       (max, current) =>
         current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
       null,
@@ -373,6 +392,18 @@ export class SwapPage extends WebViewAppPage {
   async getAmountToSend() {
     const webview = await this.getWebView();
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
+  }
+
+  @step("Retrieve send currency countervalue text")
+  async getSendCountervalueText() {
+    const webview = await this.getWebView();
+    return await webview.getByTestId(this.fromAccountAmountInactive).textContent();
+  }
+
+  @step("Retrieve receive currency amount value")
+  async getAmountToReceive() {
+    const webview = await this.getWebView();
+    return await webview.getByTestId(this.toAccountAmountInput).textContent();
   }
 
   @step("Click switch button")
@@ -764,7 +795,9 @@ export class SwapPage extends WebViewAppPage {
   async clickGiveAuthorizationButton() {
     const webview = await this.getWebView();
     const authorizationButton = webview.getByTestId(this.signPermitButton);
-    await expect(authorizationButton).toBeVisible({ timeout: APPROVAL_PROCESSING_TIMEOUT });
+    await expect(authorizationButton).toBeVisible({
+      timeout: APPROVAL_PROCESSING_TIMEOUT,
+    });
     await authorizationButton.click();
   }
 

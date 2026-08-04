@@ -24,6 +24,7 @@ declare module "jest-allure2-reporter/api" {
     description(description: string): void;
     attachment(name: string, content: string, type: string): Promise<void>;
     parameter(name: string, value: string): void;
+    step<T>(name: string, function_: () => T): T;
   };
 }
 
