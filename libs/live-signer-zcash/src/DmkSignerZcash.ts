@@ -40,6 +40,26 @@ type ZcashGetFullViewingKeyResult = {
   fullViewingKey: string | Uint8Array;
 };
 
+/** Mask clearing ZIP-202's fOverwintered bit, leaving the transaction version. */
+const OVERWINTERED_FLAG_MASK = 0x7fffffff;
+
+/** First version whose shielded bundles live outside `extraData` (NU5 / V5). */
+const FIRST_BUNDLE_CARRYING_VERSION = 5;
+
+function transactionVersion(version: Uint8Array): number {
+  if (version.length < 4) return 0;
+  const view = new DataView(version.buffer, version.byteOffset, version.byteLength);
+  return view.getUint32(0, true) & OVERWINTERED_FLAG_MASK;
+}
+
+function safeDescribe(value: unknown): string {
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return String(value);
+  }
+}
+
 export class DmkSignerZcash implements ZcashSigner {
   private readonly signer: SignerZcash;
 
@@ -48,10 +68,19 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   private mapError<E extends { _tag: string }>(error: E): Error {
-    if ("errorCode" in error && (error as { errorCode?: unknown }).errorCode === "6985") {
+    // A task can also reject with an untagged value, down to a primitive, so
+    // nothing here may assume an object shape (LIVE-35215).
+    const details: { errorCode?: unknown; _tag?: unknown } =
+      typeof error === "object" && error !== null ? error : {};
+
+    if (details.errorCode === "6985") {
       return new UserRefusedOnDevice();
     }
-    return new Error(error._tag);
+    if (typeof details._tag === "string" && details._tag.length > 0) {
+      return new Error(details._tag);
+    }
+    if (error instanceof Error) return error;
+    return new Error(`Untagged device action error: ${safeDescribe(error)}`);
   }
 
   private mapResult<T, E extends { _tag: string }>(state: DeviceActionState<T, E, unknown>): T {
@@ -147,16 +176,17 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   private toLegacyTransaction(tx: SignerTransactionLike): LegacyTransaction {
-    // When the source transaction carries a shielded bundle (e.g. an Orchard
-    // bundle in a V5 tx), serializeTransaction strips it and emits zeroed
-    // routing-count bytes instead. The device then computes the ZIP-244 txid of
-    // those truncated bytes — not the original txid — and the resulting trusted
-    // input references a txid that does not exist on-chain, causing "Missing
-    // inputs" on broadcast. Passing the full raw bytes via
-    // serializedPreviousTransactionOverride lets the device hash the original
-    // transaction and produce the correct txid.
+    // A V5+ source can carry a shielded bundle that serializeTransaction strips,
+    // leaving the device to hash truncated bytes and derive a txid absent from
+    // the chain; the raw bytes let it hash the original. The override must stay
+    // scoped to V5+ because the signer kit splits raw bytes on the V5 header
+    // layout: a V4 header is shorter, so the input count is read at the wrong
+    // offset. V4 keeps the serialized-fields path (LIVE-35215).
+    const carriesShieldedBundle = transactionVersion(tx.version) >= FIRST_BUNDLE_CARRYING_VERSION;
     const serializedPreviousTransactionOverride =
-      tx.rawTxHex !== undefined ? Buffer.from(tx.rawTxHex, "hex") : undefined;
+      carriesShieldedBundle && tx.rawTxHex !== undefined
+        ? Buffer.from(tx.rawTxHex, "hex")
+        : undefined;
     return {
       version: tx.version,
       inputs: tx.inputs.map(input => ({

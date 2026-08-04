@@ -4,27 +4,24 @@ import type { NetworkInfo } from "./types";
 import { getWalletAccount } from "./getWalletAccount";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInfrastructureError } from "./errors";
-import { getRelayFeeFloorSatVb, maxTxVBytesCeil } from "@ledgerhq/wallet-btc/utils";
+import { getRelayFeeFloorSatVb } from "@ledgerhq/wallet-btc/utils";
 import type { Account as WalletAccount } from "@ledgerhq/wallet-btc/index";
-import { ZIP317_MARGINAL_FEE } from "./chain-adapters/zcash/coin-selection";
+import { zcashSafeFeePerByte } from "./chain-adapters/zcash/transparent-fee-rate";
 const speeds = ["fast", "medium", "slow"];
 
 /**
- * Zcash uses deterministic ZIP-317 fees (no sat/vByte fee market).
- * We approximate the ZIP-317 marginal fee (5000 zats/action) as a flat sat/vByte rate.
- * See: https://zips.z.cash/zip-0317 and LIVE-35152.
+ * Zcash prices transactions with ZIP-317 (per logical action), not with a
+ * sat/vByte fee market, so there is nothing to read from the explorer here. The
+ * rate below is the one that covers ZIP-317 for any layout; `prepareTransaction`
+ * then tightens it to the actual transaction through the chain adapter's
+ * `resolveFeePerByte`. See https://zips.z.cash/zip-0317 and LIVE-35152.
  */
 function getZcashNetworkInfo(
   walletAccount: WalletAccount,
   relayFeePerByte: BigNumber,
 ): NetworkInfo {
   const { crypto, derivationMode } = walletAccount.xpub;
-  const fixedVBytes = maxTxVBytesCeil(0, [], false, crypto, derivationMode);
-  const oneInputVBytes = maxTxVBytesCeil(1, [], false, crypto, derivationMode) - fixedVBytes;
-  const zip317FeePerByte = new BigNumber(
-    Math.max(1, Math.ceil(ZIP317_MARGINAL_FEE / Math.max(1, oneInputVBytes))),
-  );
-  const feePerByte = BigNumber.max(zip317FeePerByte, relayFeePerByte);
+  const feePerByte = BigNumber.max(zcashSafeFeePerByte(crypto, derivationMode), relayFeePerByte);
 
   // Zcash has no fee market: the three speeds all resolve to the same ZIP-317
   // rate. A "custom" fee remains available for advanced users via the UI.
