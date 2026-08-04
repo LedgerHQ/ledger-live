@@ -1049,18 +1049,6 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
-  config_currency_scroll_sepolia: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      node: { type: "external", uri: "https://scroll-sepolia.coin.ledger.com" },
-      explorer: { type: "blockscout", uri: "https://scroll-sepolia.blockscout.com/api" },
-      showNfts: false,
-    },
-  },
   config_currency_shape: {
     type: "object",
     default: {
