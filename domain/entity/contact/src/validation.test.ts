@@ -3,10 +3,16 @@ import {
   DuplicateContactAddressLabelError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
-} from "./errors";
-import { ContactAddressLabelSchema } from "./schema";
-import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "./errors";
+import {
+  ContactAddressLabelInputSchema,
+  ContactAddressLabelSchema,
+} from "./schema";
+import {
   getContactAddressLabelValidationError,
   getContactNameValidationError,
   isValidContactAddressLabel,
@@ -14,9 +20,6 @@ import {
   normalizeContactAddressLabelForComparison,
   parseContactAddressLabel,
   parseContactName,
-  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
-  INVALID_CONTACT_NAME_ERROR_NAME,
 } from "./validation";
 
 describe("contact name validation", () => {
@@ -93,8 +96,14 @@ describe("contact address label validation", () => {
   });
 
   it("normalizes ASCII labels for comparison", () => {
-    expect(normalizeContactAddressLabelForComparison(" Ethereum ")).toBe(
-      normalizeContactAddressLabelForComparison("ETHEREUM")
+    expect(
+      normalizeContactAddressLabelForComparison(
+        ContactAddressLabelInputSchema.parse(" Ethereum ")
+      )
+    ).toBe(
+      normalizeContactAddressLabelForComparison(
+        ContactAddressLabelInputSchema.parse("ETHEREUM")
+      )
     );
   });
 
