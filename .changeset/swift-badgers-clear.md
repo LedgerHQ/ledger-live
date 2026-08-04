@@ -1,9 +1,9 @@
 ---
-"@shared/feature-flags": patch
-"@ledgerhq/live-common": patch
-"@features/flow-analytics-consent": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@shared/feature-flags": minor
+"@ledgerhq/live-common": minor
+"@features/flow-analytics-consent": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Remove analytics consentValidityDays and the unused live-common consent expiry helpers

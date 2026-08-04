@@ -1,5 +1,5 @@
 ---
-"@features/flow-contacts": patch
+"@features/flow-contacts": minor
 "ledger-live-desktop": minor
 ---
 

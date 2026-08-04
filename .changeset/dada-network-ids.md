@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/live-common": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/live-common": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Forward Modular Asset Drawer network filters to DADA asset requests.
