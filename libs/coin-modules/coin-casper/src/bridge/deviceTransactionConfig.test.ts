@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { methodToString } from "../common-logic";
-import { CASPER_NETWORK } from "../consts";
+import { CASPER_NETWORK } from "../constants";
 import { createMockAccount, createMockTransaction } from "../test/fixtures";
 import { TransactionStatus, Transaction } from "../types";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";

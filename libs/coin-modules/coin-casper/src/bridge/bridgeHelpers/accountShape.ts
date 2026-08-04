@@ -3,8 +3,8 @@ import { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelp
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../api/index";
-import { ITxnHistoryData } from "../../api/types";
+import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../network/api";
+import { ITxnHistoryData } from "../../types/network";
 import { mapTxToOps } from "./txn";
 
 export const getAccountShape: GetAccountShape = async info => {
