@@ -18,7 +18,7 @@ type FetchBaseQuery = BaseQueryFn<
   AuthenticatedBaseQueryExtraOptions
 >;
 
-const UNAUTHORIZED_STATUSES = new Set([401, 403]);
+const UNAUTHORIZED_STATUSES = new Set([401]); // Only re-authenticate on 401
 
 export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs): FetchBaseQuery {
   return async (args, api, extraOptions) => {
