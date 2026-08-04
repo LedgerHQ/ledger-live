@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
-import { SanctionedAddressBanner } from "@features/platform-address-validation";
+import { SanctionedAddressBanner } from "@shared/address-validation";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
