@@ -20,6 +20,7 @@ function resolveDrawerStep(
       return "address";
     case "namingAddress":
       return "name";
+    case "reviewingAddress":
     case "confirmationRequired":
     case "success":
       return "name";
