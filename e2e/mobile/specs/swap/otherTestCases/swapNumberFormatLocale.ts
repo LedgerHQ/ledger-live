@@ -17,8 +17,10 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 const fromAccount = Account.ETH_1;
 const toAccount = Account.BTC_NATIVE_SEGWIT_1;
 
-// Large enough to trigger thousands-grouping in the displayed amounts (B2CQA-4014).
-const TEST_AMOUNT = "1234.56";
+// Immediately overridden by tapping "Max" below (performSwapUntilQuoteSelectionStep requires
+// some amount to type first). A fixed amount like desktop's isn't safe here: it can exceed the
+// emulator's real balance or a provider's limit and leave "Get quotes" permanently disabled.
+const PLACEHOLDER_AMOUNT = "0.001";
 
 // The send-amount input always groups with plain whitespace, regardless of language.
 const SEND_INPUT_THOUSANDS = " ";
@@ -77,14 +79,11 @@ export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]
         const separators = getExpectedSeparators(languageId);
         const formattedAmountPattern = buildFormattedAmountPattern(separators);
 
-        // continueToQuotes=false: the wait below is locale-aware instead of the
-        // English-only `floatNumberRegex` the skipped step would have used.
-        await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, TEST_AMOUNT, false);
-        await waitForWebElementToMatchRegex(
-          app.swapLiveApp.toAmountInput,
-          formattedAmountPattern,
-          20000,
-        );
+        // continueToQuotes=false: "Max" (below) fills a real, balance-safe amount instead of a
+        // guessed one, and the wait is locale-aware instead of the English-only
+        // `floatNumberRegex` the skipped step would have used.
+        await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, PLACEHOLDER_AMOUNT, false);
+        await app.swapLiveApp.clickSwapMax(formattedAmountPattern, 20000);
         await app.swapLiveApp.tapGetQuotesButton();
         await app.swapLiveApp.waitForQuotes();
 

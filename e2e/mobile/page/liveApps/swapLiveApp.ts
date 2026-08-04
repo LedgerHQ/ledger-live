@@ -387,9 +387,9 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Click on swap max")
-  async clickSwapMax() {
+  async clickSwapMax(pattern: RegExp = floatNumberRegex, timeout?: number) {
     await tapWebElementByTestId(this.swapMaxToggle);
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex);
+    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, pattern, timeout);
   }
 
   @Step("Retrieve send currency amount value")
