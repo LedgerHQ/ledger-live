@@ -10,6 +10,25 @@ type Fixtures<LocalState, DistantState> = {
   matchingDistantState?: DistantState;
 };
 
+/** UTF-8 byte length, without Buffer or TextEncoder so consumers need no node/dom types */
+function utf8ByteLength(value: string): number {
+  let bytes = 0;
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code < 0x80) {
+      bytes += 1;
+    } else if (code < 0x800) {
+      bytes += 2;
+    } else if (code >= 0xd800 && code <= 0xdbff) {
+      bytes += 4;
+      i++; // surrogate pair encodes as a single 4-byte sequence
+    } else {
+      bytes += 3;
+    }
+  }
+  return bytes;
+}
+
 /**
  * Runs a generic contract test suite for a CloudSyncDataManager implementation.
  * Import and call this inside a describe block in your cloudSyncModule.test.ts.
@@ -107,7 +126,7 @@ export function describeCloudSyncModuleContract<
       expect(() => {
         serialized = JSON.stringify(nextState);
       }).not.toThrow();
-      expect(Buffer.byteLength(serialized!, "utf8")).toBeLessThan(1_000_000);
+      expect(utf8ByteLength(serialized!)).toBeLessThan(1_000_000);
       expect(() => JSON.parse(serialized!)).not.toThrow();
     });
 
