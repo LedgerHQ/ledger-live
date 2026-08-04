@@ -27,3 +27,7 @@ services:
 # No named volume: a single node keeps its state in the container filesystem,
 # and `down --volumes` (killBabylond) discards the container — each run sees a
 # fresh chain from genesis.
+
+networks:
+  default:
+    internal: true

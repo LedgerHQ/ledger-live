@@ -3,10 +3,6 @@ import chalk from "chalk";
 import * as compose from "docker-compose";
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
-// Single-validator Cosmos Hub devnet. Its own compose file so it stays
-// independent of the (two-validator) babylond devnet; the two scenarios run
-// sequentially, each spinning its chain up and tearing it down.
 const composeOptions = {
   cwd: PACKAGE_ROOT,
   config: "docker-compose.gaia.yml",

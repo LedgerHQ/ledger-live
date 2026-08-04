@@ -12,7 +12,6 @@ export type PrefundedAccount = {
 };
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
 const composeOpts = () => ({
   cwd: PACKAGE_ROOT,
   log: Boolean(process.env.DEBUG),

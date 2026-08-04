@@ -25,10 +25,4 @@ services:
       retries: 12
     ports:
       - "8545:8545"
-    volumes:
-      - ./state:/state:ro
-    command: -c "anvil --host 0.0.0.0 --load-state /state/${CHAIN}.json --no-storage-caching --steps-tracing --mnemonic='${SEED}'"
-
-networks:
-  default:
-    internal: true
+    command: -c "anvil --host 0.0.0.0 --fork-url ${RPC} ${FORK_BLOCK_OPT} --no-storage-caching --steps-tracing --mnemonic='${SEED}'"

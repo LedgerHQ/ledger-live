@@ -81,7 +81,7 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic BNB Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://bsc-rpc.publicnode.com", signer.exportMnemonic());
+    await spawnAnvil("bnb");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 

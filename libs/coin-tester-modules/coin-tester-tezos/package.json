@@ -53,7 +53,8 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "fetch-state": "COIN_TESTER_PREPARE=1 pnpm jest --runTestsByPath src/prepare.test.ts --forceExit --runInBand",
+    "start": "pnpm jest --runTestsByPath src/scenarii.test.ts --forceExit --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {

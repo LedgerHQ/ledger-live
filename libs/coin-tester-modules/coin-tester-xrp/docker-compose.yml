@@ -1,7 +1,6 @@
 services:
   rippled:
     image: xrpllabsofficial/xrpld:3.2.1@sha256:12352a54543e972ecf806eac4317bffdf4168131b889b9601a0a31d91d44a5ef
-    container_name: coin-tester-xrp
     # The image's entrypoint copies /config/rippled.cfg into /etc/opt/ripple/rippled.cfg
     # then execs `rippled --conf /etc/opt/ripple/rippled.cfg` with any args appended here.
     # Pass only the standalone-mode flags.
@@ -27,3 +26,7 @@ services:
       timeout: 5s
       retries: 30
       start_period: 5s
+
+networks:
+  default:
+    internal: true

@@ -1,3 +1,4 @@
+import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
 import { ALICE_BAKER_ADDRESS } from "./fixtures";
@@ -5,15 +6,20 @@ import { ALICE_BAKER_ADDRESS } from "./fixtures";
 export const TEZOS_RPC = "http://127.0.0.1:20000";
 
 const composeOptions = {
-  cwd: __dirname,
+  cwd: path.resolve(__dirname, ".."),
   log: Boolean(process.env.DEBUG),
   env: process.env,
 };
+
+function composeConfig(): string[] | undefined {
+  return process.env.COIN_TESTER_PREPARE ? ["docker-compose.prepare.yml"] : undefined;
+}
 
 export async function spawnFlextesa(): Promise<void> {
   console.log("Starting Tezos sandbox (Flextesa)...");
   await compose.upOne("flextesa", {
     ...composeOptions,
+    config: composeConfig(),
     commandOptions: ["--wait"],
   });
   await waitForAlice();
@@ -47,6 +53,7 @@ export async function killFlextesa(): Promise<void> {
   console.log("Stopping Tezos sandbox...");
   await compose.down({
     ...composeOptions,
+    config: composeConfig(),
     commandOptions: ["--remove-orphans", "--volumes"],
   });
 }

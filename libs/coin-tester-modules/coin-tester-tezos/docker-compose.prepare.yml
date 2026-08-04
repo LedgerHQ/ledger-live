@@ -1,23 +1,16 @@
 services:
   flextesa:
-    build:
-      context: .
-      dockerfile: run-entrypoint.Dockerfile
-      tags:
-        - "coin-tester-flextesa-run:latest"
+    image: oxheadalpha/flextesa:latest@sha256:fc6a223f366af7978275f3c01006b86d8fd487804cd44776da1977d5cd525a7b
     platform: linux/amd64
     environment:
       block_time: 2
+    command: oxfordbox start
     volumes:
       - ./state:/tmp/flextesa-daemons-upgrade-adaptive-issuance-box
+    ports:
+      - "20000:20000"
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://127.0.0.1:20000/chains/main/blocks/head/header"]
       interval: 5s
       timeout: 10s
       retries: 30
-    ports:
-      - "20000:20000"
-
-networks:
-  default:
-    internal: true

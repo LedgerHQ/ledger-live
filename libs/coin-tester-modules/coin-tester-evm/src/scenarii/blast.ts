@@ -79,8 +79,7 @@ export const scenarioBlast: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
     const signer = await buildSigner();
-
-    await spawnAnvil("https://rpc.blast.io", signer.exportMnemonic());
+    await spawnAnvil("blast");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 

@@ -82,7 +82,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://rpc.ankr.com/core", signer.exportMnemonic());
+    await spawnAnvil("core");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 

@@ -1,9 +1,10 @@
+import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
 import { FRIENDBOT_URL } from "./fixtures";
 
 const composeOptions = {
-  cwd: __dirname,
+  cwd: path.resolve(__dirname, ".."),
   log: Boolean(process.env.DEBUG),
   env: process.env,
 };

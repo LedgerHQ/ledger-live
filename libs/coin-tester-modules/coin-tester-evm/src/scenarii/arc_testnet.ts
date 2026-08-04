@@ -14,7 +14,6 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 
 type ArcTestnetScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-const ARC_TESTNET_RPC = "https://rpc.testnet.arc.network";
 const ARC_TESTNET_EXPLORER = "https://proxyblockscout.api.live.ledger.com/5042002/api";
 
 // USDC is the chain's native unit on Arc, exposed as ERC20 at this precompile address.
@@ -49,7 +48,7 @@ export const scenarioArcTestnetNative: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     restoreCalStore = patchCalStoreForArcTestnet();
     const signer = await buildSigner();
-    await spawnAnvil(ARC_TESTNET_RPC, signer.exportMnemonic());
+    await spawnAnvil("arc_testnet");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
     setBlock(await provider.getBlockNumber());

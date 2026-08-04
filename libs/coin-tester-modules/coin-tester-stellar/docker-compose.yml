@@ -1,7 +1,6 @@
 services:
   stellar:
     image: stellar/quickstart:latest@sha256:cdc51da353be3296b4ddf456878bb02356ec2b6f0ff45ddd7a5d9c6ec01e7270
-    container_name: stellar-quickstart
     platform: linux/amd64
     # `--local` is the modern replacement for `--standalone`. The quickstart
     # /start script (see lines 250-254) reads NETWORK_PASSPHRASE from the
@@ -27,3 +26,7 @@ services:
       retries: 60
     ports:
       - "8000:8000"
+
+networks:
+  default:
+    internal: true

@@ -7,7 +7,6 @@ import * as compose from "docker-compose";
 // context relative to cwd, so cwd must be the package root (same pattern as
 // coin-tester-tron). Using __dirname would look in src/ and fail to start.
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
 const composeOptions = {
   cwd: PACKAGE_ROOT,
   log: Boolean(process.env.DEBUG),

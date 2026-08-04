@@ -1,32 +1,44 @@
+import path from "path";
 import chalk from "chalk";
 import * as compose from "docker-compose";
+import { COIN_TESTER_EVM_MNEMONIC } from "./signer";
 
-export const spawnAnvil = async (
-  rpc: string,
-  seed: string,
-  forkBlockNumber?: number,
-): Promise<void> => {
-  console.log("Starting anvil...");
+const PACKAGE_ROOT = path.resolve(__dirname, "..");
+export const spawnAnvilFork = async (rpc: string, forkBlockNumber?: number): Promise<void> => {
   await compose.upOne("anvil", {
-    cwd: __dirname,
+    cwd: PACKAGE_ROOT,
     log: Boolean(process.env.DEBUG),
+    config: ["docker-compose.prepare.yml"],
     env: {
       ...process.env,
       RPC: rpc,
-      SEED: seed,
       FORK_BLOCK_OPT:
         typeof forkBlockNumber === "number" ? `--fork-block-number ${forkBlockNumber}` : "",
+      SEED: COIN_TESTER_EVM_MNEMONIC,
     },
     commandOptions: ["--wait"],
   });
+};
 
+export const spawnAnvil = async (chain: string): Promise<void> => {
+  console.log("Starting anvil...");
+  await compose.upOne("anvil", {
+    cwd: PACKAGE_ROOT,
+    log: Boolean(process.env.DEBUG),
+    env: {
+      ...process.env,
+      CHAIN: chain,
+      SEED: COIN_TESTER_EVM_MNEMONIC,
+    },
+    commandOptions: ["--wait"],
+  });
   console.log(chalk.bgBlueBright(" -  ANVIL READY ✅  - "));
 };
 
 export const killAnvil = async (): Promise<void> => {
   console.log("Stopping anvil...");
   await compose.down({
-    cwd: __dirname,
+    cwd: PACKAGE_ROOT,
     log: Boolean(process.env.DEBUG),
     env: process.env,
     commandOptions: ["--remove-orphans"],

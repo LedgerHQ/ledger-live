@@ -85,7 +85,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://ethereum-rpc.publicnode.com", signer.exportMnemonic());
+    await spawnAnvil("ethereum");
 
     setCoinConfig(() => ({
       info: {

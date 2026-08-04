@@ -5,7 +5,6 @@ import * as compose from "docker-compose";
 export const THOR_SOLO_RPC = "http://127.0.0.1:8669";
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
 const composeOpts = () => ({
   cwd: PACKAGE_ROOT,
   log: Boolean(process.env.DEBUG),

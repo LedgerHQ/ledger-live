@@ -6,7 +6,6 @@ services:
     #
     # See https://github.com/multiversx/mx-chain-simulator-go (default API/proxy port: 8085).
     image: multiversx/chainsimulator:v1.11.3@sha256:f741e192a0cc1d5fc87827bba5b37e7365add337f8d9bf47f2771ab9831e898d
-    container_name: multiversx-chain-simulator
     ports:
       - "8085:8085"
     # Run a single shard so every address lives in shard 0 — transfers are then
@@ -29,3 +28,7 @@ services:
     # The simulator does not produce blocks on a timer; tests drive block
     # production explicitly via POST /simulator/generate-blocks/:n. This keeps
     # the scenario fully deterministic.
+
+networks:
+  default:
+    internal: true

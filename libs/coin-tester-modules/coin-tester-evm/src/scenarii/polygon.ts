@@ -82,7 +82,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://polygon-bor-rpc.publicnode.com", signer.exportMnemonic());
+    await spawnAnvil("polygon");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 

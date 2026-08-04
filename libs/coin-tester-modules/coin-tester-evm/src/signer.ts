@@ -1,7 +1,10 @@
 import type { EvmAddress } from "@ledgerhq/live-signer-evm";
 import { Signer } from "@ledgerhq/live-common/families/evm/signer";
 import { HDNodeWallet, Transaction } from "ethers";
-import { generateMnemonic, mnemonicToSeed } from "bip39";
+import { mnemonicToSeed } from "bip39";
+
+export const COIN_TESTER_EVM_MNEMONIC =
+  "test test test test test test test test test test test junk";
 
 type EvmSigner = Signer & { exportMnemonic: () => string };
 
@@ -15,15 +18,13 @@ function signTransaction(wallet: HDNodeWallet, transaction: string): Promise<str
 }
 
 export async function buildSigner(): Promise<EvmSigner> {
-  const mnemonic = generateMnemonic();
-  const seed = await mnemonicToSeed(mnemonic);
-  const seedHex = seed.toString("hex");
-  const root = HDNodeWallet.fromSeed(`0x${seedHex}`);
+  const seed = await mnemonicToSeed(COIN_TESTER_EVM_MNEMONIC);
+  const root = HDNodeWallet.fromSeed(`0x${seed.toString("hex")}`);
 
   const wallet = (path: string) => root.derivePath(path);
 
   return {
-    exportMnemonic: () => mnemonic,
+    exportMnemonic: () => COIN_TESTER_EVM_MNEMONIC,
     getAddress: (path: string) => getAddress(wallet(path)),
     signTransaction: (path: string, transaction: string) =>
       signTransaction(wallet(path), transaction),

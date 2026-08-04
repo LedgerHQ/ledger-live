@@ -79,7 +79,7 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://sonic-rpc.publicnode.com", signer.exportMnemonic());
+    await spawnAnvil("sonic");
 
     setCoinConfig(() => ({
       info: {

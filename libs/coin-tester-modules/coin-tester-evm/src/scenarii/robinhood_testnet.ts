@@ -13,13 +13,11 @@ import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-co
 
 type RobinhoodTestnetScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-const ROBINHOOD_TESTNET_RPC = "https://rpc.testnet.chain.robinhood.com";
-
 export const scenarioRobinhoodTestnet: Scenario<GenericTransaction, Account> = {
   name: "Robinhood Testnet — send native ETH",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil(ROBINHOOD_TESTNET_RPC, signer.exportMnemonic());
+    await spawnAnvil("robinhood_testnet");
 
     setCoinConfig(() => ({
       info: {

@@ -107,10 +107,169 @@ jobs:
           echo "Is affected: $IS_AFFECTED"
           echo "Matrix: $MATRIX"
 
+  prepare-evm:
+    name: Prepare EVM State
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' && contains(needs.is-affected.outputs.matrix, 'evm') }}
+    runs-on: public-ledgerhq-shared-small
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Login to Ledger Artifactory
+        id: jfrog-login
+        timeout-minutes: 10
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Login to JFrog OCI Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
+          username: ${{ steps.jfrog-login.outputs.oidc-user }}
+          password: ${{ steps.jfrog-login.outputs.oidc-token }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Setup environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+
+      - name: Generate EVM state files
+        run: pnpm coin:tester:evm dump-state
+
+      - name: Upload EVM state files
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: evm-state
+          path: libs/coin-tester-modules/coin-tester-evm/state/
+
+  prepare-polkadot:
+    name: Prepare Polkadot State
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' && contains(needs.is-affected.outputs.matrix, 'polkadot') }}
+    runs-on: public-ledgerhq-shared-small
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Login to Ledger Artifactory
+        id: jfrog-login
+        timeout-minutes: 10
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Login to JFrog OCI Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
+          username: ${{ steps.jfrog-login.outputs.oidc-user }}
+          password: ${{ steps.jfrog-login.outputs.oidc-token }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Setup environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+
+      - name: Fetch Polkadot state
+        run: pnpm coin:tester:polkadot fetch-state
+
+      - name: Upload Polkadot state
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: polkadot-state
+          path: libs/coin-tester-modules/coin-tester-polkadot/state/
+
+  prepare-tezos:
+    name: Prepare Tezos State
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' && contains(needs.is-affected.outputs.matrix, 'tezos') }}
+    runs-on: public-ledgerhq-shared-small
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Login to Ledger Artifactory
+        id: jfrog-login
+        timeout-minutes: 10
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Login to JFrog OCI Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: jfrog.ledgerlabs.net/bbs-oci-prod-green
+          username: ${{ steps.jfrog-login.outputs.oidc-user }}
+          password: ${{ steps.jfrog-login.outputs.oidc-token }}
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Setup environment
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
+
+      - name: Fetch Tezos state
+        run: pnpm coin:tester:tezos fetch-state
+
+      - name: Upload Tezos state
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: tezos-state
+          path: libs/coin-tester-modules/coin-tester-tezos/state/
+
   coin-tester:
     name: Coin Tester - ${{ matrix.chain }}
-    needs: is-affected
-    if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
+    needs: [is-affected, prepare-evm, prepare-polkadot, prepare-tezos]
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' && (needs.prepare-evm.result == 'success' || needs.prepare-evm.result == 'skipped') && (needs.prepare-polkadot.result == 'success' || needs.prepare-polkadot.result == 'skipped') && (needs.prepare-tezos.result == 'success' || needs.prepare-tezos.result == 'skipped') }}
     runs-on: public-ledgerhq-shared-small
     permissions:
       id-token: write
@@ -123,6 +282,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Download EVM state files
+        if: matrix.chain == 'evm'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: evm-state
+          path: libs/coin-tester-modules/coin-tester-evm/state/
+
+      - name: Download Polkadot state
+        if: matrix.chain == 'polkadot'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: polkadot-state
+          path: libs/coin-tester-modules/coin-tester-polkadot/state/
+
+      - name: Download Tezos state
+        if: matrix.chain == 'tezos'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: tezos-state
+          path: libs/coin-tester-modules/coin-tester-tezos/state/
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop

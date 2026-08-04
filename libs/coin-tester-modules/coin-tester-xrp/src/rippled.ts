@@ -6,7 +6,6 @@ import { deriveAddress, deriveKeypair, sign } from "ripple-keypairs";
 import { XRP_LOCAL_RPC, GENESIS_SEED } from "./fixtures";
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
-
 const composeOpts = () => ({
   cwd: PACKAGE_ROOT,
   log: Boolean(process.env.DEBUG),

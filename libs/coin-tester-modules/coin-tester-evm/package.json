@@ -54,7 +54,8 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
-    "start": "pnpm jest --runTestsByPath src/*.test.ts --runInBand",
+    "dump-state": "pnpm jest --runTestsByPath src/dump-state.test.ts --runInBand",
+    "start": "pnpm jest --runTestsByPath src/scenarii.test.ts --runInBand",
     "unimported": "unimported"
   },
   "dependencies": {

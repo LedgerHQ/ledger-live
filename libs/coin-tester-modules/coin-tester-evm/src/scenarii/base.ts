@@ -53,9 +53,7 @@ export const scenarioBase: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Base Transactions",
   setup: async () => {
     const signer = await buildSigner();
-
-    // 2797222 = deployment block of USDC on Base + 1
-    await spawnAnvil("https://mainnet.base.org", signer.exportMnemonic(), 2797222);
+    await spawnAnvil("base");
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
