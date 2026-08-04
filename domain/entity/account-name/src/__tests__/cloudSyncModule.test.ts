@@ -1,4 +1,14 @@
 import { accountNamesSyncModule } from "../cloudSyncModule";
+import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
+
+describeCloudSyncModuleContract("accountNamesSyncModule contract", accountNamesSyncModule, {
+  emptyLocalState: new Map(),
+  nonEmptyLocalState: new Map([
+    ["acc1", "My Account"],
+    ["acc2", "Savings"],
+  ]),
+  matchingDistantState: { acc1: "My Account", acc2: "Savings" },
+});
 
 const makeMap = (entries: Record<string, string>) => new Map(Object.entries(entries));
 
