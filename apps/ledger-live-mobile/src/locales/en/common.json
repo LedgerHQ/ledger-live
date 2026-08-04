@@ -9653,6 +9653,21 @@
       "cta": "Try again"
     }
   },
+  "perpsDeposit": {
+    "title": "Deposit",
+    "inputDepositAmount": "Deposit ~{{value}}{{currencyTicker}}",
+    "inputSubText": "Swap and deposit via SwapKit",
+    "selectCurrencyTitle": "Deposit with {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
+    "selectCurrencyDescription": "No account",
+    "review": "Review",
+    "keypadDelete": "Delete last digit",
+    "formErrors": {
+      "enterAmount": "Enter an amount",
+      "minDeposit": "Minimum deposit is $5",
+      "amountExceedsBalance": "Amount exceeds available balance"
+    }
+  },
   "swapErrors": {
     "incorrectCommandData": {
       "title": "Incorrect command data",

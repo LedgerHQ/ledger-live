@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from "react";
 import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
 import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
+import PerpsDepositRoot from "LLD/features/Perps/screens/PerpsDeposit/PerpsDepositDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
@@ -25,6 +26,7 @@ const GlobalDialogs = () => (
       <SendFlowRoot />
     </Suspense>
     <PerpsSignRoot />
+    <PerpsDepositRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>
       <ReleaseNotes />
