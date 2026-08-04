@@ -1,5 +1,22 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.49.0-next.1
+
+### Minor Changes
+
+- [#20349](https://github.com/LedgerHQ/ledger-live/pull/20349) [`f79de59`](https://github.com/LedgerHQ/ledger-live/commit/f79de59f95ed384fc2b2e49dfa28efb1a0493d4a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
+
+  ZIP-317 charges per logical action — `max(inputs, outputs)`, floored at two actions, so 10 000 zats minimum — while the shared Bitcoin path prices transactions in sat/vByte. The account-wide rate was derived from the marginal fee spread over one input (5000 zats over ~148 vBytes ⇒ 34 sat/vB), which billed only 7684 zats on a one-input, two-output send: below the floor, and rejected by the node.
+
+  A single rate cannot express ZIP-317, since the floor stays flat while the byte count grows — a rate covering a one-input send would charge nearly double the fee owed on a two-input one. The rate is now chosen per transaction: `getAccountNetworkInfo` provides the rate that covers ZIP-317 for any layout (~53 sat/vB, set by the smallest transaction), and the Zcash chain adapter tightens it to the transaction's actual layout through the new `ChainAdapter.resolveFeePerByte` hook, falling back to the safe rate whenever the tighter one cannot be confirmed. Resulting fees land within ~2% above the ZIP-317 amount instead of under it.
+
+  Only the legacy transparent path is affected — the flows routed to the PCZT builder already compute their ZIP-317 fee directly.
+
+### Patch Changes
+
+- Updated dependencies [[`f715aa5`](https://github.com/LedgerHQ/ledger-live/commit/f715aa516225f72124e083e3ffa0f254b9d5df4f)]:
+  - @ledgerhq/live-signer-zcash@0.7.0-next.1
+
 ## 0.49.0-next.0
 
 ### Minor Changes

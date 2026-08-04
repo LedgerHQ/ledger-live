@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-multiversx
 
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@37.0.0-next.1
+
 ## 0.3.0-next.0
 
 ### Minor Changes

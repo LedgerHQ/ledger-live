@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/live-signer-zcash": patch
-"live-mobile": patch 
+"@ledgerhq/live-signer-zcash": minor
+"live-mobile": minor 
 ---
 
 Fix Zcash sends failing before the device prompt when the coin being spent came from a V4-format transaction (PROD-12599).

@@ -211,6 +211,8 @@
     "LIVE-32915-tier1b-coin-native-errors",
     "LIVE-32915-tier2a-live-network-errors",
     "LIVE-32989-cleanup-queued-drawer",
+    "LIVE-35152-zcash-zip317-transparent-fee",
+    "PROD-12599-zcash-v4-source-tx-override",
     "QAA-1114-review-subaccount-spec",
     "big-swans-greet",
     "borrow-e2e-testids-refactor",

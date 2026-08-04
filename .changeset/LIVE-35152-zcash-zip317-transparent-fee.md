@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-bitcoin": minor
 ---
 
 Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
