@@ -80,6 +80,7 @@
     "@features/flow-card": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/flow-large-screen-upsell": "workspace:^",
+    "@features/platform-address-validation": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@features/platform-style": "workspace:^",

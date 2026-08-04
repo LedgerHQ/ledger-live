@@ -110,6 +110,7 @@
     "@features/flow-card": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
+    "@features/platform-address-validation": "workspace:^",
     "@features/platform-currencies": "workspace:^",
     "@features/platform-env": "workspace:*",
     "@features/platform-feature-flags": "workspace:^",
