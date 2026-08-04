@@ -122,9 +122,6 @@
     },
     "./features/flow/contacts": {
       "entry": ["src/jest.native.ts"]
-    },
-    "./libs/coin-tester-modules/coin-tester-vechain": {
-      "entry": ["src/scenarii/vechain.ts"]
     }
   }
 }

@@ -34,6 +34,11 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./scenarii/vechain": {
+      "@ledgerhq/source": "./src/scenarii/vechain.ts",
+      "require": "./lib/scenarii/vechain.js",
+      "default": "./lib-es/scenarii/vechain.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
