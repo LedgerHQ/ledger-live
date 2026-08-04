@@ -52,6 +52,10 @@ export const getFeeResourceBreakdown = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<FeeResourceBreakdown> => {
+  // SPONSORING SEAM (LIVE-32775): when `transaction.energyProviderInfo` is set, rented energy from a
+  // provider will augment `energyAvailable` below (LIVE-32776 savings estimate / LIVE-32892 crafting).
+  // Dormant for now — availability is computed from self-staked energy only, so behavior is unchanged.
+
   // Energy is only required for an actual TRC20 transfer — native/TRC10 use none, non-"send" modes
   // don't transfer, and a zero-amount non-max send is headed for AmountRequired. Compute it up front
   // so the network-failure path reports the "insufficient" sentinel only when energy is truly needed.
@@ -159,6 +163,11 @@ const computeActiveRecipientTrc20Fee = async (
   tokenAccount: TokenAccount,
   breakdown?: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
+  // SPONSORING SEAM (LIVE-32775): when `transaction.energyProviderInfo` is set, a sponsored send rents
+  // energy from a provider instead of burning the sender's TRX, so the fee below changes once
+  // rented-energy pricing lands (LIVE-32776 savings estimate / LIVE-32892 crafting). Dormant for now —
+  // a sponsored tx is priced exactly like a standard one, so behavior is unchanged.
+
   try {
     const resourceBreakdown =
       breakdown ?? (await getFeeResourceBreakdown(account, transaction, tokenAccount));
