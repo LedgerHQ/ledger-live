@@ -6,6 +6,7 @@ import type {
   ContactInput,
 } from "@domain/entity-contact";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { ContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
 import type { ContactAddressDetailAsset, ContactAddressDetailNetwork } from "../types";
 
 export type ContactAddressCurrencyPort = Readonly<{
@@ -43,7 +44,12 @@ export type ContactAddressDetailActionsPorts = Readonly<{
   deletion: ContactAddressDeletionPort;
 }>;
 
-/** Injected by app wiring; aligns with the future @features/platform-contacts contract. */
+export type ContactAddressDetailEditFlowPorts = ContactAddressDetailActionsPorts &
+  Readonly<{
+    signerValidation: ContactSignerValidationPort;
+  }>;
+
+/** Injected by app wiring. */
 export type ContactAddressDetailPort = Readonly<{
   resolveNetwork(currencyId: ContactAddress["currencyId"]): ContactAddressDetailNetwork;
   resolveAsset(currencyId: ContactAddress["currencyId"]): ContactAddressDetailAsset;

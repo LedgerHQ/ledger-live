@@ -123,6 +123,7 @@ export type ContactAddressDetailEditIntent = Readonly<{
   type: "edit-address";
   contactId: ContactId;
   addressId: ContactAddressId;
+  editRequirement: ContactEditRequirement;
 }>;
 
 export type ContactAddressDetailDeleteIntent = Readonly<{
@@ -142,4 +143,5 @@ export type ContactAddressDetailActionsViewModel = Readonly<{
   editIntent: ContactAddressDetailEditIntent | undefined;
   deleteIntent: ContactAddressDetailDeleteIntent;
   deleteLifecycle: ContactAddressDeleteLifecycle;
+  isSignerRequiredForEdit: boolean;
 }>;

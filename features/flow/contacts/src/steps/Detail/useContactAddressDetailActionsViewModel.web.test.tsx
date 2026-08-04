@@ -48,7 +48,7 @@ describe("useContactAddressDetailActionsViewModel", () => {
     });
   });
 
-  it("exposes an edit intent when the address exists", () => {
+  it("exposes an edit intent with a signer-required requirement when the address exists", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
@@ -61,7 +61,12 @@ describe("useContactAddressDetailActionsViewModel", () => {
       type: "edit-address",
       contactId: contact.id,
       addressId: address.id,
+      editRequirement: {
+        type: "confirmation-required",
+        reason: "contact-has-address",
+      },
     });
+    expect(result.current.isSignerRequiredForEdit).toBe(true);
   });
 
   it("exposes undefined send and edit intents when the address is not found", () => {
