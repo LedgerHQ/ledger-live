@@ -177,6 +177,36 @@ describe("ContactsAddAddressEntry", () => {
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
   });
 
+  it("should render the sanctioned banner without a redundant helper", () => {
+    render(
+      <ContactsAddAddressEntry
+        addressEntry={{
+          status: "invalid",
+          value: VALID_ADDRESS,
+          resolvedAddress: null,
+          inputMethod: "manual",
+          error: "sanctioned",
+        }}
+        labels={labels}
+        sanctionedBanner={{
+          description: "This wallet address is sanctioned.",
+          actionLabel: "Learn more",
+          onAction: jest.fn(),
+          testID: "contacts-sanctioned-address-banner",
+        }}
+        onChangeText={jest.fn()}
+        onConfirm={jest.fn()}
+        onQrCodeClick={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-input").props).toMatchObject({
+      helperText: undefined,
+      status: "error",
+    });
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeTruthy();
+  });
+
   it("should render validation unavailability as a blocking error", () => {
     renderEntry({
       status: "unavailable",

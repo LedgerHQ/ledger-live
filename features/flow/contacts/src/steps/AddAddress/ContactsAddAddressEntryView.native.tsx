@@ -7,6 +7,7 @@ import {
   Box,
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
+import { SanctionedAddressBanner } from "@features/platform-address-validation";
 import type { ContactsAddAddressEntryViewProps } from "./ContactsAddAddressEntry.types";
 
 export function ContactsAddAddressEntryView({
@@ -16,6 +17,7 @@ export function ContactsAddAddressEntryView({
   bottomPadding,
   inputStatus,
   helperText,
+  sanctionedBanner,
   showEnsDisclaimer,
   isConfirmEnabled,
   onAddressChange,
@@ -44,6 +46,7 @@ export function ContactsAddAddressEntryView({
             autoCorrect={false}
             spellCheck={false}
           />
+          {sanctionedBanner ? <SanctionedAddressBanner {...sanctionedBanner} /> : null}
           {showEnsDisclaimer ? (
             <Banner
               testID="contacts-add-address-ens-disclaimer"

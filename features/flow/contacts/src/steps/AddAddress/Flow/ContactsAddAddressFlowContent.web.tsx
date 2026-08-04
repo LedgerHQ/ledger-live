@@ -2,6 +2,7 @@ import React from "react";
 import { ContactsAddAddressEntry } from "../ContactsAddAddressEntry.web";
 import { ContactsAddAddressNameInput } from "../AddressName/Input/ContactsAddAddressNameInput.web";
 import type { ContactsAddAddressNameLabels } from "../AddressName/types";
+import type { SanctionedAddressBannerProps } from "@features/platform-address-validation";
 import { ContactsAddAddressCompletion } from "../Completion/ContactsAddAddressCompletion.web";
 import type {
   AddAddressCompletionLabels,
@@ -20,6 +21,7 @@ export type ContactsAddAddressFlowContentProps = Readonly<{
   entryLabels: AddAddressEntryLabels;
   nameLabels: ContactsAddAddressNameLabels;
   completionLabels: AddAddressCompletionLabels;
+  sanctionedBanner?: SanctionedAddressBannerProps;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
   onAddressLabelChange: (value: string) => void;
@@ -58,6 +60,7 @@ export function ContactsAddAddressFlowContent({
   entryLabels,
   nameLabels,
   completionLabels,
+  sanctionedBanner,
   onAddressChange,
   onContinueFromAddressDetails,
   onAddressLabelChange,
@@ -73,6 +76,7 @@ export function ContactsAddAddressFlowContent({
           addressLabel={state.addressLabel}
           labels={entryLabels}
           nameLabels={nameLabels}
+          sanctionedBanner={sanctionedBanner}
           onAddressChange={onAddressChange}
           onAddressLabelChange={onAddressLabelChange}
           onConfirm={onContinueFromAddressDetails}

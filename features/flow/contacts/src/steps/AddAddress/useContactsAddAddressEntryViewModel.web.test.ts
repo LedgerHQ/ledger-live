@@ -157,6 +157,27 @@ describe("useContactsAddAddressEntryViewModel", () => {
     });
   });
 
+  it("should expose a sanctioned banner alongside the Desktop helper", () => {
+    const sanctionedBanner = {
+      description: "This wallet address is sanctioned.",
+      actionLabel: "Learn more",
+      onAction: jest.fn(),
+    };
+    const { result } = renderViewModel({
+      addressEntry: {
+        status: "invalid",
+        value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+        resolvedAddress: null,
+        inputMethod: "manual",
+        error: "sanctioned",
+      },
+      sanctionedBanner,
+    });
+
+    expect(result.current.sanctionedBanner).toBe(sanctionedBanner);
+    expect(result.current.helperText).toBe("This address is sanctioned and cannot be used.");
+  });
+
   it("should require a valid address label for the combined Desktop form", () => {
     const onAddressLabelChange = jest.fn();
     const { result } = renderViewModel({

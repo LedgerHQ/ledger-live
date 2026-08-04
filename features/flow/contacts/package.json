@@ -26,6 +26,7 @@
     "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
+    "@features/platform-address-validation": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
     "@shared/feature-flags": "workspace:^",
     "@shared/qr-code": "workspace:*"

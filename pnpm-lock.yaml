@@ -4687,6 +4687,9 @@ importers:
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../../domain/entity/currency-token
+      '@features/platform-address-validation':
+        specifier: workspace:^
+        version: link:../../platform/address-validation
       '@features/platform-feature-flags':
         specifier: workspace:^
         version: link:../../platform/feature-flags

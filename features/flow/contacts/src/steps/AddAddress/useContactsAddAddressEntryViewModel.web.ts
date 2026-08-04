@@ -75,6 +75,7 @@ function resolveAddressInputPresentation(
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
   labels,
+  sanctionedBanner,
   onAddressChange,
   onConfirm,
   ...addressLabelProps
@@ -126,6 +127,9 @@ export function useContactsAddAddressEntryViewModel({
     value: addressEntry.value,
     labels,
     ...presentation,
+    ...(addressEntry.status === "invalid" && addressEntry.error === "sanctioned" && sanctionedBanner
+      ? { sanctionedBanner }
+      : {}),
     ...addressLabelViewProps,
     isConfirmEnabled: presentation.isConfirmEnabled && isNameValid && onConfirm !== undefined,
     onChange,

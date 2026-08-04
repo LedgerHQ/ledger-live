@@ -87,6 +87,7 @@ function resolveAddressInputPresentation(
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
   labels,
+  sanctionedBanner,
   bottomOffset = 0,
   onChangeText,
   onConfirm,
@@ -102,13 +103,17 @@ export function useContactsAddAddressEntryViewModel({
     [addressEntry.value, onChangeText],
   );
 
+  const shouldShowSanctionedBanner =
+    addressEntry.status === "invalid" && addressEntry.error === "sanctioned" && sanctionedBanner;
+
   return {
     value: addressEntry.value,
     labels,
     bottomOffset,
     bottomPadding: 32,
     inputStatus: presentation.status,
-    helperText: presentation.helperText,
+    helperText: shouldShowSanctionedBanner ? undefined : presentation.helperText,
+    ...(shouldShowSanctionedBanner ? { sanctionedBanner } : {}),
     showEnsDisclaimer: presentation.showEnsDisclaimer,
     isConfirmEnabled: presentation.isConfirmEnabled,
     onAddressChange,
