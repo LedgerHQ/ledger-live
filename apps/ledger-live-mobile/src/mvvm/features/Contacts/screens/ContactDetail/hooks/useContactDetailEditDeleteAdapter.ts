@@ -1,4 +1,8 @@
-import { INVALID_CONTACT_NAME_ERROR_NAME, type ContactId } from "@domain/entity-contact";
+import {
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+  type ContactId,
+} from "@domain/entity-contact";
 import {
   type ContactsDeleteContactDrawerProps,
   type ContactsEditSignerDrawerProps,
@@ -51,6 +55,7 @@ export function useContactDetailEditDeleteAdapter(
       applyChanges: t("contacts.editContact.applyChanges"),
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
       },
     }),
     [t],
