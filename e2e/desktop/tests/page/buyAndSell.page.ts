@@ -129,7 +129,7 @@ export class BuyAndSellPage extends WebViewAppPage {
               `after ${maxReloads + 1} attempts — webview stuck loading.`,
           );
         }
-        await webview.reload();
+        await webview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
       }
     }
   }
