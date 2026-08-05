@@ -8,7 +8,7 @@ import {
   Button,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsAddAddressEntryViewProps } from "./ContactsAddAddressEntry.types";
-import { SanctionedAddressBanner } from "./SanctionedAddressBanner.native";
+import { SanctionedAddressBanner } from "./components/SanctionedAddressBanner/SanctionedAddressBanner.native";
 
 export function ContactsAddAddressEntryView({
   value,

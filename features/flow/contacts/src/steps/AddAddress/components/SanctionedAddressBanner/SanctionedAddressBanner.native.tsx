@@ -1,6 +1,6 @@
 import React from "react";
 import { Banner, Button } from "@ledgerhq/lumen-ui-rnative";
-import type { SanctionedAddressBannerProps } from "./ContactsAddAddressEntry.types";
+import type { SanctionedAddressBannerProps } from "../../ContactsAddAddressEntry.types";
 
 export function SanctionedAddressBanner({
   description,
