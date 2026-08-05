@@ -672,6 +672,78 @@ function markSpentNotes(tx: ShieldedTransaction, spentSet: Set<string>): Shielde
   };
 }
 
+/** How far the scan got, as persisted on the account. */
+function scanProgress(
+  result: ShieldedSyncResult,
+): Pick<ZcashPrivateInfo, "syncState" | "progress"> {
+  const totalBlocks = result.processedBlocks + result.remainingBlocks;
+  return {
+    syncState: result.remainingBlocks > 0 ? "running" : "complete",
+    progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
+  };
+}
+
+/**
+ * Fold a chunk that carries no transaction the account does not already hold.
+ *
+ * Only the scan cursor and the spent flags can move here: a note already known
+ * may have been spent elsewhere, which the chunk reports through its
+ * nullifiers. Operations are left untouched.
+ */
+function reduceUnchangedShieldedChunk(
+  accumulated: ShieldedScanAccumulated,
+  result: ShieldedSyncResult,
+  context: {
+    existingPrivateInfo: ZcashPrivateInfo;
+    transparentBalance: BigNumber;
+    lastProcessedBlock: number | null;
+    accountId: string;
+  },
+): ShieldedScanAccumulated {
+  const { existingPrivateInfo, transparentBalance, lastProcessedBlock, accountId } = context;
+  // The NAPI uses a unified spentKnownNullifiers list for all pools.
+  const spentNfs = result.spentKnownNullifiers ?? [];
+  const hasNewlySpentNotes = spentNfs.length > 0;
+  const spentSet = new Set(spentNfs);
+
+  const updatedTransactions = hasNewlySpentNotes
+    ? existingPrivateInfo.transactions.map(tx => markSpentNotes(tx, spentSet))
+    : existingPrivateInfo.transactions;
+  const orchardBalance = hasNewlySpentNotes
+    ? computeBalanceFromNotes(updatedTransactions)
+    : existingPrivateInfo.orchardBalance;
+  const ironwoodBalance = hasNewlySpentNotes
+    ? computeIronwoodBalanceFromNotes(updatedTransactions)
+    : existingPrivateInfo.ironwoodBalance;
+
+  const balance = computeZcashBalance(transparentBalance, {
+    orchardBalance,
+    saplingBalance: existingPrivateInfo.saplingBalance,
+    ironwoodBalance,
+  });
+
+  reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
+
+  return {
+    ...accumulated,
+    accountUpdate: {
+      ...accumulated.accountUpdate,
+      balance,
+      spendableBalance: balance,
+      blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
+      privateInfo: {
+        ...existingPrivateInfo,
+        ...scanProgress(result),
+        lastProcessedBlock,
+        lastSyncTimestamp: Date.now(),
+        transactions: updatedTransactions,
+        orchardBalance,
+        ironwoodBalance,
+      },
+    },
+  };
+}
+
 export function reduceShieldedSyncResult(
   accumulated: ShieldedScanAccumulated,
   result: ShieldedSyncResult,
@@ -693,51 +765,12 @@ export function reduceShieldedSyncResult(
   );
 
   if (newTransactions.length === 0) {
-    const totalBlocks = result.processedBlocks + result.remainingBlocks;
-    // The NAPI uses a unified spentKnownNullifiers list for all pools.
-    const spentNfs = result.spentKnownNullifiers ?? [];
-    let updatedTransactions = existingPrivateInfo.transactions;
-    if (spentNfs.length > 0) {
-      const spentSet = new Set(spentNfs);
-      updatedTransactions = updatedTransactions.map(tx => markSpentNotes(tx, spentSet));
-    }
-    const orchardBalance =
-      spentNfs.length > 0
-        ? computeBalanceFromNotes(updatedTransactions)
-        : existingPrivateInfo.orchardBalance;
-    const ironwoodBalance =
-      spentNfs.length > 0
-        ? computeIronwoodBalanceFromNotes(updatedTransactions)
-        : existingPrivateInfo.ironwoodBalance;
-
-    const balance = computeZcashBalance(transparentBalance, {
-      orchardBalance,
-      saplingBalance: existingPrivateInfo.saplingBalance,
-      ironwoodBalance,
+    return reduceUnchangedShieldedChunk(accumulated, result, {
+      existingPrivateInfo,
+      transparentBalance,
+      lastProcessedBlock,
+      accountId,
     });
-
-    reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
-
-    return {
-      ...accumulated,
-      accountUpdate: {
-        ...accumulated.accountUpdate,
-        balance,
-        spendableBalance: balance,
-        blockHeight: lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
-        privateInfo: {
-          ...existingPrivateInfo,
-          syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-          progress:
-            totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-          lastProcessedBlock,
-          lastSyncTimestamp: Date.now(),
-          transactions: updatedTransactions,
-          orchardBalance,
-          ironwoodBalance,
-        },
-      },
-    };
   }
 
   const newOperations = convertShieldedTransactionsToOperations(newTransactions, accountId);
@@ -765,13 +798,11 @@ export function reduceShieldedSyncResult(
   const ironwoodBalance = computeIronwoodBalanceFromNotes(allShieldedTx);
   const saplingBalance = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
 
-  const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance,
     orchardBalance,
     ironwoodBalance,
-    syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-    progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
+    ...scanProgress(result),
     estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
     ufvk: existingPrivateInfo?.ufvk ?? null,
     birthday: existingPrivateInfo?.birthday ?? null,
