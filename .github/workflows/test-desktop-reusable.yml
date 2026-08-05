@@ -93,6 +93,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-pnpm-cache: false
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
@@ -206,6 +207,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-pnpm-cache: false
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:

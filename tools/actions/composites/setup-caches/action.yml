@@ -81,11 +81,26 @@ runs:
         sudo apt-get update
         sudo apt-get install -y build-essential pkg-config
 
+    - name: Set pnpm store dir
+      shell: bash
+      run: |
+        store_dir="${{ github.workspace }}/.pnpm-store"
+        # Runner images may set npm_config_store_dir globally; env beats project .npmrc.
+        pnpm config set store-dir "$store_dir" --location project
+        echo "PNPM_STORE_DIR=$store_dir" >> "$GITHUB_ENV"
+        echo "npm_config_store_dir=$store_dir" >> "$GITHUB_ENV"
+
     - name: Get pnpm store directory
       id: get-store-path
       shell: bash
       run: |
-        echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        store_path="$(pnpm store path --silent)"
+        echo "store-path=$store_path" >> "$GITHUB_OUTPUT"
+        echo "Resolved pnpm store: $store_path"
+        expected="${{ github.workspace }}/.pnpm-store"
+        if [[ "$store_path" != "$expected"* ]]; then
+          echo "::warning::pnpm store path ($store_path) does not match expected ($expected)"
+        fi
 
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache
@@ -122,9 +137,9 @@ runs:
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ steps.get-store-path.outputs.store-path }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+        key: ${{ runner.os }}-pnpm-store-v2-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+          ${{ runner.os }}-pnpm-store-v2-
         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
         sessionToken: ${{ env.AWS_SESSION_TOKEN}}

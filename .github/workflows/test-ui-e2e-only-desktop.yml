@@ -203,7 +203,6 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      npm_config_loglevel: warn
       DO_NOT_TRACK: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
@@ -257,6 +256,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-pnpm-cache: false
 
       - name: Pull Speculos docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
