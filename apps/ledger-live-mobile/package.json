@@ -94,7 +94,6 @@
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-market-sentiment": "workspace:^",
-    "@domain/api-pay-card": "workspace:^",
     "@domain/api-push-devices": "workspace:*",
     "@domain/entity-account-name": "workspace:^",
     "@domain/entity-altcoins-sentiment": "workspace:^",

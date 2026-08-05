@@ -856,9 +856,6 @@ importers:
       '@domain/api-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/market-sentiment
-      '@domain/api-pay-card':
-        specifier: workspace:^
-        version: link:../../domain/api/pay-card
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -1632,9 +1629,6 @@ importers:
       '@domain/api-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/market-sentiment
-      '@domain/api-pay-card':
-        specifier: workspace:^
-        version: link:../../domain/api/pay-card
       '@domain/api-push-devices':
         specifier: workspace:*
         version: link:../../domain/api/push-devices
@@ -3988,46 +3982,6 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  domain/api/pay-card:
-    dependencies:
-      '@domain/entity-pay-card':
-        specifier: workspace:*
-        version: link:../../entity/pay-card
-      '@reduxjs/toolkit':
-        specifier: 'catalog:'
-        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.6
-    devDependencies:
-      '@jest/globals':
-        specifier: 'catalog:'
-        version: 30.2.0
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
-      react-redux:
-        specifier: 'catalog:'
-        version: 9.2.0(react@19.1.4)
-      typescript:
-        specifier: 'catalog:'
-        version: '@typescript/typescript6@6.0.2'
-
   domain/api/push-devices:
     dependencies:
       '@domain/entity-client-identity':
@@ -5348,12 +5302,15 @@ importers:
 
   features/flow/pay-card-auth:
     dependencies:
-      '@domain/api-pay-card':
-        specifier: workspace:*
-        version: link:../../../domain/api/pay-card
       '@domain/entity-pay-card':
         specifier: workspace:^
         version: link:../../../domain/entity/pay-card
+      '@shared/api-services':
+        specifier: workspace:^
+        version: link:../../../shared/api-services
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@features/platform-style':
         specifier: workspace:*

@@ -23,10 +23,10 @@ import {
   calApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  payCardApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
-import { payCardApiExtra } from "@domain/api-pay-card";
 import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
 import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 import { sleepingListener } from "./sleepingListener";

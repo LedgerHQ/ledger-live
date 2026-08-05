@@ -5,10 +5,12 @@
 
 Shared jest configuration for `features/flow/*` packages.
 
-`createFlowJestConfig()` returns a dual-project jest config:
+`createFlowJestConfig()` returns a multi-project jest config:
 
 - **web** (`*.web.test.ts?(x)`) — jsdom environment, for Desktop.
 - **native** (`*.native.test.ts?(x)`) — node environment, for Mobile.
+- **shared** (every other `*.test.ts?(x)`) — node environment, for platform-agnostic code such as
+  flow state. Node also provides `fetch`, which jsdom does not.
 
 Both projects transpile TS/TSX with `@swc/jest`.
 

@@ -94,7 +94,7 @@ Inside the Internal and Third-party tables, rows are grouped by **owning team** 
 | Buy API | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Sell API | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Provider session | `buy.api.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
-| Pay Card API | `global.api.stg.ledger-test.com`<br>_path: `/card`; VPN-only staging_ | [env](/libs/env/src/env.ts) | staging |
+| Pay Card API | `global.api.stg.ledger-test.com`<br>_path: `/card`; VPN-only staging_ | [env](/shared/env/src/definitions/team-ptx/index.ts) | staging |
 | Swap backend | `swap.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Ramp catalog | `cdn.live.ledger.com` | [env](/libs/env/src/env.ts) | prod |
 | Partner signatures (CAL) | `global.api.prd.ledger.com`<br>_path: `/cal`; staging: `global.api.stg.ledger-test.com`_ | [env](/libs/env/src/env.ts) | prod |

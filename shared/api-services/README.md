@@ -7,7 +7,8 @@ One **endpoint-less** RTK Query api per backend service. Each service owns every
 one backend — base URL, base query, retry policy, reducer path and the thunk `extraArgument` contract —
 and nothing about *what* is fetched from it.
 
-Use-case packages in `domain/api/*` add their endpoints with
+Use-case packages in `domain/api/*` — or a `features/flow/*` package whose endpoints serve only that
+flow — add their endpoints with
 [`injectEndpoints`](https://redux-toolkit.js.org/rtk-query/usage/code-splitting#injecting-endpoints)
 and their cache tags with `enhanceEndpoints({ addTagTypes })`. Both mutate and return the *same* api
 object, so one reducer, one middleware and one cache serve every use case on a given backend.
@@ -17,6 +18,7 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 | `services/cal` | `calApi` | `@domain/api-currency-token` |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-altcoins-sentiment`, `@domain/api-market-sentiment` |
 | `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat` |
+| `services/pay-card` | `payCardApi` | `@features/flow-pay-card-auth` |
 | `services/push-devices` | `pushDevicesApi` | `@domain/api-push-devices` |
 
 ## What lives here, and what does not
@@ -106,8 +108,7 @@ because consumers like `apps/web-tools`, `apps/cli` and `buildStandaloneCryptoAs
 one service only and must not be forced to supply config for services they never call.
 
 A base query added here must be **pure transport** — no endpoint URLs, no endpoint-name lookups, no wire
-schemas. `@domain/api-pay-card` is the one backend not yet here: its base query resolves mock responses
-keyed by endpoint URL, so it needs that untangling first. It is a holdout to migrate, not a precedent.
+schemas.
 
 > [!NOTE]
 > `@domain/api-aggregated-assets` is a placeholder for **DADA**, which currently lives as

@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { usePreAuthMutation } from "@domain/api-pay-card";
+import { usePreAuthMutation } from "../../../state";
 import { useCardLoginViewModel } from "../useCardLoginViewModel";
 
-jest.mock("@domain/api-pay-card", () => ({
+jest.mock("../../../state", () => ({
   usePreAuthMutation: jest.fn(),
 }));
 

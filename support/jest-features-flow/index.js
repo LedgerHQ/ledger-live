@@ -25,10 +25,11 @@ const nativeMocks = {
 };
 
 /**
- * Dual-project jest config for a features/flow package.
+ * Multi-project jest config for a features/flow package.
  *
  * - web project: jsdom, matches *.web.test.ts(x) — Desktop.
  * - native project: node, matches *.native.test.ts(x) — Mobile.
+ * - shared project: node, matches every other test — platform-agnostic code such as flow state.
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
@@ -72,6 +73,18 @@ function createFlowJestConfig(overrides = {}) {
         testEnvironment: "node",
         testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
         moduleNameMapper: { ...nativeMocks },
+      },
+      {
+        ...base,
+        displayName: "shared",
+        testEnvironment: "node",
+        testMatch: ["**/*.test.ts?(x)", "**/*.spec.ts?(x)"],
+        // Platform-suffixed tests belong to the projects above; without this they would run twice.
+        testPathIgnorePatterns: [
+          ...testPathIgnorePatterns,
+          "\\.web\\.(test|spec)\\.",
+          "\\.native\\.(test|spec)\\.",
+        ],
       },
     ],
     ...overrides,

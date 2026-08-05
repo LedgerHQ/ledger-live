@@ -13,10 +13,10 @@ import {
   calApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  payCardApiExtra,
   pushDevicesApiExtra,
   swapApiExtra,
 } from "@shared/api-services";
-import { payCardApiExtra } from "@domain/api-pay-card";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";

@@ -16,6 +16,21 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 The host app provides `openHostedLogin` so platform-specific navigation remains at the app
 composition root.
 
+## Card API
+
+The three endpoints this flow calls live in `src/state/api.ts`, injected into the endpoint-less
+`payCardApi` service from [`@shared/api-services`](../../../shared/api-services/README.md):
+
+| Endpoint | Method | Purpose |
+| -------- | ------ | ------- |
+| `/card/v1/pre-auth` | POST | Exchange a provider for the hosted login URL |
+| `/card/v1/auth` | POST | Exchange the OAuth `state` and `code` for an app session token |
+| `/card/v1/me` | GET | Read the card holder's verification and card status |
+
+Reaching the backend — base URL (`PAY_CARD_API_BASE_URL`, staging is VPN-only) and the bearer token —
+belongs to the service; the flow owns only the wire contracts in `src/state/schema.ts` and the
+endpoints. Apps register `payCardApi`; importing this flow is what injects the endpoints into it.
+
 ## Platform resolution
 
 Platform files live side by side (`.web` / `.native`). Imports omit the suffix; TypeScript
@@ -60,9 +75,11 @@ pay-card-auth/
     ├── hooks/                              # Flow-local hooks
     ├── router/                             # Flow-local routing
     ├── state/
-    │   ├── schema.ts                       # State models used only by this flow
-    │   ├── slice.ts                        # Redux slice used only by this flow
-    │   └── api.ts                          # Flow-local RTK Query API
+    │   ├── __tests__/
+    │   │   └── api.test.ts                 # Endpoint contract tests
+    │   ├── api.ts                          # Card API endpoints, injected into payCardApi
+    │   ├── index.ts                        # Flow-local state surface
+    │   └── schema.ts                       # Card API wire contracts
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

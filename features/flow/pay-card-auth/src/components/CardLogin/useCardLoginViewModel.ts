@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { usePreAuthMutation } from "@domain/api-pay-card";
+import { usePreAuthMutation } from "../../state";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
 
 function getSecureHostedLoginUrl(loginUrl: string): string {
