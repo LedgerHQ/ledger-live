@@ -433,6 +433,7 @@ describe("Contacts integration", () => {
     expect(assetList).toHaveClass("h-auto");
     expect(assetList).toHaveClass("min-h-0");
     expect(assetList).toHaveClass("flex-1");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-0");
 
     act(() => {
       store
@@ -448,6 +449,7 @@ describe("Contacts integration", () => {
     expect(confirmationButton).toBeDisabled();
     expect(confirmationButton.querySelector("svg")).not.toBeNull();
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-24");
   });
 
   it("should render the address and its prefilled name together before review", async () => {

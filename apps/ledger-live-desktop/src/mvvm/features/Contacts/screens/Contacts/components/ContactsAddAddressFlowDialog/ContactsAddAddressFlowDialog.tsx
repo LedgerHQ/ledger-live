@@ -97,7 +97,9 @@ export function ContactsAddAddressFlowDialog({
           <DialogFlow
             currentStep={currentStep}
             defaultOptions={{
-              dialogBodyProps: { className: "!mb-0 px-24 pb-24 pt-12" },
+              dialogBodyProps: {
+                className: `!mb-0 px-24 ${isSelectingCurrency ? "pb-0" : "pb-24"} pt-12`,
+              },
               dialogContentProps: { className: "w-400 bg-canvas-sheet pb-0" },
             }}
             height={isSelectingCurrency ? "fixed" : undefined}
