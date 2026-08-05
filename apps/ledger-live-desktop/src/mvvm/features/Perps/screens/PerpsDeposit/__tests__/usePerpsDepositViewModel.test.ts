@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { act, renderHook } from "tests/testSetup";
 import { usePerpsDepositViewModel, type PerpsDepositData } from "../usePerpsDepositViewModel";
