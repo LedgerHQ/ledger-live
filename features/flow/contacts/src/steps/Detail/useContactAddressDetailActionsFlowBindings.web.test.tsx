@@ -3,7 +3,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { contactsSlice } from "@domain/entity-contact";
-import { mockContactWithAddress, mockContactWithMultipleAddresses, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  mockContactWithAddress,
+  mockContactWithMultipleAddresses,
+  mockMeContact,
+} from "@domain/entity-contact/schema.mock";
 import { createMockContactSignerValidationPort } from "../../platform/contactSignerValidationPort";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsFlowBindings } from "./useContactAddressDetailActionsFlowBindings";

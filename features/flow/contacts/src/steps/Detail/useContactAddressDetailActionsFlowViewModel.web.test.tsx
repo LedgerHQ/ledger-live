@@ -2,8 +2,16 @@ import { createElement, type ReactNode } from "react";
 import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { ContactAddressIdSchema, contactsSlice, type ContactAddressId } from "@domain/entity-contact";
-import { mockContactAddress, mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import {
+  ContactAddressIdSchema,
+  contactsSlice,
+  type ContactAddressId,
+} from "@domain/entity-contact";
+import {
+  mockContactAddress,
+  mockContactWithAddress,
+  mockMeContact,
+} from "@domain/entity-contact/schema.mock";
 import {
   createMockContactSignerValidationPort,
   type ContactSignerValidationPort,
@@ -220,11 +228,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
       ReturnType<typeof useContactAddressDetailActionsFlowViewModel>,
       { addressId: ContactAddressId | undefined }
     >(
-      ({
-        addressId,
-      }: {
-        addressId: ContactAddressId | undefined;
-      }) =>
+      ({ addressId }: { addressId: ContactAddressId | undefined }) =>
         useContactAddressDetailActionsFlowViewModel({
           contactId: contact.id,
           addressId,
