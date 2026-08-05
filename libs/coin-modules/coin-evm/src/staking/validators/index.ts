@@ -1,6 +1,5 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "../contracts";
 import monadValidatorApi from "./monad";
 import seiValidatorApi from "./sei";
@@ -29,10 +28,7 @@ export const getValidatorApi = (currencyId: string): ValidatorApi | undefined =>
   }
 };
 
-const resolveValidators = async (
-  currencyId: string,
-  cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
+const resolveValidators = async (currencyId: string, cursor?: Cursor): Promise<Page<Validator>> => {
   const api = getValidatorApi(currencyId);
   if (!api) return { items: [], next: undefined };
   return api.fetchValidators(currencyId, cursor);
@@ -74,7 +70,7 @@ export const clearValidatorsCache = (currencyId?: string): void => {
 export const getValidators = async (
   currencyId: string,
   cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
+): Promise<Page<Validator>> => {
   const key = pageKey(currencyId, cursor);
   issuedKeys.add(key);
 
@@ -141,29 +137,4 @@ export const hasChainRewards = (currencyId: string): boolean => {
   return typeof config?.functions.claimReward === "string";
 };
 
-const toValidatorBalance = (tokens: string): bigint => {
-  try {
-    const balance = BigInt(tokens);
-    return balance > 0n ? balance : 0n;
-  } catch {
-    return 0n;
-  }
-};
-
-export const getValidatorsPage = async (
-  currencyId: string,
-  cursor?: Cursor,
-): Promise<Page<Validator>> => {
-  const page = await getValidators(currencyId, cursor);
-  return {
-    items: page.items.map(v => ({
-      id: v.validatorId ?? v.validatorAddress,
-      address: v.validatorAddress,
-      name: v.name,
-      balance: toValidatorBalance(v.tokens),
-      commissionRate: v.commission.toString(),
-      apy: v.estimatedYearlyRewardsRate,
-    })),
-    next: page.next,
-  };
-};
+export const getValidatorsPage = getValidators;

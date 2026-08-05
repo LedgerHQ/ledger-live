@@ -21,28 +21,15 @@ export {
 } from "./validators";
 export { prepareStakingIntent } from "./prepareIntents";
 export {
-  mapDelegations,
-  mapUnbondings,
-  mapRedelegations,
-  getMaxDelegationAvailable,
-  getMaxEstimatedBalance,
   canUndelegate,
   canWithdraw,
   canDelegate,
   canRedelegate,
   canCompound,
-  getRedelegation,
-  getRedelegationCompletionDate,
   parseAmountStringToNumber,
   decodeRedelegatePayload,
   isSeiAccountUnassociated,
 } from "./logic";
-export {
-  assignFromAccountRaw,
-  assignToAccountRaw,
-  fromStakingResourcesRaw,
-  toStakingResourcesRaw,
-} from "./serialization";
 export {
   fetchRedelegations,
   buildRedelegationsFromOps,
