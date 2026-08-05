@@ -53,7 +53,7 @@ export function mapTxToOps(
           recipients: [toAccount],
           date,
           extra: {
-            transferId: txArgs.id.parsed?.toString(),
+            ...(txArgs.id.parsed !== undefined && { transferId: txArgs.id.parsed.toString() }),
           },
         });
       }
@@ -73,7 +73,7 @@ export function mapTxToOps(
           recipients: [toAccount],
           date,
           extra: {
-            transferId: txArgs.id.parsed?.toString(),
+            ...(txArgs.id.parsed !== undefined && { transferId: txArgs.id.parsed.toString() }),
           },
         });
       }
