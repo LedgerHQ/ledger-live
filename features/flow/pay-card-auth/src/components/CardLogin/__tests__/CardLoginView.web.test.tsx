@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style";
-import { CardLoginView } from "../CardLoginView";
+import { CardLoginView } from "../CardLoginView.web";
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Ledger Card",

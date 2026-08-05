@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { CardLoginView } from "../CardLoginView";
+import { CardLoginView } from "../CardLoginView.native";
 
 const defaultProps: React.ComponentProps<typeof CardLoginView> = {
   title: "Ledger Card",

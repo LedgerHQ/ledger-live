@@ -31,7 +31,7 @@ import { CardLoginView } from "./CardLoginView";
 | TypeScript (IDE) | Solution-style `tsconfig.json` → `tsconfig.web.json` / `tsconfig.native.json` |
 | Desktop (Rspack) | `.web` / unsuffixed |
 | Mobile (Metro) | `.native` / unsuffixed |
-| Jest | `moduleFileExtensions` prefers `.web.*` or `.native.*` per project |
+| Jest | Tests import `.web` / `.native` files explicitly |
 
 | Platform         | File resolved                        |
 | ---------------- | ------------------------------------ |
