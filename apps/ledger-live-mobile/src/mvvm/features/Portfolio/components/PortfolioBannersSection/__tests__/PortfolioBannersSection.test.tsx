@@ -29,7 +29,7 @@ const hiddenLazyOnboardingBanner = {
   isShown: false,
   title: "Discover Ledger devices",
   description: "Explore our latest products and accessories",
-  imageUrl: "lazy-onboarding-banner.png",
+  imageUrl: "lazy-onboarding-banner.webp",
   onPress: jest.fn(),
   onClose: jest.fn(),
 };
