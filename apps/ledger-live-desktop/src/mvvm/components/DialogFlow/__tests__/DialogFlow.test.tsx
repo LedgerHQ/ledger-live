@@ -1,20 +1,21 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { DialogFlow } from "..";
+import { DialogFlow, type DialogFlowProps } from "..";
 
 type Step = "first" | "second";
+type TestDialogFlowProps = Readonly<{
+  currentStep: Step;
+  height?: DialogFlowProps<Step>["height"];
+  onBack?: () => void;
+  onClose?: () => void;
+}>;
 
 function TestDialogFlow({
   currentStep,
   height,
   onBack = jest.fn(),
   onClose = jest.fn(),
-}: Readonly<{
-  currentStep: Step;
-  height?: "fit" | "fixed";
-  onBack?: () => void;
-  onClose?: () => void;
-}>) {
+}: TestDialogFlowProps) {
   return (
     <DialogFlow
       currentStep={currentStep}

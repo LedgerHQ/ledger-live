@@ -61,7 +61,6 @@ const ModularDialogFlowManager = ({ onClose }: ModularDialogFlowManagerProps) =>
               dialogBodyProps: { className: "px-16!" },
               dialogContentProps: { className: "pb-0" },
             }}
-            height="fixed"
             isOpen={isOpen}
             onBack={onBack}
             onClose={handleClose}

@@ -44,5 +44,6 @@ export type ModularDialogFlowRenderProps = Readonly<{
 
 export type ModularDialogFlowProps = Readonly<{
   children: (props: ModularDialogFlowRenderProps) => ReactNode;
+  fillAvailableHeight?: boolean;
   onClose?: () => void;
 }>;

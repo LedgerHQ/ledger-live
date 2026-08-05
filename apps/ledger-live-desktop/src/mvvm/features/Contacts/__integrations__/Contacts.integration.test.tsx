@@ -423,6 +423,17 @@ describe("Contacts integration", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeVisible();
 
+    await waitFor(() => {
+      expect(screen.getByTestId("asset-selector-list-container")).toBeVisible();
+    });
+
+    const assetList = screen.getByTestId("asset-selector-list-container");
+    expect(dialog).toHaveClass("h-560");
+    expect(screen.getByTestId("modular-dialog-screen-ASSET_SELECTION")).toHaveClass("flex-1");
+    expect(assetList).toHaveClass("h-auto");
+    expect(assetList).toHaveClass("min-h-0");
+    expect(assetList).toHaveClass("flex-1");
+
     act(() => {
       store
         .getState()

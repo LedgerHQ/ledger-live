@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Fix Modular Dialog asset and network lists to fill the modal height.
+Fix the Contacts currency selection list so it fills the modal height.
