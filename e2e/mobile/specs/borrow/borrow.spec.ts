@@ -28,6 +28,7 @@ import type { ApplicationOptions } from "page";
 const borrowTags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"];
 
 const openLoanAccount = Account.ETH_4;
+const openLoanSpeculosAppName = openLoanAccount.currency.speculosApp.name;
 
 const borrowOnChainInit = (): ApplicationOptions => ({
   userdata: "skip-onboarding-with-last-seen-device",
@@ -67,9 +68,10 @@ async function resetLoanStateBestEffort(context: string): Promise<void> {
   }
 }
 
+jest.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
+
 describe("Borrow - Cold start", () => {
   beforeAll(async () => {
-    jest.setTimeout(BORROW_HOOK_TIMEOUT_MS);
     await initBorrowApp({
       userdata: "speculos-x-other-account",
       featureFlags: BORROW_FEATURE_FLAGS,
@@ -78,12 +80,11 @@ describe("Borrow - Cold start", () => {
 
   setTeamOwner(Team.EARN);
   $TmsLink("B2CQA-6062");
-  ["@NanoSP", "@LNS", ...borrowTags].forEach(tag => $Tag(tag));
+  ["@LNS", ...borrowTags].forEach(tag => $Tag(tag));
 
   it(
     "Portfolio entry point opens borrow and shows Introducing Crypto Loan modal",
     async () => {
-      jest.setTimeout(BORROW_COLD_START_TEST_TIMEOUT_MS);
       await openBorrowFromPortfolio();
       await app.borrow.goAndWaitForBorrowColdStart(async () =>
         app.portfolio.clickBorrowEntryPoint(),
@@ -102,14 +103,12 @@ describe("Borrow - Cold start", () => {
 const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
 (runOnChainBorrowTests ? describe : describe.skip)("Borrow - Open loan", () => {
   beforeAll(async () => {
-    jest.setTimeout(BORROW_HOOK_TIMEOUT_MS);
     await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
     await releaseSpeculosDmkSessions();
     await initBorrowApp(borrowOnChainInit());
   }, BORROW_HOOK_TIMEOUT_MS);
 
   afterAll(async () => {
-    jest.setTimeout(BORROW_HOOK_TIMEOUT_MS);
     await resetLoanStateBestEffort("open-loan afterAll");
   }, BORROW_HOOK_TIMEOUT_MS);
 
@@ -120,7 +119,6 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
   it(
     "Portfolio entry point opens borrow, simulates loan, and completes open-loan execution",
     async () => {
-      jest.setTimeout(BORROW_TEST_TIMEOUT_MS);
       await openBorrowFromPortfolio();
       await app.borrow.goAndWaitForBorrowToBeReady(async () =>
         app.portfolio.clickBorrowEntryPoint(),
@@ -132,13 +130,14 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
       await app.borrow.expectExecutionFlowVisible();
 
       if (await app.borrow.completeGiveApprovalIfRequired()) {
-        await app.borrow.completeHostDeviceSignature(async () => {
+        await app.borrow.completeHostDeviceSignature(openLoanSpeculosAppName, async () => {
           await app.speculos.signTokenApproval();
         });
         await app.borrow.expectApprovalStepCompleted();
       }
 
       await app.borrow.completeAuthorizeExecutionWithRetry({
+        speculosAppName: openLoanSpeculosAppName,
         clickAuthorize: () => app.borrow.clickAuthorizeDepositing(),
         authorizeButtonId: "borrow-authorize-depositing-button",
         signOnDevice: async () => {
@@ -149,6 +148,7 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
       });
 
       await app.borrow.completeAuthorizeExecutionWithRetry({
+        speculosAppName: openLoanSpeculosAppName,
         clickAuthorize: () => app.borrow.clickAuthorizeBorrowing(),
         authorizeButtonId: "borrow-authorize-borrowing-button",
         signOnDevice: async () => {
@@ -166,7 +166,6 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
 
 (runOnChainBorrowTests ? describe : describe.skip)("Borrow - Repay and withdraw on-chain", () => {
   beforeAll(async () => {
-    jest.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
     await releaseSpeculosDmkSessions();
     await initBorrowApp(borrowOnChainInit());
     await ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
@@ -174,7 +173,6 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
   }, BORROW_HOOK_TIMEOUT_MS * 2);
 
   afterAll(async () => {
-    jest.setTimeout(BORROW_HOOK_TIMEOUT_MS);
     await resetLoanStateBestEffort("repay-withdraw afterAll");
   }, BORROW_HOOK_TIMEOUT_MS);
 
@@ -186,7 +184,6 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
   it(
     "Hot start opens repay modal and completes full repay execution",
     async () => {
-      jest.setTimeout(BORROW_TEST_TIMEOUT_MS);
       await ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
       await openBorrowFromPortfolio();
       await app.borrow.goAndWaitForBorrowHotStart(async () =>
@@ -198,7 +195,7 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
       await app.borrow.submitRepayInFull();
 
       if (await app.borrow.completeRepayGiveApprovalIfRequired()) {
-        await app.borrow.completeHostDeviceSignature(async () => {
+        await app.borrow.completeHostDeviceSignature(openLoanSpeculosAppName, async () => {
           await app.speculos.signTokenApproval();
         });
         await app.borrow.expectRepayApprovalStepCompleted();
@@ -210,6 +207,7 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
       };
 
       await app.borrow.completeAuthorizeExecutionWithRetry({
+        speculosAppName: openLoanSpeculosAppName,
         clickAuthorize: () => app.borrow.clickAuthorizeRepay(),
         authorizeButtonId: "borrow-authorize-repay-button",
         signOnDevice: signRepayOnDevice,
@@ -225,7 +223,6 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
   it(
     "Hot start routes a fully-repaid loan to withdraw and completes collateral withdrawal",
     async () => {
-      jest.setTimeout(BORROW_TEST_TIMEOUT_MS);
       await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
 
       await openBorrowFromPortfolio();
@@ -241,6 +238,7 @@ const runOnChainBorrowTests = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
       };
 
       await app.borrow.completeAuthorizeExecutionWithRetry({
+        speculosAppName: openLoanSpeculosAppName,
         clickAuthorize: () => app.borrow.clickAuthorizeWithdraw(),
         authorizeButtonId: "borrow-authorize-withdraw-button",
         signOnDevice: signWithdrawOnDevice,

@@ -1,14 +1,13 @@
 import { Step } from "jest-allure2-reporter/api";
-import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { isAndroid } from "../../helpers/commonHelpers";
+import { delay, isAndroid } from "../../helpers/commonHelpers";
 import { WebElementHelpers } from "../../helpers/elementHelpers";
 import { refreshSpeculosForSigning } from "../../utils/speculosUtils";
 
-const BORROW_SPECULOS_APP = Account.ETH_4.currency.speculosApp.name;
 const MAINNET_FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
 export default class BorrowPage {
+  private readonly webTestIdProbe = { timeout: 2_000, throwOnTimeout: false as const };
   private readonly borrowScreenId = "borrow-screen";
   private readonly executionStepTimeoutMs = 240_000;
   private readonly simulateLoanExecutionUrlTimeoutMs = 60_000;
@@ -53,6 +52,19 @@ export default class BorrowPage {
   private readonly withdrawCompletionCardId = "borrow-withdraw-completion-card";
   private readonly backToMyLoansButtonId = "borrow-back-to-my-loans-button";
 
+  /** XPath fallbacks when testids are missing or not yet mounted (borrow-live-app gaps). */
+  private readonly introModalCloseFallbackXpath =
+    "//*[@data-testid='borrow-intro-modal']//button[contains(@aria-label, 'Close') or contains(@aria-label, 'close')]";
+  private readonly viewMyLoanFallbackXpath =
+    "//*[(self::button or @role='button') and contains(normalize-space(.), 'View my loan')]";
+  private readonly tryAgainButtonXpath = "//button[contains(., 'Try again')]";
+  private readonly authorizeRepayFallbackXpath =
+    "//*[(self::button or @role='button') and contains(normalize-space(.), 'Authorize repayment')]";
+  private readonly authorizeWithdrawFallbackXpath =
+    "//*[(self::button or @role='button') and contains(normalize-space(.), 'Authorize withdrawal')]";
+  private readonly simulateLoanKeypadDigitXpathTemplate =
+    "//*[@data-testid='borrow-simulate-loan-screen']//*[(self::button or @role='button') and normalize-space(.)='%s']";
+
   @Step("Expect borrow native screen visible")
   async expectBorrowScreenVisible() {
     await waitForElementById(this.borrowScreenId);
@@ -89,9 +101,11 @@ export default class BorrowPage {
       // fall through to intro / get-new-loan handling
     }
 
-    await waitWebElementByTestId(this.introModalId, { timeout: 60_000, throwOnTimeout: false });
-    const introVisible = await this.isWebTestIdVisible(this.introModalId);
-    if (introVisible) {
+    const introModal = await waitWebElementByTestId(this.introModalId, {
+      timeout: 60_000,
+      throwOnTimeout: false,
+    });
+    if (introModal) {
       await this.clickSimulateMyLoan();
       return;
     }
@@ -104,7 +118,7 @@ export default class BorrowPage {
 
   @Step("Dismiss intro modal if shown and wait for simulate screen")
   async dismissIntroModalIfVisible() {
-    if (await this.isWebTestIdVisible(this.introModalId)) {
+    if (await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)) {
       await this.clickSimulateMyLoan();
       return;
     }
@@ -139,10 +153,15 @@ export default class BorrowPage {
     );
   }
 
+  private simulateLoanKeypadDigitXpath(digit: string): string {
+    return this.simulateLoanKeypadDigitXpathTemplate.replace("%s", digit);
+  }
+
   private async tapSimulateLoanKeypadDigit(digit: string) {
-    const screenScope = `//*[@data-testid='${this.simulateLoanScreenId}']`;
-    const keypadButtonXpath = `${screenScope}//*[(self::button or @role='button') and normalize-space(.)='${digit}']`;
-    await tapWebElementByElement(getWebElementByXpath(keypadButtonXpath), 5_000);
+    await tapWebElementByElement(
+      getWebElementByXpath(this.simulateLoanKeypadDigitXpath(digit)),
+      5_000,
+    );
   }
 
   @Step("Click Continue on simulate loan")
@@ -207,8 +226,8 @@ export default class BorrowPage {
   }
 
   @Step("Complete host device signature")
-  async completeHostDeviceSignature(signOnDevice: () => Promise<void>) {
-    await refreshSpeculosForSigning(BORROW_SPECULOS_APP);
+  async completeHostDeviceSignature(speculosAppName: string, signOnDevice: () => Promise<void>) {
+    await refreshSpeculosForSigning(speculosAppName);
     await this.continueHostSignTransaction();
     await signOnDevice();
   }
@@ -348,8 +367,8 @@ export default class BorrowPage {
     }
 
     if (
-      (await this.isWebTestIdVisible(this.repayCompletionCardId)) ||
-      (await this.isWebTestIdVisible(this.loanCompletionCardId))
+      (await waitWebElementByTestId(this.repayCompletionCardId, this.webTestIdProbe)) ||
+      (await waitWebElementByTestId(this.loanCompletionCardId, this.webTestIdProbe))
     ) {
       await this.tapViewMyLoanIfVisible();
       return;
@@ -365,7 +384,7 @@ export default class BorrowPage {
       return;
     }
 
-    if (await this.isWebTestIdVisible(this.introModalId)) {
+    if (await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)) {
       return;
     }
 
@@ -374,7 +393,7 @@ export default class BorrowPage {
 
   /** Close intro on hot start (existing loan). Do not tap "Simulate my loan". */
   private async dismissIntroModalForHotStart(): Promise<boolean> {
-    if (!(await this.isWebTestIdVisible(this.introModalId))) {
+    if (!(await waitWebElementByTestId(this.introModalId, this.webTestIdProbe))) {
       return false;
     }
 
@@ -383,10 +402,12 @@ export default class BorrowPage {
     }
 
     // Fallback until borrow-live-app exposes borrow-intro-modal-close.
-    const closeButtonXpath = `//*[@data-testid='${this.introModalId}']//button[contains(@aria-label, 'Close') or contains(@aria-label, 'close')]`;
     try {
-      await tapWebElementByElement(getWebElementByXpath(closeButtonXpath), 3_000);
-      await this.waitUntil(async () => !(await this.isWebTestIdVisible(this.introModalId)), 10_000);
+      await tapWebElementByElement(getWebElementByXpath(this.introModalCloseFallbackXpath), 3_000);
+      await this.waitUntil(
+        async () => !(await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)),
+        10_000,
+      );
       return true;
     } catch {
       return false;
@@ -400,7 +421,10 @@ export default class BorrowPage {
         throwOnTimeout: true,
       });
       await tapWebElementByTestId(this.introModalCloseButtonId);
-      await this.waitUntil(async () => !(await this.isWebTestIdVisible(this.introModalId)), 10_000);
+      await this.waitUntil(
+        async () => !(await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)),
+        10_000,
+      );
       return true;
     } catch {
       return false;
@@ -408,28 +432,26 @@ export default class BorrowPage {
   }
 
   private async tapViewMyLoanIfVisible(): Promise<void> {
-    if (await this.isWebTestIdVisible(this.viewMyLoanButtonId)) {
+    if (await waitWebElementByTestId(this.viewMyLoanButtonId, this.webTestIdProbe)) {
       await tapWebElementByTestId(this.viewMyLoanButtonId);
       await this.waitUntil(
         async () =>
           (await this.isLoansDashboardReady()) ||
           (await this.isWithdrawEntryReady()) ||
-          !(await this.isWebTestIdVisible(this.viewMyLoanButtonId)),
+          !(await waitWebElementByTestId(this.viewMyLoanButtonId, this.webTestIdProbe)),
         15_000,
       );
       return;
     }
 
     try {
-      const viewMyLoan = getWebElementByXpath(
-        "//*[(self::button or @role='button') and contains(normalize-space(.), 'View my loan')]",
-      );
+      const viewMyLoan = getWebElementByXpath(this.viewMyLoanFallbackXpath);
       await tapWebElementByElement(viewMyLoan, 5_000);
       await this.waitUntil(
         async () =>
           (await this.isLoansDashboardReady()) ||
           (await this.isWithdrawEntryReady()) ||
-          !(await this.isWebTestIdVisible(this.loanCompletionCardId)),
+          !(await waitWebElementByTestId(this.loanCompletionCardId, this.webTestIdProbe)),
         15_000,
       );
     } catch {
@@ -445,13 +467,13 @@ export default class BorrowPage {
   }
 
   private async isLoansDashboardReady(): Promise<boolean> {
-    if (await this.isWebTestIdVisible(this.loansDashboardId)) {
+    if (await waitWebElementByTestId(this.loansDashboardId, this.webTestIdProbe)) {
       return true;
     }
 
-    return (
-      (await this.isWebTestIdVisible(this.yourLoansTitleId)) &&
-      (await this.isWebTestIdVisible(this.loanDashboardRowId))
+    return !!(
+      (await waitWebElementByTestId(this.yourLoansTitleId, this.webTestIdProbe)) &&
+      (await waitWebElementByTestId(this.loanDashboardRowId, this.webTestIdProbe))
     );
   }
 
@@ -533,7 +555,10 @@ export default class BorrowPage {
   @Step("Click Authorize repayment")
   async clickAuthorizeRepay() {
     await waitWebElementByTestId(this.repayExecutionScreenId, { timeout: 60_000 });
-    await this.tapAuthorizeButtonWhenReady(this.authorizeRepayButtonId, "Authorize repayment");
+    await this.tapAuthorizeButtonWhenReady(
+      this.authorizeRepayButtonId,
+      this.authorizeRepayFallbackXpath,
+    );
   }
 
   @Step("Wait for repay execution to complete")
@@ -561,7 +586,10 @@ export default class BorrowPage {
   @Step("Click Authorize withdrawal")
   async clickAuthorizeWithdraw() {
     await waitWebElementByTestId(this.withdrawExecutionScreenId, { timeout: 60_000 });
-    await this.tapAuthorizeButtonWhenReady(this.authorizeWithdrawButtonId, "Authorize withdrawal");
+    await this.tapAuthorizeButtonWhenReady(
+      this.authorizeWithdrawButtonId,
+      this.authorizeWithdrawFallbackXpath,
+    );
   }
 
   @Step("Wait for withdraw execution to complete")
@@ -580,19 +608,19 @@ export default class BorrowPage {
 
   /** Spec-level visibility checks (Sonar S2699). Call after the matching expect* step. */
   async isIntroModalShown(): Promise<boolean> {
-    return this.isWebTestIdVisible(this.introModalId);
+    return !!(await waitWebElementByTestId(this.introModalId, this.webTestIdProbe));
   }
 
   async isLoanCompletionShown(): Promise<boolean> {
-    return this.isWebTestIdVisible(this.loanCompletionCardId);
+    return !!(await waitWebElementByTestId(this.loanCompletionCardId, this.webTestIdProbe));
   }
 
   async isRepayCompletionShown(): Promise<boolean> {
-    return this.isWebTestIdVisible(this.repayCompletionCardId);
+    return !!(await waitWebElementByTestId(this.repayCompletionCardId, this.webTestIdProbe));
   }
 
   async isWithdrawCompletionShown(): Promise<boolean> {
-    return this.isWebTestIdVisible(this.withdrawCompletionCardId);
+    return !!(await waitWebElementByTestId(this.withdrawCompletionCardId, this.webTestIdProbe));
   }
 
   @Step("Click Back to my loans")
@@ -618,16 +646,16 @@ export default class BorrowPage {
   private async isBorrowEmptyStateReady(): Promise<boolean> {
     const url = (await getCurrentWebviewUrl()).toLowerCase();
     if (url.includes("/loan/simulate-loan")) {
-      return (
-        (await this.isWebTestIdVisible(this.simulateLoanScreenId)) ||
-        (await this.isWebTestIdVisible(this.introModalId)) ||
-        (await this.isWebTestIdVisible(this.loanAmountInputId))
+      return !!(
+        (await waitWebElementByTestId(this.simulateLoanScreenId, this.webTestIdProbe)) ||
+        (await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)) ||
+        (await waitWebElementByTestId(this.loanAmountInputId, this.webTestIdProbe))
       );
     }
 
-    return (
-      (await this.isWebTestIdVisible(this.introModalId)) ||
-      (await this.isWebTestIdVisible(this.getNewLoanButtonId))
+    return !!(
+      (await waitWebElementByTestId(this.introModalId, this.webTestIdProbe)) ||
+      (await waitWebElementByTestId(this.getNewLoanButtonId, this.webTestIdProbe))
     );
   }
 
@@ -636,7 +664,7 @@ export default class BorrowPage {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
       try {
-        const tryAgain = getWebElementByXpath("//button[contains(., 'Try again')]");
+        const tryAgain = getWebElementByXpath(this.tryAgainButtonXpath);
         await waitWebElement(tryAgain, 2_000, false);
         await tapWebElementByElement(tryAgain);
         return true;
@@ -657,6 +685,7 @@ export default class BorrowPage {
    */
   @Step("Complete authorize execution with on-chain retry")
   async completeAuthorizeExecutionWithRetry(options: {
+    speculosAppName: string;
     clickAuthorize: () => Promise<void>;
     authorizeButtonId: string;
     signOnDevice: () => Promise<void>;
@@ -666,7 +695,7 @@ export default class BorrowPage {
     const maxAttempts = options.maxAttempts ?? 3;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       await options.clickAuthorize();
-      await this.completeHostDeviceSignature(options.signOnDevice);
+      await this.completeHostDeviceSignature(options.speculosAppName, options.signOnDevice);
       try {
         await options.expectComplete();
         return;
@@ -677,7 +706,11 @@ export default class BorrowPage {
           error.message.includes("failed in webview");
         if (!retriable) throw error;
         if (
-          !(await this.retryAfterOnChainFailure(options.signOnDevice, options.authorizeButtonId))
+          !(await this.retryAfterOnChainFailure(
+            options.speculosAppName,
+            options.signOnDevice,
+            options.authorizeButtonId,
+          ))
         ) {
           throw error;
         }
@@ -686,6 +719,7 @@ export default class BorrowPage {
   }
 
   private async retryAfterOnChainFailure(
+    speculosAppName: string,
     signOnDevice: () => Promise<void>,
     authorizeButtonId: string,
   ): Promise<boolean> {
@@ -693,14 +727,14 @@ export default class BorrowPage {
     await this.pollInterval(1_000);
 
     if (await this.isSendSummaryContinueVisible()) {
-      await this.completeHostDeviceSignature(signOnDevice);
+      await this.completeHostDeviceSignature(speculosAppName, signOnDevice);
       return true;
     }
 
     if (await this.isWebElementEnabledByTestId(authorizeButtonId)) {
       await tapWebElementByTestId(authorizeButtonId);
     }
-    await this.completeHostDeviceSignature(signOnDevice);
+    await this.completeHostDeviceSignature(speculosAppName, signOnDevice);
     return true;
   }
 
@@ -713,17 +747,8 @@ export default class BorrowPage {
     }
   }
 
-  private async isWebTestIdVisible(testId: string): Promise<boolean> {
-    try {
-      await waitWebElementByTestId(testId, { timeout: 2_000, throwOnTimeout: true });
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   private async pollInterval(delayMs = 500): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, delayMs));
+    await delay(delayMs);
   }
 
   private async waitUntil(
@@ -747,10 +772,10 @@ export default class BorrowPage {
   ): Promise<boolean> {
     const deadline = Date.now() + 60_000;
     while (Date.now() < deadline) {
-      if (await this.isWebTestIdVisible(stepDoneId)) return false;
+      if (await waitWebElementByTestId(stepDoneId, this.webTestIdProbe)) return false;
       if (await this.isWebElementEnabledByTestId(nextAuthorizeId)) return false;
       if (
-        (await this.isWebTestIdVisible(giveApprovalId)) &&
+        (await waitWebElementByTestId(giveApprovalId, this.webTestIdProbe)) &&
         (await this.isWebElementEnabledByTestId(giveApprovalId))
       ) {
         await tapWebElementByTestId(giveApprovalId);
@@ -758,7 +783,7 @@ export default class BorrowPage {
       }
       await this.pollInterval();
     }
-    if (await this.isWebTestIdVisible(stepDoneId)) return false;
+    if (await waitWebElementByTestId(stepDoneId, this.webTestIdProbe)) return false;
     if (await this.isWebElementEnabledByTestId(nextAuthorizeId)) return false;
     throw new Error(
       `${stepLabel}: give approval did not become clickable or auto-complete within 60s`,
@@ -776,7 +801,7 @@ export default class BorrowPage {
   }
 
   /** Partner tx prep can take ~2 min on mainnet; button may render before data-testid is attached. */
-  private async tapAuthorizeButtonWhenReady(testId: string, label: string): Promise<void> {
+  private async tapAuthorizeButtonWhenReady(testId: string, fallbackXpath: string): Promise<void> {
     const deadline = Date.now() + this.executionStepTimeoutMs;
 
     while (Date.now() < deadline) {
@@ -786,9 +811,7 @@ export default class BorrowPage {
       }
 
       try {
-        const button = getWebElementByXpath(
-          `//*[(self::button or @role='button') and contains(normalize-space(.), '${label}')]`,
-        );
+        const button = getWebElementByXpath(fallbackXpath);
         await waitWebElement(button, 2_000, false);
         if (await WebElementHelpers.isWebElementEnabled(button)) {
           await tapWebElementByElement(button);
@@ -801,13 +824,15 @@ export default class BorrowPage {
       await this.pollInterval();
     }
 
-    throw new Error(`${label} did not become enabled within ${this.executionStepTimeoutMs}ms`);
+    throw new Error(
+      `Authorize button did not become enabled within ${this.executionStepTimeoutMs}ms`,
+    );
   }
 
   private async isExecutionErrorVisible(): Promise<boolean> {
-    return (
-      (await this.isWebTestIdVisible(this.executionErrorId)) ||
-      (await this.isWebTestIdVisible(this.onChainFailedMessageId))
+    return !!(
+      (await waitWebElementByTestId(this.executionErrorId, this.webTestIdProbe)) ||
+      (await waitWebElementByTestId(this.onChainFailedMessageId, this.webTestIdProbe))
     );
   }
 
@@ -819,7 +844,7 @@ export default class BorrowPage {
     const deadline = Date.now() + this.executionStepTimeoutMs;
     while (Date.now() < deadline) {
       for (const testId of successTestIds) {
-        if (await this.isWebTestIdVisible(testId)) return;
+        if (await waitWebElementByTestId(testId, this.webTestIdProbe)) return;
       }
       if (await this.isExecutionErrorVisible()) {
         throw new Error(`${stepLabel} failed in webview. ${MAINNET_FUNDING_HINT}`);

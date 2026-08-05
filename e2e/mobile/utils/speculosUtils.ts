@@ -15,7 +15,7 @@ import {
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
 } from "@ledgerhq/live-e2e-shared/speculosCI";
-import { ensureBridgeReady, isSpeculosRemote } from "../helpers/commonHelpers";
+import { delay, ensureBridgeReady, isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
@@ -168,7 +168,7 @@ export async function launchSpeculos(appName: string, reusePort?: number) {
 async function findPortByDeviceId(
   deviceId: string,
   maxAttempts = 3,
-  delay = 1000,
+  retryDelayMs = 1000,
 ): Promise<number | undefined> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     log.info(
@@ -186,9 +186,9 @@ async function findPortByDeviceId(
     if (attempt < maxAttempts) {
       log.info(
         "E2E",
-        `RunId ${deviceId} not found in map, retrying in ${delay}ms (attempt ${attempt}/${maxAttempts})`,
+        `RunId ${deviceId} not found in map, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxAttempts})`,
       );
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await delay(retryDelayMs);
     }
   }
 
@@ -349,7 +349,7 @@ async function waitForBridgeEnv(
       // retry until timeout
     }
     if (attempt < attempts) {
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+      await delay(delayMs);
     }
   }
   throw new Error(
@@ -398,7 +398,7 @@ export async function waitForSpeculosHttpReady(timeoutMs = 30_000): Promise<void
       await fetchCurrentScreenTexts(port);
       return;
     } catch {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await delay(500);
     }
   }
 

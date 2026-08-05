@@ -50,6 +50,8 @@ export default class PortfolioPage {
   portfolioBalanceAmount = "portfolio-balance-amount";
   portfolioBalanceAnalyticsPill = "portfolio-balance-analytics-pill";
   portfolioBalanceDelta = "portfolio-balance-delta";
+  borrowEntryPointId = "portfolio-borrow-entry-point";
+  borrowExploreCtaId = "borrow-explore-cta";
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
@@ -631,9 +633,6 @@ export default class PortfolioPage {
   async checkStocksListPageVisible() {
     await this.checkListPageVisible(this.stocksListId);
   }
-
-  private readonly borrowEntryPointId = "portfolio-borrow-entry-point";
-  private readonly borrowExploreCtaId = "borrow-explore-cta";
 
   @Step("Expect borrow entry point to be visible")
   async expectBorrowEntryPointVisible() {

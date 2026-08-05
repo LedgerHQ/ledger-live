@@ -107,7 +107,7 @@ export async function ensureBridgeReady(): Promise<void> {
   while (Date.now() < deadline) {
     const envsAfterRelaunch = await getEnvs();
     if (envsAfterRelaunch) return;
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await delay(500);
   }
 
   throw new Error(
