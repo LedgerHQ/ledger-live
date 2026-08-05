@@ -128,6 +128,9 @@ function ContactsViewModelProbe({
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
         Start Add Address
       </button>
+      <button type="button" onClick={viewModel.addAddressFlowDialog.onContinueFromReview}>
+        Continue address review
+      </button>
     </>
   );
 }
@@ -498,7 +501,59 @@ describe("Contacts integration", () => {
     await user.click(screen.getByTestId("contacts-add-address-confirm"));
     await user.click(screen.getByTestId("contacts-add-address-review-continue"));
 
-    expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-add-address-success")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-add-address-success-continue"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-add-address-success")).not.toBeInTheDocument();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("1 address"),
+      ).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(
+        within(screen.getByTestId("contacts-detail-screen")).getByText("Exchange"),
+      ).toBeVisible();
+    });
+  });
+
+  it("should reopen currency selection when going back from address entry", async () => {
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    await screen.findByTestId("contacts-add-address-input");
+    await user.click(
+      screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }),
+    );
+
+    await waitFor(() => {
+      expect(store.getState().modularDialog.isOpen).toBe(true);
+    });
+  });
+
+  it("should ignore review continuation when the address flow is closed", async () => {
+    const { user } = render(
+      <MemoryRouter initialEntries={["/contacts"]}>
+        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+      </MemoryRouter>,
+      {
+        skipRouter: true,
+        initialState: contactsPageInitialState(),
+      },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Continue address review" }));
+
+    expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
   });
 
   it("should expose the Add Address session started for Me", async () => {

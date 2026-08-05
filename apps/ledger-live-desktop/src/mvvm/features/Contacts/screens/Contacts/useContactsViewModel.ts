@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { v4 as uuid } from "uuid";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  addAddress,
+  contactAddress,
   type ContactId,
 } from "@domain/entity-contact";
 import {
@@ -32,6 +35,7 @@ import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurr
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
+import { useDispatch } from "LLD/hooks/redux";
 import type {
   ContactsAddAddressFlowDialogProps,
   ContactsAddAddressReviewLabels,
@@ -47,6 +51,7 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
   }>;
 
 export function useContactsViewModel(): ContactsPageViewModel {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,6 +77,21 @@ export function useContactsViewModel(): ContactsPageViewModel {
     completeMockConfirmation,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({ addressValidation });
+  const saveAddressFromReview = useCallback(() => {
+    if (addAddressFlowState.status !== "reviewingAddress") {
+      return;
+    }
+
+    const address = contactAddress({
+      id: `address-${uuid()}`,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
+
+    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    continueFromReview();
+  }, [addAddressFlowState, continueFromReview, dispatch]);
   const selectCurrencyForContact = useCallback(
     (contactId: ContactId) => {
       void selectCurrency()
@@ -100,7 +120,8 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const onBackAddAddress = useCallback(() => {
     if (
       addAddressFlowState.status === "namingAddress" ||
-      addAddressFlowState.status === "reviewingAddress"
+      addAddressFlowState.status === "reviewingAddress" ||
+      addAddressFlowState.status === "confirmationRequired"
     ) {
       goBackAddAddress();
       return;
@@ -163,7 +184,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       onContinueFromAddressDetails: continueFromAddressDetails,
       onAddressLabelChange: updateAddressLabel,
       onContinueFromName: continueFromName,
-      onContinueFromReview: continueFromReview,
+      onContinueFromReview: saveAddressFromReview,
       onCompleteMockConfirmation: completeMockConfirmation,
       onBack: onBackAddAddress,
       onClose: onCloseAddAddress,
@@ -179,7 +200,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       updateAddressLabel,
       continueFromAddressDetails,
       continueFromName,
-      continueFromReview,
+      saveAddressFromReview,
       completeMockConfirmation,
     ],
   );
