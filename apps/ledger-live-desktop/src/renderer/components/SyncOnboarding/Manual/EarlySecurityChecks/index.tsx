@@ -32,6 +32,11 @@ import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 import { useDispatch } from "LLD/hooks/redux";
 import { setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { getFirmwareUpdateAppsToReinstall } from "./getFirmwareUpdateAppsToReinstall";
+import {
+  resolveFirmwareUpdateCloseAction,
+  resolveInstalledAppsForFirmwareUpdate,
+  resolveListedAppsListingEffect,
+} from "./firmwareUpdateAppsRestore";
 import useTheme from "~/renderer/hooks/useTheme";
 import { renderAllowManager } from "../../../DeviceAction/rendering";
 
@@ -189,13 +194,13 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         setFwUpdateInterrupted(latestFirmware.final);
 
-        const appsToRestore = installedAppsRef.current.map(({ name }) => name);
-        if (
-          firmwareUpdateCompletedRef.current &&
-          withAppsToReinstallRef.current &&
-          appsToRestore.length > 0
-        ) {
-          onFirmwareUpdateClose(appsToRestore);
+        const closeAction = resolveFirmwareUpdateCloseAction(
+          firmwareUpdateCompletedRef.current,
+          withAppsToReinstallRef.current,
+          installedAppsRef.current,
+        );
+        if (closeAction.type === "restoreApps") {
+          onFirmwareUpdateClose(closeAction.apps);
           return;
         }
 
@@ -256,13 +261,12 @@ const EarlySecurityChecks = ({
   );
 
   const startFirmwareUpdate = useCallback(() => {
-    if (installedAppsRef.current.length > 0) {
-      openFirmwareUpdateDrawer(installedAppsRef.current);
-      return;
-    }
-
-    if (listedAppsResult?.installed) {
-      openFirmwareUpdateDrawer(listedAppsResult.installed);
+    const installedAppsResolution = resolveInstalledAppsForFirmwareUpdate(
+      installedAppsRef.current,
+      listedAppsResult?.installed,
+    );
+    if (installedAppsResolution.type === "ready") {
+      openFirmwareUpdateDrawer(installedAppsResolution.installed);
       return;
     }
 
@@ -270,19 +274,20 @@ const EarlySecurityChecks = ({
   }, [listedAppsResult?.installed, openFirmwareUpdateDrawer]);
 
   useEffect(() => {
-    if (!shouldListInstalledApps) return;
+    const listingEffect = resolveListedAppsListingEffect(
+      shouldListInstalledApps,
+      listAppsState.error,
+      installedAppsRef.current,
+      listedAppsResult?.installed,
+    );
 
-    if (listAppsState.error) {
-      setShouldListInstalledApps(false);
-      openFirmwareUpdateDrawer(installedAppsRef.current);
-      return;
-    }
+    if (listingEffect.type === "noop") return;
 
-    if (!listedAppsResult?.installed) return;
-
-    installedAppsRef.current = listedAppsResult.installed;
     setShouldListInstalledApps(false);
-    openFirmwareUpdateDrawer(listedAppsResult.installed);
+    if (listingEffect.type === "openWithListed") {
+      installedAppsRef.current = listingEffect.installed;
+    }
+    openFirmwareUpdateDrawer(listingEffect.installed);
   }, [listAppsState.error, listedAppsResult, openFirmwareUpdateDrawer, shouldListInstalledApps]);
 
   useEffect(() => {
@@ -508,7 +513,9 @@ const EarlySecurityChecks = ({
           startFirmwareUpdate();
         }}
         isPreparingFirmwareUpdate={
-          isListingInstalledApps && firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
+          shouldListInstalledApps &&
+          isListingInstalledApps &&
+          firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
         }
         onClickSkipUpdate={() => {
           track("button_clicked2", { button: "Skip update" });

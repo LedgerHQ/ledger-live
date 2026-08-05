@@ -49,6 +49,12 @@ test("Firmware Update @smoke", async ({ page }) => {
   });
 
   await test.step("Drawer is closed", async () => {
+    // Previously asserted with a full-page toHaveScreenshot("modal-closed.png"). That snapshot
+    // predates a fix (LIVE-33298) that wires up `setFirmwareUpdateCompleted`, which now correctly
+    // triggers a Manager reset on close, replacing the old (buggy) stale-dashboard render with the
+    // Disconnected/reconnect spinner screen. A pixel-diff assertion here would be testing an
+    // ever-changing async spinner state, not "the modal is closed" — a state-based wait for the
+    // drawer to disappear is the meaningful and stable assertion for this step.
     await firmwareUpdateDrawer.finishButton.click();
     await firmwareUpdateDrawer.waitForDrawerToDisappear();
   });

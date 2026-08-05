@@ -49,4 +49,25 @@ describe("getFirmwareUpdateAppsToReinstall", () => {
       DeviceModelId.europa,
     );
   });
+
+  it("returns false when apps are installed but the update keeps them", () => {
+    mockedManager.firmwareUpdateWillUninstallApps.mockReturnValue(false);
+
+    expect(
+      getFirmwareUpdateAppsToReinstall(
+        [
+          {
+            name: "Bitcoin",
+            version: "1.0.0",
+            hash: "",
+            updated: false,
+            blocks: 0,
+            availableVersion: "1.0.0",
+          },
+        ],
+        deviceInfo,
+        DeviceModelId.europa,
+      ),
+    ).toBe(false);
+  });
 });

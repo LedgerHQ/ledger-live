@@ -25,6 +25,7 @@ import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 import InstallSetOfApps from "~/renderer/components/OnboardingAppInstall/InstallSetOfApps";
+import { resolveAppsRestoreTrigger } from "./EarlySecurityChecks/firmwareUpdateAppsRestore";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -131,8 +132,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   const handleFirmwareUpdateClose = useCallback(
     (appsToRestore: readonly string[]) => {
-      if (appsToRestore.length > 0) {
-        setAppsToRestoreAfterFwUpdate([...appsToRestore]);
+      const restoreTrigger = resolveAppsRestoreTrigger(appsToRestore);
+      if (restoreTrigger.type === "startRestore") {
+        setAppsToRestoreAfterFwUpdate(restoreTrigger.apps);
         setIsRestoringAppsAfterFwUpdate(true);
         return;
       }
