@@ -1,10 +1,11 @@
 export function parseUiUseCase(uiUseCase?: string) {
   const [namespace, variant] = uiUseCase?.split(":") ?? [];
+  const isPerps = namespace === "perpetuals";
 
   return {
     namespace,
     variant,
-    isPerpsWithoutVariant: namespace === "perpetuals" && !variant,
-    hasVariant: Boolean(variant),
+    isPerpsWithoutVariant: isPerps && !variant,
+    isPerpsDeposit: isPerps && variant === "deposit",
   };
 }

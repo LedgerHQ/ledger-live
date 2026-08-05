@@ -63,13 +63,14 @@ const AssetSelection = ({
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
 
-  const [, variant] = uiUseCase?.split(":") ?? [];
+  const [namespace, variant] = uiUseCase?.split(":") ?? [];
+  const isPerpsDeposit = namespace === "perpetuals" && variant === "deposit";
 
-  const headerTitle = variant
+  const headerTitle = isPerpsDeposit
     ? t("modularDrawer.selectDepositCurrencyTitle")
     : t("modularDrawer.selectAsset");
 
-  const headerDescription = variant
+  const headerDescription = isPerpsDeposit
     ? t("modularDrawer.selectDepositCurrencyDescription")
     : undefined;
 
