@@ -421,6 +421,39 @@ describe("estimateFees", () => {
     });
   });
 
+  it("buffers the L2 additional fees for send-max to absorb L1 base-fee drift before broadcast", async () => {
+    nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
+    nodeApiMock.getTransactionCount.mockResolvedValue(42);
+    nodeApiMock.getFeeData.mockResolvedValue({
+      gasPrice: new BigNumber("20000000000"),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+    mockGetGasTracker.mockReturnValue(null);
+    nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
+
+    const result = await estimateFees(
+      {
+        ...mockCurrency,
+        id: CryptoCurrencyIdSchema.parse("optimism"),
+        ethereumLikeInfo: { chainId: 10 },
+      },
+      {
+        intentType: "transaction",
+        type: "send-legacy",
+        amount: BigInt("1000000000000000000"),
+        asset: { type: "native" },
+        recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        sender: "0xsender",
+        data: { type: "buffer", value: Buffer.from([]) },
+        useAllAmount: true,
+      },
+    );
+    // 8000 (raw L1 fee) x SEND_MAX_L1_FEE_BUFFER (2) = 16000
+    expect(result.parameters?.additionalFees).toBe(16000n);
+  });
+
   it("gives 0 additional fees if the transaction is not serializable", async () => {
     nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     nodeApiMock.getTransactionCount.mockResolvedValue(42);

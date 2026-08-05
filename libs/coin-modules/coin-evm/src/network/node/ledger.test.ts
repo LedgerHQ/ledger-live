@@ -618,6 +618,47 @@ describe("EVM Family", () => {
           ),
         ).toEqual(new BigNumber("100000000"));
       });
+
+      it.each(["blast", "blast_sepolia", "base", "base_sepolia"])(
+        "should query the OP-stack gas oracle for %s (not return 0)",
+        async currencyId => {
+          const api = createLedgerNodeApi(ledgerConfig);
+          jest.spyOn(axios, "request").mockImplementationOnce(async () => ({
+            data: [
+              {
+                info: {
+                  contract: "0x420000000000000000000000000000000000000F",
+                  data: "0xSerializedTransaction",
+                  blockNumber: 123,
+                },
+                response: "100000000",
+              },
+            ],
+          }));
+
+          const transaction = Transaction.from({
+            to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            value: 1n,
+            gasLimit: 2n,
+            chainId: 1,
+            nonce: 0,
+            gasPrice: 3n,
+            type: 0,
+            signature: {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            },
+          });
+
+          expect(
+            await api.getOptimismAdditionalFees(
+              { ...currency, id: CryptoCurrencyIdSchema.parse(currencyId) },
+              transaction.serialized,
+            ),
+          ).toEqual(new BigNumber("100000000"));
+        },
+      );
     });
 
     describe("getScrollAdditionalFees", () => {
