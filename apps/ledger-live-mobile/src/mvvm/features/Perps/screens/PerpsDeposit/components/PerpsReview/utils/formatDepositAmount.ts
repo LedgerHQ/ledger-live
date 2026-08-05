@@ -1,11 +1,8 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import {
-  findCryptoCurrencyById,
-  formatCurrencyUnit,
-  parseCurrencyUnit,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositAmount } from "@ledgerhq/live-common/wallet-api/Perps/server";
 
 function resolveCurrency(amount: PerpsDepositAmount, account: AccountLike): CryptoOrTokenCurrency {
