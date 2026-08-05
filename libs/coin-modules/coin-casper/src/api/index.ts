@@ -1,135 +1,88 @@
-import network from "@ledgerhq/live-network";
-import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
-import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
-import { getCoinConfig } from "../config";
-import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../consts";
-import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "./types";
+import type {
+  Balance,
+  BalanceOptions,
+  Block,
+  BlockInfo,
+  CoinModuleApi,
+  CraftedTransaction,
+  Cursor,
+  FeeEstimation,
+  MemoNotSupported,
+  Page,
+  Reward,
+  Stake,
+  TransactionIntent,
+  TransactionValidation,
+  Validator,
+} from "@ledgerhq/coin-module-framework/api/index";
+import { type CasperCoinConfig, setCoinConfig } from "../config";
 
-const getCasperIndexerURL = (path: string): string => {
-  const baseUrl = getCoinConfig().infra.API_CASPER_INDEXER;
-  if (!baseUrl) throw new Error("API base URL not available");
+export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
+  setCoinConfig(config);
 
-  return new URL(path, baseUrl).toString();
-};
-
-const getCasperNodeURL = (): string => {
-  const baseUrl = getCoinConfig().infra.API_CASPER_NODE_ENDPOINT;
-  if (!baseUrl) throw new Error("API base URL not available");
-
-  return baseUrl;
-};
-
-export const getCasperNodeRpcClient = (): RpcClient => {
-  const url = getCasperNodeURL();
-  const handler = new HttpHandler(url);
-  return new RpcClient(handler);
-};
-
-const casperIndexerWrapper = async <T>(path: string) => {
-  const url = getCasperIndexerURL(path);
-
-  try {
-    const rawResponse = await network<IndexerResponseRoot<T>>({
-      method: "GET",
-      url,
-    });
-    log("http", url);
-
-    const { data, status } = rawResponse;
-    if (status >= 300) {
-      log("http", url, data);
-    }
-    return data;
-  } catch (error) {
-    log("error", "Casper indexer error: ", error);
-    throw error;
-  }
-};
-
-export const fetchAccountStateInfo = async (
-  publicKey: string,
-): Promise<{
-  purseUref: string | undefined;
-  accountHash: string | undefined;
-}> => {
-  const client = getCasperNodeRpcClient();
-  try {
-    const { account } = await client.getAccountInfo(
-      null,
-      new AccountIdentifier(undefined, PublicKey.fromHex(publicKey)),
-    );
-
-    const accountHash = account.accountHash.toHex();
-    const purseURefString = account.mainPurse.toPrefixedString();
-
-    return { purseUref: purseURefString, accountHash };
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      [NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed].includes(
-        (error as RpcError).statusCode,
-      )
-    ) {
-      return {
-        purseUref: undefined,
-        accountHash: undefined,
-      };
-    }
-    throw error;
-  }
-};
-
-export const fetchBalance = async (purseUref: string): Promise<BigNumber> => {
-  const client = getCasperNodeRpcClient();
-  try {
-    const { stateRootHash } = await client.getStateRootHashLatest();
-    const balance = await client.getBalanceByStateRootHash(purseUref, stateRootHash.toHex());
-    return new BigNumber(balance.balanceValue.toString());
-  } catch (error) {
-    log("error", "Failed to fetch balance", error);
-    throw error;
-  }
-};
-
-export const fetchBlockHeight = async (): Promise<number> => {
-  const client = getCasperNodeRpcClient();
-  try {
-    const latestBlock = await client.getLatestBlock();
-    return latestBlock.block.height;
-  } catch (error) {
-    log("error", "Failed to fetch block height", error);
-    throw error;
-  }
-};
-
-export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
-  let page = 1;
-  let res: ITxnHistoryData[] = [];
-  const limit = 100;
-
-  let response = await casperIndexerWrapper<ITxnHistoryData>(
-    `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
-  );
-  res = res.concat(response.data);
-
-  while (response.page_count > page) {
-    page++;
-    response = await casperIndexerWrapper<ITxnHistoryData>(
-      `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
-    );
-    res = res.concat(response.data);
-  }
-  return res;
-};
-
-export const broadcastTx = async (transaction: Transaction): Promise<string> => {
-  const client = getCasperNodeRpcClient();
-  try {
-    const response = await client.putTransaction(transaction);
-    return response.transactionHash.toHex();
-  } catch (error) {
-    log("error", "Failed to broadcast transaction", error);
-    throw error;
-  }
-};
+  return {
+    lastBlock(): Promise<BlockInfo> {
+      throw new Error("lastBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getBlock(_height: number): Promise<Block> {
+      throw new Error("getBlock is not supported");
+    },
+    async call() {
+      throw new Error("call is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
+    getBalance(_address: string, _options?: BalanceOptions) {
+      throw new Error("getBalance is not supported");
+    },
+    listOperations(_address: string, _options?: unknown) {
+      throw new Error("listOperations is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
+    craftTransaction(_intent: TransactionIntent<MemoNotSupported>): Promise<CraftedTransaction> {
+      throw new Error("craftTransaction is not supported");
+    },
+    craftRawTransaction(
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: bigint,
+    ): Promise<CraftedTransaction> {
+      throw new Error("craftRawTransaction is not supported");
+    },
+    estimateFees(_intent: TransactionIntent<MemoNotSupported>): Promise<FeeEstimation> {
+      throw new Error("estimateFees is not supported");
+    },
+    combine(_tx: string, _signature: string, _pubkey?: string): string {
+      throw new Error("combine is not supported");
+    },
+    broadcast(_tx: string): Promise<string> {
+      throw new Error("broadcast is not supported");
+    },
+    validateIntent(
+      _intent: TransactionIntent<MemoNotSupported>,
+      _balances: Balance[],
+      _customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> {
+      throw new Error("validateIntent is not supported");
+    },
+    getNextSequence(_address: string): Promise<bigint> {
+      throw new Error("getNextSequence is not supported");
+    },
+    validateAddress(_address: string, _parameters: unknown): Promise<boolean> {
+      throw new Error("validateAddress is not supported");
+    },
+    craftTransactionData(_intent: TransactionIntent<MemoNotSupported>) {
+      throw new Error("craftTransactionData is not supported");
+    },
+  };
+}

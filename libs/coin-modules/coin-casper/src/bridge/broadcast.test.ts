@@ -1,6 +1,6 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Transaction as CasperTransaction, PublicKey } from "casper-js-sdk";
-import { broadcastTx } from "../api";
+import { broadcastTx } from "../network/api";
 import {
   createMockAccount,
   createMockTransaction,
@@ -22,7 +22,7 @@ jest.mock("casper-js-sdk", () => {
   };
 });
 
-jest.mock("../api", () => ({
+jest.mock("../network/api", () => ({
   broadcastTx: jest.fn().mockResolvedValue("mockedTxHash"),
 }));
 

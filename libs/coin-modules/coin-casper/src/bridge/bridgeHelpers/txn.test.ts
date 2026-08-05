@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { ITxnHistoryData } from "../../api/types";
+import { ITxnHistoryData } from "../../types/network";
 import * as fixtures from "../../test/fixtures";
 import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
 import { getUnit, mapTxToOps } from "./txn";
@@ -38,7 +38,7 @@ jest.mock("./addresses", () => ({
   isAddressValid: jest.fn(),
 }));
 
-jest.mock("../../api", () => ({
+jest.mock("../../network/api", () => ({
   getCasperNodeRpcClient: jest.fn(),
 }));
 

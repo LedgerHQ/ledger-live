@@ -10,7 +10,7 @@ import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   InvalidMinimumAmountError,
   MayBlockAccountError,
-} from "../consts";
+} from "../constants";
 import { CasperInvalidTransferId } from "../errors";
 import * as logicValidateMemo from "../logic/validateMemo";
 import { createMockAccount, createMockTransaction, TEST_ADDRESSES } from "../test/fixtures";
