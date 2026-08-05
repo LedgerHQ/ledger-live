@@ -134,6 +134,150 @@ function withRecoveredRecipients(
   return { ...op, recipients: [...transparentRecipients, ...payees] };
 }
 
+type AccountInputs = {
+  /** Every address the transaction spends from, ours or not. */
+  senders: Set<string>;
+  accountInputs: WalletInput[];
+  /** What the account's own inputs put in, before its change comes back. */
+  spent: BigNumber;
+};
+
+function collectAccountInputs(tx: TX, accountAddresses: Set<string>): AccountInputs {
+  const senders = new Set<string>();
+  const accountInputs: WalletInput[] = [];
+  let spent = new BigNumber(0);
+
+  for (const input of tx.inputs) {
+    if (!input.address) continue;
+    senders.add(input.address);
+    if (input.value && accountAddresses.has(input.address)) {
+      spent = spent.plus(input.value);
+      accountInputs.push(input);
+    }
+  }
+
+  return { senders, accountInputs, spent };
+}
+
+/**
+ * Minimum nSequence among the account's own inputs -- the conservative
+ * RBF/locktime signal. An input that omits it counts as 0xfffffffe, the
+ * Bitcoin Core default; no own input at all reads as 0.
+ */
+function minAccountSequence(accountInputs: WalletInput[]): BigNumber {
+  if (accountInputs.length === 0) return new BigNumber(0);
+  return new BigNumber(Math.min(...accountInputs.map(input => input.sequence ?? 0xfffffffe)));
+}
+
+/** Where a sender's own change sits: the last output of the transaction. */
+function changeOutputIndexOf(tx: TX): number {
+  return tx.outputs.reduce((highest, output) => Math.max(highest, output.output_index), 0);
+}
+
+type OutputContext = {
+  fundedByAccount: boolean;
+  singleOutput: boolean;
+  changeOutputIndex: number;
+  spentNothing: boolean;
+};
+
+/** An output the explorer could not attribute carries a placeholder address. */
+function isAttributed(output: WalletOutput): boolean {
+  return !!output.address && !output.address.includes("unknown");
+}
+
+/**
+ * A foreign address is a payee only when the account funded the transaction,
+ * and only among the outputs preceding the change.
+ */
+function isForeignPayee(output: WalletOutput, context: OutputContext): boolean {
+  if (!context.fundedByAccount) return false;
+  return context.singleOutput || output.output_index < context.changeOutputIndex;
+}
+
+/**
+ * One of the account's own addresses is a payee unless it is change -- which
+ * still counts when nothing else was paid, or when the account spent nothing
+ * and is therefore being paid rather than paying.
+ */
+function isOwnPayee(
+  output: WalletOutput,
+  changeAddresses: Set<string>,
+  recipientsSoFar: number,
+  context: OutputContext,
+): boolean {
+  if (!changeAddresses.has(output.address)) return true;
+  return (
+    (recipientsSoFar === 0 && output.output_index >= context.changeOutputIndex) ||
+    context.spentNothing
+  );
+}
+
+type OutputRoles = {
+  recipients: string[];
+  accountOutputs: WalletOutput[];
+};
+
+function assignOutputRoles(
+  tx: TX,
+  accountAddresses: Set<string>,
+  changeAddresses: Set<string>,
+  context: OutputContext,
+): OutputRoles {
+  const recipients: string[] = [];
+  const accountOutputs: WalletOutput[] = [];
+
+  for (const output of tx.outputs) {
+    if (!isAttributed(output)) continue;
+
+    const isOwn = accountAddresses.has(output.address);
+    if (isOwn) accountOutputs.push(output);
+
+    const isPayee = isOwn
+      ? isOwnPayee(output, changeAddresses, recipients.length, context)
+      : isForeignPayee(output, context);
+    if (isPayee) recipients.push(output.address);
+  }
+
+  return { recipients, accountOutputs };
+}
+
+function sumValues(outputs: WalletOutput[]): BigNumber {
+  return outputs.reduce((total, output) => total.plus(output.value), new BigNumber(0));
+}
+
+type OperationDraft = {
+  tx: TX;
+  accountId: string;
+  senders: Set<string>;
+  recipients: string[];
+  transactionSequenceNumber: BigNumber;
+};
+
+function buildOperation(
+  draft: OperationDraft,
+  type: OperationType,
+  value: BigNumber,
+): BtcOperation {
+  const { tx, accountId, senders, recipients, transactionSequenceNumber } = draft;
+  return {
+    id: encodeOperationId(accountId, tx.id, type),
+    hash: tx.id,
+    type,
+    value,
+    fee: explorerFee(tx),
+    senders: Array.from(senders),
+    recipients,
+    blockHeight: tx.block?.height,
+    blockHash: tx.block?.hash,
+    accountId,
+    date: txDate(tx),
+    hasFailed: false,
+    transactionSequenceNumber,
+    extra: { inputs: Array.from(new Set(spentOutpoints(tx))) },
+  } as BtcOperation;
+}
+
 /**
  * Maps a wallet-btc TX to LL operations. Ported from coin-bitcoin's
  * `logic.ts` `mapTxToOperations`, dropping the multi-currency `perCoinLogic`
@@ -145,127 +289,38 @@ function mapTxToOperations(
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
 ): BtcOperation[] {
+  const { senders, accountInputs, spent } = collectAccountInputs(tx, accountAddresses);
+  const fundedByAccount = accountInputs.length > 0;
+
+  const { recipients, accountOutputs } = assignOutputRoles(tx, accountAddresses, changeAddresses, {
+    fundedByAccount,
+    singleOutput: tx.outputs.length === 1,
+    changeOutputIndex: changeOutputIndexOf(tx),
+    spentNothing: spent.eq(0),
+  });
+
+  const draft: OperationDraft = {
+    tx,
+    accountId,
+    senders,
+    recipients,
+    transactionSequenceNumber: minAccountSequence(accountInputs),
+  };
+
   const operations: BtcOperation[] = [];
-  const txId = tx.id;
-  const fee = explorerFee(tx);
-  const blockHeight = tx.block?.height;
-  const blockHash = tx.block?.hash;
-  const date = txDate(tx);
-  const senders = new Set<string>();
-  const recipients: string[] = [];
-  let type: OperationType = "OUT";
-  let value = new BigNumber(0);
-  const hasFailed = false;
-  const accountInputs: WalletInput[] = [];
-  const accountOutputs: WalletOutput[] = [];
-  const inputs = new Set(spentOutpoints(tx));
 
-  for (const input of tx.inputs) {
-    if (input.address) {
-      senders.add(input.address);
-      if (input.value && accountAddresses.has(input.address)) {
-        value = value.plus(input.value);
-        accountInputs.push(input);
-      }
-    }
+  if (fundedByAccount) {
+    const change = accountOutputs.filter(output => changeAddresses.has(output.address));
+    operations.push(buildOperation(draft, "OUT", spent.minus(sumValues(change))));
   }
 
-  // Minimum nSequence among the account's own inputs -- the conservative
-  // RBF/locktime signal. An input that omits it counts as 0xfffffffe, the
-  // Bitcoin Core default; no own input at all reads as 0.
-  const transactionSequenceNumber = new BigNumber(
-    accountInputs.length === 0
-      ? 0
-      : Math.min(...accountInputs.map(input => input.sequence ?? 0xfffffffe)),
-  );
-
-  const hasSpentNothing = value.eq(0);
-  const changeOutputIndex =
-    tx.outputs.length === 0
-      ? 0
-      : tx.outputs.map(o => o.output_index).reduce((p, c) => (p > c ? p : c));
-
-  for (const output of tx.outputs) {
-    if (output.address && !output.address.includes("unknown")) {
-      if (!accountAddresses.has(output.address)) {
-        if (
-          accountInputs.length > 0 &&
-          (tx.outputs.length === 1 || output.output_index < changeOutputIndex)
-        ) {
-          recipients.push(output.address);
-        }
-      } else {
-        accountOutputs.push(output);
-        if (!changeAddresses.has(output.address)) {
-          recipients.push(output.address);
-        } else if (
-          (recipients.length === 0 && output.output_index >= changeOutputIndex) ||
-          hasSpentNothing
-        ) {
-          recipients.push(output.address);
-        }
-      }
-    }
-  }
-
-  if (accountInputs.length > 0) {
-    for (const output of accountOutputs) {
-      if (changeAddresses.has(output.address)) {
-        value = value.minus(output.value);
-      }
-    }
-
-    type = "OUT";
-    operations.push({
-      id: encodeOperationId(accountId, txId, type),
-      hash: txId,
-      type,
-      value,
-      fee,
-      senders: Array.from(senders),
-      recipients,
-      blockHeight,
-      blockHash,
-      accountId,
-      date,
-      hasFailed,
-      transactionSequenceNumber,
-      extra: { inputs: Array.from(inputs) },
-    } as BtcOperation);
-  }
-
-  if (accountOutputs.length > 0) {
-    const filterChangeAddresses = !!accountInputs.length;
-    let accountOutputCount = 0;
-    let finalAmount = new BigNumber(0);
-
-    for (const output of accountOutputs) {
-      if (!filterChangeAddresses || !changeAddresses.has(output.address)) {
-        finalAmount = finalAmount.plus(output.value);
-        accountOutputCount += 1;
-      }
-    }
-
-    if (accountOutputCount > 0) {
-      value = finalAmount;
-      type = "IN";
-      operations.push({
-        id: encodeOperationId(accountId, txId, type),
-        hash: txId,
-        type,
-        value,
-        fee,
-        senders: Array.from(senders),
-        recipients,
-        blockHeight,
-        blockHash,
-        accountId,
-        date,
-        hasFailed,
-        transactionSequenceNumber,
-        extra: { inputs: Array.from(inputs) },
-      } as BtcOperation);
-    }
+  // Change coming back to the account is not income, so a send only credits
+  // what it pays to an address of ours that is not change.
+  const credited = fundedByAccount
+    ? accountOutputs.filter(output => !changeAddresses.has(output.address))
+    : accountOutputs;
+  if (credited.length > 0) {
+    operations.push(buildOperation(draft, "IN", sumValues(credited)));
   }
 
   return operations;
