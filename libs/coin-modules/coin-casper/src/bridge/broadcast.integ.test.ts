@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   CasperNetwork,
   KeyAlgorithm,
@@ -22,19 +21,20 @@ describe("Broadcast", () => {
     const senderHex = privateKey.publicKey.toHex();
 
     const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
-    const feeMotes = new BigNumber(CASPER_FEES_MOTES);
     const deploy: CasperDeployTransaction = casperNetwork.createTransferTransaction(
       PublicKey.fromHex(senderHex),
       PublicKey.fromHex(senderHex),
       CASPER_NETWORK,
       "1",
-      feeMotes.toNumber(),
+      CASPER_FEES_MOTES,
       CASPER_DEFAULT_TTL,
       0,
     );
 
+    // Matches TransactionV1.sign()/validate(): the signed message is the transaction hash,
+    // not the serialized transaction bytes.
     const signatureHex = Buffer.from(
-      privateKey.signAndAddAlgorithmBytes(new Uint8Array(deploy.toBytes())),
+      privateKey.signAndAddAlgorithmBytes(new Uint8Array(deploy.hash.toBytes())),
     ).toString("hex");
 
     await expect(
