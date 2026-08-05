@@ -4,7 +4,7 @@ import {
   createMockTransaction,
   TEST_ADDRESSES,
   TEST_TRANSFER_IDS,
-} from "../test/fixtures";
+} from "../__tests__/fixtures";
 import { TransactionRaw } from "../types";
 import transaction, { fromTransactionRaw, formatTransaction } from "./transaction";
 

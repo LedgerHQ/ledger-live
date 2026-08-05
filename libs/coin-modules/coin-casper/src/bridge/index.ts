@@ -8,12 +8,12 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { CasperCoinConfig } from "../config";
 import { setCoinConfig } from "../config";
+import type { CasperCoinConfig } from "../types";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
 import resolver from "../signer";
 import type { Transaction, TransactionStatus, CasperSigner } from "../types";
-import { getAccountShape } from "./bridgeHelpers/accountShape";
+import { getAccountShape } from "./sync";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";

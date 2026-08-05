@@ -1,10 +1,10 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { createMockAccount, createMockTransaction, TEST_TRANSFER_IDS } from "../test/fixtures";
-import { getAddress } from "./bridgeHelpers/addresses";
+import { createMockAccount, createMockTransaction, TEST_TRANSFER_IDS } from "../__tests__/fixtures";
+import { getAddress } from "../logic/validateAddress";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 // Mock dependencies
-jest.mock("./bridgeHelpers/addresses", () => ({
+jest.mock("../logic/validateAddress", () => ({
   getAddress: jest.fn(),
 }));
 

@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
-import { ITxnHistoryData } from "../../types/network";
-import * as fixtures from "../../test/fixtures";
-import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
-import { getUnit, mapTxToOps } from "./txn";
-import { createNewTransaction as testCreateNewTransaction } from "./txn";
+import { ITxnHistoryData } from "../types/network";
+import { TEST_ADDRESSES, TEST_TRANSFER_IDS } from "../__tests__/fixtures/addresses.fixture";
+import { createMockAccountShapeData } from "../__tests__/fixtures/sync.fixture";
+import { casperAccountHashFromPublicKey, isAddressValid } from "./validateAddress";
+import { getUnit, mapTxToOps } from "./listOperations";
+import { createNewTransaction as testCreateNewTransaction } from "./craftTransaction";
 
 // Import Casper SDK mock for direct access to mocks
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -33,12 +34,12 @@ jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   ),
 }));
 
-jest.mock("./addresses", () => ({
+jest.mock("./validateAddress", () => ({
   casperAccountHashFromPublicKey: jest.fn((key: string) => `account-hash-${key}`),
   isAddressValid: jest.fn(),
 }));
 
-jest.mock("../../network/api", () => ({
+jest.mock("../network/api", () => ({
   getCasperNodeRpcClient: jest.fn(),
 }));
 
@@ -60,7 +61,7 @@ describe("txn", () => {
   });
 
   describe("mapTxToOps", () => {
-    const { mockAccountId } = fixtures.createMockAccountShapeData();
+    const { mockAccountId } = createMockAccountShapeData();
     const fees = new BigNumber("100000000");
     const mockTimestamp = "2023-01-01T12:00:00Z";
 
@@ -71,8 +72,7 @@ describe("txn", () => {
     });
 
     test("should map an outgoing transaction to operation", () => {
-      // Use a modified version of the fixture tx data
-      const fixtureData = fixtures.createMockAccountShapeData();
+      const fixtureData = createMockAccountShapeData();
       const txData: ITxnHistoryData = {
         ...fixtureData.mockTxs[0],
         timestamp: mockTimestamp,
@@ -98,7 +98,6 @@ describe("txn", () => {
         amount: "5000000000",
       };
 
-      // Set up the owner address hash to match the from account hash
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
         "account-hash-owner-public-key",
       );
@@ -131,8 +130,7 @@ describe("txn", () => {
 
     test("should map an incoming transaction to operation", () => {
       const recipientAddressHash = "account-hash-owner-public-key";
-      // Use a modified version of the fixture tx data
-      const fixtureData = fixtures.createMockAccountShapeData();
+      const fixtureData = createMockAccountShapeData();
       const txData: ITxnHistoryData = {
         ...fixtureData.mockTxs[0],
         timestamp: mockTimestamp,
@@ -187,8 +185,7 @@ describe("txn", () => {
     });
 
     test("should map a failed transaction correctly", () => {
-      // Use a modified version of the fixture tx data
-      const fixtureData = fixtures.createMockAccountShapeData();
+      const fixtureData = createMockAccountShapeData();
       const txData: ITxnHistoryData = {
         ...fixtureData.mockTxs[0],
         timestamp: mockTimestamp,
@@ -230,8 +227,7 @@ describe("txn", () => {
     });
 
     test("should handle target as account hash string directly", () => {
-      // Use a modified version of the fixture tx data
-      const fixtureData = fixtures.createMockAccountShapeData();
+      const fixtureData = createMockAccountShapeData();
       const txData: ITxnHistoryData = {
         ...fixtureData.mockTxs[0],
         timestamp: mockTimestamp,
@@ -275,7 +271,6 @@ describe("txn", () => {
         timestamp: mockTimestamp,
         caller_public_key: "owner-public-key",
         args: {
-          // Intentionally missing the target field to cause an error
           amount: {
             parsed: "5000000000",
             cl_type: "U512",
@@ -298,13 +293,12 @@ describe("txn", () => {
   });
 
   describe("createNewTransaction", () => {
-    const { mockAddress: mockSender } = fixtures.createMockAccountShapeData();
-    const mockRecipient = fixtures.TEST_ADDRESSES.RECIPIENT_SECP256K1;
+    const { mockAddress: mockSender } = createMockAccountShapeData();
+    const mockRecipient = TEST_ADDRESSES.RECIPIENT_SECP256K1;
     const mockAmount = new BigNumber("5000000000");
     const mockFees = new BigNumber("100000000");
-    const mockTransferId = fixtures.TEST_TRANSFER_IDS.VALID;
+    const mockTransferId = TEST_TRANSFER_IDS.VALID;
 
-    // Direct access to the mocks from jest.mock
     const mockCreateNetwork = mockCasperSDK.CasperNetwork.create;
     const mockPublicKeyFromHex = mockCasperSDK.PublicKey.fromHex;
 

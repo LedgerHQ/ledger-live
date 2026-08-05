@@ -1,7 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import { CasperAccount, CasperOperation, Transaction } from "../types";
-import { getAddress } from "./bridgeHelpers/addresses";
+import { getAddress } from "../logic/validateAddress";
 
 export const buildOptimisticOperation = (
   account: CasperAccount,
