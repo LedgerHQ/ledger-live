@@ -65,7 +65,7 @@ describe("getDeviceTransactionConfig", () => {
   });
 
   test("should not include transferId field when undefined in transaction", async () => {
-    const mockTransaction = createMockTransaction({ amount: MOCK_AMOUNT, transferId: undefined });
+    const mockTransaction = createMockTransaction({ amount: MOCK_AMOUNT });
     const fields = await getConfigFields(mockTransaction);
 
     expect(fields).toHaveLength(4);

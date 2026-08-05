@@ -15,7 +15,7 @@ export const createMockTransaction = (options?: Partial<Transaction>): Transacti
         : new BigNumber(options?.amount || CASPER_MINIMUM_VALID_AMOUNT_MOTES),
     recipient: options?.recipient || TEST_ADDRESSES.RECIPIENT_SECP256K1,
     fees: options?.fees instanceof BigNumber ? options.fees : defaultFees,
-    transferId: options?.transferId,
+    ...(options?.transferId !== undefined && { transferId: options.transferId }),
     useAllAmount: options?.useAllAmount || false,
   };
 

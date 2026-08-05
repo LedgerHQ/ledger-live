@@ -1,6 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { createMockAccount, createMockTransaction, TEST_TRANSFER_IDS } from "../__tests__/fixtures";
 import { getAddress } from "../logic/validateAddress";
+import type { Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
 // Mock dependencies
@@ -75,15 +76,14 @@ describe("buildOptimisticOperation", () => {
   });
 
   test("should handle transaction without transferId", () => {
-    const txWithoutTransferId = {
-      ...mockTransaction,
-      transferId: undefined,
-    };
+    const { transferId: _t, ...txWithoutTransferId } = mockTransaction;
 
-    const operation = buildOptimisticOperation(mockAccount, txWithoutTransferId, mockHash);
+    const operation = buildOptimisticOperation(
+      mockAccount,
+      txWithoutTransferId as Transaction,
+      mockHash,
+    );
 
-    expect(operation.extra).toEqual({
-      transferId: undefined,
-    });
+    expect(operation.extra).toEqual({});
   });
 });

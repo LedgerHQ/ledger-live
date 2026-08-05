@@ -25,7 +25,7 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     date: new Date(),
     extra: {
-      transferId: transaction.transferId,
+      ...(transaction.transferId !== undefined && { transferId: transaction.transferId }),
     },
     nftOperations: [],
     subOperations: [],

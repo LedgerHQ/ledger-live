@@ -152,7 +152,6 @@ describe("transaction", () => {
         useAllAmount: false,
         amount: new BigNumber(50000000),
         fees: new BigNumber(1000000),
-        transferId: undefined,
       });
 
       const result = transaction.toTransactionRaw(tx);

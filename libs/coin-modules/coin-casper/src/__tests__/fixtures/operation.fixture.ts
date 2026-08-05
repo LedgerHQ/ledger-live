@@ -27,7 +27,7 @@ export const createMockOperation = (
     fee: transaction.fees,
     date: options?.date || new Date(),
     extra: {
-      transferId: transaction.transferId,
+      ...(transaction.transferId !== undefined && { transferId: transaction.transferId }),
     },
     nftOperations: [],
     subOperations: [],
