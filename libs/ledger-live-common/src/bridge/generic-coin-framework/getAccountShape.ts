@@ -335,6 +335,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
     }
+    // `getAccountInfo` (ADR-045) is fetched only when a family declares a mapper: coin-tezos
+    // implements the fetch without one, so an unconditional call would add a request to every tezos
+    // sync for a result nothing reads.
+    const buildShape = bridgeApi.buildAccountShape;
+    const chainSpecificShapePromise = buildShape
+      ? Promise.resolve(coinModuleApi.getAccountInfo?.(address)).then(accountInfo =>
+          buildShape(address, accountInfo),
+        )
+      : Promise.resolve(undefined);
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -368,11 +377,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         })
       : Promise.resolve(undefined);
 
-    const [blockInfo, balanceRes, validators, readiness] = await Promise.all([
+    const [blockInfo, balanceRes, validators, readiness, chainSpecificShape] = await Promise.all([
       coinModuleApi.lastBlock(),
       coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
       validatorsPromise,
       readinessPromise,
+      chainSpecificShapePromise,
     ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
@@ -557,6 +567,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
     } = {
+      ...chainSpecificShape,
       id: accountId,
       // `||` (not `??`): a device getAddress may return an empty-string publicKey (e.g. when the
       // chain code is not requested); treat "" as absent and fall back rather than storing a blank xpub.

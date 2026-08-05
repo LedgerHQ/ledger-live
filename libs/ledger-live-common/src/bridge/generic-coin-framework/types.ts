@@ -9,6 +9,21 @@ import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getA
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import BigNumber from "bignumber.js";
 
+/**
+ * Values that are JSON-serializable. Used for the parts of a transaction that are persisted
+ * verbatim, so a `BigNumber`, `bigint` or class instance is rejected at the point it is written
+ * rather than silently corrupted on revival.
+ */
+type JsonSafe =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonSafe[]
+  | { [key: string]: JsonSafe | undefined };
+
+export type JsonSafeRecord = { [key: string]: JsonSafe | undefined };
+
 type NetworkInfo = {
   fees: BigNumber;
 };
@@ -89,6 +104,27 @@ export type GenericTransaction = TransactionCommon & {
   valId?: string;
   withdrawId?: string;
   dstValAddress?: string;
+  /**
+   * Chain-specific transaction fields with no generic equivalent; the owning family maps them onto
+   * the intent's `TxData` via `BridgeApi.buildIntentData` (ADR-047). `JsonSafe` is load-bearing: the
+   * bag round-trips through `GenericTransactionRaw` verbatim; a non-JSON value corrupts on revival.
+   *
+   * Holds user inputs only. Chain-computed values travel in `feeParameters`, so nothing here has to
+   * be merged or invalidated between fee estimations.
+   */
+  familySpecificData?: JsonSafeRecord;
+  /**
+   * Fee telemetry the coin module returned in `FeeEstimation.parameters`; per ADR-050 extra fee
+   * data travels on the fee-estimation channel, not as bespoke transaction-status fields.
+   *
+   * Derived, so absent from `GenericTransactionRaw` — reviving it is how a stale figure survives
+   * a restore. `prepareTransaction` treats it as part of the transaction's identity, so it is
+   * recomputed even when the fee value has not moved.
+   *
+   * Typed exactly as its source so no assertion can lie; values are commonly `bigint`, hence not
+   * `JsonSafeRecord`.
+   */
+  feeParameters?: Record<string, unknown>;
 };
 
 export type GenericTransactionRaw = TransactionCommonRaw & {
@@ -121,6 +157,10 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   valId?: string;
   withdrawId?: string;
   dstValAddress?: string;
+  /** @see GenericTransaction.familySpecificData — carried verbatim, hence the identical type. */
+  familySpecificData?: JsonSafeRecord;
+  // `feeParameters` is deliberately absent: derived from the last fee estimation, so persisting it
+  // is how a stale figure survives a restore; the next `prepareTransaction` recomputes it.
 };
 
 export interface OperationCommon extends Operation {
@@ -144,6 +184,18 @@ export type CoinFrameworkSigner<S = unknown> = {
 export type AccountRawAssignHooks = {
   assignFromAccountRaw?: AccountBridge<GenericTransaction>["assignFromAccountRaw"];
   assignToAccountRaw?: AccountBridge<GenericTransaction>["assignToAccountRaw"];
+  /**
+   * Revive/serialize the family-owned part of `Operation.extra` (forwarded through
+   * `Operation.details.familyExtra`). Without these the bag is persisted verbatim, so a non-JSON
+   * value corrupts on revival. `AccountBridge` members on a different call path from the `assign*`
+   * pair — `fromSignedOperationRaw` has no account in hand.
+   *
+   * The serialization layer calls these with the **whole** `Operation.extra` — the family's keys
+   * merged with the framework's — and replaces `extra` wholesale with what is returned, so an
+   * implementation that maps only its own keys silently drops every framework-owned key.
+   */
+  fromOperationExtraRaw?: AccountBridge<GenericTransaction>["fromOperationExtraRaw"];
+  toOperationExtraRaw?: AccountBridge<GenericTransaction>["toOperationExtraRaw"];
 };
 
 export type SignTransactionOptions = {

@@ -71,6 +71,7 @@ describe("genericPrepareTransaction", () => {
       expect.objectContaining(baseTransaction),
       undefined,
       undefined,
+      undefined,
     );
   });
 
@@ -295,6 +296,75 @@ describe("genericPrepareTransaction", () => {
         customGasLimit: new BigNumber(22000),
       }),
     );
+  });
+
+  it("carries fee parameters the framework does not model onto feeParameters", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 700n,
+        parameters: { gasLimit: 21000n, energyRequired: "1200", bandwidthRequired: "268" },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    // The whole bag rides through, including the keys `propagateField` recognises — the framework
+    // does not curate what a family's fee descriptor is allowed to read.
+    expect((result as any).feeParameters).toEqual({
+      gasLimit: 21000n,
+      energyRequired: "1200",
+      bandwidthRequired: "268",
+    });
+  });
+
+  it("refreshes feeParameters when the fee value is unchanged but the breakdown is not", async () => {
+    // `fees`/`amount`/asset all match here, so this isolates the `feeParameters` term of the
+    // early-return identity check: the total can hold while the breakdown behind it moves.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { energyRequired: "2400" },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      feeParameters: { energyRequired: "1200" },
+    } as any);
+
+    expect((result as any).feeParameters).toEqual({ energyRequired: "2400" });
+  });
+
+  it("returns the original transaction when the breakdown is unchanged too", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { energyRequired: "1200" },
+      }),
+    });
+
+    const original = { ...baseTransaction, feeParameters: { energyRequired: "1200" } } as any;
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    // Identity, not equality: the early return exists so an unchanged estimation does not churn
+    // referential equality for consumers that memoise on it.
+    expect(await prepareTransaction(account, original)).toBe(original);
+  });
+
+  it("clears stale feeParameters when a re-estimation returns none", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: 900n }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      feeParameters: { energyRequired: "1200" },
+    } as any);
+
+    expect((result as any).feeParameters).toBeUndefined();
   });
 
   it("uses customFees.parameters.fees without calling estimateFees", async () => {
@@ -535,6 +605,7 @@ describe("genericPrepareTransaction", () => {
         assetOwner: "test-account-address",
         assetReference: "usdc",
       },
+      undefined,
       undefined,
       undefined,
     );

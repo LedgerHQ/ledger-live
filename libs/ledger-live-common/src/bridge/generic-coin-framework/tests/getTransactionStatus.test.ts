@@ -1,10 +1,15 @@
 import BigNumber from "bignumber.js";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
+import { getBridgeApi } from "../bridge";
 import * as utils from "../utils";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
+}));
+
+jest.mock("../bridge", () => ({
+  getBridgeApi: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -13,6 +18,7 @@ jest.mock("../utils", () => ({
 }));
 
 const mockExtractBalances = utils.extractBalances as jest.Mock;
+const mockGetBridgeApi = getBridgeApi as jest.Mock;
 
 describe("genericGetTransactionStatus", () => {
   const account = {
@@ -39,6 +45,7 @@ describe("genericGetTransactionStatus", () => {
     validateIntent.mockResolvedValue(validateIntentResult);
     mockExtractBalances.mockReturnValue({});
     (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent });
+    mockGetBridgeApi.mockResolvedValue({});
   });
 
   it.each([
@@ -88,5 +95,38 @@ describe("genericGetTransactionStatus", () => {
       expect.anything(),
       expect.anything(),
     );
+  });
+
+  it("carries familySpecificData through the draft transaction to the family's buildIntentData", async () => {
+    const familySpecificData = { chosenOption: "OPTION_A", chosenList: [], chosenCount: 3 };
+    const buildIntentData = jest.fn().mockReturnValue({ type: "none" });
+    mockGetBridgeApi.mockResolvedValue({ buildIntentData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    await getStatus(account, {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+      familySpecificData,
+    } as any);
+
+    // The draft is a field-by-field allowlist: a field missing from it vanishes with no type error.
+    expect(buildIntentData).toHaveBeenCalledWith(expect.objectContaining({ familySpecificData }));
+  });
+
+  it("leaves the intent's data to the coin module when the family declares no buildIntentData", async () => {
+    const craftTransactionData = jest.fn().mockReturnValue({ type: "none" });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent, craftTransactionData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    await getStatus(account, {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+    } as any);
+
+    expect(craftTransactionData).toHaveBeenCalled();
   });
 });

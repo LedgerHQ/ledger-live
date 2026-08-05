@@ -32,6 +32,7 @@ export function genericGetTransactionStatus(
       valAddress: transaction.valAddress,
       valId: transaction.valId,
       dstValAddress: transaction.dstValAddress,
+      familySpecificData: transaction.familySpecificData,
     };
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
@@ -48,6 +49,7 @@ export function genericGetTransactionStatus(
       draftTransaction,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
+      bridgeApi.buildIntentData,
     );
 
     const customFees = bigNumberToBigIntDeep({

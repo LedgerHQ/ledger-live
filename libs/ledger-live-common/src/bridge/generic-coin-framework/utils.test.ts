@@ -15,7 +15,12 @@ import { addPendingOperation } from "@ledgerhq/ledger-wallet-framework/account/i
 import BigNumber from "bignumber.js";
 import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
+import {
+  GenericTransaction,
+  GenericTransactionMode,
+  GenericTransactionRaw,
+  OperationCommon,
+} from "./types";
 import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
 jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
@@ -461,6 +466,73 @@ describe("coin-framework utils", () => {
 
       expect(operation.fee).toEqual(fees);
       expect(operation.value).toEqual(amount);
+    });
+
+    it("carries familySpecificData into transactionRaw so a pending operation survives restore", () => {
+      const familySpecificData = { chosenOption: "OPTION_A", chosenList: ["a", "b"] };
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+        } as Account,
+        {
+          family: "familyx",
+          amount: new BigNumber(100),
+          recipient: "TRecipient",
+          familySpecificData,
+        } as GenericTransaction,
+        3n,
+      );
+
+      expect(
+        (operation.transactionRaw as GenericTransactionRaw | undefined)?.familySpecificData,
+      ).toEqual(familySpecificData);
+    });
+
+    it("takes a described type and value from the family", () => {
+      const describeOptimisticOperation = jest.fn().mockReturnValue({
+        type: "FREEZE" as const,
+        value: new BigNumber(0),
+      });
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+        } as Account,
+        {
+          family: "familyx",
+          amount: new BigNumber(100),
+          recipient: "TRecipient",
+          mode: "stake",
+        } as GenericTransaction,
+        3n,
+        describeOptimisticOperation,
+      );
+
+      expect(operation.type).toBe("FREEZE");
+      expect(operation.value).toEqual(new BigNumber(0));
+      expect((operation.extra as Record<string, unknown>).ledgerOpType).toBe("FREEZE");
+    });
+
+    it("keeps generic behaviour when the family does not own the mode", () => {
+      const describeOptimisticOperation = jest.fn().mockReturnValue(undefined);
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+        } as Account,
+        {
+          family: "familyx",
+          amount: new BigNumber(100),
+          recipient: "TRecipient",
+          mode: "stake",
+        } as GenericTransaction,
+        3n,
+        describeOptimisticOperation,
+      );
+
+      expect(operation.type).toBe("STAKE");
+      expect(operation.value).toEqual(new BigNumber(100));
     });
   });
 
@@ -1401,6 +1473,46 @@ describe("coin-framework utils", () => {
     it("handles a large pending sequence without throwing (fixed-point, not exponential)", () => {
       // BigNumber(1e21).toString() is "1e+21", which BigInt() cannot parse; .toFixed() must be used.
       expect(nextSequenceWithPending([pendingOp(1e21)], 5n)).toBe(1000000000000000000001n);
+    });
+  });
+
+  describe("adaptCoreOperationToLiveOperation family extras", () => {
+    // Kept as a precise `CoreOperation` cast rather than `as any`.
+    const coreOperation: CoreOperation = {
+      id: "op1",
+      asset: { type: "native" },
+      type: "FREEZE",
+      value: BigInt(100),
+      senders: ["TSender"],
+      recipients: ["TRecipient"],
+      tx: {
+        hash: "hash1",
+        fees: BigInt(1),
+        block: {
+          hash: "blockhash1",
+          height: 1,
+          time: new Date("2026-01-01"),
+        },
+        date: new Date("2026-01-01"),
+        failed: false,
+      },
+      details: { ledgerOpType: "FREEZE", familyExtra: { frozenAmount: "42", votes: [] } },
+    };
+
+    it("forwards the family's own extras bag onto the operation", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", coreOperation);
+
+      expect((operation.extra as Record<string, unknown>).frozenAmount).toBe("42");
+      expect((operation.extra as Record<string, unknown>).votes).toEqual([]);
+    });
+
+    it("never lets the family shadow a framework-owned extra", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", {
+        ...coreOperation,
+        details: { ledgerOpType: "FREEZE", familyExtra: { ledgerOpType: "HIJACKED" } },
+      });
+
+      expect((operation.extra as Record<string, unknown>).ledgerOpType).toBe("FREEZE");
     });
   });
 });
