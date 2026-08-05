@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { reduceShieldedSyncResult, postSync } from "./sync";
+import { reserveNotes, getReservedNullifiers, _resetReservationsForTest } from "./note-reservation";
 import type { ZcashAccount } from "../types/bridge";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import type { BtcOperation } from "../types/bridge";
@@ -231,6 +232,80 @@ describe("reduceShieldedSyncResult", () => {
         output.accountUpdate.privateInfo?.transactions?.[0].decryptedData?.ironwood_outputs;
       expect(notes).toHaveLength(1);
       expect(notes?.[0].nullifier).toBe(nullifier);
+    });
+  });
+
+  // Reconciliation is what keeps the session reservation store from growing
+  // forever, and the reducer is its only caller — one per branch, the chunk that
+  // discovered transactions and the chunk that did not. Both are covered here
+  // against the real store, since a mis-threaded argument is the regression that
+  // silently defeats the cleanup.
+  describe("reservation reconciliation", () => {
+    const RESERVED_A = "11".repeat(32);
+    const RESERVED_B = "22".repeat(32);
+
+    beforeEach(() => {
+      _resetReservationsForTest();
+    });
+
+    describe.each([
+      { branch: "without new transactions", transactions: [] as ShieldedTransaction[] },
+      { branch: "carrying new transactions", transactions: [incomingTx(3_425_869, 1000)] },
+    ])("on a chunk $branch", ({ transactions }) => {
+      it("releases every reservation once the scan reaches the chain tip", () => {
+        reserveNotes("acc-1", [RESERVED_A, RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          {
+            ...emptyChunk,
+            transactions,
+            processedBlocks: 15,
+            remainingBlocks: 0,
+            spentKnownNullifiers: [RESERVED_A],
+          },
+          infoWith({}),
+          "acc-1",
+        );
+
+        expect(getReservedNullifiers("acc-1").size).toBe(0);
+      });
+
+      it("drops only the reported nullifiers while blocks remain to scan", () => {
+        reserveNotes("acc-1", [RESERVED_A, RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          {
+            ...emptyChunk,
+            transactions,
+            processedBlocks: 10,
+            remainingBlocks: 5,
+            spentKnownNullifiers: [RESERVED_A],
+          },
+          infoWith({}),
+          "acc-1",
+        );
+
+        const reserved = getReservedNullifiers("acc-1");
+        expect(reserved.has(RESERVED_A)).toBe(false);
+        expect(reserved.has(RESERVED_B)).toBe(true);
+      });
+
+      it("keeps the reservations of the accounts it is not syncing", () => {
+        reserveNotes("acc-1", [RESERVED_A]);
+        reserveNotes("acc-2", [RESERVED_B]);
+
+        reduceShieldedSyncResult(
+          { processedOperations: [], accountUpdate: {} },
+          { ...emptyChunk, transactions, processedBlocks: 15, remainingBlocks: 0 },
+          infoWith({}),
+          "acc-1",
+        );
+
+        expect(getReservedNullifiers("acc-1").size).toBe(0);
+        expect(getReservedNullifiers("acc-2").has(RESERVED_B)).toBe(true);
+      });
     });
   });
 });

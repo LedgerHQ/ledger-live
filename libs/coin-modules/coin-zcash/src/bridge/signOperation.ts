@@ -16,6 +16,7 @@ import { combine } from "../logic/transaction/combine";
 import { mapOutputs, mapSpends, mapTransparentInputs } from "./mapping";
 import { getWalletAccount } from "./getWalletAccount";
 import { resolveTransparentUtxos } from "./statusHelpers";
+import { reserveNotes } from "./note-reservation";
 
 // The V6 builder mirrors zcash-utils' own precondition: the transaction must carry
 // an Ironwood bundle, which an Ironwood spend or an Ironwood output creates. Those
@@ -123,6 +124,12 @@ export const buildSignOperation =
         );
 
         const fee = new BigNumber(buildResult.feeZat);
+
+        const ironwoodNullifiers = transaction.selectedNotes.map(n => n.nullifier);
+        if (ironwoodNullifiers.length > 0) {
+          reserveNotes(account.id, ironwoodNullifiers);
+        }
+
         const operation: Operation = {
           id: encodeOperationId(account.id, finalizeResult.txid, "OUT"),
           hash: finalizeResult.txid,
@@ -137,6 +144,7 @@ export const buildSignOperation =
           date: new Date(),
           extra: {
             zcashShielded: true,
+            ...(ironwoodNullifiers.length > 0 && { shieldedNullifiers: ironwoodNullifiers }),
             ...(inputRefs.length > 0 && {
               inputs: inputRefs.map(r => `${r.hash}-${r.outputIndex}`),
               inputRefs,

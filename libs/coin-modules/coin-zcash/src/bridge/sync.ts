@@ -45,6 +45,7 @@ import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "..
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
+import { reconcileReservations } from "./note-reservation";
 
 export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 
@@ -715,6 +716,8 @@ export function reduceShieldedSyncResult(
       ironwoodBalance,
     });
 
+    reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
+
     return {
       ...accumulated,
       accountUpdate: {
@@ -796,6 +799,8 @@ export function reduceShieldedSyncResult(
     0,
     (info.initialAccount?.operationsCount ?? 0) - (info.initialAccount?.operations?.length ?? 0),
   );
+
+  reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
 
   return {
     processedOperations: [...result.transactions],
