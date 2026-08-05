@@ -36,6 +36,7 @@ Two kinds of preset:
 | Package | Applies to |
 | --- | --- |
 | [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
+| [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
 
 ## Adding a package
 

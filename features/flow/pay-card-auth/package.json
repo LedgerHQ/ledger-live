@@ -32,7 +32,7 @@
     "@domain/entity-pay-card": "workspace:^"
   },
   "devDependencies": {
-    "@features/platform-jest-config": "workspace:*",
+    "@support/jest-features-flow": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",

@@ -1,5 +1,5 @@
 {
-  "name": "@features/platform-jest-config",
+  "name": "@support/jest-features-flow",
   "targets": {
     "build": {
       "executor": "nx:noop"

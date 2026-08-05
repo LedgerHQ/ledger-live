@@ -1,4 +1,4 @@
-# @features/platform-jest-config
+# @support/jest-features-flow
 
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
@@ -31,7 +31,7 @@ Tests therefore assert on your own layout/view-model wiring, not on real Lumen i
 
 ```js
 // features/flow/<pkg>/jest.config.js
-module.exports = require("@features/platform-jest-config").createFlowJestConfig();
+module.exports = require("@support/jest-features-flow").createFlowJestConfig();
 ```
 
 Add the dependency:
@@ -39,6 +39,6 @@ Add the dependency:
 ```jsonc
 // package.json
 "devDependencies": {
-  "@features/platform-jest-config": "workspace:*"
+  "@support/jest-features-flow": "workspace:*"
 }
 ```

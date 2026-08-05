@@ -4680,9 +4680,6 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/qr-code
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.23
@@ -4710,6 +4707,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4873,9 +4873,6 @@ importers:
 
   features/flow/market-banner:
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -4888,6 +4885,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.52(8f2c508bbb7b9fda5127db56feef203c)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4986,9 +4986,6 @@ importers:
         specifier: workspace:^
         version: link:../../../domain/entity/pay-card
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@features/platform-style':
         specifier: workspace:*
         version: link:../../platform/style
@@ -5010,6 +5007,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5278,12 +5278,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-
-  features/platform/jest-config:
-    devDependencies:
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
 
   features/platform/style:
     dependencies:
@@ -14550,6 +14544,12 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+
+  support/jest-features-flow:
+    devDependencies:
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
 
   tests/dummy-live-app:
     dependencies:
@@ -66701,7 +66701,7 @@ snapshots:
       '@babel/parser': 7.29.2
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
-      metro: 0.83.7(metro-transform-worker@0.83.7)
+      metro: 0.83.7
       metro-babel-transformer: 0.83.7
       metro-cache: 0.83.7
       metro-cache-key: 0.83.7
@@ -66899,53 +66899,6 @@ snapshots:
       yargs: 17.7.2
     transitivePeerDependencies:
       - bufferutil
-      - supports-color
-      - utf-8-validate
-
-  metro@0.83.7(metro-transform-worker@0.83.7):
-    dependencies:
-      '@babel/code-frame': 7.29.0
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.29.1
-      '@babel/parser': 7.29.2
-      '@babel/template': 7.28.6
-      '@babel/traverse': 7.29.0
-      '@babel/types': 7.29.0
-      accepts: 2.0.0
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 4.4.3
-      error-stack-parser: 2.1.4
-      flow-enums-runtime: 0.0.6
-      graceful-fs: 4.2.11
-      hermes-parser: 0.35.0
-      image-size: 1.1.1
-      invariant: 2.2.4
-      jest-worker: 29.7.0(metro@0.83.7)
-      jsc-safe-url: 0.2.4
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.83.7
-      metro-cache: 0.83.7
-      metro-cache-key: 0.83.7
-      metro-config: 0.83.7(metro-transform-worker@0.83.7)
-      metro-core: 0.83.7
-      metro-file-map: 0.83.7(metro@0.83.7)
-      metro-resolver: 0.83.7
-      metro-runtime: 0.83.7
-      metro-source-map: 0.83.7
-      metro-symbolicate: 0.83.7
-      metro-transform-plugins: 0.83.7
-      metro-transform-worker: 0.83.7
-      mime-types: 3.0.1
-      nullthrows: 1.1.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      throat: 5.0.0
-      ws: 7.5.10
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
