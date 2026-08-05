@@ -55,9 +55,7 @@ describe("DmkSignerICP", () => {
         getAppConfiguration: jest.fn().mockReturnValue({ observable }),
       };
 
-      await expect(signer.getAppConfiguration()).rejects.toThrow(
-        "Unexpected device action status",
-      );
+      await expect(signer.getAppConfiguration()).rejects.toThrow("Unexpected device action status");
     });
   });
 
@@ -96,7 +94,9 @@ describe("DmkSignerICP", () => {
         getAddress: jest.fn().mockReturnValue({ observable }),
       };
 
-      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow(UserRefusedOnDevice);
+      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow(
+        UserRefusedOnDevice,
+      );
     });
 
     it("rejects with a generic error on an unknown error code", async () => {
@@ -108,7 +108,9 @@ describe("DmkSignerICP", () => {
         getAddress: jest.fn().mockReturnValue({ observable }),
       };
 
-      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow("GetAddressDAError");
+      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow(
+        "GetAddressDAError",
+      );
     });
 
     it("rejects with the error tag when no errorCode is present", async () => {
@@ -120,7 +122,9 @@ describe("DmkSignerICP", () => {
         getAddress: jest.fn().mockReturnValue({ observable }),
       };
 
-      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow("GetAddressDAError");
+      await expect(signer.getAddressAndPubKey(DERIVATION_PATH)).rejects.toThrow(
+        "GetAddressDAError",
+      );
     });
 
     it("rejects on observable error", async () => {

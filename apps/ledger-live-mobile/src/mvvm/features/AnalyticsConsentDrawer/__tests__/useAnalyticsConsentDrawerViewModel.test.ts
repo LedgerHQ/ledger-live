@@ -9,7 +9,7 @@ import {
 } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
 
-/** Fixed clock so `needsConsentRenewal` / consent ISO strings are deterministic. */
+/** Fixed clock so consent ISO strings are deterministic. */
 const FIXED_NOW = new Date("2024-01-15T12:00:00.000Z");
 
 const drawerEventPayload = {

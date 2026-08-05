@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aleo",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "Ledger Aleo Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -110,7 +110,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",

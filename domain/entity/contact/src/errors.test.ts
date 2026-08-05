@@ -1,6 +1,7 @@
 import {
   ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
+  DuplicateContactNameError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
@@ -8,11 +9,9 @@ import {
 describe("errors", () => {
   it.each([
     [new InvalidContactNameError(), "InvalidContactNameError"],
+    [new DuplicateContactNameError(), "DuplicateContactNameError"],
     [new InvalidContactAddressLabelError(), "InvalidContactAddressLabelError"],
-    [
-      new DuplicateContactAddressLabelError(),
-      "DuplicateContactAddressLabelError",
-    ],
+    [new DuplicateContactAddressLabelError(), "DuplicateContactAddressLabelError"],
     [new ContactAddressLabelTooLongError(), "ContactAddressLabelTooLongError"],
   ])("%s extends Error and keeps the stable name", (error, name) => {
     expect(error).toBeInstanceOf(Error);

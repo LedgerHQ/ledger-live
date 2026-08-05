@@ -10,10 +10,11 @@ export function useRenameContactDialogViewModel({
   isRequestedOpen,
   onCloseRequest,
   onSaveSuccess,
-}: UseRenameContactDialogViewModelOptions & Readonly<{
-  isRequestedOpen: boolean;
-  onCloseRequest: () => void;
-}>): RenameContactDialogViewModel {
+}: UseRenameContactDialogViewModelOptions &
+  Readonly<{
+    isRequestedOpen: boolean;
+    onCloseRequest: () => void;
+  }>): RenameContactDialogViewModel {
   const [draftName, setDraftName] = useState(currentName);
   const [isSaving, setIsSaving] = useState(false);
   const { invalidNameError, isConfirmEnabled, save } = useRenameContactViewModel(

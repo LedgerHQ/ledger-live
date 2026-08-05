@@ -1,20 +1,21 @@
-import { parseContactName, type Contact } from "@domain/entity-contact";
+import { parseContactName, type Contact, type ContactName } from "@domain/entity-contact";
 import type { ContactCreationPort } from "./ports";
 import { createAddContactViewModel } from "./viewModel";
 import type { AddContactViewModel } from "./types";
 
 export type AddContactController = Readonly<{
-  getViewModel: (draftName: string) => AddContactViewModel;
-  save: (draftName: string) => Promise<Contact>;
+  getViewModel: (draftName: string, existingNames?: readonly ContactName[]) => AddContactViewModel;
+  save: (draftName: string, existingNames?: readonly ContactName[]) => Promise<Contact>;
 }>;
 
 export function createAddContactController(
   contactCreation: ContactCreationPort,
 ): AddContactController {
   return {
-    getViewModel: draftName => createAddContactViewModel(draftName),
-    save: async draftName => {
-      const name = parseContactName(draftName);
+    getViewModel: (draftName, existingNames = []) =>
+      createAddContactViewModel(draftName, existingNames),
+    save: async (draftName, existingNames = []) => {
+      const name = parseContactName(draftName, existingNames);
 
       return contactCreation.createContact({ name });
     },

@@ -10,15 +10,13 @@ import {
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
+  getLargeScreenUpsellDecision,
   lastSeenUpsellModalSelector,
+  mapDevicesModelListToUpsellInputs,
   resetUpsellModalRetries,
   retriesUpsellModalSelector,
   setLastSeenUpsellModal,
   setUpsellModalRetries,
-} from "@domain/entity-large-screen-upsell-modal";
-import {
-  getLargeScreenUpsellDecision,
-  mapDevicesModelListToUpsellInputs,
 } from "@features/flow-large-screen-upsell";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { saveSettings, setSharePersonalizedRecommendations } from "~/renderer/actions/settings";

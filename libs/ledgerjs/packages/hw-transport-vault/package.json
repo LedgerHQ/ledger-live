@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "private": true,
   "description": "Ledger Vault transport",
   "keywords": [
@@ -27,7 +27,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/logs": "workspace:^"
+    "@ledgerhq/logs": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

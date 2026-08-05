@@ -20,7 +20,7 @@ export function ContactNameInput({
       data-testid="contacts-add-contact-name-input"
       label={placeholder}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={event => onChange(event.target.value)}
       maxLength={CONTACT_NAME_MAX_LENGTH}
       maxCount={CONTACT_NAME_MAX_LENGTH}
       helperText={errorMessage}

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "36.6.1",
+  "version": "37.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -356,7 +356,7 @@
     "@ledgerhq/live-signer-solana": "workspace:^",
     "@ledgerhq/live-signer-zcash": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.15.2",

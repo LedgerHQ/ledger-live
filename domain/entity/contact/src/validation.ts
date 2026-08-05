@@ -1,20 +1,22 @@
 import {
   ContactAddressLabelTooLongError,
   DuplicateContactAddressLabelError,
+  DuplicateContactNameError,
   InvalidContactAddressLabelError,
   InvalidContactNameError,
 } from "./errors";
-import {
-  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
-  ContactAddressLabelSchema,
-  ContactNameSchema,
-} from "./schema";
+import { ContactAddressLabelInputSchema, ContactNameInputSchema } from "./schema";
 import type { ContactAddressLabel, ContactName } from "./types";
 
-export type ContactNameValidationErrorName = InvalidContactNameError["name"];
+export type ContactNameValidationErrorName =
+  | InvalidContactNameError["name"]
+  | DuplicateContactNameError["name"];
 
 export const INVALID_CONTACT_NAME_ERROR_NAME =
   "InvalidContactNameError" satisfies ContactNameValidationErrorName;
+
+export const DUPLICATE_CONTACT_NAME_ERROR_NAME =
+  "DuplicateContactNameError" satisfies ContactNameValidationErrorName;
 
 export type ContactAddressLabelValidationErrorName =
   | InvalidContactAddressLabelError["name"]
@@ -30,96 +32,132 @@ export const DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME =
 export const CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME =
   "ContactAddressLabelTooLongError" satisfies ContactAddressLabelValidationErrorName;
 
-export function getContactNameValidationError(
-  draftName: string
-): ContactNameValidationErrorName | null {
-  const trimmedDraftName = draftName.trim();
+type ContactNameValidationResult = {
+  readonly validationError: ContactNameValidationErrorName | null;
+  readonly value: ContactName | null;
+};
 
-  if (trimmedDraftName.length === 0) {
-    return null;
-  }
+type ContactAddressLabelValidationResult = {
+  readonly validationError: ContactAddressLabelValidationErrorName | null;
+  readonly value: ContactAddressLabel | null;
+};
 
-  return ContactNameSchema.safeParse(trimmedDraftName).success
-    ? null
-    : INVALID_CONTACT_NAME_ERROR_NAME;
-}
-
-export function isValidContactName(draftName: string): boolean {
-  return (
-    draftName.trim().length > 0 &&
-    getContactNameValidationError(draftName) === null
-  );
-}
-
-export function parseContactName(draftName: string): ContactName {
-  if (
-    getContactNameValidationError(draftName) === INVALID_CONTACT_NAME_ERROR_NAME
-  ) {
-    throw new InvalidContactNameError();
-  }
-
-  const parsed = ContactNameSchema.safeParse(draftName.trim());
+function validateContactNameInput(
+  draftName: string,
+  existingNames: readonly ContactName[],
+): ContactNameValidationResult {
+  const parsed = ContactNameInputSchema.safeParse(draftName);
 
   if (!parsed.success) {
+    return { validationError: INVALID_CONTACT_NAME_ERROR_NAME, value: null };
+  }
+
+  if (parsed.data === "") {
+    return { validationError: null, value: null };
+  }
+
+  const validationError = existingNames.some(
+    name =>
+      normalizeContactNameForComparison(name) === normalizeContactNameForComparison(parsed.data),
+  )
+    ? DUPLICATE_CONTACT_NAME_ERROR_NAME
+    : null;
+
+  return { validationError, value: parsed.data };
+}
+
+export function getContactNameValidationError(
+  draftName: string,
+  existingNames: readonly ContactName[] = [],
+): ContactNameValidationErrorName | null {
+  return validateContactNameInput(draftName, existingNames).validationError;
+}
+
+export function isValidContactName(
+  draftName: string,
+  existingNames: readonly ContactName[] = [],
+): boolean {
+  const { validationError, value } = validateContactNameInput(draftName, existingNames);
+
+  return validationError === null && value !== null;
+}
+
+export function normalizeContactNameForComparison(name: string): string {
+  return name.trim().normalize("NFC").toLocaleLowerCase("en-US");
+}
+
+export function parseContactName(
+  draftName: string,
+  existingNames: readonly ContactName[] = [],
+): ContactName {
+  const { validationError, value } = validateContactNameInput(draftName, existingNames);
+
+  if (validationError === INVALID_CONTACT_NAME_ERROR_NAME || value === null) {
     throw new InvalidContactNameError();
   }
 
-  return parsed.data;
+  if (validationError === DUPLICATE_CONTACT_NAME_ERROR_NAME) {
+    throw new DuplicateContactNameError();
+  }
+
+  return value;
 }
 
-export function normalizeContactAddressLabelForComparison(
-  label: string
-): string {
-  return label.trim().normalize("NFC").toLocaleLowerCase("en-US");
+export function normalizeContactAddressLabelForComparison(label: string): string {
+  return label.toLocaleLowerCase("en-US");
+}
+
+function validateContactAddressLabelInput(
+  draftLabel: string,
+  existingLabels: readonly ContactAddressLabel[],
+): ContactAddressLabelValidationResult {
+  const parsed = ContactAddressLabelInputSchema.safeParse(draftLabel);
+
+  if (!parsed.success) {
+    const validationError = parsed.error.issues.some(
+      issue => issue.message === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+    )
+      ? CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME
+      : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
+
+    return { validationError, value: null };
+  }
+
+  if (parsed.data === "") {
+    return { validationError: null, value: null };
+  }
+
+  const comparisonLabel = normalizeContactAddressLabelForComparison(parsed.data);
+  const validationError = existingLabels.some(
+    label => normalizeContactAddressLabelForComparison(label) === comparisonLabel,
+  )
+    ? DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME
+    : null;
+
+  return { validationError, value: parsed.data };
 }
 
 export function getContactAddressLabelValidationError(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabelValidationErrorName | null {
-  const trimmedDraftLabel = draftLabel.trim();
-
-  if (trimmedDraftLabel.length > CONTACT_ADDRESS_LABEL_MAX_LENGTH) {
-    return CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME;
-  }
-
-  const parsed = ContactAddressLabelSchema.safeParse(trimmedDraftLabel);
-
-  if (!parsed.success) {
-    return trimmedDraftLabel.length === 0
-      ? null
-      : INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME;
-  }
-
-  const comparisonLabel = normalizeContactAddressLabelForComparison(
-    parsed.data
-  );
-  return existingLabels.some(
-    (label) =>
-      normalizeContactAddressLabelForComparison(label) === comparisonLabel
-  )
-    ? DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME
-    : null;
+  return validateContactAddressLabelInput(draftLabel, existingLabels).validationError;
 }
 
 export function isValidContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): boolean {
-  return (
-    draftLabel.trim().length > 0 &&
-    getContactAddressLabelValidationError(draftLabel, existingLabels) === null
-  );
+  const { validationError, value } = validateContactAddressLabelInput(draftLabel, existingLabels);
+
+  return validationError === null && value !== null;
 }
 
 export function parseContactAddressLabel(
   draftLabel: string,
-  existingLabels: readonly ContactAddressLabel[] = []
+  existingLabels: readonly ContactAddressLabel[] = [],
 ): ContactAddressLabel {
-  const validationError = getContactAddressLabelValidationError(
-    draftLabel,
-    existingLabels
-  );
+  const { validationError, value } = validateContactAddressLabelInput(draftLabel, existingLabels);
 
   if (validationError === CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME) {
     throw new ContactAddressLabelTooLongError();
@@ -133,11 +171,9 @@ export function parseContactAddressLabel(
     throw new DuplicateContactAddressLabelError();
   }
 
-  const parsed = ContactAddressLabelSchema.safeParse(draftLabel.trim());
-
-  if (!parsed.success) {
+  if (value === null) {
     throw new InvalidContactAddressLabelError();
   }
 
-  return ContactAddressLabelSchema.parse(parsed.data.normalize("NFC"));
+  return value;
 }

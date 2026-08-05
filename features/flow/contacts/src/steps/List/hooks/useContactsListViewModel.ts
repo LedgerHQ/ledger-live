@@ -8,8 +8,5 @@ export function useContactsListViewModel(): ContactsListViewModel {
   const meContact = useContactsMeContact();
   const contacts = useContacts();
 
-  return useMemo(
-    () => createContactsListViewModel(meContact, contacts),
-    [contacts, meContact],
-  );
+  return useMemo(() => createContactsListViewModel(meContact, contacts), [contacts, meContact]);
 }

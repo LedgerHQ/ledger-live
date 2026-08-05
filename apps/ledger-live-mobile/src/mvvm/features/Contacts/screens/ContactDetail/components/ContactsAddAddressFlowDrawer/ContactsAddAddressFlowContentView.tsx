@@ -27,19 +27,10 @@ export function ContactsAddAddressFlowContentView({
   currencyShell,
   currentStep,
   isOpen,
-  labels,
   onBack,
   onClose,
-  onContinueFromReview,
-  onFinish,
 }: ContactsAddAddressFlowContentViewModel): React.JSX.Element {
-  const flowContentProps = {
-    addressEntryProps,
-    addressNameProps,
-    labels,
-    onContinueFromReview,
-    onFinish,
-  };
+  const flowContentProps = { addressEntryProps, addressNameProps };
   const screens: QueuedDrawerFlowScreenRegistry<ContactsAddAddressDrawerStep> = {
     currency: {
       content: currencyShell.content,
@@ -55,17 +46,6 @@ export function ContactsAddAddressFlowContentView({
     name: {
       content: <ContactsAddAddressFlowContent {...flowContentProps} step="name" />,
       options: LOCKED_STEP_OPTIONS,
-    },
-    review: {
-      content: <ContactsAddAddressFlowContent {...flowContentProps} step="review" />,
-      options: LOCKED_STEP_OPTIONS,
-    },
-    success: {
-      content: <ContactsAddAddressFlowContent {...flowContentProps} step="success" />,
-      options: {
-        ...LOCKED_STEP_OPTIONS,
-        hasBackButton: false,
-      },
     },
   };
 

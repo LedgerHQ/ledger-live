@@ -8,9 +8,7 @@ acknowledge a new privacy policy, or stay silent. Implements
 [ADR: Analytics Consent Renewal](https://ledgerhq.atlassian.net/wiki/spaces/Engagement/pages/7249592355):
 `analyticsOptIn.params.policyVersion` carries major/minor semantics.
 
-Renewal is version-driven only. A stored consent never expires on a timer, so
-`analyticsOptIn.params.consentValidityDays` is not read here — it remains for desktop, which
-still runs its own rolling window through `libs/ledger-live-common`.
+Renewal is version-driven only. A stored consent never expires on a timer.
 
 One verdict drives both the consent drawer and the tracking gate, so optional analytics is
 disabled exactly while a fresh choice is pending.

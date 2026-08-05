@@ -236,7 +236,7 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
-  it("should advance through the placeholder steps with the resolved address", async () => {
+  it("should require confirmation and return the saved address target", async () => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({
       status: "valid",
@@ -259,13 +259,28 @@ describe("useAddAddressFlowViewModel", () => {
     });
 
     act(() => result.current.continueFromName());
-    expect(result.current.state.status).toBe("reviewingAddress");
+    expect(result.current.state).toMatchObject({
+      status: "confirmationRequired",
+      selectedContactId: contactId,
+      selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+      addressEntry: {
+        value: "ledger.eth",
+        resolvedAddress: RESOLVED_ADDRESS,
+      },
+    });
 
-    act(() => result.current.continueFromReview());
-    expect(result.current.state.status).toBe("success");
+    act(() => result.current.completeMockConfirmation());
+    expect(result.current.state).toMatchObject({
+      status: "success",
+      target: { type: "contactDetail", contactId },
+      addressEntry: {
+        value: "ledger.eth",
+        resolvedAddress: RESOLVED_ADDRESS,
+      },
+    });
   });
 
-  it("should allow a custom address label before review", async () => {
+  it("should allow a custom address label before confirmation", async () => {
     const contact = mockContact();
     const addressValidation = createValidationPort();
     const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
@@ -287,7 +302,7 @@ describe("useAddAddressFlowViewModel", () => {
     });
 
     act(() => result.current.continueFromName());
-    expect(result.current.state.status).toBe("reviewingAddress");
+    expect(result.current.state.status).toBe("confirmationRequired");
   });
 
   it("should limit default and edited address labels to 32 characters", async () => {

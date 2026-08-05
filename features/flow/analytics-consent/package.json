@@ -2,7 +2,7 @@
   "name": "@features/flow-analytics-consent",
   "version": "0.1.0",
   "private": true,
-  "description": "Analytics consent decision engine: policy version major/minor semantics plus rolling consent expiry",
+  "description": "Analytics consent decision engine: policy version major/minor semantics",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
