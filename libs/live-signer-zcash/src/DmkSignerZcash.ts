@@ -263,13 +263,14 @@ export class DmkSignerZcash implements ZcashSigner {
   }
 
   /**
-   * Sign an Orchard PCZT via the DMK signer.
+   * Sign a PCZT via the DMK signer (Orchard V5 and Ironwood V6).
    *
    * Delegates to the DMK `signPcztTransaction` device action, which streams the
    * PCZT bundle to the device and collects all spend-authorization signatures
    * atomically. Returns `SignPcztTransactionResult` containing per-action Orchard
-   * signatures and per-input transparent signatures — callers must not reorder
-   * them before passing to `finalizeTransaction`.
+   * signatures (`orchard`), per-action Ironwood signatures (`ironwood`), and
+   * per-input transparent signatures (`transparentInputSigs`) — callers must not
+   * reorder any of these arrays before passing to `finalizeTransaction`.
    *
    * `skipOpenApp: true` is consistent with the other signer methods; the caller
    * (signOperation orchestration) is responsible for ensuring the Zcash app is open.
