@@ -448,6 +448,32 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     ).toBeVisible();
   });
 
+  it("should keep the empty-accounts description on the perpetuals account step", async () => {
+    const { user } = render(<ModularDialogFlowManager />, {
+      ...INITIAL_STATE,
+      initialState: {
+        accounts: [],
+        modularDialog: {
+          ...defaultModularDialogState,
+          dialogParams: {
+            ...defaultModularDialogState.dialogParams,
+            uiUseCase: "perpetuals",
+          },
+        },
+      },
+    });
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    await user.click(screen.getByText(/ethereum/i));
+    await user.click(screen.getByText(/ethereum/i));
+
+    expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
+    expect(screen.getAllByText(/you don't have ethereum accounts yet/i)[0]).toBeVisible();
+    expect(
+      screen.queryByText(/select an account you want to deposit funds into/i),
+    ).not.toBeInTheDocument();
+  });
+
   it("should show deposit asset header when uiUseCase has a variant", async () => {
     render(<ModularDialogFlowManager />, {
       ...INITIAL_STATE,
