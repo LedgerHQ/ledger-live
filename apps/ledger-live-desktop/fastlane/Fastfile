@@ -112,7 +112,7 @@ platform :mac do
       platform: "osx",
       initial_build_number: 0
     )
-    build_number = latest + 1
+    build_number = latest.to_i + 1
     UI.message("Next MAS build number for #{ENV["APP_IDENTIFIER"]} #{version}: #{build_number}")
     if ENV["GITHUB_ENV"]
       File.open(ENV["GITHUB_ENV"], "a") { |f| f.puts("MAS_BUILD_NUMBER=#{build_number}") }
