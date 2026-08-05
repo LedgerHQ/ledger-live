@@ -1,8 +1,11 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "moduleSuffixes": [".web", ""]
+        "moduleSuffixes": [".web", ""],
+        // jest-dom is loaded by the shared web preset's setupFilesAfterEnv; naming it here is what
+        // registers its matcher types (toBeVisible, toBeInTheDocument, …).
+        "types": ["jest", "@testing-library/jest-dom"]
     },
-    "include": ["src/**/*", "jest.setup.ts", "jest/**/*", "**/*.d.ts"],
+    "include": ["src/**/*", "jest/**/*", "**/*.d.ts"],
     "exclude": ["node_modules", "jest/**/*.native.*", "src/**/*.native.*"]
 }

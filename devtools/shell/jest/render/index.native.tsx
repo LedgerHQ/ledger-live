@@ -1,35 +1,15 @@
-import React, { type ComponentType } from "react";
-import { render as rntlRender, RenderOptions, RenderResult } from "@testing-library/react-native";
+import React, { type ComponentType, type ReactNode } from "react";
+import { render, type RenderResult } from "@support/jest-devtools-fixtures/native";
 import { NavigationContainer } from "@react-navigation/native";
-import { ThemeProvider } from "@ledgerhq/lumen-ui-rnative";
-import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { DevToolsShellProvider, type CategoryGroup } from "../../src/context";
 
-function ThemeProviders({ children }: { readonly children: React.ReactNode }) {
-  return <ThemeProvider themes={ledgerLiveThemes}>{children}</ThemeProvider>;
+function NavigationWrapper({ children }: { readonly children: ReactNode }) {
+  return <NavigationContainer>{children}</NavigationContainer>;
 }
 
-function NavigationProviders({ children }: { readonly children: React.ReactNode }) {
-  return (
-    <ThemeProviders>
-      <NavigationContainer>{children}</NavigationContainer>
-    </ThemeProviders>
-  );
-}
-
-/** Default render */
-function render(ui: React.ReactElement, options?: Omit<RenderOptions, "wrapper">): RenderResult {
-  return rntlRender(ui, { wrapper: ThemeProviders, ...options });
-}
-
-/**
- * Render wrapped in a NavigationContainer.
- */
-function renderWithNavigation(
-  ui: React.ReactElement,
-  options?: Omit<RenderOptions, "wrapper">,
-): RenderResult {
-  return rntlRender(ui, { wrapper: NavigationProviders, ...options });
+/** Render wrapped in a NavigationContainer, nested inside the lumen ThemeProvider. */
+function renderWithNavigation(ui: React.ReactElement): RenderResult {
+  return render(ui, { wrapper: NavigationWrapper });
 }
 
 type ScreenProps = { readonly route: { readonly params?: unknown } };
@@ -52,5 +32,5 @@ function renderScreen<P extends ScreenProps>(
   return { navigation, ...result };
 }
 
-export * from "@testing-library/react-native";
-export { render, renderWithNavigation, renderScreen };
+export * from "@support/jest-devtools-fixtures/native";
+export { renderWithNavigation, renderScreen };

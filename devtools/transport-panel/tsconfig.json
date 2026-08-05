@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "jest/*": ["./jest/*"]
+      "jest/*": ["./jest/*"],
+      "jest/render.native": ["./jest/render/index.native.tsx"]
     },
     "lib": ["ES2022", "DOM"],
     "target": "ES2022",

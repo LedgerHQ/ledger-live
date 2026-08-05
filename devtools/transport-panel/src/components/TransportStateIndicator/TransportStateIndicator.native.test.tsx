@@ -1,4 +1,4 @@
-import { render, screen } from "jest/render";
+import { render, screen } from "jest/render.native";
 import type { ConnectionStatus, TransportState, MessageMap } from "@devtools/transport";
 import { TransportStateIndicator } from "./TransportStateIndicator";
 

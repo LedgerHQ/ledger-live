@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "jest/render";
+import { render, screen, act } from "jest/render.native";
 import { QRScannerSheet } from "./QRScannerSheet.native";
 
 jest.mock("react-native-vision-camera", () => ({
