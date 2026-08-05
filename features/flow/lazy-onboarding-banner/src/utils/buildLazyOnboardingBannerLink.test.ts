@@ -40,4 +40,14 @@ describe("buildLazyOnboardingBannerLink", () => {
     expect(url.protocol).toBe("https:");
     expect(url.searchParams.get("utm_content")).toBe("lazy_onboarding_banner");
   });
+
+  it.each(["not a url", "javascript:alert(1)", "http://shop.ledger.com/"])(
+    "should fall back to the default Shop URL for unsafe link %p",
+    link => {
+      const url = new URL(buildLazyOnboardingBannerLink(link, "mobile"));
+
+      expect(url.origin + url.pathname).toBe(DEFAULT_LINK);
+      expect(url.protocol).toBe("https:");
+    },
+  );
 });

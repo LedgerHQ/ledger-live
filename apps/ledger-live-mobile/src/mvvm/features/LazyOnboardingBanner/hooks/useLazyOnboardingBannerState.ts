@@ -42,7 +42,7 @@ export function useLazyOnboardingBannerState(): LazyOnboardingBannerState {
 
   return {
     isShown: decision.shouldShow,
-    link: feature?.params?.link ?? "",
+    link: typeof feature?.params?.link === "string" ? feature.params.link : "",
     dismiss,
   };
 }
