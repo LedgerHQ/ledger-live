@@ -37,6 +37,11 @@ const WEB_TRANSFORM_ALLOWLIST = [
   "@ledgerhq\\+lumen-utils-shared",
 ];
 
+// CI runs these projects with `nx --parallel=4` and two jest workers each, under coverage
+// instrumentation. userEvent interactions on lumen components exceed the 5s default there while
+// taking ~3s locally, so the timeout has to absorb runner contention rather than test cost.
+const TEST_TIMEOUT = 30_000;
+
 /**
  * jsdom project for a devtools package's `*.web.test.*` files.
  *
@@ -48,6 +53,7 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
+    testTimeout: TEST_TIMEOUT,
     transform: { "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: swcJsc }] },
     moduleFileExtensions: ["web.tsx", "web.ts", "tsx", "ts", "js", "jsx", "json", "node"],
     testPathIgnorePatterns: ["\\.native\\.test\\."],
@@ -84,6 +90,7 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
     preset: "react-native",
     roots: ["<rootDir>/src"],
     testMatch: ["**/*.native.test.{ts,tsx}"],
+    testTimeout: TEST_TIMEOUT,
     transform: {
       // SWC handles our TypeScript/TSX source files
       "^.+\\.(t)sx?$": ["@swc/jest", { jsc: swcJsc }],

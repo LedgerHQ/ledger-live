@@ -1,3 +1,1 @@
-module.exports = require("@support/jest-devtools-fixtures").createWebJestConfig({
-  testTimeout: 30_000,
-});
+module.exports = require("@support/jest-devtools-fixtures").createWebJestConfig();
