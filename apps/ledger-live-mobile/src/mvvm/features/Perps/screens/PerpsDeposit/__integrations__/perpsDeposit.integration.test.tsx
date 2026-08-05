@@ -54,7 +54,7 @@ describe("PerpsDeposit integration", () => {
     await user.press(screen.getByTestId("perps-deposit-select-currency"));
 
     expect(mockOpenDrawer).toHaveBeenCalledWith(
-      expect.objectContaining({ uiUseCase: "perpetuals:Deposit" }),
+      expect.objectContaining({ uiUseCase: "perpetuals:deposit" }),
     );
   });
 
