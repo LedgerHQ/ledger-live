@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { generateNonce } from "../common-logic";
-import { Transaction, MAINNET_CHAIN_TAG } from "../types";
+import { getChainTag } from "../config";
+import { Transaction } from "../types";
 
 /**
  * Create an empty VET or VTHO transaction
@@ -9,7 +10,7 @@ import { Transaction, MAINNET_CHAIN_TAG } from "../types";
  * @returns {Transaction}
  */
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
-  const chainTag = MAINNET_CHAIN_TAG;
+  const chainTag = getChainTag();
 
   return {
     family: "vechain",

@@ -106,7 +106,6 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@vechain/sdk-core": "2.0.0",
     "@vechain/sdk-network": "2.0.0",
