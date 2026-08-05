@@ -1,24 +1,6 @@
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-const mockInjectiveCurrency = {
-  type: "CryptoCurrency" as const,
-  id: CryptoCurrencyIdSchema.parse("injective"),
-  name: "Injective",
-  ticker: "INJ",
-  units: [
-    {
-      name: "INJ",
-      code: "INJ",
-      magnitude: 18,
-    },
-  ],
-  family: "injective",
-  managerAppName: "Injective",
-  coinType: 60,
-  scheme: "injective",
-  color: "#00F2FE",
-  explorerViews: [],
-};
+const mockInjectiveCurrency = getCryptoCurrencyById("injective");
 
 export const mockAssetsData = {
   cryptoAssets: {
@@ -90,25 +72,7 @@ export const mockAssetsDataWithPagination = {
 };
 
 // Bitcoin mock data
-const mockBitcoinCurrency = {
-  type: "CryptoCurrency" as const,
-  id: CryptoCurrencyIdSchema.parse("bitcoin"),
-  name: "Bitcoin",
-  ticker: "BTC",
-  units: [
-    {
-      name: "BTC",
-      code: "BTC",
-      magnitude: 8,
-    },
-  ],
-  family: "bitcoin",
-  managerAppName: "Bitcoin",
-  coinType: 0,
-  scheme: "bitcoin",
-  color: "#FF9900",
-  explorerViews: [],
-};
+const mockBitcoinCurrency = getCryptoCurrencyById("bitcoin");
 
 export const mockBitcoinAssetsData = {
   cryptoAssets: {
@@ -241,19 +205,7 @@ export const mockArbitrumTokenAssetsData = {
       tokenType: "erc20",
       units: [{ name: "ARB", code: "ARB", magnitude: 18 }],
     },
-    arbitrum: {
-      type: "CryptoCurrency" as const,
-      id: CryptoCurrencyIdSchema.parse("arbitrum"),
-      name: "Arbitrum One",
-      ticker: "ETH",
-      units: [{ name: "ETH", code: "ETH", magnitude: 18 }],
-      family: "evm",
-      managerAppName: "Ethereum",
-      coinType: 60,
-      scheme: "arbitrum",
-      color: "#28A0F0",
-      explorerViews: [],
-    },
+    arbitrum: getCryptoCurrencyById("arbitrum"),
   },
   interestRates: {},
   markets: {},
