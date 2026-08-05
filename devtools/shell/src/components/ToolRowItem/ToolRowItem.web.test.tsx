@@ -1,4 +1,4 @@
-import { render, screen } from "@support/jest-devtools-fixtures/web";
+import { render, screen } from "@support/jest-devtools/web";
 import { ToolRowItem } from "./ToolRowItem";
 import { makeTool } from "jest/fixtures";
 import { Category } from "@devtools/registry";

@@ -23,7 +23,7 @@
     "@shared/feature-flags": "workspace:^"
   },
   "devDependencies": {
-    "@support/jest-devtools-fixtures": "workspace:*",
+    "@support/jest-devtools": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@testing-library/dom": "catalog:",

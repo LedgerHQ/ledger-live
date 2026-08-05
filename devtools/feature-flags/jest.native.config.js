@@ -1,1 +1,1 @@
-module.exports = require("@support/jest-devtools-fixtures").createNativeJestConfig();
+module.exports = require("@support/jest-devtools").createNativeJestConfig();

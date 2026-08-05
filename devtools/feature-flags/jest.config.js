@@ -1,1 +1,1 @@
-module.exports = require("@support/jest-devtools-fixtures").createWebJestConfig();
+module.exports = require("@support/jest-devtools").createWebJestConfig();

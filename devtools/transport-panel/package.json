@@ -30,7 +30,7 @@
     "@devtools/transport": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-devtools-fixtures": "workspace:*",
+    "@support/jest-devtools": "workspace:*",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
     "react-test-renderer": "catalog:",

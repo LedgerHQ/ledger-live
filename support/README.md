@@ -35,7 +35,7 @@ Two kinds of preset:
 
 | Package | Applies to |
 | --- | --- |
-| [`jest-devtools-fixtures`](./jest-devtools-fixtures) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
+| [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
 
 ## Adding a package
 

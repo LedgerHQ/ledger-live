@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@support/jest-devtools-fixtures/web";
+import { render, screen, fireEvent } from "@support/jest-devtools/web";
 import { mockTransportPanelProps } from "jest/mocks/transport";
 import { TransportPanel } from "./TransportPanel.web";
 

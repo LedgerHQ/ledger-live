@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from "@support/jest-devtools-fixtures/native";
+import { render, screen, userEvent } from "@support/jest-devtools/native";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { FlagDisplayState } from "../../types";
 import {

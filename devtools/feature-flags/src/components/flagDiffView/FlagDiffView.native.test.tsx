@@ -1,4 +1,4 @@
-import { render, screen } from "@support/jest-devtools-fixtures/native";
+import { render, screen } from "@support/jest-devtools/native";
 import type { DiffLine } from "../../utils";
 import { FlagDiffView } from "./FlagDiffView";
 

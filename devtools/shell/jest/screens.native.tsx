@@ -1,5 +1,5 @@
 import React, { type ComponentType, type ReactNode } from "react";
-import { render, type RenderResult } from "@support/jest-devtools-fixtures/native";
+import { render, type RenderResult } from "@support/jest-devtools/native";
 import { NavigationContainer } from "@react-navigation/native";
 import { DevToolsShellProvider, type CategoryGroup } from "../src/context";
 
@@ -32,5 +32,5 @@ function renderScreen<P extends ScreenProps>(
   return { navigation, ...result };
 }
 
-export * from "@support/jest-devtools-fixtures/native";
+export * from "@support/jest-devtools/native";
 export { renderWithNavigation, renderScreen };

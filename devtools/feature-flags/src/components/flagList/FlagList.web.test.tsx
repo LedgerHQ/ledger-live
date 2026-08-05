@@ -1,4 +1,4 @@
-import { render, screen } from "@support/jest-devtools-fixtures/web";
+import { render, screen } from "@support/jest-devtools/web";
 import userEvent from "@testing-library/user-event";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";

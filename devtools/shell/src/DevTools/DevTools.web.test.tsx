@@ -1,4 +1,4 @@
-import { render, screen } from "@support/jest-devtools-fixtures/web";
+import { render, screen } from "@support/jest-devtools/web";
 import { DevTools } from "./DevTools";
 
 jest.mock("@devtools/registry", () => ({

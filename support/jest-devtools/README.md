@@ -1,4 +1,4 @@
-# @support/jest-devtools-fixtures
+# @support/jest-devtools
 
 > [!CAUTION]
 > **Status: UNSTABLE** — New package; the factory options are still being designed.
@@ -16,18 +16,18 @@ had drifted.
 ```jsonc
 // package.json
 "devDependencies": {
-  "@support/jest-devtools-fixtures": "workspace:*"
+  "@support/jest-devtools": "workspace:*"
 }
 ```
 
 ```js
 // jest.config.js
-module.exports = require("@support/jest-devtools-fixtures").createWebJestConfig();
+module.exports = require("@support/jest-devtools").createWebJestConfig();
 ```
 
 ```js
 // jest.native.config.js
-module.exports = require("@support/jest-devtools-fixtures").createNativeJestConfig();
+module.exports = require("@support/jest-devtools").createNativeJestConfig();
 ```
 
 Both factories take an optional overrides object. `moduleNameMapper` is merged into the preset's;
@@ -35,7 +35,7 @@ every other key replaces it.
 
 ```js
 // jest.native.config.js, adding a package-local mock
-module.exports = require("@support/jest-devtools-fixtures").createNativeJestConfig({
+module.exports = require("@support/jest-devtools").createNativeJestConfig({
   moduleNameMapper: { "^jest/mocks/transport$": "<rootDir>/jest/mocks/transport.ts" },
 });
 ```
@@ -46,12 +46,12 @@ Tests import the entry point for their platform directly. There is no per-packag
 
 ```ts
 // FlagRow.web.test.tsx
-import { render, screen } from "@support/jest-devtools-fixtures/web";
+import { render, screen } from "@support/jest-devtools/web";
 ```
 
 ```ts
 // FlagRow.native.test.tsx
-import { render, screen } from "@support/jest-devtools-fixtures/native";
+import { render, screen } from "@support/jest-devtools/native";
 ```
 
 The subpath is explicit rather than resolved from the filename, because jest's resolver does not

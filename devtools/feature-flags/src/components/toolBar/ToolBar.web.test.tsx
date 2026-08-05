@@ -1,4 +1,4 @@
-import { render, screen } from "@support/jest-devtools-fixtures/web";
+import { render, screen } from "@support/jest-devtools/web";
 import userEvent from "@testing-library/user-event";
 import { ToolBar } from "./ToolBar";
 import type { ToolBarInput, ToolBarFilters, ToolBarSort, ToolBarActions } from "./types";

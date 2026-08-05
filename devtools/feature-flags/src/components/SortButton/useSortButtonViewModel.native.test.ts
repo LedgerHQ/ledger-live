@@ -1,4 +1,4 @@
-import { renderHook } from "@support/jest-devtools-fixtures/native";
+import { renderHook } from "@support/jest-devtools/native";
 import type { SortCategory, SortDirection } from "../../hooks";
 import { useSortButtonViewModel } from "./useSortButtonViewModel";
 

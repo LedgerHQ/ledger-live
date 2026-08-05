@@ -77,7 +77,7 @@ devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
 
 # Platform — support
-support/jest-devtools-fixtures/                           @ledgerhq/platform
+support/jest-devtools/                           @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp

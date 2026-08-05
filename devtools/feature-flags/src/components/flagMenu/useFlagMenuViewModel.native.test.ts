@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@support/jest-devtools-fixtures/native";
+import { renderHook, waitFor } from "@support/jest-devtools/native";
 import { FEATURE_FLAGS_INITIAL_STATE, type PartialFeatures } from "@shared/feature-flags";
 import {
   useFeatureFlagsToolActions,
