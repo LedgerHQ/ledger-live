@@ -21,13 +21,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
-    "uuid": "^9.0.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/uuid": "^9.0.0",
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"

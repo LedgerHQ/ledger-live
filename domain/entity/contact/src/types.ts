@@ -24,5 +24,4 @@ export type ContactsState = {
 };
 
 export type ContactAddressInput = z.input<typeof ContactAddressSchema>;
-export type ContactAddressCreationInput = Omit<ContactAddressInput, "id">;
 export type ContactInput = z.input<typeof ContactSchema>;
