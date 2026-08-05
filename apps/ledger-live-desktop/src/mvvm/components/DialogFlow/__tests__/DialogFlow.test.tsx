@@ -6,10 +6,12 @@ type Step = "first" | "second";
 
 function TestDialogFlow({
   currentStep,
+  height,
   onBack = jest.fn(),
   onClose = jest.fn(),
 }: Readonly<{
   currentStep: Step;
+  height?: "fit" | "fixed";
   onBack?: () => void;
   onClose?: () => void;
 }>) {
@@ -21,6 +23,7 @@ function TestDialogFlow({
         dialogContentProps: { className: "default-content" },
         dialogHeaderProps: { density: "expanded" },
       }}
+      height={height}
       isOpen
       onBack={onBack}
       onClose={onClose}
@@ -63,6 +66,13 @@ describe("DialogFlow", () => {
     expect(dialog).toHaveClass("default-content");
     expect(screen.getByText("Second content").parentElement).toHaveClass("second-body");
     expect(screen.getByText("Second content").parentElement).not.toHaveClass("default-body");
+  });
+
+  it("should support a fixed dialog height for scrollable screens", () => {
+    render(<TestDialogFlow currentStep="first" height="fixed" />);
+
+    expect(screen.getByRole("dialog")).toHaveClass("h-560");
+    expect(screen.getByText("First content").parentElement).toHaveClass("basis-0");
   });
 
   it("should expose back and close actions for the current screen", async () => {

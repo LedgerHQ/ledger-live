@@ -61,6 +61,8 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     });
 
     expect(screen.getAllByText(/select asset/i)[0]).toBeVisible();
+    expect(screen.getByRole("dialog")).toHaveClass("h-560");
+    expect(screen.getByTestId("modular-dialog-screen-ASSET_SELECTION")).toHaveClass("flex-1");
 
     await waitForSkeletonToBeRemoved();
 
@@ -92,6 +94,8 @@ describe("ModularDialogFlowManager - Select Network Flow", () => {
     await user.click(ethereumAsset);
 
     expect(screen.getAllByText(/select network/i)[0]).toBeVisible();
+    expect(screen.getByRole("dialog")).toHaveClass("h-560");
+    expect(screen.getByTestId("modular-dialog-screen-NETWORK_SELECTION")).toHaveClass("flex-1");
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.queryByText(/arbitrum/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
