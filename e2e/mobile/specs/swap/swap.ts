@@ -32,12 +32,11 @@ export function runSwapTest(
   tmsLinks: string[],
   tags: string[],
   fee: Fee = Fee.MEDIUM,
-  hardcodedAmount?: string,
 ) {
   // The amount is resolved at runtime from the provider minimum and set on `swap` inside the test.
   const swap = new Swap(accountToDebit, accountToCredit, "", undefined, fee);
 
-  describe("Swap - Accepted (without tx broadcast)", () => {
+  describe("Swap - accepted", () => {
     beforeAll(async () => {
       await beforeAllFunction(swap);
     });
@@ -45,14 +44,9 @@ export function runSwapTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap ${accountToDebit.currency.name} to ${accountToCredit.currency.name}`, async () => {
-      let swapAmount: string;
-      if (hardcodedAmount) {
-        swapAmount = hardcodedAmount;
-      } else {
-        const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
-        swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
-      }
+    it(`[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Swap`, async () => {
+      const minAmount = await app.swapLiveApp.getMinimumAmount(accountToDebit, accountToCredit);
+      const swapAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       swap.amount = swapAmount;
 
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
@@ -71,7 +65,8 @@ export function runSwapTest(
         await app.common.disableSynchronizationForiOS();
         await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
-        await app.swap.waitForSuccessAndContinue();
+        await app.swap.waitForSuccessAndClose();
+        await app.swap.expectSwapPage();
       }
     });
   });

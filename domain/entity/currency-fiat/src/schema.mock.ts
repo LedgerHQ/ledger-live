@@ -1,4 +1,3 @@
-import { FiatCurrencyIdSchema } from "@shared/schema-primitives";
 import type { FiatCurrency } from "./schema";
 
 /**
@@ -8,7 +7,6 @@ import type { FiatCurrency } from "./schema";
 export function mockFiatCurrency(overrides?: Partial<FiatCurrency>): FiatCurrency {
   return {
     type: "FiatCurrency",
-    id: FiatCurrencyIdSchema.parse("usd"),
     name: "US Dollar",
     ticker: "USD",
     symbol: "$",

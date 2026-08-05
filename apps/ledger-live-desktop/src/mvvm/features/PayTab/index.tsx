@@ -1,12 +1,15 @@
 import React from "react";
-import { CardScreen } from "@features/flow-card";
+import { CardLogin } from "@features/flow-pay-card-auth";
+import { openURL } from "~/renderer/linking";
 import PayTabHeader from "./components/PayTabHeader";
+
+const openHostedLogin = (loginUrl: string) => openURL(loginUrl, "");
 
 const PayTab = () => {
   return (
     <>
       <PayTabHeader />
-      <CardScreen />
+      <CardLogin openHostedLogin={openHostedLogin} />
     </>
   );
 };

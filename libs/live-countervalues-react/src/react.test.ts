@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  CountervaluesProvider,
-  useTrackingPairForAccounts,
-  type CountervaluesBridge,
-} from ".";
+import { CountervaluesProvider, useTrackingPairForAccounts, type CountervaluesBridge } from ".";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, act, render, waitFor } from "@testing-library/react";
 import {
@@ -16,7 +12,15 @@ import type {
   CounterValuesState,
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
-import type { Currency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  Currency,
+  FiatCurrency,
+  TokenCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  TokenCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
@@ -151,9 +155,11 @@ describe("CountervaluesProvider", () => {
   const bitcoin = genAccount("bitcoin").currency;
   const unsupportedToken: TokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/lc_staked_shared_eth_0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    id: TokenCurrencyIdSchema.parse(
+      "ethereum/erc20/lc_staked_shared_eth_0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
+    ),
     contractAddress: "0xc4dcb059dd98b45b090da8982234c61d0b9e84f9",
-    parentCurrencyId: "ethereum",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
     tokenType: "erc20",
     name: "Ledger Staked Shared ETH",
     ticker: "osETH",

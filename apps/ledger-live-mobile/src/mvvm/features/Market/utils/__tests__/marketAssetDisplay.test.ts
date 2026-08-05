@@ -1,5 +1,5 @@
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { TFunction } from "i18next";
 import { createMarketCurrencyData } from "../../__tests__/helpers";
 import { mapMarketCurrencyToDisplayData } from "../marketAssetDisplay";

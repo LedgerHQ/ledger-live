@@ -1,3 +1,10 @@
+export class NotEnoughBalanceToDelegate extends Error {
+  override name = "NotEnoughBalanceToDelegate";
+  constructor(message?: string) {
+    super(message || "NotEnoughBalanceToDelegate");
+  }
+}
+
 export class InvalidAddressBecauseAlreadyDelegated extends Error {
   override name = "InvalidAddressBecauseAlreadyDelegated";
   constructor(message?: string, fields?: Record<string, unknown>) {

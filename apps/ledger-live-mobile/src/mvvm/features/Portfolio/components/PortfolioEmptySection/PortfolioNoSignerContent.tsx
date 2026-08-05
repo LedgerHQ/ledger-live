@@ -10,19 +10,19 @@ import { WalletAssetsView } from "LLM/features/WalletAssets";
 import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 
 interface PortfolioNoSignerContentProps {
-  readonly isLNSUpsellBannerShown: boolean;
+  readonly isLNUpsellBannerShown: boolean;
   readonly variant: WalletAssetsVariant;
 }
 
 export const PortfolioNoSignerContent = ({
-  isLNSUpsellBannerShown,
+  isLNUpsellBannerShown,
   variant,
 }: PortfolioNoSignerContentProps) => (
   <Box lx={{ paddingHorizontal: "s16" }}>
     <TrackScreen name={TRACKING_LABEL_MAP[NavigatorName.Portfolio]} />
     <QuickActionsCtas sourceScreenName={ScreenName.Portfolio} />
     <TransferDrawer />
-    <PortfolioBannersSection isFirst={true} isLNSUpsellBannerShown={isLNSUpsellBannerShown} />
+    <PortfolioBannersSection isFirst={true} isLNUpsellBannerShown={isLNUpsellBannerShown} />
     <MarketBanner />
     <WalletAssetsView variant={variant} noPaddingHorizontal />
   </Box>

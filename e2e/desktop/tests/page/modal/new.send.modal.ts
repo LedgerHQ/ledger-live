@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
@@ -63,9 +64,7 @@ export class NewSendModal extends Modal {
   async clickOnSendToButton(account?: AccountType) {
     const label =
       account?.ensName ??
-      (account?.address
-        ? formatAddress(account.address, { prefixLength: 5, suffixLength: 5 })
-        : undefined);
+      (account?.address ? formatAddress(account.address, SEND_ADDRESS_FORMAT_OPTIONS) : undefined);
 
     const button = label
       ? this.matchedAddressButtons.filter({ hasText: label }).first()

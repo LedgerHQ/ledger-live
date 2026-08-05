@@ -133,3 +133,27 @@ export class TronEmptyPage extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class TronEmptyAccount extends Error {
+  override name = "TronEmptyAccount";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "TronEmptyAccount");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class MaybeKeepTronAccountAlive extends Error {
+  override name = "MaybeKeepTronAccountAlive";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "MaybeKeepTronAccountAlive");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}

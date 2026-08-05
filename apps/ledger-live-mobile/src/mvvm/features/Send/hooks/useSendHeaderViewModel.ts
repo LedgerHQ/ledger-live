@@ -8,13 +8,19 @@ import type { BaseNavigationComposite } from "~/components/RootNavigator/types/h
 
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext";
+import {
+  buildTransactionPatchFromURIScheme,
+  type DecodedURISchemePayment,
+} from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import { useSendFlowData, useSendFlowActions } from "../context/SendFlowContext";
 import { useAvailableBalance } from "./useAvailableBalance";
 import { useCurrentSendFlowStep } from "./useCurrentSendFlowStep";
 import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
+  SEND_ADDRESS_FORMAT_OPTIONS,
 } from "@ledgerhq/live-common/flows/send/utils";
+import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import type { SendFlowNavigationProp } from "../types";
 
 export type SendHeaderViewModel = {
@@ -87,15 +93,10 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
 
   const formattedAddress = useMemo(() => {
     if (isRecipientStep) {
-      return recipientSearch.value.length > 11
-        ? `${recipientSearch.value.slice(0, 4)}...${recipientSearch.value.slice(-4)}`
-        : recipientSearch.value;
+      return formatAddress(recipientSearch.value, SEND_ADDRESS_FORMAT_OPTIONS);
     }
     if (isAmountStep) {
-      return getRecipientDisplayValue(recipientFromTransaction, {
-        prefixLength: 4,
-        suffixLength: 4,
-      });
+      return getRecipientDisplayValue(recipientFromTransaction);
     }
     return "";
   }, [isRecipientStep, isAmountStep, recipientSearch.value, recipientFromTransaction]);
@@ -131,21 +132,35 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
     navigation.goBack();
   }, [isAmountStep, navigation, recipientFromTransaction, setRecipientSearchValue]);
 
+  const handleScannedURI = useCallback(
+    (decoded: DecodedURISchemePayment) => {
+      setRecipientSearchValue(decoded.address);
+
+      const currentTransaction = state.transaction.transaction;
+      if (currentTransaction) {
+        const patch = buildTransactionPatchFromURIScheme(currentTransaction, decoded);
+        if (Object.keys(patch).length > 0) {
+          transaction.updateTransaction(tx => ({ ...tx, ...patch }) as typeof tx);
+        }
+      }
+    },
+    [setRecipientSearchValue, state.transaction.transaction, transaction],
+  );
+
   const handleQrCodeClick = useCallback(() => {
-    const account = state.account.account;
-    if (!account) return;
+    if (!state.account.account) return;
 
     clearRecipientSearch();
     navigation.navigate(ScreenName.ScanRecipient, {
-      accountId: account.id,
+      accountId: state.account.account.id,
       parentId: state.account.parentAccount?.id,
       transaction: state.transaction.transaction ?? undefined,
-      onScanned: setRecipientSearchValue,
+      onScannedURI: handleScannedURI,
     });
   }, [
     clearRecipientSearch,
+    handleScannedURI,
     navigation,
-    setRecipientSearchValue,
     state.account.account,
     state.account.parentAccount?.id,
     state.transaction.transaction,

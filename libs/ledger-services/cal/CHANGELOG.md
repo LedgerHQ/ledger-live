@@ -1,5 +1,43 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.19.0
+
+### Minor Changes
+
+- [#20047](https://github.com/LedgerHQ/ledger-live/pull/20047) [`6ac54ab`](https://github.com/LedgerHQ/ledger-live/commit/6ac54abe700847501356adc11231f8437d4a5817) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Defer CAL_SERVICE_URL env lookup to call site to avoid module-scope side effects.
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0
+  - @shared/env@0.1.1
+
+## 1.19.0-next.0
+
+### Minor Changes
+
+- [#20047](https://github.com/LedgerHQ/ledger-live/pull/20047) [`6ac54ab`](https://github.com/LedgerHQ/ledger-live/commit/6ac54abe700847501356adc11231f8437d4a5817) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Defer CAL_SERVICE_URL env lookup to call site to avoid module-scope side effects.
+
+### Patch Changes
+
+- Updated dependencies [[`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @shared/env@0.1.1-next.0
+
+## 1.18.5
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0
+
+## 1.18.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
 ## 1.18.4
 
 ### Patch Changes

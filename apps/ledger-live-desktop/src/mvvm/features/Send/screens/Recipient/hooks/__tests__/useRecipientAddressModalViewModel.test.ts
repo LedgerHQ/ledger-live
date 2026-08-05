@@ -6,7 +6,10 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -62,6 +65,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: false,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -172,6 +176,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: "sanctioned",
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: false,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -213,6 +218,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: "incorrect_format",
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: false,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -254,6 +260,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: true,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -279,6 +286,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     expect(result.current.showMatchedAddress).toBe(true);
     expect(result.current.showEmptyState).toBe(false);
+    expect(result.current.isAddressValid).toBe(true);
   });
 
   it("identifies self-transfer error correctly", () => {
@@ -296,6 +304,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: { recipient: selfTransferError },
         bridgeWarnings: {},
+        hasBridgeValidationResult: true,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -321,6 +330,7 @@ describe("useRecipientAddressModalViewModel", () => {
 
     expect(result.current.showBridgeRecipientError).toBe(true);
     expect(result.current.bridgeRecipientError).toBe(selfTransferError);
+    expect(result.current.isAddressValid).toBe(false);
   });
 
   it("treats InvalidAddress as incorrect format for domain-like strings", () => {
@@ -338,6 +348,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: { recipient: invalidAddressError },
         bridgeWarnings: {},
+        hasBridgeValidationResult: true,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -378,6 +389,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: false,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,
@@ -411,6 +423,7 @@ describe("useRecipientAddressModalViewModel", () => {
         error: null,
         bridgeErrors: {},
         bridgeWarnings: {},
+        hasBridgeValidationResult: false,
         matchedAccounts: [],
         resolvedAddress: undefined,
         ensName: undefined,

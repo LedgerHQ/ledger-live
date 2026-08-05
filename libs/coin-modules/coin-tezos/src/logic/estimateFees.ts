@@ -183,11 +183,15 @@ export async function estimateFees({
 
     // NOTE: send-max only applies to native XTZ transfer, not FA2
     if (transaction.useAllAmount && transaction.mode === "send") {
+      // Reserve `mainOpFee`, not the raw taquito suggestion: `estimatedFees` below reports the
+      // `minFees` floor, so subtracting the (lower) suggestion here yields an amount whose
+      // `amount + estimatedFees` exceeds the spendable balance, and validateIntent then rejects
+      // the very max it was handed (LIVE-28506).
       // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
       const totalFees =
         estimate.burnFeeMutez > 0
-          ? estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE // 20 is storage buffer
-          : estimate.suggestedFeeMutez;
+          ? mainOpFee + estimate.burnFeeMutez - 20 * COST_PER_BYTE // 20 is storage buffer
+          : mainOpFee;
       const maxAmount = spendableForMax - (totalFees + Number(revealFee));
       // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
@@ -196,6 +200,14 @@ export async function estimateFees({
       const incr = DUST_MARGIN_MUTEZ * MINIMAL_FEE_PER_GAS_MUTEZ + Number(estimate.opSize);
       const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);
       estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : 0n;
+      log("tezos-send-max", "send-max fee inputs", {
+        minFees,
+        mainOpFee,
+        suggestedFeeMutez: estimate.suggestedFeeMutez,
+        burnFeeMutez: estimate.burnFeeMutez,
+        opSize: Number(estimate.opSize),
+        revealFee: Number(revealFee),
+      });
     } else if (transaction.useAllAmount && transaction.mode === "stake") {
       estimation.amount = computeMaxStakeAmount(
         BigInt(account.balance),

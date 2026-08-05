@@ -3,7 +3,7 @@
  */
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction } from "../../../../../coin-modules/transaction-types";
 import type { FlowEffect } from "../../../../../bridge/descriptor/types";
 import { sendFeatures } from "../../../../../bridge/descriptor/send/features";

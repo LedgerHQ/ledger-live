@@ -39,7 +39,6 @@ const renderCategorized = (options?: {
     overrideInitialState: withFlagOverrides(
       {
         lwmWallet40: {
-          enabled: true,
           params: { assetDiscoverability: options?.discoverability ?? true },
         },
       },

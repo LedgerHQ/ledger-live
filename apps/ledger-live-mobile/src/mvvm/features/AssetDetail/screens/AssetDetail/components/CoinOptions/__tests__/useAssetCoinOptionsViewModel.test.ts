@@ -1,5 +1,5 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { track } from "~/analytics";
 import type { State } from "~/reducers/types";
 import { useAssetCoinOptionsViewModel } from "../useAssetCoinOptionsViewModel";

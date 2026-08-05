@@ -1,5 +1,6 @@
 import type { Store } from "redux";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
+import { LEGACY_ONBOARDING_DATE } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import {
   onboardingDateSelector,
   postOnboardingSelector,
@@ -10,7 +11,6 @@ import type { State } from "~/reducers/types";
 import logger from "~/logger";
 
 type BackfillDeps = {
-  now?: Date;
   save?: typeof savePostOnboardingState;
 };
 
@@ -22,11 +22,11 @@ type BackfillDeps = {
  */
 export function backfillOnboardingDate(
   store: Store<State>,
-  { now = new Date(), save = savePostOnboardingState }: BackfillDeps = {},
+  { save = savePostOnboardingState }: BackfillDeps = {},
 ): void {
   const state = store.getState();
   if (hasCompletedOnboardingSelector(state) && onboardingDateSelector(state) == null) {
-    store.dispatch(setPostOnboardingDate({ onboardingDate: now }));
+    store.dispatch(setPostOnboardingDate({ onboardingDate: LEGACY_ONBOARDING_DATE }));
     // Persist immediately because DBSave baselines after this migration runs.
     save(postOnboardingSelector(store.getState())).catch(error => logger.critical(error));
   }

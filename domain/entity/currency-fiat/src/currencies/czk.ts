@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const czk = fiat({
   type: "FiatCurrency",
-  id: "czk",
   ticker: "CZK",
   name: "Czech Koruna",
   symbol: "Kč",

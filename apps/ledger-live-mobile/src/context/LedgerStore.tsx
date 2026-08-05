@@ -6,9 +6,6 @@ import { restoreLargeScreenUpsellModalState } from "@ledgerhq/live-engagement/la
 import { backfillOnboardingDate } from "~/logic/postOnboarding/backfillOnboardingDate";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { selectSupportedFiats } from "@domain/entity-currency-fiat";
-import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
-import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import type { StorageCurrencyData, StoreStorageData } from "LLM/utils/logLastStartupEvents";
@@ -35,14 +32,12 @@ import {
   getIdentities,
   getUser,
 } from "../db";
-import { importSettings, setSupportedCounterValues } from "~/actions/settings";
+import { importSettings } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import {
-  INITIAL_STATE as settingsState,
-  counterValueIdOf,
   migrateLegacyCryptoCounterValue,
   migrateLegacyStarredMarketCoins,
 } from "~/reducers/settings";
@@ -54,7 +49,6 @@ import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/s
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
 import { initHistory } from "~/reducers/history";
-import type { SettingsState } from "~/reducers/types";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
@@ -202,9 +196,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importMarketBannerState(marketBannerState));
       }
 
-      if (trustchainStore) {
-        store.dispatch(importTrustchainStoreState(trustchainStore));
-      }
+      store.dispatch(importTrustchainStoreState(trustchainStore));
 
       if (walletStore) {
         store.dispatch(importWalletState(walletStore));
@@ -273,7 +265,6 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       setReady(true);
       onInitFinished();
 
-      updateSupportedCountervalues(store, settingsData);
       await hydrateCurrencies().finally(() => setCurrencyInitialized(true)); // Don't block the App rendering for this
     } catch (error) {
       console.error(
@@ -290,9 +281,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   return (
     <Provider store={store}>
-      <InitialQueriesProvider>
-        {children({ ready, initialCountervalues, currencyInitialized })}
-      </InitialQueriesProvider>
+      {children({ ready, initialCountervalues, currencyInitialized })}
     </Provider>
   );
 };
@@ -331,21 +320,4 @@ async function hydrateCurrencies() {
     totalDuration: Date.now() - totalStartTime,
     mmkvRead: mmkvStorageWrapper.flushAccessedKeys(false),
   });
-}
-
-function updateSupportedCountervalues(store: Store, settingsData: Partial<SettingsState>) {
-  const supportedFiats = selectSupportedFiats(store.getState());
-  const supportedCounterValues = buildSupportedCounterValues(supportedFiats);
-  store.dispatch(setSupportedCounterValues(supportedCounterValues));
-
-  if (
-    settingsData?.counterValue &&
-    !supportedCounterValues.find(
-      ({ currency }) => counterValueIdOf(currency) === settingsData.counterValue,
-    ) &&
-    settingsData.counterValue !== settingsState.counterValue
-  ) {
-    settingsData.counterValue = settingsState.counterValue;
-    store.dispatch(importSettings(settingsData));
-  }
 }

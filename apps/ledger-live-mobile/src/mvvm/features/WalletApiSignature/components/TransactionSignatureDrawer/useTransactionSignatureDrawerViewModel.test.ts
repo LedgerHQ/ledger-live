@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { createIntent } from "@ledgerhq/device-intent";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";

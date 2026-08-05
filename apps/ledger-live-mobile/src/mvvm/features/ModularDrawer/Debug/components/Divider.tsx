@@ -1,4 +1,8 @@
 import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { Box, Divider as LumenDivider } from "@ledgerhq/lumen-ui-rnative";
 
-export const Divider = () => <Flex height={1} backgroundColor="neutral.c50" my={3} />;
+export const Divider = () => (
+  <Box lx={{ marginVertical: "s8" }}>
+    <LumenDivider />
+  </Box>
+);

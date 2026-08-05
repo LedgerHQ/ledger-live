@@ -54,6 +54,7 @@ export const RecipientScreenView = ({
     bridgeRecipientWarning,
     handleAddressSelect,
     isAddressComplete,
+    isAddressValid,
     addressValidationErrorType,
     clipboardAddress,
     handlePasteFromClipboard,
@@ -86,7 +87,7 @@ export const RecipientScreenView = ({
   }, [track, onMemoProceed, trackingProperties]);
 
   const resolvedAddress = result?.resolvedAddress ?? searchValue;
-  const showMemo = uiConfig.hasMemo && isAddressComplete;
+  const showMemo = uiConfig.hasMemo && isAddressValid;
   const memoVm = useMemoViewModel({
     address: showMemo ? resolvedAddress : "",
     onSkip: handleSkipMemo,

@@ -60,7 +60,7 @@ export const preload = async (): Promise<NearPreloadedData> => {
 
   const [protocolConfig, rawValidators, gasPrice] = await Promise.all([
     getProtocolConfig(),
-    getValidators({ per_page: 200, page: 1 }), // get first 200 validators
+    getValidators({ total: 200 }),
     getGasPrice(),
   ]);
 

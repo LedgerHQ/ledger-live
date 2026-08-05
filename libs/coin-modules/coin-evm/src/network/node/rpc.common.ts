@@ -812,9 +812,9 @@ async function getOptimismAdditionalFees(
   }
 
   const optimismGasOracle = new ethers.Contract(
-    // contract address provided here
-    // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-    "0x4f1db3c6AbD250ba86E0928471A8F7DB3AFd88F1",
+    // Canonical OP-stack GasPriceOracle predeploy, present on all OP-stack chains
+    // (Optimism, Base, Blast). @see https://docs.optimism.io/stack/transactions/fees
+    "0x420000000000000000000000000000000000000F",
     OptimismGasPriceOracleAbi,
     api,
   );
@@ -827,7 +827,7 @@ async function getScrollAdditionalFees(
   currency: CryptoCurrency,
   transaction: string,
 ): Promise<BigNumber> {
-  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+  if (currency.id !== "scroll") {
     return new BigNumber(0);
   }
 

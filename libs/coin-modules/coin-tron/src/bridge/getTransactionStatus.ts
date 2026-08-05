@@ -4,9 +4,8 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account";
 import BigNumber from "bignumber.js";
 import sumBy from "lodash/sumBy";
@@ -20,6 +19,7 @@ import {
 } from "../network";
 import { Transaction, TransactionStatus, TronAccount } from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronInvalidVoteCount,

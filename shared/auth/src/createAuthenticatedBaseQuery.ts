@@ -5,7 +5,7 @@ import {
   type FetchBaseQueryArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import { AuthenticatedBaseQueryMissingAuthSDKError } from "./errors";
+import { AuthProviderMissingError } from "./errors";
 import {
   AuthenticatedBaseQueryExtraSchema,
   type AuthenticatedBaseQueryExtraOptions,
@@ -18,15 +18,18 @@ type FetchBaseQuery = BaseQueryFn<
   AuthenticatedBaseQueryExtraOptions
 >;
 
-const UNAUTHORIZED_STATUSES = new Set([401, 403]);
+const UNAUTHORIZED_STATUSES = new Set([401]); // Only re-authenticate on 401
 
 export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs): FetchBaseQuery {
   return async (args, api, extraOptions) => {
     if (extraOptions?.authenticated !== false) {
       try {
-        return await getAuthSDK(api.extra).withToken({
-          queryFn: async token =>
-            fetchBaseQuery({
+        return await getAuthProvider(api.extra).withToken({
+          async queryFn(token) {
+            if (!token) {
+              return fetchBaseQuery(baseQueryArgs)(args, api, extraOptions);
+            }
+            return fetchBaseQuery({
               ...baseQueryArgs,
               async prepareHeaders(headers, baseQueryApi) {
                 const preparedHeaders =
@@ -34,12 +37,24 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
                 preparedHeaders.set("authorization", `${token.tokenType} ${token.accessToken}`);
                 return preparedHeaders;
               },
-            })(args, api, extraOptions),
+            })(args, api, extraOptions);
+          },
 
-          refreshAndRetryWhen: result =>
-            !!result.error &&
-            typeof result.error?.status === "number" &&
-            UNAUTHORIZED_STATUSES.has(result.error.status),
+          refreshAndRetryWhen(result) {
+            if (extraOptions?.refreshAndRetryWhen) {
+              try {
+                return extraOptions.refreshAndRetryWhen(result);
+              } catch (error) {
+                console?.error("AuthenticatedBaseQuery retry predicate failed:", error);
+                return false;
+              }
+            }
+            return (
+              !!result.error &&
+              typeof result.error?.status === "number" &&
+              UNAUTHORIZED_STATUSES.has(result.error.status)
+            );
+          },
         });
       } catch (error) {
         // Authentication failed; fall back to an unauthenticated request.
@@ -51,10 +66,10 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
   };
 }
 
-function getAuthSDK(extra: unknown) {
+function getAuthProvider(extra: unknown) {
   try {
-    return AuthenticatedBaseQueryExtraSchema.parse(extra).authSDK;
+    return AuthenticatedBaseQueryExtraSchema.parse(extra).authProvider;
   } catch {
-    throw new AuthenticatedBaseQueryMissingAuthSDKError();
+    throw new AuthProviderMissingError();
   }
 }

@@ -1,6 +1,6 @@
 import { createQRCodeHostInstance, createQRCodeCandidateInstance } from ".";
 import WebSocket from "ws";
-import { convertKeyPairToLiveCredentials } from "../sdk";
+import { convertKeyPairToLiveCredentials } from "../utils";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { ScannedInvalidQrCode, ScannedOldImportQrCode } from "../errors";
 

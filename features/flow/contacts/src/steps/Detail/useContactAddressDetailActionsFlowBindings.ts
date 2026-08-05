@@ -1,0 +1,68 @@
+import {
+  selectContactAddressById,
+  selectContactById,
+  type ContactAddressId,
+  type ContactId,
+} from "@domain/entity-contact";
+import { ContactAddressIdSchema } from "@domain/entity-contact";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { useRenameAddressDialogViewModel } from "../EditAddress/useRenameAddressDialogViewModel";
+import type { ContactAddressDetailActionsPorts } from "./model/ports";
+import { useContactAddressDetailActionsFlowViewModel } from "./useContactAddressDetailActionsFlowViewModel";
+import type { ContactAddressDetailSendIntent } from "./types";
+
+const PLACEHOLDER_ADDRESS_ID = ContactAddressIdSchema.parse("address-unselected");
+
+type ContactsStateRoot = Parameters<typeof selectContactById>[0];
+
+export type UseContactAddressDetailActionsFlowBindingsOptions = Readonly<{
+  contactId: ContactId;
+  addressId: ContactAddressId | undefined;
+  ports: ContactAddressDetailActionsPorts;
+  onSend?: (intent: ContactAddressDetailSendIntent) => void;
+  onDeleteSuccess?: () => void;
+  onCloseAddressDetail?: () => void;
+}>;
+
+export function useContactAddressDetailActionsFlowBindings({
+  contactId,
+  addressId,
+  ports,
+  onSend,
+  onDeleteSuccess,
+  onCloseAddressDetail,
+}: UseContactAddressDetailActionsFlowBindingsOptions) {
+  const flow = useContactAddressDetailActionsFlowViewModel({
+    contactId,
+    addressId,
+    ports,
+    onSend,
+    onDeleteSuccess,
+    onCloseAddressDetail,
+  });
+  const resolvedAddressId = addressId ?? PLACEHOLDER_ADDRESS_ID;
+  const contact = useSelector((state: ContactsStateRoot) => selectContactById(state, contactId));
+  const contactAddress = useSelector((state: ContactsStateRoot) =>
+    selectContactAddressById(state, contactId, resolvedAddressId),
+  );
+  const existingLabels = useMemo(
+    () =>
+      contact?.addresses
+        .filter(address => address.id !== addressId)
+        .map(address => address.label) ?? [],
+    [addressId, contact?.addresses],
+  );
+  const renameViewModel = useRenameAddressDialogViewModel({
+    contactId,
+    addressId: resolvedAddressId,
+    currentLabel: contactAddress?.label ?? "",
+    existingLabels,
+    editPort: ports.edit,
+    isRequestedOpen: flow.editUiState === "edit-open",
+    onCloseRequest: flow.onEditClose,
+    onSaveSuccess: () => onCloseAddressDetail?.(),
+  });
+
+  return { flow, renameViewModel };
+}

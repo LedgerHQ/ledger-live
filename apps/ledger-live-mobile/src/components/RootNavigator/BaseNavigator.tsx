@@ -36,7 +36,6 @@ import SwapSubScreensNavigator from "./SwapSubScreensNavigator";
 import PerpsNavigator from "./PerpsNavigator";
 import GlobalSearchNavigator from "LLM/features/GlobalSearch/Navigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
@@ -104,7 +103,7 @@ import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
-import { getEarnScreenOptions } from "./getEarnScreenOptions";
+import { getEarnScreenOptions, getEarnScreenOptionsFromRouteParams } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
 
@@ -192,6 +191,8 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const swapToEarnFlag = useFeature("swapToEarn");
+  const isSwapToEarnEnabled = swapToEarnFlag?.enabled ?? false;
 
   return (
     <>
@@ -470,15 +471,6 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={ScreenName.AnalyticsAllocation}
-          component={AnalyticsAllocation}
-          options={{
-            title: t("analytics.allocation.title"),
-            headerRight: () => null,
-            animation: "slide_from_bottom",
-          }}
-        />
-        <Stack.Screen
           name={ScreenName.AnalyticsOperations}
           component={AnalyticsOperations}
           options={{
@@ -596,7 +588,12 @@ export default function BaseNavigator() {
           // `useEarnIntentFlowPresentation` becomes the live owner and overrides this imperatively
           // via `getParent(BASE_NAVIGATOR_ID).setOptions` as the webview route changes.
           options={props =>
-            getEarnScreenOptions(props.route?.params?.params?.intent, t, liveAppCanvasColor)
+            getEarnScreenOptionsFromRouteParams(
+              props.route?.params?.params,
+              t,
+              liveAppCanvasColor,
+              isSwapToEarnEnabled,
+            )
           }
         />
         <Stack.Screen

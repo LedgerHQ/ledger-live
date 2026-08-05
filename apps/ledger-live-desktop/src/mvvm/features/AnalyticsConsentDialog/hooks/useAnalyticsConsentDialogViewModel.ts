@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import logger from "~/renderer/logger";
 import { useTranslation } from "react-i18next";
-import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@features/platform-feature-flags";
 import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
@@ -20,11 +18,9 @@ import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
-  resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+  useAnalyticsConsentDecision,
+} from "@features/flow-analytics-consent";
 import type { AnalyticsConsentDialogPhase } from "../types";
 
 export const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
@@ -40,22 +36,17 @@ export function useAnalyticsConsentDialogViewModel() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
-  const portfolioRouteMatch = useMatch({ path: "/", end: true });
-  const isPortfolioRouteFocused = Boolean(portfolioRouteMatch);
-
-  const feature = useFeature("analyticsOptIn");
-  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(feature);
 
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
 
-  const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
+  const { isFeatureEnabled, decision, currentPolicyVersion } =
+    useAnalyticsConsentDecision(consentInfo);
+  // An invalid remote version must not erase the version the user already acknowledged.
+  const policyVersion = currentPolicyVersion?.normalized ?? consentInfo.privacyPolicyVersion;
 
-  const shouldOffer = Boolean(
-    feature?.enabled && hasCompletedOnboarding && (needsUpdatePrivacy || needsRenewal),
-  );
+  const shouldOffer = isFeatureEnabled && hasCompletedOnboarding && decision.kind !== "none";
 
   const [phase, setPhase] = useState<AnalyticsConsentDialogPhase>("closed");
   const [consentPhaseBeforePreferences, setConsentPhaseBeforePreferences] = useState<
@@ -89,7 +80,7 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   useEffect(() => {
-    if (!isPortfolioRouteFocused || !shouldOffer) {
+    if (!shouldOffer) {
       setPhase(current => {
         if (current !== "closed") {
           track("drawer_closed", dialogClosedPayload);
@@ -100,17 +91,17 @@ export function useAnalyticsConsentDialogViewModel() {
     }
     setPhase(current => {
       if (current === "preferences") return current;
-      return resolveAnalyticsConsentPhase(
-        current,
-        needsRenewal,
-        needsUpdatePrivacy,
-        shareAnalytics,
-      );
+      return resolveAnalyticsConsentPhase(current, decision, shareAnalytics);
     });
-  }, [isPortfolioRouteFocused, shouldOffer, needsRenewal, needsUpdatePrivacy, shareAnalytics]);
+  }, [shouldOffer, decision, shareAnalytics]);
 
-  const persistAnalyticsConsentAck = async () => {
-    dispatch(setAnalyticsConsentInfo(policyVersion));
+  const persistConsentCompletion = async () => {
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: new Date().toISOString(),
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     try {
       await updateIdentify({ force: true });
@@ -131,7 +122,7 @@ export function useAnalyticsConsentDialogViewModel() {
     );
     dispatch(setShareAnalytics(true));
     dispatch(setSharePersonalizedRecommendations(true));
-    await persistAnalyticsConsentAck();
+    await persistConsentCompletion();
     handleCloseDialog();
   };
 
@@ -147,7 +138,7 @@ export function useAnalyticsConsentDialogViewModel() {
     );
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
-    await persistAnalyticsConsentAck();
+    await persistConsentCompletion();
     handleCloseDialog();
   };
 
@@ -161,7 +152,18 @@ export function useAnalyticsConsentDialogViewModel() {
       },
       true,
     );
-    await persistAnalyticsConsentAck();
+    dispatch(
+      setAnalyticsConsentInfo({
+        consentDate: consentInfo.consentDate,
+        privacyPolicyVersion: policyVersion,
+      }),
+    );
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
+    try {
+      await updateIdentify({ force: true });
+    } catch (e) {
+      logger.critical(e, "Failed to update analytics identify after privacy acknowledgement");
+    }
     handleCloseDialog();
   };
 
@@ -195,7 +197,7 @@ export function useAnalyticsConsentDialogViewModel() {
     );
     dispatch(setShareAnalytics(draftShareAnalytics));
     dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));
-    await persistAnalyticsConsentAck();
+    await persistConsentCompletion();
     handleCloseDialog();
   };
 

@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const mdl = fiat({
   type: "FiatCurrency",
-  id: "mdl",
   ticker: "MDL",
   name: "Moldovan Leu",
   symbol: "lei",

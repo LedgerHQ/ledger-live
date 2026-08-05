@@ -1,7 +1,9 @@
 name: "[CI] - Auto Author Assign - PR"
 
+# pull_request_target is required for fork PR write access (author assign).
+# No PR code is checked out, so the elevated token cannot execute attacker-controlled code.
 on:
-  pull_request_target:
+  pull_request_target: # zizmor: ignore[dangerous-triggers]
     types: [opened, reopened]
 
 permissions:

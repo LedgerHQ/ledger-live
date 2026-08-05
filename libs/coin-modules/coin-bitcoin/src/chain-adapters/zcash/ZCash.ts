@@ -32,6 +32,8 @@ import type {
   ZCashClientArgs,
   BuildTransactionArgs,
   BuildTransactionResult,
+  BuildIronwoodTransactionArgs,
+  BuildIronwoodTransactionResult,
   FinalizeTransactionArgs,
   FinalizeTransactionResult,
   TransactionDetailsRequest,
@@ -44,6 +46,7 @@ import {
   startSyncJob,
   validateStartSyncArgs,
   buildTransactionJob,
+  buildIronwoodTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
   transactionDetailsJob,
@@ -72,6 +75,9 @@ export type ZCashClientDeps = {
   buildTransactionJob?: (
     args: Omit<BuildTransactionArgs, "requestId">,
   ) => Promise<BuildTransactionResult>;
+  buildIronwoodTransactionJob?: (
+    args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+  ) => Promise<BuildIronwoodTransactionResult>;
   finalizeTransactionJob?: (
     args: Omit<FinalizeTransactionArgs, "requestId">,
   ) => Promise<FinalizeTransactionResult>;
@@ -96,6 +102,7 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
   // like `if (!client.buildTransaction)` behave consistently across environments.
   const {
     buildTransactionJob,
+    buildIronwoodTransactionJob,
     finalizeTransactionJob,
     broadcastTransactionJob,
     transactionDetailsJob,
@@ -123,6 +130,12 @@ export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientAr
       buildTransaction: (
         args: Omit<BuildTransactionArgs, "requestId">,
       ): Promise<BuildTransactionResult> => buildTransactionJob(args),
+    }),
+
+    ...(buildIronwoodTransactionJob && {
+      buildIronwoodTransaction: (
+        args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+      ): Promise<BuildIronwoodTransactionResult> => buildIronwoodTransactionJob(args),
     }),
 
     ...(finalizeTransactionJob && {
@@ -214,6 +227,7 @@ const defaultDeps: ZCashClientDeps = {
   rehydrateSyncResult,
   createSyncTimeEstimator,
   buildTransactionJob,
+  buildIronwoodTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
   transactionDetailsJob,

@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const gbp = fiat({
   type: "FiatCurrency",
-  id: "gbp",
   ticker: "GBP",
   name: "British Pound",
   symbol: "£",

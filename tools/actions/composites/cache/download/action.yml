@@ -39,23 +39,32 @@ runs:
       id: download-cache
       shell: bash
       run: |
-        aws s3 cp s3://${{ inputs.bucket }}/${{ inputs.key }}/cache.tzst /tmp/cache.tzst --endpoint-url https://${{ inputs.endpoint || format('s3.{0}.amazonaws.com', inputs.region) }} --region ${{ inputs.region }} --no-progress
+        ENDPOINT_URL="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
+        aws s3 cp s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst /tmp/cache.tzst --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} --no-progress
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}
+        INPUTS_BUCKET: ${{ inputs.bucket }}
+        INPUTS_KEY: ${{ inputs.key }}
+        INPUTS_REGION: ${{ inputs.region }}
+        INPUTS_ENDPOINT: ${{ inputs.endpoint }}
 
     - name: Un-Compress files (Linux)
       if: runner.os == 'Linux' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        tar -xf /tmp/cache.tzst -C ${{ inputs.destination }} --use-compress-program unzstd
+        tar -xf /tmp/cache.tzst -C ${INPUTS_DESTINATION} --use-compress-program unzstd
+      env:
+        INPUTS_DESTINATION: ${{ inputs.destination }}
 
     - name: Un-Compress files (macOS)
       if: runner.os == 'macOS' && steps.download-cache.outcome == 'success'
       shell: bash
       run: |
-        gtar -xf /tmp/cache.tzst -C ${{ inputs.destination }} --use-compress-program unzstd
+        gtar -xf /tmp/cache.tzst -C ${INPUTS_DESTINATION} --use-compress-program unzstd
+      env:
+        INPUTS_DESTINATION: ${{ inputs.destination }}
 
     - name: Cleanup
       shell: bash

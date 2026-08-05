@@ -44,6 +44,8 @@ const iconsComponent = {
   STAKE: IconsLegacy.HandshakeMedium,
   UNSTAKE: IconsLegacy.UndelegateMedium,
   WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,
+  STAKE_NEURON: IconsLegacy.HandshakeMedium,
+  TOP_UP_NEURON: IconsLegacy.HandshakeMedium,
   ASSOCIATE_TOKEN: IconsLegacy.PlusMedium,
   CONTRACT_CALL: IconsLegacy.ArrowTopMedium,
   UPDATE_ACCOUNT: IconsLegacy.PlusMedium,

@@ -20,19 +20,22 @@ runs:
       id: format-tag
       shell: bash
       run: |
-        if [ "${{ inputs.tag_version }}" = "latest" ]; then
+        if [ "${INPUTS_TAG_VERSION}" = "latest" ]; then
           main_ref="main"
         else
-          if [ "${{ inputs.application }}" = "LLM" ]; then
+          if [ "${INPUTS_APPLICATION}" = "LLM" ]; then
             formatted_app="live-mobile"
-          elif [ "${{ inputs.application }}" = "LLD" ]; then
+          elif [ "${INPUTS_APPLICATION}" = "LLD" ]; then
             formatted_app="@ledgerhq/live-desktop"
           else
             echo "Unknown application"
             exit 1
           fi
-          main_ref="${formatted_app}@${{ inputs.tag_version }}"
+          main_ref="${formatted_app}@${INPUTS_TAG_VERSION}"
         fi
 
         echo "Tag/ref generated: ${main_ref}"
         echo "main_ref=${main_ref}" >> $GITHUB_OUTPUT
+      env:
+        INPUTS_TAG_VERSION: ${{ inputs.tag_version }}
+        INPUTS_APPLICATION: ${{ inputs.application }}

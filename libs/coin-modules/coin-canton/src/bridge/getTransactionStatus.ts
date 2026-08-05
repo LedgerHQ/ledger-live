@@ -9,7 +9,7 @@ import {
   NotEnoughBalanceInParentAccount,
   NotEnoughSpendableBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isRecipientValid } from "../common-logic/utils";

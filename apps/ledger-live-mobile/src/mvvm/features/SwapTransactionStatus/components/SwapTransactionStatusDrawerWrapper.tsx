@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
   closeSwapTransactionStatusDrawer,
@@ -24,7 +24,7 @@ export function SwapTransactionStatusDrawerWrapper() {
   useCloseDrawerOnAndroidBack(isOpen, closeDrawer);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={closeDrawer}
       snapPoints="full"
@@ -36,6 +36,6 @@ export function SwapTransactionStatusDrawerWrapper() {
           <SwapTransactionStatusDrawerBody params={params} onClose={closeDrawer} />
         ) : null}
       </BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

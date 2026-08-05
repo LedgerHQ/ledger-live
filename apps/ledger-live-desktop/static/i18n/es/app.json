@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Avanzado",
     "custom" : "Personalizado",
+    "defaultNetworkFee" : "Tarifa de red predeterminada",
     "fast" : "Rápida",
     "networkFees" : "Tarifas de red",
     "high" : "Alta",
@@ -538,7 +539,11 @@
       "monad_title" : "No es posible usar el Ledger Nano S™ para permutar Monad",
       "monad_description" : "Para permutar Monad, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "zcash_title" : "No es posible usar el Ledger Nano S™ para permutar Zcash",
-      "zcash_description" : "Para permutar Zcash, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+      "zcash_description" : "Para permutar Zcash, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "aleo_title" : "No es posible utilizar el Ledger Nano S™ para permutar Aleo",
+      "aleo_description" : "Para permutar Aleo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "aleo_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Aleo",
+      "aleo_tokens_description" : "Para permutar tokens de Aleo, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -1385,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Sincroniza tu wallet",
           "description" : "Mantén tus cuentas cripto sincronizadas"
-        },
-        "customImage" : {
-          "title" : "Personalizar la pantalla de bloqueo",
-          "description" : "Exhibe tu ilustración digital o foto favoritos como pantalla de bloqueo de tu dispositivo."
         },
         "discoverWallet" : {
           "title" : "Descubre lo que puede hacer tu wallet",
@@ -2596,6 +2597,14 @@
     "feesAmount" : "Monto de la tarifa ({{unit}})",
     "gasLimit" : "Limite de gas ({{unit}})",
     "feesPaid" : "Tarifa abonada a la red para procesar tu transacción",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "Usarás {{energy}} de energía y {{bandwidth}} de ancho de banda para pagar las tarifas de red."
+      },
+      "insufficient" : {
+        "description" : "No tienes suficiente energía y ancho de banda para cubrir esta transferencia. La diferencia se cubrirá quemando TRX."
+      }
+    },
     "insufficientBalanceFees" : "Saldo insuficiente para cubrir las tarifas de red.",
     "amountToSend" : "Monto a enviar en ({{currency}})",
     "coinToSend" : "Monedas a enviar",
@@ -4339,7 +4348,10 @@
         "redelegate" : "Redelegar",
         "redelegateDisabledTooltip" : "Puedes volver a delegar <0>{{days}}</0>",
         "redelegateMaxDisabledTooltip" : "No puedes redelegar más de <0>7</0> validadores a la vez.",
-        "undelegateDisabledTooltip" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "No puedes desdelegar más de <0>7</0> validadores a la vez.",
+          "zero_gravity" : "Necesitas al menos 1 gwei de participaciones delegadas para desdelegar"
+        },
         "undelegateActivatingTooltip" : "No puedes desdelegar una participación que sigue activándose",
         "reward" : "Reclamar recompensas",
         "activeTooltip" : "Los importes delegados generan recompensas",
@@ -4363,7 +4375,8 @@
               }
             },
             "amount" : {
-              "title" : "Importe"
+              "title" : "Importe",
+              "visibilityDelay" : "Esta delegación puede tardar hasta {{numberOfMinutes}} minutos en aparecer en tu panel de delegación."
             },
             "validator" : {
               "title" : "Validadores",
@@ -4732,6 +4745,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "Depositar",
+      "OUT" : "Retirar"
     }
   },
   "tezos" : {
@@ -5232,7 +5251,16 @@
         "customFamiliesHint" : "Familias separadas por comas para pruebas multifamilia personalizadas.",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "Aplicar",
-        "resetOverride" : "Restablecer forzado"
+        "contactsData" : "Datos de contactos",
+        "loadPopulatedContacts" : "Cargar contactos completados",
+        "resetContacts" : "Restablecer contactos",
+        "resetOverride" : "Restablecer forzado",
+        "featureIntroduction" : {
+          "title" : "Introducción a las funcionalidades",
+          "label" : "Introducción a la funcionalidad Mostrar Contactos",
+          "dismissed" : "Descartado — Actívalo para volver a mostrar la introducción en Contactos.",
+          "willShow" : "Se mostrará en Contactos hasta que se descarte."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "Lista de activos cripto",
@@ -5429,11 +5457,6 @@
           "title" : "Probar animaciones Lottie",
           "description" : "Probar todas las animaciones utilizadas en Ledger Wallet",
           "longDesc" : "Esta herramienta se proporciona tal cual para que el equipo valide las animaciones de lottie usadas en la aplicación."
-        },
-        "testStories" : {
-          "title" : "Probar las historias de Storyly",
-          "description" : "Probar todas las historias usadas en Ledger Wallet",
-          "longDesc" : "Esta herramienta se proporciona tal cual para que el equipo valide las historias de storyly usadas en la aplicación."
         },
         "testStaxPostonboarding" : {
           "title" : "Test Stax Post Onboarding",
@@ -6714,6 +6737,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "La cuenta de recepción no ha adherido al ASA seleccionado."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "El Memo es demasiado largo.",
+      "description" : "Los memos de Algorand no pueden superar los 1024 bytes. Por favor, acorta tu memo."
     },
     "AmountRequired" : {
       "title" : "Importe requerido"
@@ -8250,11 +8277,6 @@
         "doThisLater" : "Quizás más tarde"
       }
     },
-    "postOnboarding" : {
-      "title" : "Personalizar la pantalla de bloqueo",
-      "description" : "Exhibe tu ilustración digital o foto favoritos como pantalla de bloqueo de tu dispositivo.",
-      "actionCompletedPopupLabel" : "Dispositivo personalizado"
-    },
     "customImageSet" : "Pantalla de bloqueo personalizada",
     "finishCTA" : "Cerrar"
   },
@@ -8622,13 +8644,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "Más datos. Menos toques. Ahorra un {{discount}}%",
-      "subtitle" : "Disfruta de una pantalla más grande, una revisión de transacciones más inteligente, protección mejorada y un descuento exclusivo del {{discount}}%."
+      "subtitle" : "Disfruta de una pantalla más grande, una revisión de transacciones más inteligente, protección mejorada y un descuento exclusivo del {{discount}}%.",
+      "cta" : "Explora los signers táctiles"
     },
     "optedOut" : {
-      "title" : "Detecta estafas. Visualiza cada detalle",
-      "subtitle" : "Revisa con claridad en un signer con pantalla táctil y detecta estafas con controles de seguridad avanzados."
-    },
-    "cta" : "Explora los signers táctiles"
+      "title" : "Detecta estafas antes de firmar",
+      "subtitle" : "Más información sobre las características de seguridad avanzadas que permiten detectar amenazas en tiempo real.",
+      "cta" : "Más información"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -8912,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Envío público",
+          "transparentToShielded" : "Envío de público a privado",
+          "shieldedToTransparent" : "Envío de privado a público",
+          "shielded" : "Envío privado"
+        },
         "transferFrom" : {
           "label" : "Transferir desde",
           "public" : {
@@ -8922,6 +8951,25 @@
             "title" : "Saldo privado",
             "subtitle" : "Blindado",
             "unavailable" : "Saldo privado no disponible"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (opcional)",
+          "placeholder" : "Escribe un memo",
+          "tooltip" : "Adjunta un mensaje privado a esta transacción blindada. Solo el receptor puede leerlo. Hasta 512 bytes."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "El saldo privado no está sincronizado",
+            "cta" : "Reanudar sincronización"
+          },
+          "running" : {
+            "message" : "El saldo privado se está sincronizando ({{progress}}%)",
+            "timeRemaining" : "Tiempo restante estimado: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "El saldo podría no estar del todo actualizado",
+            "cta" : "Sincronizar saldo"
           }
         }
       },
@@ -9014,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Autotransferencia",
+      "headerAction" : "Convertir",
       "headerActionTooltip" : "No tienes fondos para realizar una transferencia a ti mismo",
       "modal" : {
-        "title" : "Autotransferencia",
+        "title" : "Convertir",
         "stepRecipient" : {
           "selectLabel" : "Transferir desde"
         }
@@ -9271,12 +9319,59 @@
   "contacts" : {
     "title" : "Contactos",
     "addContact" : "Agregar contacto",
+    "addAddress" : "Agregar dirección",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Nombre del contacto",
+      "namingDisclaimer" : "Por privacidad, evita los nombres y apellidos completos. Usa un apodo o sólo el nombre y la inicial, como por ejemplo, \"John S\".",
+      "invalidNameError" : "No se permiten caracteres especiales."
+    },
     "searchPlaceholder" : "Buscar contacto",
+    "searchNoResults" : "No se encontró ningún contacto",
+    "addressCount_zero" : "0 direcciones",
+    "addressCount_one" : "{{count}} dirección",
+    "addressCount_other" : "{{count}} direcciones",
     "me" : {
-      "name" : "Yo",
-      "addressCount_zero" : "0 direcciones",
-      "addressCount_one" : "{{count}} dirección",
-      "addressCount_other" : "{{count}} direcciones"
+      "name" : "Yo"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "No tienes direcciones guardadas",
+        "contactTitle" : "No hay direcciones guardadas para {{name}}",
+        "meDescription" : "Guarda tus direcciones de wallet para recibir cripto por nombre la próxima vez.",
+        "contactDescription" : "Guarda sus direcciones de wallet para enviarlas por nombre la próxima vez."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Enviar",
+      "copy" : "Copiar",
+      "copied" : "Copiado",
+      "edit" : "Editar",
+      "delete" : "Borrar",
+      "networkTag" : "Red {{name}}"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "Tus contactos están cifrados de extremo a extremo con tu Ledger y sincronizados en todos tus dispositivos; solo tú puedes desbloquearlos.",
+      "dismiss" : "Entendido"
+    },
+    "featureIntroduction" : {
+      "title" : "Presentamos Contactos",
+      "description" : "Tu agenda de direcciones cripto — Guarda las wallets a las que envías activos en un mismo lugar.",
+      "primaryAction" : "Prueba Contactos",
+      "secondaryAction" : "Quizás más tarde",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "Guarda las direcciones una sola vez",
+          "description" : "Mantén las direcciones a las que envías en un solo lugar."
+        },
+        "sendToRightAddress" : {
+          "title" : "Envía a la dirección correcta",
+          "description" : "Los fondos siempre llegan a la wallet correcta."
+        },
+        "privateAcrossDevices" : {
+          "title" : "Privado en todos tus dispositivos",
+          "description" : "Cifrado de extremo a extremo con Ledger Sync."
+        }
+      }
     }
   },
   "assetDetails" : {

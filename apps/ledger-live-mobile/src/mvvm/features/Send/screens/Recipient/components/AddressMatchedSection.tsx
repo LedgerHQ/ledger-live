@@ -1,5 +1,6 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import {
   Banner,
   BottomSheet,
@@ -13,6 +14,7 @@ import {
   Text,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
+import { useFeature } from "@features/platform-feature-flags";
 import React, { useCallback } from "react";
 import { Keyboard } from "react-native";
 import { useTranslation } from "~/context/Locale";
@@ -39,6 +41,8 @@ export function AddressMatchedSection({
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
+  const isFirstInteractionBannerEnabled =
+    useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
   const helpSheetRef = useBottomSheetRef();
   const openHelpSheet = useCallback(() => {
     Keyboard.dismiss();
@@ -61,10 +65,10 @@ export function AddressMatchedSection({
     return null;
   }
 
-  const formattedAddress = formatAddress(resolvedAddress ?? searchValue, {
-    prefixLength: 5,
-    suffixLength: 5,
-  });
+  const formattedAddress = formatAddress(
+    resolvedAddress ?? searchValue,
+    SEND_ADDRESS_FORMAT_OPTIONS,
+  );
 
   const getENSDisplayTitle = (): string => {
     return `${ensName} (${formattedAddress})`;
@@ -117,10 +121,10 @@ export function AddressMatchedSection({
         {hasRecentMatch && !hasMatchedAccounts && !hasENS && (
           <AddressListItem
             address={matchedRecentAddress?.address ?? searchValue}
-            name={formatAddress(matchedRecentAddress?.address ?? searchValue, {
-              prefixLength: 5,
-              suffixLength: 5,
-            })}
+            name={formatAddress(
+              matchedRecentAddress?.address ?? searchValue,
+              SEND_ADDRESS_FORMAT_OPTIONS,
+            )}
             description={getRecentDescription()}
             onSelect={() =>
               onSelect(matchedRecentAddress?.address ?? searchValue, matchedRecentAddress?.ensName)
@@ -156,7 +160,8 @@ export function AddressMatchedSection({
         )}
       </Box>
       <Box lx={{ flexDirection: "column", marginVertical: "s16", marginHorizontal: "s8" }}>
-        {searchResult.isFirstInteraction &&
+        {isFirstInteractionBannerEnabled &&
+          searchResult.isFirstInteraction &&
           !isSanctioned &&
           !hasBridgeError &&
           isAddressComplete && (

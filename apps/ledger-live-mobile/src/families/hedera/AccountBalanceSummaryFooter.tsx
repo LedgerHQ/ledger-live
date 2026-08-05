@@ -4,7 +4,7 @@ import { useTranslation } from "~/context/Locale";
 import { ScrollView } from "react-native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
+import CryptoIcon from "@ledgerhq/crypto-icons/native";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import InfoItem from "~/components/BalanceSummaryInfoItem";

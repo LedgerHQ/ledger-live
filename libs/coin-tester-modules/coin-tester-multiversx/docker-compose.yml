@@ -4,9 +4,8 @@ services:
     # collapsed, exposing the standard gateway/proxy REST API plus the
     # /simulator/* control endpoints (on-demand block generation + set-state).
     #
-    # NOTE: Intentionally uses :latest; update the tag if upstream changes break CI.
     # See https://github.com/multiversx/mx-chain-simulator-go (default API/proxy port: 8085).
-    image: multiversx/chainsimulator:latest
+    image: multiversx/chainsimulator:v1.11.3@sha256:f741e192a0cc1d5fc87827bba5b37e7365add337f8d9bf47f2771ab9831e898d
     container_name: multiversx-chain-simulator
     ports:
       - "8085:8085"

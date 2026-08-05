@@ -1,3 +1,6 @@
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+
 export const mockStocksResponse = {
   cryptoAssets: {
     "urn:crypto:meta-currency:applex": {
@@ -23,11 +26,11 @@ export const mockStocksResponse = {
   cryptoOrTokenCurrencies: {
     "solana/spl/applex": {
       type: "TokenCurrency" as const,
-      id: "solana/spl/applex",
+      id: TokenCurrencyIdSchema.parse("solana/spl/applex"),
       name: "Apple xStock",
       ticker: "AAPLX",
       contractAddress: "XsAAPL000000000000000000000000000000000000",
-      parentCurrencyId: "solana",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("solana"),
       tokenType: "spl",
       units: [
         {
@@ -39,11 +42,11 @@ export const mockStocksResponse = {
     },
     "solana/spl/teslax": {
       type: "TokenCurrency" as const,
-      id: "solana/spl/teslax",
+      id: TokenCurrencyIdSchema.parse("solana/spl/teslax"),
       name: "Tesla xStock",
       ticker: "TSLAX",
       contractAddress: "XsTSLA000000000000000000000000000000000000",
-      parentCurrencyId: "solana",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("solana"),
       tokenType: "spl",
       units: [
         {

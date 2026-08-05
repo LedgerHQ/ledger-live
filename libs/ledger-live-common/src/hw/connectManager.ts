@@ -1,6 +1,6 @@
 import { Observable, concat, concatWith, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
-import { StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 import { isCharonSupported } from "@ledgerhq/device-core";
 import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";

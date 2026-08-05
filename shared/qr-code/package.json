@@ -1,0 +1,56 @@
+{
+  "name": "@shared/qr-code",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared address QR code UI for mobile (Contacts, Pay To, …)",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../.. -W shared/qr-code"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react-native-qrcode-svg": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native-qrcode-svg": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-native-qrcode-svg": "6.1.1",
+    "react-native-svg": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import type { TransactionStatus as BtcTransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { CoinControlDisplayData, CoinControlUtxoRow } from "../../../bridge/descriptor/types";
 import type { Transaction, TransactionStatus } from "../../../coin-modules/transaction-types";
-import { getCryptoCurrencyById } from "../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { bitcoinCoinControlConfig } from "./coinControl";
 import { bitcoinPickingStrategy } from "../types";
 import type { BitcoinOutput } from "../types";

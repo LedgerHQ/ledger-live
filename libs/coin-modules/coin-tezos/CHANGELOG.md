@@ -1,5 +1,59 @@
 # @ledgerhq/coin-tezos
 
+## 7.11.0
+
+### Minor Changes
+
+- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
+
+- [#19599](https://github.com/LedgerHQ/ledger-live/pull/19599) [`51e7153`](https://github.com/LedgerHQ/ledger-live/commit/51e715314f2f89fbe76db1b69d878b4b250872e1) Thanks [@shazzzam](https://github.com/shazzzam)! - Fix: handle registered baker (tzkt `type: "delegate"`) accounts. Previously only `user` accounts were recognized, so a baker address reported a zero balance, no staking positions, an incorrect reveal state and next-sequence, and failed transaction validation. Account reads and manager-key logic now gate on a shared `hasManagerKey` guard covering both `user` and `delegate`.
+
+- [#19599](https://github.com/LedgerHQ/ledger-live/pull/19599) [`fb0f177`](https://github.com/LedgerHQ/ledger-live/commit/fb0f17772d553ebe985fd59240b24d9fdbf0e0db) Thanks [@shazzzam](https://github.com/shazzzam)! - Add `getAccountInfo` to the Tezos coin module API, exposing the account's on-chain reveal state (`{ type: "tezos", revealed: boolean }`). The reveal state was previously only computed internally inside `craftTransaction`/`estimateFees`; it is now a first-class API method.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/live-network@3.0.0
+
+## 7.11.0-next.0
+
+### Minor Changes
+
+- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
+
+- [#19599](https://github.com/LedgerHQ/ledger-live/pull/19599) [`51e7153`](https://github.com/LedgerHQ/ledger-live/commit/51e715314f2f89fbe76db1b69d878b4b250872e1) Thanks [@shazzzam](https://github.com/shazzzam)! - Fix: handle registered baker (tzkt `type: "delegate"`) accounts. Previously only `user` accounts were recognized, so a baker address reported a zero balance, no staking positions, an incorrect reveal state and next-sequence, and failed transaction validation. Account reads and manager-key logic now gate on a shared `hasManagerKey` guard covering both `user` and `delegate`.
+
+- [#19599](https://github.com/LedgerHQ/ledger-live/pull/19599) [`fb0f177`](https://github.com/LedgerHQ/ledger-live/commit/fb0f17772d553ebe985fd59240b24d9fdbf0e0db) Thanks [@shazzzam](https://github.com/shazzzam)! - Add `getAccountInfo` to the Tezos coin module API, exposing the account's on-chain reveal state (`{ type: "tezos", revealed: boolean }`). The reveal state was previously only computed internally inside `craftTransaction`/`estimateFees`; it is now a first-class API method.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+
+## 7.10.0
+
+### Minor Changes
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0
+
+## 7.10.0-next.0
+
+### Minor Changes
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+### Patch Changes
+
+- Updated dependencies [[`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193)]:
+  - @ledgerhq/live-network@2.7.0-next.0
+
 ## 7.9.0
 
 ### Minor Changes

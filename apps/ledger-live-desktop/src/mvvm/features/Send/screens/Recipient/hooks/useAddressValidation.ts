@@ -2,7 +2,7 @@ import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import type { DomainServiceStatus } from "@ledgerhq/domain-service/hooks/types";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
@@ -334,6 +334,8 @@ export function useAddressValidation({
       matchedAccounts,
       bridgeErrors: filteredBridgeErrors,
       bridgeWarnings: bridgeValidation.warnings,
+      isBridgeLoading: bridgeValidation.isLoading && bridgeValidation.status === null,
+      hasBridgeValidationResult: bridgeValidation.status !== null,
     };
   }, [
     validationState,
@@ -350,12 +352,16 @@ export function useAddressValidation({
     addressForBridgeValidation,
     bridgeValidation.errors,
     bridgeValidation.warnings,
+    bridgeValidation.isLoading,
+    bridgeValidation.status,
   ]);
 
   return {
     result,
     isLoading:
-      validationState.status === "loading" || domainIsLoading || bridgeValidation.isLoading,
+      validationState.status === "loading" ||
+      domainIsLoading ||
+      (bridgeValidation.isLoading && bridgeValidation.status === null),
     validateAddress,
   };
 }

@@ -16,7 +16,7 @@ const FF_WALLET_ASSETS = {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", () => {
+describe("Wallet assets", () => {
   const tmsLinks = ["B2CQA-4839", "B2CQA-4840"];
   const currency = Account.INJ_1.currency;
 
@@ -34,14 +34,14 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", (
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should display 4 cryptos, 2 stablecoins and an Add account CTA", async () => {
+  it(`[${currency.testLabel}] - Wallet assets empty state shows placeholders and add account CTA`, async () => {
     await app.portfolio.checkCryptosListSectionVisible(true);
     await app.portfolio.checkStablecoinsListSectionVisible(true);
     await app.portfolio.checkTotalAssetItemCount(6);
     await app.portfolio.checkAddAccountCtaVisible();
   });
 
-  it("should redirect to the correct asset market page when selecting an asset", async () => {
+  it(`[${currency.testLabel}] - Selecting an asset redirects to its market page`, async () => {
     await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectAssetPageVisible();
     await app.market.leaveAssetPage();
@@ -50,7 +50,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Onboard without accounts", (
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
+describe("Wallet assets", () => {
   const tmsLinks = ["B2CQA-4841"];
 
   beforeAll(async () => {
@@ -66,7 +66,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than sec
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should pad cryptos to 4 and stablecoins to 2 with default assets when user has fewer accounts than minimum", async () => {
+  it(`[${Currency.BTC.testLabel}] - Wallet assets section with fewer than 6 cryptos and stablecoins`, async () => {
     await app.portfolio.checkCryptosListSectionVisible();
     await app.portfolio.checkStablecoinsListSectionVisible();
     await app.portfolio.checkTotalAssetItemCount(6);
@@ -75,7 +75,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - With fewer accounts than sec
 });
 
 setTeamOwner(Team.WALLET_XP);
-describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts", () => {
+describe("Wallet assets", () => {
   const tmsLinks = ["B2CQA-4834", "B2CQA-4837", "B2CQA-4838"];
 
   beforeAll(async () => {
@@ -91,7 +91,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts",
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should cap cryptos at 6, show only cryptos when clicking section title, and list all 6 crypto assets", async () => {
+  it("Wallet assets section caps cryptos at 6", async () => {
     await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkCryptosListSectionVisible();
     await app.portfolio.checkCryptosSectionAssetItemCount(6);
@@ -103,7 +103,7 @@ describe("Wallet 4.0 Q2 - Portfolio-Asset/Address - Open the app with accounts",
     await app.mainNavigation.waitForWallet40Ready();
   });
 
-  it("should cap stablecoins at 6, show only stablecoins when clicking section title, and list all stablecoin assets", async () => {
+  it("Wallet assets section caps stablecoins at 6", async () => {
     await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkStablecoinsListSectionVisible();
     await app.portfolio.checkAssetVisible("Tether USD");

@@ -48,7 +48,7 @@ export function usePortfolioCarouselCards(
   );
 
   const dismissCard = useCallback<CarouselActions["dismissCard"]>(
-    index => {
+    (index, displayedPosition) => {
       const slide = portfolioCards[index];
       if (!slide?.id) return;
       const currentCard = getBrazeCard(slide.id);
@@ -62,7 +62,7 @@ export function usePortfolioCarouselCards(
             page: "Portfolio",
             type: "portfolio_carousel",
             location: slide.location,
-            displayedPosition: index,
+            displayedPosition: displayedPosition ?? index,
           });
         } else if (currentCard.id) {
           dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
@@ -74,7 +74,7 @@ export function usePortfolioCarouselCards(
   );
 
   const logSlideClick = useCallback<CarouselActions["logSlideClick"]>(
-    cardId => {
+    (cardId, displayedPosition) => {
       if (!isTrackedUser) return;
 
       const slideIndex = portfolioCards.findIndex(card => card.id === cardId);
@@ -95,7 +95,7 @@ export function usePortfolioCarouselCards(
         page: "Portfolio",
         type: "portfolio_carousel",
         location: slide.location,
-        displayedPosition: slideIndex,
+        displayedPosition: displayedPosition ?? slideIndex,
       });
     },
     [portfolioCards, getBrazeCard, isTrackedUser],

@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { joinFilter, splitFilter } from "./escaping.mjs";
+import { findTestFiles as findSpecFiles, filterTestFiles } from "./selectSpecs.mjs";
 
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
@@ -60,22 +61,6 @@ export function applySmokeFilter(filter, smokeTests) {
   return filter ? `@smoke ${filter}` : "@smoke";
 }
 
-function findTestFiles(dir) {
-  const results = [];
-  if (!fs.existsSync(dir)) return results;
-
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      results.push(...findTestFiles(fullPath));
-    } else if (entry.name.endsWith(".spec.ts") && !entry.name.endsWith(".skip.spec.ts")) {
-      results.push(fullPath);
-    }
-  }
-
-  return results;
-}
-
 function hasMatch(files, pattern) {
   let matcher;
   try {
@@ -91,24 +76,39 @@ function hasMatch(files, pattern) {
   });
 }
 
-function warnZeroMatches(checkDir, baseFilter, expandedTags) {
+function warnZeroMatches(checkDir, baseFilter, expandedTags, runner) {
   if (!checkDir) return;
 
   const testDir = path.resolve(repoRoot, checkDir);
-  const files = findTestFiles(testDir);
+  // Decide "0 matches" the same way the target runner actually selects tests, so the warning
+  // can't disagree with what runs:
+  // - detox (mobile) selects whole spec files by path + declared @-tags (selectSpecs.filterTestFiles).
+  //   Content-only filters (a TMS id, a describe/it title) select nothing, so they MUST warn.
+  // - playwright (desktop) selects by test title via --grep, approximated by a regex over the
+  //   spec path and content.
+  const isDetox = runner === "detox";
+  const files = findSpecFiles(testDir);
 
   if (files.length === 0) {
     console.warn(`::warning title=E2E filter check skipped::No test files found in ${checkDir}`);
     return;
   }
 
+  const selectsSomething = isDetox
+    ? pattern => filterTestFiles(files, pattern).length > 0
+    : pattern => hasMatch(files, pattern);
+
   for (const tag of expandedTags) {
-    if (!hasMatch(files, tag)) {
+    if (!selectsSomething(tag)) {
       console.warn(`::warning title=Missing E2E tag::${tag} has no matching specs in ${checkDir}`);
     }
   }
 
-  if (baseFilter && !hasMatch(files, baseFilter.split(/\s+/).filter(Boolean).join("|"))) {
+  // filterTestFiles already splits on whitespace/","/"|"; the playwright regex needs "|" alternation.
+  const baseFilterPattern = isDetox
+    ? baseFilter
+    : baseFilter.split(/\s+/).filter(Boolean).join("|");
+  if (baseFilter && !selectsSomething(baseFilterPattern)) {
     console.warn(
       `::warning title=E2E filter has no matches::${baseFilter} matched 0 specs in ${checkDir}`,
     );
@@ -120,6 +120,7 @@ function parseArgs(args) {
     input: "",
     smokeTests: false,
     checkDir: "",
+    runner: "playwright",
   };
 
   for (let i = 0; i < args.length; i += 1) {
@@ -134,6 +135,9 @@ function parseArgs(args) {
       case "--check-dir":
         parsed.checkDir = args[++i] ?? "";
         break;
+      case "--runner":
+        parsed.runner = args[++i] ?? "playwright";
+        break;
       default:
         if (!parsed.input) parsed.input = arg;
         break;
@@ -143,9 +147,14 @@ function parseArgs(args) {
   return parsed;
 }
 
-export function resolveTestFilter({ input = "", smokeTests = false, checkDir = "" } = {}) {
+export function resolveTestFilter({
+  input = "",
+  smokeTests = false,
+  checkDir = "",
+  runner = "playwright",
+} = {}) {
   const { filter: baseFilter, expandedTags } = resolveBaseFilter(input);
-  warnZeroMatches(checkDir, baseFilter, expandedTags);
+  warnZeroMatches(checkDir, baseFilter, expandedTags, runner);
   return applySmokeFilter(baseFilter, smokeTests);
 }
 

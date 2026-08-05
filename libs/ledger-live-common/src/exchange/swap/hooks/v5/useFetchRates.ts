@@ -1,5 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fetchRates } from "../../api/v5/fetchRates";

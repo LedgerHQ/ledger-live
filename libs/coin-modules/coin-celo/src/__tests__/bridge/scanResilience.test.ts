@@ -1,4 +1,4 @@
-import { UpdateYourApp } from "@ledgerhq/errors";
+import { UpdateYourApp } from "@ledgerhq/ledger-wallet-framework/errors";
 import { buildResilientIterateResult, isUpdateYourAppError } from "../../bridge/scanResilience";
 
 describe("isUpdateYourAppError", () => {

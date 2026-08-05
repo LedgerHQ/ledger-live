@@ -3,7 +3,12 @@ import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { buildTransaction, txToMessages } from "./buildTransaction";
+import {
+  buildTransaction,
+  CosmosTransactionParams,
+  messageParamsFromTransaction,
+  txToMessages,
+} from "./buildTransaction";
 import cryptoFactory from "./chain/chain";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAPI } from "./network/Cosmos";
@@ -26,7 +31,7 @@ export const calculateFees: CacheRes<
     gasWanted: BigNumber;
     gasWantedFees: BigNumber;
   }> => {
-    return await getEstimatedFees(account as CosmosAccount, transaction);
+    return await getEstimatedFees(messageParamsFromTransaction(account, transaction));
   },
   ({ account, transaction }) =>
     `${account.id}_${account.currency.id}_${transaction.amount.toFixed()}_${
@@ -44,29 +49,28 @@ export const calculateFees: CacheRes<
 );
 
 export const getEstimatedFees = async (
-  account: CosmosAccount,
-  transaction: Transaction,
+  params: CosmosTransactionParams,
 ): Promise<{
   gasWanted: BigNumber;
   gasWantedFees: BigNumber;
 }> => {
-  const chainInstance = cryptoFactory(account.currency.id);
+  const chainInstance = cryptoFactory(params.currencyId);
   let gasUsed = new BigNumber(chainInstance.defaultGas);
 
-  const cosmosAPI = new CosmosAPI(account.currency.id);
-  const { protoMsgs } = txToMessages(account, transaction, chainInstance);
-  const { sequence, pubKey, pubKeyType } = await cosmosAPI.getAccount(account.freshAddress);
+  const cosmosAPI = new CosmosAPI(params.currencyId);
+  const { protoMsgs } = txToMessages(params, chainInstance);
+  const { sequence, pubKey, pubKeyType } = await cosmosAPI.getAccount(params.senderAddress);
 
   const unsignedTx = buildTransaction({
     protoMsgs,
     gasLimit: undefined,
     feeAmount: [
       {
-        denom: account.currency.units[1].code,
+        denom: params.denom,
         amount: "1", // Amount should just not be 0 as it would impact the simulation by requiring less gas
       },
     ],
-    memo: transaction.memo || "",
+    memo: params.memo,
     pubKey,
     pubKeyType,
     sequence,

@@ -3,7 +3,7 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useSelector } from "~/context/hooks";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
-import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   getRecentAddressesStore,
   getMainAccount,
@@ -368,7 +368,7 @@ describe("useAddressValidation", () => {
     );
   });
 
-  it("does not surface bridge validation loading as recipient input loading", () => {
+  it("surfaces bridge loading only while awaiting the first result for the recipient", () => {
     mockedUseBridgeRecipientValidation.mockReturnValue({
       errors: {},
       warnings: {},
@@ -377,14 +377,31 @@ describe("useAddressValidation", () => {
       cleanup: jest.fn(),
     });
 
-    const { result } = renderHook(() =>
-      useAddressValidation({
-        searchValue: "address",
-        currency: mockAccount.currency,
-        account: mockAccount,
-      }),
+    const validationProps = {
+      searchValue: "address",
+      currency: mockAccount.currency,
+      account: mockAccount,
+    };
+
+    const { result, rerender } = renderHook(
+      (props: typeof validationProps) => useAddressValidation(props),
+      { initialProps: validationProps },
     );
 
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.result.isBridgeLoading).toBe(true);
+
+    mockedUseBridgeRecipientValidation.mockReturnValue({
+      errors: {},
+      warnings: {},
+      isLoading: true,
+      // Bridge already settled once for this recipient (revalidation in progress).
+      status: { errors: {}, warnings: {} } as never,
+      cleanup: jest.fn(),
+    });
+    rerender(validationProps);
+
+    expect(result.current.result.isBridgeLoading).toBe(false);
     expect(result.current.isLoading).toBe(false);
   });
 

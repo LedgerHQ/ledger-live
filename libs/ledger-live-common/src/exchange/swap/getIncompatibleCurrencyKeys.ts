@@ -1,7 +1,6 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { ExchangeSwap } from "./types";
 
-type Keys = Partial<Record<CryptoCurrency["id"], { title: string; description: string }>>;
+type Keys = Partial<Record<string, { title: string; description: string }>>; // TO BE REPLACED soon by branded id
 
 const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
   solana: {
@@ -23,6 +22,10 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
   ton: {
     title: "swap.incompatibility.ton_tokens_title",
     description: "swap.incompatibility.ton_tokens_description",
+  },
+  aleo: {
+    title: "swap.incompatibility.aleo_tokens_title",
+    description: "swap.incompatibility.aleo_tokens_description",
   },
 };
 

@@ -7,7 +7,7 @@ import {
   toggleOnboardingEarlyCheckCmd,
   ToggleTypeP2,
 } from "../commands/toggleOnboardingEarlyCheck";
-import { StatusCodes } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
 
 export type ToggleOnboardingEarlyCheckTaskError =
   | "DeviceInInvalidState"

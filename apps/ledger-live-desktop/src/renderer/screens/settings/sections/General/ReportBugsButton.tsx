@@ -1,15 +1,15 @@
 import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { setSentryLogs } from "~/renderer/actions/settings";
-import { sentryLogsSelector } from "~/renderer/reducers/settings";
+import { setCrashReporting } from "~/renderer/actions/settings";
+import { crashReportingSelector } from "~/renderer/reducers/settings";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 const ReportBugsButton = () => {
   const dispatch = useDispatch();
-  const reportBugs = useSelector(sentryLogsSelector);
+  const reportBugs = useSelector(crashReportingSelector);
   const onChangeReportBugs = useCallback(
     (value: boolean) => {
-      dispatch(setSentryLogs(value));
+      dispatch(setCrashReporting(value));
     },
     [dispatch],
   );

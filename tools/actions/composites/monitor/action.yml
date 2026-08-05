@@ -52,14 +52,17 @@ runs:
         DD_APP_KEY: ${{ inputs.DD_APP_KEY }}
         DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
         SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
+        INPUTS_MONITOR_FILTER_ISOLATED: ${{ inputs.MONITOR_FILTER_ISOLATED }}
+        INPUTS_MONITOR_FILTER_CURRENCIES: ${{ inputs.MONITOR_FILTER_CURRENCIES }}
+        INPUTS_MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}
       run: |
         ISOLATED_FLAG=""
-        if [ "${{ inputs.MONITOR_FILTER_ISOLATED }}" = "true" ]; then
+        if [ "${INPUTS_MONITOR_FILTER_ISOLATED}" = "true" ]; then
           ISOLATED_FLAG="--isolated"
         fi
 
         pnpm coin:modules:monitoring start monitor \
-        --currencies "${{ inputs.MONITOR_FILTER_CURRENCIES }}"  \
-        --account-types "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}" \
+        --currencies "${INPUTS_MONITOR_FILTER_CURRENCIES}"  \
+        --account-types "${INPUTS_MONITOR_FILTER_ACCOUNT_TYPES}" \
         $ISOLATED_FLAG
       shell: bash

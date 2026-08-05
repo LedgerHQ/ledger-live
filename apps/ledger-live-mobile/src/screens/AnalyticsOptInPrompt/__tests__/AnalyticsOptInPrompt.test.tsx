@@ -77,12 +77,10 @@ function NotificationsOptInScreen() {
 }
 
 const renderAnalyticsOptInMain = ({
-  wallet40Enabled,
   lazyOnboarding,
   notificationsOptInEnabled = false,
   initialRouteName = "AnalyticsOptInPrompt",
 }: {
-  wallet40Enabled: boolean;
   lazyOnboarding?: boolean;
   notificationsOptInEnabled?: boolean;
   initialRouteName?: keyof TestStackParamList;
@@ -109,7 +107,6 @@ const renderAnalyticsOptInMain = ({
     {
       overrideInitialState: withFlagOverrides({
         lwmWallet40: {
-          enabled: wallet40Enabled,
           params: {
             lazyOnboarding,
           },
@@ -123,7 +120,7 @@ const renderAnalyticsOptInMain = ({
 
 describe("AnalyticsOptInPrompt", () => {
   it("navigates to onboarding device selection when lazy onboarding is disabled", async () => {
-    const { user } = renderAnalyticsOptInMain({ wallet40Enabled: true, lazyOnboarding: false });
+    const { user } = renderAnalyticsOptInMain({ lazyOnboarding: false });
 
     await user.press(screen.getByTestId(acceptAnalyticsButtonId));
 
@@ -132,7 +129,6 @@ describe("AnalyticsOptInPrompt", () => {
 
   it("navigates to portfolio when lazy onboarding is enabled", async () => {
     const { user } = renderAnalyticsOptInMain({
-      wallet40Enabled: true,
       lazyOnboarding: true,
     });
 
@@ -143,7 +139,6 @@ describe("AnalyticsOptInPrompt", () => {
 
   it("navigates to notifications opt-in when lazy onboarding and notifications opt-in are enabled", async () => {
     const { user } = renderAnalyticsOptInMain({
-      wallet40Enabled: true,
       lazyOnboarding: true,
       notificationsOptInEnabled: true,
     });
@@ -153,20 +148,8 @@ describe("AnalyticsOptInPrompt", () => {
     expect(await screen.findByText(notificationsOptInLabel)).toBeVisible();
   });
 
-  it("keeps onboarding path when Wallet40 is disabled even with lazyOnboarding enabled", async () => {
-    const { user } = renderAnalyticsOptInMain({
-      wallet40Enabled: false,
-      lazyOnboarding: true,
-    });
-
-    await user.press(screen.getByTestId(acceptAnalyticsButtonId));
-
-    expect(await screen.findByText(onboardingDeviceSelectionLabel)).toBeVisible();
-  });
-
   it("should reset onboarding history after accepting analytics", async () => {
     const { user } = renderAnalyticsOptInMain({
-      wallet40Enabled: true,
       lazyOnboarding: true,
       initialRouteName: "Previous",
     });
@@ -183,7 +166,6 @@ describe("AnalyticsOptInPrompt", () => {
 
   it("should reset onboarding history after declining analytics", async () => {
     const { user } = renderAnalyticsOptInMain({
-      wallet40Enabled: true,
       lazyOnboarding: true,
       initialRouteName: "Previous",
     });

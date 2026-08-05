@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import { TonCommentInvalid, TonExcessFee } from "../../errors";
 import getTransactionStatus from "../../getTransactionStatus";
@@ -125,6 +125,20 @@ describe("getTransactionStatus", () => {
           ...baseTransaction,
           amount: new BigNumber("1"),
           comment: { isEncrypted: false, text: "comment\nInvalid" },
+        };
+        const res = await getTransactionStatus(account, transaction);
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            transaction: new TonCommentInvalid(),
+          }),
+        );
+      });
+
+      it("should report a malformed comment as an error instead of throwing", async () => {
+        const transaction = {
+          ...baseTransaction,
+          amount: new BigNumber("1"),
+          comment: { isEncrypted: false, text: undefined as unknown as string },
         };
         const res = await getTransactionStatus(account, transaction);
         expect(res.errors).toEqual(

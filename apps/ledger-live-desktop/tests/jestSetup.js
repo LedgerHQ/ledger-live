@@ -32,8 +32,15 @@ setFrameworkCryptoAssetsStore({
 });
 import "@jest/globals";
 import "@testing-library/jest-dom";
+import { configure } from "@testing-library/react";
 import { server } from "./server";
 import { EventEmitter } from "events";
+
+// testing-library defaults `waitFor`/`findBy*` to 1s. Suites that mount large trees (Default,
+// OnboardModal) exceed that on CI, where jest runs one worker per core: the element does show up,
+// just later than 1s. Kept well below `testTimeout` so a genuine miss still reports the query error
+// rather than a bare jest timeout.
+configure({ asyncUtilTimeout: 5_000 });
 
 // Disable max listeners warning for MSW (known issue with multiple tests)
 EventEmitter.defaultMaxListeners = 0;
@@ -88,6 +95,8 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 jest.mock("@ledgerhq/react-ui/assets/fonts", () => ({}));
+
+jest.mock("@braze/web-sdk", () => require("tests/mocks/brazeWebSdk").getBrazeWebSdkJestMock());
 
 class WorkerMock {
   constructor(stringUrl) {

@@ -139,3 +139,84 @@ export class NotEnoughNftOwned extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+// Transaction validation
+export class GasLessThanEstimate extends Error {
+  override name = "GasLessThanEstimate";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "GasLessThanEstimate");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class PriorityFeeTooLow extends Error {
+  override name = "PriorityFeeTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "PriorityFeeTooLow");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class PriorityFeeTooHigh extends Error {
+  override name = "PriorityFeeTooHigh";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "PriorityFeeTooHigh");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class PriorityFeeHigherThanMaxFee extends Error {
+  override name = "PriorityFeeHigherThanMaxFee";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "PriorityFeeHigherThanMaxFee");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class MaxFeeTooLow extends Error {
+  override name = "MaxFeeTooLow";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "MaxFeeTooLow");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ETHAddressNonEIP extends Error {
+  override name = "ETHAddressNonEIP";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ETHAddressNonEIP");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class RedelegateDstValAddressRequired extends Error {
+  override name = "RedelegateDstValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "RedelegateDstValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ValAddressRequired extends Error {
+  override name = "ValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class NotEnoughGas extends Error {
+  override name = "NotEnoughGas";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "NotEnoughGas");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ClaimRewardsFeesWarning extends Error {
+  override name = "ClaimRewardsFeesWarning";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ClaimRewardsFeesWarning");
+    if (fields) Object.assign(this, fields);
+  }
+}

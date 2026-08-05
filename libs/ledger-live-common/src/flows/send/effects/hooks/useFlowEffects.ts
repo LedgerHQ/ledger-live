@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import isEqual from "lodash/isEqual";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Transaction } from "../../../../coin-modules/transaction-types";
 import type { FlowEffect, TransactionPatch } from "../../../../bridge/descriptor/types";
 import { sendFeatures } from "../../../../bridge/descriptor/send/features";

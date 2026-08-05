@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
@@ -22,7 +23,7 @@ export const TEST_TOKEN_POLICY_ID = "1234567890123456789012345678901234567890123
 export const TEST_TOKEN_ASSET_NAME = "4d59544f4b454e";
 export const TEST_TOKEN: TokenCurrency = {
   type: "TokenCurrency",
-  id: `cardano/native/${TEST_TOKEN_POLICY_ID}${TEST_TOKEN_ASSET_NAME}`,
+  id: TokenCurrencyIdSchema.parse(`cardano/native/${TEST_TOKEN_POLICY_ID}${TEST_TOKEN_ASSET_NAME}`),
   contractAddress: `${TEST_TOKEN_POLICY_ID}${TEST_TOKEN_ASSET_NAME}`,
   parentCurrencyId: CARDANO.id,
   tokenType: "native",

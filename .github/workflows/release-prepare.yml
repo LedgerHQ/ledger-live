@@ -94,6 +94,11 @@ jobs:
   release-final:
     name: "Prepare Release > Publish packages and apps"
     needs: prepare-release
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: write
+      id-token: write
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
       ref: main

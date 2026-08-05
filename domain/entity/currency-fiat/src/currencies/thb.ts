@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const thb = fiat({
   type: "FiatCurrency",
-  id: "thb",
   ticker: "THB",
   name: "Thai Baht",
   symbol: "฿",

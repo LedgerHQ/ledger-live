@@ -92,8 +92,8 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugDevTools)}
       />
       <SettingsRow
-        title="Analytics opt-in consent — QA"
-        desc="Inspect consent state and simulate portfolio drawer scenarios"
+        title="Analytics consent QA"
+        desc="Policy bumps, consent state, drawer preview"
         iconLeft={<IconsLegacy.ChartNetworkMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugAnalyticsConsentQA)}
       />

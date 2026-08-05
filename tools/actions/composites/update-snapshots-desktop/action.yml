@@ -56,7 +56,7 @@ runs:
 
     - name: Get current branch
       id: get_branch
-      run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+      run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Commit snapshots
@@ -65,7 +65,7 @@ runs:
       with:
         commit_message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
         repo: ${{ github.repository }}
-        branch: ${{ env.branch }}
+        branch: ${{ steps.get_branch.outputs.branch }}
         file_pattern: '*'
       env:
         GITHUB_TOKEN: ${{ inputs.token }}

@@ -5,7 +5,7 @@ import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { Platform } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { useQ2WalletV4TourDrawerViewModel } from "./hooks/useQ2WalletV4TourDrawerViewModel";
@@ -59,7 +59,7 @@ export const Q2WalletV4TourDrawer = ({
   );
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isDrawerOpen}
       onClose={closeDrawer}
       enableDynamicSizing
@@ -101,6 +101,6 @@ export const Q2WalletV4TourDrawer = ({
           </Slides>
         </BottomSheetView>
       ) : null}
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 };

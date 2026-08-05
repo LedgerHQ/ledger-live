@@ -5,14 +5,14 @@ import { PortfolioBannersSection } from "../index";
 import { usePortfolioBannersSectionViewModel } from "../usePortfolioBannersSectionViewModel";
 import RecoverBanner from "../../RecoverBanner";
 import { OnboardingWidget } from "../../OnboardingWidget";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
+import { LNUpsellBanner } from "LLM/features/LNUpsell/components/LNUpsellBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 
 jest.mock("../usePortfolioBannersSectionViewModel");
 jest.mock("../../RecoverBanner", () => ({ __esModule: true, default: jest.fn() }));
 jest.mock("../../OnboardingWidget", () => ({ OnboardingWidget: jest.fn() }));
-jest.mock("LLM/features/LNSUpsell/components/LNSUpsellBanner", () => ({
-  LNSUpsellBanner: jest.fn(),
+jest.mock("LLM/features/LNUpsell/components/LNUpsellBanner", () => ({
+  LNUpsellBanner: jest.fn(),
 }));
 jest.mock("~/dynamicContent/ContentCardsLocation", () => ({
   __esModule: true,
@@ -22,20 +22,22 @@ jest.mock("~/dynamicContent/ContentCardsLocation", () => ({
 const mockUseViewModel = jest.mocked(usePortfolioBannersSectionViewModel);
 const MockRecoverBanner = jest.mocked(RecoverBanner);
 const MockOnboardingWidget = jest.mocked(OnboardingWidget);
-const MockLNSUpsellBanner = jest.mocked(LNSUpsellBanner);
+const MockLNUpsellBanner = jest.mocked(LNUpsellBanner);
 const MockContentCardsLocation = jest.mocked(ContentCardsLocation);
 
 const baseViewModel = {
   shouldShowOnboardingWidget: false,
   contentCardsPaddingTop: undefined,
   hasAssets: false,
+  hasTopWalletDisplayableCards: false,
   shouldDisplayRecover: false,
+  canCoexistWithBraze: false,
   onScroll: jest.fn(),
   carouselIndex: 0,
 };
 
 const renderSection = (props: Partial<React.ComponentProps<typeof PortfolioBannersSection>> = {}) =>
-  render(<PortfolioBannersSection isFirst={false} isLNSUpsellBannerShown={false} {...props} />);
+  render(<PortfolioBannersSection isFirst={false} isLNUpsellBannerShown={false} {...props} />);
 
 describe("PortfolioBannersSection", () => {
   beforeEach(() => {
@@ -43,7 +45,7 @@ describe("PortfolioBannersSection", () => {
     mockUseViewModel.mockReturnValue(baseViewModel);
     MockRecoverBanner.mockReturnValue(<View testID="mock-recover-banner" />);
     MockOnboardingWidget.mockReturnValue(<View testID="mock-onboarding-widget" />);
-    MockLNSUpsellBanner.mockReturnValue(<View testID="mock-lns-banner" />);
+    MockLNUpsellBanner.mockReturnValue(<View testID="mock-ln-banner" />);
     MockContentCardsLocation.mockReturnValue(<View testID="mock-content-cards" />);
   });
 
@@ -52,11 +54,30 @@ describe("PortfolioBannersSection", () => {
     expect(screen.queryByTestId("portfolio-banners-section")).toBeNull();
   });
 
-  it("renders the LNS upsell banner when isLNSUpsellBannerShown is true", () => {
-    renderSection({ isLNSUpsellBannerShown: true });
-    expect(screen.getByTestId("mock-lns-banner")).toBeVisible();
+  it("renders the LN upsell banner when isLNUpsellBannerShown is true", () => {
+    renderSection({ isLNUpsellBannerShown: true });
+    expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
     expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
+    expect(screen.queryByTestId("mock-content-cards")).toBeNull();
+  });
+
+  it("coexists upsell and Braze content cards when both are available", () => {
+    mockUseViewModel.mockReturnValue({
+      ...baseViewModel,
+      hasAssets: true,
+      hasTopWalletDisplayableCards: true,
+      canCoexistWithBraze: true,
+    });
+    renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+
+    expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+    expect(MockContentCardsLocation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        leadingSlide: expect.anything(),
+      }),
+      undefined,
+    );
   });
 
   describe("when user has assets and onboarding is hidden", () => {
@@ -64,6 +85,7 @@ describe("PortfolioBannersSection", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         hasAssets: true,
+        hasTopWalletDisplayableCards: true,
         shouldDisplayRecover: true,
       });
     });
@@ -72,6 +94,19 @@ describe("PortfolioBannersSection", () => {
       renderSection({ showAssets: true });
       expect(screen.getByTestId("mock-recover-banner")).toBeVisible();
       expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+    });
+
+    it("keeps LN upsell exclusive over Recover when both would show with Braze cards", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        hasAssets: true,
+        hasTopWalletDisplayableCards: true,
+        shouldDisplayRecover: true,
+      });
+      renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+      expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+      expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
     });
 
     it("does not render onboarding or the carousel page indicator", () => {
@@ -84,11 +119,23 @@ describe("PortfolioBannersSection", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         hasAssets: true,
+        hasTopWalletDisplayableCards: true,
         shouldDisplayRecover: false,
       });
       renderSection({ showAssets: true });
       expect(screen.getByTestId("mock-content-cards")).toBeVisible();
       expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+    });
+
+    it("renders upsell alone when assets are shown but TopWallet has no cards", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        hasAssets: true,
+        hasTopWalletDisplayableCards: false,
+      });
+      renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+      expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
     });
   });
 

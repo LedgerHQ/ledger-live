@@ -82,6 +82,9 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
+To run only selected specs when dispatching an E2E workflow, see
+[Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
+
 ### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON override
 
 You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.
@@ -120,7 +123,13 @@ It is possible to choose an optional Feature Flag set for the test run.
 Set the env var to the desired value, eg:
 
 ```bash
-export E2E_DESKTOP_FEATURE_FLAGS="wallet40-q2"
+export E2E_DESKTOP_FEATURE_FLAGS="some-preset"
 ```
 
 Or use the "Choose a feature flag set" options dropdown on the Github workflow.
+
+### 8. Soft assertions
+
+Soft assertions can be useful for gathering more feedback in a single test run.
+
+Read the [soft-expect docs](./docs/soft-expect.md) for examples and more.

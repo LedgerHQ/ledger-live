@@ -20,7 +20,6 @@ type UseMarketRowViewModelProps = {
   size: number;
   start: number;
   currency: MarketCurrencyData;
-  counterCurrency?: string;
   locale: string;
   range?: string;
   isStarred: boolean;
@@ -31,7 +30,6 @@ export function useMarketRowViewModel({
   size,
   start,
   currency,
-  counterCurrency,
   locale,
   range,
   isStarred,

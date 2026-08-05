@@ -17,7 +17,7 @@ runs:
     - name: Duplicate AVDs
       shell: bash
       run: |
-        AVD_NAME="${{ inputs.source_avd_name }}"
+        AVD_NAME="${INPUTS_SOURCE_AVD_NAME}"
         AVD_DIR="/home/runner/.android/avd"
 
         echo "📋 Source AVD: ${AVD_NAME}"
@@ -32,7 +32,7 @@ runs:
 
         echo "✅ Source AVD found"
 
-        IFS=',' read -ra SUFFIXES <<< "${{ inputs.target_suffixes }}"
+        IFS=',' read -ra SUFFIXES <<< "${INPUTS_TARGET_SUFFIXES}"
         for suffix in "${SUFFIXES[@]}"; do
           NEW_NAME="${AVD_NAME}${suffix}"
           echo ""
@@ -53,7 +53,7 @@ runs:
         avd.ini.encoding=UTF-8
         path=${AVD_DIR}/${NEW_NAME}.avd
         path.rel=avd/${NEW_NAME}.avd
-        target=android-${{ inputs.avd_api }}
+        target=android-${INPUTS_AVD_API}
         EOF
 
           # Update hardware-qemu.ini if it exists (contains avd name references)
@@ -76,3 +76,8 @@ runs:
         echo ""
         echo "📋 Final AVD list:"
         ls -la "${AVD_DIR}/"
+
+      env:
+        INPUTS_SOURCE_AVD_NAME: ${{ inputs.source_avd_name }}
+        INPUTS_TARGET_SUFFIXES: ${{ inputs.target_suffixes }}
+        INPUTS_AVD_API: ${{ inputs.avd_api }}

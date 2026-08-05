@@ -3,8 +3,9 @@
  */
 import { renderHook } from "@testing-library/react";
 import { usePickDefaultCurrency } from "./usePickDefaultCurrency";
-import { getCryptoCurrencyById } from "../../../currencies";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();

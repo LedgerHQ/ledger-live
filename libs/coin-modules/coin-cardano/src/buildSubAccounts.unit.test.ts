@@ -1,5 +1,10 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  TokenCurrencyIdSchema,
+  CryptoCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
+
 import BigNumber from "bignumber.js";
 
 import { APITransaction } from "./api/api-types";
@@ -22,9 +27,9 @@ const parentCurrency = { id: PARENT_CURRENCY_ID } as CryptoCurrency;
 
 const tokenCurrency: TokenCurrency = {
   type: "TokenCurrency",
-  id: TOKEN_CURRENCY_ID,
+  id: TokenCurrencyIdSchema.parse(TOKEN_CURRENCY_ID),
   contractAddress: POLICY_ID,
-  parentCurrency,
+  parentCurrencyId: CryptoCurrencyIdSchema.parse(PARENT_CURRENCY_ID),
   tokenType: "native",
   name: "Test Token",
   ticker: "TEST",

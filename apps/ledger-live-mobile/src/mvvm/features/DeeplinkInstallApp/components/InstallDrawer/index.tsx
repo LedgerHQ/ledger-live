@@ -1,7 +1,7 @@
 import React from "react";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { ConfirmationStep } from "./ConfirmationStep";
 import { InstallingContent } from "./InstallingContent";
 import { SuccessStep } from "./SuccessStep";
@@ -30,7 +30,7 @@ export function DeeplinkInstallAppDrawer() {
   }
 
   const renderContent = () => {
-    // QueuedDrawerBottomSheet renders children even when closed
+    // QueuedBottomSheet renders children even when closed
     if (!isOpen) return null;
 
     switch (step) {
@@ -69,7 +69,7 @@ export function DeeplinkInstallAppDrawer() {
   };
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={handleClose}
       preventBackdropClick
@@ -77,6 +77,6 @@ export function DeeplinkInstallAppDrawer() {
       enableDynamicSizing
     >
       <BottomSheetView style={{ paddingBottom: bottomInset }}>{renderContent()}</BottomSheetView>
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

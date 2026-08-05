@@ -21,6 +21,7 @@ import {
 const privateInfoMock: ZcashPrivateInfo = {
   saplingBalance: new BigNumber("2"),
   orchardBalance: new BigNumber("4"),
+  ironwoodBalance: new BigNumber("0"),
   ufvk: "uview123...",
   syncState: "running",
   birthday: "",
@@ -34,6 +35,7 @@ const privateInfoMock: ZcashPrivateInfo = {
 const privateInfoRawMock: ZcashPrivateInfoRaw = {
   saplingBalance: "2",
   orchardBalance: "4",
+  ironwoodBalance: "0",
   ufvk: "uview123...",
   syncState: "running",
   birthday: "",

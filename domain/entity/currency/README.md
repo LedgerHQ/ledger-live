@@ -3,30 +3,29 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Currency union types and single entry-point for all currency entity packages.
+Cross-package currency **union types**. Specialized entity types live in their own packages.
 
 ## Responsibility
 
 - Export **`CryptoOrTokenCurrency`** — discriminated union of `CryptoCurrency | TokenCurrency`
 - Export **`Currency`** — discriminated union of `CryptoCurrency | TokenCurrency | FiatCurrency`
-- Re-export everything from the three currency entity packages and `@domain/entity-currency-unit`
 
-This package owns no schemas of its own. It is a pure aggregation layer.
+This package owns no schemas of its own and exposes **only** the cross-package unions. Import
+specialized types (`CryptoCurrency`, `TokenCurrency`, `FiatCurrency`, `Unit`) directly from their
+own `@domain/entity-currency-*` package — the aggregate does not re-export them.
 
 ## Usage
 
 ```ts
-// Union types
+// Unions — from the aggregate
 import { type Currency, type CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { CurrencySchema, CryptoOrTokenCurrencySchema } from "@domain/entity-currency";
 
-// Everything from the sub-packages is also re-exported here
-import {
-  type CryptoCurrency, CRYPTO_CURRENCIES_REGISTRY,
-  type TokenCurrency, token,
-  type FiatCurrency, FIAT_CURRENCIES_REGISTRY,
-  type Unit,
-} from "@domain/entity-currency";
+// Specialized types — each from its own package
+import { type CryptoCurrency, CRYPTO_CURRENCIES_REGISTRY } from "@domain/entity-currency-crypto";
+import { type TokenCurrency, token } from "@domain/entity-currency-token";
+import { type FiatCurrency, FIAT_CURRENCIES_REGISTRY } from "@domain/entity-currency-fiat";
+import { type Unit } from "@domain/entity-currency-unit";
 ```
 
 ## Union types
@@ -50,12 +49,13 @@ Use `CryptoOrTokenCurrency` when working with on-chain balances or addresses. Us
 
 ## Dependencies
 
-| Package | Re-exports |
+The unions are composed from the specialized entity schemas:
+
+| Package | Union member |
 |---|---|
-| `@domain/entity-currency-unit` | `Unit`, `UnitSchema` |
-| `@domain/entity-currency-crypto` | `CryptoCurrency`, `CRYPTO_CURRENCIES_REGISTRY`, `currency()`, … |
-| `@domain/entity-currency-token` | `TokenCurrency`, `token()`, … |
-| `@domain/entity-currency-fiat` | `FiatCurrency`, `FIAT_CURRENCIES_REGISTRY`, `fiat()`, … |
+| `@domain/entity-currency-crypto` | `CryptoCurrencySchema` |
+| `@domain/entity-currency-token` | `TokenCurrencySchema` |
+| `@domain/entity-currency-fiat` | `FiatCurrencySchema` |
 
 ## Testing
 

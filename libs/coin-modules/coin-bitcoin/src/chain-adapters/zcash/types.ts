@@ -31,6 +31,9 @@ export interface ZCashClient {
   estimatedSyncTime(totalBlocks: number): Promise<(processedBlocks: number) => SyncEstimatedTime>;
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
   buildTransaction?(args: Omit<BuildTransactionArgs, "requestId">): Promise<BuildTransactionResult>;
+  buildIronwoodTransaction?(
+    args: Omit<BuildIronwoodTransactionArgs, "requestId">,
+  ): Promise<BuildIronwoodTransactionResult>;
   finalizeTransaction?(
     args: Omit<FinalizeTransactionArgs, "requestId">,
   ): Promise<FinalizeTransactionResult>;
@@ -89,6 +92,7 @@ export type SpendableNote = Required<SpendingFields> & {
 export type DecryptedTransaction = {
   orchard_outputs: DecryptedOutput[];
   sapling_outputs: DecryptedOutput[];
+  ironwood_outputs?: DecryptedOutput[];
 };
 
 export type ShieldedTransaction = {
@@ -115,6 +119,7 @@ export type ShieldedTransaction = {
 export type ZcashPrivateInfo = {
   saplingBalance: BigNumber;
   orchardBalance: BigNumber;
+  ironwoodBalance: BigNumber;
   syncState: ZcashSyncState;
   progress: number;
   estimatedTimeRemaining: SyncEstimatedTime;
@@ -128,6 +133,7 @@ export type ZcashPrivateInfo = {
 export type ZcashPrivateInfoRaw = {
   orchardBalance: string;
   saplingBalance: string;
+  ironwoodBalance: string;
   syncState: string;
   progress: number;
   estimatedTimeRemaining: SyncEstimatedTime;
@@ -151,6 +157,7 @@ export type ShieldedTransactionRaw = {
   decryptedData?: {
     orchard_outputs: DecryptedOutputRaw[];
     sapling_outputs: DecryptedOutputRaw[];
+    ironwood_outputs?: DecryptedOutputRaw[];
   };
 };
 
@@ -184,9 +191,17 @@ export type SyncEstimatedTime = {
   minutes: number;
 };
 
-export const ZCASH_SHIELDED_TX_IN_TYPES = ["SHIELDED_TX_SAPLING_IN", "SHIELDED_TX_ORCHARD_IN"];
+export const ZCASH_SHIELDED_TX_IN_TYPES = [
+  "SHIELDED_TX_SAPLING_IN",
+  "SHIELDED_TX_ORCHARD_IN",
+  "SHIELDED_TX_IRONWOOD_IN",
+];
 
-export const ZCASH_SHIELDED_TX_OUT_TYPES = ["SHIELDED_TX_SAPLING_OUT", "SHIELDED_TX_ORCHARD_OUT"];
+export const ZCASH_SHIELDED_TX_OUT_TYPES = [
+  "SHIELDED_TX_SAPLING_OUT",
+  "SHIELDED_TX_ORCHARD_OUT",
+  "SHIELDED_TX_IRONWOOD_OUT",
+];
 
 export const ZCASH_SHIELDED_TX_TYPES = [
   ...ZCASH_SHIELDED_TX_IN_TYPES,
@@ -212,7 +227,9 @@ export type ZcashTransferType =
   | "transparent"
   | "transparent-to-shielded"
   | "shielded-to-transparent"
-  | "shielded";
+  | "shielded"
+  | "ironwood"
+  | "ironwood-to-transparent";
 
 export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
@@ -310,6 +327,43 @@ export type FinalizeTransactionResult = {
   txHex: string;
   /** 64-char hex txid, big-endian display order (matches ShieldedTransaction.txid). */
   txid: string;
+};
+
+export type BuildIronwoodTransactionArgs = {
+  requestId: string;
+  grpcUrl: string;
+  ufvk: string;
+  network?: string;
+  seedFingerprint: string;
+  accountIndex: number;
+  feeZat: string;
+  spends: Array<{
+    recipient: string;
+    valueZat: string;
+    rho: string;
+    rseed: string;
+    cmx: string;
+    position: string;
+  }>;
+  transparentInputs: BuildTransactionArgs["transparentInputs"];
+  outputs: BuildTransactionArgs["outputs"];
+  anchorHeight?: number;
+};
+
+export type BuildIronwoodTransactionResult = {
+  /** Hex-encoded canonical PCZT bytes — passed unchanged to finalizeTransaction. */
+  pcztHex: string;
+  /**
+   * Adapter-applied output of parsePczt(); ready for signPcztTransaction.
+   * parsePczt runs in the UtilityProcess (engine.ts) so Uint8Array + bigint
+   * values are structuredClone-safe across the IPC boundary.
+   */
+  pcztTransaction: PcztTransaction;
+  feeZat: string;
+  anchorHeight: number;
+  nActionsIronwood: number;
+  nTransparentInputs: number;
+  nTransparentOutputs: number;
 };
 
 export type BroadcastTransactionArgs = {

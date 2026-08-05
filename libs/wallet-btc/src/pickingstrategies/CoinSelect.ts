@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import flatten from "lodash/flatten";
 import sortBy from "lodash/sortBy";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "../errors";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
 import { PickingStrategy } from "./types";

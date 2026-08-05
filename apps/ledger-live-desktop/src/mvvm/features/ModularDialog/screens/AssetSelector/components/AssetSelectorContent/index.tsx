@@ -21,6 +21,7 @@ export type AssetSelectorContentProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
+  fillAvailableHeight?: boolean;
   providersLoadingStatus: LoadingStatus;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
@@ -34,6 +35,7 @@ export const AssetSelectorContent = ({
   assetsToDisplay,
   scrollToTop,
   assetsConfiguration,
+  fillAvailableHeight,
   providersLoadingStatus,
   onAssetSelected,
   onScrolledToTop,
@@ -114,6 +116,7 @@ export const AssetSelectorContent = ({
       onVisibleItemsScrollEnd={loadNext}
       hasNextPage={!!loadNext}
       isDebuggingDuplicates={isDebuggingDuplicates}
+      fillAvailableHeight={fillAvailableHeight}
     />
   );
 };

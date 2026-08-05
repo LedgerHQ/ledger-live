@@ -1,8 +1,8 @@
 // polyfill the unfinished support of apps logic
 import semver from "semver";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { listCryptoCurrencies, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { AppType, ApplicationV2 } from "@ledgerhq/types-live";
-import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
 const reverseDep = {};
 
@@ -109,9 +109,7 @@ function matchAppNameAndCryptoCurrency(appName: string, crypto: CryptoCurrency) 
   return appName.toLowerCase() === crypto.managerAppName.toLowerCase();
 }
 
-const getCurrencyIdFromAppName = (
-  appName: string,
-): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
+const getCurrencyIdFromAppName = (appName: string): string | undefined => {
   const crypto =
     // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
     listCryptoCurrencies(true).find(

@@ -1,5 +1,5 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import api from "@ledgerhq/live-countervalues/api/index";
 
 // sort currencies by ids provided

@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const pyg = fiat({
   type: "FiatCurrency",
-  id: "pyg",
   ticker: "PYG",
   name: "Paraguayan Guarani",
   symbol: "₲",

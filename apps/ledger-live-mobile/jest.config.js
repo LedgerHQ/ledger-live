@@ -33,6 +33,8 @@ const transformIncludePatterns = [
   "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
+  "expo-crypto",
+  "expo-modules-core",
   "uuid",
   "react-native-ble-plx",
   "react-native-android-location-services-dialog-box",
@@ -133,6 +135,8 @@ module.exports = {
   ],
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
+    "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
+      "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
     ...pathsToModuleNameMapper(compilerOptions.paths),
     // Logic-only stub — integration tests overlay UI components via jest.mock.
     "^@features/flow-contacts$": "<rootDir>/../../features/flow/contacts/src/jest.native.ts",

@@ -11,7 +11,7 @@ test.describe("Main navigation", () => {
   });
 
   test(
-    "main sidebar entries redirect to the expected sections",
+    "Main navigation entries redirect to the expected sections",
     {
       tag: [...DEVICE_TAGS],
       annotation: {
@@ -39,7 +39,7 @@ test.describe("Main navigation", () => {
   );
 
   test(
-    "top navigation actions open the expected sections",
+    "Top navigation actions open the expected sections",
     {
       tag: [...DEVICE_TAGS],
       annotation: {

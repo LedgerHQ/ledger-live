@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import invariant from "invariant";
 import type { CosmosAccount, Transaction } from "../types";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";

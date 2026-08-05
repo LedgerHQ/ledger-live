@@ -1,7 +1,7 @@
 import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 jest.mock("../../bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),

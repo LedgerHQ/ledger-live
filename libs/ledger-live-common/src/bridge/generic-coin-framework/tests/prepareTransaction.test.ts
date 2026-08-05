@@ -5,7 +5,7 @@ import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "../types";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../api", () => ({
@@ -214,6 +214,63 @@ describe("genericPrepareTransaction", () => {
       );
     },
   );
+
+  it("clears orphaned EIP-1559 fee fields when estimation returns null", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: {
+          type: 0,
+          gasPrice: 20_000_000_000n,
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+        },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      type: 2,
+      maxFeePerGas: new BigNumber(0),
+      maxPriorityFeePerGas: new BigNumber(0),
+      customFees: undefined,
+    } as GenericTransaction);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        type: 0,
+        gasPrice: new BigNumber(20_000_000_000),
+        maxFeePerGas: null,
+        maxPriorityFeePerGas: null,
+      }),
+    );
+  });
+
+  it("does not clear fee fields when estimation omits them", async () => {
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: new BigNumber(491),
+        parameters: { gasLimit: 21000n },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, {
+      ...baseTransaction,
+      maxFeePerGas: new BigNumber(24),
+      maxPriorityFeePerGas: new BigNumber(3),
+      customFees: undefined,
+    } as GenericTransaction);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        maxFeePerGas: new BigNumber(24),
+        maxPriorityFeePerGas: new BigNumber(3),
+        gasLimit: new BigNumber(21000),
+      }),
+    );
+  });
 
   it("does not propagate the custom gas limit", async () => {
     (getCoinModuleApi as jest.Mock).mockReturnValue({

@@ -59,9 +59,9 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setSentryLogs = (sentryLogs: boolean) =>
+export const setCrashReporting = (crashReporting: boolean) =>
   saveSettings({
-    sentryLogs,
+    crashReporting,
   });
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
@@ -72,37 +72,8 @@ export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandat
     sharePersonalizedRecommandations,
   });
 
-export const setAnalyticsConsentInfo = (privacyPolicyVersion: number) =>
-  saveAnalyticsConsentInfo({
-    consentDate: new Date().toISOString(),
-    privacyPolicyVersion,
-  });
-
-/**
- * @deprecated QA / developer tools only. Do not use in production flows.
- * Merges a partial patch into `analyticsConsentInfo` (e.g. force stale privacy version or clear consent date).
- */
-export const DANGEROUSLY_setAnalyticsConsentInfoForQa = (patch: Partial<AnalyticsConsentInfo>) =>
-  saveAnalyticsConsentInfo(patch);
-
-/**
- * @deprecated QA / developer tools only. Do not use in production flows.
- * Clears consent metadata and turns off analytics sharing flags to simulate a pre-consent state.
- */
-export const DANGEROUSLY_resetAnalyticsOptInStateForQa = () => (dispatch: AppDispatch) => {
-  dispatch(
-    saveSettings({
-      shareAnalytics: false,
-      sharePersonalizedRecommandations: false,
-    }),
-  );
-  dispatch(
-    saveAnalyticsConsentInfo({
-      consentDate: null,
-      privacyPolicyVersion: null,
-    }),
-  );
-};
+export const setAnalyticsConsentInfo = (info: Partial<AnalyticsConsentInfo>) =>
+  saveAnalyticsConsentInfo(info);
 
 /**
  * @deprecated QA / developer tools only. Do not use in production flows.

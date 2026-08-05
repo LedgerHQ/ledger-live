@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import BigNumber from "bignumber.js";
 import { AssetConfigurationOptions } from "../utils/type";
 import {

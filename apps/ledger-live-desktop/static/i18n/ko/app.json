@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "고급",
     "custom" : "커스텀",
+    "defaultNetworkFee" : "기본 네트워크 수수료",
     "fast" : "빠름",
     "networkFees" : "네트워크 수수료",
     "high" : "높음",
@@ -538,7 +539,11 @@
       "monad_title" : "Ledger Nano S™는 모나드(Monad) 스왑을 지원하지 않습니다.",
       "monad_description" : "모나드를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "zcash_title" : "Ledger Nano S™는 Zcash 스왑을 지원하지 않습니다.",
-      "zcash_description" : "Zcash를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
+      "zcash_description" : "Zcash를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+      "aleo_title" : "Ledger Nano S™는 Aleo 스왑을 지원하지 않습니다.",
+      "aleo_description" : "Aleo를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "aleo_tokens_title" : "Ledger Nano S™는 Aleo 토큰 스왑을 지원하지 않습니다.",
+      "aleo_tokens_description" : "Aleo 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1385,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "지갑 동기화",
           "description" : "암호화폐 계정을 동기화 상태로 유지하세요"
-        },
-        "customImage" : {
-          "title" : "잠금화면을 취향대로 꾸며보세요",
-          "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요."
         },
         "discoverWallet" : {
           "title" : "지갑의 다양한 기능 알아보기",
@@ -2596,6 +2597,14 @@
     "feesAmount" : "수수료({{unit}})",
     "gasLimit" : "가스 한도({{unit}})",
     "feesPaid" : "네트워크에 지불하는 트랜잭션 처리 수수료",
+    "tronFees" : {
+      "sufficient" : {
+        "description" : "네트워크 수수료로 에너지({{energy}})와 대역폭({{bandwidth}})이 사용됩니다."
+      },
+      "insufficient" : {
+        "description" : "이번 전송을 처리하기에 에너지와 대역폭이 충분하지 않습니다. 부족분은 TRX를 소각하여 충당됩니다."
+      }
+    },
     "insufficientBalanceFees" : "네트워크 수수료를 지불할 잔액이 부족합니다",
     "amountToSend" : "보낼 수량({{currency}})",
     "coinToSend" : "보낼 코인",
@@ -4339,7 +4348,10 @@
         "redelegate" : "재위임",
         "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
         "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
-        "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+        "undelegateDisabledTooltip" : {
+          "sei_evm" : "한 번에 위임 해제할 수 있는 검증인 수는 최대 <0>7</0>명입니다.",
+          "zero_gravity" : "위임된 지분이 최소 1 Gwei 이상이어야 위임을 해제를 할 수 있습니다."
+        },
         "undelegateActivatingTooltip" : "아직 활성화 단계의 스테이킹 자산은 위임을 취소할 수 없습니다.",
         "reward" : "보상 수령",
         "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
@@ -4363,7 +4375,8 @@
               }
             },
             "amount" : {
-              "title" : "수량"
+              "title" : "수량",
+              "visibilityDelay" : "이 위임 내역이 위임 보드에 표시되기까지 최대 {{numberOfMinutes}}분이 소요될 수 있습니다."
             },
             "validator" : {
               "title" : "검증인",
@@ -4732,6 +4745,12 @@
           }
         }
       }
+    }
+  },
+  "hypercore" : {
+    "operationTypes" : {
+      "IN" : "입금",
+      "OUT" : "출금"
     }
   },
   "tezos" : {
@@ -5232,7 +5251,16 @@
         "customFamiliesHint" : "사용자 지정 다중 패밀리 테스트를 위해 쉼표로 구분된 주소 체계",
         "customFamiliesPlaceholder" : "evm, stellar, aptos",
         "applyFamilies" : "적용",
-        "resetOverride" : "오버라이드 리셋"
+        "contactsData" : "연락처 데이터",
+        "loadPopulatedContacts" : "등록된 연락처 불러오기",
+        "resetContacts" : "연락처 초기화",
+        "resetOverride" : "오버라이드 리셋",
+        "featureIntroduction" : {
+          "title" : "기능 소개",
+          "label" : "연락처 기능 소개 보기",
+          "dismissed" : "해제 — 연락처에서 소개 화면을 다시 보려면 이 설정을 켜세요.",
+          "willShow" : "닫기 전까지 연락처에 표시됩니다."
+        }
       },
       "cryptoAssetsList" : {
         "title" : "암호화폐 목록",
@@ -5429,11 +5457,6 @@
           "title" : "테스트 로티 애니메이션",
           "description" : "Ledger Wallet에서 사용되는 모든 애니메이션 테스트",
           "longDesc" : "이것은 팀이 앱에서 사용된 Lottie 애니메이션을 검증할 수 있도록 그대로 제공되는 도구입니다."
-        },
-        "testStories" : {
-          "title" : "Storyly 스토리 테스트",
-          "description" : "Ledger Wallet에서 사용되는 모든 스토리 테스트",
-          "longDesc" : "이것은 팀이 앱에서 사용된 Storyly 스토리를 검증할 수 있도록 그대로 제공되는 도구입니다."
         },
         "testStaxPostonboarding" : {
           "title" : "Stax Post Onboarding 테스트",
@@ -6714,6 +6737,10 @@
     },
     "AlgorandASANotOptInInRecipient" : {
       "title" : "선택한 ASA에서 수령인 계정을 선택하지 않았습니다."
+    },
+    "AlgorandMemoExceededSizeError" : {
+      "title" : "메모 길이 초과",
+      "description" : "Algorand 메모는 1,024바이트를 초과할 수 없습니다. 메모 길이를 줄여주세요."
     },
     "AmountRequired" : {
       "title" : "필요 금액"
@@ -8250,11 +8277,6 @@
         "doThisLater" : "다음에 결정하기"
       }
     },
-    "postOnboarding" : {
-      "title" : "잠금화면을 취향대로 꾸며보세요",
-      "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
-      "actionCompletedPopupLabel" : "장치 커스텀 완료"
-    },
     "customImageSet" : "잠금화면 꾸미기 완료",
     "finishCTA" : "닫기"
   },
@@ -8622,13 +8644,14 @@
   "largeScreenUpsellModal" : {
     "optedIn" : {
       "title" : "더 다양하게, 더 간편하게, {{discount}}% 할인까지",
-      "subtitle" : "더 커진 화면, 더 스마트해진 트랜잭션 검토, 강화된 보안은 물론 {{discount}}% 할인 혜택까지."
+      "subtitle" : "더 커진 화면, 더 스마트해진 트랜잭션 검토, 강화된 보안은 물론 {{discount}}% 할인 혜택까지.",
+      "cta" : "자세히 알아보기"
     },
     "optedOut" : {
-      "title" : "스캠 감지, 모든 정보 확인",
-      "subtitle" : "터치스크린 사이너에서 모든 정보를 꼼꼼히 확인하고, 고급 보안 점검 기능으로 스캠을 식별하세요."
-    },
-    "cta" : "터치스크린 사이너 둘러보기"
+      "title" : "서명 전 스캠 감지",
+      "subtitle" : "실시간 위협 감지를 지원하는 고급 보안 기능에 대해 자세히 알아보세요.",
+      "cta" : "자세히 알아보기"
+    }
   },
   "modularAssetDrawer" : {
     "addAccounts" : {
@@ -8912,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "공개 보내기",
+          "transparentToShielded" : "공개에서 비공개로 보내기",
+          "shieldedToTransparent" : "비공개에서 공개로 보내기",
+          "shielded" : "비공개 보내기"
+        },
         "transferFrom" : {
           "label" : "출금 계정",
           "public" : {
@@ -8922,6 +8951,25 @@
             "title" : "비공개 수량",
             "subtitle" : "Shielded(프라이빗)",
             "unavailable" : "비공개 수량 확인 불가"
+          }
+        },
+        "memo" : {
+          "label" : "메모(선택)",
+          "placeholder" : "메모 입력",
+          "tooltip" : "이 보호된 트랜잭션에 비공개 메시지를 첨부합니다. 수신자만 읽을 수 있습니다. (최대 512바이트)"
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "비공개 수량이 동기화되지 않았습니다",
+            "cta" : "동기화 재개"
+          },
+          "running" : {
+            "message" : "비공개 수량 동기화 중({{progress}}%)",
+            "timeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "잔액이 최신 상태가 아닐 수 있습니다",
+            "cta" : "수량 동기화"
           }
         }
       },
@@ -9014,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "내 계좌로 전송",
+      "headerAction" : "교환",
       "headerActionTooltip" : "내 계좌로 전송할 자산이 없습니다.",
       "modal" : {
-        "title" : "내 계좌로 전송",
+        "title" : "교환",
         "stepRecipient" : {
           "selectLabel" : "출금 계정"
         }
@@ -9271,12 +9319,59 @@
   "contacts" : {
     "title" : "연락처",
     "addContact" : "연락처 추가",
+    "addAddress" : "주소 추가",
+    "addContactDrawer" : {
+      "namePlaceholder" : "연락처명",
+      "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
+      "invalidNameError" : "특수 문자는 허용되지 않습니다."
+    },
     "searchPlaceholder" : "연락처 검색",
+    "searchNoResults" : "검색된 연락처가 없습니다",
+    "addressCount_zero" : "0개 주소",
+    "addressCount_one" : "{{count}}개 주소",
+    "addressCount_other" : "{{count}}개 주소",
     "me" : {
-      "name" : "나",
-      "addressCount_zero" : "주소 0개",
-      "addressCount_one" : "주소 {{count}}개",
-      "addressCount_other" : "주소 {{count}}개"
+      "name" : "나"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "등록된 주소가 없습니다",
+        "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
+        "meDescription" : "다음번에는 이름만으로 암호화폐를 받을 수 있도록 지갑 주소를 저장하세요.",
+        "contactDescription" : "다음번에는 이름만으로 송금할 수 있도록 상대방의 지갑 주소를 저장하세요."
+      }
+    },
+    "addressDetail" : {
+      "send" : "전송",
+      "copy" : "복사",
+      "copied" : "복사됨",
+      "edit" : "편집",
+      "delete" : "삭제",
+      "networkTag" : "{{name}} 네트워크"
+    },
+    "ledgerSyncIntroduction" : {
+      "description" : "연락처는 Ledger 장치를 통해 종단간 암호화되어 모든 장치에 동기화되며, 오직 사용자 본인만 잠금을 해제할 수 있습니다.",
+      "dismiss" : "확인"
+    },
+    "featureIntroduction" : {
+      "title" : "연락처 기능 소개",
+      "description" : "암호화폐 주소록 — 송금할 지갑 주소를 한곳에 모두 저장하세요.",
+      "primaryAction" : "연락처 기능 사용해 보기",
+      "secondaryAction" : "다음에 결정하기",
+      "highlights" : {
+        "saveAddresses" : {
+          "title" : "주소를 한 번만 저장하세요",
+          "description" : "송금할 주소를 한 곳에서 보관하고 관리하세요."
+        },
+        "sendToRightAddress" : {
+          "title" : "정확한 주소로 송금하기",
+          "description" : "자산이 매번 올바른 지갑으로 전송됩니다."
+        },
+        "privateAcrossDevices" : {
+          "title" : "모든 장치에서 비공개로 유지",
+          "description" : "Ledger Sync를 통해 엔드투엔드로 암호화를 지원합니다."
+        }
+      }
     }
   },
   "assetDetails" : {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-internet_computer",
-  "version": "1.25.0",
+  "version": "1.27.0",
   "description": "Ledger Internet Computer integration",
   "keywords": [
     "Ledger",
@@ -99,9 +99,8 @@
     "@dfinity/principal": "2.4.1",
     "@dfinity/utils": "2.14.0",
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",

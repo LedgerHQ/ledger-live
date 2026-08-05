@@ -3,13 +3,11 @@ import { useTranslation } from "react-i18next";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { useFeature } from "@features/platform-feature-flags";
 import {
+  LargeScreenUpsellModal,
+  mapDevicesModelListToUpsellInputs,
   markBlockedByCompeting,
   retriesUpsellModalSelector,
   sessionSelector,
-} from "@domain/entity-large-screen-upsell-modal";
-import {
-  LargeScreenUpsellModal,
-  mapDevicesModelListToUpsellInputs,
   type LargeScreenUpsellDismissMethod,
   type LargeScreenUpsellModalAnalyticsPorts,
   type LargeScreenUpsellModalViewedContext,

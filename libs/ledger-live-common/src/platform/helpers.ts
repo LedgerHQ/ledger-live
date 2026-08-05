@@ -1,6 +1,6 @@
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency } from "@domain/entity-currency";
 import {
   PlatformCurrency,
   PlatformSupportedCurrency,

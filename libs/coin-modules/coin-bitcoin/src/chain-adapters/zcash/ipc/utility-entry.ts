@@ -22,6 +22,7 @@ import {
   finalizeTransactionJob,
   broadcastTransactionJob,
   transactionDetailsJob,
+  buildIronwoodTransactionJob,
 } from "../native-engine/engine";
 import type {
   CancelSyncArgs,
@@ -36,6 +37,7 @@ import type {
   FinalizeTransactionArgs,
   TransactionDetailsArgs,
   BroadcastTransactionArgs,
+  BuildIronwoodTransactionArgs,
 } from "../types";
 
 /**
@@ -159,6 +161,23 @@ async function handleBuildTransaction(port: ParentPort, args: BuildTransactionAr
   }
 }
 
+async function handleBuildIronwoodTransaction(
+  port: ParentPort,
+  args: BuildIronwoodTransactionArgs,
+): Promise<void> {
+  const { requestId, ...jobArgs } = args;
+  try {
+    const result = await buildIronwoodTransactionJob(jobArgs);
+    send(port, { type: "build-ironwood-transaction-result", requestId, result });
+  } catch (err) {
+    send(port, {
+      type: "build-ironwood-transaction-error",
+      requestId,
+      message: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
 async function handleFinalizeTransaction(
   port: ParentPort,
   args: FinalizeTransactionArgs,
@@ -244,6 +263,9 @@ export function bootstrapUtility(port: ParentPort): void {
         break;
       case "transaction-details":
         void handleTransactionDetails(port, message.args);
+        break;
+      case "build-ironwood-transaction":
+        void handleBuildIronwoodTransaction(port, message.args);
         break;
       default: {
         const exhaustive: never = message;

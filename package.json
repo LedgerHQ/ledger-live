@@ -47,17 +47,17 @@
     "build:llm:deps": "nx run-many -t build -p live-mobile",
     "build:coin-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-*\"",
     "build:coin-tester-modules:deps": "nx run-many -t build -p \"@ledgerhq/coin-tester-*\"",
-    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "build:ljs": "nx run-many -t build -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "build:hw-app": "nx run-many -t build -p \"@ledgerhq/hw-app-*\"",
     "build:web-tools": "nx run-many -t build -p @ledgerhq/web-tools",
     "build-ci:llm:ios": "nx run-many -t ios:ci:adhoc -p live-mobile",
     "build-ci:llm:android": "nx run-many -t android:apk -p live-mobile",
-    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
-    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "clean:ljs": "nx run-many -t clean -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
+    "doc:ljs": "nx run-many -t doc -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\"",
     "watch:coin": "nx run-many -t watch -p \"@ledgerhq/coin-*\" --parallel=20",
     "watch:es:coin": "nx run-many -t watch:es -p \"@ledgerhq/coin-*\" --parallel=20",
-    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
-    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/cryptoassets,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/logs,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:ljs": "nx run-many -t watch -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
+    "watch:es:ljs": "nx run-many -t watch:es -p \"@ledgerhq/hw-*,@ledgerhq/devices,@ledgerhq/errors,@ledgerhq/types-*,@ledgerhq/react-native-*,@ledgerhq/swift-bridge-*\" --parallel=44",
     "watch:common": "nx run-many -t watch -p @ledgerhq/live-common",
     "watch:es:common": "nx run-many -t watch:es -p @ledgerhq/live-common",
     "watch:countervalues": "nx run-many -t watch -p @ledgerhq/live-countervalues",
@@ -89,6 +89,7 @@
     "unimported": "nx run-many -t unimported",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
+    "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",
     "cli": "pnpm --filter live-cli",
     "wallet-framework": "pnpm --filter ledger-wallet-framework",
     "wallet-cli": "pnpm --filter wallet-cli",
@@ -127,6 +128,7 @@
     "coin:vechain": "pnpm --filter coin-vechain",
     "coin:xrp": "pnpm --filter coin-xrp",
     "coin:sui": "pnpm --filter coin-sui",
+    "coin:zcash": "pnpm --filter coin-zcash",
     "coin-modules:lint-fix": "nx run-many -t lint:fix -p \"@ledgerhq/coin-*\"",
     "coin-modules:test-integ": "nx run-many -t test-integ -p \"@ledgerhq/coin-*\"",
     "coin:modules:monitoring": "pnpm --filter coin-modules-monitoring",
@@ -140,6 +142,7 @@
     "coin:tester:tezos": "pnpm --filter coin-tester-tezos",
     "coin:tester:multiversx": "pnpm --filter coin-tester-multiversx",
     "coin:tester:tron": "pnpm --filter coin-tester-tron",
+    "coin:tester:vechain": "pnpm --filter coin-tester-vechain",
     "coin:tester:xrp": "pnpm --filter coin-tester-xrp",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
@@ -170,7 +173,6 @@
     "live-dmk-shared": "pnpm --filter live-dmk-shared",
     "live-dmk-mobile": "pnpm --filter live-dmk-mobile",
     "live-dmk-desktop": "pnpm --filter live-dmk-desktop",
-    "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
     "ljs:errors": "pnpm --filter errors",
     "ljs:hw-app:coverage": "nx run-many -t coverage -p \"@ledgerhq/hw-app-*\" --parallel=2",
@@ -203,8 +205,6 @@
     "ljs:hw-transport-node-speculos": "pnpm --filter hw-transport-node-speculos",
     "ljs:hw-transport-node-speculos-http": "pnpm --filter hw-transport-node-speculos-http",
     "ljs:hw-transport-vault": "pnpm --filter hw-transport-vault",
-    "ljs:logs": "pnpm --filter logs",
-    "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
     "service:cal": "pnpm --filter ledger-cal-service",
@@ -278,6 +278,7 @@
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
+      "@ledgerhq/errors": "workspace:*",
       "@ledgerhq/hw-transport": "workspace:*",
       "@ledgerhq/context-module": "catalog:",
       "tslib": "2.6.2",
@@ -331,6 +332,26 @@
       "detox": {
         "dependencies": {
           "expect": "*"
+        }
+      },
+      "@ledgerhq/coin-module-framework": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-stellar": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-xrp": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
+        }
+      },
+      "@ledgerhq/coin-hypercore": {
+        "dependencies": {
+          "@ledgerhq/errors": "workspace:*"
         }
       }
     },

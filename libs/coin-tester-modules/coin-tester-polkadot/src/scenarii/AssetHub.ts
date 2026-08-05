@@ -137,8 +137,8 @@ const getTransactions = () => {
     mode: "nominate",
     // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
     validators: [
-      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
+      "14uXNEUx4xqgBafCtxvZMxDEgHdjUTcSXKQqFjHCGXoAY4Kn",
+      "13qsqBRWCaH12UsuKuaLuvW9M29FRjfxtZMmMMZLLi9JmyZc",
     ],
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;

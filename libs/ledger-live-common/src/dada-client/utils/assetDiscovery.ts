@@ -1,4 +1,4 @@
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { PartialMarketItemResponse } from "../../market/utils/types";
 import { dadaIdToMarketId } from "../../market/utils/index";
 import type { CryptoAssetMeta } from "../entities/index";

@@ -2,16 +2,16 @@
 name: errors
 description: |
   How to define and check error classes in Ledger Live. Read when adding a new
-  error, creating an errors.ts file, or checking an error's type. Replaces the
-  deprecated @ledgerhq/errors lib (createCustomErrorClass + serialize/deserialize).
+  error, creating an errors.ts file, or checking an error's type.
 globs: ["**/errors.ts", "**/errors/**/*.ts"]
 ---
 
 # Errors
 
 Each package owns its errors in its own `src/errors.ts`, as plain native classes.
-Do **not** add new errors to `@ledgerhq/errors` (`libs/ledgerjs/packages/errors`) —
-that lib is deprecated and frozen (see its `DEPRECATED.md`).
+There is no shared errors lib: no workspace package may depend on `@ledgerhq/errors`,
+and the `enforce-boundaries` CI check fails on any manifest that does. It only still
+lives here to keep being published for external consumers (see its `DEPRECATED.md`).
 
 ## Define errors
 
@@ -102,5 +102,5 @@ Use `instanceof` only when you are certain the error has not crossed a boundary
 - Logic in one package → that package's `src/errors.ts`.
 - Used only by an app → the app's `src/errors.ts` (`apps/ledger-live-desktop`,
   `apps/ledger-live-mobile`).
-- Shared by several coin modules → for now stay in `@ledgerhq/errors` (no editable
-  shared package sits below the coin layer); do not add new ones there.
+- Shared by several coin modules → `libs/ledger-wallet-framework/src/errors.ts`
+  (`@ledgerhq/ledger-wallet-framework/errors`), the shared home below the coin layer.

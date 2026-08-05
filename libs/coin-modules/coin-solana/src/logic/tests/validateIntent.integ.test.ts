@@ -5,7 +5,8 @@ import type {
   StringMemo,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidAddress, NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
+import { InvalidAddress, NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NotEnoughGas } from "../../errors";
 import { getChainAPI } from "../../network";
 import type { ChainAPI } from "../../network";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";

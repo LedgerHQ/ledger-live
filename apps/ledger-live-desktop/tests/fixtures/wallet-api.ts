@@ -998,15 +998,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "scroll_sepolia",
-    ticker: "ETH",
-    name: "Scroll Sepolia",
-    family: "ethereum",
-    color: "#ff0000",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "shape",
     ticker: "ETH",
     name: "Shape",

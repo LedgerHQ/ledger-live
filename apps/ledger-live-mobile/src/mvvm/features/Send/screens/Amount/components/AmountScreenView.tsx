@@ -68,9 +68,9 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
         <NetworkFeesRow viewModel={viewModel.networkFees} />
         <Divider />
 
-        {viewModel.quickActions.show ? (
+        {viewModel.quickActions.show && (
           <QuickActionsRow actions={viewModel.quickActions.actions} />
-        ) : null}
+        )}
 
         <NumberKeyboard
           onKeyPress={handleKeyPress}

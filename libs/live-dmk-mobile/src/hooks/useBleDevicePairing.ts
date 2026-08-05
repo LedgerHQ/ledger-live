@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { DmkError } from "@ledgerhq/device-management-kit";
-import { PeerRemovedPairing } from "@ledgerhq/errors";
+import { PeerRemovedPairing } from "../errors";
 import {
   rnBleTransportIdentifier,
   PeerRemovedPairingError,

@@ -1,7 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/sync";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import type { TokenCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  type TokenCurrency,
+  type CryptoCurrencyId,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount, makeOperation, makeTokenAccount } from "./syncHelpers.fixtures";
@@ -317,7 +321,7 @@ describe("Celo sync helpers", () => {
     it("should provide a new hash if currency is using a new node config", async () => {
       const hash1 = await getSyncHash({
         ...currency,
-        id: "celo",
+        id: CryptoCurrencyIdSchema.parse("celo"),
         ethereumLikeInfo: { chainId: 42220 },
       });
       const hash2 = await getSyncHash({
@@ -345,7 +349,7 @@ describe("Celo sync helpers", () => {
     it("should provide a new hash if currency is using a new explorer config", async () => {
       const hash1 = await getSyncHash({
         ...currency,
-        id: "celo",
+        id: CryptoCurrencyIdSchema.parse("celo"),
       });
       const hash2 = await getSyncHash({
         ...currency,

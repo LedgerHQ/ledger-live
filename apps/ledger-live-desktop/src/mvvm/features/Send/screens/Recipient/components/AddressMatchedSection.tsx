@@ -1,6 +1,8 @@
 import type { AddressSearchResult } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
+import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-react";
+import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useFormatRelativeDate } from "../hooks/useFormatRelativeDate";
@@ -26,6 +28,8 @@ export function AddressMatchedSection({
 }: AddressMatchedSectionProps) {
   const { t } = useTranslation();
   const formatRelativeDate = useFormatRelativeDate();
+  const isFirstInteractionBannerEnabled =
+    useFeature("newSendFlowFirstInteractionBanner")?.enabled ?? false;
 
   const { accountName, matchedAccounts, ensName, matchedRecentAddress, status, resolvedAddress } =
     searchResult;
@@ -44,10 +48,10 @@ export function AddressMatchedSection({
     return null;
   }
 
-  const formattedAddress = formatAddress(resolvedAddress ?? searchValue, {
-    prefixLength: 5,
-    suffixLength: 5,
-  });
+  const formattedAddress = formatAddress(
+    resolvedAddress ?? searchValue,
+    SEND_ADDRESS_FORMAT_OPTIONS,
+  );
 
   const getENSDisplayTitle = (): string => {
     return `${ensName} (${formattedAddress})`;
@@ -136,7 +140,8 @@ export function AddressMatchedSection({
           />
         )}
 
-        {searchResult.isFirstInteraction &&
+        {isFirstInteractionBannerEnabled &&
+          searchResult.isFirstInteraction &&
           !isSanctioned &&
           !hasBridgeError &&
           isAddressComplete && <RecentHistoryWarningCard />}

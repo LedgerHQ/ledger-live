@@ -4,7 +4,7 @@ import {
   type MarketStateSlice,
 } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -14,13 +14,14 @@ import { buildSwapNavigationState } from "LLD/features/Market/utils/swapNavigati
 import type { RightPanelViewModel } from "./types";
 
 const ASSET_PATH_PREFIX = "/asset/";
+const WEBVIEW_KEY_PLACEHOLDER = "none";
 
-const buildSwapWebViewKey = (currencyId?: string, accountId?: string): string =>
-  `${currencyId ?? "none"}::${accountId ?? "none"}`;
+const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
+  [assetId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
 
 export const DEFAULT_RIGHT_PANEL_VIEW_MODEL: RightPanelViewModel = {
   initialSwapState: undefined,
-  webviewKey: "none::none",
+  webviewKey: buildSwapWebViewKey(),
 };
 
 export const getRightPanelRouteAssetId = (pathname: string): string | undefined => {
@@ -60,6 +61,7 @@ export const useRightPanelViewModel = ({
   const allAccounts = useSelector(accountsSelector);
 
   const currency = useRightPanelRouteCurrency(routeAssetId, marketState);
+  const decodedRouteAssetId = decodeRouteParam(routeAssetId).toLowerCase();
 
   const initialSwapState = useMemo(() => {
     if (!currency) return undefined;
@@ -81,8 +83,9 @@ export const useRightPanelViewModel = ({
   }, [currency, pathname, allAccounts]);
 
   const webviewKey = useMemo(
-    () => buildSwapWebViewKey(currency?.id, initialSwapState?.defaultAccountId),
-    [currency, initialSwapState],
+    () =>
+      buildSwapWebViewKey(decodedRouteAssetId || currency?.id, initialSwapState?.defaultAccountId),
+    [decodedRouteAssetId, currency?.id, initialSwapState?.defaultAccountId],
   );
 
   return {

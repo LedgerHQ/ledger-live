@@ -1,6 +1,6 @@
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenSendFlow } from "../useOpenSendFlow";

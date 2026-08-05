@@ -7,7 +7,6 @@ import { LargeMoverLandingPageParams } from "./LandingPagesNavigator";
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
   [ScreenName.CountervalueSettings]: undefined;
-  [ScreenName.RegionSettings]: undefined;
   [ScreenName.GeneralSettings]: undefined;
   [ScreenName.AnalyticsPreferencesSettings]: { initialTogglesOff?: boolean } | undefined;
   [ScreenName.AccountsSettings]: undefined;

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/device-intent";
 import { Text, Flex, Button, SelectableList } from "@ledgerhq/native-ui";
 import { BottomSheetHeader, BottomSheetScrollView } from "@ledgerhq/lumen-ui-rnative";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { DeviceIntentExecutorLWM } from "LLM/components/DeviceIntentExecutor";
 import { initializationEchoIntentLWMDefinition } from "./intents/initializationEchoIntent/intentLWMDefinition";
 import type { InitializationEchoIntentJobState } from "./intents/initializationEchoIntent/types";
@@ -178,7 +178,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
         {enabled ? <DeviceIntentExecutorLWM sourceFlow="debug" {...executorProps} /> : null}
       </ScrollView>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={isPickerOpen}
         onClose={closePicker}
         snapPoints={SCENARIO_PICKER_SNAP_POINTS}
@@ -207,7 +207,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
             ))}
           </SelectableList>
         </BottomSheetScrollView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </>
   );
 }

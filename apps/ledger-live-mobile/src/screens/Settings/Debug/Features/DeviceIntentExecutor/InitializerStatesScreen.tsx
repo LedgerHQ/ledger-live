@@ -13,7 +13,7 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 import { DeviceContextInitializerComponentLWMView } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/DeviceContextInitializerComponentLWMView";
 import type { InitializerDevice } from "LLM/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/types";
 import { DeviceIntentTrackingProvider } from "LLM/components/DeviceIntentExecutor/utils/DeviceIntentTrackingContext";
@@ -233,7 +233,7 @@ export default function DebugInitializerStatesScreen() {
         </Box>
       </ScrollView>
 
-      <QueuedDrawerBottomSheet
+      <QueuedBottomSheet
         isRequestingToBeOpened={Boolean(selectedScenario)}
         onClose={() => setSelectedScenario(null)}
         enableDynamicSizing
@@ -253,7 +253,7 @@ export default function DebugInitializerStatesScreen() {
             </DeviceIntentTrackingProvider>
           ) : null}
         </BottomSheetView>
-      </QueuedDrawerBottomSheet>
+      </QueuedBottomSheet>
     </>
   );
 }

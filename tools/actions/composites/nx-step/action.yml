@@ -13,12 +13,15 @@ runs:
   steps:
     - name: Run (cache disabled)
       if: ${{ inputs.disable_cache == 'true' }}
-      run: ${{ inputs.command }}
+      run: bash -c "${INPUTS_COMMAND}"
       shell: bash
       env:
         NX_SKIP_NX_CACHE: "true"
+        INPUTS_COMMAND: ${{ inputs.command }}
 
     - name: Run (Nx cache enabled)
       if: ${{ inputs.disable_cache != 'true' }}
-      run: ${{ inputs.command }}
+      run: bash -c "${INPUTS_COMMAND}"
       shell: bash
+      env:
+        INPUTS_COMMAND: ${{ inputs.command }}

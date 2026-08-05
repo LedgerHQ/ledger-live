@@ -1,7 +1,7 @@
 import { buildAssetDistribution } from "../buildAssetDistribution";
 import type { AssetsDataLike, BuildAssetDistributionOpts } from "../types";
 import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 

@@ -1,9 +1,8 @@
 import { Account } from "@ledgerhq/types-live";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BitcoinInput, Transaction } from "./types";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { DustLimit } from "@ledgerhq/errors";
-import { RbfBuildError, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
+import { DustLimit, RbfBuildError, FeeTooLow, ZcashSaplingRecipientNotSupported } from "./errors";
 import BigNumber from "bignumber.js";
 
 // Mock modules before importing the module under test

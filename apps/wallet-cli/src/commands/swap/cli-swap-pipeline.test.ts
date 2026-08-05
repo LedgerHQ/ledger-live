@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@domain/entity-currency-unit";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CommandOutput } from "../../output";

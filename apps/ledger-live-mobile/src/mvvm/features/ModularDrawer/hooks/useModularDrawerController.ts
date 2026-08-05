@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { openModularDrawer, closeModularDrawer } from "~/reducers/modularDrawer";
 import type { State } from "~/reducers/types";
 import { DrawerParams, DrawerRemoteParams } from "../types";
@@ -32,6 +32,7 @@ export const useModularDrawerController = () => {
     callbackId,
     enableAccountSelection,
     completionMode,
+    presentation,
     assetsConfiguration,
     networksConfiguration,
     useCase,
@@ -44,6 +45,7 @@ export const useModularDrawerController = () => {
       callbackId: state.modularDrawer.callbackId,
       enableAccountSelection: state.modularDrawer.enableAccountSelection,
       completionMode: state.modularDrawer.completionMode,
+      presentation: state.modularDrawer.presentation,
       assetsConfiguration: state.modularDrawer.assetsConfiguration,
       networksConfiguration: state.modularDrawer.networksConfiguration,
       useCase: state.modularDrawer.useCase,
@@ -136,6 +138,7 @@ export const useModularDrawerController = () => {
     preselectedCurrencies,
     enableAccountSelection,
     completionMode,
+    presentation,
     assetsConfiguration,
     networksConfiguration,
     useCase,

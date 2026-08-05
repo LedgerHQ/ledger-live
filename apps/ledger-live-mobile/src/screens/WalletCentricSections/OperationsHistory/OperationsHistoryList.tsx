@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { Operation, DailyOperationsSection } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import SectionHeader from "~/components/SectionHeader";
 import { ViewProps } from "./types";
 import { useTranslation } from "~/context/Locale";
@@ -23,8 +22,6 @@ export function OperationsHistoryList({
   goToAnalyticsOperations,
 }: ViewProps) {
   const { t } = useTranslation();
-  const { isEnabled: isWallet40Enabled } = useWalletFeaturesConfig("mobile");
-
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const flattenedAccounts = flattenAccounts(accounts);
@@ -64,7 +61,7 @@ export function OperationsHistoryList({
           size="large"
           outline
           mt={6}
-          mb={isWallet40Enabled ? 6 : undefined}
+          mb={6}
           onPress={goToAnalyticsOperations}
           testID="portfolio-seeAll-transaction"
         >

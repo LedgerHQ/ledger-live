@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const tmt = fiat({
   type: "FiatCurrency",
-  id: "tmt",
   ticker: "TMT",
   name: "Turkmenistani Manat",
   symbol: "m",

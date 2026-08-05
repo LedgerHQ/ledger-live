@@ -35,9 +35,12 @@ export type SendFlowNavigationProp = NativeStackNavigationProp<SendFlowStackPara
 export type NetworkFeesViewModel = Readonly<{
   label: string;
   value: string;
+  /**
+   * Native fee amount rendered after `value` in the muted colour. Only set when the fee is not
+   * editable, where the row is the user's only view of what the network will take.
+   */
+  secondaryValue: string | null;
   strategyLabel: string;
-  /** When true, `value` already includes the native fee-currency amount (with fiat when a rate exists); the row omits the strategy label. */
-  showFeeCurrencyAmount: boolean;
   selectedFeeStrategy: string | null;
   displayOptions: readonly FeeSelectorOption[];
   canOpenSelector: boolean;

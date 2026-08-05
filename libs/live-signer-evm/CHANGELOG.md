@@ -1,5 +1,49 @@
 # @ledgerhq/live-signer-evm
 
+## 0.22.0
+
+### Minor Changes
+
+- [#19860](https://github.com/LedgerHQ/ledger-live/pull/19860) [`d08f2bc`](https://github.com/LedgerHQ/ledger-live/commit/d08f2bccae5f94a339206ec703c8d16139f6cbc9) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL into DMK ContextModule for the EVM signer
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/live-env@3.0.0
+  - @ledgerhq/hw-app-eth@7.8.12
+  - @ledgerhq/live-dmk-shared@0.29.1
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#19860](https://github.com/LedgerHQ/ledger-live/pull/19860) [`d08f2bc`](https://github.com/LedgerHQ/ledger-live/commit/d08f2bccae5f94a339206ec703c8d16139f6cbc9) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Wire CAL_SERVICE_URL into DMK ContextModule for the EVM signer
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.12-next.0
+  - @ledgerhq/live-dmk-shared@0.29.1-next.0
+
+## 0.21.2
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0
+  - @ledgerhq/hw-app-eth@7.8.11
+
+## 0.21.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`762b5eb`](https://github.com/LedgerHQ/ledger-live/commit/762b5ebf332566879a10ab1f16ef85a3da360fe7)]:
+  - @ledgerhq/live-dmk-shared@0.29.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.11-next.0
+
 ## 0.21.1
 
 ### Patch Changes

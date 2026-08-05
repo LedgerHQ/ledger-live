@@ -89,10 +89,7 @@ describe("MarketList Layout", () => {
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true } },
-          withEmptyStarredFilter,
-        ),
+        overrideInitialState: withFlagOverrides({}, withEmptyStarredFilter),
       });
 
       await waitFor(() => {
@@ -107,10 +104,7 @@ describe("MarketList Layout", () => {
       server.use(http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json([])));
 
       renderWithReactQuery(<MarketListTest />, {
-        overrideInitialState: withFlagOverrides(
-          { lwmWallet40: { enabled: true } },
-          withEmptyStarredFilter,
-        ),
+        overrideInitialState: withFlagOverrides({}, withEmptyStarredFilter),
       });
 
       await waitFor(() => {

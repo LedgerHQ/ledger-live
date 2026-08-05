@@ -1,4 +1,8 @@
-import { contact } from "@domain/entity-contact";
+import {
+  contact,
+  ContactNameSchema,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import { createAddContactController } from "./controller";
 import type { ContactCreationPort } from "./ports";
 
@@ -25,6 +29,19 @@ describe("createAddContactController", () => {
     });
   });
 
+  it("rejects a duplicate name before calling the creation port", async () => {
+    const createContact = jest.fn();
+    const controller = createAddContactController(createContactCreationPort(createContact));
+    const existingNames = [ContactNameSchema.parse("Ada")];
+
+    expect(controller.getViewModel(" ada ", existingNames)).toMatchObject({
+      invalidNameError: DUPLICATE_CONTACT_NAME_ERROR_NAME,
+      isSaveEnabled: false,
+    });
+    await expect(controller.save(" ada ", existingNames)).rejects.toThrow();
+    expect(createContact).not.toHaveBeenCalled();
+  });
+
   it("rejects save when the draft name is empty", async () => {
     const controller = createAddContactController(createContactCreationPort(jest.fn()));
 
@@ -49,5 +66,21 @@ describe("createAddContactController", () => {
       addresses: [],
     });
     expect(createContact).toHaveBeenCalledWith({ name: "Olivia" });
+  });
+
+  it("normalizes a contact name before calling the creation port", async () => {
+    const createContact = jest.fn(async ({ name }) =>
+      contact({
+        id: "contact-elodie",
+        isMe: false,
+        name,
+        addresses: [],
+      }),
+    );
+    const controller = createAddContactController(createContactCreationPort(createContact));
+
+    await controller.save(" E\u0301lodie ");
+
+    expect(createContact).toHaveBeenCalledWith({ name: "Élodie" });
   });
 });

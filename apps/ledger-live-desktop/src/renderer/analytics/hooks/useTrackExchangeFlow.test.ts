@@ -2,12 +2,12 @@ import { renderHook } from "tests/testSetup";
 import { useTrackExchangeFlow, UseTrackExchangeFlow } from "./useTrackExchangeFlow";
 import { track } from "../segment";
 import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
   CantOpenDevice,
   LockedDeviceError,
   TransportRaceCondition,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({

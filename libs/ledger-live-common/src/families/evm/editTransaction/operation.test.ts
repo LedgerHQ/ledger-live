@@ -1,10 +1,14 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  getCryptoCurrencyById,
+  CryptoCurrency,
+  CryptoCurrencyIdSchema,
+} from "@domain/entity-currency-crypto";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   genAccount,
   genOperation,
   genTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import Prando from "prando";
@@ -102,7 +106,7 @@ describe("EVM Family", () => {
 
           const tokenCurrencyWithoutGasTracker: TokenCurrency = {
             ...usdc,
-            parentCurrencyId: "ethereum",
+            parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
           };
 
           const account = genAccount("myAccount", { currency: evmWithoutGasTracker });

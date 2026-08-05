@@ -1,17 +1,17 @@
 import semver from "semver";
 import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
   FirmwareOrAppUpdateRequired,
-  UserRefusedOnDevice,
   UpdateYourApp,
-  StatusCodes,
   LatestFirmwareVersionRequired,
-} from "@ledgerhq/errors";
+} from "../errors";
 import type Transport from "@ledgerhq/hw-transport";
 import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { AppOp, SkippedAppOp } from "../apps/types";
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
 import inlineAppInstall from "../apps/inlineAppInstall";

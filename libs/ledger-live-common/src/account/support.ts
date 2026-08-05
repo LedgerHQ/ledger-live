@@ -1,10 +1,10 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { CurrencyNotSupported } from "../errors";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { checkAccountSupported as checkAccountDerivationSupported } from "@ledgerhq/ledger-wallet-framework/account/support";
 import { isCoinModuleRegistered } from "../coin-modules/registry";
 import { getAccountBridge } from "../bridge";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 
 export { getReceiveFlowError } from "@ledgerhq/ledger-wallet-framework/account/support";
 

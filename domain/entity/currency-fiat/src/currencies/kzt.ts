@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const kzt = fiat({
   type: "FiatCurrency",
-  id: "kzt",
   ticker: "KZT",
   name: "Kazakhstani Tenge",
   symbol: "₸",

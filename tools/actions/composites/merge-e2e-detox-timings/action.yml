@@ -95,9 +95,12 @@ runs:
       shell: bash
       run: |
         apps/ledger-live-mobile/scripts/merge-timing-files.sh \
-          --file-prefix "${{ inputs.test_results_prefix }}" \
-          --artifacts-dir "${{ inputs.artifacts_dir }}" \
+          --file-prefix "${INPUTS_TEST_RESULTS_PREFIX}" \
+          --artifacts-dir "${INPUTS_ARTIFACTS_DIR}" \
           --verbose
+      env:
+        INPUTS_TEST_RESULTS_PREFIX: ${{ inputs.test_results_prefix }}
+        INPUTS_ARTIFACTS_DIR: ${{ inputs.artifacts_dir }}
 
     - name: Upload merged timing file to artifacts
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -108,8 +111,11 @@ runs:
     - name: Copy merged timing file to artifacts dir
       shell: bash
       run: |
-        mkdir -p ${{ inputs.artifacts_dir }}
-        cp ./${{ inputs.test_results_prefix }}.json ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
+        mkdir -p ${INPUTS_ARTIFACTS_DIR}
+        cp ./${INPUTS_TEST_RESULTS_PREFIX}.json ${INPUTS_ARTIFACTS_DIR}/${INPUTS_TEST_RESULTS_PREFIX}.json
+      env:
+        INPUTS_ARTIFACTS_DIR: ${{ inputs.artifacts_dir }}
+        INPUTS_TEST_RESULTS_PREFIX: ${{ inputs.test_results_prefix }}
 
     - name: Save merged timing file to cache
       uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0

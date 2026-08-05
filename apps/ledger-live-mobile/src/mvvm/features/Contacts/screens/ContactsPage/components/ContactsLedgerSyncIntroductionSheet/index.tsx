@@ -4,7 +4,7 @@ import {
   type ContactsLedgerSyncIntroductionContentProps,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
 
 export type ContactsLedgerSyncIntroductionSheetProps = Omit<
   ContactsLedgerSyncIntroductionContentProps,
@@ -23,7 +23,7 @@ export function ContactsLedgerSyncIntroductionSheet({
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onDismiss}
       testID="contacts-ledger-sync-introduction-drawer"
@@ -39,6 +39,6 @@ export function ContactsLedgerSyncIntroductionSheet({
         onActivate={onActivate}
         onDismiss={onDismiss}
       />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

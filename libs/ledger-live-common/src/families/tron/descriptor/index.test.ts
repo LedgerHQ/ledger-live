@@ -18,8 +18,12 @@ const status = (fields: {
 });
 
 describe("tron descriptor", () => {
-  it("opts into showing the fee-currency amount on the fee row", () => {
-    expect(descriptor.send.fees.showFeeCurrencyAmount).toBe(true);
+  // Tron fees are not editable, which is what makes the fee row show both the fiat and the TRX
+  // amount. Guard that so a future preset/custom-fee opt-in does not silently drop the TRX amount.
+  it("declares no editable fees", () => {
+    expect(descriptor.send.fees.hasPresets).toBe(false);
+    expect(descriptor.send.fees.hasCustom).toBe(false);
+    expect(descriptor.send.fees.hasCoinControl).toBeUndefined();
   });
 });
 

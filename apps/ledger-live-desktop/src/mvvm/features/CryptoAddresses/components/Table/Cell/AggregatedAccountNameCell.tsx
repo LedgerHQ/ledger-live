@@ -1,5 +1,5 @@
 import React from "react";
-import { TableCellContent } from "@ledgerhq/lumen-ui-react";
+import { TableCellItem, TableCellContent, TableCellContentTitle } from "@ledgerhq/lumen-ui-react";
 import type { Account } from "@ledgerhq/types-live";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 
@@ -13,15 +13,15 @@ export function AggregatedAccountNameCell({
   displayName,
 }: AggregatedAccountNameCellProps) {
   return (
-    <TableCellContent
-      leadingContent={
-        <SquaredCryptoIcon
-          ledgerId={account.currency.id}
-          ticker={account.currency.ticker}
-          size={32}
-        />
-      }
-      title={displayName}
-    />
+    <TableCellItem>
+      <SquaredCryptoIcon
+        ledgerId={account.currency.id}
+        ticker={account.currency.ticker}
+        size={32}
+      />
+      <TableCellContent>
+        <TableCellContentTitle>{displayName}</TableCellContentTitle>
+      </TableCellContent>
+    </TableCellItem>
   );
 }

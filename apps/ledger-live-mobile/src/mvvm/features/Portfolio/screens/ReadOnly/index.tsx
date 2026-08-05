@@ -25,7 +25,7 @@ type NavigationProps = BaseComposite<
 >;
 
 function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
-  const { safeAreaTop, isLNSUpsellBannerShown, source, onBackFromUpdate } =
+  const { safeAreaTop, isLNUpsellBannerShown, source, onBackFromUpdate } =
     useReadOnlyPortfolioViewModel(navigation);
   const { bottom } = useSafeAreaInsets();
 
@@ -41,11 +41,11 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
       </View>,
       <PortfolioNoSignerContent
         key="noSigner"
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+        isLNUpsellBannerShown={isLNUpsellBannerShown}
         variant="readOnly"
       />,
     ],
-    [isLNSUpsellBannerShown, onBackFromUpdate, safeAreaTop],
+    [isLNUpsellBannerShown, onBackFromUpdate, safeAreaTop],
   );
 
   return (

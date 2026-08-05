@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import childProcess from "child_process";
@@ -12,7 +11,7 @@ import { firstValueFrom, reduce } from "rxjs";
 import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { liveConfig } from "../../config/sharedConfig";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "../../currencies";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
 
 // mandatory to run the script
@@ -29,7 +28,7 @@ type Args = {
    * comma seperated currencyIds
    * eg: --currencies ethereum,polygon,bitcoin
    */
-  currencies?: CryptoCurrencyId;
+  currencies?: string; // TO BE REPLACED soon by branded id
   /**
    * absolute path for the output folder for the json file
    * eg: --outputFolderPath ~/outputs/

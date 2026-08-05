@@ -26,6 +26,13 @@ const ID_IN_CHUNK_SIZE = 100;
 
 const getExplorerUrl = () => coinConfig.getCoinConfig().explorer.url;
 
+/**
+ * Coalesces concurrent `getAccountByAddress` calls for the same explorer+address into a
+ * single request. During a sync both `getBalance` and the readiness hook hit this endpoint
+ * in the same tick; the in-flight promise is dropped on settle, so there is no staleness.
+ */
+const accountByAddressInflight = new Map<string, Promise<APIAccount>>();
+
 const clearUndefined = (obj: Record<string, unknown>) => {
   const newObj = { ...obj };
   Object.entries(newObj).forEach(([key, value]) => value === undefined && delete newObj[key]);
@@ -91,10 +98,16 @@ const api = {
     };
   },
   async getAccountByAddress(address: string): Promise<APIAccount> {
-    const { data } = await network<APIAccount>({
+    const key = `${getExplorerUrl()}|${address}`;
+    const existing = accountByAddressInflight.get(key);
+    if (existing) return existing;
+    const request = network<APIAccount>({
       url: `${getExplorerUrl()}/v1/accounts/${address}`,
-    });
-    return data;
+    })
+      .then(({ data }) => data)
+      .finally(() => accountByAddressInflight.delete(key));
+    accountByAddressInflight.set(key, request);
+    return request;
   },
 
   /**

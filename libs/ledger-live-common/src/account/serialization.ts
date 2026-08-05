@@ -1,5 +1,5 @@
 import memoize from "lodash/memoize";
-import { getCryptoCurrencyById } from "../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type {
   Account,
   AccountBridge,

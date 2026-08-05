@@ -1,4 +1,4 @@
-import { UpdateIncorrectHash, UpdateIncorrectSig } from "@ledgerhq/errors";
+import { UpdateIncorrectHash, UpdateIncorrectSig } from "../../errors";
 import * as sslHelper from "./sslHelper";
 type Opts = {
   filename: string;

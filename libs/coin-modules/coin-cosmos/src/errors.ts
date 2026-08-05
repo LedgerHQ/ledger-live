@@ -45,3 +45,43 @@ export class CosmosTooManyRedelegations extends Error {
     if (fields) Object.assign(this, fields);
   }
 }
+
+export class SequenceNumberError extends Error {
+  override name = "SequenceNumberError";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "SequenceNumberError");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ExpertModeRequired extends Error {
+  override name = "ExpertModeRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ExpertModeRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class RecommendUndelegation extends Error {
+  override name = "RecommendUndelegation";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "RecommendUndelegation");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class ValAddressRequired extends Error {
+  override name = "ValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "ValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}
+
+export class RedelegateDstValAddressRequired extends Error {
+  override name = "RedelegateDstValAddressRequired";
+  constructor(message?: string, fields?: Record<string, unknown>) {
+    super(message || "RedelegateDstValAddressRequired");
+    if (fields) Object.assign(this, fields);
+  }
+}

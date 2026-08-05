@@ -6,19 +6,24 @@ import useShouldDisplayRecoverBanner from "../RecoverBanner/useShouldDisplayReco
 
 interface PortfolioBannersSectionViewModelParams {
   readonly showAssets?: boolean;
+  readonly isLNUpsellBannerShown: boolean;
 }
 
 interface PortfolioBannersSectionViewModelResult {
   readonly contentCardsPaddingTop: "s12" | undefined;
   readonly hasAssets: boolean;
+  readonly hasTopWalletDisplayableCards: boolean;
   readonly shouldShowOnboardingWidget: boolean;
   readonly shouldDisplayRecover: boolean;
+  /** LN upsell exclusive over Recover/onboarding; coexist only with Braze TopWallet cards. */
+  readonly canCoexistWithBraze: boolean;
   readonly onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   readonly carouselIndex: number;
 }
 
 export const usePortfolioBannersSectionViewModel = ({
   showAssets,
+  isLNUpsellBannerShown,
 }: PortfolioBannersSectionViewModelParams): PortfolioBannersSectionViewModelResult => {
   const hasTopWalletDisplayableCards = useTopWalletHasDisplayableContentCards();
   const shouldShowOnboardingWidget = useOnboardingWidgetVisibility();
@@ -26,6 +31,13 @@ export const usePortfolioBannersSectionViewModel = ({
   const [carouselIndex, setCarouselIndex] = useState(0);
 
   const hasAssets = showAssets === true;
+
+  const canCoexistWithBraze =
+    isLNUpsellBannerShown &&
+    hasAssets &&
+    !shouldShowOnboardingWidget &&
+    !shouldDisplayRecover &&
+    hasTopWalletDisplayableCards;
 
   let contentCardsPaddingTop: PortfolioBannersSectionViewModelResult["contentCardsPaddingTop"];
   if (hasTopWalletDisplayableCards) {
@@ -45,7 +57,9 @@ export const usePortfolioBannersSectionViewModel = ({
     shouldShowOnboardingWidget,
     contentCardsPaddingTop,
     hasAssets,
+    hasTopWalletDisplayableCards,
     shouldDisplayRecover,
+    canCoexistWithBraze,
     onScroll,
     carouselIndex,
   };

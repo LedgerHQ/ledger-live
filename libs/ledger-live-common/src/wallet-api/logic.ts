@@ -29,7 +29,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import { AccountPublicKeyUnavailable } from "../errors";
 

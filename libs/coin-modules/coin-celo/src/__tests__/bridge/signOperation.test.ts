@@ -1,4 +1,4 @@
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import type { SignOperationEvent } from "@ledgerhq/types-live";
 import { accountFixture, transactionFixture } from "../../bridge/fixtures";

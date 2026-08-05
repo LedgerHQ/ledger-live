@@ -1,5 +1,5 @@
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
 export type AssetDetailMarketInfo = Readonly<{
   id?: string;

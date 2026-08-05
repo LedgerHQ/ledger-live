@@ -2,15 +2,18 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUsers";
 import {
   getCryptoCurrencyById,
+  findCryptoCurrencyById,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
+import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  findCryptoCurrencyById,
-  OFAC_CURRENCIES,
-} from "@ledgerhq/live-common/currencies/index";
+  selectSupportedFiats,
+  type FiatCurrency,
+} from "@domain/entity-currency-fiat";
+import { OFAC_CURRENCIES } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@shared/env";
 import { Currency } from "@domain/entity-currency";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { selectSupportedFiats, type FiatCurrency } from "@domain/entity-currency-fiat";
 import { Unit } from "@domain/entity-currency-unit";
 import {
   AccountLike,
@@ -43,11 +46,14 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
+import type { AnalyticsConsentInfo } from "@domain/entity-analytics-consent";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 import { selectFeature } from "@shared/feature-flags";
+
+export type { AnalyticsConsentInfo };
 
 /* Initial state */
 
@@ -56,11 +62,6 @@ export type VaultSigner = {
   host: string;
   workspace: string;
   token: string;
-};
-
-export type AnalyticsConsentInfo = {
-  consentDate: string | null;
-  privacyPolicyVersion: number | null;
 };
 
 export type SettingsState = {
@@ -92,7 +93,7 @@ export type SettingsState = {
   shareAnalytics: boolean;
   sharePersonalizedRecommandations: boolean;
   analyticsConsentInfo: AnalyticsConsentInfo;
-  sentryLogs: boolean; // will be addressed by LIVE-34932
+  crashReporting: boolean;
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
@@ -144,7 +145,7 @@ export type SettingsState = {
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
   lastAnalyticsConsentDate: string | null;
-  privacyPolicyVersion: number | null;
+  privacyPolicyVersion: number | string | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -170,9 +171,12 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   return { language: DEFAULT_LANGUAGE.id, locale: DEFAULT_LANGUAGE.locales.default };
 };
 
+const DEFAULT_COUNTERVALUE_TICKER = "USD";
+const OFAC_CURRENCIES_SET = new Set(OFAC_CURRENCIES);
+
 export const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
-  counterValue: "USD",
+  counterValue: DEFAULT_COUNTERVALUE_TICKER,
   ...getInitialLanguageAndLocale(),
   theme: "dark",
   region: null,
@@ -191,7 +195,7 @@ export const INITIAL_STATE: SettingsState = {
     privacyPolicyVersion: null,
   },
   hasSeenAnalyticsOptInPrompt: false,
-  sentryLogs: true,
+  crashReporting: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
   accountsViewMode: "list",
@@ -666,13 +670,13 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
-  if (OFAC_CURRENCIES.includes(state.counterValue)) {
-    return getFiatCurrencyByTicker("USD");
+  if (OFAC_CURRENCIES_SET.has(state.counterValue)) {
+    return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   }
   return (
     findFiatCurrencyByTicker(state.counterValue) ||
     findCryptoCurrencyById(state.counterValue) ||
-    getFiatCurrencyByTicker("USD")
+    getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER)
   );
 };
 
@@ -792,7 +796,7 @@ export const accountUnitSelector = (state: State, account: AccountLike): Unit =>
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
-export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
+export const crashReportingSelector = (state: State) => state.settings.crashReporting;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
@@ -804,18 +808,16 @@ export const analyticsConsentInfoSelector = (state: State): AnalyticsConsentInfo
     privacyPolicyVersion: null,
   };
 
-// Plain selector (not createSelector): wall-clock "now" is not in Redux, so the consent window must be recomputed on every read.
 export const trackingEnabledSelector = (state: State) => {
   const s = state.settings;
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
 
   if (analyticsOptIn?.enabled) {
-    if (!s.lastAnalyticsConsentDate) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(s.lastAnalyticsConsentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      analyticsConsentInfoSelector(state),
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }

@@ -4,7 +4,6 @@ import { server, http, HttpResponse, delay } from "@tests/server";
 import {
   PortfolioTest,
   ReadOnlyPortfolioTest,
-  overrideInitialStateWithFeatureFlag,
   overrideInitialStateWithReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
   overrideInitialStateWithPerpsAndAssetSection,
@@ -38,18 +37,14 @@ const setupDadaApiLoading = () => {
 
 describe("Portfolio Screen", () => {
   it("should render Portfolio", async () => {
-    renderWithReactQuery(<PortfolioTest />, {
-      overrideInitialState: overrideInitialStateWithFeatureFlag,
-    });
+    renderWithReactQuery(<PortfolioTest />);
 
     expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
   });
 
   describe("Portfolio Balance Section", () => {
     it("should display noFund state when user has no assets", async () => {
-      renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithFeatureFlag,
-      });
+      renderWithReactQuery(<PortfolioTest />);
 
       await screen.findByTestId("PortfolioEmptyList");
 

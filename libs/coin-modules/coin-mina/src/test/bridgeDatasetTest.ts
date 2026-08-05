@@ -4,7 +4,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "../bridge/transaction";

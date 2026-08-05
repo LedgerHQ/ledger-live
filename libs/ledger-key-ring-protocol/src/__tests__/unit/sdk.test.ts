@@ -15,6 +15,7 @@ import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { SDK } from "../../sdk";
 import { TrustchainResultType } from "../../types";
 import { convertLiveCredentialsToKeyPair } from "../../utils";
+import { CHALLENGE } from "../../__mocks__/challenge";
 
 describe("Trustchain SDK", () => {
   // Setup API calls mocks
@@ -69,7 +70,7 @@ describe("Trustchain SDK", () => {
   it("encryptUserData + decryptUserData", async () => {
     const sdk = new SDK(sdkContext, hwDeviceProviderMock);
     const obj = new Uint8Array([1, 2, 3, 4, 5]);
-    const keypair = await crypto.randomKeypair();
+    const keypair = crypto.randomKeypair();
     const trustchain = {
       rootId: "",
       walletSyncEncryptionKey: crypto.to_hex(keypair.privateKey),
@@ -94,7 +95,7 @@ describe("Trustchain SDK", () => {
     apiMocks.getTrustchainByIdMock.mockReturnValue(initialTree.serialize());
 
     // Mock APDU device interactions:
-    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (deviceId, job) =>
+    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (_deviceId, job) =>
       job({ accessToken: "ACCESS TOKEN" }),
     );
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(initialTree);
@@ -143,7 +144,7 @@ describe("Trustchain SDK", () => {
     });
 
     // Mock APDU device interactions:
-    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (deviceId, job) =>
+    HWDeviceProviderMethodsMocks.withJwt.mockImplementation(async (_deviceId, job) =>
       job({ accessToken: "ACCESS TOKEN" }),
     );
     HWDeviceProviderMethodsMocks.withHw.mockResolvedValueOnce(closedStreamTree);
@@ -256,8 +257,7 @@ const MOCK_DATA = {
     },
   },
 
-  challengeTlv:
-    "010107020100121053801a35c2e24b627d6e4925ce318980140101154630440220319b42a416512437e48d9c9bf204daea7da03d452c50a8caa4c2d152407ffd0c02201f121b0e99df1d30f4757b6a00b8d974d70996771893ac49c4a245c147cc1d8f160466a90248202b7472757374636861696e2d6261636b656e642e6170692e6177732e7374672e6c64672d746563682e636f6d320121332103cb7628e7248ddf9c07da54b979f16bf081fb3d173aac0992ad2a44ef6a388ae2600401000000",
+  challengeTlv: CHALLENGE.tlv,
 };
 
 function createTrustChain(device: Device): Promise<StreamTree> {

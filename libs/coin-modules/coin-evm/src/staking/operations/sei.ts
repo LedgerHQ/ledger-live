@@ -1,4 +1,4 @@
-import { RedelegateDstValAddressRequired } from "@ledgerhq/errors";
+import { RedelegateDstValAddressRequired } from "../../errors";
 import { seiEvmAmountToUsei } from "../../utils";
 import type { OperationParamsWithValAddress, StakingProtocol } from "./types";
 

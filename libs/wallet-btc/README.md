@@ -14,7 +14,7 @@ It deliberately does **not** craft, sign, or broadcast transactions, and it has 
 
 ## Dependency inversion
 
-`wallet-btc` does not depend on `@ledgerhq/cryptoassets`, `@ledgerhq/ledger-wallet-framework`, `@ledgerhq/types-*` or `@ledgerhq/live-env`. Everything currency- and network-specific is injected by the caller through a typed descriptor:
+`wallet-btc` does not depend on `@ledgerhq/ledger-wallet-framework`, `@ledgerhq/types-*` or `@ledgerhq/live-env`, nor on any currency registry. Everything currency- and network-specific is injected by the caller through a typed descriptor:
 
 ```ts
 type WalletBtcCurrency = {
@@ -24,7 +24,7 @@ type WalletBtcCurrency = {
 };
 ```
 
-The caller resolves these values on its side (from `@ledgerhq/cryptoassets` and `@ledgerhq/live-env`) and passes them in. This keeps the engine free of the Ledger Live currency registry, so it can be reused across several coin-modules. Its only `@ledgerhq` dependencies are `coin-module-framework`, `errors`, `live-network` and `logs`.
+The caller resolves these values on its side (from the currency registry and `@ledgerhq/live-env`) and passes them in. This keeps the engine free of the Ledger Live currency registry, so it can be reused across several coin-modules. Its only `@ledgerhq` dependencies are `coin-module-framework`, `errors`, `live-network` and `logs`.
 
 ## Main exports
 

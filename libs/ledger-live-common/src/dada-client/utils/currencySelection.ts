@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AssetsDataWithPagination } from "../state-manager/types";
 
 export function selectCurrencyForMetaId(

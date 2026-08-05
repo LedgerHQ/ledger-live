@@ -27,7 +27,6 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "invariant",
-    "@ledgerhq/cryptoassets"
+    "invariant"
   ]
 }

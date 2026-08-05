@@ -6,6 +6,7 @@ export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
   readonly drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
+  private drawerOverlayElement = this.page.getByTestId("drawer-overlay");
   private closeButton = this.page.getByTestId("drawer-close-button").first();
   private addAccountButton = this.page.getByTestId("add-account-button");
 
@@ -19,6 +20,13 @@ export class Drawer extends Component {
   @step("Close drawer")
   async closeDrawer() {
     await this.closeButton.click();
+  }
+
+  @step("Wait for drawer to be hidden")
+  async waitForDrawerToBeHidden() {
+    await this.content.waitFor({ state: "hidden" });
+    await this.closeButton.waitFor({ state: "hidden" });
+    await this.drawerOverlayElement.waitFor({ state: "detached" });
   }
 
   public getAccountButton = (accountName: string) =>

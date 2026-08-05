@@ -1,14 +1,14 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { CasperNetwork, PublicKey, Transaction } from "casper-js-sdk";
 import invariant from "invariant";
-import { getCasperNodeRpcClient } from "../../api";
-import { ITxnHistoryData } from "../../api/types";
-import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../consts";
+import { getCasperNodeRpcClient } from "../../network/api";
+import { ITxnHistoryData } from "../../types/network";
+import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../constants";
 import { CasperOperation } from "../../types";
 import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
 import { getEstimatedFees } from "./fee";

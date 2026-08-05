@@ -1,5 +1,117 @@
 # @ledgerhq/coin-solana
 
+## 0.60.0
+
+### Minor Changes
+
+- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
+
+- [#20135](https://github.com/LedgerHQ/ledger-live/pull/20135) [`9fe07f0`](https://github.com/LedgerHQ/ledger-live/commit/9fe07f0f618e6cde963c922f271ad5d7b29dbce7) Thanks [@YazhuEth](https://github.com/YazhuEth)! - fix(coin-solana): drop warmupCooldownRate from stake schema
+
+  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
+  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
+  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
+  `StructError` for any account holding stake accounts — breaking the legacy sync path
+  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
+
+  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
+  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/errors@7.0.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0
+  - @ledgerhq/live-network@3.0.0
+  - @ledgerhq/live-env@3.0.0
+  - @ledgerhq/types-live@6.117.0
+
+## 0.60.0-next.0
+
+### Minor Changes
+
+- [#19979](https://github.com/LedgerHQ/ledger-live/pull/19979) [`24d60d7`](https://github.com/LedgerHQ/ledger-live/commit/24d60d7628696b58764f8fbd4495140a049b3fcc) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert coin module errors from createCustomErrorClass to native ES6 classes as part of the @ledgerhq/errors sunset (LIVE-32915).
+
+- [#20135](https://github.com/LedgerHQ/ledger-live/pull/20135) [`9fe07f0`](https://github.com/LedgerHQ/ledger-live/commit/9fe07f0f618e6cde963c922f271ad5d7b29dbce7) Thanks [@YazhuEth](https://github.com/YazhuEth)! - fix(coin-solana): drop warmupCooldownRate from stake schema
+
+  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
+  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
+  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
+  `StructError` for any account holding stake accounts — breaking the legacy sync path
+  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
+
+  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
+  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
+
+### Patch Changes
+
+- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa)]:
+  - @ledgerhq/errors@7.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.6.0-next.0
+  - @ledgerhq/live-network@3.0.0-next.0
+  - @ledgerhq/live-env@3.0.0-next.0
+  - @ledgerhq/types-live@6.117.0-next.0
+
+## 0.59.1
+
+### Patch Changes
+
+- [#20154](https://github.com/LedgerHQ/ledger-live/pull/20154) [`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): drop warmupCooldownRate from stake schema
+
+  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
+  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
+  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
+  `StructError` for any account holding stake accounts — breaking the legacy sync path
+  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
+
+  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
+  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
+
+## 0.59.1-hotfix.0
+
+### Patch Changes
+
+- [#20154](https://github.com/LedgerHQ/ledger-live/pull/20154) [`d8cb7de`](https://github.com/LedgerHQ/ledger-live/commit/d8cb7deff30c3c1a88ae873d7bcddd6ce0d7375f) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): drop warmupCooldownRate from stake schema
+
+  Agave removed `warmupCooldownRate` from `UiDelegation` in 4.1 (deprecated since 1.16.7 in
+  favour of `solana_stake_interface::state::warmup_cooldown_rate()`), and mainnet now serves
+  `apiVersion: 4.1.0`. Our `Delegation` struct still required it, so parsing threw a
+  `StructError` for any account holding stake accounts — breaking the legacy sync path
+  (`synchronization.ts`) as well as `logic/getStakes` and `logic/getBalance`.
+
+  The field was never read: the activation math uses a hardcoded `WARMUP_COOLDOWN_RATE`, as
+  upstream recommends. Dropping it from the schema restores parsing with no behaviour change.
+
+## 0.59.0
+
+### Minor Changes
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+- [#19731](https://github.com/LedgerHQ/ledger-live/pull/19731) [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7) Thanks [@ysitbon](https://github.com/ysitbon)! - Relocate the token-store accessor imports from `@ledgerhq/cryptoassets/state` onto the wallet-framework port (`@ledgerhq/ledger-wallet-framework/cryptoAssetsStore`). Apps and coin-modules now read `getCryptoAssetsStore` from the framework's injectable singleton; apps inject at bootstrap via `setCryptoAssetsStore` from the same port.
+
+### Patch Changes
+
+- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/types-live@6.116.0
+  - @ledgerhq/live-network@2.7.0
+  - @ledgerhq/ledger-wallet-framework@2.5.0
+
+## 0.59.0-next.0
+
+### Minor Changes
+
+- [#19540](https://github.com/LedgerHQ/ledger-live/pull/19540) [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a) Thanks [@adussarps](https://github.com/adussarps)! - Expose the read-only smart-contract call API on EVM external RPC nodes and explicitly reject it on unsupported coin modules.
+
+- [#19731](https://github.com/LedgerHQ/ledger-live/pull/19731) [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7) Thanks [@ysitbon](https://github.com/ysitbon)! - Relocate the token-store accessor imports from `@ledgerhq/cryptoassets/state` onto the wallet-framework port (`@ledgerhq/ledger-wallet-framework/cryptoAssetsStore`). Apps and coin-modules now read `getCryptoAssetsStore` from the framework's injectable singleton; apps inject at bootstrap via `setCryptoAssetsStore` from the same port.
+
+### Patch Changes
+
+- Updated dependencies [[`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`e7caf31`](https://github.com/LedgerHQ/ledger-live/commit/e7caf310efbbf82aa777a7e86ceafe60f11e7193), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7)]:
+  - @ledgerhq/types-live@6.116.0-next.0
+  - @ledgerhq/live-network@2.7.0-next.0
+  - @ledgerhq/ledger-wallet-framework@2.5.0-next.0
+
 ## 0.58.0
 
 ### Minor Changes

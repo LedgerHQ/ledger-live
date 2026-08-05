@@ -6,9 +6,9 @@ import {
   PublicKey,
   Transaction as CasperDeployTransaction,
 } from "casper-js-sdk";
-import { getCasperNodeRpcClient } from "../api";
+import { getCasperNodeRpcClient } from "../network/api";
 import { setCoinConfig } from "../config";
-import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../consts";
+import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
 import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {

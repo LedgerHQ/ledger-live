@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
-import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import { UserRefusedAllowManager } from "@ledgerhq/live-common/errors";
 import { createConnectAppMock } from "tests/mocks/createConnectAppMock";
 import InstallSetOfApps from "./InstallSetOfApps";
 

@@ -43,7 +43,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to AssetDetail when aggregatedAssets is enabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { params: { aggregatedAssets: true } },
         }),
       });
 
@@ -81,7 +81,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to MarketDetail for placeholder assets when aggregatedAssets is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: false } },
+          lwmWallet40: { params: { aggregatedAssets: false } },
         }),
       });
 
@@ -97,7 +97,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Accounts > Asset for non-placeholder assets when aggregatedAssets is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: false } },
+          lwmWallet40: { params: { aggregatedAssets: false } },
         }),
       });
 
@@ -114,7 +114,7 @@ describe("usePortfolioSectionActions", () => {
     it("fires asset_clicked analytics with asset name and page", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
+          lwmWallet40: { params: { aggregatedAssets: true } },
         }),
       });
 
@@ -133,7 +133,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Crypto screen when assetSection is enabled and not readOnly", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: true } },
+          lwmWallet40: { params: { assetSection: true } },
         }),
       });
 
@@ -150,7 +150,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Assets screen when assetSection is disabled", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: false } },
+          lwmWallet40: { params: { assetSection: false } },
         }),
       });
 
@@ -166,7 +166,7 @@ describe("usePortfolioSectionActions", () => {
     it("navigates to Assets screen when isReadOnly is true regardless of assetSection", () => {
       const { result } = renderHook(() => usePortfolioSectionActions(true, "crypto"), {
         overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { assetSection: true } },
+          lwmWallet40: { params: { assetSection: true } },
         }),
       });
 

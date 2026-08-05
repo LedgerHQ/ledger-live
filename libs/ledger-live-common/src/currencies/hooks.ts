@@ -1,6 +1,6 @@
 import { useGetCounterValueIdsSortedByMarketCapQuery } from "../counterValues/state-manager/api";
 import { sortCurrenciesByIds } from "./sortByMarketcap";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 
 /**
  * Sorts the given currencies by marketcap.

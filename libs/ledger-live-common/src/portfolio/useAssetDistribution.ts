@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Account, AssetsDistribution } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { buildAssetDistribution } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { flattenAccounts, getAccountCurrency } from "../account/helpers";

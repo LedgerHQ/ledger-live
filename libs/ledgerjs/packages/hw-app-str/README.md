@@ -39,47 +39,83 @@ We have written corresponding classes for exceptions that developers should acti
 #### Table of Contents
 
 *   [StellarHashSigningNotEnabledError](#stellarhashsigningnotenablederror)
-*   [StellarDataParsingFailedError](#stellardataparsingfailederror)
-*   [StellarUserRefusedError](#stellaruserrefusederror)
-*   [StellarDataTooLargeError](#stellardatatoolargeerror)
-*   [Str](#str)
     *   [Parameters](#parameters)
+*   [StellarDataParsingFailedError](#stellardataparsingfailederror)
+    *   [Parameters](#parameters-1)
+*   [StellarUserRefusedError](#stellaruserrefusederror)
+    *   [Parameters](#parameters-2)
+*   [StellarDataTooLargeError](#stellardatatoolargeerror)
+    *   [Parameters](#parameters-3)
+*   [Str](#str)
+    *   [Parameters](#parameters-4)
     *   [Examples](#examples)
     *   [getAppConfiguration](#getappconfiguration)
         *   [Examples](#examples-1)
     *   [getPublicKey](#getpublickey)
-        *   [Parameters](#parameters-1)
+        *   [Parameters](#parameters-5)
         *   [Examples](#examples-2)
     *   [signTransaction](#signtransaction)
-        *   [Parameters](#parameters-2)
+        *   [Parameters](#parameters-6)
         *   [Examples](#examples-3)
     *   [signSorobanAuthorization](#signsorobanauthorization)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-7)
         *   [Examples](#examples-4)
     *   [signHash](#signhash)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-8)
         *   [Examples](#examples-5)
     *   [signMessage](#signmessage)
-        *   [Parameters](#parameters-5)
+        *   [Parameters](#parameters-9)
         *   [Examples](#examples-6)
 
 ### StellarHashSigningNotEnabledError
 
+**Extends Error**
+
 Error thrown when hash signing is not enabled on the device.
 
+#### Parameters
+
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+*   `fields` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>?**&#x20;
+*   `options` **ErrorOptions?**&#x20;
+
 ### StellarDataParsingFailedError
+
+**Extends Error**
 
 Error thrown when data parsing fails.
 
 For example, when parsing the transaction fails, this error is thrown.
 
+#### Parameters
+
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+*   `fields` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>?**&#x20;
+*   `options` **ErrorOptions?**&#x20;
+
 ### StellarUserRefusedError
+
+**Extends Error**
 
 Error thrown when the user refuses the request on the device.
 
+#### Parameters
+
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+*   `fields` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>?**&#x20;
+*   `options` **ErrorOptions?**&#x20;
+
 ### StellarDataTooLargeError
 
+**Extends Error**
+
 Error thrown when the data is too large to be processed by the device.
+
+#### Parameters
+
+*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+*   `fields` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>?**&#x20;
+*   `options` **ErrorOptions?**&#x20;
 
 ### Str
 

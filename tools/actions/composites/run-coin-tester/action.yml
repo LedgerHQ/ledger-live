@@ -7,5 +7,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: pnpm coin:tester:${{ inputs.chain }} start
+    - run: pnpm coin:tester:${INPUTS_CHAIN} start
       shell: bash
+      env:
+        INPUTS_CHAIN: ${{ inputs.chain }}

@@ -4,11 +4,9 @@ import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getL
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@features/platform-feature-flags";
-import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import useEnv from "@features/platform-env";
-
-type DadaAssetsData = NonNullable<ReturnType<typeof useAssetsData>["data"]>;
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -16,38 +14,6 @@ interface AssetsProps {
   searchedValue?: string;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
-}
-
-function buildAssetsSorted(data: DadaAssetsData, networkIds?: readonly string[]): AssetData[] {
-  const allowedNetworkIds = networkIds === undefined ? undefined : new Set(networkIds);
-
-  return data.currenciesOrder.metaCurrencyIds.flatMap(metaCurrencyId => {
-    const asset = data.cryptoAssets[metaCurrencyId];
-    if (!asset) return [];
-
-    const assetIdEntries = Object.entries(asset.assetsIds).filter(
-      ([networkId]) => allowedNetworkIds?.has(networkId) ?? true,
-    );
-    const networks = assetIdEntries.flatMap(([, assetId]) => {
-      const currency = data.cryptoOrTokenCurrencies[assetId];
-      return currency ? [currency] : [];
-    });
-    const firstCurrency = networks[0];
-    if (!firstCurrency) return [];
-
-    return [
-      {
-        asset: {
-          ...asset,
-          id: firstCurrency.id,
-          assetsIds: Object.fromEntries(assetIdEntries),
-        },
-        networks,
-        interestRates: data.interestRates?.[firstCurrency.id],
-        market: data.markets?.[firstCurrency.id],
-      },
-    ];
-  });
 }
 
 export function useAssets({
@@ -60,6 +26,7 @@ export function useAssets({
   const isAcceptedCurrency = useAcceptedCurrency();
   const modularDrawerFeature = useFeature("llmModularDrawer");
   const devMode = useEnv("MANAGER_DEV_MODE");
+  const resolvedNetworkIds = networkIds?.length ? networkIds : undefined;
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -68,18 +35,19 @@ export function useAssets({
 
   const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
-    currencyIds: networkIds === undefined ? currencyIds : undefined,
+    currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
+    networkIds: resolvedNetworkIds,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,
-    areCurrenciesFiltered: networkIds === undefined ? areCurrenciesFiltered : false,
+    areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
     isStaging,
     includeTestNetworks: devMode,
   });
 
   const assetsSorted = useMemo(
-    () => (data ? buildAssetsSorted(data, networkIds) : undefined),
-    [data, networkIds],
+    () => (data ? buildAssetsSorted(data, { networkIds: resolvedNetworkIds }) : undefined),
+    [data, resolvedNetworkIds],
   );
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });

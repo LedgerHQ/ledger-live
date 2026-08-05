@@ -1,5 +1,155 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.35.0
+
+### Minor Changes
+
+- [#20144](https://github.com/LedgerHQ/ledger-live/pull/20144) [`6773624`](https://github.com/LedgerHQ/ledger-live/commit/6773624ddd5ffd4621978d3749567f0064f6b5ab) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review and refactor `subAccount.spec` (QAA-1114): mark the legacy send-flow tests with a `legacy -` prefix and drop that prefix + the `newSendFlow` feature-flag override from the non-send-flow blocks (add account, receive, token visible), add a Solana (SOL_GIGA) sub-account to the add-account coverage, remove the redundant `ETH_LIDO` receive case, and consolidate the SOL + ETH true-e2e sends into a single parameterized `transactionE2E` loop.
+
+- [#20020](https://github.com/LedgerHQ/ledger-live/pull/20020) [`ffa89fb`](https://github.com/LedgerHQ/ledger-live/commit/ffa89fb4ad24075d5837641f04436fcc65b07c41) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Refactor Borrow desktop E2E page object to use stable `BORROW_TEST_IDS` locators
+  (LIVE-34696) now that borrow-live-app exposes data-testids in the catalog.
+
+- [#19907](https://github.com/LedgerHQ/ledger-live/pull/19907) [`59706b5`](https://github.com/LedgerHQ/ledger-live/commit/59706b5d93253c3350e8dd12500c1be38ae5a360) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add a headless Borrow driver (Borrow API + Speculos) exposed via `pnpm e2e-cli borrow <open|close|repay|withdraw>` to create/tear down real on-chain loan state, plus reusable E2E setup/teardown hooks (`ensureLoanOpen` / `resetLoanState`), an `afterAll` reset for the open-loan spec, and a `pnpm e2e-cli` subcommand dispatcher. (QAA-1401)
+
+- [#19756](https://github.com/LedgerHQ/ledger-live/pull/19756) [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df) Thanks [@dilaouid](https://github.com/dilaouid)! - tests(lwd): add e2e coverage for the new send flow (incl. memo on Speculos)
+
+- [#19623](https://github.com/LedgerHQ/ledger-live/pull/19623) [`8269231`](https://github.com/LedgerHQ/ledger-live/commit/8269231ec2f36452a5fc08f9406d71acbdff94c2) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update earn v2 ice-cold-start E2E tests for earnSimulator/earnUpselling UI
+
+- [#19947](https://github.com/LedgerHQ/ledger-live/pull/19947) [`f98da7f`](https://github.com/LedgerHQ/ledger-live/commit/f98da7f31c7cf67bdf07c8691998e0b3425e08e6) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix Base and Polkadot add-account assertions for aggregated portfolio assets
+
+### Patch Changes
+
+- Updated dependencies [[`ba20e39`](https://github.com/LedgerHQ/ledger-live/commit/ba20e3926e52284c04c9bc4e4b17b7c5e34b3cb5), [`37dac39`](https://github.com/LedgerHQ/ledger-live/commit/37dac39463de1a44bdb5bc4b1b6b37b0cff68922), [`008228e`](https://github.com/LedgerHQ/ledger-live/commit/008228ee22ba86b8aabe50c50d9c2e5e63771add), [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0), [`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`44798f3`](https://github.com/LedgerHQ/ledger-live/commit/44798f392deb662a5f60123651ece2b320fbf946), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`dd7758b`](https://github.com/LedgerHQ/ledger-live/commit/dd7758bfa16c6b73b60da072a50c22f3b132c1a2), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e7b8ddc`](https://github.com/LedgerHQ/ledger-live/commit/e7b8ddc239b88c1fbf0751c468218d9263f56859), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd), [`a8d6e25`](https://github.com/LedgerHQ/ledger-live/commit/a8d6e25c0467572fbbc0cd3b35f90d355542b1f7)]:
+  - @ledgerhq/live-common@37.0.0
+  - @ledgerhq/live-e2e-shared@0.5.0
+  - @ledgerhq/live-cli@26.2.0
+  - @shared/feature-flags@0.16.0
+  - @ledgerhq/live-wallet@0.30.1
+  - @ledgerhq/ledger-key-ring-protocol@0.17.2
+  - @shared/env@0.1.1
+  - @ledgerhq/live-dmk-speculos@0.10.3
+
+## 0.35.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@37.0.0-next.1
+  - @ledgerhq/live-cli@26.2.0-next.1
+  - @ledgerhq/live-e2e-shared@0.5.0-next.1
+
+## 0.35.0-next.0
+
+### Minor Changes
+
+- [#20144](https://github.com/LedgerHQ/ledger-live/pull/20144) [`6773624`](https://github.com/LedgerHQ/ledger-live/commit/6773624ddd5ffd4621978d3749567f0064f6b5ab) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review and refactor `subAccount.spec` (QAA-1114): mark the legacy send-flow tests with a `legacy -` prefix and drop that prefix + the `newSendFlow` feature-flag override from the non-send-flow blocks (add account, receive, token visible), add a Solana (SOL_GIGA) sub-account to the add-account coverage, remove the redundant `ETH_LIDO` receive case, and consolidate the SOL + ETH true-e2e sends into a single parameterized `transactionE2E` loop.
+
+- [#20020](https://github.com/LedgerHQ/ledger-live/pull/20020) [`ffa89fb`](https://github.com/LedgerHQ/ledger-live/commit/ffa89fb4ad24075d5837641f04436fcc65b07c41) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Refactor Borrow desktop E2E page object to use stable `BORROW_TEST_IDS` locators
+  (LIVE-34696) now that borrow-live-app exposes data-testids in the catalog.
+
+- [#19907](https://github.com/LedgerHQ/ledger-live/pull/19907) [`59706b5`](https://github.com/LedgerHQ/ledger-live/commit/59706b5d93253c3350e8dd12500c1be38ae5a360) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add a headless Borrow driver (Borrow API + Speculos) exposed via `pnpm e2e-cli borrow <open|close|repay|withdraw>` to create/tear down real on-chain loan state, plus reusable E2E setup/teardown hooks (`ensureLoanOpen` / `resetLoanState`), an `afterAll` reset for the open-loan spec, and a `pnpm e2e-cli` subcommand dispatcher. (QAA-1401)
+
+- [#19756](https://github.com/LedgerHQ/ledger-live/pull/19756) [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df) Thanks [@dilaouid](https://github.com/dilaouid)! - tests(lwd): add e2e coverage for the new send flow (incl. memo on Speculos)
+
+- [#19623](https://github.com/LedgerHQ/ledger-live/pull/19623) [`8269231`](https://github.com/LedgerHQ/ledger-live/commit/8269231ec2f36452a5fc08f9406d71acbdff94c2) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Update earn v2 ice-cold-start E2E tests for earnSimulator/earnUpselling UI
+
+- [#19947](https://github.com/LedgerHQ/ledger-live/pull/19947) [`f98da7f`](https://github.com/LedgerHQ/ledger-live/commit/f98da7f31c7cf67bdf07c8691998e0b3425e08e6) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix Base and Polkadot add-account assertions for aggregated portfolio assets
+
+### Patch Changes
+
+- Updated dependencies [[`ba20e39`](https://github.com/LedgerHQ/ledger-live/commit/ba20e3926e52284c04c9bc4e4b17b7c5e34b3cb5), [`37dac39`](https://github.com/LedgerHQ/ledger-live/commit/37dac39463de1a44bdb5bc4b1b6b37b0cff68922), [`008228e`](https://github.com/LedgerHQ/ledger-live/commit/008228ee22ba86b8aabe50c50d9c2e5e63771add), [`cee41c4`](https://github.com/LedgerHQ/ledger-live/commit/cee41c4e7a7c7e042d4df39d5a34591d72d723d0), [`341ea10`](https://github.com/LedgerHQ/ledger-live/commit/341ea108e30bf8af9abeb6eed484ee4b2c7c4a43), [`6bb19c8`](https://github.com/LedgerHQ/ledger-live/commit/6bb19c87f57e9e7de32c068388479fb45ff327df), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`452adf8`](https://github.com/LedgerHQ/ledger-live/commit/452adf85380d1cb74f1894478cdd84849b120ef4), [`44798f3`](https://github.com/LedgerHQ/ledger-live/commit/44798f392deb662a5f60123651ece2b320fbf946), [`b1d3f26`](https://github.com/LedgerHQ/ledger-live/commit/b1d3f26cbdf67c439bc125bdda1f1c56c9753f2e), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`dd7758b`](https://github.com/LedgerHQ/ledger-live/commit/dd7758bfa16c6b73b60da072a50c22f3b132c1a2), [`c9dddf2`](https://github.com/LedgerHQ/ledger-live/commit/c9dddf21f6e3208a077aa72bd575f56415287074), [`e7b8ddc`](https://github.com/LedgerHQ/ledger-live/commit/e7b8ddc239b88c1fbf0751c468218d9263f56859), [`e6a9b97`](https://github.com/LedgerHQ/ledger-live/commit/e6a9b973d05af98987c094d591342031f273b31c), [`dfab01f`](https://github.com/LedgerHQ/ledger-live/commit/dfab01f36460bd4e0ea0b0c13aa3d965aef945cd), [`a8d6e25`](https://github.com/LedgerHQ/ledger-live/commit/a8d6e25c0467572fbbc0cd3b35f90d355542b1f7)]:
+  - @ledgerhq/live-common@37.0.0-next.0
+  - @ledgerhq/live-e2e-shared@0.5.0-next.0
+  - @ledgerhq/live-cli@26.2.0-next.0
+  - @shared/feature-flags@0.16.0-next.0
+  - @ledgerhq/live-wallet@0.30.1-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.2-next.0
+  - @shared/env@0.1.1-next.0
+  - @ledgerhq/live-dmk-speculos@0.10.3-next.0
+
+## 0.34.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.6.1
+  - @ledgerhq/live-cli@26.1.1
+  - @ledgerhq/live-e2e-shared@0.4.1
+
+## 0.34.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@36.6.1-hotfix.0
+  - @ledgerhq/live-cli@26.1.1-hotfix.0
+  - @ledgerhq/live-e2e-shared@0.4.1-hotfix.0
+
+## 0.34.0
+
+### Minor Changes
+
+- [#19767](https://github.com/LedgerHQ/ledger-live/pull/19767) [`5077c9e`](https://github.com/LedgerHQ/ledger-live/commit/5077c9e2f217da78cdfe4811c0a3c19054ce7cda) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Add Playwright E2E for Borrow cold-start (B2CQA-6062, LIVE-33746) and open-loan with
+  Speculos signing on ETH 4 (B2CQA-6065, LIVE-34606) in `borrow.spec.ts`.
+
+  Run cold-start: `pnpm e2e:desktop test:playwright borrow --grep "Introducing Crypto Loan"`.
+  Run open-loan (manual E2E, `enable_broadcast`): `pnpm e2e:desktop test:playwright borrow --grep "open-loan execution"`.
+
+- [#19854](https://github.com/LedgerHQ/ledger-live/pull/19854) [`c3c5329`](https://github.com/LedgerHQ/ledger-live/commit/c3c5329ffe69ed47a1f3a8910ae7fd8b53486f24) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(algo): restore Algorand memo in new send flow with protocol 1024-byte note limit
+
+- [#19366](https://github.com/LedgerHQ/ledger-live/pull/19366) [`0936000`](https://github.com/LedgerHQ/ledger-live/commit/093600077d11e92a790e2d9ef31fa3519b41274a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(e2e): add tokens tests and more coverage for the new send flow
+
+- [#19888](https://github.com/LedgerHQ/ledger-live/pull/19888) [`f8a6ef6`](https://github.com/LedgerHQ/ledger-live/commit/f8a6ef66a6548c3d729e6db985cc05067013b962) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): hardcode the HBAR to XRP swap amount to 500 as a temporary workaround for LIVE-33611; revert once the swap "min amount for quotes" bug is fixed.
+
+- [#19724](https://github.com/LedgerHQ/ledger-live/pull/19724) [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review buySell.spec (QAA-1107): pick the buy/sell provider from the available quotes via a shared deterministic weekly rotation helper (`pickRotatingProvider` in live-e2e-shared, used by both desktop and mobile) instead of hardcoded MoonPay, and expand sell coverage to BTC, ETH and USDT. Align the mobile BTC sell TMS link accordingly.
+
+### Patch Changes
+
+- Updated dependencies [[`f57602a`](https://github.com/LedgerHQ/ledger-live/commit/f57602a679ed08b437955a2858f84e3086d6e417), [`0ee3ad8`](https://github.com/LedgerHQ/ledger-live/commit/0ee3ad8ef853baa7b17bb4ca07f41f1bed12268e), [`c3c5329`](https://github.com/LedgerHQ/ledger-live/commit/c3c5329ffe69ed47a1f3a8910ae7fd8b53486f24), [`7708345`](https://github.com/LedgerHQ/ledger-live/commit/77083455c985349f5a2061db4c22b2fa8ce758f9), [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`28c29a1`](https://github.com/LedgerHQ/ledger-live/commit/28c29a1e6f4c28edfeba59483876b130a6e6b97c), [`b2fe0f0`](https://github.com/LedgerHQ/ledger-live/commit/b2fe0f0b9bf9cb5976f4d7f21e24654d60acfcf2), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`d243bd0`](https://github.com/LedgerHQ/ledger-live/commit/d243bd0cd2489a836961a724e60f6049a27f74d6), [`f6e5b74`](https://github.com/LedgerHQ/ledger-live/commit/f6e5b7453015db453e604052b115dd9996f266fa), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`9bca613`](https://github.com/LedgerHQ/ledger-live/commit/9bca6135575e4a05db6fdccffa61173b5a438115), [`5c5e022`](https://github.com/LedgerHQ/ledger-live/commit/5c5e022e870e44adcb59215e6a672838b0194310), [`404072e`](https://github.com/LedgerHQ/ledger-live/commit/404072eca7c9fa94ba4da55218504b9a5be07983), [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e), [`f6ac3dd`](https://github.com/LedgerHQ/ledger-live/commit/f6ac3ddb1bc8fdbbe20cb4222b7229296f61bdba), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`0936000`](https://github.com/LedgerHQ/ledger-live/commit/093600077d11e92a790e2d9ef31fa3519b41274a), [`bd21084`](https://github.com/LedgerHQ/ledger-live/commit/bd21084eef567c13225adbd613eacc046856f9d7), [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a), [`f9f5db4`](https://github.com/LedgerHQ/ledger-live/commit/f9f5db46534f5294fdbb3fe12a971ed4f11e6c2d), [`93c54da`](https://github.com/LedgerHQ/ledger-live/commit/93c54daf4076e1163a9b7db86107ab2765b81b5d), [`b4ecf97`](https://github.com/LedgerHQ/ledger-live/commit/b4ecf97c0d16a686078c995f7218a256916a9e39), [`36bbe18`](https://github.com/LedgerHQ/ledger-live/commit/36bbe18500ad6f7aeb74b4a5366994ec7495f761), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7), [`caa76a1`](https://github.com/LedgerHQ/ledger-live/commit/caa76a113979e2d06c6cb2bb950e75a1f33cbe20), [`d63b9ef`](https://github.com/LedgerHQ/ledger-live/commit/d63b9efdc035ddc33a11fcc6877cd6b63f22ec3e)]:
+  - @ledgerhq/live-common@36.6.0
+  - @ledgerhq/live-wallet@0.30.0
+  - @shared/feature-flags@0.15.0
+  - @ledgerhq/live-e2e-shared@0.4.0
+  - @ledgerhq/live-cli@26.1.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.1
+
+## 0.34.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b2fe0f0`](https://github.com/LedgerHQ/ledger-live/commit/b2fe0f0b9bf9cb5976f4d7f21e24654d60acfcf2)]:
+  - @ledgerhq/live-common@36.6.0-next.1
+  - @ledgerhq/live-cli@26.1.0-next.1
+  - @ledgerhq/live-e2e-shared@0.4.0-next.1
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#19767](https://github.com/LedgerHQ/ledger-live/pull/19767) [`5077c9e`](https://github.com/LedgerHQ/ledger-live/commit/5077c9e2f217da78cdfe4811c0a3c19054ce7cda) Thanks [@alexstapenka-ledger](https://github.com/alexstapenka-ledger)! - Add Playwright E2E for Borrow cold-start (B2CQA-6062, LIVE-33746) and open-loan with
+  Speculos signing on ETH 4 (B2CQA-6065, LIVE-34606) in `borrow.spec.ts`.
+
+  Run cold-start: `pnpm e2e:desktop test:playwright borrow --grep "Introducing Crypto Loan"`.
+  Run open-loan (manual E2E, `enable_broadcast`): `pnpm e2e:desktop test:playwright borrow --grep "open-loan execution"`.
+
+- [#19854](https://github.com/LedgerHQ/ledger-live/pull/19854) [`c3c5329`](https://github.com/LedgerHQ/ledger-live/commit/c3c5329ffe69ed47a1f3a8910ae7fd8b53486f24) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(algo): restore Algorand memo in new send flow with protocol 1024-byte note limit
+
+- [#19366](https://github.com/LedgerHQ/ledger-live/pull/19366) [`0936000`](https://github.com/LedgerHQ/ledger-live/commit/093600077d11e92a790e2d9ef31fa3519b41274a) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - feat(e2e): add tokens tests and more coverage for the new send flow
+
+- [#19888](https://github.com/LedgerHQ/ledger-live/pull/19888) [`f8a6ef6`](https://github.com/LedgerHQ/ledger-live/commit/f8a6ef66a6548c3d729e6db985cc05067013b962) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): hardcode the HBAR to XRP swap amount to 500 as a temporary workaround for LIVE-33611; revert once the swap "min amount for quotes" bug is fixed.
+
+- [#19724](https://github.com/LedgerHQ/ledger-live/pull/19724) [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Review buySell.spec (QAA-1107): pick the buy/sell provider from the available quotes via a shared deterministic weekly rotation helper (`pickRotatingProvider` in live-e2e-shared, used by both desktop and mobile) instead of hardcoded MoonPay, and expand sell coverage to BTC, ETH and USDT. Align the mobile BTC sell TMS link accordingly.
+
+### Patch Changes
+
+- Updated dependencies [[`f57602a`](https://github.com/LedgerHQ/ledger-live/commit/f57602a679ed08b437955a2858f84e3086d6e417), [`0ee3ad8`](https://github.com/LedgerHQ/ledger-live/commit/0ee3ad8ef853baa7b17bb4ca07f41f1bed12268e), [`c3c5329`](https://github.com/LedgerHQ/ledger-live/commit/c3c5329ffe69ed47a1f3a8910ae7fd8b53486f24), [`7708345`](https://github.com/LedgerHQ/ledger-live/commit/77083455c985349f5a2061db4c22b2fa8ce758f9), [`a128521`](https://github.com/LedgerHQ/ledger-live/commit/a1285211f0482229e5011505fb9e8c9d473cb86a), [`2388d41`](https://github.com/LedgerHQ/ledger-live/commit/2388d4171bd2e5caa2009e8eadcd06548d2209ef), [`28c29a1`](https://github.com/LedgerHQ/ledger-live/commit/28c29a1e6f4c28edfeba59483876b130a6e6b97c), [`cdf6cf4`](https://github.com/LedgerHQ/ledger-live/commit/cdf6cf40d658b20dd21a7eabe3615c75baf4cb0a), [`d243bd0`](https://github.com/LedgerHQ/ledger-live/commit/d243bd0cd2489a836961a724e60f6049a27f74d6), [`f6e5b74`](https://github.com/LedgerHQ/ledger-live/commit/f6e5b7453015db453e604052b115dd9996f266fa), [`22d4a88`](https://github.com/LedgerHQ/ledger-live/commit/22d4a888228b7e5409593a2d6af072b4ab07bb07), [`ea28df4`](https://github.com/LedgerHQ/ledger-live/commit/ea28df4a67e1c1f64ab0de5fddf7fc016edffa8c), [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47), [`9bca613`](https://github.com/LedgerHQ/ledger-live/commit/9bca6135575e4a05db6fdccffa61173b5a438115), [`5c5e022`](https://github.com/LedgerHQ/ledger-live/commit/5c5e022e870e44adcb59215e6a672838b0194310), [`404072e`](https://github.com/LedgerHQ/ledger-live/commit/404072eca7c9fa94ba4da55218504b9a5be07983), [`22afc34`](https://github.com/LedgerHQ/ledger-live/commit/22afc34ac1ff55448414e85227c2d6da96395153), [`2eac6a1`](https://github.com/LedgerHQ/ledger-live/commit/2eac6a17b629be3f8ba08cdf650413083b89476e), [`f6ac3dd`](https://github.com/LedgerHQ/ledger-live/commit/f6ac3ddb1bc8fdbbe20cb4222b7229296f61bdba), [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6), [`0936000`](https://github.com/LedgerHQ/ledger-live/commit/093600077d11e92a790e2d9ef31fa3519b41274a), [`bd21084`](https://github.com/LedgerHQ/ledger-live/commit/bd21084eef567c13225adbd613eacc046856f9d7), [`59a6c82`](https://github.com/LedgerHQ/ledger-live/commit/59a6c82a784b4f484b5fb6a5ea42b6ebb1115818), [`c498e25`](https://github.com/LedgerHQ/ledger-live/commit/c498e25ca9f4b6ef5c4e3dfd370dab44ccdebc0f), [`06138af`](https://github.com/LedgerHQ/ledger-live/commit/06138af41298aec793f5dcab5bc5bdb686296c4a), [`f9f5db4`](https://github.com/LedgerHQ/ledger-live/commit/f9f5db46534f5294fdbb3fe12a971ed4f11e6c2d), [`93c54da`](https://github.com/LedgerHQ/ledger-live/commit/93c54daf4076e1163a9b7db86107ab2765b81b5d), [`b4ecf97`](https://github.com/LedgerHQ/ledger-live/commit/b4ecf97c0d16a686078c995f7218a256916a9e39), [`36bbe18`](https://github.com/LedgerHQ/ledger-live/commit/36bbe18500ad6f7aeb74b4a5366994ec7495f761), [`4d99006`](https://github.com/LedgerHQ/ledger-live/commit/4d99006589b6855d1a06a8aa1ece23c3f6f3ddf7), [`caa76a1`](https://github.com/LedgerHQ/ledger-live/commit/caa76a113979e2d06c6cb2bb950e75a1f33cbe20), [`d63b9ef`](https://github.com/LedgerHQ/ledger-live/commit/d63b9efdc035ddc33a11fcc6877cd6b63f22ec3e)]:
+  - @ledgerhq/live-common@36.6.0-next.0
+  - @ledgerhq/live-wallet@0.30.0-next.0
+  - @shared/feature-flags@0.15.0-next.0
+  - @ledgerhq/live-e2e-shared@0.4.0-next.0
+  - @ledgerhq/live-cli@26.1.0-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.17.1-next.0
+
 ## 0.33.0
 
 ### Minor Changes
@@ -62,6 +212,7 @@
   `@ledgerhq/live-common/e2e/*` into a new dedicated, private package `@ledgerhq/live-e2e-shared`
   (located under `e2e/`, alongside the Desktop and Mobile E2E suites). This keeps test-only code
   out of `live-common`, which is in maintenance mode.
+
   - `@ledgerhq/live-common`: removed the internal `./e2e` export.
   - `@shared/feature-flags`: now exports `getAllFeatureFlags` (previously in the live-common e2e
     module), so production debug tooling no longer depends on test code.
@@ -125,6 +276,7 @@
   `@ledgerhq/live-common/e2e/*` into a new dedicated, private package `@ledgerhq/live-e2e-shared`
   (located under `e2e/`, alongside the Desktop and Mobile E2E suites). This keeps test-only code
   out of `live-common`, which is in maintenance mode.
+
   - `@ledgerhq/live-common`: removed the internal `./e2e` export.
   - `@shared/feature-flags`: now exports `getAllFeatureFlags` (previously in the live-common e2e
     module), so production debug tooling no longer depends on test code.

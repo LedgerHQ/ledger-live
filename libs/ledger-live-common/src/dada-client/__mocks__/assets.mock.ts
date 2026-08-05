@@ -1,6 +1,8 @@
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 const mockInjectiveCurrency = {
   type: "CryptoCurrency" as const,
-  id: "injective",
+  id: CryptoCurrencyIdSchema.parse("injective"),
   name: "Injective",
   ticker: "INJ",
   units: [
@@ -39,11 +41,11 @@ export const mockAssetsData = {
   cryptoOrTokenCurrencies: {
     "bsc/bep20/injective_protocol": {
       type: "TokenCurrency" as const,
-      id: "bsc/bep20/injective_protocol",
+      id: TokenCurrencyIdSchema.parse("bsc/bep20/injective_protocol"),
       name: "Injective Protocol",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrencyId: "bsc",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("bsc"),
       tokenType: "bep20",
       units: [
         {
@@ -55,11 +57,11 @@ export const mockAssetsData = {
     },
     "ethereum/erc20/injective_token": {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/injective_token",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/injective_token"),
       name: "Injective Token",
       ticker: "INJ",
       contractAddress: "0x0",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -90,7 +92,7 @@ export const mockAssetsDataWithPagination = {
 // Bitcoin mock data
 const mockBitcoinCurrency = {
   type: "CryptoCurrency" as const,
-  id: "bitcoin",
+  id: CryptoCurrencyIdSchema.parse("bitcoin"),
   name: "Bitcoin",
   ticker: "BTC",
   units: [
@@ -128,11 +130,11 @@ export const mockBitcoinAssetsData = {
     bitcoin: mockBitcoinCurrency,
     "ethereum/erc20/wrapped_bitcoin": {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/wrapped_bitcoin",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/wrapped_bitcoin"),
       name: "Wrapped Bitcoin",
       ticker: "WBTC",
       contractAddress: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -172,11 +174,11 @@ export const mockUsdcAssetsData = {
   cryptoOrTokenCurrencies: {
     "ethereum/erc20/usd_coin": {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/usd_coin",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/usd_coin"),
       name: "USD Coin",
       ticker: "USDC",
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [
         {
@@ -188,11 +190,11 @@ export const mockUsdcAssetsData = {
     },
     "polygon/erc20/usd_coin": {
       type: "TokenCurrency" as const,
-      id: "polygon/erc20/usd_coin",
+      id: TokenCurrencyIdSchema.parse("polygon/erc20/usd_coin"),
       name: "USD Coin (Polygon)",
       ticker: "USDC",
       contractAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-      parentCurrencyId: "polygon",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("polygon"),
       tokenType: "erc20",
       units: [
         {
@@ -231,17 +233,17 @@ export const mockArbitrumTokenAssetsData = {
   cryptoOrTokenCurrencies: {
     "ethereum/erc20/arbitrum": {
       type: "TokenCurrency" as const,
-      id: "ethereum/erc20/arbitrum",
+      id: TokenCurrencyIdSchema.parse("ethereum/erc20/arbitrum"),
       name: "Arbitrum",
       ticker: "ARB",
       contractAddress: "0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1",
-      parentCurrencyId: "ethereum",
+      parentCurrencyId: CryptoCurrencyIdSchema.parse("ethereum"),
       tokenType: "erc20",
       units: [{ name: "ARB", code: "ARB", magnitude: 18 }],
     },
     arbitrum: {
       type: "CryptoCurrency" as const,
-      id: "arbitrum",
+      id: CryptoCurrencyIdSchema.parse("arbitrum"),
       name: "Arbitrum One",
       ticker: "ETH",
       units: [{ name: "ETH", code: "ETH", magnitude: 18 }],

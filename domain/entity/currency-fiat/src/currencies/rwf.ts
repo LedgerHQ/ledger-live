@@ -2,7 +2,6 @@ import { fiat } from "../define";
 
 export const rwf = fiat({
   type: "FiatCurrency",
-  id: "rwf",
   ticker: "RWF",
   name: "Rwandan Franc",
   symbol: "RWF",

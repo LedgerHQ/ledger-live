@@ -3,8 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -19,6 +18,7 @@ import {
 import { STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { NetworkInfo, Transaction, TronAccount } from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronNoFrozenForBandwidth,
@@ -288,6 +288,53 @@ describe("getTransactionStatus", () => {
     expect(status.energyRequired).toEqual(new BigNumber(0));
     expect(status.warnings.amount).toBeUndefined();
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
+  });
+
+  // LIVE-32775: adding the sponsoring context must be inert until later tickets (LIVE-32776 /
+  // LIVE-32892) price it. Presence of energyProviderInfo must not change fees or status yet.
+  describe("energyProviderInfo sponsoring context (LIVE-32775)", () => {
+    const energyProviderInfo = { providerId: "tronify", orderId: "order-123" };
+
+    it("does not change fee or status for a covered TRC20 send (standard crafting unchanged)", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const baseline = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id }),
+      );
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id, energyProviderInfo }),
+      );
+
+      expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
+      expect(sponsored.energyRequired).toEqual(baseline.energyRequired);
+      expect(sponsored.energyAvailable).toEqual(baseline.energyAvailable);
+      expect(sponsored.warnings).toEqual(baseline.warnings);
+      expect(sponsored.errors).toEqual(baseline.errors);
+    });
+
+    it("does not change fee or status for an energy-short TRC20 send", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      const overrides = {
+        subAccountId: tokenAccount.id,
+        networkInfo: buildNetworkInfo({ energyLimit: new BigNumber(500) }),
+      };
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+      const baseline = await getTransactionStatus(account, createTransaction(overrides));
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ ...overrides, energyProviderInfo }),
+      );
+
+      expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
+      expect(sponsored.warnings).toEqual(baseline.warnings);
+      expect(sponsored.errors).toEqual(baseline.errors);
+    });
   });
 
   describe("transaction-mode validations", () => {

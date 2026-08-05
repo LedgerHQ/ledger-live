@@ -1,6 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 
-import { findCryptoCurrencyById, findFiatCurrencyByTicker } from "../../../../currencies";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { getAccountIdFromWalletAccountId } from "../../../converters";
 import type { CurrencyMeta, FiatMeta, FormatContext } from "../format/types";
 import type { GetQuotesArgs } from "../types";

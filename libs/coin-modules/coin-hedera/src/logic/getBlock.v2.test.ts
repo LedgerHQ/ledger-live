@@ -82,7 +82,9 @@ describe("getBlockV2", () => {
 
     await getBlockV2({ configOrCurrencyId, height: 42 });
 
+    expect(getDateRangeFromBlockHeight).toHaveBeenCalledTimes(1);
     expect(getDateRangeFromBlockHeight).toHaveBeenCalledWith(42);
+    expect(getBlockInfo).toHaveBeenCalledTimes(1);
     expect(getBlockInfo).toHaveBeenCalledWith(42);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledTimes(1);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalledWith({
@@ -896,6 +898,7 @@ describe("getBlockV2", () => {
       info: mockBlockInfo,
       transactions: [],
     });
+    expect(getBlockInfo).toHaveBeenCalledTimes(1);
     expect(getBlockInfo).toHaveBeenCalledWith(100);
     expect(apiClient.getTransactionsByTimestampRange).toHaveBeenCalled();
   });

@@ -11,21 +11,56 @@ import { parseBalanceAmount } from "tests/utils/amountUtils";
 import { expect } from "@playwright/test";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
+import {
+  BTC_ACCOUNT_ID,
+  ETH_ACCOUNT_ID,
+  USDT_ACCOUNT_ID,
+} from "@ledgerhq/live-e2e-shared/swapDeeplinkFixtures";
+import { Application } from "tests/page";
+
+// Selects "from"/"to" via a ledgerwallet://swap deeplink instead of the modular
+// asset dialog: the dialog's virtualized list can bind a click to a stale row's
+// data mid-render, so looping through repeated searches here flaked intermittently.
+async function openSwapPairViaDeeplink(
+  app: Application,
+  fromAccountId: string,
+  toAccountId: string,
+) {
+  await app.swap.clearSwapState();
+  await app.swap.openViaDeeplink(
+    `ledgerwallet://swap?fromAccountId=${fromAccountId}&toAccountId=${toAccountId}`,
+  );
+}
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
 const maxBalanceTags = [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"];
 
 const swapMaxBalancePairs = [
-  { fromAccount: Account.ETH_1, toAccount: Account.BTC_NATIVE_SEGWIT_1 },
-  { fromAccount: TokenAccount.ETH_USDT_1, toAccount: Account.BTC_NATIVE_SEGWIT_1 },
-  { fromAccount: Account.BTC_NATIVE_SEGWIT_1, toAccount: Account.ETH_1 },
+  {
+    fromAccount: Account.ETH_3,
+    fromAccountId: ETH_ACCOUNT_ID,
+    toAccount: Account.BTC_NATIVE_SEGWIT_2,
+    toAccountId: BTC_ACCOUNT_ID,
+  },
+  {
+    fromAccount: TokenAccount.ETH_USDT_1,
+    fromAccountId: USDT_ACCOUNT_ID,
+    toAccount: Account.BTC_NATIVE_SEGWIT_2,
+    toAccountId: BTC_ACCOUNT_ID,
+  },
+  {
+    fromAccount: Account.BTC_NATIVE_SEGWIT_2,
+    fromAccountId: BTC_ACCOUNT_ID,
+    toAccount: Account.ETH_3,
+    toAccountId: ETH_ACCOUNT_ID,
+  },
 ];
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
-  const uniqueAccounts = [Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, TokenAccount.ETH_USDT_1];
+  const uniqueAccounts = [Account.ETH_3, Account.BTC_NATIVE_SEGWIT_2, TokenAccount.ETH_USDT_1];
   const uniqueAppNames = Array.from(
     new Set(uniqueAccounts.map(acc => acc.currency.speculosApp.name.replace(/ /g, "_"))),
   );
@@ -48,7 +83,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   });
 
   test(
-    "Balance is visible and Max/percentage buttons are enabled with correct Max tooltip",
+    "Swap balance is visible and max/percentage buttons are enabled",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -56,9 +91,9 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      for (const { fromAccount, toAccount } of swapMaxBalancePairs) {
+      for (const { fromAccount, fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await test.step(`Currency: ${fromAccount.currency.name}`, async () => {
-          await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
+          await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
 
           const balanceText = await app.swap.getFromAccountBalanceText();
           expect(balanceText).toBeTruthy();
@@ -73,7 +108,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 
   test(
-    "Percentage buttons show the correct tooltip text",
+    `[${swapMaxBalancePairs[0].fromAccount.currency.testLabel}-${swapMaxBalancePairs[0].toAccount.currency.testLabel}] - Swap percentage buttons show the correct tooltip`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -81,8 +116,8 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      const { fromAccount, toAccount } = swapMaxBalancePairs[0];
-      await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
+      const { fromAccountId, toAccountId } = swapMaxBalancePairs[0];
+      await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
 
       for (const percent of ["25%", "50%", "75%"] as const) {
         await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
@@ -91,7 +126,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 
   test(
-    "Percentage buttons fill the correct proportional amount of the balance",
+    "Swap percentage buttons fill the proportional amount of the balance",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -99,8 +134,8 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      for (const { fromAccount, toAccount } of swapMaxBalancePairs) {
-        await performSwapUntilQuoteSelectionStep(app, new Swap(fromAccount, toAccount, ""), "");
+      for (const { fromAccountId, toAccountId } of swapMaxBalancePairs) {
+        await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
 
         const balanceText = await app.swap.getFromAccountBalanceText();
         const balance = parseBalanceAmount(balanceText);
@@ -113,7 +148,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - funded accounts", ()
   );
 });
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native balance", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
   const fromAccount = Account.ETH_2;
@@ -141,7 +176,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native 
   });
 
   test(
-    "Max is disabled with correct tooltip while percentage buttons stay enabled",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max is disabled while percentage buttons stay enabled`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -159,7 +194,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - insufficient native 
   );
 });
 
-test.describe("Swap - Max, Balance & Quick Amount Buttons - zero balance", () => {
+test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
   const fromAccount = TokenAccount.ETH_USDC_2;
@@ -187,7 +222,7 @@ test.describe("Swap - Max, Balance & Quick Amount Buttons - zero balance", () =>
   });
 
   test(
-    "Max and percentage buttons are disabled for a zero-balance token account",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max and percentage buttons are disabled on a zero-balance token account`,
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },

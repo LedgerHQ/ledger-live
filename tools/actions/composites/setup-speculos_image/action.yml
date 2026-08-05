@@ -40,5 +40,7 @@ runs:
 
     - name: Pull docker image
       if: ${{ inputs.speculos_tag }}
-      run: docker pull ${{ inputs.speculos_tag }}
+      run: docker pull ${INPUTS_SPECULOS_TAG}
       shell: bash
+      env:
+        INPUTS_SPECULOS_TAG: ${{ inputs.speculos_tag }}

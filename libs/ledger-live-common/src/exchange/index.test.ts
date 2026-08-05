@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import calService from "@ledgerhq/ledger-cal-service";
 import { getEnv } from "@shared/env";
 import { getCurrencyExchangeConfig } from ".";

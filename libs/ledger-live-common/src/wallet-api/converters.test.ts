@@ -1,14 +1,27 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
+import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 import type { Transaction } from "../coin-modules/transaction-types";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "../bridge";
 import {
+  accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
   resolveWalletApiSpendableBalance,
 } from "./converters";
 import type { WalletAPITransaction } from "./types";
+
+const makeMainAccount = (id: string, readiness?: Account["readiness"]): Account => ({
+  ...(genAccount(id, { currency: getCryptoCurrencyById("ethereum") }) as Account),
+  readiness,
+});
+
+const makeTokenAccount = (parentAccount: Account): TokenAccount =>
+  genTokenAccount(0, parentAccount, mockTokenCurrency()) as TokenAccount;
 
 const evmBridge = jest.fn();
 const bitcoinBridge = jest.fn();
@@ -150,5 +163,44 @@ describe("resolveWalletApiSpendableBalance", () => {
       expect.stringContaining("falling back to account.spendableBalance"),
       { error: "unsupported family" },
     );
+  });
+});
+
+describe("accountToWalletAPIAccount", () => {
+  it("passes the account readiness through", () => {
+    const account = makeMainAccount("readiness-not-ready", {
+      ready: false,
+      reason: "unrevealed",
+    });
+
+    const walletApiAccount = accountToWalletAPIAccount(walletState, account);
+
+    expect(walletApiAccount.readiness).toEqual({
+      ready: false,
+      reason: "unrevealed",
+    });
+  });
+
+  it("leaves readiness undefined when the account has none", () => {
+    const account = makeMainAccount("readiness-absent");
+
+    const walletApiAccount = accountToWalletAPIAccount(walletState, account);
+
+    expect(walletApiAccount.readiness).toBeUndefined();
+  });
+
+  it("derives a token account's readiness from its parent", () => {
+    const parentAccount = makeMainAccount("readiness-parent", {
+      ready: false,
+      reason: "unrevealed",
+    });
+    const tokenAccount = makeTokenAccount(parentAccount);
+
+    const walletApiAccount = accountToWalletAPIAccount(walletState, tokenAccount, parentAccount);
+
+    expect(walletApiAccount.readiness).toEqual({
+      ready: false,
+      reason: "unrevealed",
+    });
   });
 });

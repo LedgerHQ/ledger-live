@@ -55,7 +55,6 @@ export const descriptor: CoinDescriptor = {
     fees: {
       hasPresets: false,
       hasCustom: false,
-      showFeeCurrencyAmount: true,
       getNetworkFeesInfo,
     },
   },

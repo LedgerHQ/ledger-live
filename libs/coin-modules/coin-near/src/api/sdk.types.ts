@@ -7,27 +7,32 @@ export type NearAccountDetails = {
   block_height: number;
 };
 
+export type NearV3Response<T> = {
+  data: T | null;
+  meta?: { next_page?: string };
+};
+
 export type NearTransaction = {
   signer_account_id: string;
   receiver_account_id: string;
   transaction_hash: string;
-  outcomes_agg: {
+  block_timestamp: string;
+  outcomes_agg?: {
     transaction_fee: string;
   };
-  outcomes: { status: boolean };
-  block: {
-    block_height: number;
+  outcomes?: { status?: boolean };
+  block?: {
+    block_hash?: string;
+    block_height?: string;
+    block_timestamp?: string;
   };
-  included_in_block_hash: string;
-  block_timestamp: string;
-  actions?: [
-    {
-      action: string;
-      deposit: string;
-      fee: string;
-      method: string;
-    },
-  ];
+  actions_agg?: {
+    deposit: string;
+  };
+  actions?: {
+    action: string;
+    method: string | null;
+  }[];
 };
 
 export type NearProtocolConfig = {
