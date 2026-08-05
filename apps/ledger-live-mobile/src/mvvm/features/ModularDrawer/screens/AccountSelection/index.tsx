@@ -16,6 +16,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
+import { parseUiUseCase } from "../../utils/parseUiUseCase";
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
@@ -66,11 +67,9 @@ const AccountSelectionContent = ({
     return (
       <AddAccountButton label={t("modularDrawer.addAccount")} onClick={onAddNewAccountOnClick} />
     );
-  }, [onAddNewAccountOnClick, t, uiUseCase]);
+  }, [onAddNewAccountOnClick, t]);
 
-  const [namespace, variant] = uiUseCase?.split(":") ?? [];
-  const isPerps = namespace === "perpetuals";
-  const isPerpsWithoutVariant = isPerps && !variant;
+  const { isPerpsWithoutVariant } = parseUiUseCase(uiUseCase);
 
   const headerTitle = isPerpsWithoutVariant
     ? t("modularDrawer.selectAccountPerpsTitle")

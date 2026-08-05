@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import { AddAccountButton } from "./components/AddAccountButton";
 import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -16,7 +15,6 @@ type Props = {
   asset: CryptoOrTokenCurrency;
   hideAddAccountButton?: boolean;
   overridePageName?: ModularDialogEventName;
-  uiUseCase?: string;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
@@ -25,7 +23,6 @@ export const AccountSelector = ({
   onAccountSelected,
   hideAddAccountButton,
   overridePageName,
-  uiUseCase,
 }: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
@@ -33,9 +30,9 @@ export const AccountSelector = ({
   );
 
   const BottomComponent = (
-      <AddAccountContainer>
-        <AddAccountButton onAddAccountClick={onAddAccountClick} />
-      </AddAccountContainer>
+    <AddAccountContainer>
+      <AddAccountButton onAddAccountClick={onAddAccountClick} />
+    </AddAccountContainer>
   );
 
   return (
