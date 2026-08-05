@@ -29,7 +29,7 @@ const getAndroidBinary = type =>
 const getAndroidTestBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/androidTest/${type}/app-${type}-androidTest.apk`);
 
-const DEFAULT_RETRIES = 1;
+const DEFAULT_RETRIES = 0;
 // Detox requires a finite number, so anything unparseable falls back to the default. 0 is valid.
 const parseRetries = value => {
   const raw = (value ?? "").trim();
