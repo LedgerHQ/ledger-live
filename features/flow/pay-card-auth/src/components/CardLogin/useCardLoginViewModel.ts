@@ -2,6 +2,14 @@ import { useCallback, useState } from "react";
 import { usePreAuthMutation } from "@domain/api-pay-card";
 import type { CardLoginProps, CardLoginViewProps } from "./types";
 
+function getSecureHostedLoginUrl(loginUrl: string): string {
+  const url = new URL(loginUrl);
+  if (url.protocol !== "https:") {
+    throw new Error("Unable to start login");
+  }
+  return url.toString();
+}
+
 function getLoginErrorMessage(error: unknown): string {
   if (typeof error === "object" && error !== null && "error" in error) {
     const message = error.error;
@@ -32,7 +40,7 @@ export function useCardLoginViewModel({
       setIsOpeningHostedLogin(true);
       try {
         const { loginUrl } = await preAuth({ provider }).unwrap();
-        await openHostedLogin(loginUrl);
+        await openHostedLogin(getSecureHostedLoginUrl(loginUrl));
       } catch (error) {
         setErrorMessage(getLoginErrorMessage(error));
       } finally {

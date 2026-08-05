@@ -1,6 +1,7 @@
 ---
 "@features/flow-pay-card-auth": minor
+"ledger-live-desktop": minor
 "live-mobile": minor
 ---
 
-Add the Pay Card authentication flow scaffold and integrate its login component
+Replace the legacy Pay Card placeholders with the shared authentication flow on desktop and mobile
