@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { formatPerpsDepositAmount } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { PerpsDepositAmount } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
+import { formatDepositAmount } from "./utils/formatDepositAmount";
 
 export type PerpsReviewDetailItem = Readonly<{
   labelKey: string;
@@ -25,28 +25,6 @@ export type PerpsReviewProps = PerpsReviewParams &
     onClose: () => void;
   }>;
 
-function useFormattedPerpsDepositAmount(amount: PerpsDepositAmount, account: AccountLike): string {
-  const [formatted, setFormatted] = useState("");
-  // Keyed on the amount fields rather than the object, which the caller recreates.
-  const { value: amountValue, currencyId } = amount;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void formatPerpsDepositAmount({ value: amountValue, currencyId }, account).then(value => {
-      if (!cancelled) {
-        setFormatted(value);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [amountValue, currencyId, account]);
-
-  return formatted;
-}
-
 export type PerpsReviewViewModel = Readonly<{
   drawerOpen: boolean;
   swapDetails: readonly PerpsReviewDetailItem[];
@@ -65,11 +43,14 @@ export function usePerpsReviewViewModel({
 }: PerpsReviewProps): PerpsReviewViewModel {
   const walletState = useSelector(walletSelector);
 
-  const formattedAmountSent = useFormattedPerpsDepositAmount(amountSent, depositAccount);
+  const formattedAmountSent = useMemo(
+    () => formatDepositAmount(amountSent, depositAccount),
+    [amountSent, depositAccount],
+  );
 
-  const formattedAmountReceived = useFormattedPerpsDepositAmount(
-    amountReceived ?? amountSent,
-    receiverAccount,
+  const formattedAmountReceived = useMemo(
+    () => formatDepositAmount(amountReceived ?? amountSent, receiverAccount),
+    [amountReceived, amountSent, receiverAccount],
   );
 
   const receiverAccountLabel = useMemo(

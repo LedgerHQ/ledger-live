@@ -17,7 +17,7 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   ...jest.requireActual("@ledgerhq/live-countervalues/logic"),
-  calculate: () => 20000000000000000,
+  calculate: (_state: unknown, { value }: { value: number }) => value,
 }));
 
 const mockUsePerpsDepositQuote = jest.fn();
@@ -201,11 +201,12 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.handleReview());
 
     expect(result.current.isReviewOpen).toBe(true);
-    // 20 of a 100 ceiling is a fifth of the 10_000 balance, in ETH's 18 decimals.
+    // $20 priced back into ETH's 18 decimals, for both the funding and receiving side.
     expect(result.current.reviewParams).toEqual({
       depositAccount: fundingAccount,
       receiverAccount,
       amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
+      amountReceived: { value: "0.000000000000002", currencyId: "ethereum" },
     });
   });
 

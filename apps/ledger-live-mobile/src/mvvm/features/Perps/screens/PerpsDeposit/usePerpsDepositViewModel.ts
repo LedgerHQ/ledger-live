@@ -25,7 +25,6 @@ import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { AMOUNT_MAX_INTEGER_DIGITS, applyAmountKey, toAmountText } from "./utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
-import { toFundingAmount } from "./utils/toFundingAmount";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
 type NavigationProps = RootComposite<
@@ -219,16 +218,22 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
       depositAccount,
       receiverAccount,
       amountSent: {
-        value: toFundingAmount({
-          counterValueAmount: depositAmount,
-          maxCounterValueAmount: maxAmount,
-          spendableBalance: depositAccount.spendableBalance,
-          magnitude: depositCurrency.units[0].magnitude,
-        }),
+        value: toAmountValue(
+          toCurrencyAmount(depositCurrency),
+          depositCurrency.units[0].magnitude,
+          depositAccount.spendableBalance,
+        ),
         currencyId: depositCurrency.id,
       },
+      amountReceived: {
+        value: toAmountValue(
+          toCurrencyAmount(receiverCurrency),
+          receiverCurrency.units[0].magnitude,
+        ),
+        currencyId: receiverCurrency.id,
+      },
     };
-  }, [depositAccount, depositAmount, depositCurrency, maxAmount, receiverAccount]);
+  }, [depositAccount, depositCurrency, receiverAccount, receiverCurrency, toCurrencyAmount]);
 
   const handleReview = useCallback(() => {
     if (!canReview) return;

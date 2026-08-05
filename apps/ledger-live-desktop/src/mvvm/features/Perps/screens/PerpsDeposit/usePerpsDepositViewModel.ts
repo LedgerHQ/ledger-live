@@ -23,7 +23,6 @@ import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyRatio } from "./utils/applyRatio";
 import { toAmountValue } from "./utils/toAmountValue";
-import { toFundingAmount } from "./utils/toFundingAmount";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
 /** Snapshot of the amount-entry form, used to restore it when re-opened. */
@@ -213,13 +212,19 @@ export function usePerpsDepositViewModel(
       receiverAccount,
       depositAccount,
       amountSent: {
-        value: toFundingAmount({
-          counterValueAmount: depositAmount,
-          maxCounterValueAmount: maxAmount,
-          spendableBalance: depositAccount.spendableBalance,
-          magnitude: depositCurrency.units[0].magnitude,
-        }),
+        value: toAmountValue(
+          toCurrencyAmount(depositCurrency),
+          depositCurrency.units[0].magnitude,
+          depositAccount.spendableBalance,
+        ),
         currencyId: depositCurrency.id,
+      },
+      amountReceived: {
+        value: toAmountValue(
+          toCurrencyAmount(receiverCurrency),
+          receiverCurrency.units[0].magnitude,
+        ),
+        currencyId: receiverCurrency.id,
       },
       draft: { depositAccount, depositAmount },
     });
@@ -229,9 +234,10 @@ export function usePerpsDepositViewModel(
     depositAccount,
     depositAmount,
     depositCurrency,
-    maxAmount,
     onClose,
     receiverAccount,
+    receiverCurrency,
+    toCurrencyAmount,
   ]);
 
   const headerDescription = `${receiverAccountName} · ${receiverAccountCounterValue}`;
