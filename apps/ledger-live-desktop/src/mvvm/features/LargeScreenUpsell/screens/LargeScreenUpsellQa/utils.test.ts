@@ -100,7 +100,7 @@ describe("LargeScreenUpsellQa utils", () => {
     expect(draftDisplayFromEffective(0, "30")).toBe("0");
   });
 
-  it("mirrors post-onboarding cooldown: null date is treated as today", () => {
+  it("mirrors post-onboarding cooldown: null date uses the legacy onboarding date", () => {
     const now = new Date("2026-07-17T12:00:00.000Z");
 
     expect(
@@ -109,7 +109,7 @@ describe("LargeScreenUpsellQa utils", () => {
         cooldownDays: 30,
         now,
       }),
-    ).toBe(false);
+    ).toBe(true);
 
     expect(
       isPostOnboardingCooldownPassed({
