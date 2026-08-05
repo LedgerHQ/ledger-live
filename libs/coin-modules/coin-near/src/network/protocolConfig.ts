@@ -1,7 +1,29 @@
+import network from "@ledgerhq/live-network/network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { BigNumber } from "bignumber.js";
+import { getCoinConfig } from "../config";
 import { NearProtocolConfigNotLoaded } from "../errors";
-import { getProtocolConfig } from "./node";
+import type { NearProtocolConfig } from "./sdk.types";
+
+// Lives here rather than in node.ts: fetchActionCosts is its only caller, and node.ts already
+// imports getActionCosts from this module — importing back from node.ts would cycle the two files.
+export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
+  const currencyConfig = getCoinConfig();
+  const { data } = await network<{ result: NearProtocolConfig }>({
+    method: "POST",
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
+    data: {
+      jsonrpc: "2.0",
+      id: "id",
+      method: "EXPERIMENTAL_protocol_config",
+      params: {
+        finality: "final",
+      },
+    },
+  });
+
+  return data.result;
+};
 
 // Per-action gas costs and storage price, derived from the protocol config. The account bridge
 // reads these from preload; callers outside a bridge sync (CoinModuleApi) have none, so this reads

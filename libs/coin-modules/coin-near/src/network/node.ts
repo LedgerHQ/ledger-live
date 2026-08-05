@@ -13,7 +13,6 @@ import {
   NearAccessKey,
   NearAccountDetails,
   NearContract,
-  NearProtocolConfig,
   NearRawValidator,
   NearStakingPosition,
   NearV3Response,
@@ -83,24 +82,6 @@ export const getAccount = async (
       stakingPositions,
     },
   };
-};
-
-export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
-  const currencyConfig = getCoinConfig();
-  const { data } = await network<{ result: NearProtocolConfig }>({
-    method: "POST",
-    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
-    data: {
-      jsonrpc: "2.0",
-      id: "id",
-      method: "EXPERIMENTAL_protocol_config",
-      params: {
-        finality: "final",
-      },
-    },
-  });
-
-  return data.result;
 };
 
 type NearStats = {

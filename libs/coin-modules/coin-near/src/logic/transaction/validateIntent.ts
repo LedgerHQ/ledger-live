@@ -2,9 +2,9 @@ import type {
   Balance,
   FeeEstimation,
   TransactionValidation,
+  Unit,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import {
   AmountRequired,
   InvalidAddress,
@@ -31,9 +31,12 @@ import { resolveTarget, type NearIntent } from "./craftTransaction";
 
 const STAKING_MODES = new Set(["stake", "unstake", "withdraw"]);
 
+const NEAR_NAME = "NEAR";
+const NEAR_UNIT: Unit = { name: NEAR_NAME, code: NEAR_NAME, magnitude: 24 };
+
 /** Errors carry a human-readable amount, which their i18n message interpolates. */
 function formatNear(value: BigNumber): string {
-  return formatCurrencyUnit(getCryptoCurrencyById("near").units[0], value, { showCode: true });
+  return formatCurrencyUnit(NEAR_UNIT, value, { showCode: true });
 }
 
 /** Spendable native balance: the account total minus its non-spendable part (staking and reserve). */
@@ -76,8 +79,7 @@ async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
   }
 
   if (!isValidAddress(intent.recipient)) {
-    const currencyName = getCryptoCurrencyById("near").name;
-    return { ...unusable, error: new InvalidAddress("", { currencyName }) };
+    return { ...unusable, error: new InvalidAddress("", { currencyName: NEAR_NAME }) };
   }
 
   const { storageCost: costPerByte } = await getActionCosts();

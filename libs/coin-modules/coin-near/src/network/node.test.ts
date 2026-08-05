@@ -1,11 +1,30 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
-import { broadcastTransaction, getGasPrice, getStakingPositions, getValidators } from "./node";
+import {
+  broadcastTransaction,
+  getAccount,
+  getGasPrice,
+  getStakingPositions,
+  getValidators,
+} from "./node";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
+import { getActionCosts } from "./protocolConfig";
 
 const RPC_GAS_PRICE = "123000000";
 const ADDRESS = "delegator.near";
 const VALIDATOR_ID = "astro-stakers.poolv1.near";
+
+const runtimeConfig = (storageAmountPerByte: string) => ({
+  storage_amount_per_byte: storageAmountPerByte,
+  transaction_costs: {
+    action_creation_config: {
+      add_key_cost: { full_access_cost: { execution: 101765125000, send_not_sir: 101765125000 } },
+      create_account_cost: { execution: 99607375000, send_not_sir: 99607375000 },
+      transfer_cost: { execution: 115123062500, send_not_sir: 115123062500 },
+    },
+    action_receipt_creation_config: { execution: 108059500000, send_not_sir: 108059500000 },
+  },
+});
 
 type IndexerValidator = {
   account_id: string;
@@ -83,6 +102,7 @@ describe("node api (indexer-backed calls)", () => {
 
   beforeEach(() => {
     getValidators.reset();
+    getActionCosts.reset();
   });
 
   afterEach(() => {
@@ -149,6 +169,47 @@ describe("node api (indexer-backed calls)", () => {
       );
 
       await expect(getGasPrice()).rejects.toThrow("node unavailable");
+    });
+  });
+
+  describe("getAccount", () => {
+    const mockAccount = (storageAmountPerByte: string): void => {
+      mockServer.use(
+        http.get(`${NEAR_BASE_URL_MOCKED}/v3/kitwallet/staking-deposits/:address`, () =>
+          HttpResponse.json([]),
+        ),
+        http.post(NEAR_BASE_URL_MOCKED, async ({ request }) => {
+          const body = (await request.json()) as {
+            method: string;
+            params: { request_type?: string };
+          };
+
+          if (body.method === "EXPERIMENTAL_protocol_config") {
+            return HttpResponse.json({
+              result: { runtime_config: runtimeConfig(storageAmountPerByte) },
+            });
+          }
+
+          if (body.params?.request_type === "view_account") {
+            return HttpResponse.json({
+              result: { amount: "1000000000000000000000000", storage_usage: 182, block_height: 1 },
+            });
+          }
+
+          return HttpResponse.json({ jsonrpc: "2.0", id: "id", result: {} });
+        }),
+      );
+    };
+
+    it("derives storageUsageBalance from the protocol config, not the preload cache", async () => {
+      // Distinct from FALLBACK_STORAGE_AMOUNT_PER_BYTE (constants.ts) — proves the value comes
+      // from the live protocol config rather than the preload cache's zeroed/fallback default.
+      mockAccount("20000000000000000000");
+
+      const account = await getAccount(ADDRESS);
+
+      // storageUsageBalance = storageCost * storage_usage (182) + MIN_ACCOUNT_BALANCE_BUFFER
+      expect(account.nearResources.storageUsageBalance.toFixed()).toBe("53640000000000000000000");
     });
   });
 
