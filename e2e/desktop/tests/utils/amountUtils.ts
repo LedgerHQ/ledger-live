@@ -22,12 +22,12 @@ export function getExpectedSeparators(language: FormattedNumberLanguage): Number
 }
 
 function escapeRegExpChar(char: string): string {
-  return char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return char.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 // All separator chars used across supported locales, to isolate a full numeric token first.
 const ANY_SEPARATOR_CHARS = [".", ",", " ", " ", " "].map(escapeRegExpChar).join("");
-const NUMERIC_TOKEN_REGEX = new RegExp(`\\d[${ANY_SEPARATOR_CHARS}\\d]*\\d|\\d`, "g");
+const NUMERIC_TOKEN_REGEX = new RegExp(String.raw`\d[${ANY_SEPARATOR_CHARS}\d]*\d|\d`, "g");
 
 // Matches on the full numeric token (not a loose substring) so a wrongly-formatted number
 // can't slip through. `context` also names the Allure step, so each call site fails independently.
@@ -42,12 +42,16 @@ export async function expectFormattedAmount(
       throw new Error(`Expected a formatted amount but got "${text}"${label}`);
     }
     const value = text.trim();
-    const tokens = value.match(NUMERIC_TOKEN_REGEX) ?? [];
+    const tokens: string[] = [];
+    let match: RegExpExecArray | null;
+    while ((match = NUMERIC_TOKEN_REGEX.exec(value)) !== null) {
+      tokens.push(match[0]);
+    }
     expect(tokens.length, `No numeric value found in "${value}"${label}`).toBeGreaterThan(0);
 
     const decimal = escapeRegExpChar(separators.decimal);
     const thousands = escapeRegExpChar(separators.thousands);
-    const strictPattern = new RegExp(`^\\d{1,3}(?:${thousands}\\d{3})*(?:${decimal}\\d+)?$`);
+    const strictPattern = new RegExp(String.raw`^\d{1,3}(?:${thousands}\d{3})*(?:${decimal}\d+)?$`);
 
     const matchesExpectedFormat = tokens.some(token => strictPattern.test(token));
     expect(

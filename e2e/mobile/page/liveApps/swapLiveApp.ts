@@ -224,6 +224,9 @@ export default class SwapLiveAppPage {
           `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
         );
       }
+      if (providerList.length === 0) {
+        throw new Error("No quote providers were returned");
+      }
 
       return providerList;
     }, 30000);

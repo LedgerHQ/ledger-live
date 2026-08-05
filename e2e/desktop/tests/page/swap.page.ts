@@ -138,9 +138,13 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
-    return await webview
+    const providerList = await webview
       .locator(`[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}']`)
       .allTextContents();
+    if (providerList.length === 0) {
+      throw new Error("No quote providers were returned");
+    }
+    return providerList;
   }
 
   @step("Check elements presence on swap approval step")
@@ -162,9 +166,11 @@ export class SwapPage extends WebViewAppPage {
     const provider = SwapProvider.getNameByUiName(providerUiName);
     const amount = await webview
       .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .first()
       .textContent();
     const fiatAmount = await webview
       .locator(this.providerContainerInfoSelector(provider, "fiatAmount-label"))
+      .first()
       .textContent();
     return { amount, fiatAmount };
   }
