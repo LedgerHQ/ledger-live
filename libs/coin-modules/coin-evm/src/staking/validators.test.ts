@@ -309,6 +309,7 @@ describe("staking/validators", () => {
       expect(page.next).toBeUndefined();
       expect(page.items).toEqual([
         {
+          id: "seivaloper1x",
           address: "seivaloper1x",
           name: "X",
           // 42 usei scaled to sei_evm's 18-decimal unit (×10^12).

@@ -210,10 +210,10 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-hypercore": 0.4.4
-  "@ledgerhq/coin-module-framework": 4.3.0
-  "@ledgerhq/coin-stellar": 6.26.5
-  "@ledgerhq/coin-xrp": 7.25.3
+  "@ledgerhq/coin-hypercore": 0.4.5
+  "@ledgerhq/coin-module-framework": 5.0.0
+  "@ledgerhq/coin-stellar": 6.26.6
+  "@ledgerhq/coin-xrp": 7.25.4
   detox: 20.51.3
 
 overrides:

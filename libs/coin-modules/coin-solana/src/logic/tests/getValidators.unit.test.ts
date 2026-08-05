@@ -61,6 +61,7 @@ describe("getValidators", () => {
       next: undefined,
       items: [
         {
+          id: "VoteAccountB1111111111111111111111111111111",
           address: "VoteAccountB1111111111111111111111111111111",
           name: "Validator B",
           url: undefined,
@@ -70,6 +71,7 @@ describe("getValidators", () => {
           apy: undefined,
         },
         {
+          id: "VoteAccountA1111111111111111111111111111111",
           address: "VoteAccountA1111111111111111111111111111111",
           name: "Validator A",
           url: "https://example.com/a",
