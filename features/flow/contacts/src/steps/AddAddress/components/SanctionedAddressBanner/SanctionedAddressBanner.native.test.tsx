@@ -42,8 +42,8 @@ describe("SanctionedAddressBanner", () => {
       />,
     );
 
-    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeTruthy();
-    expect(screen.getByText("This wallet address is sanctioned.")).toBeTruthy();
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
+    expect(screen.getByText("This wallet address is sanctioned.")).toBeVisible();
 
     fireEvent.press(screen.getByTestId("sanctioned-address-banner-action"));
 

@@ -164,7 +164,7 @@ describe("ContactsAddAddressEntry", () => {
       helperText: undefined,
       status: "error",
     });
-    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeTruthy();
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
   });
 
