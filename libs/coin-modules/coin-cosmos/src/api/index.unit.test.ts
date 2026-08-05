@@ -13,6 +13,7 @@ jest.mock("../network/Cosmos", () => ({
     getValidators: jest.fn().mockResolvedValue([]),
     getDelegations: jest.fn().mockResolvedValue([]),
     getUnbondings: jest.fn().mockResolvedValue([]),
+    getStakingPositions: jest.fn().mockResolvedValue({ delegations: [], unbondings: [] }),
     broadcastRawTransaction: jest.fn().mockResolvedValue("HASH"),
   })),
 }));
@@ -69,7 +70,7 @@ describe("api/createApi", () => {
     const api = createApi(config, "cosmos");
 
     await expect(api.getBalance("cosmos1a")).resolves.toEqual([
-      { value: 0n, asset: { type: "native" } },
+      { value: 0n, asset: { type: "native" }, locked: 0n },
     ]);
     await expect(api.getNextSequence("cosmos1a")).resolves.toBe(0n);
     await expect(api.lastBlock()).resolves.toHaveProperty("height", 1);

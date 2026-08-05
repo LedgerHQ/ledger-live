@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import type { AddressInfo } from "node:net";
 import { createRelayHub } from "./relay";
+import { createMockLogger, nullLanIp } from "./mocks";
 
 type Hub = ReturnType<typeof createRelayHub>;
 
@@ -34,7 +35,12 @@ describe("relay hub — invalid connections", () => {
   let base: string;
 
   beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+    hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
     base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
   });
@@ -61,7 +67,12 @@ describe("relay hub — message forwarding", () => {
   let base: string;
 
   beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+    hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
     base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
   });
@@ -111,12 +122,47 @@ describe("relay hub — message forwarding", () => {
   });
 });
 
+describe("relay hub — close", () => {
+  it("terminates all connected clients and resolves", async () => {
+    const hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
+    await waitForListening(hub);
+    const base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
+
+    const host = await open(`${base}/?role=host&id=app`);
+    const closed = waitForClose(host);
+    await hub.close();
+    await closed;
+    expect(host.readyState).toBe(WebSocket.CLOSED);
+  });
+
+  it("resolves even when no clients are connected", async () => {
+    const hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
+    await waitForListening(hub);
+    await expect(hub.close()).resolves.toBeUndefined();
+  });
+});
+
 describe("relay hub — eviction", () => {
   let hub: Hub;
   let base: string;
 
   beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+    hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
     base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
   });

@@ -20,6 +20,7 @@ import {
   combine,
   craftTransaction,
   estimateFees,
+  getAccountInfo,
   getBalance,
   getBlock,
   getBlockInfo,
@@ -53,6 +54,7 @@ export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
       throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: estimate,
+    getAccountInfo,
     getBalance: (address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,

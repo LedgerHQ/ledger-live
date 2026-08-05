@@ -14,6 +14,7 @@ function createGateway(overrides: Partial<ContactsAddressValidationGateway> = {}
     getRegistriesForDomain: jest.fn().mockResolvedValue([]),
     resolveDomain: jest.fn().mockResolvedValue([]),
     validateDomain: jest.fn().mockReturnValue(true),
+    isAddressSanctioned: jest.fn().mockResolvedValue(false),
     getAccountBridgeByFamily: jest.fn().mockResolvedValue({ validateAddress }),
     ...overrides,
   } satisfies ContactsAddressValidationGateway;
@@ -29,6 +30,7 @@ describe("createContactsAddressValidationDependencies", () => {
     expect(dependencies.findTokenById).toBe(gateway.findTokenById);
     expect(dependencies.supportsDomain).toBe(gateway.supportsDomain);
     expect(dependencies.validateDomain).toBe(gateway.validateDomain);
+    expect(dependencies.isAddressSanctioned).toBe(gateway.isAddressSanctioned);
   });
 
   it("should detect ENS from the injected domain registry", async () => {

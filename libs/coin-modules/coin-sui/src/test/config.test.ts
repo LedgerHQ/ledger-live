@@ -1,9 +1,12 @@
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  CryptoCurrencyIdSchema,
+  type CryptoCurrency,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import coinConfig from "../config";
 
 describe("Configuration", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "sui",
+    id: CryptoCurrencyIdSchema.parse("sui"),
     name: "sui",
     family: "sui",
     units: [],

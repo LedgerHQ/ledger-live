@@ -40,7 +40,7 @@ describe("Broadcast", () => {
       broadcast({
         signedOperation: {
           operation: { extra: { memo: transaction.memo } },
-          rawData: { encodedSignedCallBlob, transferRequestIdHex },
+          rawData: { encodedSignedCallBlob, transferRequestIdHex, methodName: "send" },
         },
       } as any),
     ).rejects.toThrow(/InsufficientFunds/);

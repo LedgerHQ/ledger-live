@@ -46,7 +46,9 @@ jest.mock("LLD/features/LNSUpsell", () => ({
 
 jest.mock("LLD/features/DynamicContent/components/PortfolioContentCards", () => ({
   __esModule: true,
-  default: () => <div data-testid="portfolio-content-cards" />,
+  default: ({ leadingSlide }: { leadingSlide?: React.ReactNode }) => (
+    <div data-testid="portfolio-content-cards">{leadingSlide}</div>
+  ),
 }));
 
 jest.mock("~/renderer/screens/dashboard/ActionContentCards", () => ({
@@ -240,6 +242,54 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
     });
 
+    it("prepends LNS upsell into portfolio content cards when finish and recover are off", () => {
+      setWallet40RecoverInRow(false);
+      setVisibility({
+        shouldDisplayFinishOnboardingWidget: true,
+        isLNSUpsellBannerVisible: true,
+        isFinishOnboardingWidgetVisible: false,
+      });
+
+      render(<PortfolioBannerContent />);
+
+      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
+      expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
+      expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
+    });
+
+    it("keeps LNS exclusive when recover is visible and finish is off (Wallet40 not mounted)", () => {
+      setWallet40RecoverInRow(true);
+      setVisibility({
+        shouldDisplayFinishOnboardingWidget: true,
+        isLNSUpsellBannerVisible: true,
+        isFinishOnboardingWidgetVisible: false,
+      });
+
+      render(<PortfolioBannerContent />);
+
+      expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
+      expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("portfolio-content-cards")).not.toBeInTheDocument();
+    });
+
+    it("keeps LNS exclusive when finish onboarding is visible", () => {
+      setWallet40RecoverInRow(true);
+      setVisibility({
+        shouldDisplayFinishOnboardingWidget: true,
+        isLNSUpsellBannerVisible: true,
+        isFinishOnboardingWidgetVisible: true,
+      });
+
+      render(<PortfolioBannerContent />);
+
+      expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
+      expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("portfolio-content-cards")).not.toBeInTheDocument();
+    });
+
     it("shows finish onboarding without recover when displayBanner is false", () => {
       setWallet40RecoverInRow(false);
       setVisibility({
@@ -295,6 +345,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
+      expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
       expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("action-content-cards")).not.toBeInTheDocument();
     });

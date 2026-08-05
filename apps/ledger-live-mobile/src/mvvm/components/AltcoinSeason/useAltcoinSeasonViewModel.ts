@@ -1,10 +1,8 @@
 import { useCallback, useState } from "react";
-import {
-  FIFTEEN_MINUTES_IN_MS,
-  useGetAltcoinSeasonIndexLatestQuery,
-} from "@domain/api-altcoins-sentiment";
+import { useGetAltcoinSeasonIndexLatestQuery } from "@domain/api-altcoins-sentiment";
 import { track } from "~/analytics";
 import type { AltcoinSeasonViewModel } from "./types";
+import { ALTCOIN_SEASON_REFRESH_INTERVAL_MS } from "./constants";
 
 const BUTTON_NAME = "altcoin_index_definition";
 
@@ -18,7 +16,7 @@ export function useAltcoinSeasonViewModel(): AltcoinSeasonViewModel {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { data, isLoading, isError } = useGetAltcoinSeasonIndexLatestQuery(undefined, {
-    pollingInterval: FIFTEEN_MINUTES_IN_MS,
+    pollingInterval: ALTCOIN_SEASON_REFRESH_INTERVAL_MS,
   });
 
   const handleOpenDrawer = useCallback(() => {

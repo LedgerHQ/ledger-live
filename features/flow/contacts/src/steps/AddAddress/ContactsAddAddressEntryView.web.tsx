@@ -1,6 +1,7 @@
 import React from "react";
-import { AddressInput, Banner, Button } from "@ledgerhq/lumen-ui-react";
+import { AddressInput, Banner, Button, TextInput } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsAddAddressEntryWebViewProps } from "./ContactsAddAddressEntry.web.types";
 
 export function ContactsAddAddressEntryView({
@@ -9,9 +10,13 @@ export function ContactsAddAddressEntryView({
   inputStatus,
   helperText,
   showEnsDisclaimer,
+  addressLabel,
+  nameLabels,
+  nameValidationMessage,
   isConfirmEnabled,
   onChange,
   onPaste,
+  onAddressLabelChange,
   onConfirm,
 }: ContactsAddAddressEntryWebViewProps): React.JSX.Element {
   return (
@@ -35,6 +40,21 @@ export function ContactsAddAddressEntryView({
           appearance="info"
           data-testid="contacts-add-address-ens-disclaimer"
           description={labels.ensDisclaimer}
+        />
+      ) : null}
+      {addressLabel && nameLabels && onAddressLabelChange ? (
+        <TextInput
+          autoComplete="off"
+          autoCorrect="off"
+          data-testid="contacts-add-address-name-input"
+          helperText={nameValidationMessage}
+          label={nameLabels.inputLabel}
+          maxCount={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
+          maxLength={CONTACT_ADDRESS_LABEL_MAX_LENGTH}
+          onChange={onAddressLabelChange}
+          spellCheck={false}
+          status={addressLabel.status === "invalid" ? "error" : undefined}
+          value={addressLabel.value}
         />
       ) : null}
       <Button

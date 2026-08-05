@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport",
-  "version": "6.35.6",
+  "version": "6.35.7",
   "description": "Ledger Hardware Wallet common interface of the communication layer",
   "keywords": [
     "Ledger",
@@ -26,7 +26,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "events": "^3.3.0"
   },
   "scripts": {

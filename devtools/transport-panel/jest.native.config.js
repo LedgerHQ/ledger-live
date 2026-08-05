@@ -27,8 +27,10 @@ module.exports = {
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",
     "^@sbaiahmed1/react-native-blur$": "<rootDir>/jest/mocks/react-native-blur.tsx",
+    "^react-native-vision-camera$": "<rootDir>/jest/mocks/react-native-vision-camera.tsx",
     "^react-native-worklets$": "<rootDir>/jest/mocks/react-native-worklets.js",
   },
+  testTimeout: 30_000,
   setupFilesAfterEnv: ["<rootDir>/jest/setup.native.ts"],
   coverageReporters: [
     "json",

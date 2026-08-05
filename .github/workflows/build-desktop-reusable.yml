@@ -126,7 +126,6 @@ jobs:
   report:
     name: "Build Desktop > Report"
     permissions:
-      pull-requests: write
       contents: read
     needs: build-desktop-app
     runs-on: ubuntu-22.04

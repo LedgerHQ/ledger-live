@@ -161,6 +161,8 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             apps/ledger-live-mobile
+            e2e/mobile
+            e2e/tooling
             pnpm-lock.yaml
             .pnpmfile.cjs
             tools
@@ -616,7 +618,11 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          SMOKE_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
+          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+          # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+          SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
+          [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
+          SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
             echo "has_tests=false" >> $GITHUB_OUTPUT
@@ -784,7 +790,11 @@ jobs:
       - name: Get smoke test files
         id: smoke-files
         run: |
-          SMOKE_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "@smoke" "e2e/mobile")
+          # shard-tests.mjs moved to e2e/mobile/; fall back to the old path so this @develop-pinned
+          # reusable keeps working on release/hotfix checkouts. TODO(remove ~2026-08-15) with the old file.
+          SHARD_TESTS=e2e/mobile/scripts/shard-tests.mjs
+          [ -f "$SHARD_TESTS" ] || SHARD_TESTS=apps/ledger-live-mobile/scripts/shard-tests.mjs
+          SMOKE_FILES=$(node "$SHARD_TESTS" "@smoke" "e2e/mobile")
           if [ -z "$SMOKE_FILES" ]; then
             echo "No smoke test files found — skipping smoke tests"
             echo "has_tests=false" >> $GITHUB_OUTPUT

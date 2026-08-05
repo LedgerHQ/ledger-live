@@ -1,6 +1,14 @@
-import { Platform } from "react-native";
+import { useCallback } from "react";
+import { Linking, Platform } from "react-native";
+import {
+  CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
+  DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+  INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
+} from "@domain/entity-contact";
 import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { urls } from "~/utils/urls";
 import { useContactsCurrencySelectionAdapter } from "../../../../hooks/useContactsCurrencySelectionAdapter";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
@@ -16,9 +24,9 @@ function resolveDrawerStep(
     case "namingAddress":
       return "name";
     case "reviewingAddress":
-      return "review";
+    case "confirmationRequired":
     case "success":
-      return "success";
+      return "name";
   }
 }
 
@@ -26,15 +34,19 @@ export function useContactsAddAddressFlowDrawerViewModel({
   state,
   eligibleNetworkIds,
   onAddressChange,
+  onAddressNameChange,
   onAddressConfirm,
   onBack,
   onClose,
   onContinueFromName,
-  onContinueFromReview,
   onCurrencySelected,
   onQrCodeClick,
 }: ContactsAddAddressFlowDrawerProps) {
   const { t } = useTranslation();
+  const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
+  const handleSanctionedAddressLearnMore = useCallback(() => {
+    void Linking.openURL(helpCenterUrl);
+  }, [helpCenterUrl]);
   const { isKeyboardVisible, keyboardHeight } = useKeyboardVisible({
     eventTiming: Platform.OS === "ios" ? "will" : "did",
   });
@@ -62,8 +74,14 @@ export function useContactsAddAddressFlowDrawerViewModel({
               validAddress: t("contacts.addAddressEntry.validAddress"),
               invalidAddress: t("contacts.addAddressEntry.invalidAddress"),
               domainNotFound: t("contacts.addAddressEntry.domainNotFound"),
+              sanctionedAddress: t("contacts.addAddressEntry.sanctionedAddress"),
               validationUnavailable: t("contacts.addAddressEntry.validationUnavailable"),
               ensDisclaimer: t("contacts.addAddressEntry.ensDisclaimer"),
+            },
+            sanctionedAddressBanner: {
+              description: t("contacts.addAddressEntry.sanctioned.description"),
+              actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
+              onAction: handleSanctionedAddressLearnMore,
             },
             bottomOffset,
             onChangeText: onAddressChange,
@@ -71,20 +89,36 @@ export function useContactsAddAddressFlowDrawerViewModel({
             onQrCodeClick,
           }
         : null,
+    addressNameProps:
+      state.status === "namingAddress" || state.status === "confirmationRequired"
+        ? {
+            addressLabel: state.addressLabel,
+            labels: {
+              title: t("contacts.addAddressName.title"),
+              inputLabel: t("contacts.addAddressName.inputLabel"),
+              namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
+              continueToReview: t("common.continue"),
+              validationErrors: {
+                [INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
+                  "contacts.addAddressName.invalidLabel",
+                ),
+                [DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME]: t(
+                  "contacts.addAddressName.duplicateLabel",
+                ),
+                [CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME]: t(
+                  "contacts.addAddressName.labelTooLong",
+                ),
+              },
+            },
+            bottomOffset,
+            onChangeText: onAddressNameChange,
+            onContinue: onContinueFromName,
+          }
+        : null,
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
-    isOpen: state.status !== "closed",
-    labels: {
-      name: t("contacts.addAddressFlow.name"),
-      review: t("contacts.addAddressFlow.review"),
-      success: t("contacts.addAddressFlow.success"),
-      continue: t("common.continue"),
-      done: t("common.done"),
-    },
+    isOpen: state.status !== "closed" && state.status !== "success",
     onBack,
-    onContinueFromName,
-    onContinueFromReview,
-    onFinish: onClose,
   } as const;
 }
 

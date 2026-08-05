@@ -14,7 +14,7 @@ import { readMemberCredentials } from "./utils/readMemberCredentials";
  *   - LEDGER_AUTH_CLIENT_ID
  */
 const KEYCLOAK_BASE_URL =
-  process.env.LEDGER_AUTH_KEYCLOAK_BASE_URL ?? "https://keycloak.api.live.aws.stg.ldg-tech.com";
+  process.env.LEDGER_AUTH_KEYCLOAK_BASE_URL ?? "https://global.api.stg.ledger-test.com/keycloak";
 const KEYCLOAK_REALM = process.env.LEDGER_AUTH_KEYCLOAK_REALM ?? "ledger-bc-customers";
 const CLIENT_ID = process.env.LEDGER_AUTH_CLIENT_ID ?? "ledger-keycloak";
 

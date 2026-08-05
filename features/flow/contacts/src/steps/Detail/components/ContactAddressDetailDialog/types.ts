@@ -22,6 +22,12 @@ export type ContactAddressDetailDialogProps = Readonly<{
   network: ContactDetailAddressNetworkGroup | undefined;
   labels: ContactAddressDetailDialogLabels;
   onClose: () => void;
+  onSend?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  canSend?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }>;
 
 export type ContactAddressDetailDialogNativeProps = Omit<

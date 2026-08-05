@@ -115,9 +115,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   }
 
   if (multiSignAddresses.includes(a.freshAddress)) {
-    errors.recipient = new StellarSourceHasMultiSign("", {
-      currencyName: a.currency.name,
-    });
+    errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (!t.fees || !t.baseReserve) {

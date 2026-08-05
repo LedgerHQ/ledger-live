@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
   ContactAddressValueSchema,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
@@ -235,7 +236,7 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
-  it("should advance through the placeholder steps with the resolved address", async () => {
+  it("should require confirmation and return the saved address target", async () => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({
       status: "valid",
@@ -258,13 +259,28 @@ describe("useAddAddressFlowViewModel", () => {
     });
 
     act(() => result.current.continueFromName());
-    expect(result.current.state.status).toBe("reviewingAddress");
+    expect(result.current.state).toMatchObject({
+      status: "confirmationRequired",
+      selectedContactId: contactId,
+      selectedCurrencyId: ETHEREUM_CURRENCY_ID,
+      addressEntry: {
+        value: "ledger.eth",
+        resolvedAddress: RESOLVED_ADDRESS,
+      },
+    });
 
-    act(() => result.current.continueFromReview());
-    expect(result.current.state.status).toBe("success");
+    act(() => result.current.completeMockConfirmation());
+    expect(result.current.state).toMatchObject({
+      status: "success",
+      target: { type: "contactDetail", contactId },
+      addressEntry: {
+        value: "ledger.eth",
+        resolvedAddress: RESOLVED_ADDRESS,
+      },
+    });
   });
 
-  it("should allow a custom address label before review", async () => {
+  it("should allow a custom address label before confirmation", async () => {
     const contact = mockContact();
     const addressValidation = createValidationPort();
     const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
@@ -286,7 +302,81 @@ describe("useAddAddressFlowViewModel", () => {
     });
 
     act(() => result.current.continueFromName());
-    expect(result.current.state.status).toBe("reviewingAddress");
+    expect(result.current.state.status).toBe("confirmationRequired");
+  });
+
+  it("should limit default and edited address labels to 32 characters", async () => {
+    const contact = mockContact();
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+    const longDefaultLabel = "A".repeat(CONTACT_ADDRESS_LABEL_MAX_LENGTH + 1);
+    const longEditedLabel = "B".repeat(CONTACT_ADDRESS_LABEL_MAX_LENGTH + 1);
+
+    act(() => result.current.start(contact));
+    act(() =>
+      result.current.completeCurrencySelection(contact.id, {
+        currencyId: ETHEREUM_CURRENCY_ID,
+        assetDisplayName: longDefaultLabel,
+      }),
+    );
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressLabel: {
+        status: "valid",
+        value: longDefaultLabel.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH),
+      },
+    });
+
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.confirmAddress());
+    act(() => result.current.updateAddressLabel(longEditedLabel));
+
+    expect(result.current.state).toMatchObject({
+      status: "namingAddress",
+      addressLabel: {
+        status: "valid",
+        value: longEditedLabel.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH),
+      },
+    });
+  });
+
+  it("should continue directly from address details to review when both inputs are valid", async () => {
+    const contact = mockContact();
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contact));
+    act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
+    act(() => result.current.updateAddressLabel("Exchange"));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.continueFromAddressDetails());
+
+    expect(result.current.state).toMatchObject({
+      status: "reviewingAddress",
+      origin: "addressDetails",
+      addressLabel: { label: "Exchange", status: "valid" },
+    });
+
+    act(() => result.current.goBack());
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressLabel: { label: "Exchange", status: "valid" },
+    });
+  });
+
+  it("should prevent direct review when either address detail is invalid", async () => {
+    const contact = mockContact();
+    const addressValidation = createValidationPort();
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contact));
+    act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
+    act(() => result.current.updateAddressLabel("Ethereum 💎"));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.continueFromAddressDetails());
+
+    expect(result.current.state.status).toBe("enteringAddress");
   });
 
   it("should expose invalid characters and prevent review", async () => {
@@ -298,13 +388,13 @@ describe("useAddAddressFlowViewModel", () => {
     act(() => result.current.completeCurrencySelection(contact.id, ETHEREUM_SELECTION));
     await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
     act(() => result.current.confirmAddress());
-    act(() => result.current.updateAddressLabel("Ethereum 💎"));
+    act(() => result.current.updateAddressLabel("Ethér"));
 
     expect(result.current.state).toMatchObject({
       status: "namingAddress",
       addressLabel: {
         status: "invalid",
-        value: "Ethereum 💎",
+        value: "Ethér",
         label: null,
         validationError: INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
       },
@@ -453,6 +543,22 @@ describe("useAddAddressFlowViewModel", () => {
     });
   });
 
+  it("should prevent confirmation for a sanctioned address", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: false });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress(RAW_ADDRESS, "manual"));
+    act(() => result.current.confirmAddress());
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: { status: "invalid", inputMethod: "manual", error: "sanctioned" },
+    });
+  });
+
   it("should keep ENS provenance when a resolved domain has an invalid format", async () => {
     const contactId = mockContact().id;
     const addressValidation = createValidationPort({
@@ -473,6 +579,27 @@ describe("useAddAddressFlowViewModel", () => {
         resolvedAddress: null,
         inputMethod: "ens",
         error: "invalid_format",
+      },
+    });
+  });
+
+  it("should keep ENS provenance when a resolved domain is sanctioned", async () => {
+    const contactId = mockContact().id;
+    const addressValidation = createValidationPort({ status: "sanctioned", isDomain: true });
+    const { result } = renderHook(() => useAddAddressFlowViewModel({ addressValidation }));
+
+    act(() => result.current.start(contactWithoutAddresses(contactId)));
+    act(() => result.current.completeCurrencySelection(contactId, ETHEREUM_SELECTION));
+    await act(() => result.current.updateAddress("ledger.eth", "manual"));
+
+    expect(result.current.state).toMatchObject({
+      status: "enteringAddress",
+      addressEntry: {
+        status: "invalid",
+        value: "ledger.eth",
+        resolvedAddress: null,
+        inputMethod: "ens",
+        error: "sanctioned",
       },
     });
   });

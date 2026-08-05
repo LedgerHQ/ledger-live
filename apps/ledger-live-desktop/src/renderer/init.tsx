@@ -10,7 +10,7 @@ import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -21,6 +21,7 @@ import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
 import logger, { enableDebugLogger } from "./logger";
@@ -133,6 +134,7 @@ async function init() {
   setupListeners(store.dispatch);
   setupRecentAddressesStore(store);
   setupCryptoAssetsStore(store);
+  setSwapQuotesStore(store.dispatch);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the

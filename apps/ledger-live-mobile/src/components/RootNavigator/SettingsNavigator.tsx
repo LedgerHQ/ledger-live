@@ -245,7 +245,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugAnalyticsConsentQA}
         component={DebugAnalyticsConsentQA}
         options={{
-          title: "Analytics opt-in consent — QA",
+          title: "Analytics consent QA",
         }}
       />
       <Stack.Screen

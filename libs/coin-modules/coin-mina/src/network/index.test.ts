@@ -8,10 +8,13 @@ import network from "@ledgerhq/live-network";
 import { getCoinConfig } from "../config";
 import {
   MAINNET_NETWORK_IDENTIFIER,
+  MAX_VALIDATORS_PAGES,
+  MAX_VALIDATORS_PER_PAGE,
   MINA_API_RETRY_COUNT,
   MINA_DECIMALS,
   MINA_SYMBOL,
   MINA_TOKEN_ID,
+  MINA_VALIDATORS_TIMEOUT,
 } from "../consts";
 import { ValidatorInfoFromAPI } from "./types";
 import {
@@ -690,6 +693,7 @@ const makeValidator = (overrides?: Partial<ValidatorInfoFromAPI>): ValidatorInfo
 describe("fetchValidators", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    fetchValidators.reset();
     mockGetCoinConfig.mockReturnValue({
       infra: {
         API_VALIDATORS_BASE_URL: "https://validators.example.com",
@@ -705,6 +709,13 @@ describe("fetchValidators", () => {
 
     const result = await fetchValidators();
 
+    expect(mockNetwork).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "GET",
+        url: `https://validators.example.com?page=0&size=${MAX_VALIDATORS_PER_PAGE}&orderBy=DESC&sortBy=DELEGATORS&type=ACTIVE&isVerifiedOnly=true`,
+        timeout: MINA_VALIDATORS_TIMEOUT,
+      }),
+    );
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       address: "B62qvalidator",
@@ -758,5 +769,76 @@ describe("fetchValidators", () => {
     const result = await fetchValidators();
 
     expect(result).toEqual([]);
+  });
+
+  it("should share a single fetch between callers instead of one per account", async () => {
+    mockNetwork.mockResolvedValue(mockRes({ content: [makeValidator()], last: true }));
+
+    const [first, second] = await Promise.all([fetchValidators(), fetchValidators()]);
+    const third = await fetchValidators();
+
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+    expect(first).toEqual(second);
+    expect(third).toEqual(first);
+  });
+
+  it("should refetch after the cache has been reset", async () => {
+    mockNetwork.mockResolvedValue(mockRes({ content: [makeValidator()], last: true }));
+
+    await fetchValidators();
+    fetchValidators.reset();
+    await fetchValidators();
+
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+  });
+
+  it("should stop paginating when a page comes back empty", async () => {
+    mockNetwork.mockResolvedValue(mockRes({ content: [], last: false }));
+
+    const result = await fetchValidators();
+
+    expect(result).toEqual([]);
+    expect(mockNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should stop paginating at MAX_VALIDATORS_PAGES when the API never reports the last page", async () => {
+    mockNetwork.mockResolvedValue(mockRes({ content: [makeValidator()], last: false }));
+
+    const result = await fetchValidators();
+
+    expect(mockNetwork).toHaveBeenCalledTimes(MAX_VALIDATORS_PAGES);
+    expect(result).toHaveLength(MAX_VALIDATORS_PAGES);
+  });
+
+  it("should retry retryable server errors before failing the caller", async () => {
+    const setTimeoutSpy = jest
+      .spyOn(global, "setTimeout")
+      .mockImplementation((fn: TimerHandler) => {
+        if (typeof fn === "function") fn();
+        return 0 as unknown as NodeJS.Timeout;
+      });
+    const error503 = new LedgerAPI5xx("API HTTP 503", {
+      status: 503,
+      url: "/validators",
+      method: "GET",
+    });
+    mockNetwork
+      .mockRejectedValueOnce(error503)
+      .mockResolvedValueOnce(mockRes({ content: [makeValidator()], last: true }));
+
+    const result = await fetchValidators();
+
+    expect(result).toHaveLength(1);
+    expect(mockNetwork).toHaveBeenCalledTimes(2);
+    setTimeoutSpy.mockRestore();
+  });
+
+  it("should not cache a failed fetch", async () => {
+    mockNetwork.mockRejectedValueOnce(new Error("upstream down"));
+
+    await expect(fetchValidators()).rejects.toThrow("upstream down");
+
+    mockNetwork.mockResolvedValue(mockRes({ content: [makeValidator()], last: true }));
+    await expect(fetchValidators()).resolves.toHaveLength(1);
   });
 });

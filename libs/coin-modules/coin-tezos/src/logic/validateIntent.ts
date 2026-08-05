@@ -6,10 +6,9 @@ import {
   InvalidAddress,
   RecipientRequired,
   NotEnoughBalance,
-  NotEnoughBalanceToDelegate,
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import type { APIManagerAccount } from "../network/types";
@@ -17,6 +16,7 @@ import { hasManagerKey } from "../network/types";
 import {
   InvalidAddressBecauseAlreadyDelegated,
   MustDelegateBeforeStaking,
+  NotEnoughBalanceToDelegate,
   TezosNotEnoughStaked,
   TezosStakeBlockedByPendingUnstake,
 } from "../types/errors";

@@ -1,0 +1,71 @@
+{
+  "name": "@ledgerhq/live-signer-icp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ledger Hardware Wallet Internet Computer Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "internet-computer",
+    "icp",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-icp",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib-es/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-internet_computer": "workspace:^",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-icp": "catalog:",
+    "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "rxjs": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "knip-check": "pnpm knip --directory ../.. -W libs/live-signer-icp"
+  },
+  "devDependencies": {
+    "@ledgerhq/disable-network-setup": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "jest": "catalog:",
+    "rimraf": "^4.4.1",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "ts-node": "^10.4.0"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib/*": "./lib/*.js",
+    "./package.json": "./package.json"
+  }
+}

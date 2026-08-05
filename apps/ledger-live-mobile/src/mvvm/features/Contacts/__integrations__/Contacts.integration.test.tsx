@@ -181,7 +181,7 @@ function ContactDetailViewModelProbe() {
       case "enteringAddress":
         return `enteringAddress:${viewModel.addAddressFlowState.selectedContactId}:${viewModel.addAddressFlowState.selectedCurrencyId}`;
       case "namingAddress":
-      case "reviewingAddress":
+      case "confirmationRequired":
       case "success":
         return viewModel.addAddressFlowState.status;
     }
@@ -651,15 +651,19 @@ describe("Contacts integration", () => {
     });
   });
 
-  it("should keep one Add Address drawer through QR, placeholders and success", async () => {
+  it("should save an address to the selected contact after mocked confirmation", async () => {
+    const contact = mockContact({ id: "contact-benoit", name: "Benoit" });
     const { user } = render(<ContactDetailAddressEntryTestApp />, {
-      navigationInitialState: contactDetailNavigationState,
-      overrideInitialState: withContactsPageReadyState({
-        lwmContacts: {
-          enabled: true,
-          params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+      navigationInitialState: savedContactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState(
+        {
+          lwmContacts: {
+            enabled: true,
+            params: { newBadge: false, eligibleAddressFamilies: ["evm"] },
+          },
         },
-      }),
+        state => ({ ...state, contacts: { contacts: [mockMeContact(), contact] } }),
+      ),
     });
 
     await user.press(screen.getByTestId("contacts-detail-add-address"));
@@ -688,18 +692,28 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-add-address-confirm"));
-    expect(await screen.findByTestId("contacts-add-address-name-screen-continue")).toBeVisible();
+    const addressNameInput = await screen.findByTestId("contacts-add-address-name-input");
+    expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
+    expect(addressNameInput).toHaveProp("maxLength", 32);
+    expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
+    expect(screen.getByTestId("bottom-sheet-header-title")).toHaveTextContent("Name address");
+    expect(
+      screen.getByText(
+        "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      ),
+    ).toBeVisible();
+    expect(screen.getByTestId("contacts-add-address-name-continue")).toBeEnabled();
 
-    await user.press(screen.getByTestId("contacts-add-address-name-screen-continue"));
-    expect(await screen.findByTestId("contacts-add-address-review-screen-continue")).toBeVisible();
+    await user.clear(addressNameInput);
+    await user.type(addressNameInput, "Exchange");
+    expect(screen.getByTestId("contacts-add-address-name-input")).toHaveProp("value", "Exchange");
 
-    await user.press(screen.getByTestId("contacts-add-address-review-screen-continue"));
-    expect(await screen.findByTestId("contacts-add-address-success-screen-continue")).toBeVisible();
-
-    await user.press(screen.getByTestId("contacts-add-address-success-screen-continue"));
+    await user.press(screen.getByTestId("contacts-add-address-name-continue"));
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
       expect(screen.getByTestId("contacts-detail-screen")).toBeVisible();
+      expect(screen.getByTestId("contacts-detail-network-group-ethereum")).toBeVisible();
+      expect(screen.getByText("Exchange")).toBeVisible();
     });
   });
 
@@ -808,6 +822,78 @@ describe("Contacts integration", () => {
     await waitFor(() => {
       expect(setString).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
       expect(screen.getByTestId("contacts-address-detail-copy")).toHaveTextContent("Copied");
+    });
+  });
+
+  it("should hide delete from the Me contact actions menu", async () => {
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-me-item"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-detail-edit-action")).toBeVisible();
+      expect(screen.queryByTestId("contacts-detail-delete-action")).toBeNull();
+    });
+  });
+
+  it("should rename a saved contact from the actions menu", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-edit-action"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeDisabled();
+    });
+
+    await user.clear(screen.getByTestId("contacts-add-contact-name-input"));
+    await user.type(screen.getByTestId("contacts-add-contact-name-input"), "Alice");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-contact-confirm")).toBeEnabled();
+    });
+
+    await user.press(screen.getByTestId("contacts-rename-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-contact-confirm")).toBeNull();
+      expect(screen.getByText("Alice")).toBeVisible();
+    });
+  });
+
+  it("should delete a saved contact and navigate back to the contacts list", async () => {
+    const contacts = [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })];
+    const { user } = render(<MyWalletNavigator />, {
+      overrideInitialState: withContactsPageReadyState(
+        { lwmContacts: { enabled: true, params: { newBadge: false } } },
+        state => ({ ...state, contacts: { contacts } }),
+      ),
+    });
+
+    await user.press(screen.getByTestId("my-wallet-contacts-button"));
+    await user.press(await screen.findByTestId("contacts-saved-contact-contact-ada"));
+    await user.press(await screen.findByTestId("contacts-detail-actions-trigger"));
+    await user.press(await screen.findByTestId("contacts-detail-delete-action"));
+    await user.press(await screen.findByTestId("contacts-delete-contact-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-detail-screen")).toBeNull();
+      expect(screen.getByTestId("contacts-screen")).toBeVisible();
+      expect(screen.queryByTestId("contacts-saved-contact-contact-ada")).toBeNull();
     });
   });
 });

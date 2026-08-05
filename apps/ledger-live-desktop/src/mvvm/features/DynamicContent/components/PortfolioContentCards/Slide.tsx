@@ -17,7 +17,10 @@ const SlideContainer = styled.div`
 
 type Props = PortfolioContentCard &
   CarouselActions & {
+    /** Index into `portfolioCards` for dismiss. */
     index: number;
+    /** Visual carousel position for analytics (may include a leading upsell offset). */
+    displayedPosition?: number;
   };
 
 function Slide({
@@ -30,15 +33,17 @@ function Slide({
   tag,
   image,
   index,
+  displayedPosition,
   location,
   logSlideClick,
   dismissCard,
 }: Props) {
   const navigate = useNavigate();
+  const analyticsPosition = displayedPosition ?? index;
 
-  const handleClose = () => dismissCard(index);
+  const handleClose = () => dismissCard(index, analyticsPosition);
   const handleClick = () => {
-    logSlideClick(id);
+    logSlideClick(id, analyticsPosition);
     if (path) {
       navigate(path, { state: { source: "banner" } });
     } else if (url) {
@@ -48,7 +53,7 @@ function Slide({
 
   return (
     <SlideContainer>
-      <LogContentCardWrapper id={id} displayedPosition={index} location={location}>
+      <LogContentCardWrapper id={id} displayedPosition={analyticsPosition} location={location}>
         <Card
           title={title}
           cta={cta}

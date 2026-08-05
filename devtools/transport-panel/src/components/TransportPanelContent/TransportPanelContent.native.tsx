@@ -7,7 +7,9 @@ import {
   IconButton,
   useBottomSheetRef,
 } from "@ledgerhq/lumen-ui-rnative";
-import { Refresh, Repair } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Refresh, Repair, QrCodeScanner } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Camera } from "react-native-vision-camera";
+import { QRScannerSheet } from "../QRScannerSheet/index";
 import { TransportPanelProps } from "../../types";
 import type { MessageMap } from "@devtools/transport";
 import { TransportDebug } from "../TransportDebug";
@@ -22,12 +24,13 @@ export interface TransportPanelContentProps<M extends MessageMap> {
 export function TransportPanelContent<M extends MessageMap>({
   bottomSheetRef,
   transport,
-}: TransportPanelContentProps<M>) {
+}: Readonly<TransportPanelContentProps<M>>) {
   const debugBottomSheetRef = useBottomSheetRef();
+  const scannerBottomSheetRef = useBottomSheetRef();
 
   return (
     <Box>
-      <BottomSheet ref={bottomSheetRef} snapPoints="medium">
+      <BottomSheet ref={bottomSheetRef} snapPoints="full">
         <BottomSheetView>
           <BottomSheetHeader
             title="Transport State"
@@ -47,11 +50,24 @@ export function TransportPanelContent<M extends MessageMap>({
               />
             )}
 
-            <TextInput
-              label="Hub URL"
-              value={transport.hubUrl}
-              onChangeText={transport.setHubUrl}
-            />
+            <Box lx={{ flexDirection: "row", alignItems: "flex-end", gap: "s8" }}>
+              <Box lx={{ flex: 1 }}>
+                <TextInput
+                  label="Hub URL"
+                  value={transport.hubUrl}
+                  onChangeText={transport.setHubUrl}
+                />
+              </Box>
+              <IconButton
+                icon={QrCodeScanner}
+                accessibilityLabel="Scan QR code"
+                appearance="gray"
+                onPress={async () => {
+                  await Camera.requestCameraPermission();
+                  scannerBottomSheetRef.current?.present();
+                }}
+              />
+            </Box>
             <Box lx={{ flexDirection: "row", justifyContent: "space-evenly", gap: "s16" }}>
               <IconButton
                 icon={Refresh}
@@ -72,6 +88,7 @@ export function TransportPanelContent<M extends MessageMap>({
         </BottomSheetView>
       </BottomSheet>
       <TransportDebug bottomSheetRef={debugBottomSheetRef} transport={transport} />
+      <QRScannerSheet bottomSheetRef={scannerBottomSheetRef} onScan={transport.setHubUrl} />
     </Box>
   );
 }

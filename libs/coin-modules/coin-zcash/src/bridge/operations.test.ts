@@ -390,8 +390,9 @@ describe("convertShieldedTransactionsToOperations", () => {
         timestamp: 1700000000,
         fee: new BigNumber(500),
         decryptedData: {
-          orchard_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "incoming" }],
+          orchard_outputs: [],
           sapling_outputs: [],
+          ironwood_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "incoming" }],
         },
       },
     ];
@@ -404,7 +405,7 @@ describe("convertShieldedTransactionsToOperations", () => {
       accountId,
       blockHash: "blockhash1",
       blockHeight: 100,
-      type: "SHIELDED_TX_ORCHARD_IN",
+      type: "SHIELDED_TX_IRONWOOD_IN",
       date: new Date(1700000000 * 1000), // timestamp is in Unix seconds
       fee: new BigNumber(500),
       value: new BigNumber(1000),
@@ -461,7 +462,7 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(result).toEqual([]);
   });
 
-  it("op.value for incoming tx includes only incoming notes", () => {
+  it("op.value for an incoming tx includes only incoming notes", () => {
     const tx: ShieldedTransaction = {
       id: "tx-mixed",
       hex: "00",
@@ -470,16 +471,17 @@ describe("convertShieldedTransactionsToOperations", () => {
       timestamp: 1700000000,
       fee: new BigNumber(100),
       decryptedData: {
-        orchard_outputs: [
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
           { amount: new BigNumber(3000), memo: "", transfer_type: "incoming" },
           { amount: new BigNumber(1000), memo: "", transfer_type: "outgoing" },
           { amount: new BigNumber(500), memo: "", transfer_type: "internal" },
         ],
-        sapling_outputs: [],
       },
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
-    expect(op.type).toBe("SHIELDED_TX_ORCHARD_IN");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_IN");
     expect(op.value).toEqual(new BigNumber(3000));
   });
 
@@ -487,9 +489,134 @@ describe("convertShieldedTransactionsToOperations", () => {
   // built in this module and the optimistic operation emitted at signing time. A
   // confirmed operation valued without the fee makes the amount shown in history
   // change the moment the pending operation is replaced.
-  it("op.value for outgoing tx covers the outgoing notes plus the fee", () => {
+  it("op.value for an outgoing tx covers the outgoing notes plus the fee", () => {
     const tx: ShieldedTransaction = {
       id: "tx-out",
+      hex: "00",
+      blockHeight: 101,
+      blockHash: "hash-out",
+      timestamp: 1700000001,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [
+          { amount: new BigNumber(2000), memo: "", transfer_type: "outgoing" },
+          { amount: new BigNumber(800), memo: "", transfer_type: "internal" },
+        ],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_OUT");
+    expect(op.value).toEqual(new BigNumber(2100));
+  });
+
+  // Mainnet-shaped Ironwood z→t: transparent amount + fee, change is internal.
+  it("op.value for an Ironwood z→t send is the transparent amount plus the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "932c99c7837d7be18ed347213ae9a89a848ea9303f55e07ae5392f858f9258fc",
+      hex: "00",
+      transparentOut: new BigNumber(500_000),
+      blockHeight: 3_425_862,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(15_000),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(943_170), memo: "", transfer_type: "internal" }],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_OUT");
+    expect(op.value).toEqual(new BigNumber(515_000));
+    expect(op.fee).toEqual(new BigNumber(15_000));
+  });
+
+  // The send left no change, so no note in any pool attributes it and it is typed
+  // Orchard by default. The transparent bundle is the only place its value appears.
+  it("values a whole-note z→t that left no change at the transparent amount plus the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "d452101fabff",
+      hex: "00",
+      transparentOut: new BigNumber(955_000),
+      blockHeight: 3_425_863,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(45_000),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
+    expect(op.value).toEqual(new BigNumber(1_000_000));
+  });
+
+  it("op.value for internal tx is 0", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-internal",
+      hex: "00",
+      blockHeight: 102,
+      blockHash: "hash-internal",
+      timestamp: 1700000002,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [],
+        sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "internal" }],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_INTERNAL");
+    expect(op.value).toEqual(new BigNumber(0));
+  });
+
+  // `account.balance` counts Ironwood only, so this operation reports 12_000 more
+  // than the balance it lands next to — the deliberate divergence described on
+  // `convertShieldedTransactionsToOperations`.
+  it("op.value counts the deprecated pools the Ironwood-only balance leaves out", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-deprecated-pools",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(9_000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [{ amount: new BigNumber(3_000), memo: "", transfer_type: "incoming" }],
+        ironwood_outputs: [{ amount: new BigNumber(4_000), memo: "", transfer_type: "incoming" }],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_IN");
+    expect(op.value).toEqual(new BigNumber(16_000));
+  });
+
+  it("op.value for an Orchard-only incoming tx is the amount received", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-orchard-only",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash",
+      timestamp: 1_700_000_000,
+      fee: new BigNumber(500),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(1000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
+    expect(op.type).toBe("SHIELDED_TX_ORCHARD_IN");
+    expect(op.value).toEqual(new BigNumber(1000));
+  });
+
+  it("op.value for an Orchard-only outgoing tx covers the outgoing notes plus the fee", () => {
+    const tx: ShieldedTransaction = {
+      id: "tx-orchard-out",
       hex: "00",
       blockHeight: 101,
       blockHash: "hash-out",
@@ -508,12 +635,11 @@ describe("convertShieldedTransactionsToOperations", () => {
     expect(op.value).toEqual(new BigNumber(2100));
   });
 
-  // Mainnet transaction 932c99c7…: 1458170 zat spent, 500000 sent to a transparent
-  // address, 15000 fee, 943170 zat returned as an internal change note. The history
-  // used to show it as an internal transfer worth 0.
-  it("op.value for a z→t send is the transparent amount plus the fee", () => {
+  // The payment that leaves the account: nothing else records it, since
+  // `mapTxToOperations` emits no transparent operation for an external recipient.
+  it("op.value for an Orchard z→t send is the transparent amount plus the fee", () => {
     const tx: ShieldedTransaction = {
-      id: "932c99c7837d7be18ed347213ae9a89a848ea9303f55e07ae5392f858f9258fc",
+      id: "tx-orchard-deshield",
       hex: "00",
       transparentOut: new BigNumber(500_000),
       blockHeight: 3_425_862,
@@ -528,41 +654,27 @@ describe("convertShieldedTransactionsToOperations", () => {
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
     expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
     expect(op.value).toEqual(new BigNumber(515_000));
-    expect(op.fee).toEqual(new BigNumber(15_000));
   });
 
-  it("op.value for a z→t send that left no change is still the transparent amount plus the fee", () => {
+  // The newest pool present labels the operation, but every pool that moved funds
+  // is counted: the label answers "which protocol", not "how much".
+  it("op.value for a mixed-pool outgoing tx counts the notes of every pool", () => {
     const tx: ShieldedTransaction = {
-      id: "d452101fabff",
+      id: "tx-ironwood-out-with-orchard-notes",
       hex: "00",
-      transparentOut: new BigNumber(955_000),
-      blockHeight: 3_425_863,
+      blockHeight: 3_425_865,
       blockHash: "hash",
       timestamp: 1_700_000_000,
-      fee: new BigNumber(45_000),
-      decryptedData: { orchard_outputs: [], sapling_outputs: [] },
-    };
-    const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
-    expect(op.type).toBe("SHIELDED_TX_ORCHARD_OUT");
-    expect(op.value).toEqual(new BigNumber(1_000_000));
-  });
-
-  it("op.value for internal tx is 0", () => {
-    const tx: ShieldedTransaction = {
-      id: "tx-internal",
-      hex: "00",
-      blockHeight: 102,
-      blockHash: "hash-internal",
-      timestamp: 1700000002,
       fee: new BigNumber(100),
       decryptedData: {
-        orchard_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "internal" }],
+        orchard_outputs: [{ amount: new BigNumber(9_000), memo: "", transfer_type: "outgoing" }],
         sapling_outputs: [],
+        ironwood_outputs: [{ amount: new BigNumber(2_000), memo: "", transfer_type: "outgoing" }],
       },
     };
     const [op] = convertShieldedTransactionsToOperations([tx], "acc-1");
-    expect(op.type).toBe("SHIELDED_TX_INTERNAL");
-    expect(op.value).toEqual(new BigNumber(0));
+    expect(op.type).toBe("SHIELDED_TX_IRONWOOD_OUT");
+    expect(op.value).toEqual(new BigNumber(11_100));
   });
 });
 

@@ -46,8 +46,8 @@ authorization: `${token.tokenType} ${token.accessToken}`;
 
 Set `extraOptions.authenticated` to `false` on endpoints that must stay public.
 
-By default, `401` and `403` responses rejected by `fetchBaseQuery` refresh the token
-and retry the request once. If an endpoint accepts these responses through
+By default, `401` responses rejected by `fetchBaseQuery` refresh the token and retry
+the request once. If an endpoint accepts these responses through
 `validateStatus`, set `extraOptions.refreshAndRetryWhen` to inspect the response
 metadata instead:
 

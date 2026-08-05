@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-mina",
-  "version": "1.18.1",
+  "version": "1.19.0",
   "description": "Mina Coin integration",
   "keywords": [
     "Ledger",
@@ -119,7 +119,7 @@
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "catalog:",

@@ -43,6 +43,10 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
+  newSendFlowFirstInteractionBanner: { enabled: true },
+} satisfies OptionalFeatureMap;
+
 export const FF_NEW_SEND_FLOW_ENABLED = {
   newSendFlow: {
     enabled: true,
@@ -52,6 +56,7 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
     },
   },
   useDeviceActionSignatureSend: { enabled: true }, // Note: Prevent usage of DIE, which is not Speculos ready yet.
+  ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
 } satisfies OptionalFeatureMap;
 
 export const getMergedFeatureFlags = ({

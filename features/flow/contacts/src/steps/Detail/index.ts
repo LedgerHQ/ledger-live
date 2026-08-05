@@ -2,10 +2,27 @@ export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
+export { createContactDetailActionsPorts } from "./createContactDetailActionsPorts";
+export { createContactAddressDetailActionsPorts } from "./createContactAddressDetailActionsPorts";
+export { useContactDetailEditDeleteFlowBindings } from "./useContactDetailEditDeleteFlowBindings";
+export { useContactAddressDetailActionsFlowBindings } from "./useContactAddressDetailActionsFlowBindings";
+export type { UseContactDetailEditDeleteFlowBindingsOptions } from "./useContactDetailEditDeleteFlowBindings";
+export type { UseContactAddressDetailActionsFlowBindingsOptions } from "./useContactAddressDetailActionsFlowBindings";
+export { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
+export type {
+  ContactDetailEditUiState,
+  UseContactDetailEditDeleteFlowViewModelOptions,
+  UseContactDetailEditDeleteFlowViewModelResult,
+} from "./useContactDetailEditDeleteFlowViewModel";
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
 export { useContactAddressDetail } from "./useContactAddressDetail";
 export { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
+export { useContactAddressDetailActionsFlowViewModel } from "./useContactAddressDetailActionsFlowViewModel";
 export type { UseContactAddressDetailActionsViewModelResult } from "./useContactAddressDetailActionsViewModel";
+export type {
+  UseContactAddressDetailActionsFlowViewModelOptions,
+  UseContactAddressDetailActionsFlowViewModelResult,
+} from "./useContactAddressDetailActionsFlowViewModel";
 export {
   createContactDetailAddressRowIntent,
   createPopulatedContactDetailViewModel,
@@ -44,6 +61,8 @@ export type {
   ContactAddressDeletionPort,
   ContactAddressDetailActionsPorts,
   ContactAddressDetailPort,
+  ContactAddressEditPort,
+  ContactAddressRenameInput,
   ContactDeletionPort,
   ContactDetailActionsPorts,
   ContactEditPort,
@@ -67,6 +86,7 @@ export type {
   ContactDetailEditIntent,
   ContactDetailLabels,
   ContactDetailViewProps,
+  ContactDetailActionsLabels,
   PopulatedContactDetailViewModel,
 } from "./types";
 export type {

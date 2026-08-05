@@ -4,9 +4,9 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { DerivationMode } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ITxnHistoryData } from "../api/types";
+import { ITxnHistoryData } from "../types/network";
 import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
-import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "../consts";
+import { CASPER_MINIMUM_VALID_AMOUNT_MOTES } from "../constants";
 import type { Transaction, CasperOperation } from "../types";
 
 /**

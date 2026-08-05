@@ -1,4 +1,5 @@
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import { TokenCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import { getMockedTransaction } from "../__tests__/fixtures/api.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
@@ -213,7 +214,7 @@ describe("listOperations", () => {
       it("should include multiple token operations when several CAL tokens are present", async () => {
         const secondProgramId = "usad_stablecoin.aleo";
         const secondTokenCurrency = getMockedTokenCurrency({
-          id: "aleo/token/usad_stablecoin.aleo",
+          id: TokenCurrencyIdSchema.parse("aleo/token/usad_stablecoin.aleo"),
           contractAddress: secondProgramId,
           ticker: "USAD",
         });

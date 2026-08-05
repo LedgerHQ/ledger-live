@@ -7,11 +7,13 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   nightly-release:
     name: Nightly Release
+    permissions:
+      id-token: write
+      contents: read
     runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -25,6 +27,8 @@ jobs:
           repositories: |
             ledger-live
             ledger-live-build
+          permission-contents: write
+          permission-actions: write
 
       - name: Checkout Repo
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

@@ -19,7 +19,6 @@ import {
   trackPromptPrimaryClick,
   trackPromptSecondaryClick,
 } from "../analytics/promptAnalytics";
-
 export interface GenericAwarenessModalPromptViewModel {
   title: string;
   subtitle: string;
@@ -38,6 +37,8 @@ export interface GenericAwarenessModalPromptViewModel {
 const useGenericAwarenessModalPromptViewModel = (
   contentCard: GenericAwarenessModalContentCard | undefined,
   isOpen: boolean,
+  logClick: () => void,
+  logDismiss: () => void,
 ): GenericAwarenessModalPromptViewModel => {
   const dispatch = useDispatch();
   const hasTrackedOpenRef = useRef(false);
@@ -82,8 +83,9 @@ const useGenericAwarenessModalPromptViewModel = (
         openURL(actionLink);
       }
     }
+    logClick();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext, prompt]);
+  }, [closeDialog, getContext, logClick, prompt]);
 
   const onSecondaryClick = useCallback(() => {
     const context = getContext();
@@ -94,24 +96,27 @@ const useGenericAwarenessModalPromptViewModel = (
         openURL(actionLink);
       }
     }
+    logClick();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext, prompt]);
+  }, [closeDialog, getContext, logClick, prompt]);
 
   const onHeaderClose = useCallback(() => {
     const context = getContext();
     if (context) {
       trackPromptCloseClick(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   const onDismiss = useCallback(() => {
     const context = getContext();
     if (context) {
       trackPromptDismissed(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   return useMemo(
     () => ({

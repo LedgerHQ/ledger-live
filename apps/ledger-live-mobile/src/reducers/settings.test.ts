@@ -45,12 +45,12 @@ const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
 });
 
 /**
- * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
+ * `trackingEnabledSelector` runs the consent / policy version checks only when the
  * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
  */
 const withAnalyticsOptInResolved = (
   base: State,
-  params: Partial<{ policyVersion: number; consentValidityDays: number }> = {},
+  params: Partial<{ policyVersion: number | string }> = {},
   enabled = true,
 ): State =>
   ({
@@ -76,7 +76,7 @@ const withAnalyticsOptInResolved = (
   }) as State;
 
 describe("trackingEnabledSelector", () => {
-  /** Fixed clock so consent ages / one-year cutoff in `trackingEnabledSelector` do not depend on real time. */
+  /** Fixed clock so the consent dates used below do not depend on real time. */
   const FIXED_NOW = new Date("2026-03-01T12:00:00.000Z");
   beforeEach(() => {
     jest.useFakeTimers();
@@ -105,7 +105,7 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("returns true when privacyPolicyVersion is null (legacy) but consent date is valid and analytics opt-in feature is on", () => {
+  it("returns false when the stored privacy policy version is missing even though the consent date is valid", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
@@ -115,7 +115,20 @@ describe("trackingEnabledSelector", () => {
         analyticsEnabled: true,
       }),
     );
-    expect(trackingEnabledSelector(state)).toBe(true);
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when the stored privacy policy version cannot be parsed", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: "v1",
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
   });
 
   it("returns false when consentDate parses to NaN and analytics opt-in feature is on", () => {
@@ -131,66 +144,71 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(false);
   });
 
-  it("returns true when privacy policy version is below current but consent is within one year and analytics opt-in feature is on", () => {
+  it("returns false when the major policy version was bumped even though consent is recent", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2025-06-01T00:00:00.000Z",
-          privacyPolicyVersion: 0,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
       }),
-    );
-    expect(trackingEnabledSelector(state)).toBe(true);
-  });
-
-  it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
-    const expiredConsent = add(FIXED_NOW, { days: -366 }).toISOString();
-
-    const state = withAnalyticsOptInResolved(
-      stateWithSettings({
-        analyticsConsentInfo: {
-          consentDate: expiredConsent,
-          privacyPolicyVersion: 1,
-        },
-        analyticsEnabled: true,
-      }),
+      { policyVersion: "2.0" },
     );
     expect(trackingEnabledSelector(state)).toBe(false);
   });
 
-  it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
-    const now = new Date("2026-01-10T00:00:00.000Z");
-    jest.setSystemTime(now);
-
-    const consentOnCutoff = add(now, { days: -365 }).toISOString();
-
+  it("returns true when only the minor policy version was bumped", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
-          consentDate: consentOnCutoff,
+          consentDate: "2026-02-01T00:00:00.000Z",
           privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
-        personalizedRecommendationsEnabled: false,
       }),
+      { policyVersion: "1.1" },
     );
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("uses consentValidityDays from resolved flag params", () => {
+  it("returns true when the current policy version is invalid and the consent date is still valid", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
-          consentDate: add(FIXED_NOW, { days: -40 }).toISOString(),
+          consentDate: "2026-02-01T00:00:00.000Z",
           privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
       }),
-      { consentValidityDays: 30 },
+      { policyVersion: 1.2 },
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when the current policy version is invalid and the consent date is missing", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: 1 },
+        analyticsEnabled: true,
+      }),
+      { policyVersion: "v2" },
     );
     expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("keeps tracking an ageing consent, since renewal is driven by policy version bumps", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: add(FIXED_NOW, { days: -3650 }).toISOString(),
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
   });
 
   it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {

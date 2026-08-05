@@ -14,6 +14,7 @@ export function createContactsAddressValidationDependencies(
       return registries.some(registry => registry.name === "ens");
     },
     validateDomain: gateway.validateDomain,
+    isAddressSanctioned: gateway.isAddressSanctioned,
     resolveEnsDomain: async address => {
       const [resolution] = await gateway.resolveDomain(address, "ens");
       return resolution?.address ?? null;

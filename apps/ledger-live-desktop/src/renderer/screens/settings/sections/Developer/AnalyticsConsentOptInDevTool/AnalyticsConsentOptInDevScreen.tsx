@@ -1,213 +1,238 @@
 import React from "react";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import {
+  Button,
+  Divider,
+  SegmentedControl,
+  SegmentedControlButton,
+  Switch,
+  Tag,
+} from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
-import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@features/platform-feature-flags";
+import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
 import Box from "~/renderer/components/Box";
 import {
-  analyticsConsentInfoSelector,
-  hasCompletedOnboardingSelector,
-  shareAnalyticsSelector,
-} from "~/renderer/reducers/settings";
-import {
-  DANGEROUSLY_resetAnalyticsOptInStateForQa,
-  DANGEROUSLY_setAnalyticsConsentInfoForQa,
-} from "~/renderer/actions/settings";
-import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
-  resolveAnalyticsConsentPhase,
-  resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+  scenarioConfirmMessage,
+  useAnalyticsConsentOptInQaViewModel,
+  type AnalyticsConsentOptInQaViewModel,
+  type InspectorField,
+  type ToggleField,
+} from "./useAnalyticsConsentOptInQaViewModel";
 
-const COPY = {
-  back: "Back",
-  title: "Analytics opt-in consent — QA",
-  readSection: "Current settings (read-only)",
-  currentPrivacyVersion: (version: string) => `App current privacy policy version: ${version}`,
-  currentConsentValidityDays: (days: number) => `App current consent validity (days): ${days}`,
-  storedPrivacyVersion: (version: string) => `Stored privacy policy version: ${version}`,
-  consentDate: (value: string) => `Consent date (raw): ${value}`,
-  outdatePrivacyVersion: "Outdate version",
-  consentOneYearAgo: "Set to one year ago",
-  resetForConsentFresh:
-    "Reset for consent fresh (clear consent data, turn off analytics & personalization)",
-  modalSection: "Expected modal on portfolio (home)",
-  modalGoToHome: "Open the portfolio home page to see the modal when it should appear.",
-  modal: {
-    noModalUserOk:
-      "No modal. Privacy policy version and consent date are fine: nothing to renew or re-acknowledge.",
-    noModalFeatureOff: "No modal. The analytics opt-in feature flag is off.",
-    noModalOnboarding: "No modal. Onboarding is not complete yet.",
-    fresh:
-      "First-time consent modal (consent fresh). Consent renewal is required (missing or invalid consent date) and Share analytics is off — e.g. no stored privacy ack / no consent date with analytics disabled.",
-    reconfirm:
-      "Reconfirm consent modal. Consent renewal is required and Share analytics is on — user gets the reconfirm / continue-or-stop flow instead of first-time copy.",
-    privacy:
-      "Privacy update modal. Stored privacy policy version is outdated (lower than the app), and consent renewal is not blocking — user sees the privacy-policy update step first.",
-  },
-} as const;
-
-const formatConsentDate = (value: string | null) => {
-  if (value === null) return "null";
-  if (value === "") return '""';
-  return value;
+const TONE_TEXT: Record<string, string> = {
+  error: "text-error",
+  warning: "text-warning",
+  success: "text-success",
+  gray: "text-muted",
 };
 
+function confirmAction(message: string): boolean {
+  return window.confirm(message);
+}
+
+function InspectorRow({ field }: Readonly<{ field: InspectorField }>) {
+  return (
+    <div className="flex min-w-0 flex-col gap-8 rounded-sm border border-muted p-12">
+      <div className="flex items-center justify-between gap-8">
+        <span className="body-2-semi-bold min-w-0 flex-1 text-base">{field.label}</span>
+        <Tag
+          label={field.status.label}
+          size="sm"
+          appearance={field.status.tone}
+          className="shrink-0"
+        />
+      </div>
+      <span className="body-2-semi-bold select-text text-base">{field.value}</span>
+      {field.raw ? <span className="body-3 select-text text-muted">{field.raw}</span> : null}
+    </div>
+  );
+}
+
+function ToggleRow({ field }: Readonly<{ field: ToggleField }>) {
+  return (
+    <div className="flex min-w-0 flex-col gap-8 rounded-sm border border-muted p-12">
+      <div className="flex items-center justify-between gap-8">
+        <span className="body-2-semi-bold min-w-0 flex-1 text-base">{field.label}</span>
+        <Tag
+          label={field.value ? "On" : "Off"}
+          size="sm"
+          appearance={field.value ? "success" : "gray"}
+          className="shrink-0"
+        />
+      </div>
+      <div className="flex justify-end">
+        <Switch name={field.label} selected={field.value} onChange={field.onChange} />
+      </div>
+      {field.note ? <span className="body-3 text-warning">{field.note}</span> : null}
+    </div>
+  );
+}
+
+function GroupLabel({
+  first,
+  meta,
+}: Readonly<{
+  first?: boolean;
+  meta: AnalyticsConsentOptInQaViewModel["scenariosByGroup"][number]["meta"];
+}>) {
+  return (
+    <div className={`mb-8 flex items-center gap-8 ${first ? "" : "mt-16"}`}>
+      <Tag label={meta.title} size="sm" appearance={meta.tone} />
+      <span className="body-3 flex-1 text-muted">{meta.hint}</span>
+    </div>
+  );
+}
+
 export function AnalyticsConsentOptInDevScreen() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const consentInfo = useSelector(analyticsConsentInfoSelector);
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
-  const analyticsOptInFeature = useFeature("analyticsOptIn");
-  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptInFeature);
-
-  const needsPrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
-  const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
-
-  const shouldOfferModal = Boolean(
-    analyticsOptInFeature?.enabled && hasCompletedOnboarding && (needsPrivacy || needsRenewal),
-  );
-
-  const modalPhaseIfOffered = resolveAnalyticsConsentPhase(
-    "closed",
-    needsRenewal,
-    needsPrivacy,
-    shareAnalytics,
-  );
-
-  const modalPreview = (() => {
-    if (!hasCompletedOnboarding) {
-      return { body: COPY.modal.noModalOnboarding, textClass: "text-muted" as const };
-    }
-    if (!analyticsOptInFeature?.enabled) {
-      return { body: COPY.modal.noModalFeatureOff, textClass: "text-muted" as const };
-    }
-    if (!shouldOfferModal) {
-      return { body: COPY.modal.noModalUserOk, textClass: "text-success" as const };
-    }
-    if (modalPhaseIfOffered === "consentReconfirm") {
-      return { body: COPY.modal.reconfirm, textClass: "text-interactive" as const };
-    }
-    if (modalPhaseIfOffered === "consentFresh") {
-      return { body: COPY.modal.fresh, textClass: "text-interactive" as const };
-    }
-    if (modalPhaseIfOffered === "privacy") {
-      return { body: COPY.modal.privacy, textClass: "text-interactive" as const };
-    }
-    return { body: COPY.modal.noModalUserOk, textClass: "text-success" as const };
-  })();
-
-  const onBack = () => {
-    navigate("/settings/developer");
-  };
-
-  const onPrivacyOutdated = () => {
-    dispatch(
-      DANGEROUSLY_setAnalyticsConsentInfoForQa({
-        privacyPolicyVersion: Math.max(0, policyVersion - 1),
-      }),
-    );
-  };
-
-  const onSetConsentOneYearAgo = () => {
-    const raw = consentInfo.consentDate;
-    const base = raw ? new Date(raw) : new Date();
-    const d = Number.isNaN(base.getTime()) ? new Date() : base;
-    d.setUTCFullYear(d.getUTCFullYear() - 1);
-    dispatch(
-      DANGEROUSLY_setAnalyticsConsentInfoForQa({
-        consentDate: d.toISOString(),
-        privacyPolicyVersion: consentInfo.privacyPolicyVersion,
-      }),
-    );
-  };
-
-  const onResetForConsentFresh = () => {
-    dispatch(DANGEROUSLY_resetAnalyticsOptInStateForQa());
-  };
+  const vm = useAnalyticsConsentOptInQaViewModel();
 
   return (
     <Box grow shrink className="p-8 pb-16">
+      {vm.isPreviewMounted ? <AnalyticsConsentDialog key={vm.previewKey} /> : null}
       <header className="mb-14 grid grid-cols-[1fr_auto_1fr] items-center gap-x-3 py-6">
         <div className="flex min-w-0 justify-start">
-          <Button size="sm" appearance="no-background" onClick={onBack} icon={ArrowLeft}>
-            {COPY.back}
+          <Button size="sm" appearance="no-background" onClick={vm.onBack} icon={ArrowLeft}>
+            Back
           </Button>
         </div>
         <span className="heading-2-semi-bold max-w-[min(100vw-8rem,28rem)] text-center text-base">
-          {COPY.title}
+          Analytics consent QA
         </span>
         <div aria-hidden className="min-w-0" />
       </header>
 
-      <Box className="mx-auto flex max-w-2xl flex-col gap-16 px-4">
-        <section className="flex flex-col gap-8">
-          <h2 className="body-2-semi-bold text-muted">{COPY.readSection}</h2>
-          <div className="flex flex-col gap-8">
-            <p className="body-2 leading-relaxed text-muted">
-              {COPY.currentPrivacyVersion(String(policyVersion))}
-            </p>
-            <p className="body-2 leading-relaxed text-muted">
-              {COPY.currentConsentValidityDays(consentValidityDays)}
-            </p>
-            <div className="flex flex-row flex-wrap items-center justify-between gap-10">
-              <span
-                className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
-                  needsPrivacy ? "text-error" : "text-success"
-                }`}
-              >
-                {COPY.storedPrivacyVersion(
-                  consentInfo.privacyPolicyVersion === null
-                    ? "null"
-                    : String(consentInfo.privacyPolicyVersion),
-                )}
-              </span>
-              <Button
-                className="shrink-0 self-center"
-                size="sm"
-                appearance="accent"
-                onClick={onPrivacyOutdated}
-              >
-                {COPY.outdatePrivacyVersion}
-              </Button>
+      <div className="mx-auto grid w-full max-w-5xl grid-cols-1 items-start gap-20 px-4 md:grid-cols-[minmax(20rem,28rem)_minmax(0,1fr)]">
+        <aside className="self-start md:sticky md:top-8">
+          <section className="rounded-xl bg-surface p-16">
+            <p className="body-3 mb-6 text-muted">What happens now?</p>
+            <h2 className={`heading-2-semi-bold mb-6 ${TONE_TEXT[vm.headlineTone] ?? "text-base"}`}>
+              {vm.headline}
+            </h2>
+            <p className="body-3 mb-14 text-muted">{vm.headlineHint}</p>
+
+            <div className="mb-14 flex flex-col gap-8">
+              <div className="flex flex-col gap-2">
+                <span className="body-3 text-muted">Reason</span>
+                <span className="body-2-semi-bold text-base">{vm.reasonLabel}</span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="body-3 text-muted">Analytics tracking</span>
+                <span
+                  className={`body-2-semi-bold ${vm.trackingEnabled ? "text-success" : "text-error"}`}
+                >
+                  {vm.trackingEnabled ? "On" : "Off"}
+                  {vm.trackingPausedUntilAnswered ? " · paused until answered" : ""}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-row flex-wrap items-center justify-between gap-10">
-              <span
-                className={`min-w-0 flex-1 body-2 font-medium leading-relaxed ${
-                  needsRenewal ? "text-error" : "text-success"
-                }`}
-              >
-                {COPY.consentDate(formatConsentDate(consentInfo.consentDate))}
-              </span>
+
+            <Divider />
+
+            <div className="mt-14 flex flex-col gap-6">
               <Button
-                className="shrink-0 self-center"
-                size="sm"
                 appearance="accent"
-                onClick={onSetConsentOneYearAgo}
+                size="sm"
+                disabled={!vm.isEligibleForDrawer}
+                onClick={vm.onPreviewDialog}
               >
-                {COPY.consentOneYearAgo}
+                Preview drawer
               </Button>
+              <p className="body-3 text-muted">{vm.previewHint}</p>
             </div>
+          </section>
+        </aside>
+
+        <section className="min-w-0 rounded-xl bg-surface p-16">
+          <div className="mb-14 flex items-center gap-8">
+            <div className="min-w-0 flex-1">
+              <SegmentedControl
+                selectedValue={vm.tab}
+                onSelectedChange={vm.setTab}
+                tabLayout="fit"
+                aria-label="Analytics consent QA sections"
+              >
+                <SegmentedControlButton value="scenarios">Scenarios</SegmentedControlButton>
+                <SegmentedControlButton value="inspect">Inspect</SegmentedControlButton>
+              </SegmentedControl>
+            </div>
+            <Button
+              appearance="no-background"
+              size="sm"
+              disabled={vm.isAlreadyReset}
+              onClick={() => {
+                if (
+                  confirmAction(
+                    "Clears saved consent and analytics preferences, and removes the local test override.",
+                  )
+                ) {
+                  vm.onResetAll();
+                }
+              }}
+            >
+              Reset all
+            </Button>
           </div>
-        </section>
 
-        <section className="mt-32 flex flex-col gap-6 border-t border-muted-subtle pt-14">
-          <h2 className="body-2-semi-bold text-muted">{COPY.modalSection}</h2>
-          <p className={`body-2 font-medium leading-relaxed ${modalPreview.textClass}`}>
-            {modalPreview.body}
-          </p>
-          <p className="body-3 leading-relaxed text-muted">{COPY.modalGoToHome}</p>
+          {vm.tab === "scenarios" ? (
+            <div>
+              {vm.scenariosByGroup.map(({ expected, meta, scenarios }, index) => (
+                <div key={expected}>
+                  <GroupLabel first={index === 0} meta={meta} />
+                  <div className="grid grid-cols-3 gap-8">
+                    {scenarios.map(scenario => (
+                      <button
+                        key={scenario.id}
+                        type="button"
+                        className="flex min-w-0 cursor-pointer flex-col gap-8 rounded-sm border border-muted bg-transparent p-12 text-left"
+                        onClick={() => {
+                          if (confirmAction(scenarioConfirmMessage(scenario))) {
+                            vm.applyScenario(scenario);
+                          }
+                        }}
+                      >
+                        <Tag label={meta.title} size="sm" appearance={meta.tone} />
+                        <span className="body-2-semi-bold text-base">{scenario.name}</span>
+                        <span className="body-3 text-muted">{scenario.summary}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-16">
+              <div>
+                <p className="body-3-semi-bold mb-6 text-muted">Stored on this device</p>
+                <div className="grid grid-cols-2 gap-8">
+                  {vm.storedFields.map(field => (
+                    <InspectorRow key={field.label} field={field} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="body-3-semi-bold mb-6 text-muted">From remote config</p>
+                <div className="grid grid-cols-2 gap-8">
+                  <ToggleRow
+                    field={{
+                      label: "Feature flag enabled",
+                      value: vm.featureEnabled,
+                      onChange: vm.overrideFlagEnabled,
+                    }}
+                  />
+                  <InspectorRow field={vm.policyVersionField} />
+                </div>
+              </div>
+              <div>
+                <p className="body-3-semi-bold mb-6 text-muted">User preferences</p>
+                <div className="grid grid-cols-2 gap-8">
+                  {vm.toggleFields.map(field => (
+                    <ToggleRow key={field.label} field={field} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
-
-        <section className="mt-32 flex flex-col gap-8">
-          <Button size="sm" appearance="red" onClick={onResetForConsentFresh}>
-            {COPY.resetForConsentFresh}
-          </Button>
-        </section>
-      </Box>
+      </div>
     </Box>
   );
 }

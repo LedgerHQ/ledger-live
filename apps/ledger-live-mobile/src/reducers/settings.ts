@@ -87,9 +87,9 @@ import type {
 } from "../actions/types";
 import { SettingsActionTypes } from "../actions/types";
 import {
-  needsConsentRenewal,
+  getAnalyticsConsentDecision,
   resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+} from "@features/flow-analytics-consent";
 
 const DEFAULT_COUNTERVALUE_TICKER = "USD";
 
@@ -799,14 +799,11 @@ export const trackingEnabledSelector = (state: State) => {
   const analyticsOptIn = state.featureFlags?.resolved?.analyticsOptIn;
   const analyticsOptInEnabled = analyticsOptIn?.enabled ?? false;
   if (analyticsOptInEnabled) {
-    const { consentDate } = settings.analyticsConsentInfo;
-
-    if (consentDate == null) {
-      return false;
-    }
-
-    const { consentValidityDays } = resolveAnalyticsOptInParams(analyticsOptIn);
-    if (needsConsentRenewal(consentDate, consentValidityDays)) {
+    const decision = getAnalyticsConsentDecision(
+      settings.analyticsConsentInfo,
+      resolveAnalyticsOptInParams(analyticsOptIn),
+    );
+    if (decision.kind === "renewal") {
       return false;
     }
   }

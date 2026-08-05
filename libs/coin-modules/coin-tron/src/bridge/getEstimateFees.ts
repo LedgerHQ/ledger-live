@@ -52,6 +52,9 @@ export const getFeeResourceBreakdown = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<FeeResourceBreakdown> => {
+  // TODO(LIVE-32776/LIVE-32892): when `transaction.energyProviderInfo` is set, augment energy
+  // availability with rented (sponsored) energy. Dormant for now.
+
   // Energy is only required for an actual TRC20 transfer — native/TRC10 use none, non-"send" modes
   // don't transfer, and a zero-amount non-max send is headed for AmountRequired. Compute it up front
   // so the network-failure path reports the "insufficient" sentinel only when energy is truly needed.
@@ -159,6 +162,9 @@ const computeActiveRecipientTrc20Fee = async (
   tokenAccount: TokenAccount,
   breakdown?: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
+  // TODO(LIVE-32776/LIVE-32892): when `transaction.energyProviderInfo` is set, price the send as
+  // energy-rented (sponsored) instead of burning TRX. Dormant for now.
+
   try {
     const resourceBreakdown =
       breakdown ?? (await getFeeResourceBreakdown(account, transaction, tokenAccount));

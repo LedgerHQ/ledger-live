@@ -292,6 +292,7 @@
   "fees" : {
     "advanced" : "Gelişmiş",
     "custom" : "Özel",
+    "defaultNetworkFee" : "Varsayılan ağ ücreti",
     "fast" : "Hızlı",
     "networkFees" : "Ağ ücretleri",
     "high" : "Yüksek",
@@ -540,7 +541,9 @@
       "zcash_title" : "Ledger Nano S™, Zcash takasını desteklemez",
       "zcash_description" : "Zcash takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "aleo_title" : "Ledger Nano S™, Aleo takasını desteklemez",
-      "aleo_description" : "Aleo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+      "aleo_description" : "Aleo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "aleo_tokens_title" : "Ledger Nano S™, Aleo token takasını desteklemez",
+      "aleo_tokens_description" : "Aleo token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -1387,10 +1390,6 @@
         "syncAccounts" : {
           "title" : "Cüzdanınızı senkronize edin",
           "description" : "Kripto hesaplarınızı senkronize tutun"
-        },
-        "customImage" : {
-          "title" : "Kilit ekranını kişiselleştirin",
-          "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin."
         },
         "discoverWallet" : {
           "title" : "Cüzdanınızla yapabileceklerinizi görün",
@@ -5459,11 +5458,6 @@
           "description" : "Ledger Wallet’ta kullanılan tüm animasyonları test edin",
           "longDesc" : "Bu, ekibin uygulamada kullanılan Lottie animasyonlarını doğrulaması için olduğu gibi sunulan bir araçtır."
         },
-        "testStories" : {
-          "title" : "Storyly hikâyeleri testi",
-          "description" : "Ledger Wallet’ta kullanılan tüm hikâyeleri test edin",
-          "longDesc" : "Bu, ekibin uygulamada kullanılan Storyly hikâyelerini doğrulaması için olduğu gibi sunulan bir araçtır."
-        },
         "testStaxPostonboarding" : {
           "title" : "Stax İlk Kurulum Sonrası testi",
           "description" : "Stax cihazınızda ilk kurulum sonrası tüm özellikleri test edin"
@@ -8283,11 +8277,6 @@
         "doThisLater" : "Belki sonra"
       }
     },
-    "postOnboarding" : {
-      "title" : "Kilit ekranını kişiselleştirin",
-      "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin.",
-      "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
-    },
     "customImageSet" : "Kilit ekranı kişiselleştirildi",
     "finishCTA" : "Kapat"
   },
@@ -8946,6 +8935,12 @@
     },
     "shielded" : {
       "send" : {
+        "modalTitle" : {
+          "transparent" : "Açık Gönderim",
+          "transparentToShielded" : "Açıktan Gizliye Gönderim",
+          "shieldedToTransparent" : "Gizliden Açığa Gönderim",
+          "shielded" : "Gizli Gönderim"
+        },
         "transferFrom" : {
           "label" : "Transfer kaynağı",
           "public" : {
@@ -8956,6 +8951,25 @@
             "title" : "Gizli bakiye",
             "subtitle" : "Korumalı",
             "unavailable" : "Gizli bakiye kullanılamıyor"
+          }
+        },
+        "memo" : {
+          "label" : "Memo (isteğe bağlı)",
+          "placeholder" : "Bir memo girin",
+          "tooltip" : "Bu korumalı işleme gizli bir mesaj ekleyin. Bunu yalnızca alıcı okuyabilir. En fazla 512 bayt."
+        },
+        "syncBanner" : {
+          "stopped" : {
+            "message" : "Gizli bakiye senkronize edilmedi",
+            "cta" : "Senkronizasyonu sürdür"
+          },
+          "running" : {
+            "message" : "Gizli bakiye senkronize ediliyor (%{{progress}})",
+            "timeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}"
+          },
+          "outdated" : {
+            "message" : "Bakiye güncel olmayabilir",
+            "cta" : "Bakiyeyi senkronize et"
           }
         }
       },
@@ -9048,10 +9062,10 @@
       }
     },
     "selfTransfer" : {
-      "headerAction" : "Kendine transfer",
+      "headerAction" : "Takas et",
       "headerActionTooltip" : "Kendinize transfer edebileceğiniz fonunuz bulunmuyor",
       "modal" : {
-        "title" : "Kendine transfer",
+        "title" : "Takas edin",
         "stepRecipient" : {
           "selectLabel" : "Transfer kaynağı"
         }
@@ -9305,13 +9319,35 @@
   "contacts" : {
     "title" : "Kişiler",
     "addContact" : "Kişi ekle",
+    "addAddress" : "Adres ekle",
+    "addContactDrawer" : {
+      "namePlaceholder" : "Kişi adı",
+      "namingDisclaimer" : "Gizlilik için ad ve soyadın tamamını kullanmaktan kaçının. Bir takma ad veya yalnızca ad+soyadın baş harfini kullanın, ör. \"John S\".",
+      "invalidNameError" : "Özel karakterlere izin verilmez."
+    },
     "searchPlaceholder" : "Kişi ara",
     "searchNoResults" : "Kişi bulunamadı",
+    "addressCount_zero" : "0 adres",
+    "addressCount_one" : "{{count}} adres",
+    "addressCount_other" : "{{count}} adres",
     "me" : {
-      "name" : "Ben",
-      "addressCount_zero" : "0 adres",
-      "addressCount_one" : "{{count}} adres",
-      "addressCount_other" : "{{count}} adres"
+      "name" : "Ben"
+    },
+    "detail" : {
+      "emptyState" : {
+        "meTitle" : "Sizin için kayıtlı adres bulunmuyor",
+        "contactTitle" : "{{name}} için kayıtlı adres bulunmuyor",
+        "meDescription" : "Bir sonraki işleminizde doğrudan isimle kripto almak için cüzdan adreslerinizi kaydedin.",
+        "contactDescription" : "Bir sonraki işleminizde doğrudan ismiyle kripto almak için cüzdan adresini kaydedin."
+      }
+    },
+    "addressDetail" : {
+      "send" : "Gönder",
+      "copy" : "Kopyala",
+      "copied" : "Kopyalandı",
+      "edit" : "Düzenle",
+      "delete" : "Sil",
+      "networkTag" : "{{name}} Ağı"
     },
     "ledgerSyncIntroduction" : {
       "description" : "Kişileriniz, Ledger cihazınız ile uçtan uca şifrelenir ve cihazlarınız arasında senkronize edilir; bunların kilidini yalnızca siz açabilirsiniz.",

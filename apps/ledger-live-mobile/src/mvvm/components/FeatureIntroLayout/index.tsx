@@ -54,12 +54,12 @@ export function FeatureIntroLayout({ onClose, viewModel }: FeatureIntroLayoutPro
       } catch {
         // TODO: track("malformed_url")
       } finally {
-        requestAnimationFrame(onClose);
+        requestAnimationFrame(() => onClose({ logDismiss: false }));
       }
       return;
     }
 
-    onClose();
+    onClose({ logDismiss: false });
   };
 
   return (

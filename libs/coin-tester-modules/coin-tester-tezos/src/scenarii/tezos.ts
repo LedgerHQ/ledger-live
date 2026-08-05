@@ -195,7 +195,9 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
     const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
     expect(undelegateOps.length).toBeGreaterThanOrEqual(1);
 
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(300);
+    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
+    // increment), independently of how the `minFees` floor compares to the suggested fee.
+    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
   },
 
   teardown: async () => {
@@ -284,7 +286,9 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
     const undelegateOps = account.operations.filter(op => op.type === "UNDELEGATE");
     expect(undelegateOps.length).toBe(1);
 
-    expect(account.balance.toNumber()).toBeLessThanOrEqual(300);
+    // Send-max leaves the dust margin behind (DUST_MARGIN_MUTEZ, less the fee-per-gas/op-size
+    // increment), independently of how the `minFees` floor compares to the suggested fee.
+    expect(account.balance.toNumber()).toBeLessThanOrEqual(500);
   },
 
   teardown: async () => {

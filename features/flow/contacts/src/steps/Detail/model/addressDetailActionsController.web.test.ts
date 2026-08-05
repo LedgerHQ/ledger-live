@@ -1,4 +1,5 @@
 import { ContactAddressIdSchema, ContactIdSchema } from "@domain/entity-contact";
+import { createMockContactSignerValidationPort } from "../../../platform/contactSignerValidationPort";
 import { createContactAddressDetailActionsController } from "./addressDetailActionsController";
 import type { ContactAddressDetailActionsPorts } from "./ports";
 
@@ -6,9 +7,13 @@ function createPorts(
   overrides: Partial<ContactAddressDetailActionsPorts> = {},
 ): ContactAddressDetailActionsPorts {
   return {
+    edit: {
+      renameAddressLabel: jest.fn(),
+    },
     deletion: {
       deleteAddress: jest.fn().mockResolvedValue(undefined),
     },
+    signerValidation: createMockContactSignerValidationPort(),
     ...overrides,
   };
 }

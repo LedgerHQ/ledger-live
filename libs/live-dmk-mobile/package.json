@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.29.0",
+  "version": "0.29.1",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -37,7 +37,7 @@
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-dmk-shared": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:^",
     "purify-ts": "^2.1.0",
     "@shared/env": "workspace:*"

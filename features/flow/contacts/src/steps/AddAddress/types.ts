@@ -40,7 +40,7 @@ export type AddAddressEntryState =
       value: string;
       resolvedAddress: null;
       inputMethod: AddAddressInputMethod;
-      error: "invalid_format" | "domain_not_found";
+      error: "invalid_format" | "domain_not_found" | "sanctioned";
     }>
   | Readonly<{
       status: "unavailable";
@@ -90,6 +90,11 @@ type NamedAddAddressSession = Omit<ConfirmedAddAddressSession, "addressLabel"> &
     addressLabel: ValidAddAddressLabelState;
   }>;
 
+export type AddAddressContactDetailTarget = Readonly<{
+  type: "contactDetail";
+  contactId: ContactId;
+}>;
+
 export type AddAddressFlowState =
   | Readonly<{ status: "closed" }>
   | Readonly<{
@@ -99,8 +104,17 @@ export type AddAddressFlowState =
     }>
   | (AddAddressSession & Readonly<{ status: "enteringAddress" }>)
   | (ConfirmedAddAddressSession & Readonly<{ status: "namingAddress" }>)
-  | (NamedAddAddressSession & Readonly<{ status: "reviewingAddress" }>)
-  | (NamedAddAddressSession & Readonly<{ status: "success" }>);
+  | (NamedAddAddressSession &
+      Readonly<{
+        status: "reviewingAddress";
+        origin: "addressDetails" | "addressName";
+      }>)
+  | (NamedAddAddressSession & Readonly<{ status: "confirmationRequired" }>)
+  | (NamedAddAddressSession &
+      Readonly<{
+        status: "success";
+        target?: AddAddressContactDetailTarget;
+      }>);
 
 export type AddAddressFlowViewModel = Readonly<{
   state: AddAddressFlowState;
@@ -109,8 +123,10 @@ export type AddAddressFlowViewModel = Readonly<{
   updateAddress: (address: string, inputMethod: AddAddressInputSource) => Promise<void>;
   updateAddressLabel: (label: string) => void;
   confirmAddress: () => void;
+  continueFromAddressDetails: () => void;
   continueFromName: () => void;
   continueFromReview: () => void;
+  completeMockConfirmation: () => void;
   goBack: () => void;
   close: () => void;
 }>;
@@ -123,8 +139,23 @@ export type AddAddressEntryLabels = Readonly<{
   validAddress: string;
   invalidAddress: string;
   domainNotFound: string;
+  sanctionedAddress: string;
   validationUnavailable: string;
   ensDisclaimer: string;
+}>;
+
+export type AddAddressNameLabels = Readonly<{
+  title: string;
+  inputLabel: string;
+  namingDisclaimer: string;
+  continueToReview: string;
+  validationErrors: Readonly<Record<ContactAddressLabelValidationErrorName, string>>;
+}>;
+export type AddAddressCompletionLabels = Readonly<{
+  title: string;
+  continue: string;
+  successTitle: string;
+  close: string;
 }>;
 
 export type AddAddressPlaceholderViewProps = Readonly<{

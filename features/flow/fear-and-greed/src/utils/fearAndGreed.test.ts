@@ -51,7 +51,9 @@ describe("Fear and Greed utils", () => {
       { value: 70, level: "greed", color: "success" },
       { value: 90, level: "greedPlus", color: "success" },
     ])("should return $color for value $value ($level)", ({ value, level, color }) => {
-      expect(getFearAndGreedColorKey(value)).toBe(FEAR_AND_GREED_COLORS[level as FearAndGreedLevel]);
+      expect(getFearAndGreedColorKey(value)).toBe(
+        FEAR_AND_GREED_COLORS[level as FearAndGreedLevel],
+      );
       expect(getFearAndGreedColorKey(value)).toBe(color);
     });
   });

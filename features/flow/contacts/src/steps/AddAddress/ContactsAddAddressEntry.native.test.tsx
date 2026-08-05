@@ -12,6 +12,7 @@ const labels: AddAddressEntryLabels = {
   validAddress: "Valid address",
   invalidAddress: "Invalid address",
   domainNotFound: "No address found for this domain",
+  sanctionedAddress: "This address is sanctioned and cannot be used.",
   validationUnavailable: "Address validation is unavailable",
   ensDisclaimer: "ENS names resolve to wallet addresses.",
 };
@@ -137,6 +138,36 @@ describe("ContactsAddAddressEntry", () => {
     expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
   });
 
+  it("should render the sanctioned banner without a redundant helper", () => {
+    render(
+      <ContactsAddAddressEntry
+        addressEntry={{
+          status: "invalid",
+          value: VALID_ADDRESS,
+          resolvedAddress: null,
+          inputMethod: "manual",
+          error: "sanctioned",
+        }}
+        labels={labels}
+        sanctionedAddressBanner={{
+          description: "This wallet address is sanctioned.",
+          actionLabel: "Learn more",
+          onAction: jest.fn(),
+        }}
+        onChangeText={jest.fn()}
+        onConfirm={jest.fn()}
+        onQrCodeClick={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("contacts-add-address-input").props).toMatchObject({
+      helperText: undefined,
+      status: "error",
+    });
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
+    expect(screen.getByTestId("contacts-add-address-confirm").props.disabled).toBe(true);
+  });
+
   it("should render a valid address with confirmation enabled", () => {
     const { onConfirm } = renderEntry({
       status: "valid",
@@ -159,6 +190,7 @@ describe("ContactsAddAddressEntry", () => {
   it.each([
     ["invalid_format", "Invalid address"],
     ["domain_not_found", "No address found for this domain"],
+    ["sanctioned", "This address is sanctioned and cannot be used."],
   ] as const)("should render the %s error", (error, expectedMessage) => {
     renderEntry({
       status: "invalid",

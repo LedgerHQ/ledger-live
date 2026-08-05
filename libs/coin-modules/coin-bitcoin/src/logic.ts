@@ -13,11 +13,11 @@ import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "@ledgerhq/wallet-btc/index";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
-const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
+const minFees: Partial<Record<string, number>> = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
   qtum: 4000,
@@ -117,9 +117,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Partial<
-  Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", CoinLogic>
-> = {
+export const perCoinLogic: Partial<Record<string, CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
@@ -192,7 +190,7 @@ export function inferTransactionSequenceNumberFromInputs(
 
 export const mapTxToOperations = (
   tx: TX,
-  currencyId: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
+  currencyId: string,
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,

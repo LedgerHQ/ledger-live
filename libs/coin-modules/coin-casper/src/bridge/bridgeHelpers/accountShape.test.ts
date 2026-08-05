@@ -1,12 +1,12 @@
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../api/index";
+import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../network/api";
 import { createMockAccountShapeData } from "../../test/fixtures";
 import { getAccountShape } from "./accountShape";
 import { mapTxToOps } from "./txn";
 
 // Mock dependencies
-jest.mock("../../api/index");
+jest.mock("../../network/api");
 jest.mock("./txn");
 
 describe("getAccountShape", () => {

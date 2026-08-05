@@ -1,8 +1,4 @@
-import {
-  needsConsentRenewal,
-  needsPrivacyPolicyAck,
-  resolveAnalyticsOptInParams,
-} from "@ledgerhq/live-common/analyticsConsent/index";
+import { useAnalyticsConsentDecision } from "@features/flow-analytics-consent";
 import { isGenericAwarenessModalContentCardReady } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
@@ -28,7 +24,8 @@ export function useCompetingAppStartModalsPresent(): boolean {
 
   const productTourFlag = useFeature("lwmProductTour");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
-  const analyticsOptInFlag = useFeature("analyticsOptIn");
+  const { isFeatureEnabled: isAnalyticsOptInEnabled, decision: analyticsConsentDecision } =
+    useAnalyticsConsentDecision(analyticsConsentInfo);
 
   const hasProductTourCompeting = Boolean(
     productTourFlag?.enabled && hasCompletedOnboarding && !productTourCompleted,
@@ -42,14 +39,8 @@ export function useCompetingAppStartModalsPresent(): boolean {
     ),
   );
 
-  const { consentValidityDays, policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFlag);
-
-  const hasAnalyticsConsentCompeting = Boolean(
-    analyticsOptInFlag?.enabled &&
-    hasCompletedOnboarding &&
-    (needsPrivacyPolicyAck(analyticsConsentInfo.privacyPolicyVersion, policyVersion) ||
-      needsConsentRenewal(analyticsConsentInfo.consentDate, consentValidityDays)),
-  );
+  const hasAnalyticsConsentCompeting =
+    isAnalyticsOptInEnabled && hasCompletedOnboarding && analyticsConsentDecision.kind !== "none";
 
   return (
     isBackupHubFeatureIntroOpen ||

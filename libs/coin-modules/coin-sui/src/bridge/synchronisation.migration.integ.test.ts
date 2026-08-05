@@ -1,6 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl, type StakeObject } from "@mysten/sui/jsonRpc";
 import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
@@ -24,7 +23,7 @@ beforeAll(() => {
     findTokenByAddressInCurrency: async () => undefined,
     findTokenById: async () => undefined,
     getTokensSyncHash: async () => "0",
-  } as unknown as CryptoAssetsStore);
+  });
 });
 
 const SHAPE_INFO = {

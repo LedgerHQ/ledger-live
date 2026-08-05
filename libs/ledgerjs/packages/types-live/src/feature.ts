@@ -129,7 +129,6 @@ export type CurrencyFeatures = {
   currencyBlast: DefaultFeature;
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
-  currencyScrollSepolia: DefaultFeature;
   currencyShape: DefaultFeature;
   currencyStory: DefaultFeature;
   currencyIcon: DefaultFeature;

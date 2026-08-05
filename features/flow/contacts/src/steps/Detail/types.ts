@@ -68,6 +68,11 @@ export type ContactDetailLabels = Readonly<{
   formatAddressCount: (count: number) => string;
 }>;
 
+export type ContactDetailActionsLabels = Readonly<{
+  editContact: string;
+  deleteContact: string;
+}>;
+
 export type ContactDetailViewProps = Readonly<{
   contact: Contact;
   labels: ContactDetailLabels;
@@ -76,6 +81,12 @@ export type ContactDetailViewProps = Readonly<{
   onOpenLedgerWalletAddresses?: () => void;
   addressGroups?: readonly ContactDetailAddressNetworkGroup[];
   onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
+  detailActions?: Readonly<{
+    canDelete: boolean;
+    labels: ContactDetailActionsLabels;
+    onEdit: () => void;
+    onDelete: () => void;
+  }>;
 }>;
 
 export type ContactAddressDetailAsset = Readonly<{
@@ -112,6 +123,7 @@ export type ContactAddressDetailEditIntent = Readonly<{
   type: "edit-address";
   contactId: ContactId;
   addressId: ContactAddressId;
+  editRequirement: ContactEditRequirement;
 }>;
 
 export type ContactAddressDetailDeleteIntent = Readonly<{
@@ -131,4 +143,5 @@ export type ContactAddressDetailActionsViewModel = Readonly<{
   editIntent: ContactAddressDetailEditIntent | undefined;
   deleteIntent: ContactAddressDetailDeleteIntent;
   deleteLifecycle: ContactAddressDeleteLifecycle;
+  isSignerRequiredForEdit: boolean;
 }>;

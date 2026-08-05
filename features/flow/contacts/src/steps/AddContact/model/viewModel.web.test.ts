@@ -1,4 +1,8 @@
-import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import {
+  ContactNameSchema,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import { createAddContactViewModel } from "./viewModel";
 
 describe("createAddContactViewModel", () => {
@@ -25,6 +29,13 @@ describe("createAddContactViewModel", () => {
       draftName: "Olive2",
       avatarInitial: "O",
       invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
+      isSaveEnabled: false,
+    });
+  });
+
+  it("disables save for a normalized duplicate name", () => {
+    expect(createAddContactViewModel(" ada ", [ContactNameSchema.parse("Ada")])).toMatchObject({
+      invalidNameError: DUPLICATE_CONTACT_NAME_ERROR_NAME,
       isSaveEnabled: false,
     });
   });

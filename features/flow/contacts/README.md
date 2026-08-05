@@ -32,16 +32,16 @@ After a successful selection, the session retains the selected contact and final
 identifiers and moves to `enteringAddress`. It also retains the selected contact's existing address
 labels so the naming step can reject a duplicate for that contact. Labels are compared after
 trimming, Unicode normalization, and case folding, while the user's casing is preserved for the
-saved value. An empty label has no validation error but cannot continue. The `AddAddress` step owns
+saved value. Native address-label input is limited to 32 characters. An empty label has no validation error but cannot continue. The `AddAddress` step owns
 its injected validation port, currency and token resolution, domain orchestration, input methods,
 asynchronous validation state, resolved-address storage, and stale-result protection. Consuming
 apps adapt coin bridges, domain services, token stores, and other app-owned or platform-specific
 integrations.
 
-The native Add Address views render the shared address-entry states and temporary Name, Validation,
-and Success steps as composable Lumen bottom-sheet content. The Flow owns their order, back
-transitions, resolved-address session and valid-only confirmation. Mobile owns the single queued
-bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
+The native Add Address views render the shared address-entry and address-name states plus temporary
+Validation and Success steps as composable Lumen bottom-sheet content. The Flow owns their order,
+back transitions, resolved-address session and valid-only confirmation. Mobile owns the single
+queued bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
 routing and safe-area inset. Native paste events are classified without reading the clipboard
 proactively, while manual validation can be debounced without delaying paste or QR validation.
 

@@ -59,14 +59,21 @@ function resolveAddressInputPresentation(
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: true,
       };
-    case "invalid":
+    case "invalid": {
+      let helperText = labels.invalidAddress;
+      if (addressEntry.error === "domain_not_found") {
+        helperText = labels.domainNotFound;
+      } else if (addressEntry.error === "sanctioned") {
+        helperText = labels.sanctionedAddress;
+      }
+
       return {
         status: "error",
-        helperText:
-          addressEntry.error === "domain_not_found" ? labels.domainNotFound : labels.invalidAddress,
+        helperText,
         showEnsDisclaimer: addressEntry.inputMethod === "ens",
         isConfirmEnabled: false,
       };
+    }
     case "unavailable":
       return {
         status: "error",
@@ -80,12 +87,17 @@ function resolveAddressInputPresentation(
 export function useContactsAddAddressEntryViewModel({
   addressEntry,
   labels,
+  sanctionedAddressBanner,
   bottomOffset = 0,
   onChangeText,
   onConfirm,
   onQrCodeClick,
 }: ContactsAddAddressEntryProps): ContactsAddAddressEntryViewProps {
   const presentation = resolveAddressInputPresentation(addressEntry, labels);
+  const shouldShowSanctionedAddressBanner =
+    addressEntry.status === "invalid" &&
+    addressEntry.error === "sanctioned" &&
+    sanctionedAddressBanner !== undefined;
   const onAddressChange = useCallback(
     (value: string) => {
       const inputMethod =
@@ -101,7 +113,10 @@ export function useContactsAddAddressEntryViewModel({
     bottomOffset,
     bottomPadding: 32,
     inputStatus: presentation.status,
-    helperText: presentation.helperText,
+    helperText: shouldShowSanctionedAddressBanner ? undefined : presentation.helperText,
+    sanctionedAddressBanner: shouldShowSanctionedAddressBanner
+      ? sanctionedAddressBanner
+      : undefined,
     showEnsDisclaimer: presentation.showEnsDisclaimer,
     isConfirmEnabled: presentation.isConfirmEnabled,
     onAddressChange,

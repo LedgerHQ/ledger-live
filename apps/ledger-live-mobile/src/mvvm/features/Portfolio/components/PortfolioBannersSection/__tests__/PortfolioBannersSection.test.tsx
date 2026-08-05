@@ -29,7 +29,9 @@ const baseViewModel = {
   shouldShowOnboardingWidget: false,
   contentCardsPaddingTop: undefined,
   hasAssets: false,
+  hasTopWalletDisplayableCards: false,
   shouldDisplayRecover: false,
+  canCoexistWithBraze: false,
   onScroll: jest.fn(),
   carouselIndex: 0,
 };
@@ -57,6 +59,25 @@ describe("PortfolioBannersSection", () => {
     expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
     expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
+    expect(screen.queryByTestId("mock-content-cards")).toBeNull();
+  });
+
+  it("coexists upsell and Braze content cards when both are available", () => {
+    mockUseViewModel.mockReturnValue({
+      ...baseViewModel,
+      hasAssets: true,
+      hasTopWalletDisplayableCards: true,
+      canCoexistWithBraze: true,
+    });
+    renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+
+    expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+    expect(MockContentCardsLocation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        leadingSlide: expect.anything(),
+      }),
+      undefined,
+    );
   });
 
   describe("when user has assets and onboarding is hidden", () => {
@@ -64,6 +85,7 @@ describe("PortfolioBannersSection", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         hasAssets: true,
+        hasTopWalletDisplayableCards: true,
         shouldDisplayRecover: true,
       });
     });
@@ -72,6 +94,19 @@ describe("PortfolioBannersSection", () => {
       renderSection({ showAssets: true });
       expect(screen.getByTestId("mock-recover-banner")).toBeVisible();
       expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+    });
+
+    it("keeps LN upsell exclusive over Recover when both would show with Braze cards", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        hasAssets: true,
+        hasTopWalletDisplayableCards: true,
+        shouldDisplayRecover: true,
+      });
+      renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+      expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+      expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
     });
 
     it("does not render onboarding or the carousel page indicator", () => {
@@ -84,11 +119,23 @@ describe("PortfolioBannersSection", () => {
       mockUseViewModel.mockReturnValue({
         ...baseViewModel,
         hasAssets: true,
+        hasTopWalletDisplayableCards: true,
         shouldDisplayRecover: false,
       });
       renderSection({ showAssets: true });
       expect(screen.getByTestId("mock-content-cards")).toBeVisible();
       expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+    });
+
+    it("renders upsell alone when assets are shown but TopWallet has no cards", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        hasAssets: true,
+        hasTopWalletDisplayableCards: false,
+      });
+      renderSection({ isLNUpsellBannerShown: true, showAssets: true });
+      expect(screen.getByTestId("mock-ln-banner")).toBeVisible();
+      expect(screen.queryByTestId("mock-content-cards")).toBeNull();
     });
   });
 

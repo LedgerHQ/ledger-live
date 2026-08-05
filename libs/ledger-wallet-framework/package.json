@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -103,7 +103,7 @@
     "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
@@ -115,7 +115,8 @@
     "lodash": "^4.17.21",
     "prando": "^6.0.1",
     "rxjs": "catalog:",
-    "uuid": "11.1.0"
+    "uuid": "11.1.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@domain/entity-currency-crypto": "workspace:^",

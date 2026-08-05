@@ -5,12 +5,12 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalance,
-  NotEnoughBalanceToDelegate,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import coinConfig from "../config";
 import {
   InvalidAddressBecauseAlreadyDelegated,
   MustDelegateBeforeStaking,
+  NotEnoughBalanceToDelegate,
   TezosNotEnoughStaked,
   TezosStakeBlockedByPendingUnstake,
 } from "../types/errors";

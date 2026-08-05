@@ -1,8 +1,6 @@
-import {
-  FIFTEEN_MINUTES_IN_MS,
-  useGetAltcoinSeasonIndexLatestQuery,
-} from "@domain/api-altcoins-sentiment";
+import { useGetAltcoinSeasonIndexLatestQuery } from "@domain/api-altcoins-sentiment";
 import { track } from "~/renderer/analytics/segment";
+import { ALT_SEASON_INDEX_REFRESH_INTERVAL_MS } from "../constants";
 
 const getAltSeasonTranslationKey = (value: number) =>
   value < 50
@@ -11,7 +9,7 @@ const getAltSeasonTranslationKey = (value: number) =>
 
 export const useAltSeasonIndexViewModel = () => {
   const { data, isError, isLoading } = useGetAltcoinSeasonIndexLatestQuery(undefined, {
-    pollingInterval: FIFTEEN_MINUTES_IN_MS,
+    pollingInterval: ALT_SEASON_INDEX_REFRESH_INTERVAL_MS,
   });
 
   const onClick = () => {

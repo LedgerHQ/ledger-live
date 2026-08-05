@@ -3025,6 +3025,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "FINALIZE_UNSTAKE": "Unstaked",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Stake increased",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
@@ -9509,12 +9511,12 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade to any touchscreen signer and get 20% off.",
+      "description": "Upgrade and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
       "title": "More security. More control",
-      "description": "Learn more about advanced security features.",
+      "description": "Learn more about security features.",
       "cta": "Learn more"
     }
   },
@@ -10193,7 +10195,8 @@
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
       "confirmName": "Confirm name",
-      "invalidNameError": "Special characters are not allowed."
+      "invalidNameError": "Special characters are not allowed.",
+      "duplicateNameError": "This contact name is already in use."
     },
     "addAddressEntry": {
       "title": "Enter address",
@@ -10203,13 +10206,22 @@
       "validAddress": "Valid address",
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
+      "sanctionedAddress": "This address is sanctioned and cannot be used.",
+      "sanctioned": {
+        "description": "This wallet address is sanctioned by international laws and regulations.",
+        "learnMore": "Learn more"
+      },
       "validationUnavailable": "Address validation is temporarily unavailable",
       "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
     },
-    "addAddressFlow": {
-      "name": "Name",
-      "review": "Validation",
-      "success": "Success"
+    "addAddressName": {
+      "title": "Name address",
+      "inputLabel": "Address name",
+      "namingDisclaimer": "We recommend giving this address a name to easily find it when needed. It will be only visible by you.",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "labelTooLong": "This address name is too long."
     },
     "addressCount_zero": "0 address",
     "addressCount_one": "{{count}} address",
@@ -10239,6 +10251,32 @@
       "share": "Share",
       "delete": "Delete",
       "networkTag": "{{name}} Network"
+    },
+    "detailActions": {
+      "editName": "Edit name",
+      "deleteContact": "Delete contact",
+      "menuAccessibilityLabel": "Contact options"
+    },
+    "editContact": {
+      "title": "Edit contact",
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "confirmName": "Confirm name",
+      "applyChanges": "Apply changes",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "deleteContact": {
+      "title": "Delete contact?",
+      "description": "Deleting this contact will erase all associated addresses.",
+      "mobileDescription": "Removing this contact will erase all associated addresses.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editSigner": {
+      "title": "Confirm on your device",
+      "description": "Connect and unlock your Ledger device to confirm this change.",
+      "confirm": "Continue",
+      "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
       "title": "Turn on Ledger Sync to save contacts",

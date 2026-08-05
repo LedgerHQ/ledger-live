@@ -33,7 +33,7 @@ export class CoinFrameworkAdapter {
     const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
 
     const tokenBalances = await Promise.all(
-      tokenAssets.map(async ({ asset, value }) => {
+      tokenAssets.map(async ({ asset, value }): Promise<Balance | null> => {
         const token = await bridgeApi.getTokenFromAsset?.(asset);
         if (!token) return null;
         return { assetId: token.id, balance: BigNumberStrSchema.parse(String(value)) };

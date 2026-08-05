@@ -1,4 +1,5 @@
 import { isCooldownElapsed } from "../internal/isCooldownElapsed";
+import { resolveOnboardingDateForUpsell } from "../internal/legacyOnboardingDate";
 import type {
   LargeScreenUpsellContext,
   LargeScreenUpsellDecision,
@@ -77,7 +78,7 @@ export function getLargeScreenUpsellDecision(
     enabledSeenNanoModelIds,
     cooldownDays,
   );
-  const onboardingDateForEligibility = onboardingDate ?? now;
+  const onboardingDateForEligibility = resolveOnboardingDateForUpsell(onboardingDate);
 
   if (
     !isCooldownElapsed({

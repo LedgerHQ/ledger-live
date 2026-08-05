@@ -96,6 +96,8 @@ Object.defineProperty(window, "matchMedia", {
 
 jest.mock("@ledgerhq/react-ui/assets/fonts", () => ({}));
 
+jest.mock("@braze/web-sdk", () => require("tests/mocks/brazeWebSdk").getBrazeWebSdkJestMock());
+
 class WorkerMock {
   constructor(stringUrl) {
     this.url = stringUrl;

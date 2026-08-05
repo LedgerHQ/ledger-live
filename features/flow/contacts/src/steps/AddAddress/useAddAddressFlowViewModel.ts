@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
   getContactAddressLabelValidationError,
   parseContactAddressLabel,
   type ContactAddress,
@@ -73,6 +74,10 @@ function createAddressLabelState(
   };
 }
 
+function limitAddressLabelLength(value: string): string {
+  return value.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH);
+}
+
 function resolveAddressEntryState(
   value: string,
   inputMethod: AddAddressInputSource,
@@ -88,13 +93,15 @@ function resolveAddressEntryState(
       };
     case "invalid_format":
     case "domain_not_found":
+    case "sanctioned":
       return {
         status: "invalid",
         value,
         resolvedAddress: null,
         inputMethod:
           result.status === "domain_not_found" ||
-          (result.status === "invalid_format" && result.isDomain)
+          ((result.status === "invalid_format" || result.status === "sanctioned") &&
+            result.isDomain)
             ? "ens"
             : inputMethod,
         error: result.status,
@@ -187,7 +194,7 @@ export function useAddAddressFlowViewModel({
           selectedCurrencyId: selection.currencyId,
           addressEntry: EMPTY_ADD_ADDRESS_ENTRY_STATE,
           addressLabel: createAddressLabelState(
-            selection.assetDisplayName,
+            limitAddressLabelLength(selection.assetDisplayName),
             currentState.existingAddressLabels,
           ),
         };
@@ -251,13 +258,16 @@ export function useAddAddressFlowViewModel({
   );
   const updateAddressLabel = useCallback((value: string) => {
     setState(currentState => {
-      if (currentState.status !== "namingAddress") {
+      if (currentState.status !== "enteringAddress" && currentState.status !== "namingAddress") {
         return currentState;
       }
 
       return {
         ...currentState,
-        addressLabel: createAddressLabelState(value, currentState.existingAddressLabels),
+        addressLabel: createAddressLabelState(
+          limitAddressLabelLength(value),
+          currentState.existingAddressLabels,
+        ),
       };
     });
   }, []);
@@ -288,7 +298,7 @@ export function useAddAddressFlowViewModel({
       }
 
       return {
-        status: "reviewingAddress",
+        status: "confirmationRequired",
         selectedContactId: currentState.selectedContactId,
         existingAddressLabels: currentState.existingAddressLabels,
         selectedCurrencyId: currentState.selectedCurrencyId,
@@ -297,10 +307,49 @@ export function useAddAddressFlowViewModel({
       };
     });
   }, []);
+  const continueFromAddressDetails = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      if (
+        currentState.status !== "enteringAddress" ||
+        currentState.addressEntry.status !== "valid" ||
+        currentState.addressLabel.status !== "valid"
+      ) {
+        return currentState;
+      }
+
+      return {
+        status: "reviewingAddress",
+        selectedContactId: currentState.selectedContactId,
+        existingAddressLabels: currentState.existingAddressLabels,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+        addressLabel: currentState.addressLabel,
+        origin: "addressDetails",
+      };
+    });
+  }, [cancelAddressValidation]);
   const continueFromReview = useCallback(() => {
+    setState(currentState => {
+      if (currentState.status !== "reviewingAddress") {
+        return currentState;
+      }
+
+      const { origin, ...session } = currentState;
+      return { ...session, status: "success" };
+    });
+  }, []);
+  const completeMockConfirmation = useCallback(() => {
     setState(currentState =>
-      currentState.status === "reviewingAddress"
-        ? { ...currentState, status: "success" }
+      currentState.status === "confirmationRequired"
+        ? {
+            ...currentState,
+            status: "success",
+            target: {
+              type: "contactDetail",
+              contactId: currentState.selectedContactId,
+            },
+          }
         : currentState,
     );
   }, []);
@@ -320,7 +369,13 @@ export function useAddAddressFlowViewModel({
           };
         case "namingAddress":
           return { ...currentState, status: "enteringAddress" };
-        case "reviewingAddress":
+        case "reviewingAddress": {
+          const { origin, ...session } = currentState;
+          return origin === "addressDetails"
+            ? { ...session, status: "enteringAddress" }
+            : { ...session, status: "namingAddress" };
+        }
+        case "confirmationRequired":
           return { ...currentState, status: "namingAddress" };
         case "success":
           return currentState;
@@ -340,8 +395,10 @@ export function useAddAddressFlowViewModel({
     updateAddress,
     updateAddressLabel,
     confirmAddress,
+    continueFromAddressDetails,
     continueFromName,
     continueFromReview,
+    completeMockConfirmation,
     goBack,
     close,
   };

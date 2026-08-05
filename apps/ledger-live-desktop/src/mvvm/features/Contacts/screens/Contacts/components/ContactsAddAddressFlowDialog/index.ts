@@ -1,2 +1,2 @@
 export { ContactsAddAddressFlowDialog } from "./ContactsAddAddressFlowDialog";
-export type { ContactsAddAddressFlowDialogProps } from "./types";
+export type { ContactsAddAddressFlowDialogProps, ContactsAddAddressReviewLabels } from "./types";

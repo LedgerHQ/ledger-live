@@ -44,15 +44,3 @@ export const PersistedCALSchema = z.object({
   /** Mapping of currencyId to its `X-Ledger-Commit` hash. */
   hashes: z.record(z.string(), z.string()).optional(),
 });
-
-/**
- * Thunk `extraArgument` contract for the CAL token api. The app supplies the resolved CAL service
- * URL, client version and an optional logger at store configuration time, so this package owns no
- * env/config/logging dependency. The app picks the prod or staging URL — there is no staging switch
- * in here.
- */
-export const CalApiExtraSchema = z.object({
-  calServiceUrl: z.string().min(1),
-  ledgerClientVersion: z.string().min(1),
-  logger: z.custom<(...args: unknown[]) => void>().optional(),
-});

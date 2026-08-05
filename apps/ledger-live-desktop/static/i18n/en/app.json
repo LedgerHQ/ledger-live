@@ -205,6 +205,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "FINALIZE_UNSTAKE": "Withdrawn",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Stake increased",
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
@@ -5036,10 +5038,6 @@
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
       },
-      "analyticsConsentOptInQa": {
-        "rowTitle": "Analytics opt-in consent (QA)",
-        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
-      },
       "devTools": {
         "rowTitle": "DevTools",
         "rowDesc": "Open the DevTools shell (feature flags and dev tools panel)."
@@ -5511,7 +5509,7 @@
       },
       "tokenBlacklist": {
         "title": "Hidden tokens",
-        "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
+        "desc": "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count": "1 token",
         "count_other": "{{count}} tokens"
       },
@@ -8601,12 +8599,12 @@
   },
   "lnsUpsellMediaBanner": {
     "opted_in": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "Get an exclusive 20% off on the latest Ledger signers."
+      "title": "See more. Sign safer",
+      "description": "Upgrade and get 20% off."
     },
     "opted_out": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+      "title": "More security. More control",
+      "description": "Learn more about security features."
     }
   },
   "largeScreenUpsellModal": {
@@ -9302,13 +9300,28 @@
       "validAddress": "Valid address",
       "invalidAddress": "Invalid address",
       "domainNotFound": "Domain not found",
+      "sanctionedAddress": "This address is sanctioned and cannot be used.",
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "This ENS name resolves to the address shown above."
+    },
+    "addAddressName": {
+      "inputLabel": "Address name",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "tooLongLabel": "Address names must be 32 characters or fewer."
+    },
+    "addAddressReview": {
+      "title": "Review address",
+      "continue": "Confirm address",
+      "successTitle": "Address saved",
+      "close": "Close"
     },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      "invalidNameError": "Special characters are not allowed."
+      "invalidNameError": "Special characters are not allowed.",
+      "duplicateNameError": "This contact name is already in use."
     },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
@@ -9334,6 +9347,29 @@
       "edit": "Edit",
       "delete": "Delete",
       "networkTag": "{{name}} Network"
+    },
+    "detailActions": {
+      "editContact": "Edit contact",
+      "deleteContact": "Delete contact"
+    },
+    "editContact": {
+      "title": "Edit contact",
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges": "Apply changes",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "deleteContact": {
+      "title": "Delete contact?",
+      "description": "Deleting this contact will erase all associated addresses.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editSigner": {
+      "title": "Confirm on your device",
+      "description": "Connect and unlock your Ledger device to confirm this change.",
+      "confirm": "Continue",
+      "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
