@@ -1,13 +1,10 @@
 import { SwapQuotesRequestFailed } from "../../../../errors";
-import { makeQuotesInput } from "../fixtures/quotesInput";
-import { makeRawQuote, makeRawQuoteError } from "../fixtures/rawQuotes";
+import { makeQuotesInput, makeRawQuote, makeRawQuoteError } from "@domain/api-swap-quotes/fixtures";
+import { log } from "@ledgerhq/logs";
 import { swapQuotesApi } from "../state-manager/api";
-import { getSwapQuotesDispatch } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
 
-jest.mock("../state-manager/store", () => ({
-  getSwapQuotesDispatch: jest.fn(),
-}));
+jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 jest.mock("../state-manager/api", () => ({
   swapQuotesApi: {
@@ -19,8 +16,8 @@ jest.mock("../state-manager/api", () => ({
   },
 }));
 
-const getSwapQuotesDispatchMock = jest.mocked(getSwapQuotesDispatch);
 const initiateMock = jest.mocked(swapQuotesApi.endpoints.fetchQuotes.initiate);
+const logMock = jest.mocked(log);
 
 const DISPATCH_OPTIONS = { forceRefetch: true };
 
@@ -33,19 +30,18 @@ function makeArgs(): Parameters<typeof fetchQuotes>[0] {
 
 describe("fetchQuotes", () => {
   let unsubscribe: jest.Mock;
+  let dispatch: jest.Mock;
 
   // `fetchQuotes` unsubscribes the query promise once settled, so the stub has
   // to carry `unsubscribe`.
   function mockResult(result: unknown) {
-    getSwapQuotesDispatchMock.mockReturnValue(
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      jest.fn(() => Object.assign(Promise.resolve(result), { unsubscribe })) as never,
-    );
+    dispatch = jest.fn(() => Object.assign(Promise.resolve(result), { unsubscribe }));
   }
 
   beforeEach(() => {
     jest.clearAllMocks();
     unsubscribe = jest.fn();
+    dispatch = jest.fn();
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     initiateMock.mockImplementation(((arg: unknown) => ({ arg })) as never);
   });
@@ -55,7 +51,7 @@ describe("fetchQuotes", () => {
     const providerErrors = [makeRawQuoteError()];
     mockResult({ data: { rawQuotes, providerErrors } });
 
-    const result = await fetchQuotes(makeArgs(), "usd");
+    const result = await fetchQuotes(makeArgs(), "usd", dispatch as never);
 
     expect(result).toEqual({ rawQuotes, providerErrors });
     expect(initiateMock).toHaveBeenCalledWith(
@@ -74,7 +70,7 @@ describe("fetchQuotes", () => {
   it("releases the cache subscription once the request settles", async () => {
     mockResult({ data: { rawQuotes: [], providerErrors: [] } });
 
-    await fetchQuotes(makeArgs(), "usd");
+    await fetchQuotes(makeArgs(), "usd", dispatch as never);
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
@@ -82,7 +78,7 @@ describe("fetchQuotes", () => {
   it("releases the cache subscription even when the request fails", async () => {
     mockResult({ error: { status: "FETCH_ERROR", error: "network down" } });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toBeDefined();
+    await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).rejects.toBeDefined();
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
@@ -90,7 +86,7 @@ describe("fetchQuotes", () => {
   it("returns an empty result when the endpoint yields no data", async () => {
     mockResult({});
 
-    await expect(fetchQuotes(makeArgs(), "usd")).resolves.toEqual({
+    await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).resolves.toEqual({
       rawQuotes: [],
       providerErrors: [],
     });
@@ -105,10 +101,38 @@ describe("fetchQuotes", () => {
   ])("returns an empty result on %s", async (_label, error) => {
     mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).resolves.toEqual({
+    await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).resolves.toEqual({
       rawQuotes: [],
       providerErrors: [],
     });
+  });
+
+  it.each([
+    ["a numeric HTTP status", { status: 502, data: "<html>502</html>" }, "502 GET /quote"],
+    [
+      "a parsing error carrying the original status",
+      { status: "PARSING_ERROR", originalStatus: 500 },
+      "500 GET /quote",
+    ],
+  ])(
+    // The caller turns this into "no quotes", which looks identical to a genuinely
+    // empty result, so the log is the only trace that the aggregator failed.
+    "logs a network-error on %s",
+    async (_label, error, expected) => {
+      mockResult({ error });
+
+      await fetchQuotes(makeArgs(), "usd", dispatch as never);
+
+      expect(logMock).toHaveBeenCalledWith("network-error", expect.stringContaining(expected));
+    },
+  );
+
+  it("does not log a network-error when the request succeeds", async () => {
+    mockResult({ data: { rawQuotes: [makeRawQuote()], providerErrors: [] } });
+
+    await fetchQuotes(makeArgs(), "usd", dispatch as never);
+
+    expect(logMock).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -122,7 +146,7 @@ describe("fetchQuotes", () => {
     async (_label, error, expectedDetail) => {
       mockResult({ error });
 
-      await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(
+      await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).rejects.toThrow(
         `swap /quote request failed: ${expectedDetail}`,
       );
     },
@@ -132,8 +156,12 @@ describe("fetchQuotes", () => {
     const error = { status: "FETCH_ERROR", error: "network down" };
     mockResult({ error });
 
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toThrow(SwapQuotesRequestFailed);
-    await expect(fetchQuotes(makeArgs(), "usd")).rejects.toMatchObject({ cause: error });
+    await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).rejects.toThrow(
+      SwapQuotesRequestFailed,
+    );
+    await expect(fetchQuotes(makeArgs(), "usd", dispatch as never)).rejects.toMatchObject({
+      cause: error,
+    });
   });
 
   it("flattens caller-supplied headers before dispatching", async () => {
@@ -143,7 +171,7 @@ describe("fetchQuotes", () => {
       headers: [["x-foo", "bar"]],
     };
 
-    await fetchQuotes(args, "usd");
+    await fetchQuotes(args, "usd", dispatch as never);
 
     expect(initiateMock).toHaveBeenCalledWith(
       expect.objectContaining({ customHeaders: { "x-foo": "bar" } }),

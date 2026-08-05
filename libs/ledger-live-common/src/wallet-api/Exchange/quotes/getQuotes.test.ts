@@ -5,7 +5,7 @@ import { fetchQuotes } from "./service/fetchQuotes";
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
-import { makeRawQuote } from "./fixtures/rawQuotes";
+import { makeRawQuote } from "@domain/api-swap-quotes/fixtures";
 import type { RawQuote, RawQuoteError } from "./service/types";
 import {
   ProviderErrorCodes,
@@ -81,6 +81,7 @@ const aggregatorError: RawQuoteError = {
 
 const emptyContext: GetQuotesContext = {
   accounts: [],
+  dispatch: jest.fn() as never,
   spotPrices: {},
   locale: "en",
   counterValueCurrency: "usd",
@@ -457,6 +458,7 @@ describe("getQuotes", () => {
 
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
         accounts: [],
+        dispatch: jest.fn() as never,
         spotPrices: {},
         locale: "en",
         counterValueCurrency: "usd",

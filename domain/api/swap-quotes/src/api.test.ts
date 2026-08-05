@@ -1,12 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
 import { swapApi } from "@shared/api-services";
 
 import { makeQuotesInput } from "./fixtures/quotesInput";
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
-import { buildQuotesParams, splitQuotes, swapQuotesApi, transformFetchQuotesResponse } from "./api";
+import {
+  buildQuotesParams,
+  hashCustomHeaders,
+  splitQuotes,
+  swapQuotesApi,
+  transformFetchQuotesResponse,
+} from "./api";
 
 const EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-3.2.1" };
 
@@ -71,6 +77,29 @@ describe("buildQuotesParams", () => {
 
     expect(params).not.toHaveProperty("networkFeesCurrency");
     expect(params).not.toHaveProperty("slippage");
+  });
+});
+
+describe("hashCustomHeaders", () => {
+  it("is empty when there are no headers", () => {
+    expect(hashCustomHeaders()).toBe("");
+    expect(hashCustomHeaders({})).toBe("");
+  });
+
+  it("never contains the header value", () => {
+    expect(hashCustomHeaders({ "x-token": "super-secret" })).not.toContain("super-secret");
+  });
+
+  it("is stable, and independent of order and header-name casing", () => {
+    const a = hashCustomHeaders({ "x-token": "one", "x-other": "two" });
+    const b = hashCustomHeaders({ "X-Other": "two", "X-Token": "one" });
+    expect(a).toBe(b);
+  });
+
+  it("differs when a value differs", () => {
+    expect(hashCustomHeaders({ "x-token": "one" })).not.toBe(
+      hashCustomHeaders({ "x-token": "two" }),
+    );
   });
 });
 
@@ -229,7 +258,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     expect(new URL(seen!.url).origin).toBe("https://swap.test");
   });
 
-  it("keeps customHeaders out of the cache key", async () => {
+  it("keeps the raw customHeaders out of the cache key, but separates callers", async () => {
     server.use(http.get("https://swap.test/quote", () => HttpResponse.json([])));
 
     const base = {
@@ -251,9 +280,50 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     );
 
     const keys = Object.keys(store.getState().swapApi.queries);
-    expect(keys).toHaveLength(1);
-    expect(keys[0]).not.toContain("x-token");
-    expect(keys[0]).not.toContain("secret");
+    // Distinct entries, so neither caller can be served the other's response...
+    expect(keys).toHaveLength(2);
+    // ...but the token itself never reaches redux state.
+    for (const key of keys) {
+      expect(key).not.toContain("secret-one");
+      expect(key).not.toContain("secret-two");
+    }
+  });
+
+  it("does not serve a caller the response fetched with another caller's headers", async () => {
+    server.use(
+      http.get("https://swap.test/quote", async ({ request }) => {
+        // Hold both requests open so they genuinely overlap. RTK Query's `condition`
+        // short-circuits on `status === "pending"` before `forceRefetch` is consulted,
+        // so a shared cache key here would hand caller two the first caller's body.
+        await delay(20);
+        return HttpResponse.json([
+          makeRawQuote({ key: request.headers.get("x-token") ?? "no-token" }),
+        ]);
+      }),
+    );
+
+    const base = {
+      providers: ["lifi"],
+      quotesInput: makeQuotesInput(),
+      counterValueCurrency: "usd",
+    };
+    const [first, second] = await Promise.all([
+      store.dispatch(
+        swapQuotesApi.endpoints.fetchQuotes.initiate(
+          { ...base, customHeaders: { "x-token": "caller-one" } },
+          { forceRefetch: true },
+        ),
+      ),
+      store.dispatch(
+        swapQuotesApi.endpoints.fetchQuotes.initiate(
+          { ...base, customHeaders: { "x-token": "caller-two" } },
+          { forceRefetch: true },
+        ),
+      ),
+    ]);
+
+    expect(first.data?.rawQuotes[0]?.key).toBe("caller-one");
+    expect(second.data?.rawQuotes[0]?.key).toBe("caller-two");
   });
 
   it("lets caller-supplied headers override the defaults", async () => {

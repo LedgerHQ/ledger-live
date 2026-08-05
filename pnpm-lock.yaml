@@ -3807,10 +3807,10 @@ importers:
         specifier: 'catalog:'
         version: 2.11.2
       '@shared/api-services':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../../shared/api-services
       '@shared/auth':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../../../shared/auth
       zod:
         specifier: 'catalog:'

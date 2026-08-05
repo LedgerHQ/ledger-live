@@ -187,6 +187,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
+        dispatch,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(

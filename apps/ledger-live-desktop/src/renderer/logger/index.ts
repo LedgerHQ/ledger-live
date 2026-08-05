@@ -101,6 +101,35 @@ function isRTKQueryMeta(meta: unknown): meta is RTKQueryMeta {
   );
 }
 
+/**
+ * Keys whose values must never reach the exportable support log.
+ *
+ * `queryArg` is recorded verbatim below, and RTK Query keeps the *unstripped* args on the action
+ * even when an endpoint leaves them out of its cache key. Swap `/quote` alone carries live-app
+ * supplied headers plus the user's send/receive addresses.
+ */
+const REDACTED_QUERY_ARG_KEYS = new Set([
+  "customHeaders",
+  "headers",
+  "sendAddress",
+  "receiveAddress",
+  "addressFrom",
+  "addressTo",
+]);
+
+/** Recursively replaces sensitive values, preserving the shape so the log stays useful. */
+export function redactQueryArg(value: unknown, depth = 0): unknown {
+  if (depth > 5 || value === null || typeof value !== "object") return value;
+  if (Array.isArray(value)) return value.map(item => redactQueryArg(item, depth + 1));
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entry]) => [
+      key,
+      REDACTED_QUERY_ARG_KEYS.has(key) ? "[redacted]" : redactQueryArg(entry, depth + 1),
+    ]),
+  );
+}
+
 export default {
   onDB: (way: "read" | "write" | "clear", name: string) => {
     const msg = `📁  ${way} ${name}`;
@@ -122,7 +151,7 @@ export default {
       if (action.type.includes("/executeQuery/") || action.type.includes("/executeMutation/")) {
         if (isRTKQueryMeta(action.meta)) {
           if (action.meta.arg) {
-            logData.queryArg = action.meta.arg;
+            logData.queryArg = redactQueryArg(action.meta.arg);
           }
           if (action.meta.endpointName) {
             logData.endpointName = action.meta.endpointName;

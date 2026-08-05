@@ -64,6 +64,7 @@ import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
 import { getQuotes } from "./quotes";
+import type { SwapQuotesDispatch } from "./quotes/state-manager/store";
 import { resolveQuotesInput } from "./quotes/resolveQuotesInput";
 import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
 import {
@@ -198,6 +199,7 @@ export const handlers = ({
   locale,
   counterValueCurrency,
   deviceModelId,
+  dispatch,
   uiHooks: {
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
@@ -214,6 +216,8 @@ export const handlers = ({
   locale: string;
   counterValueCurrency: string;
   deviceModelId?: DeviceModelId;
+  /** Store dispatch, threaded to `getQuotes` so the quotes endpoint has no global to look up. */
+  dispatch: SwapQuotesDispatch;
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
@@ -800,6 +804,7 @@ export const handlers = ({
         });
         return getQuotes(params, {
           accounts,
+          dispatch,
           spotPrices,
           locale,
           counterValueCurrency,

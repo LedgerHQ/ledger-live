@@ -21,6 +21,7 @@ import {
 } from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
 import { resolveQuotesInput } from "./resolveQuotesInput";
+import type { SwapQuotesDispatch } from "./state-manager/store";
 
 /**
  * Server-side dependencies for {@link getQuotes}. Not part of the public
@@ -60,6 +61,8 @@ import { resolveQuotesInput } from "./resolveQuotesInput";
  */
 export type GetQuotesContext = {
   accounts: AccountLike[];
+  /** Store dispatch used to run the quotes endpoint. Threaded from the host app's store. */
+  dispatch: SwapQuotesDispatch;
   spotPrices: Record<string, number>;
   locale: string;
   counterValueCurrency: string;
@@ -125,6 +128,7 @@ export async function getQuotes(
   const { rawQuotes, providerErrors } = await fetchQuotes(
     resolvedArgs,
     context.counterValueCurrency,
+    context.dispatch,
   );
 
   // Drop every successful quote when the pair is on the wallet-side blocklist

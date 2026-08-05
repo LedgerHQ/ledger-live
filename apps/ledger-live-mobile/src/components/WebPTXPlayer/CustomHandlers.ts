@@ -347,6 +347,7 @@ export function useCustomExchangeHandlers({
         locale,
         counterValueCurrency: counterValueCurrency.ticker,
         deviceModelId: lastSeenDevice?.modelId,
+        dispatch,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -532,6 +533,7 @@ export function useCustomExchangeHandlers({
     };
   }, [
     accounts,
+    dispatch,
     device,
     manifest,
     navigation,

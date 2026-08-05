@@ -1,9 +1,10 @@
 import type { SerializedError } from "@reduxjs/toolkit";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { log } from "@ledgerhq/logs";
 
 import { SwapQuotesRequestFailed } from "../../../../errors";
 import { swapQuotesApi } from "../state-manager/api";
-import { getSwapQuotesDispatch } from "../state-manager/store";
+import type { SwapQuotesDispatch } from "../state-manager/store";
 
 import type { GetQuotesArgs } from "../types";
 import type { ResolvedQuotesInput } from "../resolveQuotesInput";
@@ -42,19 +43,20 @@ function describeError(error: FetchBaseQueryError | SerializedError): string {
  * `custom.exchange.getQuotes` request.
  *
  * Runs the {@link swapQuotesApi} endpoint imperatively against the dispatch
- * registered by the host app via `setSwapQuotesStore`.
+ * supplied by the caller, which threads it down from the host app's store.
  *
  * @param counterValueCurrency - Fiat ticker (e.g. `"USD"`) for quote
  *   countervalues, from the wallet's counter-value setting.
+ * @param dispatch - Store dispatch used to run the endpoint.
  * @returns Successful quotes and per-provider rejection rows. A non-OK HTTP
  *   response yields an empty result; only transport failures reject.
  */
 export async function fetchQuotes(
   args: FetchQuotesArgs,
   counterValueCurrency: string,
+  dispatch: SwapQuotesDispatch,
 ): Promise<FetchQuotesResult> {
   const { providers, data: quotesInput, headers: customHeaders } = args;
-  const dispatch = getSwapQuotesDispatch();
 
   const promise = dispatch(
     swapQuotesApi.endpoints.fetchQuotes.initiate(
@@ -75,12 +77,20 @@ export async function fetchQuotes(
     const result = await promise;
 
     if (result.error) {
-      if (getHttpStatus(result.error) === undefined) {
+      const status = getHttpStatus(result.error);
+
+      if (status === undefined) {
         throw new SwapQuotesRequestFailed(
           `swap /quote request failed: ${describeError(result.error)}`,
           result.error,
         );
       }
+
+      // The aggregator answered with an error and the caller will surface this as
+      // "no quotes", which is indistinguishable from an empty result. This log is
+      // the only remaining signal that the request failed at all — the old axios
+      // interceptor emitted it before the migration to RTK Query.
+      log("network-error", `${status} GET /quote: ${describeError(result.error)}`);
       return emptyResult();
     }
 

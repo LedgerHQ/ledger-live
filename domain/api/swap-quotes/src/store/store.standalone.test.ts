@@ -6,7 +6,6 @@ import { swapApi } from "@shared/api-services";
 import { swapQuotesApi } from "../api";
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
-import { getSwapQuotesDispatch, resetSwapQuotesStore } from "./store";
 import { setupStandaloneSwapQuotesStore } from "./store.standalone";
 
 const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
@@ -15,20 +14,14 @@ describe("setupStandaloneSwapQuotesStore", () => {
   const server = setupServer();
 
   beforeAll(() => server.listen());
-  beforeEach(() => {
-    // Reset so the "throws before setup" assertion doesn't depend on the order
-    // of the tests in this file.
-    resetSwapQuotesStore();
-  });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it("registers the store dispatch for getSwapQuotesDispatch", () => {
-    expect(() => getSwapQuotesDispatch()).toThrow(/Swap quotes store is not set/);
-
+  it("returns a store whose dispatch the caller threads into GetQuotesContext", () => {
     const store = setupStandaloneSwapQuotesStore(API_EXTRA);
 
-    expect(getSwapQuotesDispatch()).toBe(store.dispatch);
+    expect(typeof store.dispatch).toBe("function");
+    expect(store.getState()).toHaveProperty(swapApi.reducerPath);
   });
 
   it("rejects a config whose values resolved to empty strings", () => {
@@ -39,8 +32,7 @@ describe("setupStandaloneSwapQuotesStore", () => {
     const rawQuote = makeRawQuote();
     server.use(http.get("https://swap.test/quote", () => HttpResponse.json([rawQuote])));
 
-    setupStandaloneSwapQuotesStore(API_EXTRA);
-    const dispatch = getSwapQuotesDispatch();
+    const { dispatch } = setupStandaloneSwapQuotesStore(API_EXTRA);
 
     const result = (await dispatch(
       swapQuotesApi.endpoints.fetchQuotes.initiate(
@@ -62,8 +54,8 @@ describe("setupStandaloneSwapQuotesStore", () => {
       }),
     );
 
-    setupStandaloneSwapQuotesStore(API_EXTRA);
-    await getSwapQuotesDispatch()(
+    const { dispatch } = setupStandaloneSwapQuotesStore(API_EXTRA);
+    await dispatch(
       swapQuotesApi.endpoints.fetchQuotes.initiate(
         { providers: ["lifi"], quotesInput: makeQuotesInput(), counterValueCurrency: "usd" },
         { forceRefetch: true },

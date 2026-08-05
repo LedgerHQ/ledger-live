@@ -2,7 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { getQuotes, type QuotesError } from "@ledgerhq/live-common/wallet-api/Exchange/index";
-import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
+import { swapQuotesStore, WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
@@ -121,7 +121,13 @@ export default defineCommand({
             receiveAccountId: "",
           },
         },
-        { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
+        {
+          accounts: [],
+          dispatch: swapQuotesStore.dispatch,
+          spotPrices: {},
+          locale: "en",
+          counterValueCurrency: "USD",
+        },
       );
 
       if (result.quotes.length === 0 && result.providerErrors.length > 0) {

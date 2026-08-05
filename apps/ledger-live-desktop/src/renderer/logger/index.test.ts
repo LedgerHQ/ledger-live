@@ -1,4 +1,4 @@
-import logger from "./index";
+import logger, { redactQueryArg } from "./index";
 
 jest.mock("~/datadog/renderer", () => ({
   addBreadcrumb: jest.fn(),
@@ -44,6 +44,44 @@ describe("renderer logger", () => {
         message: "button_clicked",
         data: { button: "submit" },
       });
+    });
+  });
+
+  describe("redactQueryArg", () => {
+    /**
+     * `queryArg` lands in the user-exportable support log, and RTK Query keeps the
+     * unstripped args on the action even when an endpoint omits them from its cache
+     * key — so swap `/quote` carries live-app headers and the user's addresses.
+     */
+    it("redacts live-app headers and swap addresses, at any depth", () => {
+      expect(
+        redactQueryArg({
+          endpointName: "fetchQuotes",
+          customHeaders: { "x-partner-token": "super-secret" },
+          quotesInput: { sendAddress: "0xfrom", receiveAddress: "0xto", amount: "1" },
+        }),
+      ).toEqual({
+        endpointName: "fetchQuotes",
+        customHeaders: "[redacted]",
+        quotesInput: { sendAddress: "[redacted]", receiveAddress: "[redacted]", amount: "1" },
+      });
+    });
+
+    it("keeps the surrounding shape so the log stays useful", () => {
+      expect(redactQueryArg({ providers: ["lifi", "okx"], counterValueCurrency: "USD" })).toEqual({
+        providers: ["lifi", "okx"],
+        counterValueCurrency: "USD",
+      });
+    });
+
+    it("passes through primitives and nullish values untouched", () => {
+      expect(redactQueryArg("plain")).toBe("plain");
+      expect(redactQueryArg(null)).toBeNull();
+      expect(redactQueryArg(undefined)).toBeUndefined();
+    });
+
+    it("redacts inside arrays", () => {
+      expect(redactQueryArg([{ addressFrom: "0xabc" }])).toEqual([{ addressFrom: "[redacted]" }]);
     });
   });
 });

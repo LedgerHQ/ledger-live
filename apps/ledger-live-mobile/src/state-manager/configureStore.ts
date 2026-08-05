@@ -12,7 +12,6 @@ import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
-import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { State } from "~/reducers/types";
@@ -134,4 +133,3 @@ setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
 });
 setupRecentAddressesStore(store);
 setupCryptoAssetsStore(store);
-setSwapQuotesStore(store.dispatch);

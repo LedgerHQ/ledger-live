@@ -1,47 +1,12 @@
 /**
- * Dispatch holder for the {@link swapQuotesApi}.
+ * Dispatch type for the {@link swapQuotesApi} endpoints.
  *
- * `fetchQuotes` runs server-side inside the wallet-api `getQuotes` flow,
- * not from a React component, so it cannot use the generated query hook.
- * Instead each app injects its store's `dispatch` once at startup via
- * {@link setSwapQuotesStore}, and `fetchQuotes` retrieves it with
- * {@link getSwapQuotesDispatch} to imperatively run the endpoint.
- *
- * Kept on `globalThis` so lazy-loaded bundles that resolve live-common to
- * separate copies still share one dispatch.
+ * `fetchQuotes` runs server-side inside the wallet-api `getQuotes` flow rather
+ * than from a React component, so it cannot use the generated query hook. The
+ * host app's dispatch is threaded down to it through `GetQuotesContext`, which
+ * every caller already builds — so a host that registers the reducer but never
+ * supplies a dispatch fails to compile rather than throwing on the first quote.
  */
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export type SwapQuotesDispatch = ThunkDispatch<unknown, unknown, UnknownAction>;
-
-declare global {
-  // `var` is required: TypeScript builds `typeof globalThis` from global `var`
-  // declarations, so an `interface GlobalThis` would augment nothing.
-  var __ledgerSwapQuotesDispatch: SwapQuotesDispatch | undefined;
-}
-
-/**
- * Register the store dispatch used to run swap quote requests. Should be
- * called once during application initialization.
- */
-export function setSwapQuotesStore(dispatch: SwapQuotesDispatch): void {
-  globalThis.__ledgerSwapQuotesDispatch = dispatch;
-}
-
-/** Clear the registered dispatch. For tests. */
-export function resetSwapQuotesStore(): void {
-  globalThis.__ledgerSwapQuotesDispatch = undefined;
-}
-
-/**
- * Get the registered dispatch.
- * @throws {Error} If {@link setSwapQuotesStore} has not been called yet.
- */
-export function getSwapQuotesDispatch(): SwapQuotesDispatch {
-  if (!globalThis.__ledgerSwapQuotesDispatch) {
-    throw new Error(
-      "Swap quotes store is not set. Please call setSwapQuotesStore during app initialization.",
-    );
-  }
-  return globalThis.__ledgerSwapQuotesDispatch;
-}

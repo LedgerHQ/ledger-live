@@ -175,6 +175,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -216,6 +217,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -251,6 +253,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -317,6 +320,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         locale: "en",
         counterValueCurrency: "USD",
         tracking: mockTracking,
@@ -393,6 +397,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         locale: "en",
         counterValueCurrency: "USD",
         tracking: mockTracking,
@@ -448,6 +453,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1")];
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -488,6 +494,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1")];
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -548,6 +555,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
+        dispatch: jest.fn() as never,
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",

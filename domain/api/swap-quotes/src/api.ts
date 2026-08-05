@@ -81,6 +81,38 @@ export function transformFetchQuotesResponse(response: unknown): FetchQuotesResu
 }
 
 /**
+ * Digest of `customHeaders` for the cache key.
+ *
+ * RTK Query's `condition` returns early on `status === "pending"` *before* it consults
+ * `forceRefetch`, so requests sharing a cache key are deduped while in flight. With the headers
+ * omitted entirely, two concurrent calls differing only by header would share one request and the
+ * second caller would receive a body fetched with the first caller's headers — `headers` is
+ * arbitrary live-app input, so that is not ours to assume is harmless.
+ *
+ * Hashing rather than including them verbatim keeps a live-app token out of redux state, which is
+ * the point of leaving them out of the key in the first place.
+ */
+export function hashCustomHeaders(customHeaders?: Record<string, string>): string {
+  const entries = Object.entries(customHeaders ?? {});
+  if (entries.length === 0) return "";
+
+  // Header names are case-insensitive and order carries no meaning, so canonicalise both.
+  const canonical = entries
+    .map(([name, value]) => `${name.toLowerCase()}:${value}`)
+    .sort()
+    .join("\n");
+
+  // FNV-1a, 32-bit. Not a security boundary: it only has to separate cache entries and stay stable
+  // across calls, and it must be synchronous (`crypto.subtle` is not).
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < canonical.length; i++) {
+    hash ^= canonical.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
  * Swap quotes endpoint, injected into the shared swap aggregator api.
  *
  * Consumed imperatively from the server-side `getQuotes` flow rather than through a hook, so no query
@@ -95,11 +127,12 @@ export const swapQuotesApi = swapApi.injectEndpoints({
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
         headers: { ...(customHeaders ?? {}) },
       }),
-      // Keeps a live-app token out of the cache key. Consequence: concurrent
-      // requests differing only by `customHeaders` share one in-flight call.
+      // Headers are represented by a digest rather than verbatim: the token stays out of the cache
+      // key, while callers sending different headers still get separate entries instead of sharing
+      // one in-flight request. See {@link hashCustomHeaders}.
       serializeQueryArgs: ({ queryArgs }) => {
-        const { customHeaders: _omitted, ...cacheable } = queryArgs;
-        return cacheable;
+        const { customHeaders, ...cacheable } = queryArgs;
+        return { ...cacheable, customHeadersHash: hashCustomHeaders(customHeaders) };
       },
       transformResponse: transformFetchQuotesResponse,
       // Quotes are time-sensitive: never retain them between requests.

@@ -2,12 +2,10 @@ import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
 import { createTestStore } from "@tests/test-helpers/testUtils";
 
-import { makeQuotesInput } from "../fixtures/quotesInput";
-import { makeRawQuote } from "../fixtures/rawQuotes";
+import { makeQuotesInput, makeRawQuote } from "@domain/api-swap-quotes/fixtures";
 import { swapApi } from "@shared/api-services";
 
 import { swapQuotesApi } from "../state-manager/api";
-import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
 import { fetchQuotes } from "./fetchQuotes";
 
 const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
@@ -27,7 +25,6 @@ describe("fetchQuotes against a live store", () => {
   beforeAll(() => server.listen());
   afterEach(() => {
     server.resetHandlers();
-    resetSwapQuotesStore();
   });
   afterAll(() => server.close());
 
@@ -36,7 +33,6 @@ describe("fetchQuotes against a live store", () => {
     store = createTestStore([swapApi], {
       extra: { ...API_EXTRA, authProvider: unauthenticatedProvider },
     });
-    setSwapQuotesStore(store.dispatch);
   });
 
   function serveOneQuote() {
@@ -60,9 +56,9 @@ describe("fetchQuotes against a live store", () => {
   it("returns quotes for repeated identical requests", async () => {
     serveOneQuote();
 
-    const first = await fetchQuotes(args(), "usd");
-    const second = await fetchQuotes(args(), "usd");
-    const third = await fetchQuotes(args(), "usd");
+    const first = await fetchQuotes(args(), "usd", store.dispatch as never);
+    const second = await fetchQuotes(args(), "usd", store.dispatch as never);
+    const third = await fetchQuotes(args(), "usd", store.dispatch as never);
 
     expect(first.rawQuotes).toHaveLength(1);
     expect(second.rawQuotes).toHaveLength(1);
@@ -74,8 +70,8 @@ describe("fetchQuotes against a live store", () => {
     serveOneQuote();
 
     const [first, second] = await Promise.all([
-      fetchQuotes(args(), "usd"),
-      fetchQuotes(args(), "usd"),
+      fetchQuotes(args(), "usd", store.dispatch as never),
+      fetchQuotes(args(), "usd", store.dispatch as never),
     ]);
 
     expect(first.rawQuotes).toHaveLength(1);
@@ -86,7 +82,7 @@ describe("fetchQuotes against a live store", () => {
   it("does not retain quote cache entries after the request settles", async () => {
     serveOneQuote();
 
-    await fetchQuotes(args(), "usd");
+    await fetchQuotes(args(), "usd", store.dispatch as never);
     // `keepUnusedDataFor: 0` schedules the eviction on the next macrotask.
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -101,7 +97,7 @@ describe("fetchQuotes against a live store", () => {
       ),
     );
 
-    await expect(fetchQuotes(args(), "usd")).resolves.toEqual({
+    await expect(fetchQuotes(args(), "usd", store.dispatch as never)).resolves.toEqual({
       rawQuotes: [],
       providerErrors: [],
     });
@@ -110,7 +106,7 @@ describe("fetchQuotes against a live store", () => {
   it("rejects with a named Error when the request never reaches the aggregator", async () => {
     server.use(http.get("https://swap.test/quote", () => HttpResponse.error()));
 
-    await expect(fetchQuotes(args(), "usd")).rejects.toMatchObject({
+    await expect(fetchQuotes(args(), "usd", store.dispatch as never)).rejects.toMatchObject({
       name: "SwapQuotesRequestFailed",
       cause: { status: "FETCH_ERROR" },
     });

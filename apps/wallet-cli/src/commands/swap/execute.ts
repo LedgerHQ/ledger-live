@@ -7,6 +7,7 @@ import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import { swapQuotesStore } from "../../live-common-setup";
 import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -131,7 +132,13 @@ async function selectDieQuote(
         receiveAccountId: "",
       },
     },
-    { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
+    {
+      accounts: [],
+      dispatch: swapQuotesStore.dispatch,
+      spotPrices: {},
+      locale: "en",
+      counterValueCurrency: "USD",
+    },
   );
 
   const match = quotes.find(q => q.provider === args.provider) ?? quotes[0];
