@@ -427,7 +427,7 @@ export async function performTransparentSync(
   const getInputsKey = (op: BtcOperation): string | null => {
     const inputs = op.extra?.inputs;
     if (!Array.isArray(inputs) || inputs.length === 0) return null;
-    return [...inputs].sort().join("|");
+    return [...inputs].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).join("|");
   };
 
   const isBetterCandidate = (candidate: BtcOperation, existing: BtcOperation): boolean => {
