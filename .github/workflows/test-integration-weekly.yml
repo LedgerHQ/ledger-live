@@ -11,12 +11,14 @@ on:
         default: develop
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
   integration-tests:
     name: "Integration Tests"
+    permissions:
+      id-token: write
+      contents: read
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3

@@ -51,6 +51,8 @@ jobs:
           repositories: |
             ledger-live
             ledger-live-build
+          permission-contents: write
+          permission-actions: write
 
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -172,6 +174,8 @@ jobs:
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+        env:
+          INPUT_REF: ${{ inputs.ref }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -181,13 +185,15 @@ jobs:
               ref: "main",
               workflow_id: "release-desktop.yml",
               inputs: {
-                branch: "${{ inputs.ref }}"
+                branch: process.env.INPUT_REF
               }
             });
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         name: trigger release build for mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+        env:
+          INPUT_REF: ${{ inputs.ref }}
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -197,7 +203,7 @@ jobs:
               ref: "main",
               workflow_id: "release-mobile.yml",
               inputs: {
-                ref: "${{ inputs.ref }}"
+                ref: process.env.INPUT_REF
               }
             });
 

@@ -10,7 +10,6 @@ concurrency:
   group: ci-integration-${{ github.ref }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -43,6 +42,9 @@ jobs:
 
   integration-tests:
     name: "Integration Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:
