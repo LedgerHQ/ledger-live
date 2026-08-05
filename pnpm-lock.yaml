@@ -5748,9 +5748,6 @@ importers:
       '@ledgerhq/wallet-btc':
         specifier: workspace:^
         version: link:../../wallet-btc
-      '@ledgerhq/zcash-utils':
-        specifier: 'catalog:'
-        version: 1.1.1
       '@noble/hashes':
         specifier: 1.8.0
         version: 1.8.0

@@ -13,7 +13,6 @@ jest.mock("../../../cache", () => ({
 import { resolveZcashFeePerByte, zcashSafeFeePerByte } from "../transparent-fee-rate";
 import { ZIP317_MARGINAL_FEE, ZIP317_MINIMUM_FEE } from "../coin-selection";
 import { getChainAdapter } from "../../registry";
-import { setZcashShieldedEnabled } from "../constants";
 // Registers the Zcash adapter as a side effect.
 import "../index";
 
@@ -156,10 +155,7 @@ describe("the Zcash adapter's resolveFeePerByte hook", () => {
   const prepared = (feePerByte: BigNumber | null) =>
     ({ ...transaction, feePerByte }) as unknown as Transaction;
 
-  afterEach(() => setZcashShieldedEnabled(false));
-
-  it("resolves the ZIP-317 rate on the legacy transparent path", async () => {
-    setZcashShieldedEnabled(false);
+  it("resolves the ZIP-317 rate on the transparent path", async () => {
     calculateFees.mockImplementation(chargingLike(() => [2, 2]));
 
     const rate = await hook()(account, prepared(safeRate))!;
@@ -168,16 +164,7 @@ describe("the Zcash adapter's resolveFeePerByte hook", () => {
     expect(feeAt(rate!, 2, 2)).toBeGreaterThanOrEqual(ZIP317_MINIMUM_FEE);
   });
 
-  it("leaves the rate alone when the PCZT flows are in charge of the fee", () => {
-    setZcashShieldedEnabled(true);
-
-    expect(hook()(account, prepared(safeRate))).toBeUndefined();
-    expect(calculateFees).not.toHaveBeenCalled();
-  });
-
   it("leaves the rate alone when no usable rate was prepared", () => {
-    setZcashShieldedEnabled(false);
-
     expect(hook()(account, prepared(null))).toBeUndefined();
     expect(hook()(account, prepared(new BigNumber(0)))).toBeUndefined();
     expect(calculateFees).not.toHaveBeenCalled();
