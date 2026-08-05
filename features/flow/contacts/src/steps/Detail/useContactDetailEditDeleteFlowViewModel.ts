@@ -2,12 +2,9 @@ import { selectContactById, type ContactId } from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import type { ContactDetailActionsPorts } from "./model/ports";
-import {
-  resolveEditUiStateOnPress,
-  resolveEditUiStateOnSignerCancel,
-  type SignerEditUiState,
-} from "./model/signerEditUiState";
 import { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
+import { useContactEditSignerUiState } from "./useContactEditSignerUiState";
+import type { SignerEditUiState } from "./model/signerEditUiState";
 
 export type ContactDetailEditUiState = SignerEditUiState;
 
@@ -52,7 +49,14 @@ export function useContactDetailEditDeleteFlowViewModel({
     deleteIntent,
     isSignerRequiredForEdit,
   } = useContactDetailActionsViewModel(contactId, ports);
-  const [editUiState, setEditUiState] = useState<ContactDetailEditUiState>("closed");
+  const {
+    editUiState,
+    openSignerDialog,
+    openEditDialog,
+    onSignerConfirm,
+    onSignerCancel,
+    onEditClose,
+  } = useContactEditSignerUiState();
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const canDelete = contact !== undefined && !contact.isMe;
@@ -60,27 +64,19 @@ export function useContactDetailEditDeleteFlowViewModel({
 
   const onEditPress = useCallback(() => {
     setIsActionsMenuOpen(false);
-    setEditUiState(resolveEditUiStateOnPress(isSignerRequiredForEdit));
-  }, [isSignerRequiredForEdit]);
+
+    if (isSignerRequiredForEdit) {
+      openSignerDialog();
+      return;
+    }
+
+    openEditDialog();
+  }, [isSignerRequiredForEdit, openEditDialog, openSignerDialog]);
 
   const onDeletePress = useCallback(() => {
     setIsActionsMenuOpen(false);
     openDelete();
   }, [openDelete]);
-
-  const onSignerConfirm = useCallback(() => {
-    setEditUiState("edit-open");
-  }, []);
-
-  const onSignerCancel = useCallback(() => {
-    // QueuedBottomSheet calls onClose when isRequestingToBeOpened becomes false — including
-    // after the user confirms and we transition to edit-open. Only cancel when still on signer.
-    setEditUiState(current => resolveEditUiStateOnSignerCancel(current));
-  }, []);
-
-  const onEditClose = useCallback(() => {
-    setEditUiState("closed");
-  }, []);
 
   const onOpenActionsMenu = useCallback(() => {
     setIsActionsMenuOpen(true);

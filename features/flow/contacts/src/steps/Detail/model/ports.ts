@@ -2,6 +2,7 @@ import type {
   Contact,
   ContactAddress,
   ContactAddressId,
+  ContactAddressLabel,
   ContactId,
   ContactInput,
 } from "@domain/entity-contact";
@@ -38,6 +39,16 @@ export type ContactAddressDeletionInput = Readonly<{
 
 export type ContactAddressDeletionPort = Readonly<{
   deleteAddress(input: ContactAddressDeletionInput): Promise<void>;
+}>;
+
+export type ContactAddressRenameInput = Readonly<{
+  contactId: ContactId;
+  addressId: ContactAddressId;
+  label: ContactAddressLabel;
+}>;
+
+export type ContactAddressEditPort = Readonly<{
+  renameAddressLabel(input: ContactAddressRenameInput): Promise<ContactAddress>;
 }>;
 
 export type ContactAddressDetailActionsPorts = Readonly<{
