@@ -2,9 +2,14 @@ import { selectContactById, type ContactId } from "@domain/entity-contact";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import type { ContactDetailActionsPorts } from "./model/ports";
+import {
+  resolveEditUiStateOnPress,
+  resolveEditUiStateOnSignerCancel,
+  type SignerEditUiState,
+} from "./model/signerEditUiState";
 import { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 
-export type ContactDetailEditUiState = "closed" | "signer-open" | "edit-open";
+export type ContactDetailEditUiState = SignerEditUiState;
 
 export type UseContactDetailEditDeleteFlowViewModelOptions = Readonly<{
   contactId: ContactId;
@@ -55,13 +60,7 @@ export function useContactDetailEditDeleteFlowViewModel({
 
   const onEditPress = useCallback(() => {
     setIsActionsMenuOpen(false);
-
-    if (isSignerRequiredForEdit) {
-      setEditUiState("signer-open");
-      return;
-    }
-
-    setEditUiState("edit-open");
+    setEditUiState(resolveEditUiStateOnPress(isSignerRequiredForEdit));
   }, [isSignerRequiredForEdit]);
 
   const onDeletePress = useCallback(() => {
@@ -76,7 +75,7 @@ export function useContactDetailEditDeleteFlowViewModel({
   const onSignerCancel = useCallback(() => {
     // QueuedBottomSheet calls onClose when isRequestingToBeOpened becomes false — including
     // after the user confirms and we transition to edit-open. Only cancel when still on signer.
-    setEditUiState(current => (current === "signer-open" ? "closed" : current));
+    setEditUiState(current => resolveEditUiStateOnSignerCancel(current));
   }, []);
 
   const onEditClose = useCallback(() => {

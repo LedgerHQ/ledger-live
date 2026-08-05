@@ -3,8 +3,14 @@ export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
 export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 export { createContactDetailActionsPorts } from "./createContactDetailActionsPorts";
+export { createContactAddressDetailEditFlowPorts } from "./createContactAddressDetailEditFlowPorts";
 export { useContactDetailEditDeleteFlowBindings } from "./useContactDetailEditDeleteFlowBindings";
+export { useContactAddressDetailEditFlowBindings } from "./useContactAddressDetailEditFlowBindings";
 export type { UseContactDetailEditDeleteFlowBindingsOptions } from "./useContactDetailEditDeleteFlowBindings";
+export type {
+  ContactAddressDetailEditSignerDialogBindings,
+  UseContactAddressDetailEditFlowBindingsOptions,
+} from "./useContactAddressDetailEditFlowBindings";
 export { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 export type {
   ContactDetailEditUiState,
@@ -14,7 +20,14 @@ export type {
 export type { UseContactDetailActionsViewModelResult } from "./useContactDetailActionsViewModel";
 export { useContactAddressDetail } from "./useContactAddressDetail";
 export { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
+export { useContactAddressDetailEditFlowViewModel } from "./useContactAddressDetailEditFlowViewModel";
 export type { UseContactAddressDetailActionsViewModelResult } from "./useContactAddressDetailActionsViewModel";
+export type {
+  ContactAddressDetailEditSignerValidationState,
+  ContactAddressDetailEditUiState,
+  UseContactAddressDetailEditFlowViewModelOptions,
+  UseContactAddressDetailEditFlowViewModelResult,
+} from "./useContactAddressDetailEditFlowViewModel";
 export {
   createContactDetailAddressRowIntent,
   createPopulatedContactDetailViewModel,
@@ -52,6 +65,7 @@ export type {
   ContactAddressDeletionInput,
   ContactAddressDeletionPort,
   ContactAddressDetailActionsPorts,
+  ContactAddressDetailEditFlowPorts,
   ContactAddressDetailPort,
   ContactDeletionPort,
   ContactDetailActionsPorts,
