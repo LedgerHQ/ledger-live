@@ -155,3 +155,4 @@ export const handlers = ({
     }),
   };
 };
+export { formatPerpsDepositAmount, resolvePerpsDepositAmountCurrency } from "./formatDepositAmount";
