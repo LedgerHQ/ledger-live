@@ -13,6 +13,7 @@ function safeStakeToBigInt(value: string | undefined): bigint {
 
 function providerToValidator(provider: MultiversXProvider): Validator {
   return {
+    id: provider.contract,
     address: provider.contract,
     name: provider.identity?.name ?? provider.contract,
     description: provider.identity?.description,

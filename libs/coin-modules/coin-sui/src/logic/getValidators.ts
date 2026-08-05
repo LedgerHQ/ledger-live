@@ -8,6 +8,7 @@ export async function getValidators(
   const validators = await getValidatorsFromNetwork(currencyId);
 
   const items: Validator[] = validators.map(v => ({
+    id: v.suiAddress,
     address: v.suiAddress,
     name: v.name,
     description: v.description,

@@ -58,6 +58,7 @@ describe("logic/getValidators", () => {
 
     const [a, b] = page.items;
     expect(a).toEqual({
+      id: "0xabc",
       address: "0xabc",
       name: "Validator A",
       description: "desc",
@@ -69,6 +70,7 @@ describe("logic/getValidators", () => {
     });
 
     expect(b).toEqual({
+      id: "0xdef",
       address: "0xdef",
       name: "Validator B",
       description: "",

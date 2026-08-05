@@ -68,6 +68,7 @@ function toValidator(raw: ValidatorRaw, apyMap: Record<string, number>): Validat
     return undefined;
   }
   return {
+    id: raw.vote_account,
     address: raw.vote_account,
     name: raw.name ?? raw.vote_account,
     url: raw.www_url ?? undefined,
