@@ -1,5 +1,5 @@
 import { FlatList } from "react-native";
-import { BottomSheetVirtualizedList, BottomSheetHeader, Banner } from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetVirtualizedList, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,
@@ -76,11 +76,14 @@ const AccountSelectionContent = ({
     ? t("modularDrawer.selectAccountPerpsTitle")
     : t("modularDrawer.selectAccount");
 
-  const headerDescription = isPerpsWithoutVariant
-    ? t("modularDrawer.selectAccountPerpsDescription")
-    : detailedAccounts.length === 0
+  const emptyAccountsDescription =
+    detailedAccounts.length === 0
       ? t("modularDrawer.emptyAccounts", { network: asset.name })
       : undefined;
+
+  const headerDescription = isPerpsWithoutVariant
+    ? t("modularDrawer.selectAccountPerpsDescription")
+    : emptyAccountsDescription;
 
   return (
     <>
