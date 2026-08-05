@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "react-native";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import type { AddAddressEntryLabels, AddAddressEntryState } from "./types";
@@ -150,9 +149,11 @@ describe("ContactsAddAddressEntry", () => {
           error: "sanctioned",
         }}
         labels={labels}
-        sanctionedAddressBanner={
-          <Text testID="contacts-sanctioned-address-banner">Sanctioned</Text>
-        }
+        sanctionedAddressBanner={{
+          description: "This wallet address is sanctioned.",
+          actionLabel: "Learn more",
+          onAction: jest.fn(),
+        }}
         onChangeText={jest.fn()}
         onConfirm={jest.fn()}
         onQrCodeClick={jest.fn()}
