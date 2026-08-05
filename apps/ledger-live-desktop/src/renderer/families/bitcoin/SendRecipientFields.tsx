@@ -7,7 +7,7 @@ import {
   ZcashAccount,
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import type { ZcashTransaction } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { Transaction as ZcashTransaction } from "@ledgerhq/coin-zcash/types";
 import { useFeature } from "@features/platform-feature-flags";
 import React from "react";
 import { connect } from "react-redux";
@@ -41,10 +41,8 @@ const SendRecipientFields = (props: Props) => {
     op => op.type === "IN" && !isConfirmedOperation(op, account, confirmationsNb),
   );
   // Memo can only be delivered to a shielded (private) recipient.
-  const showMemo =
-    isZcash &&
-    shieldedEnabled &&
-    (transaction as Partial<ZcashTransaction>).recipientType === "private";
+  const zcashTx = transaction as unknown as Partial<ZcashTransaction>;
+  const showMemo = isZcash && shieldedEnabled && zcashTx.recipientType === "private";
   return (
     <>
       {incomingTransactionPending && (
@@ -53,10 +51,7 @@ const SendRecipientFields = (props: Props) => {
         </Alert>
       )}
       {isZcash ? (
-        <ZcashSyncStateBanner
-          account={account as ZcashAccount}
-          sender={(transaction as Partial<ZcashTransaction>).sender}
-        />
+        <ZcashSyncStateBanner account={account as ZcashAccount} sender={zcashTx.sender} />
       ) : null}
       {showMemo ? (
         <Box mt={2}>

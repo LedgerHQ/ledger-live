@@ -86,12 +86,13 @@ describe("reduceShieldedSyncResult", () => {
     remainingBlocks: 0,
   };
 
-  // Notes are as spendable as UTXOs. Reporting only the transparent balance here
-  // shows an account holding nothing but notes as having nothing to spend.
-  it("counts the shielded pools as spendable, not just as balance", () => {
+  // Ironwood notes are as spendable as UTXOs. Reporting only the transparent
+  // balance here shows an account holding nothing but notes as having nothing to
+  // spend. (Orchard/Sapling are deprecated and excluded — see balance.ts.)
+  it("counts the spendable Ironwood pool as spendable, not just as balance", () => {
     const output = reduceShieldedSyncResult(
       { processedOperations: [], accountUpdate: {} },
-      { ...emptyChunk, transactions: [incomingTx(3_425_869, 50_000)] },
+      { ...emptyChunk, transactions: [ironwoodTx(3_425_869, 50_000)] },
       infoWith({}, 100_000),
       "acc-1",
     );
@@ -174,9 +175,11 @@ describe("reduceShieldedSyncResult", () => {
       expect(output.accountUpdate.balance).toEqual(new BigNumber(5_000_000));
     });
 
-    // Each pool is counted once and only once: the balance is their sum, not the
-    // newest pool shadowing the others.
-    it("counts ironwood alongside orchard and the transparent UTXOs", () => {
+    // Each pool's notes are discovered and tracked independently, ironwood never
+    // shadowing orchard. The reported balance, though, counts only the spendable
+    // Ironwood pool plus the transparent UTXOs — the deprecated Orchard notes are
+    // tracked but left out of the total (see balance.ts).
+    it("tracks ironwood alongside orchard while only ironwood and the UTXOs count", () => {
       const output = reduceShieldedSyncResult(
         { processedOperations: [], accountUpdate: {} },
         {
@@ -189,7 +192,7 @@ describe("reduceShieldedSyncResult", () => {
 
       expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(2_000_000));
       expect(output.accountUpdate.privateInfo?.ironwoodBalance).toEqual(new BigNumber(3_000_000));
-      expect(output.accountUpdate.balance).toEqual(new BigNumber(6_000_000));
+      expect(output.accountUpdate.balance).toEqual(new BigNumber(4_000_000));
     });
 
     // The engine reports the nullifiers it saw spent in a single list covering
