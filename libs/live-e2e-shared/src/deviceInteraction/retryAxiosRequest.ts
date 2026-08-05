@@ -30,13 +30,6 @@ export async function retryAxiosRequest<T>(
 
       const ax = axios.isAxiosError(error) ? error : null;
 
-      // `live-network` installs a GLOBAL axios response interceptor that rewrites
-      // transport failures into `@ledgerhq/errors` classes before they ever reach
-      // this catch: 5xx/4xx responses become LedgerAPI5xx/LedgerAPI4xx (which carry
-      // a numeric `.status`), and no-response failures become NetworkDown. In that
-      // runtime the caught value is no longer an AxiosError, so gating retries on
-      // `axios.isAxiosError` alone silently disables them — we must also inspect the
-      // transformed error's own shape.
       const err = error as { status?: number; name?: string; code?: string } | null;
       const status = ax?.response?.status ?? err?.status;
       const code = ax?.code ?? err?.code;
