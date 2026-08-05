@@ -26,7 +26,6 @@ export const deviceInitializationInput: InitializationInput = {
   appName: "Ethereum",
   dependencies: ["1inch"],
   requireLatestFirmware: false,
-  allowPartialDependencies: false,
 };
 
 export const initializerDevice: InitializerDevice = {
