@@ -3,10 +3,10 @@ import type {
   FetchBaseQueryMeta,
   QueryReturnValue,
 } from "@reduxjs/toolkit/query/react";
-import { getEnv } from "@shared/env";
 import type { RawApiResponse } from "../schema";
 import type { GetAssetsByCategoryParams } from "../types";
 import { assertDadaApiUrl } from "./utils";
+import { resolveBaseUrl } from "./requests";
 
 /**
  * Walks every page of a category and collects one projection per asset.
@@ -18,7 +18,7 @@ export async function collectAllByCategory(
   extract: (data: RawApiResponse) => string[],
 ): Promise<QueryReturnValue<string[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>> {
   try {
-    const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+    const baseUrl = resolveBaseUrl(queryArg);
     const collected: string[] = [];
     let cursor: string | undefined;
 

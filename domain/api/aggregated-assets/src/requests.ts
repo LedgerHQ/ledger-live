@@ -1,8 +1,4 @@
-import { getEnv } from "@shared/env";
-import type { RawApiResponse } from "./schema";
-import { AssetsAdditionalData, type AssetsData, type GetAssetsDataParams } from "./types";
-import { convertApiAssets } from "./transforms";
-import { assertDadaApiUrl } from "./internals/utils";
+import { AssetsAdditionalData, type GetAssetsDataParams } from "./types";
 
 export function buildAssetsQueryParams(
   queryArg: GetAssetsDataParams,
@@ -32,38 +28,5 @@ export function buildAssetsQueryParams(
       AssetsAdditionalData.Apy,
       AssetsAdditionalData.MarketTrend,
     ],
-  };
-}
-
-export function resolveBaseUrl(queryArg: { isStaging?: boolean }): string {
-  return queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
-}
-
-/** One page for one chunk of currency ids. Used by the chunked lookup endpoint. */
-export async function fetchAssetsPage(
-  baseUrl: string,
-  queryArg: GetAssetsDataParams,
-): Promise<AssetsData> {
-  const params = buildAssetsQueryParams(queryArg);
-  const url = new URL(`${baseUrl}/assets`);
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) {
-      url.searchParams.set(key, Array.isArray(value) ? value.join(",") : String(value));
-    }
-  }
-
-  assertDadaApiUrl(url);
-  const response = await fetch(url.toString());
-
-  if (!response.ok) {
-    throw new Error(`DADA fetch failed: ${response.status} ${response.statusText}`);
-  }
-
-  const raw: RawApiResponse = await response.json();
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(raw.cryptoOrTokenCurrencies);
-
-  return {
-    ...raw,
-    cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
   };
 }

@@ -1,6 +1,6 @@
 import { fetchAssetsPage, resolveBaseUrl } from "./requests";
-import type { GetAssetsDataParams } from "./types";
-import type { RawApiResponse } from "./schema";
+import type { GetAssetsDataParams } from "../types";
+import type { RawApiResponse } from "../schema";
 
 /*
  * `@shared/env` is mocked because the Domain Test CI job installs only ./domain/** and ./shared/**,

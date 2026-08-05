@@ -10,7 +10,8 @@ import {
 import { ONE_DAY_IN_SECONDS } from "./constants";
 import { transformAssetsResponse } from "./transforms";
 import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
-import { buildAssetsQueryParams, fetchAssetsPage, resolveBaseUrl } from "./requests";
+import { buildAssetsQueryParams } from "./requests";
+import { fetchAssetsPage, resolveBaseUrl } from "./internals/requests";
 import {
   allSettled,
   chunkCurrencyIds,
