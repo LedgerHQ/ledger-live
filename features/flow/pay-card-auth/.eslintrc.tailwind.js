@@ -29,7 +29,6 @@ module.exports = {
   overrides: [
     {
       files: ["**/*.web.{ts,tsx}"],
-      // config above applies to these files
     },
   ],
 };

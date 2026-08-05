@@ -108,7 +108,7 @@
     "@domain/entity-market-sentiment": "workspace:^",
     "@domain/entity-pay-card": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
-    "@features/flow-card": "workspace:^",
+    "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-contacts": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/platform-currencies": "workspace:^",
