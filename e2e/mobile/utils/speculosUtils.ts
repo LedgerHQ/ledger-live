@@ -416,6 +416,9 @@ export async function refreshSpeculosForSigning(appName: string): Promise<void> 
   }
 
   const device = await launchSpeculos(appName, reusePort);
+  if (isSpeculosRemote()) {
+    await waitForSpeculosReady(device.id);
+  }
   await registerSpeculos(device.port);
   await registerKnownSpeculos(device.port);
   await waitForSpeculosHttpReady();
