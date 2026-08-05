@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { v4 as uuid } from "uuid";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
   DUPLICATE_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   INVALID_CONTACT_ADDRESS_LABEL_ERROR_NAME,
   addAddress,
-  contactAddress,
+  createContactAddress,
   type ContactId,
 } from "@domain/entity-contact";
 import {
@@ -82,8 +81,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       return;
     }
 
-    const address = contactAddress({
-      id: `address-${uuid()}`,
+    const address = createContactAddress({
       currencyId: addAddressFlowState.selectedCurrencyId,
       label: addAddressFlowState.addressLabel.label,
       address: addAddressFlowState.addressEntry.resolvedAddress,

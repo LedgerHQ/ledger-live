@@ -3874,6 +3874,9 @@ importers:
       '@shared/schema-primitives':
         specifier: workspace:*
         version: link:../../../shared/schema-primitives
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -3887,6 +3890,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/uuid':
+        specifier: ^9.0.0
+        version: 9.0.8
       jest:
         specifier: 'catalog:'
         version: 30.2.0

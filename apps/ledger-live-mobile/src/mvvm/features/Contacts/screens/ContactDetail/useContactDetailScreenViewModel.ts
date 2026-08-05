@@ -2,8 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { v4 as uuid } from "uuid";
-import { addAddress, contactAddress } from "@domain/entity-contact";
+import { addAddress, createContactAddress } from "@domain/entity-contact";
 import {
   type AddAddressFlowState,
   type AddAddressInputSource,
@@ -97,8 +96,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     hasCompletedMockConfirmation.current = true;
 
-    const address = contactAddress({
-      id: `address-${uuid()}`,
+    const address = createContactAddress({
       currencyId: addAddressFlowState.selectedCurrencyId,
       label: addAddressFlowState.addressLabel.label,
       address: addAddressFlowState.addressEntry.resolvedAddress,
