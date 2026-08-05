@@ -19,6 +19,39 @@ describe("Casper Api (mainnet)", () => {
     api = createApi(casperMainnetConfig);
   });
 
+  describe("broadcast", () => {
+    it("throws on insufficient funds", async () => {
+      const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
+      const senderHex = sender.publicKey.toHex();
+
+      const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
+      const deploy = casperNetwork.createTransferTransaction(
+        sender.publicKey,
+        sender.publicKey,
+        CASPER_NETWORK,
+        "1",
+        CASPER_FEES_MOTES,
+        CASPER_DEFAULT_TTL,
+        0,
+      );
+
+      // matches TransactionV1.sign()/validate(): the signed message is the transaction hash, not the serialized transaction bytes
+      const taggedSignature = Buffer.from(
+        sender.signAndAddAlgorithmBytes(new Uint8Array(deploy.hash.toBytes())),
+      ).toString("hex");
+
+      const combined = await api.combine(
+        JSON.stringify(deploy.toJSON()),
+        taggedSignature,
+        senderHex,
+      );
+
+      await expect(api.broadcast(combined)).rejects.toThrow(
+        /Code: -32016, err: Invalid transaction/,
+      );
+    });
+  });
+
   describe("combine", () => {
     const craftUnsignedTransfer = async (sender: PrivateKey, recipient: PrivateKey) => {
       const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
