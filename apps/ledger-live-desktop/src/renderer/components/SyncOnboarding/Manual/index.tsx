@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "LLD/hooks/redux";
+import { log } from "@ledgerhq/logs";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
@@ -146,6 +147,16 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     setAppsToRestoreAfterFwUpdate([]);
     restartChecksAfterUpdate();
   }, [restartChecksAfterUpdate]);
+
+  // The reinstall is best-effort: failing to restore apps should not block onboarding,
+  // but the failure needs to be observable instead of being silently swallowed.
+  const handleAppsRestoreError = useCallback(
+    (error: Error) => {
+      log("EarlySecurityCheck", "Failed to reinstall apps after firmware update:", error);
+      handleAppsRestoreComplete();
+    },
+    [handleAppsRestoreComplete],
+  );
 
   useEffect(() => {
     if (lockedDevice) {
@@ -339,7 +350,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
             setHeaderLoader={() => {}}
             onComplete={handleAppsRestoreComplete}
             onCancel={handleAppsRestoreComplete}
-            onError={handleAppsRestoreComplete}
+            onError={handleAppsRestoreError}
           />
         </Flex>
       </Flex>
