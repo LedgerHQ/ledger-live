@@ -62,7 +62,6 @@
     "tailwind-merge": "catalog:",
     "react-test-renderer": "catalog:"
   },
-
   "peerDependencies": {
     "react": ">=19",
     "@ledgerhq/lumen-design-core": "catalog:",
