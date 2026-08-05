@@ -1,5 +1,5 @@
 import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
-import { CryptoCurrencyIdSchema, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencySchema, findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { convertApiToken } from "@domain/api-currency-token";
 import type { ApiAsset, RawApiResponse } from "./schema";
@@ -12,6 +12,11 @@ import type { AssetsDataWithPagination } from "./types";
  * dropped, and a crypto missing from the local registry is *synthesised* rather than dropped, so
  * assets DADA knows about but the CAL does not still render. Do not tighten without replacing
  * that behaviour.
+ *
+ * The synthesised entity is validated by `CryptoCurrencySchema`, which also brands `id`. `parse`
+ * rather than `safeParse` is deliberate: it keeps the existing contract that an unusable currency
+ * surfaces as a query error instead of being silently dropped. Note this makes the whole response
+ * fail, so LIVE-35232 should convert it to per-item drop-and-count once that telemetry exists.
  */
 export function convertApiAssets(
   apiAssets: Record<string, ApiAsset>,
@@ -26,9 +31,9 @@ export function convertApiAssets(
       if (crypto) {
         result[key] = crypto;
       } else {
-        result[key] = {
+        result[key] = CryptoCurrencySchema.parse({
           type: "CryptoCurrency" as const,
-          id: CryptoCurrencyIdSchema.parse(asset.id),
+          id: asset.id,
           name: asset.name,
           ticker: asset.ticker,
           units: asset.units,
@@ -42,7 +47,7 @@ export function convertApiAssets(
           disableCountervalue: asset.disableCountervalue,
           supportsSegwit: asset.hasSegwit,
           ...(asset.chainId ? { ethereumLikeInfo: { chainId: parseInt(asset.chainId, 10) } } : {}),
-        };
+        });
       }
     }
   }
