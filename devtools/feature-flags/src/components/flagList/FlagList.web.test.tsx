@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "jest/render";
 import userEvent from "@testing-library/user-event";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";

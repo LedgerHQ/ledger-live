@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render } from "jest/render";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { FeatureFlags } from "./FeatureFlags";
 import type { FeatureFlagsToolProps } from "../types";

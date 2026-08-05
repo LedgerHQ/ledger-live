@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "jest/render";
 import { FlagListSummary } from "./FlagListSummary";
 
 describe("FlagListSummary", () => {

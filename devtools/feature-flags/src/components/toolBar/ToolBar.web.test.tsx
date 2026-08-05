@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "jest/render";
 import userEvent from "@testing-library/user-event";
 import { ToolBar } from "./ToolBar";
 import type { ToolBarInput, ToolBarFilters, ToolBarSort, ToolBarActions } from "./types";

@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render } from "jest/render";
 import type { DiffLine } from "../../utils";
 import { FlagDiffView } from "./FlagDiffView";
 

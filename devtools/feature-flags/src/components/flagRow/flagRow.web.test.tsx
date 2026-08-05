@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "jest/render";
 import userEvent from "@testing-library/user-event";
 import type { FlagDisplayState } from "../../types";
 import { FlagRow } from "../../components";
