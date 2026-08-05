@@ -43,6 +43,18 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
+export const FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
+  ...FF_LWM_WALLET_40_Q2,
+  analyticsOptIn: { enabled: false },
+} satisfies OptionalFeatureMap;
+
+export const FF_BORROW_MOBILE = {
+  ptxBorrowLiveApp: {
+    enabled: true,
+    params: { manifest_id: "borrow" },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies OptionalFeatureMap;

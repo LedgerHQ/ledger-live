@@ -1,5 +1,6 @@
 import { allure } from "jest-allure2-reporter/api";
 import {
+  fetchCurrentScreenTexts,
   specs,
   startSpeculos,
   stopSpeculos,
@@ -14,7 +15,7 @@ import {
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
 } from "@ledgerhq/live-e2e-shared/speculosCI";
-import { isSpeculosRemote } from "../helpers/commonHelpers";
+import { ensureBridgeReady, isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
@@ -22,6 +23,7 @@ import path from "path";
 
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { getCapturedStderr } from "./loggingUtils";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 
 const SPECULOS_STDOUT_MARKER = "--- Speculos stdout ---";
 const SPECULOS_STDERR_MARKER = "--- Speculos stderr ---";
@@ -101,11 +103,15 @@ async function writeInstances(instances: SpeculosId[]) {
   await fs.writeFile(SPECULOS_TRACKING_FILE, JSON.stringify(instances, null, 2));
 }
 
-export async function launchSpeculos(appName: string) {
+export async function launchSpeculos(appName: string, reusePort?: number) {
   const testName = jestExpect.getState().testPath || "unknown";
   let device;
   try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+    device = await startSpeculos(
+      testName ?? "cli_speculos",
+      specs[appName.replaceAll(" ", "_")],
+      reusePort,
+    );
   } catch (e: unknown) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;
@@ -324,15 +330,20 @@ function getKnownSpeculosAddress(speculosPort: number): string {
 async function waitForBridgeEnv(
   key: string,
   expectedValue: string,
-  attempts = 12,
+  attempts = 24,
   delayMs = 500,
 ): Promise<void> {
+  let bridgeRelaunched = false;
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const envsRaw = await getEnvs();
       if (envsRaw) {
         const envs = JSON.parse(envsRaw) as Record<string, string | undefined>;
         if ((envs[key] ?? "") === expectedValue) return;
+      } else if (!bridgeRelaunched && attempt >= 3) {
+        await ensureBridgeReady();
+        bridgeRelaunched = true;
+        continue;
       }
     } catch {
       // retry until timeout
@@ -346,10 +357,68 @@ async function waitForBridgeEnv(
   );
 }
 
+export async function releaseSpeculosDmkSessions(): Promise<void> {
+  await DeviceManagementKitTransportSpeculos.disconnectAll();
+}
+
 export async function registerKnownSpeculos(speculosPort: number) {
+  await ensureBridgeReady();
   const address = getKnownSpeculosAddress(speculosPort);
   await addKnownSpeculos(address);
   await waitForBridgeEnv("DEVICE_PROXY_URL", address);
+  process.env.DEVICE_PROXY_URL = address;
+}
+
+export function getActiveSpeculosPort(): number | undefined {
+  const ports = Array.from(speculosDevices.values()).filter(
+    (port): port is number => typeof port === "number",
+  );
+  return ports.at(-1);
+}
+
+export function getActiveSpeculosDeviceId(): string | undefined {
+  const entries = Array.from(speculosDevices.entries());
+  return entries.at(-1)?.[0];
+}
+
+export function getActiveSpeculosAddress(): string | undefined {
+  const port = getActiveSpeculosPort();
+  return port === undefined ? undefined : getKnownSpeculosAddress(port);
+}
+
+export async function waitForSpeculosHttpReady(timeoutMs = 30_000): Promise<void> {
+  const port = getActiveSpeculosPort();
+  if (port === undefined) {
+    throw new Error("No active Speculos port");
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      await fetchCurrentScreenTexts(port);
+      return;
+    } catch {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
+  throw new Error(`Speculos HTTP not ready on port ${port} after ${timeoutMs}ms`);
+}
+
+/** Relaunch Speculos on the same port before signing (desktop borrow / swap parity). */
+export async function refreshSpeculosForSigning(appName: string): Promise<void> {
+  const reusePort = getActiveSpeculosPort();
+  const deviceId = getActiveSpeculosDeviceId();
+
+  await releaseSpeculosDmkSessions();
+  if (deviceId) {
+    await removeSpeculosAndDeregisterKnownSpeculos(deviceId);
+  }
+
+  const device = await launchSpeculos(appName, reusePort);
+  await registerSpeculos(device.port);
+  await registerKnownSpeculos(device.port);
+  await waitForSpeculosHttpReady();
 }
 
 export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string) {
@@ -360,7 +429,9 @@ export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string
     } catch (e) {
       log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
     }
+    await ensureBridgeReady();
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");
+    delete process.env.DEVICE_PROXY_URL;
   }
 }

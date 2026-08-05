@@ -631,4 +631,18 @@ export default class PortfolioPage {
   async checkStocksListPageVisible() {
     await this.checkListPageVisible(this.stocksListId);
   }
+
+  private readonly borrowEntryPointId = "portfolio-borrow-entry-point";
+  private readonly borrowExploreCtaId = "borrow-explore-cta";
+
+  @Step("Expect borrow entry point to be visible")
+  async expectBorrowEntryPointVisible() {
+    await scrollToId(this.borrowEntryPointId, this.accountsListView, 700, "down");
+    await detoxExpect(getElementById(this.borrowEntryPointId)).toBeVisible();
+  }
+
+  @Step("Click borrow entry point")
+  async clickBorrowEntryPoint() {
+    await tapById(this.borrowExploreCtaId);
+  }
 }

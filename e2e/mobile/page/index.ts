@@ -36,6 +36,7 @@ import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
 import EarnV2DashboardPage from "./trade/earnV2Dashboard.page";
+import BorrowPage from "./trade/borrow.page";
 import ModularDrawer from "./drawer/modular.drawer";
 import SwapTransactionStatusDrawer from "./drawer/swapTransactionStatus.drawer";
 import UndelegatePage from "./trade/undelegate.page";
@@ -55,7 +56,7 @@ export const getUserdataPath = (userdata: string) => {
 const lazyInit = <T>(PageClass: new () => T) => {
   let instance: T | null = null;
   return () => {
-    if (!instance) instance = new PageClass();
+    instance ??= new PageClass();
     return instance;
   };
 };
@@ -97,6 +98,7 @@ export class Application {
   private buySellPageInstance = lazyInit(BuySellPage);
   private settingsHelpPageInstance = lazyInit(SettingsHelpPage);
   private readonly earnV2DashboardPageInstance = lazyInit(EarnV2DashboardPage);
+  private readonly borrowPageInstance = lazyInit(BorrowPage);
   private modularDrawerPageInstance = lazyInit(ModularDrawer);
   private swapTransactionStatusDrawerInstance = lazyInit(SwapTransactionStatusDrawer);
   private readonly wallet40DrawersPageInstance = lazyInit(Wallet40DrawersPage);
@@ -257,6 +259,10 @@ export class Application {
 
   public get earnV2Dashboard() {
     return this.earnV2DashboardPageInstance();
+  }
+
+  public get borrow() {
+    return this.borrowPageInstance();
   }
 
   public get modularDrawer() {
