@@ -562,6 +562,11 @@ export function buildDebugContentCard(
   const categoryCta = values.categoryCta.trim();
   const isCarousel = values.layout === ContentCardsLayout.carousel;
   // Carousel: container header uses dedicated category* fields only (empty by default = cards only).
+  let categoryLink = values.link;
+  if (isCarousel) {
+    categoryLink = categoryCta ? values.link : "";
+  }
+
   const category: CategoryContentCard = {
     id: `${values.categoryId}-category-${values.id}`,
     categoryId: values.categoryId,
@@ -575,7 +580,7 @@ export function buildDebugContentCard(
     title: isCarousel ? categoryTitle : categoryTitle || values.title,
     description: isCarousel ? categoryDescription : values.description,
     cta: isCarousel ? categoryCta : values.cta,
-    link: isCarousel ? (categoryCta ? values.link : "") : values.link,
+    link: categoryLink,
     isDismissable: true,
     extras: {
       platform: "mobile",

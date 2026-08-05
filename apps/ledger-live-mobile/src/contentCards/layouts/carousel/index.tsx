@@ -162,6 +162,24 @@ const Carousel = ContentLayoutBuilder<Props>(
       [logImpressionCard, findDisplayedPosition],
     );
 
+    const lumenPageIndicator = (
+      <Box lx={{ alignItems: "center" }}>
+        <PageIndicator
+          currentPage={Math.min(carouselIndex + 1, listData.length)}
+          totalPages={listData.length}
+        />
+      </Box>
+    );
+
+    let pagination: React.ReactNode = null;
+    if (isPaginationEnabled) {
+      if (leadingSlide) {
+        pagination = lumenPageIndicator;
+      } else {
+        pagination = <Pagination items={items} carouselIndex={carouselIndex} />;
+      }
+    }
+
     return (
       <View
         ref={viewRef}
@@ -204,26 +222,8 @@ const Carousel = ContentLayoutBuilder<Props>(
           )}
         />
 
-        {isPaginationEnabled ? (
-          leadingSlide ? (
-            <Box lx={{ alignItems: "center" }}>
-              <PageIndicator
-                currentPage={Math.min(carouselIndex + 1, listData.length)}
-                totalPages={listData.length}
-              />
-            </Box>
-          ) : (
-            <Pagination items={items} carouselIndex={carouselIndex} />
-          )
-        ) : null}
-        {showDots ? (
-          <Box lx={{ alignItems: "center" }}>
-            <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, listData.length)}
-              totalPages={listData.length}
-            />
-          </Box>
-        ) : null}
+        {pagination}
+        {showDots ? lumenPageIndicator : null}
       </View>
     );
   },

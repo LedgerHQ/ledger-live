@@ -115,9 +115,9 @@ const PortfolioBrazePlacementSlide = memo(function PortfolioBrazePlacementSlide(
   );
 });
 
-type PortfolioContentCardsProps = {
+type PortfolioContentCardsProps = Readonly<{
   leadingSlide?: ReactNode;
-};
+}>;
 
 function PortfolioContentCards({ leadingSlide }: PortfolioContentCardsProps) {
   const { layout, brazeCarouselEntries, positionOffset, logSlideClick, dismissCard } =
