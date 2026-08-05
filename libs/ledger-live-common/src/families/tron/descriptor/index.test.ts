@@ -25,6 +25,10 @@ describe("tron descriptor", () => {
     expect(descriptor.send.fees.hasCustom).toBe(false);
     expect(descriptor.send.fees.hasCoinControl).toBeUndefined();
   });
+
+  it("declares address book support", () => {
+    expect(descriptor.send.addressBook).toBe(true);
+  });
 });
 
 describe("tron descriptor - getNetworkFeesInfo", () => {
