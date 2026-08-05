@@ -1,3 +1,5 @@
+import { buildCategoryResponse } from "./categoryResponse.mock";
+
 const STABLECOIN_TICKERS = [
   "USDT",
   "USDC",
@@ -21,25 +23,10 @@ const STABLECOIN_TICKERS = [
   "GUSD",
 ];
 
-export const mockStablecoinsResponse = {
-  cryptoAssets: Object.fromEntries(
-    STABLECOIN_TICKERS.map(ticker => [
-      `urn:crypto:meta-currency:${ticker.toLowerCase()}`,
-      {
-        id: `urn:crypto:meta-currency:${ticker.toLowerCase()}`,
-        ticker,
-        name: ticker,
-        assetsIds: {},
-      },
-    ]),
-  ),
-  networks: {},
-  cryptoOrTokenCurrencies: {},
-  interestRates: {},
-  markets: {},
-  currenciesOrder: {
-    key: "marketCap",
-    order: "desc",
-    metaCurrencyIds: STABLECOIN_TICKERS.map(t => `urn:crypto:meta-currency:${t.toLowerCase()}`),
-  },
-};
+/*
+ * The category endpoints keep one field per asset, so tickers alone are enough here: the
+ * stablecoins list is consumed as tickers and never resolved to currencies.
+ */
+export const mockStablecoinsResponse = buildCategoryResponse(
+  STABLECOIN_TICKERS.map(ticker => ({ ticker })),
+);
