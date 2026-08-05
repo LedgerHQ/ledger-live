@@ -1,0 +1,61 @@
+{
+  "name": "@support/jest-devtools-fixtures",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared jest presets and themed render fixtures for devtools/* packages (dual web/native)",
+  "main": "index.js",
+  "sideEffects": false,
+  "exports": {
+    ".": "./index.js",
+    "./native": "./src/index.native.ts",
+    "./web": "./src/index.web.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "mocks",
+    "setup",
+    "src"
+  ],
+  "scripts": {
+    "format": "oxfmt index.js src setup mocks",
+    "format:check": "oxfmt index.js src setup mocks --check",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json"
+  },
+  "peerDependencies": {
+    "@gorhom/bottom-sheet": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "react": ">=19",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-worklets": "catalog:",
+    "react-test-renderer": "catalog:"
+  },
+  "devDependencies": {
+    "@gorhom/bottom-sheet": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-worklets": "catalog:",
+    "react-test-renderer": "catalog:",
+    "typescript": "catalog:"
+  }
+}

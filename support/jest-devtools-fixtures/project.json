@@ -1,0 +1,8 @@
+{
+  "name": "@support/jest-devtools-fixtures",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleSuffixes": [".native", ""]
+  },
+  // setup/native.ts is deliberately not typechecked: it imports
+  // react-native-safe-area-context/jest/mock, a .tsx source file whose own imports (@jest/globals)
+  // cannot resolve from inside its pnpm directory. The native test suites execute it instead.
+  "include": ["src/**/*", "mocks/**/*.ts", "mocks/**/*.tsx", "**/*.d.ts"],
+  "exclude": ["node_modules", "src/**/*.web.*"]
+}
