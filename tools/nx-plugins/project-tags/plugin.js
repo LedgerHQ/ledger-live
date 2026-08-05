@@ -55,6 +55,10 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:devtools");
   }
 
+  if (projectRoot.startsWith("support/")) {
+    tags.add("scope:support");
+  }
+
   if (projectRoot.startsWith("e2e/")) {
     tags.add("scope:e2e");
   }

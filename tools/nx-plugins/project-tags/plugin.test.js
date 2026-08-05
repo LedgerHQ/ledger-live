@@ -36,6 +36,13 @@ test("shared/* gets scope:shared", () => {
   ]);
 });
 
+test("support/* gets scope:support", () => {
+  assert.deepEqual(inferTags("support/jest-devtools", "@support/jest-devtools"), [
+    "scope:no-apps",
+    "scope:support",
+  ]);
+});
+
 test("features/* (unclassified sub-path) gets scope:features only — no type tag (regression)", () => {
   const tags = inferTags("features/market-banner", "@features/market-banner");
   assert.deepEqual(tags, ["scope:features", "scope:no-apps"]);
