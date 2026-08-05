@@ -9511,12 +9511,12 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade to any touchscreen signer and get 20% off.",
+      "description": "Upgrade and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
       "title": "More security. More control",
-      "description": "Learn more about advanced security features.",
+      "description": "Learn more about security features.",
       "cta": "Learn more"
     }
   },
