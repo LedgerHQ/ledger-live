@@ -5,6 +5,7 @@ import type { DialogFlowOptions, DialogFlowProps } from "./types";
 export function DialogFlow<Step extends string>({
   currentStep,
   defaultOptions,
+  height,
   isOpen,
   onBack,
   onClose,
@@ -40,7 +41,7 @@ export function DialogFlow<Step extends string>({
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog height={height} open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent {...options.dialogContentProps}>
         <DialogHeader
           {...options.dialogHeaderProps}

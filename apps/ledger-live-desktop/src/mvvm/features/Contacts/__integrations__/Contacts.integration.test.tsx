@@ -426,6 +426,19 @@ describe("Contacts integration", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeVisible();
 
+    await waitFor(() => {
+      expect(screen.getByTestId("asset-selector-list-container")).toBeVisible();
+    });
+
+    const assetList = screen.getByTestId("asset-selector-list-container");
+    expect(dialog).toHaveClass("h-560");
+    expect(screen.getByTestId("modular-dialog-screen-ASSET_SELECTION")).toHaveClass("flex-1");
+    expect(assetList).toHaveClass("h-auto");
+    expect(assetList).toHaveClass("min-h-0");
+    expect(assetList).toHaveClass("flex-1");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-0");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-16");
+
     act(() => {
       store
         .getState()
@@ -440,6 +453,8 @@ describe("Contacts integration", () => {
     expect(confirmationButton).toBeDisabled();
     expect(confirmationButton.querySelector("svg")).not.toBeNull();
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("!mb-0");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("pb-24");
+    expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-24");
   });
 
   it("should render the address and its prefilled name together before review", async () => {
