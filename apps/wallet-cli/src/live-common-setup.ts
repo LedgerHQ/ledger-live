@@ -4,6 +4,7 @@ import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
+import { setupStandaloneSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/standaloneStore";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv, getEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
@@ -123,4 +124,9 @@ setFrameworkCryptoAssetsStore(
     ledgerClientVersion,
   }),
 );
+// `getQuotes` needs a store dispatch; wallet-cli has no app Redux store.
+setupStandaloneSwapQuotesStore({
+  swapApiBaseUrl: getEnv("SWAP_API_BASE"),
+  ledgerClientVersion,
+});
 registerWalletCliDmkTransport();
