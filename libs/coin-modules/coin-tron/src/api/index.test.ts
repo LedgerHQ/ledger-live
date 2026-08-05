@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from ".";
 import coinConfig, { TronConfig } from "../config";
+import type { TronMemo, TronTxData } from "../types";
 import {
   broadcast,
   combine,
@@ -62,8 +63,8 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
-    const intent: TransactionIntent = {
+    const api: CoinModuleApi<TronMemo, TronTxData> = createApi(mockTronConfig);
+    const intent: TransactionIntent<TronMemo, TronTxData> = {
       intentType: "transaction",
       type: "send",
       sender: "sender",
@@ -73,6 +74,7 @@ describe("createApi", () => {
         type: "trc10",
         assetReference: "1002000",
       },
+      data: { type: "tron" },
     };
     // Simulate calling all methods
     await api.broadcast("transaction");
@@ -102,7 +104,7 @@ describe("createApi", () => {
   });
 
   it("should throw when limit > 200", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
+    const api: CoinModuleApi<TronMemo, TronTxData> = createApi(mockTronConfig);
     await expect(api.listOperations("address", { minHeight: 0, limit: 201 })).rejects.toThrow(
       "limit must be <= 200 for Tron (TronGrid API restriction)",
     );
@@ -110,7 +112,7 @@ describe("createApi", () => {
   });
 
   it("should not throw when limit is exactly 200", async () => {
-    const api: CoinModuleApi = createApi(mockTronConfig);
+    const api: CoinModuleApi<TronMemo, TronTxData> = createApi(mockTronConfig);
     await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.toEqual({
       items: [],
       next: undefined,

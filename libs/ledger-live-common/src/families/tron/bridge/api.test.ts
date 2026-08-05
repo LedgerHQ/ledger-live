@@ -3,9 +3,21 @@ import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import { getAssetFromToken, getTokenFromAsset, computeIntentType } from "./api";
+import { BigNumber } from "bignumber.js";
+import { isAccountEmpty } from "@ledgerhq/coin-tron/index";
+import { fetchTronAccount } from "@ledgerhq/coin-tron/network";
+import {
+  buildAccountShape,
+  buildIntentData,
+  getAssetFromToken,
+  getTokenFromAsset,
+  computeIntentType,
+  describeOptimisticOperation,
+  getDeviceSignOptions,
+} from "./api";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore");
+jest.mock("@ledgerhq/coin-tron/network", () => ({ fetchTronAccount: jest.fn() }));
 
 const trc20Token = {
   id: "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
@@ -26,6 +38,17 @@ const trc10Token = {
 const tron = getCryptoCurrencyById("tron");
 
 describe("tron bridge", () => {
+  describe("buildAccountShape", () => {
+    it("returns the zeroed defaults for an unactivated address", async () => {
+      (fetchTronAccount as jest.Mock).mockResolvedValue([]);
+
+      const shape = await buildAccountShape("TUnactivated");
+
+      expect(shape).toEqual({ tronResources: expect.anything() });
+      expect(isAccountEmpty(shape as { tronResources: never })).toBe(true);
+    });
+  });
+
   describe("computeIntentType", () => {
     it.each([
       [{ mode: "send" }, "send"],
@@ -35,10 +58,114 @@ describe("tron bridge", () => {
       expect(computeIntentType(transaction)).toBe(expected);
     });
 
+    it.each([
+      "freeze",
+      "unfreeze",
+      "vote",
+      "claimReward",
+      "withdrawExpireUnfreeze",
+      "unDelegateResource",
+      "legacyUnfreeze",
+    ])("should pass the resource-staking mode %s through as its own intent type", mode => {
+      expect(computeIntentType({ mode })).toBe(mode);
+    });
+
     it("should throw for an unsupported mode", () => {
-      expect(() => computeIntentType({ mode: "freeze" })).toThrow(
-        "Unsupported Tron transaction mode: freeze",
+      expect(() => computeIntentType({ mode: "delegate" })).toThrow(
+        "Unsupported Tron transaction mode: delegate",
       );
+    });
+  });
+
+  describe("buildIntentData", () => {
+    it("maps the staking fields out of familySpecificData", () => {
+      const votes = [{ name: "sr", address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 7 }];
+
+      expect(
+        buildIntentData({
+          mode: "vote",
+          familySpecificData: { resource: "BANDWIDTH", duration: 3, votes },
+        }),
+      ).toEqual({ type: "tron", mode: "vote", resource: "BANDWIDTH", duration: 3, votes });
+    });
+
+    it("returns the bare discriminant for a plain send", () => {
+      expect(buildIntentData({ mode: "send" })).toEqual({ type: "tron", mode: "send" });
+    });
+
+    it("omits absent fields rather than sending explicit undefined", () => {
+      expect(
+        buildIntentData({ mode: "freeze", familySpecificData: { resource: "ENERGY" } }),
+      ).toEqual({ type: "tron", mode: "freeze", resource: "ENERGY" });
+    });
+
+    it("drops keys it does not model, so a stray field cannot reach the coin module", () => {
+      const data = buildIntentData({
+        mode: "freeze",
+        familySpecificData: { resource: "ENERGY", somethingElse: "ignored" },
+      });
+
+      expect(data).not.toHaveProperty("somethingElse");
+    });
+
+    it("preserves a null resource, which the UI uses for 'not chosen yet'", () => {
+      expect(buildIntentData({ mode: "freeze", familySpecificData: { resource: null } })).toEqual({
+        type: "tron",
+        mode: "freeze",
+        resource: null,
+      });
+    });
+  });
+
+  describe("describeOptimisticOperation", () => {
+    it.each([
+      ["freeze", "FREEZE"],
+      ["unfreeze", "UNFREEZE"],
+      ["vote", "VOTE"],
+      ["withdrawExpireUnfreeze", "WITHDRAW_EXPIRE_UNFREEZE"],
+      ["unDelegateResource", "UNDELEGATE_RESOURCE"],
+      ["legacyUnfreeze", "LEGACY_UNFREEZE"],
+    ])("maps the resource-staking mode %s to the %s operation type", (mode, expected) => {
+      expect(describeOptimisticOperation(mode, {} as never)).toEqual({
+        type: expected,
+        value: new BigNumber(0),
+      });
+    });
+
+    it("reports the accrued reward as a claim's value, since the transaction carries no amount", () => {
+      const account = { tronResources: { unwithdrawnReward: new BigNumber(1234) } };
+
+      // No type: `claimReward` is a generic mode the framework already maps to `REWARD`.
+      expect(describeOptimisticOperation("claimReward", account as never)).toEqual({
+        value: new BigNumber(1234),
+      });
+    });
+
+    it.each(["claimReward", "send"])(
+      "leaves %s entirely to the framework when there is nothing Tron-specific to say",
+      mode => {
+        expect(describeOptimisticOperation(mode, {} as never)).toBeUndefined();
+      },
+    );
+  });
+
+  describe("getDeviceSignOptions", () => {
+    const signedToken = { ...trc10Token, ledgerSignature: "3045cafe" };
+    const account = {
+      subAccounts: [{ id: "sub-1", token: signedToken }],
+    };
+
+    it("passes the token's CAL signature for a sub-account send, which app-tron clear-signs with", () => {
+      expect(getDeviceSignOptions({ subAccountId: "sub-1" }, account as never)).toEqual({
+        token: { id: signedToken.id, ledgerSignature: "3045cafe" },
+      });
+    });
+
+    it.each([
+      ["a main-account send", {}],
+      ["a sub-account the sync has not produced yet", { subAccountId: "sub-unknown" }],
+    ])("supplies nothing for %s", (_case, transaction) => {
+      expect(getDeviceSignOptions(transaction, account as never)).toBeUndefined();
     });
   });
 

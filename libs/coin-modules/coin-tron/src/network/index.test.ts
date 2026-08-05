@@ -1,6 +1,5 @@
 import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import network from "@ledgerhq/live-network";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { TronTransactionExpired } from "../types/errors";
@@ -10,7 +9,6 @@ import {
   claimRewardTronTransaction,
   craftStandardTransaction,
   craftTrc20Transaction,
-  createTronTransaction,
   defaultFetchParams,
   fetchTronAccount,
   fetchTronAccountTxs,
@@ -94,17 +92,14 @@ describe("post / fetch error handling", () => {
 
   it("propagates GET errors from fetch", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ Error: { message: "get-boom" } }));
-    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(senderBase58)).rejects.toThrow(/get-boom/);
   });
 });
 
 describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
   it("freezeTronTransaction posts to freezebalancev2", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await freezeTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { amount: new BigNumber(1000), resource: "BANDWIDTH" } as never,
-    );
+    await freezeTronTransaction(senderBase58, new BigNumber(1000), "BANDWIDTH");
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         method: "POST",
@@ -116,10 +111,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
 
   it("unfreezeTronTransaction posts to unfreezebalancev2", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await unfreezeTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { amount: new BigNumber(500), resource: "ENERGY" } as never,
-    );
+    await unfreezeTronTransaction(senderBase58, new BigNumber(500), "ENERGY");
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         url: expect.stringContaining("/wallet/unfreezebalancev2"),
@@ -130,10 +122,7 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
 
   it("withdrawExpireUnfreezeTronTransaction posts to withdrawexpireunfreeze", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await withdrawExpireUnfreezeTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      {} as never,
-    );
+    await withdrawExpireUnfreezeTronTransaction(senderBase58);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/withdrawexpireunfreeze") }),
     );
@@ -141,10 +130,12 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
 
   it("unDelegateResourceTransaction posts to undelegateresource", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await unDelegateResourceTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { amount: new BigNumber(1000), resource: "BANDWIDTH", recipient: recipientBase58 } as never,
-    );
+    await unDelegateResourceTransaction({
+      ownerAddress: senderBase58,
+      receiverAddress: recipientBase58,
+      amount: new BigNumber(1000),
+      resource: "BANDWIDTH",
+    });
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/undelegateresource") }),
     );
@@ -152,10 +143,11 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
 
   it("legacyUnfreezeTronTransaction with recipient", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await legacyUnfreezeTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { resource: "ENERGY", recipient: recipientBase58 } as never,
-    );
+    await legacyUnfreezeTronTransaction({
+      ownerAddress: senderBase58,
+      resource: "ENERGY",
+      receiverAddress: recipientBase58,
+    });
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ receiver_address: expect.any(String) }),
@@ -165,10 +157,11 @@ describe("freeze / unfreeze / withdraw / unDelegate / legacyUnfreeze", () => {
 
   it("legacyUnfreezeTronTransaction without recipient", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await legacyUnfreezeTronTransaction(
-      { freshAddress: senderBase58 } as Account,
-      { resource: "ENERGY", recipient: "" } as never,
-    );
+    await legacyUnfreezeTronTransaction({
+      ownerAddress: senderBase58,
+      resource: "ENERGY",
+      receiverAddress: undefined,
+    });
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ receiver_address: undefined }),
@@ -187,11 +180,7 @@ describe("getDelegatedResource", () => {
         ],
       }),
     );
-    const result = await getDelegatedResource(
-      { freshAddress: senderBase58 } as Account,
-      { recipient: recipientBase58 } as never,
-      "BANDWIDTH",
-    );
+    const result = await getDelegatedResource(senderBase58, recipientBase58, "BANDWIDTH");
     expect(result.toNumber()).toBe(150);
   });
 
@@ -204,21 +193,13 @@ describe("getDelegatedResource", () => {
         ],
       }),
     );
-    const result = await getDelegatedResource(
-      { freshAddress: senderBase58 } as Account,
-      { recipient: recipientBase58 } as never,
-      "ENERGY",
-    );
+    const result = await getDelegatedResource(senderBase58, recipientBase58, "ENERGY");
     expect(result.toNumber()).toBe(125);
   });
 
   it("returns 0 when no delegatedResource is present", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({}));
-    const result = await getDelegatedResource(
-      { freshAddress: senderBase58 } as Account,
-      { recipient: recipientBase58 } as never,
-      "BANDWIDTH",
-    );
+    const result = await getDelegatedResource(senderBase58, recipientBase58, "BANDWIDTH");
     expect(result.toNumber()).toBe(0);
   });
 });
@@ -318,60 +299,12 @@ describe("craftStandardTransaction", () => {
   });
 });
 
-describe("createTronTransaction", () => {
-  it.each([
-    {
-      name: "native",
-      subAccount: null,
-      expectedUrl: "/wallet/createtransaction",
-    },
-    {
-      name: "trc10",
-      subAccount: { type: "TokenAccount", token: { id: "tron/trc10/1000001" } } as TokenAccount,
-      expectedUrl: "/wallet/transferasset",
-    },
-    {
-      name: "trc20",
-      subAccount: {
-        type: "TokenAccount",
-        token: {
-          id: "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        },
-      } as unknown as TokenAccount,
-      expectedUrl: "/wallet/triggersmartcontract",
-    },
-  ])(
-    "dispatches a $name transaction to the right endpoint",
-    async ({ subAccount, expectedUrl }) => {
-      const expirationInFuture = Date.now() + 10 * 60 * 1000;
-      mockedNetwork.mockResolvedValueOnce(
-        mockResponse(
-          expectedUrl.includes("triggersmartcontract")
-            ? { transaction: { raw_data: { expiration: expirationInFuture } } }
-            : { raw_data: { expiration: expirationInFuture } },
-        ),
-      );
-      await createTronTransaction(
-        { freshAddress: senderBase58 } as Account,
-        { recipient: recipientBase58, amount: new BigNumber(1) } as never,
-        subAccount,
-      );
-      expect(mockedNetwork).toHaveBeenCalledWith(
-        expect.objectContaining({ url: expect.stringContaining(expectedUrl) }),
-      );
-    },
-  );
-
+describe("extendExpiration (via craftStandardTransaction)", () => {
   it("throws InvalidTransactionError if the node returns an expired transaction", async () => {
     const pastExpiration = Date.now() - 60 * 60 * 1000;
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: { expiration: pastExpiration } }));
     await expect(
-      createTronTransaction(
-        { freshAddress: senderBase58 } as Account,
-        { recipient: recipientBase58, amount: new BigNumber(1) } as never,
-        null,
-      ),
+      craftStandardTransaction(undefined, recipientHex, senderHex, new BigNumber(1), false),
     ).rejects.toThrow(InvalidTransactionError);
   });
 });
@@ -425,9 +358,9 @@ describe("fetchTronAccount", () => {
     expect(result).toEqual([{ address: senderHex }]);
   });
 
-  it("returns [] on network error", async () => {
+  it("propagates network errors instead of reporting an inactive account", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("network"));
-    await expect(fetchTronAccount(senderBase58)).resolves.toEqual([]);
+    await expect(fetchTronAccount(senderBase58)).rejects.toThrow("network");
   });
 });
 
@@ -717,9 +650,9 @@ describe("fetchTronContract / getContractUserEnergyRatioConsumption", () => {
     });
   });
 
-  it("returns undefined on error", async () => {
+  it("propagates errors instead of reporting no contract", async () => {
     mockedNetwork.mockRejectedValueOnce(new Error("nope"));
-    await expect(fetchTronContract(senderBase58)).resolves.toBeUndefined();
+    await expect(fetchTronContract(senderBase58)).rejects.toThrow("nope");
   });
 
   it("getContractUserEnergyRatioConsumption returns the percent when present", async () => {
@@ -866,10 +799,9 @@ describe("super representatives", () => {
 describe("voteTronSuperRepresentatives", () => {
   it("forwards encoded addresses and vote counts", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await voteTronSuperRepresentatives(
-      { freshAddress: senderBase58 } as Account,
-      { votes: [{ address: recipientBase58, voteCount: 7 }] } as never,
-    );
+    await voteTronSuperRepresentatives(senderBase58, [
+      { name: "sr", address: recipientBase58, voteCount: 7 },
+    ]);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
         url: expect.stringContaining("/wallet/votewitnessaccount"),
@@ -904,7 +836,7 @@ describe("getUnwithdrawnReward", () => {
 describe("claimRewardTronTransaction", () => {
   it("POSTs to /wallet/withdrawbalance", async () => {
     mockedNetwork.mockResolvedValueOnce(mockResponse({ raw_data: {} }));
-    await claimRewardTronTransaction({ freshAddress: senderBase58 } as Account);
+    await claimRewardTronTransaction(senderBase58);
     expect(mockedNetwork).toHaveBeenCalledWith(
       expect.objectContaining({ url: expect.stringContaining("/wallet/withdrawbalance") }),
     );

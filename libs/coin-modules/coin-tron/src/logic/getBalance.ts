@@ -10,8 +10,9 @@ const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
 export async function getBalance(address: string): Promise<Balance[]> {
   const accounts = await fetchTronAccount(address);
 
-  // if account is not activated, an empty balance is returned
-  if (accounts.length === 0) return [{ value: BigInt(0), asset: { type: "native" } }];
+  // Same shape as `computeBalance`, which always reports `locked`, so consumers never have to
+  // special-case an unactivated account.
+  if (accounts.length === 0) return [{ value: 0n, locked: 0n, asset: { type: "native" } }];
 
   const account = accounts[0];
 
@@ -57,70 +58,23 @@ function extractTrc20Balance(account: AccountTronAPI, owner: string): Balance[] 
 
 export function computeBalance(account: AccountTronAPI): Balance {
   const tronResources = getTronResources(account);
+  const free = bigIntOrZero(account.balance ?? 0);
 
-  let balance = bigIntOrZero(account.balance ?? 0);
-  balance += bigIntOrZero(tronResources.frozen.bandwidth?.amount);
-  balance += bigIntOrZero(tronResources.frozen.energy?.amount);
-  balance += bigIntOrZero(tronResources.delegatedFrozen.bandwidth?.amount);
-  balance += bigIntOrZero(tronResources.delegatedFrozen.energy?.amount);
-  balance += tronResources.unFrozen.energy
-    ? tronResources.unFrozen.energy.reduce((accum, cur) => {
-        return accum + BigInt(cur.amount.toString());
-      }, BigInt(0))
-    : BigInt(0);
-  balance += tronResources.unFrozen.bandwidth
-    ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
-        return accum + BigInt(cur.amount.toString());
-      }, BigInt(0))
-    : BigInt(0);
-  balance += bigIntOrZero(tronResources.legacyFrozen.bandwidth?.amount);
-  balance += bigIntOrZero(tronResources.legacyFrozen.energy?.amount);
+  // Everything staked, being unstaked, or delegated away. It counts towards the total balance but
+  // cannot pay for a transaction, so it is reported as `locked`: the generic coin framework derives
+  // `spendableBalance = value - locked`, and without this a send-max would offer frozen TRX and the
+  // broadcast would fail on chain.
+  let locked = bigIntOrZero(tronResources.frozen.bandwidth?.amount);
+  locked += bigIntOrZero(tronResources.frozen.energy?.amount);
+  locked += bigIntOrZero(tronResources.delegatedFrozen.bandwidth?.amount);
+  locked += bigIntOrZero(tronResources.delegatedFrozen.energy?.amount);
+  locked += sumAmounts(tronResources.unFrozen.energy);
+  locked += sumAmounts(tronResources.unFrozen.bandwidth);
+  locked += bigIntOrZero(tronResources.legacyFrozen.bandwidth?.amount);
+  locked += bigIntOrZero(tronResources.legacyFrozen.energy?.amount);
 
-  return { asset: { type: "native" }, value: balance };
+  return { asset: { type: "native" }, value: free + locked, locked };
 }
 
-export function computeBalanceBridge(account: AccountTronAPI): BigNumber {
-  const tronResources = getTronResources(account);
-
-  const spendableBalance = account.balance ? new BigNumber(account.balance) : new BigNumber(0);
-  const balance = spendableBalance
-    .plus(tronResources.frozen.bandwidth ? tronResources.frozen.bandwidth.amount : new BigNumber(0))
-    .plus(tronResources.frozen.energy ? tronResources.frozen.energy.amount : new BigNumber(0))
-    .plus(
-      tronResources.delegatedFrozen.bandwidth
-        ? tronResources.delegatedFrozen.bandwidth.amount
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.delegatedFrozen.energy
-        ? tronResources.delegatedFrozen.energy.amount
-        : new BigNumber(0),
-    )
-
-    .plus(
-      tronResources.unFrozen.energy
-        ? tronResources.unFrozen.energy.reduce((accum, cur) => {
-            return accum.plus(cur.amount);
-          }, new BigNumber(0))
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.unFrozen.bandwidth
-        ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
-            return accum.plus(cur.amount);
-          }, new BigNumber(0))
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.legacyFrozen.bandwidth
-        ? tronResources.legacyFrozen.bandwidth.amount
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.legacyFrozen.energy
-        ? tronResources.legacyFrozen.energy.amount
-        : new BigNumber(0),
-    );
-
-  return balance;
-}
+const sumAmounts = (entries: { amount: BigNumber }[] | null | undefined): bigint =>
+  entries?.reduce((total, cur) => total + BigInt(cur.amount.toString()), 0n) ?? 0n;

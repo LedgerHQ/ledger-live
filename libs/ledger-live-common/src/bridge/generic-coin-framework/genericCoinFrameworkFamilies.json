@@ -4,5 +4,6 @@
   "xrp": true,
   "stellar": true,
   "tezos": true,
+  "tron": true,
   "solana": false
 }

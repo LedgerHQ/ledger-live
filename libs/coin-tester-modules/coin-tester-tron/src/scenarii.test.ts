@@ -11,13 +11,12 @@ jest.setTimeout(600_000);
   }),
 );
 
-describe.each([["legacy"], ["generic-adapter"]] as const)("Tron (%s strategy)", strategy => {
+// Tron has a single bridge, so `executeScenario`'s `strategy` argument is left off, as in the other
+// single-bridge testers.
+describe("Tron", () => {
   it("scenario tron", async () => {
     try {
-      await executeScenario(
-        { ...scenarioTron, name: `${scenarioTron.name} [${strategy} strategy]` },
-        strategy,
-      );
+      await executeScenario(scenarioTron);
     } catch (e) {
       if (e !== "done") {
         await killTronbox();

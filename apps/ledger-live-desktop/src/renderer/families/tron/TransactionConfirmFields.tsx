@@ -52,8 +52,10 @@ const TronVotesField = ({
 }: FieldComponentProps<TronAccount, Transaction, TransactionStatus>) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "tron", "tron transaction");
-  const { votes } = transaction;
-  if (!votes) return null;
+  const votes = transaction.familySpecificData?.votes;
+  // Length, not truthiness: `createTransaction` seeds `votes: []` and `[]` is truthy. Mirrors
+  // the mobile sibling.
+  if (!votes?.length) return null;
   return (
     <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />

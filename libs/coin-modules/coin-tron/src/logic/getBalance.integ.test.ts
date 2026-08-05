@@ -27,6 +27,6 @@ describe("getBalance", () => {
   it("returns 0 when address is not found", async () => {
     const result = await getBalance("TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
 
-    expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
+    expect(result).toEqual([{ value: 0n, locked: 0n, asset: { type: "native" } }]);
   });
 });

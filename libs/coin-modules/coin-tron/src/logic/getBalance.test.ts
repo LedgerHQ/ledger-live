@@ -1,7 +1,6 @@
-import BigNumber from "bignumber.js";
 import { fetchTronAccount } from "../network";
 import type { AccountTronAPI } from "../network/types";
-import { computeBalance, computeBalanceBridge, getBalance } from "./getBalance";
+import { computeBalance, getBalance } from "./getBalance";
 import { getTronResources } from "./utils";
 
 jest.mock("../network", () => ({
@@ -31,6 +30,7 @@ describe("computeBalance", () => {
   it("returns only the balance when no resources are frozen", () => {
     expect(computeBalance(baseAccount)).toEqual({
       value: 1781772n,
+      locked: 0n,
       asset: { type: "native" },
     });
   });
@@ -38,6 +38,7 @@ describe("computeBalance", () => {
   it("returns 0 when balance is missing", () => {
     expect(computeBalance({ ...baseAccount, balance: undefined })).toEqual({
       value: 0n,
+      locked: 0n,
       asset: { type: "native" },
     });
   });
@@ -49,6 +50,7 @@ describe("computeBalance", () => {
     };
     expect(computeBalance(account)).toEqual({
       value: 4_781_772n,
+      locked: 3_000_000n,
       asset: { type: "native" },
     });
   });
@@ -63,6 +65,7 @@ describe("computeBalance", () => {
     };
     expect(computeBalance(account)).toEqual({
       value: 2_981_772n,
+      locked: 1_200_000n,
       asset: { type: "native" },
     });
   });
@@ -78,6 +81,7 @@ describe("computeBalance", () => {
     };
     expect(computeBalance(account)).toEqual({
       value: 2_131_772n,
+      locked: 350_000n,
       asset: { type: "native" },
     });
   });
@@ -92,6 +96,7 @@ describe("computeBalance", () => {
     };
     expect(computeBalance(account)).toEqual({
       value: 2_481_772n,
+      locked: 700_000n,
       asset: { type: "native" },
     });
   });
@@ -114,6 +119,7 @@ describe("computeBalance", () => {
     };
     expect(computeBalance(account)).toEqual({
       value: 9_000_000n,
+      locked: 8_000_000n,
       asset: { type: "native" },
     });
   });
@@ -129,49 +135,9 @@ describe("computeBalance", () => {
     });
     expect(computeBalance(baseAccount)).toEqual({
       value: 1_781_772n,
+      locked: 0n,
       asset: { type: "native" },
     });
-  });
-});
-
-describe("computeBalanceBridge", () => {
-  it("returns the balance as BigNumber when no resources are frozen", () => {
-    expect(computeBalanceBridge(baseAccount)).toEqual(new BigNumber(1781772));
-  });
-
-  it("returns 0 when balance is missing", () => {
-    expect(computeBalanceBridge({ ...baseAccount, balance: undefined })).toEqual(new BigNumber(0));
-  });
-
-  it("aggregates every kind of resource at once", () => {
-    const account: AccountTronAPI = {
-      ...baseAccount,
-      balance: 1_000_000,
-      frozenV2: [{ amount: 1_000_000 }, { type: "ENERGY", amount: 1_000_000 }],
-      delegated_frozenV2_balance_for_bandwidth: 1_000_000,
-      account_resource: {
-        delegated_frozenV2_balance_for_energy: 1_000_000,
-        frozen_balance_for_energy: { frozen_balance: 1_000_000, expire_time: 0 },
-      },
-      frozen: [{ frozen_balance: 1_000_000, expire_time: 0 }],
-      unfrozenV2: [
-        { unfreeze_amount: 1_000_000, unfreeze_expire_time: 0 },
-        { type: "ENERGY", unfreeze_amount: 1_000_000, unfreeze_expire_time: 0 },
-      ],
-    };
-    expect(computeBalanceBridge(account)).toEqual(new BigNumber(9_000_000));
-  });
-
-  it("falls back to zero when unFrozen energy and bandwidth are missing", () => {
-    mockedGetTronResources.mockReturnValueOnce({
-      frozen: { bandwidth: undefined, energy: undefined },
-      unFrozen: { bandwidth: undefined, energy: undefined } as never,
-      delegatedFrozen: { bandwidth: undefined, energy: undefined },
-      legacyFrozen: { bandwidth: undefined, energy: undefined },
-      tronPower: 0,
-      lastWithdrawnRewardDate: undefined,
-    });
-    expect(computeBalanceBridge(baseAccount)).toEqual(new BigNumber(1_781_772));
   });
 });
 
@@ -185,7 +151,7 @@ describe("getBalance", () => {
 
     const balance = await getBalance(address);
 
-    expect(balance).toEqual([{ asset: { type: "native" }, value: 0n }]);
+    expect(balance).toEqual([{ asset: { type: "native" }, value: 0n, locked: 0n }]);
     expect(mockedFetchTronAccount).toHaveBeenCalledWith(address);
   });
 
@@ -208,7 +174,7 @@ describe("getBalance", () => {
     const balance = await getBalance(address);
 
     expect(balance).toEqual([
-      { asset: { type: "native" }, value: 27_781_772n },
+      { asset: { type: "native" }, value: 27_781_772n, locked: 0n },
       {
         asset: { type: "trc10", assetReference: "1002000", assetOwner: address },
         value: 26_888_000n,
@@ -241,6 +207,6 @@ describe("getBalance", () => {
 
     const balance = await getBalance(address);
 
-    expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n }]);
+    expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n, locked: 0n }]);
   });
 });

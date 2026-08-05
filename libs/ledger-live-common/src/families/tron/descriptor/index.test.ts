@@ -3,19 +3,31 @@ import { descriptor } from "./index";
 
 const getNetworkFeesInfo = descriptor.send.fees.getNetworkFeesInfo;
 
-const status = (fields: {
+/**
+ * The resource amounts arrive on the *transaction*, propagated from `FeeEstimation.parameters` onto
+ * `feeParameters` by the generic `prepareTransaction` — the status carries no Tron-specific fields.
+ */
+const networkFeesInfoFor = (fields: {
   estimatedFees: number;
-  energyRequired: number;
-  bandwidthRequired: number;
-  energyAvailable?: number;
-  bandwidthAvailable?: number;
-}) => ({
-  estimatedFees: new BigNumber(fields.estimatedFees),
-  energyRequired: new BigNumber(fields.energyRequired),
-  bandwidthRequired: new BigNumber(fields.bandwidthRequired),
-  energyAvailable: new BigNumber(fields.energyAvailable ?? 0),
-  bandwidthAvailable: new BigNumber(fields.bandwidthAvailable ?? 0),
-});
+  energyRequired?: string;
+  bandwidthRequired?: string;
+  errors?: Record<string, unknown>;
+}) =>
+  getNetworkFeesInfo?.({
+    transaction: {
+      feeParameters: {
+        ...(fields.energyRequired !== undefined ? { energyRequired: fields.energyRequired } : {}),
+        ...(fields.bandwidthRequired !== undefined
+          ? { bandwidthRequired: fields.bandwidthRequired }
+          : {}),
+      },
+    },
+    status: {
+      estimatedFees: new BigNumber(fields.estimatedFees),
+      errors: fields.errors ?? {},
+      warnings: {},
+    },
+  });
 
 describe("tron descriptor", () => {
   // Tron fees are not editable, which is what makes the fee row show both the fiat and the TRX
@@ -37,62 +49,64 @@ describe("tron descriptor - getNetworkFeesInfo", () => {
   });
 
   it("zero fee → sufficient, values are the amounts the transfer uses", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({ estimatedFees: 0, energyRequired: 50_000, bandwidthRequired: 345 }),
-    });
-    expect(info).toEqual({
+    expect(
+      networkFeesInfoFor({ estimatedFees: 0, energyRequired: "50000", bandwidthRequired: "345" }),
+    ).toEqual({
       translationKey: "tronFees.sufficient",
       values: { energy: "50000", bandwidth: "345" },
     });
   });
 
   it("non-zero fee → insufficient", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({ estimatedFees: 13_740_900, energyRequired: 65_000, bandwidthRequired: 345 }),
-    });
-    expect(info?.translationKey).toBe("tronFees.insufficient");
+    expect(
+      networkFeesInfoFor({
+        estimatedFees: 13_740_900,
+        energyRequired: "65000",
+        bandwidthRequired: "345",
+      })?.translationKey,
+    ).toBe("tronFees.insufficient");
   });
 
   it("ample resources but a non-zero fee (inactive-recipient TRC20) → insufficient, not sufficient", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({
+    expect(
+      networkFeesInfoFor({
         estimatedFees: 13_740_900,
-        energyRequired: 50_000,
-        energyAvailable: 999_999,
-        bandwidthRequired: 345,
-        bandwidthAvailable: 999_999,
-      }),
-    });
-    expect(info?.translationKey).toBe("tronFees.insufficient");
+        energyRequired: "50000",
+        bandwidthRequired: "345",
+      })?.translationKey,
+    ).toBe("tronFees.insufficient");
   });
 
   it("native TRX / TRC10 covered (zero fee, zero energy) → sufficient", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({ estimatedFees: 0, energyRequired: 0, bandwidthRequired: 270 }),
+    const info = networkFeesInfoFor({
+      estimatedFees: 0,
+      energyRequired: "0",
+      bandwidthRequired: "270",
     });
+
     expect(info?.translationKey).toBe("tronFees.sufficient");
     expect(info?.values).toEqual({ energy: "0", bandwidth: "270" });
   });
 
   it("native TRX / TRC10 with a bandwidth fee (non-zero) → insufficient", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({ estimatedFees: 270_000, energyRequired: 0, bandwidthRequired: 270 }),
-    });
-    expect(info?.translationKey).toBe("tronFees.insufficient");
+    expect(
+      networkFeesInfoFor({ estimatedFees: 270_000, energyRequired: "0", bandwidthRequired: "270" })
+        ?.translationKey,
+    ).toBe("tronFees.insufficient");
   });
 
   it("returns null when the TRON breakdown fields are absent", () => {
+    expect(networkFeesInfoFor({ estimatedFees: 0 })).toBeNull();
     expect(
-      getNetworkFeesInfo?.({
-        transaction: {},
-        status: { errors: {}, warnings: {}, estimatedFees: new BigNumber(0) },
-      }),
+      getNetworkFeesInfo?.({ transaction: {}, status: { estimatedFees: new BigNumber(0) } }),
     ).toBeNull();
+  });
+
+  it("returns null when the transaction is null/undefined", () => {
+    const status = { estimatedFees: new BigNumber(0), errors: {}, warnings: {} };
+
+    expect(getNetworkFeesInfo?.({ transaction: null, status })).toBeNull();
+    expect(getNetworkFeesInfo?.({ transaction: undefined, status })).toBeNull();
   });
 
   it("returns null when status is null/undefined", () => {
@@ -100,22 +114,30 @@ describe("tron descriptor - getNetworkFeesInfo", () => {
     expect(getNetworkFeesInfo?.({ transaction: {}, status: undefined })).toBeNull();
   });
 
-  it("returns null when a breakdown field is non-finite (unknown, matches the fee row)", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: status({ estimatedFees: NaN, energyRequired: 0, bandwidthRequired: 0 }),
-    });
-    expect(info).toBeNull();
+  it("returns null when the fee is non-finite (unknown, matches the fee row)", () => {
+    expect(
+      networkFeesInfoFor({ estimatedFees: NaN, energyRequired: "0", bandwidthRequired: "0" }),
+    ).toBeNull();
+  });
+
+  it("returns null when a resource amount is not a finite number", () => {
+    expect(
+      networkFeesInfoFor({
+        estimatedFees: 0,
+        energyRequired: "not-a-number",
+        bandwidthRequired: "270",
+      }),
+    ).toBeNull();
   });
 
   it("returns null for a zero fee while the transaction has errors (unknown, not covered)", () => {
-    const info = getNetworkFeesInfo?.({
-      transaction: {},
-      status: {
-        ...status({ estimatedFees: 0, energyRequired: 0, bandwidthRequired: 0 }),
+    expect(
+      networkFeesInfoFor({
+        estimatedFees: 0,
+        energyRequired: "0",
+        bandwidthRequired: "0",
         errors: { recipient: new Error("bad") },
-      },
-    });
-    expect(info).toBeNull();
+      }),
+    ).toBeNull();
   });
 });

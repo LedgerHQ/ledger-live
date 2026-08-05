@@ -8293,9 +8293,6 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
-      rxjs:
-        specifier: 'catalog:'
-        version: 7.8.2
       tronweb:
         specifier: 6.2.0
         version: 6.2.0

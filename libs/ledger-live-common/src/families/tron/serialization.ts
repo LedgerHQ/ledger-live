@@ -1,15 +1,13 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {
-  isTrongridExtraTxInfo,
-  isTrongridExtraTxInfoRaw,
   type TronAccount,
   type TronAccountRaw,
   type TronResources,
   type TronResourcesRaw,
   type TrongridExtraTxInfo,
   type TrongridExtraTxInfoRaw,
-} from "../types";
+} from "./types";
 
 export const toTronResourcesRaw = ({
   frozen,
@@ -203,60 +201,37 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
     (account as TronAccount).tronResources = fromTronResourcesRaw(tronResourcesRaw);
 }
 
-export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): TrongridExtraTxInfo {
-  const extra: TrongridExtraTxInfo = {};
-  if (!isTrongridExtraTxInfoRaw(extraRaw)) {
-    return extra;
-  }
+/**
+ * The staking amounts are `BigNumber`s on the operation (what the app renderers consume) and strings
+ * once persisted. Every other key of `extra` — `ledgerOpType`, `assetReference`, … — is carried
+ * through untouched, so wiring these hooks costs the rest of the bag nothing.
+ *
+ * The three amounts are converted whenever present rather than behind
+ * `isTrongridExtraTxInfo`, whose key list omits `unDelegatedAmount`: an undelegate's extras would
+ * fail that guard, take the verbatim branch, and persist a `BigNumber` as `{s,e,c}` for the
+ * renderers to choke on.
+ */
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  if (extraRaw === null || typeof extraRaw !== "object") return extraRaw;
+  const { frozenAmount, unfreezeAmount, unDelegatedAmount, ...rest } =
+    extraRaw as TrongridExtraTxInfoRaw;
 
-  if (extraRaw.frozenAmount) {
-    extra.frozenAmount = new BigNumber(extraRaw.frozenAmount);
-  }
-
-  if (extraRaw.unfreezeAmount) {
-    extra.unfreezeAmount = new BigNumber(extraRaw.unfreezeAmount);
-  }
-
-  if (extraRaw.votes) {
-    extra.votes = extraRaw.votes;
-  }
-
-  if (extraRaw.unDelegatedAmount) {
-    extra.unDelegatedAmount = new BigNumber(extraRaw.unDelegatedAmount);
-  }
-
-  if (extraRaw.receiverAddress) {
-    extra.receiverAddress = extraRaw.receiverAddress;
-  }
-
-  return extra;
+  return {
+    ...rest,
+    ...(frozenAmount ? { frozenAmount: new BigNumber(frozenAmount) } : {}),
+    ...(unfreezeAmount ? { unfreezeAmount: new BigNumber(unfreezeAmount) } : {}),
+    ...(unDelegatedAmount ? { unDelegatedAmount: new BigNumber(unDelegatedAmount) } : {}),
+  } satisfies TrongridExtraTxInfo;
 }
 
-export function toOperationExtraRaw(extra: OperationExtra): TrongridExtraTxInfoRaw {
-  const extraRaw: TrongridExtraTxInfoRaw = {};
-  if (!isTrongridExtraTxInfo(extra)) {
-    return extraRaw;
-  }
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  if (extra === null || typeof extra !== "object") return extra;
+  const { frozenAmount, unfreezeAmount, unDelegatedAmount, ...rest } = extra as TrongridExtraTxInfo;
 
-  if (extra.frozenAmount) {
-    extraRaw.frozenAmount = extra.frozenAmount.toString();
-  }
-
-  if (extra.unfreezeAmount) {
-    extraRaw.unfreezeAmount = extra.unfreezeAmount.toString();
-  }
-
-  if (extra.votes) {
-    extraRaw.votes = extra.votes;
-  }
-
-  if (extra.unDelegatedAmount) {
-    extraRaw.unDelegatedAmount = extra.unDelegatedAmount.toString();
-  }
-
-  if (extra.receiverAddress) {
-    extraRaw.receiverAddress = extra.receiverAddress;
-  }
-
-  return extraRaw;
+  return {
+    ...rest,
+    ...(frozenAmount ? { frozenAmount: frozenAmount.toString() } : {}),
+    ...(unfreezeAmount ? { unfreezeAmount: unfreezeAmount.toString() } : {}),
+    ...(unDelegatedAmount ? { unDelegatedAmount: unDelegatedAmount.toString() } : {}),
+  } satisfies TrongridExtraTxInfoRaw;
 }

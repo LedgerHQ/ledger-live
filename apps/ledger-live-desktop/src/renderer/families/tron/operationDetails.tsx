@@ -117,7 +117,7 @@ const OperationDetailsExtra = ({
 
   const unfreezeAmount = operation.extra?.unfreezeAmount
     ? (operation.extra.unfreezeAmount as BigNumber)
-    : new BigNumber(10);
+    : new BigNumber(0);
 
   const unDelegatedAmount = operation.extra?.unDelegatedAmount
     ? (operation.extra.unDelegatedAmount as BigNumber)

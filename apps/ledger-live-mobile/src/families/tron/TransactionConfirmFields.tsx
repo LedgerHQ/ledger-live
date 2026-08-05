@@ -43,7 +43,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
               values={{
-                resource: (transaction.resource || "").toLowerCase(),
+                resource: (transaction.familySpecificData?.resource || "").toLowerCase(),
               }}
             />
           </LText>
@@ -57,7 +57,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
 
 const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "tron", "tron transaction");
-  const { resource } = transaction;
+  const resource = transaction.familySpecificData?.resource;
   return (
     resource && (
       <DataRow label="Resource">
@@ -73,7 +73,7 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
   const { locale } = useSettings();
-  const { votes } = transaction;
+  const votes = transaction.familySpecificData?.votes;
   const sp = useTronSuperRepresentatives();
   const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;
   return formattedVotes ? (

@@ -4,21 +4,98 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import { craftStandardTransaction, craftTrc20Transaction } from "../network";
+import {
+  claimRewardTronTransaction,
+  craftStandardTransaction,
+  craftTrc20Transaction,
+  freezeTronTransaction,
+  legacyUnfreezeTronTransaction,
+  unDelegateResourceTransaction,
+  unfreezeTronTransaction,
+  voteTronSuperRepresentatives,
+  withdrawExpireUnfreezeTronTransaction,
+} from "../network";
 import { decode58Check } from "../network/format";
-import { TronMemo } from "../types";
+import { TronMemo, TronTxData } from "../types";
 import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronMemo>,
+  transactionIntent: TransactionIntent<TronMemo, TronTxData>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const { asset, recipient, sender, amount, expiration } = transactionIntent;
+  const { recipient, sender, amount, type } = transactionIntent;
   const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
-
   const memo = rawMemo?.type === "string" && rawMemo.kind === "memo" ? rawMemo.value : undefined;
-  const recipientAddress = decode58Check(recipient);
-  const senderAddress = decode58Check(sender);
+
+  // Resource-staking fields travel in the TxData generic (ADR-047), never as loose intent fields.
+  // `data` is a required member, but a hand-built intent (the coin-tester, a script) can still omit
+  // it, so the reads below tolerate its absence.
+  const data: TronTxData | undefined = transactionIntent.data;
+  const resource = data?.resource;
+  // Converted per branch rather than up front: `craftSend` must validate custom fees before it
+  // touches the amount, so that an out-of-range fee reports the fee error and not a cast failure.
+  const value = (): BigNumber => new BigNumber(amount.toString());
+
+  switch (type) {
+    case "freeze":
+      return toCrafted(await freezeTronTransaction(sender, value(), resource));
+
+    case "unfreeze":
+      return toCrafted(await unfreezeTronTransaction(sender, value(), resource));
+
+    case "vote":
+      return toCrafted(await voteTronSuperRepresentatives(sender, data?.votes ?? []));
+
+    case "claimReward":
+      return toCrafted(await claimRewardTronTransaction(sender));
+
+    case "withdrawExpireUnfreeze":
+      return toCrafted(await withdrawExpireUnfreezeTronTransaction(sender));
+
+    case "unDelegateResource":
+      return toCrafted(
+        await unDelegateResourceTransaction({
+          ownerAddress: sender,
+          receiverAddress: recipient,
+          amount: value(),
+          resource,
+        }),
+      );
+
+    case "legacyUnfreeze":
+      // Pre-Stake-2.0 unfreeze. A recipient is only present when reclaiming a delegation.
+      return toCrafted(
+        await legacyUnfreezeTronTransaction({
+          ownerAddress: sender,
+          resource,
+          receiverAddress: recipient || undefined,
+        }),
+      );
+
+    case "send":
+      return craftSend(transactionIntent, memo, customFees);
+
+    default:
+      // The signing path must not be more permissive than `estimatedTxSize`, which rejects the same
+      // input: crafting an unknown mode as a plain transfer would sign something the user never asked
+      // for.
+      throw new Error(`unsupported Tron intent type for crafting: ${type}`);
+  }
+}
+
+function toCrafted({ raw_data_hex: rawDataHex }: { raw_data_hex?: string }): CraftedTransaction {
+  if (!rawDataHex) {
+    throw new Error("Tron node returned no raw_data_hex for the crafted transaction");
+  }
+  return { transaction: rawDataHex };
+}
+
+async function craftSend(
+  transactionIntent: TransactionIntent<TronMemo, TronTxData>,
+  memo: string | undefined,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
+  const { amount, asset, recipient, sender, expiration } = transactionIntent;
 
   if (asset.type === "trc20" && asset.assetReference) {
     const fees = customFees?.value;
@@ -32,27 +109,29 @@ export async function craftTransaction(
       throw new Error("Memo cannot be used with smart contract transactions");
     }
 
-    const { raw_data_hex: rawDataHex } = await craftTrc20Transaction(
-      asset.assetReference,
-      recipientAddress,
-      senderAddress,
-      new BigNumber(amount.toString()),
-      feesToNumber(fees),
-      expiration,
+    return toCrafted(
+      await craftTrc20Transaction(
+        asset.assetReference,
+        decode58Check(recipient),
+        decode58Check(sender),
+        new BigNumber(amount.toString()),
+        feesToNumber(fees),
+        expiration,
+      ),
     );
-    return { transaction: rawDataHex as string };
-  } else {
-    const isTransferAsset = asset.type === "trc10";
-    const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
-    const { raw_data_hex: rawDataHex } = await craftStandardTransaction(
+  }
+
+  const isTransferAsset = asset.type === "trc10";
+  const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
+  return toCrafted(
+    await craftStandardTransaction(
       tokenId,
-      recipientAddress,
-      senderAddress,
+      decode58Check(recipient),
+      decode58Check(sender),
       new BigNumber(amount.toString()),
       isTransferAsset,
       memo,
       expiration,
-    );
-    return { transaction: rawDataHex as string };
-  }
+    ),
+  );
 }

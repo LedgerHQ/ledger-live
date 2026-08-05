@@ -1,8 +1,21 @@
 import { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
-import { craftStandardTransaction, craftTrc20Transaction } from "../network";
+import {
+  claimRewardTronTransaction,
+  craftStandardTransaction,
+  craftTrc20Transaction,
+  freezeTronTransaction,
+  legacyUnfreezeTronTransaction,
+  unDelegateResourceTransaction,
+  unfreezeTronTransaction,
+  voteTronSuperRepresentatives,
+  withdrawExpireUnfreezeTronTransaction,
+} from "../network";
 import { decode58Check } from "../network/format";
+import type { TronMemo, TronTxData } from "../types";
 import { craftTransaction } from "./craftTransaction";
+
+type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 
 jest.mock("../network/format", () => ({
   decode58Check: jest.fn(),
@@ -13,6 +26,13 @@ jest.mock("../network", () => ({
   extendTronTxExpirationTimeBy10mn: jest.fn(),
   craftStandardTransaction: jest.fn(),
   craftTrc20Transaction: jest.fn(),
+  claimRewardTronTransaction: jest.fn(),
+  freezeTronTransaction: jest.fn(),
+  legacyUnfreezeTronTransaction: jest.fn(),
+  unDelegateResourceTransaction: jest.fn(),
+  unfreezeTronTransaction: jest.fn(),
+  voteTronSuperRepresentatives: jest.fn(),
+  withdrawExpireUnfreezeTronTransaction: jest.fn(),
 }));
 
 describe("craftTransaction", () => {
@@ -21,13 +41,14 @@ describe("craftTransaction", () => {
   });
 
   it("should craft a standard transaction", async () => {
-    const transactionIntent: TransactionIntent = {
+    const transactionIntent: TronIntent = {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       recipient: "recipient",
       sender: "sender",
       amount: BigInt(1000),
+      data: { type: "tron" },
     };
 
     (decode58Check as jest.Mock).mockImplementation(address => address);
@@ -52,7 +73,7 @@ describe("craftTransaction", () => {
   });
 
   it("should craft a TRC20 transaction", async () => {
-    const transactionIntent: TransactionIntent = {
+    const transactionIntent: TronIntent = {
       intentType: "transaction",
       type: "send",
       asset: {
@@ -62,6 +83,7 @@ describe("craftTransaction", () => {
       recipient: "recipient",
       sender: "sender",
       amount: BigInt(1000),
+      data: { type: "tron" },
     };
 
     (decode58Check as jest.Mock).mockImplementation(address => address);
@@ -85,13 +107,14 @@ describe("craftTransaction", () => {
   });
 
   it("should craft a native TRX transaction when custom fees are 0", async () => {
-    const transactionIntent: TransactionIntent = {
+    const transactionIntent: TronIntent = {
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       recipient: "recipient",
       sender: "sender",
       amount: BigInt(1000),
+      data: { type: "tron" },
     };
 
     (decode58Check as jest.Mock).mockImplementation(address => address);
@@ -111,12 +134,13 @@ describe("craftTransaction", () => {
     const amount = 1000;
     const transactionIntent = {
       intentType: "transaction",
+      type: "send",
       asset: {
         type: "trc20",
         assetReference: "contractAddress",
       },
       amount: BigInt(amount),
-    } as TransactionIntent;
+    } as TronIntent;
 
     (decode58Check as jest.Mock).mockImplementation(_address => undefined);
     (craftTrc20Transaction as jest.Mock).mockResolvedValue({
@@ -139,12 +163,13 @@ describe("craftTransaction", () => {
     const amount: number = 1000;
     const transactionIntent = {
       intentType: "transaction",
+      type: "send",
       asset: {
         type: "trc20",
         assetReference: "contractAddress",
       },
       amount: BigInt(amount),
-    } as TransactionIntent;
+    } as TronIntent;
 
     (decode58Check as jest.Mock).mockImplementation(_address => undefined);
     (craftTrc20Transaction as jest.Mock).mockResolvedValue({
@@ -166,12 +191,13 @@ describe("craftTransaction", () => {
     const amount = 1000;
     const transactionIntent = {
       intentType: "transaction",
+      type: "send",
       asset: {
         type: "trc20",
         assetReference: "contractAddress",
       },
       amount: BigInt(amount),
-    } as TransactionIntent;
+    } as TronIntent;
 
     (decode58Check as jest.Mock).mockImplementation(_address => undefined);
     (craftTrc20Transaction as jest.Mock).mockResolvedValue({
@@ -196,11 +222,12 @@ describe("craftTransaction", () => {
         await craftTransaction(
           {
             intentType: "transaction",
+            type: "send",
             asset: {
               type: "trc20",
               assetReference: "contractAddress",
             },
-          } as TransactionIntent,
+          } as TronIntent,
           { value: customFees },
         );
       } catch (error) {
@@ -210,4 +237,145 @@ describe("craftTransaction", () => {
       }
     },
   );
+
+  describe("resource staking", () => {
+    const SENDER = "sender";
+    const RECIPIENT = "recipient";
+    const VOTES = [{ name: "sr", address: "srAddress", voteCount: 3 }];
+
+    const stakingIntent = (
+      type: string,
+      data: Partial<TronTxData> = {},
+      overrides: Partial<TransactionIntent<TronMemo, TronTxData>> = {},
+    ): TransactionIntent<TronMemo, TronTxData> =>
+      ({
+        intentType: "transaction",
+        type,
+        sender: SENDER,
+        recipient: "",
+        amount: 0n,
+        asset: { type: "native" },
+        data: { type: "tron", ...data },
+        ...overrides,
+      }) as TransactionIntent<TronMemo, TronTxData>;
+
+    beforeEach(() => {
+      for (const builder of [
+        claimRewardTronTransaction,
+        freezeTronTransaction,
+        legacyUnfreezeTronTransaction,
+        unDelegateResourceTransaction,
+        unfreezeTronTransaction,
+        voteTronSuperRepresentatives,
+        withdrawExpireUnfreezeTronTransaction,
+      ]) {
+        (builder as jest.Mock).mockResolvedValue({ raw_data_hex: "stakingRawDataHex" });
+      }
+    });
+
+    it("crafts a freeze from the amount and the TxData resource", async () => {
+      const { transaction } = await craftTransaction(
+        stakingIntent("freeze", { resource: "BANDWIDTH", duration: 3 }, { amount: 5_000_000n }),
+      );
+
+      expect(freezeTronTransaction).toHaveBeenCalledWith(
+        SENDER,
+        new BigNumber(5_000_000),
+        "BANDWIDTH",
+      );
+      expect(transaction).toBe("stakingRawDataHex");
+    });
+
+    it("crafts an unfreeze from the amount and the TxData resource", async () => {
+      await craftTransaction(
+        stakingIntent("unfreeze", { resource: "ENERGY" }, { amount: 2_000_000n }),
+      );
+
+      expect(unfreezeTronTransaction).toHaveBeenCalledWith(
+        SENDER,
+        new BigNumber(2_000_000),
+        "ENERGY",
+      );
+    });
+
+    it("crafts a vote from the TxData vote list", async () => {
+      await craftTransaction(stakingIntent("vote", { votes: VOTES }));
+
+      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(SENDER, VOTES);
+    });
+
+    it("crafts a vote with an empty list when the TxData carries none", async () => {
+      await craftTransaction(stakingIntent("vote"));
+
+      expect(voteTronSuperRepresentatives).toHaveBeenCalledWith(SENDER, []);
+    });
+
+    it("crafts a claimReward from the sender alone", async () => {
+      await craftTransaction(stakingIntent("claimReward"));
+
+      expect(claimRewardTronTransaction).toHaveBeenCalledWith(SENDER);
+    });
+
+    it("crafts a withdrawExpireUnfreeze from the sender alone", async () => {
+      await craftTransaction(stakingIntent("withdrawExpireUnfreeze"));
+
+      expect(withdrawExpireUnfreezeTronTransaction).toHaveBeenCalledWith(SENDER);
+    });
+
+    it("crafts an unDelegateResource towards the recipient", async () => {
+      await craftTransaction(
+        stakingIntent(
+          "unDelegateResource",
+          { resource: "ENERGY" },
+          { recipient: RECIPIENT, amount: 1_000_000n },
+        ),
+      );
+
+      expect(unDelegateResourceTransaction).toHaveBeenCalledWith({
+        ownerAddress: SENDER,
+        receiverAddress: RECIPIENT,
+        amount: new BigNumber(1_000_000),
+        resource: "ENERGY",
+      });
+    });
+
+    it("crafts a legacyUnfreeze with a receiver when reclaiming a delegation", async () => {
+      await craftTransaction(
+        stakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }, { recipient: RECIPIENT }),
+      );
+
+      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith({
+        ownerAddress: SENDER,
+        resource: "BANDWIDTH",
+        receiverAddress: RECIPIENT,
+      });
+    });
+
+    it("crafts a legacyUnfreeze without a receiver when there is no recipient", async () => {
+      await craftTransaction(stakingIntent("legacyUnfreeze", { resource: "BANDWIDTH" }));
+
+      expect(legacyUnfreezeTronTransaction).toHaveBeenCalledWith({
+        ownerAddress: SENDER,
+        resource: "BANDWIDTH",
+        receiverAddress: undefined,
+      });
+    });
+
+    it("rejects an unknown mode rather than signing it as a plain transfer", async () => {
+      await expect(craftTransaction(stakingIntent("notAMode"))).rejects.toThrow(
+        /unsupported Tron intent type/,
+      );
+      expect(craftStandardTransaction).not.toHaveBeenCalled();
+    });
+
+    it("throws when the node returns no raw_data_hex", async () => {
+      (freezeTronTransaction as jest.Mock).mockResolvedValue({});
+
+      await expect(
+        craftTransaction(
+          stakingIntent("freeze", { resource: "BANDWIDTH" }, { amount: 5_000_000n }),
+        ),
+      ).rejects.toThrow(/no raw_data_hex/);
+    });
+  });
 });

@@ -3,6 +3,7 @@ import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
+import type { TronMemo, TronTxData } from "../types";
 import { createApi } from ".";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
@@ -24,7 +25,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: CoinModuleApi;
+  let module: CoinModuleApi<TronMemo, TronTxData>;
   let tronWeb: TronWeb;
 
   beforeAll(() => {

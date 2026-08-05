@@ -1,4 +1,3 @@
-import { SendTransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import coinConfig from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
@@ -33,6 +32,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -75,6 +75,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -115,6 +116,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -143,6 +145,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
       },
       { value: 0n },
     );
@@ -189,6 +192,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
       },
       { value: customFees },
     );
@@ -216,6 +220,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const decodeResult = await decodeTransaction(result);
@@ -254,6 +259,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
       memo: {
         type: "string",
         kind: "memo",
@@ -288,6 +294,7 @@ describe("Testing craftTransaction function", () => {
         sender,
         recipient,
         amount,
+        data: { type: "tron" },
         memo: {
           type: "string",
           kind: "memo",
@@ -312,6 +319,7 @@ describe("Testing craftTransaction function", () => {
       sender,
       recipient,
       amount,
+      data: { type: "tron" },
     });
 
     const after = Date.now();
@@ -346,7 +354,8 @@ describe("Testing craftTransaction function", () => {
       recipient,
       amount,
       expiration,
-    } as SendTransactionIntent);
+      data: { type: "tron" },
+    });
 
     const after = Date.now();
 
