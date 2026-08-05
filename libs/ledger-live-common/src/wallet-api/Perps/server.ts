@@ -17,25 +17,15 @@ type AppOption = {
   allowPartialDependencies: boolean;
   skipAppInstallIfNotFound: boolean;
 };
-export type PerpsDepositAmount = {
-  value: string;
-  currencyId: string;
-};
 
 export type PerpsDepositParams = {
-  receiverWalletAccountId: string;
+  receiverAccountId: string;
 };
 
 export type PerpsDepositResult = Record<string, never>;
 
 export type PerpsDepositUiParams = {
   receiverAccount: AccountLike;
-};
-
-export type PerpsDepositReviewParams = PerpsDepositUiParams & {
-  depositAccount: AccountLike;
-  amountSent: PerpsDepositAmount;
-  amountReceived?: PerpsDepositAmount;
 };
 
 export type PerpsUiHooks = {

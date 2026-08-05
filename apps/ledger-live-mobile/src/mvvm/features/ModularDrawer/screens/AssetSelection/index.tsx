@@ -32,6 +32,7 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { parseUiUseCase } from "../../utils/parseUiUseCase";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -63,8 +64,7 @@ const AssetSelection = ({
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
 
-  const [namespace, variant] = uiUseCase?.split(":") ?? [];
-  const isPerpsDeposit = namespace === "perpetuals" && variant === "deposit";
+  const { isPerpsDeposit } = parseUiUseCase(uiUseCase);
 
   const headerTitle = isPerpsDeposit
     ? t("modularDrawer.selectDepositCurrencyTitle")
