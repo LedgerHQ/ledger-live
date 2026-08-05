@@ -1,6 +1,9 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
+import {
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
+  INVALID_CONTACT_NAME_ERROR_NAME,
+} from "@domain/entity-contact";
 import { ContactsAddContactDialog } from "./ContactsAddContactDialog.web";
 import type { ContactsAddContactDialogProps } from "./types";
 
@@ -22,6 +25,7 @@ function createViewModel(
       confirmName: "Add contact",
       nameValidationErrors: {
         [INVALID_CONTACT_NAME_ERROR_NAME]: "Special characters are not allowed.",
+        [DUPLICATE_CONTACT_NAME_ERROR_NAME]: "This contact name is already in use.",
       },
     },
     onClose: jest.fn(),

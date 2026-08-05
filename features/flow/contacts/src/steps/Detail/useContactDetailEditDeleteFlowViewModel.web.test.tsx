@@ -1,13 +1,10 @@
-import { createElement, type ReactNode } from "react";
-import { configureStore } from "@reduxjs/toolkit";
 import { act, renderHook } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { contactsSlice } from "@domain/entity-contact";
 import {
   mockContact,
   mockContactWithAddress,
   mockMeContact,
 } from "@domain/entity-contact/schema.mock";
+import { makeContactsWrapper } from "./__tests__/contactsStoreTestUtils";
 import type { ContactDetailActionsPorts } from "./model/ports";
 import { useContactDetailEditDeleteFlowViewModel } from "./useContactDetailEditDeleteFlowViewModel";
 
@@ -25,21 +22,10 @@ function createPorts(
   };
 }
 
-function makeWrapper(contacts: ReturnType<typeof contactsSlice.getInitialState>["contacts"]) {
-  const store = configureStore({
-    reducer: { contacts: contactsSlice.reducer },
-    preloadedState: { contacts: { contacts } },
-  });
-
-  return function Wrapper({ children }: { readonly children: ReactNode }) {
-    return createElement(Provider, { store, children });
-  };
-}
-
 describe("useContactDetailEditDeleteFlowViewModel", () => {
   it("should open the edit dialog directly when no signer is required", () => {
     const contact = mockContact();
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
       () =>
         useContactDetailEditDeleteFlowViewModel({
@@ -59,7 +45,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
 
   it("should open the signer dialog when editing a contact with addresses", () => {
     const contact = mockContactWithAddress();
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
       () =>
         useContactDetailEditDeleteFlowViewModel({
@@ -82,9 +68,37 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     expect(result.current.editUiState).toBe("edit-open");
   });
 
+  it("should keep edit dialog open when signer close fires after confirm", () => {
+    const contact = mockContactWithAddress();
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
+    const { result } = renderHook(
+      () =>
+        useContactDetailEditDeleteFlowViewModel({
+          contactId: contact.id,
+          ports: createPorts(),
+        }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.onEditPress();
+    });
+    act(() => {
+      result.current.onSignerConfirm();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+
+    act(() => {
+      result.current.onSignerCancel();
+    });
+
+    expect(result.current.editUiState).toBe("edit-open");
+  });
+
   it("should prevent deleting the Me contact", () => {
     const meContact = mockMeContact();
-    const Wrapper = makeWrapper([meContact]);
+    const Wrapper = makeContactsWrapper([meContact]);
     const { result } = renderHook(
       () =>
         useContactDetailEditDeleteFlowViewModel({
@@ -101,7 +115,7 @@ describe("useContactDetailEditDeleteFlowViewModel", () => {
     const contact = mockContact();
     const onDeleteSuccess = jest.fn();
     const deleteContact = jest.fn().mockResolvedValue(undefined);
-    const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const Wrapper = makeContactsWrapper([mockMeContact(), contact]);
     const { result } = renderHook(
       () =>
         useContactDetailEditDeleteFlowViewModel({

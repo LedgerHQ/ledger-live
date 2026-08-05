@@ -126,12 +126,14 @@ export function buildTonTransaction(
     payload,
   };
 
-  if (commentTx.text.length) {
-    tonTransaction.payload = { type: "comment", text: commentTx.text };
+  const commentText = typeof commentTx?.text === "string" ? commentTx.text : "";
+
+  if (commentText.length) {
+    tonTransaction.payload = { type: "comment", text: commentText };
   }
 
   if (subAccount) {
-    const forwardPayload = commentTx.text.length ? comment(commentTx.text) : null;
+    const forwardPayload = commentText.length ? comment(commentText) : null;
 
     const currencyConfig = getCoinConfig();
     const knownJettons = currencyConfig.infra.KNOWN_JETTONS;

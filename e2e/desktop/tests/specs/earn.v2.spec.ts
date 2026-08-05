@@ -36,7 +36,7 @@ async function navigateToEarn(app: Application) {
   );
 }
 
-test.describe("Earn [v2]", () => {
+test.describe("Earn v2", () => {
   setupEnv(true);
   test.use({
     teamOwner: Team.EARN,
@@ -56,7 +56,7 @@ test.describe("Earn [v2]", () => {
 
     const xrayTicket = "B2CQA-4639";
     test(
-      "Earn v2 ice cold start page displays correctly",
+      `[${account.currency.testLabel}] - Earn v2 ice cold start page displays correctly`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -76,7 +76,7 @@ test.describe("Earn [v2]", () => {
   ];
 
   for (const { account, xrayTicket } of coldStartCurrencies) {
-    test.describe(`Cold start - ${account.currency.ticker}`, () => {
+    test.describe("Cold start", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
@@ -90,7 +90,7 @@ test.describe("Earn [v2]", () => {
       });
 
       test(
-        `Earn v2 cold start page shows ${account.currency.ticker} ready to earn`,
+        `[${account.currency.testLabel}] - Earn v2 cold start page shows account ready to earn`,
         {
           tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTicket },
@@ -130,7 +130,7 @@ test.describe("Earn [v2]", () => {
   ];
 
   for (const { account, xrayTickets } of activePositionCurrencies) {
-    test.describe(`Hot start & Position - ${account.currency.ticker}`, () => {
+    test.describe("Hot start and position", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
@@ -140,7 +140,7 @@ test.describe("Earn [v2]", () => {
       });
 
       test(
-        `Earn v2 hot start page shows ${account.currency.ticker} with rewards and navigates to account`,
+        `[${account.currency.testLabel}] - Earn v2 hot start page shows rewards and navigates to account`,
         {
           tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
@@ -159,7 +159,7 @@ test.describe("Earn [v2]", () => {
 
   // --- Earn v2 inline Add Account ---
 
-  test.describe("Earn v2 inline Add Account", () => {
+  test.describe("Inline add account", () => {
     const account = Account.ETH_1;
     const xrayTicket = "B2CQA-4642";
 
@@ -176,7 +176,7 @@ test.describe("Earn [v2]", () => {
     });
 
     test(
-      "Earn v2 ice cold start allows inline account addition",
+      `[${account.currency.testLabel}] - Earn v2 inline add account`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -202,7 +202,7 @@ test.describe("Earn [v2]", () => {
 
   // swapToEarn disabled → resolveAssetFlow routes to EarnV1Deposit → text-button-cta
 
-  test.describe("Earn v2 simulator CTA → v1 deposit", () => {
+  test.describe("Simulator CTA", () => {
     const account = Account.ETH_1;
     const xrayTicket = "B2CQA-6136";
 
@@ -220,7 +220,7 @@ test.describe("Earn [v2]", () => {
     });
 
     test(
-      "Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled",
+      `[${account.currency.testLabel}] - Earn v2 simulator CTA routes to v1 deposit when swapToEarn is disabled`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -239,7 +239,7 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: CTA Flows ---
 
-  test.describe("CTA → Native staking (SOL)", () => {
+  test.describe("CTA to native staking", () => {
     const account = Account.SOL_2;
 
     test.use({
@@ -252,7 +252,7 @@ test.describe("Earn [v2]", () => {
 
     const xrayTicket = "B2CQA-4643";
     test(
-      "Earn v2 CTA → Native staking (SOL)",
+      `[${account.currency.testLabel}] - Earn v2 CTA initiates native staking`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -265,7 +265,7 @@ test.describe("Earn [v2]", () => {
     );
   });
 
-  test.describe("CTA → Earn staking (USDT)", () => {
+  test.describe("CTA to earn staking", () => {
     const account = TokenAccount.ETH_USDT_1;
 
     test.use({
@@ -278,7 +278,7 @@ test.describe("Earn [v2]", () => {
 
     const xrayTicket = "B2CQA-4645";
     test(
-      "Earn v2 CTA → Earn staking (USDT)",
+      `[${account.currency.testLabel}] - Earn v2 CTA initiates deposit flow`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -302,7 +302,7 @@ test.describe("Earn [v2]", () => {
   ];
 
   for (const { provider, xrayTickets } of ethProviders) {
-    test.describe(`ETH staking flow - ${provider.name}`, () => {
+    test.describe("Staking flow", () => {
       const account = Account.ETH_1;
 
       test.use({
@@ -317,7 +317,7 @@ test.describe("Earn [v2]", () => {
       });
 
       test(
-        `Earn v2 ETH staking flow - ${provider.name}`,
+        `[${account.currency.testLabel}] - Earn v2 staking flow with ${provider.name}`,
         {
           tag: buildTags({ currencyId: account.currency.id }),
           annotation: { type: "TMS", description: xrayTickets.join(", ") },
@@ -338,7 +338,7 @@ test.describe("Earn [v2]", () => {
 
   // --- Navigation: Position Row Flows ---
 
-  test.describe("Position → Dapp (ETH)", () => {
+  test.describe("Position to dapp", () => {
     const account = Account.ETH_1;
 
     test.use({
@@ -363,7 +363,7 @@ test.describe("Earn [v2]", () => {
 
     const xrayTicket = "B2CQA-4647";
     test(
-      "Earn v2 position row navigates to dapp for ETH",
+      `[${account.currency.testLabel}] - Earn v2 position row navigates to dapp`,
       {
         tag: buildTags({ currencyId: account.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -380,7 +380,7 @@ test.describe("Earn [v2]", () => {
   });
 
   // ETH parent account is used for setup; the test verifies the USDT token position within it
-  test.describe("Position → Withdrawal (USDT)", () => {
+  test.describe("Position to withdrawal", () => {
     const parentAccount = Account.ETH_1;
     const tokenAccount = TokenAccount.ETH_USDT_1;
 
@@ -394,7 +394,7 @@ test.describe("Earn [v2]", () => {
 
     const xrayTicket = "B2CQA-4648";
     test(
-      "Earn v2 position row navigates to withdrawal for USDT",
+      `[${tokenAccount.currency.testLabel}] - Earn v2 position row navigates to withdrawal`,
       {
         tag: buildTags({ currencyId: parentAccount.currency.id }),
         annotation: { type: "TMS", description: xrayTicket },
@@ -410,7 +410,7 @@ test.describe("Earn [v2]", () => {
   });
 });
 
-test.describe("LiveApp delegate - ETH", () => {
+test.describe("Select a validator", () => {
   const account = Account.ETH_1;
 
   test.use({
@@ -422,7 +422,7 @@ test.describe("LiveApp delegate - ETH", () => {
   });
 
   test(
-    "[Ethereum] - Select validator",
+    `[${account.currency.testLabel}] - Select validator`,
     {
       tag: buildTags({ currencyId: account.currency.id, extraTags: ["@smoke"] }),
       annotation: { type: "TMS", description: "B2CQA-3024" },

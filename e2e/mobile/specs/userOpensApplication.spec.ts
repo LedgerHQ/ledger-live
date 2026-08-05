@@ -7,11 +7,11 @@ const testConfig = {
 };
 
 setTeamOwner(Team.WALLET_XP);
-describe("User opens application", () => {
+describe("Settings", () => {
   testConfig.tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   testConfig.tags.forEach(tag => $Tag(tag));
 
-  test("Verify that user can open application", async () => {
+  test("Open the application", async () => {
     await app.onboarding.waitForOnboardingToLoad();
     await app.onboarding.expectGetStartedButtonToBeVisible();
     await app.onboarding.expectProgressBarToBeVisible();

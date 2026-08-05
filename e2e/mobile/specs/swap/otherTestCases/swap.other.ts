@@ -36,7 +36,10 @@ export function runSwapWithoutAccountTest(
   event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo",
   tags: string[],
 ) {
-  describe("Swap a coin for which you have no account yet", () => {
+  const debitCurrency = (event === "noAccountFrom" ? asset2 : asset1).currency;
+  const creditCurrency = (event === "noAccountFrom" ? asset1 : asset2).currency;
+
+  describe("Swap - account not present", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
@@ -56,7 +59,7 @@ export function runSwapWithoutAccountTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`${testTitle}`, async () => {
+    it(`[${debitCurrency.testLabel}-${creditCurrency.testLabel}] - ${testTitle}`, async () => {
       const debitAsset = event === "noAccountFrom" ? asset2 : asset1;
       const creditAsset = event === "noAccountFrom" ? asset1 : asset2;
 
@@ -78,7 +81,7 @@ export function runSwapWithDifferentSeedTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - Using different seed", () => {
+  describe("Swap - using a different seed", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -90,7 +93,7 @@ export function runSwapWithDifferentSeedTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap using a different seed`, async () => {
       swap.accountToDebit.address = addressFrom;
       swap.accountToCredit.address = addressTo;
       const minAmount = await app.swapLiveApp.getMinimumAmount(
@@ -123,7 +126,7 @@ export function runSwapLandingPageTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - Landing page", () => {
+  describe("Swap - landing page", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -145,7 +148,7 @@ export function runSwapLandingPageTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Swap landing page", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap landing page and best offer`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -206,7 +209,7 @@ export function runSwapLnsNotSupportedBannerTest(
       setTeamOwner(Team.SWAP);
       tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
       tags.forEach(tag => $Tag(tag));
-      it(`Shows LNS not supported banner for ${unsupportedProvider.uiName}`, async () => {
+      it(`Swap LNS not supported banner for ${unsupportedProvider.uiName}`, async () => {
         const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount, [
           unsupportedProvider.name,
         ]);
@@ -227,7 +230,7 @@ export function runTooLowAmountForQuoteSwapsTest(
   quotesVisible: boolean,
   tags: string[],
 ) {
-  describe(`Swap - with too low amount (throwing UI errors) - ${swap.amount} ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, () => {
+  describe("Swap - too low amount", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -249,7 +252,7 @@ export function runTooLowAmountForQuoteSwapsTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage}`, async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap too low quote amount (${swap.amount}): ${errorMessage}`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -282,7 +285,7 @@ export function runUserRefusesTransactionTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - Rejected on device", () => {
+  describe("Swap - rejected on device", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -303,7 +306,7 @@ export function runUserRefusesTransactionTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`User refuses transaction - ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const rejectAmount = minAmount ? truncateSwapAmount(minAmount) : minAmount;
       const rejectedSwap = new Swap(fromAccount, toAccount, rejectAmount);
@@ -330,7 +333,7 @@ export function runSwapHistoryOperationsTest(
   tags: string[],
   details: SwapTransactionStatusDetails,
 ) {
-  describe("Swap history", () => {
+  describe("Swap - history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -342,7 +345,7 @@ export function runSwapHistoryOperationsTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap history is visible from the swap history page`, async () => {
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapOperation(swapId, swap);
       await app.swap.openSelectedOperation(swapId);
@@ -364,7 +367,7 @@ export function runExportSwapHistoryOperationsTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap history", () => {
+  describe("Swap - history", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -376,7 +379,7 @@ export function runExportSwapHistoryOperationsTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Export swap history operations - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Export swap history operations`, async () => {
       swap.accountToDebit.address = addressFrom;
       swap.accountToCredit.address = addressTo;
       await app.swap.goToSwapHistory();
@@ -389,7 +392,7 @@ export function runExportSwapHistoryOperationsTest(
 export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
   const swapHistoryFeedbackFormUrl =
     "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile";
-  describe("Swap history", () => {
+  describe("Swap - history", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
         userdata: "swap-history",
@@ -400,7 +403,7 @@ export function runSwapHistoryFeedbackTest(tmsLinks: string[], tags: string[]) {
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Check feedback form URL from swap history", async () => {
+    it("Swap feedback form URL from swap history", async () => {
       await app.swap.goToSwapHistory();
       await app.swap.checkSwapHistoryFeedbackFormUrl(swapHistoryFeedbackFormUrl);
     });
@@ -413,7 +416,7 @@ export function runSwapWithSendMaxTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - Send Max", () => {
+  describe("Swap - send max", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -435,7 +438,7 @@ export function runSwapWithSendMaxTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`, async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max amount`, async () => {
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.performSearchByTicker(fromAccount.currency.ticker);
       await app.modularDrawer.selectCurrencyByTicker(fromAccount.currency.ticker);
@@ -476,7 +479,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - Switch You send and You receive currency", () => {
+  describe("Swap - switch currencies", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -488,7 +491,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Switch You send and You receive currency", async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`, async () => {
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -514,7 +517,7 @@ async function openSwapFromPortfolioEntryPoint() {
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
-  describe("Swap - Entry Points", () => {
+  describe("Swap - entry points", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
         userdata: "speculos-tests-app",
@@ -525,7 +528,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it("Access Swap from different entry points", async () => {
+    it(`[${account.currency.testLabel}] - Swap entry points`, async () => {
       await openSwapFromPortfolioEntryPoint();
       await validateSwapAssetsPage(account.currency.ticker, "");
 
@@ -548,7 +551,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe(`Swap - Error message when network fees are above account balance (${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name})`, () => {
+  describe("Swap - network fees above balance", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(swap);
       await beforeAllFunctionSwap({
@@ -571,7 +574,7 @@ export function runSwapNetworkFeesAboveAccountBalanceTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`Swap - Network fees above account balance`, async () => {
+    it(`[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Swap network fees above account balance`, async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(
         swap.accountToDebit,
         swap.accountToCredit,
@@ -597,7 +600,7 @@ export function runSwapDiscreetModeTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap Discreet Mode", () => {
+  describe("Swap - discreet mode", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
         userdata: "discreet-mode",
@@ -618,14 +621,14 @@ export function runSwapDiscreetModeTest(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Checks if the amount is hidden in the asset drawer", async () => {
+    it("Swap amount is hidden in the asset drawer in discreet mode", async () => {
       const tickers = accounts.map(account => account.currency.ticker);
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.checkSelectAssetPage();
       await app.modularDrawer.checkAssetAmountsAreDiscreet(tickers);
     });
 
-    it("Checks if the balance is hidden in the swap main form", async () => {
+    it("Swap balance is hidden in the swap main form in discreet mode", async () => {
       // Masking is currency-agnostic, so a single account is enough here.
       await app.swapLiveApp.tapFromCurrency();
       await app.modularDrawer.selectAsset(balanceCheckAccount);

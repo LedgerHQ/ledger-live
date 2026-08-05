@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.41.0",
+  "version": "0.42.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -161,7 +161,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.9.0",

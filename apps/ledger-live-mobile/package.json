@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.13.0",
+  "version": "4.14.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -90,6 +90,7 @@
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
     "@domain/api-altcoins-sentiment": "workspace:^",
+    "@shared/api-services": "workspace:^",
     "@domain/api-currency-fiat": "workspace:^",
     "@domain/api-currency-token": "workspace:^",
     "@domain/api-market-sentiment": "workspace:^",
@@ -155,7 +156,7 @@
     "@ledgerhq/live-hooks": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-ui-rnative-visualization": "catalog:",

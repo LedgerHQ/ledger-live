@@ -4,7 +4,6 @@ import { log } from "@ledgerhq/logs";
 import { Account, AccountBridge, DeviceId } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { Observable } from "rxjs";
-import { getPath } from "../common-logic";
 import { createUnsignedSendTransaction, type UnsignedTransaction } from "../logic/buildTransaction";
 import { pubkeyToDer } from "../logic/crypto";
 import { hashTransaction } from "../logic/hashTransaction";
@@ -64,7 +63,7 @@ export const buildSignOperation =
         let encodedSignedCallBlob: string = "";
         const res = await signICPTransaction(
           unsignedTransaction,
-          getPath(derivationPath),
+          derivationPath,
           signerContext,
           account,
           deviceId,

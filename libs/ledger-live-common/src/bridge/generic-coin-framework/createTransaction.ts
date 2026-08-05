@@ -100,6 +100,18 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         mode: "send",
         nonce: new BigNumber(0),
       };
+    case "cosmos":
+      return {
+        family: currency.family,
+        mode: "send",
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        memoType: null,
+        memoValue: null,
+        networkInfo: null,
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

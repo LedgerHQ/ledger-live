@@ -26,7 +26,7 @@ describe("createContactAddressDetailSendIntent", () => {
 });
 
 describe("createContactAddressDetailEditIntent", () => {
-  it("exposes an edit-address intent for the selected address", () => {
+  it("exposes an edit-address intent with a signer-required requirement for the selected address", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
 
@@ -34,6 +34,10 @@ describe("createContactAddressDetailEditIntent", () => {
       type: "edit-address",
       contactId: contact.id,
       addressId: address.id,
+      editRequirement: {
+        type: "confirmation-required",
+        reason: "contact-has-address",
+      },
     });
   });
 });

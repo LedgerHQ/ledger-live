@@ -12,7 +12,7 @@ test.describe("Market", () => {
   });
 
   test(
-    "Filters behavior",
+    `[${Account.BTC_NATIVE_SEGWIT_1.currency.testLabel}-${Account.ETH_1.currency.testLabel}] - Market filters behavior`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {

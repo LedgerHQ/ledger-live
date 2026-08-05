@@ -1,6 +1,6 @@
 {
   "name": "@devtools/transport-panel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Ledger Live DevTools — transport status panel",
   "main": "src/index.web.ts",
@@ -59,6 +59,7 @@
     "jest-sonar": "0.2.16",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react-native-vision-camera": "4.7.3",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
@@ -73,6 +74,7 @@
   },
   "peerDependencies": {
     "react": ">=19",
+    "react-native-vision-camera": ">=4",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@radix-ui/react-dialog": "catalog:",

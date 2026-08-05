@@ -34,6 +34,7 @@
     "src/createTransaction.ts",
     "src/estimateMaxSpendable.ts",
     "src/getTransactionStatus.ts",
+    "src/logic/staking/getRedelegations.ts",
     "src/prepareTransaction.ts",
     "src/signOperation.ts",
     "src/synchronisation.ts",

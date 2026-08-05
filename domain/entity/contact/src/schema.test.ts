@@ -1,8 +1,10 @@
 import {
+  ContactAddressLabelInputSchema,
   ContactAddressLabelSchema,
   ContactAddressSchema,
   ContactAddressValueSchema,
   ContactCurrencyIdSchema,
+  ContactNameInputSchema,
   ContactNameSchema,
   ContactSchema,
 } from "./schema";
@@ -38,7 +40,7 @@ describe("ContactSchema", () => {
   });
 
   it("accepts international contact names", () => {
-    expect(ContactNameSchema.parse(" E\u0301lodie ")).toBe("E\u0301lodie");
+    expect(ContactNameInputSchema.parse(" E\u0301lodie ")).toBe("Élodie");
     expect(ContactNameSchema.parse("Jean-Luc O'Connor")).toBe("Jean-Luc O'Connor");
     expect(ContactNameSchema.parse("Алексей")).toBe("Алексей");
     expect(ContactNameSchema.parse("مريم")).toBe("مريم");
@@ -87,6 +89,11 @@ describe("ContactAddressSchema", () => {
     expect(ContactAddressLabelSchema.parse("Aave v3 1INCH")).toBe("Aave v3 1INCH");
     expect(ContactAddressLabelSchema.parse("USDC.e")).toBe("USDC.e");
     expect(ContactAddressLabelSchema.parse("123")).toBe("123");
+  });
+
+  it("normalizes address label input before applying the entity schema", () => {
+    expect(ContactAddressLabelInputSchema.parse("  Ethereum  ")).toBe("Ethereum");
+    expect(ContactAddressLabelInputSchema.parse("   ")).toBe("");
   });
 
   it("rejects non-ASCII, punctuation-only, emoji, and control-character address labels", () => {

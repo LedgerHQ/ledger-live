@@ -1,5 +1,6 @@
 import {
   ContactIdSchema,
+  DUPLICATE_CONTACT_NAME_ERROR_NAME,
   INVALID_CONTACT_NAME_ERROR_NAME,
   type ContactId,
 } from "@domain/entity-contact";
@@ -8,11 +9,10 @@ import {
   type ContactsEditSignerDialogProps,
   type ContactsRenameContactDialogProps,
   type ContactDetailActionsLabels,
-  useContactDetailEditDeleteFlowViewModel,
-  useRenameContactDialogViewModel,
+  useContactDetailEditDeleteFlowBindings,
+  useContactsEditDeletePorts,
 } from "@features/flow-contacts";
 import { useTranslation } from "react-i18next";
-import { useContactsEditDeletePorts } from "../../hooks/useContactsEditDeletePorts";
 
 export type ContactDetailEditDeleteDialogProps = Readonly<{
   detailActions?: Readonly<{
@@ -33,18 +33,10 @@ export function useContactDetailEditDeleteAdapter(
   const { t } = useTranslation();
   const ports = useContactsEditDeletePorts();
   const resolvedContactId = contactId ?? ContactIdSchema.parse("contact-me");
-  const flow = useContactDetailEditDeleteFlowViewModel({
+  const { flow, renameViewModel } = useContactDetailEditDeleteFlowBindings({
     contactId: resolvedContactId,
     ports,
     onDeleteSuccess,
-  });
-  const renameDialogViewModel = useRenameContactDialogViewModel({
-    contactId: resolvedContactId,
-    currentName: flow.contactName,
-    editPort: ports.edit,
-    isRequestedOpen: flow.editUiState === "edit-open",
-    onCloseRequest: flow.onEditClose,
-    onSaveSuccess: () => undefined,
   });
   const actionLabels: ContactDetailActionsLabels = {
     editContact: t("contacts.detailActions.editContact"),
@@ -57,6 +49,7 @@ export function useContactDetailEditDeleteAdapter(
     applyChanges: t("contacts.editContact.applyChanges"),
     nameValidationErrors: {
       [INVALID_CONTACT_NAME_ERROR_NAME]: t("contacts.editContact.invalidNameError"),
+      [DUPLICATE_CONTACT_NAME_ERROR_NAME]: t("contacts.addContactDrawer.duplicateNameError"),
     },
   };
   const deleteLabels = {
@@ -82,7 +75,7 @@ export function useContactDetailEditDeleteAdapter(
         }
       : undefined,
     renameDialog: {
-      ...renameDialogViewModel,
+      ...renameViewModel,
       labels: renameLabels,
     },
     deleteDialog: {

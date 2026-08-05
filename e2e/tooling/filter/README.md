@@ -4,6 +4,9 @@ CI-time helpers (Node CLIs, run from the **repo root** by the E2E GitHub workflo
 that build and present the Playwright/Detox test filter. These are **not** imported by
 the test runtime (specs, page objects, fixtures) — they run inside GitHub Actions only.
 
+> Just want to filter a workflow run? See the user guide:
+> [`test-filter-guide.md`](./test-filter-guide.md). This README covers the internals.
+
 | File                 | Role                                                                                                                                                                                                                                                                                                                                                       |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `escaping.mjs`       | Single source of truth for the filter grammar: splits patterns on separators (`\|` / `,`) that are not backslash-escaped and is odd-backslash aware, defines the Playwright leaf anchor `(?! [^@])`, and unescapes regex-literal characters (`unescapeLiteral`) for display.                                                                               |

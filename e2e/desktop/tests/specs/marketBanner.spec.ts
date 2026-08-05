@@ -1,19 +1,20 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { expect } from "@playwright/test";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { coinDetailUrlPattern } from "tests/utils/urlUtils";
 
-test.describe("Market Banner", () => {
+test.describe("Market banner", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-tests-app",
   });
 
   test(
-    "Validate Market Banner elements, interactions and navigation",
+    `[${Currency.BTC.testLabel}] - Market banner elements, interactions and navigation`,
     {
       tag: [...DEVICE_TAGS],
       annotation: {

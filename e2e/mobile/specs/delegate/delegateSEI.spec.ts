@@ -33,7 +33,7 @@ describe("Delegate", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it(`Delegate on ${delegation.account.currency.name}`, async () => {
+  it(`[${delegation.account.currency.testLabel}] - Delegate`, async () => {
     const amountWithCode = DELEGATION_AMOUNT + " " + delegation.account.currency.ticker;
 
     await app.portfolio.goToAccounts(delegation.account.currency.name);

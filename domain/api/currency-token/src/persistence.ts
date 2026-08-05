@@ -1,6 +1,7 @@
 import isEqual from "lodash/isEqual";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { ThunkDispatch } from "@reduxjs/toolkit";
+import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
 import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
 import {
@@ -21,9 +22,16 @@ export function parsePersistedCAL(raw: unknown): PersistedCAL | null {
   return result.success ? result.data : null;
 }
 
-/** Redux state that includes the {@link cryptoAssetsApi} reducer. */
+/**
+ * Redux state that includes the CAL slice.
+ *
+ * Typed on {@link calApi} — the api the app actually registers — not on the injected
+ * {@link cryptoAssetsApi}. The two are the same object at runtime, but this use case adds cache tags
+ * via `enhanceEndpoints`, which widens the injected reducer's state type with those tags. Typing on
+ * the registered api keeps this assignable from an app's `State`.
+ */
 export interface WithCryptoAssetsApi {
-  [cryptoAssetsApi.reducerPath]: ReturnType<typeof cryptoAssetsApi.reducer>;
+  [calApi.reducerPath]: ReturnType<typeof calApi.reducer>;
 }
 
 /**

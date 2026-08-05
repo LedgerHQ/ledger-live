@@ -133,6 +133,20 @@ describe("getTransactionStatus", () => {
           }),
         );
       });
+
+      it("should report a malformed comment as an error instead of throwing", async () => {
+        const transaction = {
+          ...baseTransaction,
+          amount: new BigNumber("1"),
+          comment: { isEncrypted: false, text: undefined as unknown as string },
+        };
+        const res = await getTransactionStatus(account, transaction);
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            transaction: new TonCommentInvalid(),
+          }),
+        );
+      });
     });
 
     describe("Successful transaction", () => {

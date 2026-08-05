@@ -23,10 +23,7 @@ export function ContactsMeListItem({
   onOpen,
 }: ContactsMeListItemProps): React.ReactNode {
   return (
-    <ListItem
-      onClick={() => onOpen(contact.contactId)}
-      data-testid="contacts-me-row"
-    >
+    <ListItem onClick={() => onOpen(contact.contactId)} data-testid="contacts-me-row">
       <ListItemLeading>
         <Avatar size="md" src={avatarSrc} aria-hidden data-testid="contacts-me-avatar" />
         <ListItemContent>

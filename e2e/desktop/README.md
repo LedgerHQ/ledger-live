@@ -82,6 +82,9 @@ pnpm e2e:desktop test:playwright <testFileName>
 For detailed setup, debugging, and contribution guidelines, see:
 [Ledger Wallet Desktop E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLD:E2ETesting)
 
+To run only selected specs when dispatching an E2E workflow, see
+[Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
+
 ### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON override
 
 You can inject extra feature flags globally for Desktop E2E by setting `E2E_FEATURE_FLAGS_JSON`.

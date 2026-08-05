@@ -6,3 +6,8 @@ libs/ledger-key-ring-protocol/src/__tests__/LKRPIdentityProvider.integration.tes
 # used by the VeChain coin-tester scenario — not real secrets.
 libs/coin-tester-modules/coin-tester-vechain/src/scenarii/vechain.ts:generic-api-key:19
 libs/coin-tester-modules/coin-tester-vechain/src/scenarii/vechain.ts:generic-api-key:20
+libs/ledger-key-ring-protocol/src/__tests__/unit/store.test.ts:generic-api-key:41
+libs/ledger-key-ring-protocol/src/__tests__/unit/types.test.ts:generic-api-key:6
+libs/coin-modules/coin-solana/src/logic/tests/listOperations.unit.test.ts:generic-api-key:822
+apps/ledger-live-mobile/src/state-manager/configureStore.test.ts:generic-api-key:62
+apps/ledger-live-desktop/src/state-manager/configureStore.test.ts:generic-api-key:26

@@ -1,12 +1,6 @@
 import React from "react";
 import { Image, type ImageSourcePropType } from "react-native";
-import {
-  BottomSheetHeader,
-  BottomSheetView,
-  Box,
-  Button,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
 import type { ContactsFeatureIntroductionContentProps } from "./types";

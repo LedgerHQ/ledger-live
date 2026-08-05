@@ -22,6 +22,7 @@ export enum DeviceLabels {
   DEPOSIT = "Deposit",
   EXPERT_MODE = "Expert mode",
   ENABLE_TRANSACTION_CHECK = "Enable Transaction Check",
+  EXCHANGE_APP_IS_READY = "Exchange app is ready",
   FEES = "Fees",
   GET = "Get",
   I_UNDERSTAND = "I understand",

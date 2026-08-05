@@ -100,6 +100,9 @@ pnpm test:android <testFileName>         # single file
 For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
 [Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
 
+To run only selected specs when dispatching an E2E workflow, see
+[Using `test_filter` in the E2E workflows](../tooling/filter/test-filter-guide.md).
+
 ### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
 
 You can inject extra feature flags globally for Mobile E2E by setting `E2E_FEATURE_FLAGS_JSON`.

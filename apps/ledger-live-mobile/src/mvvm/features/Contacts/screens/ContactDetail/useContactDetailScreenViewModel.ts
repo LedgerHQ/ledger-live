@@ -1,7 +1,9 @@
-import { useCallback, useLayoutEffect, useMemo } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { v4 as uuid } from "uuid";
+import { addAddress, contactAddress } from "@domain/entity-contact";
 import {
   type AddAddressFlowState,
   type AddAddressInputSource,
@@ -18,12 +20,15 @@ import {
 } from "@features/flow-contacts";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
+import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { USER_AVATAR_URL } from "LLM/components/UserAvatar/constants";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
+import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
+import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -35,6 +40,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      editDeleteFlow: ContactDetailEditDeleteFlowProps;
     }>;
 
 type NavigationProp = BaseNavigationComposite<
@@ -42,6 +48,8 @@ type NavigationProp = BaseNavigationComposite<
 >;
 
 export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel {
+  const dispatch = useDispatch();
+  const hasCompletedMockConfirmation = useRef(false);
   const navigation = useNavigation<NavigationProp>();
   const route =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWalletContactDetail>>();
@@ -70,13 +78,39 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     updateAddressLabel,
     confirmAddress,
     continueFromName,
-    continueFromReview,
+    completeMockConfirmation,
     goBack: goBackAddAddress,
     close: closeAddAddress,
   } = useAddAddressFlowViewModel({
     addressValidation,
     manualValidationDebounceMs: MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS,
   });
+  const completeMockAddressConfirmation = useCallback(() => {
+    if (addAddressFlowState.status !== "confirmationRequired") {
+      hasCompletedMockConfirmation.current = false;
+      return;
+    }
+
+    if (hasCompletedMockConfirmation.current) {
+      return;
+    }
+
+    hasCompletedMockConfirmation.current = true;
+
+    const address = contactAddress({
+      id: `address-${uuid()}`,
+      currencyId: addAddressFlowState.selectedCurrencyId,
+      label: addAddressFlowState.addressLabel.label,
+      address: addAddressFlowState.addressEntry.resolvedAddress,
+    });
+
+    dispatch(addAddress({ contactId: addAddressFlowState.selectedContactId, address }));
+    completeMockConfirmation();
+    closeAddAddress();
+  }, [addAddressFlowState, closeAddAddress, completeMockConfirmation, dispatch]);
+  useEffect(() => {
+    completeMockAddressConfirmation();
+  }, [completeMockAddressConfirmation]);
   const onAddAddress = useCallback(() => {
     if (!contact || eligibleNetworkIds.length === 0) return;
     startAddAddress(contact);
@@ -144,6 +178,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     }),
     [t],
   );
+  const onDeleteSuccess = useCallback(() => {
+    navigation.navigate(ScreenName.MyWalletContacts);
+  }, [navigation]);
+  const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
   const shouldRedirect = !isEnabled || !contact;
 
   useLayoutEffect(() => {
@@ -186,7 +224,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       onBack: goBackAddAddress,
       onClose: closeAddAddress,
       onContinueFromName: continueFromName,
-      onContinueFromReview: continueFromReview,
       onCurrencySelected,
       onQrCodeClick,
     },
@@ -199,5 +236,6 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetail,
     },
+    editDeleteFlow,
   };
 }
