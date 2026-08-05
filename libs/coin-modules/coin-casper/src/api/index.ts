@@ -16,6 +16,7 @@ import type {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { setCoinConfig } from "../config";
+import { combine } from "../logic/combine";
 import type { CasperCoinConfig } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
@@ -63,9 +64,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     estimateFees(_intent: TransactionIntent<MemoNotSupported>): Promise<FeeEstimation> {
       throw new Error("estimateFees is not supported");
     },
-    combine(_tx: string, _signature: string, _pubkey?: string): string {
-      throw new Error("combine is not supported");
-    },
+    combine,
     broadcast(_tx: string): Promise<string> {
       throw new Error("broadcast is not supported");
     },

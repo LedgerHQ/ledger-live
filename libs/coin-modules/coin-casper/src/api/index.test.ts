@@ -1,17 +1,13 @@
+import { getMockedConfig } from "../__tests__/fixtures";
 import { setCoinConfig } from "../config";
+import { combine } from "../logic/combine";
 import { createApi } from "./index";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
 }));
 
-const mockConfig = jest.fn().mockReturnValue({
-  status: { type: "active" },
-  infra: {
-    API_CASPER_NODE_ENDPOINT: "https://mock.node",
-    API_CASPER_INDEXER: "https://mock.indexer",
-  },
-});
+const mockConfig = jest.fn().mockReturnValue(getMockedConfig());
 
 describe("createApi", () => {
   beforeEach(() => {
@@ -54,11 +50,15 @@ describe("createApi", () => {
     ["lastBlock", []],
     ["getBalance", ["someAddress"]],
     ["broadcast", ["rawTx"]],
-    ["combine", ["tx", "sig"]],
     ["validateAddress", ["addr", {}]],
   ])("%s throws 'not supported'", (_method, args) => {
     const api = createApi(mockConfig);
     const fn = api[_method as keyof typeof api] as (...a: unknown[]) => unknown;
     expect(() => fn(...args)).toThrow(`${_method} is not supported`);
+  });
+
+  it("wires combine to the shared logic implementation", () => {
+    const api = createApi(mockConfig);
+    expect(api.combine).toBe(combine);
   });
 });

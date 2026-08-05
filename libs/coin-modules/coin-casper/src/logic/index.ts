@@ -1,3 +1,4 @@
+export * from "./combine";
 export * from "./craftTransaction";
 export * from "./estimateFees";
 export * from "./listOperations";
