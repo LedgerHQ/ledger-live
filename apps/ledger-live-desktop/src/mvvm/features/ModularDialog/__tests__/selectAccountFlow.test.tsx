@@ -516,10 +516,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     await user.click(screen.getByText(/ethereum/i));
 
     expect(screen.getAllByText(/select account/i)[0]).toBeVisible();
-    expect(screen.queryByText(/select trading account/i)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(/currently only supported with usdc on arbitrum chain/i),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/select hyperliquid account/i)).not.toBeInTheDocument();
   });
 
   it("should not display perpetuals account header when uiUseCase is not set", async () => {
