@@ -444,7 +444,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
 
     expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
     expect(
-      screen.getAllByText(/select an account you want to deposit funds into/i)[0],
+      screen.getAllByText(/To fund your perps, you need a Hyperliquid account/i)[0],
     ).toBeVisible();
   });
 
@@ -470,7 +470,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
     expect(screen.getAllByText(/select hyperliquid account/i)[0]).toBeVisible();
     expect(screen.getAllByText(/you don't have ethereum accounts yet/i)[0]).toBeVisible();
     expect(
-      screen.queryByText(/select an account you want to deposit funds into/i),
+      screen.queryByText(/To fund your perps, you need a Hyperliquid account/i),
     ).not.toBeInTheDocument();
   });
 
