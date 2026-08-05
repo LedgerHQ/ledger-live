@@ -4,6 +4,8 @@ export * from "./steps/AddContact";
 export * from "./steps/AddContact/web";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/web";
+export * from "./steps/EditAddress";
+export * from "./steps/EditAddress/web";
 export * from "./steps/AddAddress";
 export * from "./steps/AddAddress/web";
 export * from "./steps/Introduction";

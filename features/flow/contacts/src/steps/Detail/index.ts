@@ -67,6 +67,8 @@ export type {
   ContactAddressDetailActionsPorts,
   ContactAddressDetailEditFlowPorts,
   ContactAddressDetailPort,
+  ContactAddressEditPort,
+  ContactAddressRenameInput,
   ContactDeletionPort,
   ContactDetailActionsPorts,
   ContactEditPort,

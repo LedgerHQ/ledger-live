@@ -3,6 +3,8 @@ export { ContactAddressDetailDialog } from "./components/ContactAddressDetailDia
 export { ContactDetailActions } from "./components/ContactDetailActions/ContactDetailActions.web";
 export type { ContactDetailActionsProps } from "./components/ContactDetailActions/ContactDetailActions.web";
 export { ContactsDeleteContactDialog } from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog.web";
+export { ContactsRenameAddressDialog } from "../EditAddress/ContactsRenameAddressDialog.web";
 export { ContactsEditSignerDialog } from "./components/ContactsEditSignerDialog/ContactsEditSignerDialog.web";
 export type { ContactsDeleteContactDialogProps } from "./components/ContactsDeleteContactDialog/types";
+export type { ContactsRenameAddressDialogProps } from "../EditAddress/types";
 export type { ContactsEditSignerDialogProps } from "./components/ContactsEditSignerDialog/types";
