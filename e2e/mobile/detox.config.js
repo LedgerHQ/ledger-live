@@ -56,6 +56,26 @@ module.exports = {
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
+  session: {
+    // Only governs how long Detox waits before printing "The app is busy with: <resources>", which
+    // is the most useful clue when a wait never resolves. 10s is what was in force while this key
+    // sat under `behavior`, where Detox does not read it.
+    debugSynchronization: 10000,
+  },
+  // Specified in full rather than inherited from detox-allure2-adapter/preset-detox: `pnpm mobile
+  // e2e:build` installs only the app's dependencies, and that preset belongs to this package, so
+  // extending it fails the Detox build. It only ever contributed these same five plugins.
+  artifacts: {
+    rootDir: "artifacts",
+    plugins: {
+      log: "failing",
+      screenshot: "failing",
+      video: "none",
+      instruments: "none",
+      // jest.environment.ts already captures a hierarchy on failure; the preset captured one per test.
+      uiHierarchy: "disabled",
+    },
+  },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
     init: {
@@ -66,10 +86,6 @@ module.exports = {
     cleanup: {
       shutdownDevice: false,
     },
-    session: {
-      debugSynchronization: 60000,
-    },
-    extends: "detox-allure2-adapter/preset-detox",
   },
   apps: {
     "ios.debug": {
@@ -111,6 +127,8 @@ module.exports = {
       testBinaryPath: getAndroidTestBinary("detoxPreRelease"),
     },
   },
+  // jest.environment.ts resolves `${configuration.device}${JEST_WORKER_ID}` for every extra Jest
+  // worker and throws if the alias is absent; they must cover jest.config.js maxWorkers (3 on CI).
   devices: {
     simulator: {
       type: "ios.simulator",
