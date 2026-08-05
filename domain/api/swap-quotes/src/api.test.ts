@@ -90,6 +90,19 @@ describe("hashCustomHeaders", () => {
     expect(hashCustomHeaders({ "x-token": "super-secret" })).not.toContain("super-secret");
   });
 
+  // `headers` is live-app input and the digest is what keeps concurrent callers
+  // apart, so a digest an app could deliberately collide would defeat the point.
+  it("is a full-length SHA-256 digest, not a truncated or non-cryptographic one", () => {
+    expect(hashCustomHeaders({ "x-token": "one" })).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("matches the SHA-256 of the canonical header string", () => {
+    // sha256("x-token:one"), computed independently.
+    expect(hashCustomHeaders({ "x-token": "one" })).toBe(
+      "c9d3f7a8814aa8f6ed28e5c713144bdcd3ff449d99dbbee2d4757a04c06d8c27",
+    );
+  });
+
   it("is stable, and independent of order and header-name casing", () => {
     const a = hashCustomHeaders({ "x-token": "one", "x-other": "two" });
     const b = hashCustomHeaders({ "X-Other": "two", "X-Token": "one" });

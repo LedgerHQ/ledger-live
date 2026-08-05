@@ -1,3 +1,6 @@
+import { sha256 } from "@noble/hashes/sha2";
+import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils";
+
 import { swapApi } from "@shared/api-services";
 
 import { RawQuoteErrorSchema, RawQuoteSchema } from "./schema";
@@ -91,6 +94,11 @@ export function transformFetchQuotesResponse(response: unknown): FetchQuotesResu
  *
  * Hashing rather than including them verbatim keeps a live-app token out of redux state, which is
  * the point of leaving them out of the key in the first place.
+ *
+ * The digest is what keeps those requests apart, and `headers` is chosen by the live app, so it has
+ * to be collision-resistant: a digest an app can deliberately collide would hand it back the
+ * separation this exists to provide. SHA-256 is used rather than a fast non-cryptographic hash for
+ * that reason alone — it must also stay synchronous, which rules out `crypto.subtle`.
  */
 export function hashCustomHeaders(customHeaders?: Record<string, string>): string {
   const entries = Object.entries(customHeaders ?? {});
@@ -102,14 +110,7 @@ export function hashCustomHeaders(customHeaders?: Record<string, string>): strin
     .sort()
     .join("\n");
 
-  // FNV-1a, 32-bit. Not a security boundary: it only has to separate cache entries and stay stable
-  // across calls, and it must be synchronous (`crypto.subtle` is not).
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < canonical.length; i++) {
-    hash ^= canonical.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(36);
+  return bytesToHex(sha256(utf8ToBytes(canonical)));
 }
 
 /**

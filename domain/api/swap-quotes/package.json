@@ -21,6 +21,7 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/swap-quotes"
   },
   "dependencies": {
+    "@noble/hashes": "1.8.0",
     "@reduxjs/toolkit": "catalog:",
     "@shared/api-services": "workspace:*",
     "@shared/auth": "workspace:*",

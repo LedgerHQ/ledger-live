@@ -3803,6 +3803,9 @@ importers:
 
   domain/api/swap-quotes:
     dependencies:
+      '@noble/hashes':
+        specifier: 1.8.0
+        version: 1.8.0
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
