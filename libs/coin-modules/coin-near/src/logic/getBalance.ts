@@ -1,6 +1,6 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
-import { getAccount } from "../../network";
-import { toStakes } from "../staking/getStakes";
+import { getAccount } from "../network";
+import { toStakes } from "./getStakes";
 
 export const NATIVE_ASSET: AssetInfo = { type: "native" };
 

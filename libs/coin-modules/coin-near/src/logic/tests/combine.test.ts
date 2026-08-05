@@ -1,5 +1,5 @@
 import * as nearAPI from "near-api-js";
-import { combine } from "./combine";
+import { combine } from "../combine";
 
 const SENDER = "sender.near";
 const RECIPIENT = "recipient.near";

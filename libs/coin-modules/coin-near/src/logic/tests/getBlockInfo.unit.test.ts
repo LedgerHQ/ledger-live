@@ -1,6 +1,6 @@
 import { getBlockHeaderAtHeight, getLastBlockHeader } from "../../network";
-import { getBlockInfo, toBlockInfo } from "./getBlockInfo";
-import { lastBlock } from "./lastBlock";
+import { getBlockInfo, toBlockInfo } from "../getBlockInfo";
+import { lastBlock } from "../lastBlock";
 
 jest.mock("../../network", () => ({
   getBlockHeaderAtHeight: jest.fn(),

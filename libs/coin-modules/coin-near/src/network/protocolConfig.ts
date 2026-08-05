@@ -38,6 +38,10 @@ export type NearActionCosts = {
   addKeyCostExecution: BigNumber;
   receiptCreationSend: BigNumber;
   receiptCreationExecution: BigNumber;
+  /** Floor on the execution-half gas price (protocol 85+); 0 on older protocol versions. */
+  minGasPurchasePrice: BigNumber;
+  /** Yocto cost of activating a new account (protocol 85+); 0 on older protocol versions. */
+  accountCreationCharge: BigNumber;
 };
 
 const fetchActionCosts = async (): Promise<NearActionCosts> => {
@@ -47,7 +51,12 @@ const fetchActionCosts = async (): Promise<NearActionCosts> => {
     throw new NearProtocolConfigNotLoaded();
   }
 
-  const { storage_amount_per_byte, transaction_costs } = protocolConfig.runtime_config;
+  const {
+    storage_amount_per_byte,
+    transaction_costs,
+    min_gas_purchase_price,
+    account_creation_charge,
+  } = protocolConfig.runtime_config;
   const { action_creation_config, action_receipt_creation_config } = transaction_costs;
 
   return {
@@ -64,6 +73,8 @@ const fetchActionCosts = async (): Promise<NearActionCosts> => {
     ),
     receiptCreationSend: new BigNumber(action_receipt_creation_config.send_not_sir),
     receiptCreationExecution: new BigNumber(action_receipt_creation_config.execution),
+    minGasPurchasePrice: new BigNumber(min_gas_purchase_price ?? 0),
+    accountCreationCharge: new BigNumber(account_creation_charge ?? 0),
   };
 };
 

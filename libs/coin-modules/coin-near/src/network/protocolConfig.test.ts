@@ -53,6 +53,30 @@ describe("getActionCosts", () => {
     expect(costs.addKeyCostExecution.toFixed()).toBe("101765125000");
   });
 
+  it("defaults minGasPurchasePrice and accountCreationCharge to 0 on a pre-protocol-85 config", async () => {
+    mockProtocolConfig({ runtime_config: runtimeConfig });
+
+    const costs = await getActionCosts();
+
+    expect(costs.minGasPurchasePrice.toFixed()).toBe("0");
+    expect(costs.accountCreationCharge.toFixed()).toBe("0");
+  });
+
+  it("reads minGasPurchasePrice and accountCreationCharge once the protocol exposes them", async () => {
+    mockProtocolConfig({
+      runtime_config: {
+        ...runtimeConfig,
+        min_gas_purchase_price: "1000000000",
+        account_creation_charge: "7000000000000000000000",
+      },
+    });
+
+    const costs = await getActionCosts();
+
+    expect(costs.minGasPurchasePrice.toFixed()).toBe("1000000000");
+    expect(costs.accountCreationCharge.toFixed()).toBe("7000000000000000000000");
+  });
+
   it("caches, so repeated pricing does not re-fetch the protocol config", async () => {
     let calls = 0;
     mockProtocolConfig({ runtime_config: runtimeConfig }, () => calls++);

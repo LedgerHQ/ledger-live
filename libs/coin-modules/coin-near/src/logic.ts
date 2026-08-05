@@ -171,12 +171,13 @@ export const getYoctoThreshold = (): BigNumber => {
 /*
  * An estimation for the fee by using the staking gas and scaling accordingly.
  * Buffer added so that the transaction never fails - we'll always overestimate.
+ *
+ * The runtime locks the whole prepaid gas at conversion time and refunds the unburnt part
+ * afterwards, so the fee charges the full prepaid amount rather than a fraction of it — the
+ * refund shows up on-chain the same way it does for the account bridge.
  */
 export const getStakingFees = (t: StakingGasInput, gasPrice: BigNumber): BigNumber => {
   const stakingGas = getStakingGas(t);
 
-  return stakingGas
-    .plus(STAKING_GAS_BASE) // Buffer
-    .multipliedBy(gasPrice)
-    .dividedBy(10);
+  return stakingGas.plus(STAKING_GAS_BASE).multipliedBy(gasPrice); // Buffer
 };

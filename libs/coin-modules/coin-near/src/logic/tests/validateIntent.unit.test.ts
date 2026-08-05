@@ -6,7 +6,7 @@ import type {
 import { BigNumber } from "bignumber.js";
 import { fetchAccountDetails, getActionCosts, getStakingPositions } from "../../network";
 import { getYoctoThreshold } from "../../logic";
-import { validateIntent } from "./validateIntent";
+import { validateIntent } from "../validateIntent";
 
 jest.mock("../../network", () => ({
   fetchAccountDetails: jest.fn(),
@@ -77,6 +77,7 @@ describe("validateIntent", () => {
     jest.clearAllMocks();
     (getActionCosts as unknown as jest.Mock).mockResolvedValue({
       storageCost: new BigNumber("10000000000000000000"),
+      accountCreationCharge: new BigNumber(0),
     });
     (fetchAccountDetails as jest.Mock).mockResolvedValue({ amount: "1", storage_usage: 182 });
     (getStakingPositions as jest.Mock).mockResolvedValue({ stakingPositions: [] });

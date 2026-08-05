@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { buildTransaction } from "../../buildTransaction";
 import { getAccessKey } from "../../network";
 import type { Transaction } from "../../types";
-import { craftTransaction } from "./craftTransaction";
+import { craftTransaction } from "../craftTransaction";
 
 jest.mock("../../network", () => ({ getAccessKey: jest.fn() }));
 

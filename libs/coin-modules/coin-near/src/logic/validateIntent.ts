@@ -11,9 +11,9 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/ledger-wallet-framework/errors";
+} from "@ledgerhq/coin-module-framework/errors";
 import { BigNumber } from "bignumber.js";
-import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "../../constants";
+import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "../constants";
 import {
   NearActivationFeeNotCovered,
   NearNewAccountWarning,
@@ -23,10 +23,10 @@ import {
   NearRecommendUnstake,
   NearStakingThresholdNotMet,
   NearUseAllAmountStakeWarning,
-} from "../../errors";
-import { fetchAccountDetails, getActionCosts, getStakingPositions } from "../../network";
-import { pooledAmount } from "../staking/pooledAmount";
-import { getYoctoThreshold, isImplicitAccount, isValidAddress } from "../../logic";
+} from "../errors";
+import { fetchAccountDetails, getActionCosts, getStakingPositions } from "../network";
+import { pooledAmount } from "./pooledAmount";
+import { getYoctoThreshold, isImplicitAccount, isValidAddress } from "../logic";
 import { resolveTarget, type NearIntent } from "./craftTransaction";
 
 const STAKING_MODES = new Set(["stake", "unstake", "withdraw"]);
@@ -82,8 +82,13 @@ async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
     return { ...unusable, error: new InvalidAddress("", { currencyName: NEAR_NAME }) };
   }
 
-  const { storageCost: costPerByte } = await getActionCosts();
-  const storageCost = costPerByte.multipliedBy(NEW_ACCOUNT_SIZE);
+  const { storageCost: costPerByte, accountCreationCharge } = await getActionCosts();
+  // The activation minimum is the higher of the storage deposit and nearcore's explicit
+  // account-creation charge (protocol 85+) — the latter can exceed the former.
+  const storageCost = BigNumber.max(
+    costPerByte.multipliedBy(NEW_ACCOUNT_SIZE),
+    accountCreationCharge,
+  );
   const formattedStorageCost = formatNear(storageCost);
 
   if (await fetchAccountDetails(intent.recipient)) {

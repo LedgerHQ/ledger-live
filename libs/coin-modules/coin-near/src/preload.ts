@@ -44,6 +44,12 @@ function fromHydratePreloadData(data: any): NearPreloadedData {
     if (data.receiptCreationExecution) {
       hydratedData.receiptCreationExecution = new BigNumber(data.receiptCreationExecution);
     }
+    if (data.minGasPurchasePrice) {
+      hydratedData.minGasPurchasePrice = new BigNumber(data.minGasPurchasePrice);
+    }
+    if (data.accountCreationCharge) {
+      hydratedData.accountCreationCharge = new BigNumber(data.accountCreationCharge);
+    }
     if (Array.isArray(data.validators) && data.validators.length) {
       hydratedData.validators = data.validators;
     }

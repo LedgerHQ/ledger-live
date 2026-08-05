@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { STAKING_GAS_BASE } from "../constants";
-import { computeFees, type NearFeeCosts } from "./fees";
+import { STAKING_GAS_BASE } from "../../constants";
+import { computeFees, type NearFeeCosts } from "../fees";
 
 const GAS_PRICE = new BigNumber(100_000_000);
 
@@ -13,6 +13,8 @@ const costs: NearFeeCosts = {
   createAccountCostExecution: new BigNumber(2_000),
   addKeyCostSend: new BigNumber(500),
   addKeyCostExecution: new BigNumber(700),
+  minGasPurchasePrice: new BigNumber(0),
+  accountCreationCharge: new BigNumber(0),
 };
 
 const NAMED_RECIPIENT = "recipient.near";
@@ -51,11 +53,9 @@ describe("computeFees", () => {
       costs,
     });
 
-    // (5 * base + base buffer) * gasPrice / 10
-    const expected = new BigNumber(STAKING_GAS_BASE)
-      .multipliedBy(6)
-      .multipliedBy(GAS_PRICE)
-      .dividedBy(10);
+    // (5 * base + base buffer) * gasPrice — the full prepaid gas, not a fraction of it: the
+    // runtime locks the whole amount at conversion time and refunds the unburnt part on-chain.
+    const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(6).multipliedBy(GAS_PRICE);
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
 
@@ -68,11 +68,26 @@ describe("computeFees", () => {
       costs,
     });
 
-    // (7 * base + base buffer) * gasPrice / 10
-    const expected = new BigNumber(STAKING_GAS_BASE)
-      .multipliedBy(8)
+    // (7 * base + base buffer) * gasPrice
+    const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(8).multipliedBy(GAS_PRICE);
+    expect(fees.toFixed()).toBe(expected.toFixed());
+  });
+
+  it("floors the execution-half gas price at minGasPurchasePrice", () => {
+    const floorPrice = GAS_PRICE.multipliedBy(5);
+    const highFloor: NearFeeCosts = { ...costs, minGasPurchasePrice: floorPrice };
+
+    const fees = computeFees({
+      mode: "send",
+      recipient: NAMED_RECIPIENT,
+      gasPrice: GAS_PRICE,
+      costs: highFloor,
+    });
+
+    // send half (110) at the raw gasPrice, execution half (220) at the floored price
+    const expected = new BigNumber(110)
       .multipliedBy(GAS_PRICE)
-      .dividedBy(10);
+      .plus(new BigNumber(220).multipliedBy(floorPrice));
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
 

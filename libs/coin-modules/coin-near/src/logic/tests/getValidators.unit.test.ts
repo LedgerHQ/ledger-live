@@ -1,5 +1,5 @@
 import { getValidators as fetchValidators } from "../../network";
-import { getValidators } from "./getValidators";
+import { getValidators } from "../getValidators";
 
 jest.mock("../../network", () => ({ getValidators: jest.fn() }));
 

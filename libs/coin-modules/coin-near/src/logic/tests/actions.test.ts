@@ -1,4 +1,4 @@
-import { buildActions } from "./actions";
+import { buildActions } from "../actions";
 
 const AMOUNT = "1000000000000000000000000";
 

@@ -1,5 +1,5 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/types";
-import { broadcastTransaction } from "../../network";
+import { broadcastTransaction } from "../network";
 
 /**
  * Submit a signed transaction (base64, from {@link combine}) and return its hash. The retry on the

@@ -1,6 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getBlockHeaderAtHeight } from "../../network";
-import type { NearBlockHeader } from "../../network/sdk.types";
+import { getBlockHeaderAtHeight } from "../network";
+import type { NearBlockHeader } from "../network/sdk.types";
 
 /** NEAR block timestamps are nanoseconds since the epoch. */
 export const toBlockInfo = (header: NearBlockHeader): BlockInfo => ({

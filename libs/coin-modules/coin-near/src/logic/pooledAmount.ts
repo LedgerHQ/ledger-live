@@ -1,5 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
-import { getStakingPositions } from "../../network";
+import { getStakingPositions } from "../network";
 
 /** Sum of the staking positions in a given state, per pool. */
 function stakedAt(balances: Balance[], delegate: string, states: string[]): bigint {

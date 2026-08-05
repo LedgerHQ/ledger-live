@@ -1,5 +1,5 @@
 import { broadcastTransaction } from "../../network";
-import { broadcast } from "./broadcast";
+import { broadcast } from "../broadcast";
 
 jest.mock("../../network", () => ({ broadcastTransaction: jest.fn() }));
 

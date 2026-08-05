@@ -5,9 +5,9 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
-import { getAccessKey } from "../../network";
-import { buildActions } from "../actions";
-import { isValidAddress } from "../../logic";
+import { getAccessKey } from "../network";
+import { buildActions } from "./actions";
+import { isValidAddress } from "../logic";
 
 export type NearIntent = TransactionIntent | StakingTransactionIntent;
 

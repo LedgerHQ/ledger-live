@@ -3,7 +3,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
-import { combine } from "../logic/transaction/combine";
+import { combine } from "../logic/combine";
 import { getActionCosts } from "../network/protocolConfig";
 import { createApi } from "./index";
 

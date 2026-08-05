@@ -1,7 +1,7 @@
 import type { Cursor, Page, Stake, StakeAction } from "@ledgerhq/coin-module-framework/api/index";
-import { getStakingPositions } from "../../network";
-import type { NearStakingPosition } from "../../network/sdk.types";
-import { canUnstake, canWithdraw } from "../../logic";
+import { getStakingPositions } from "../network";
+import type { NearStakingPosition } from "../network/sdk.types";
+import { canUnstake, canWithdraw } from "../logic";
 
 // Maps a delegation to up to three stakes (staked, unbonding, withdrawable) per pool. Rewards
 // compound into the staked balance so aren't a separate position, and sub-threshold dust (the node

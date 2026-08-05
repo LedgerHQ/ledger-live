@@ -21,17 +21,17 @@ import type {
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { setCoinConfig, type NearCoinConfig } from "../config";
 import { isValidAddress } from "../logic";
-import { getBalance } from "../logic/account/getBalance";
-import { getBlockInfo } from "../logic/history/getBlockInfo";
-import { lastBlock } from "../logic/history/lastBlock";
-import { listOperations } from "../logic/history/listOperations";
-import { getStakes } from "../logic/staking/getStakes";
-import { getValidators } from "../logic/staking/getValidators";
-import { broadcast } from "../logic/transaction/broadcast";
-import { combine } from "../logic/transaction/combine";
-import { craftTransaction, type NearIntent } from "../logic/transaction/craftTransaction";
-import { estimateFees } from "../logic/transaction/estimateFees";
-import { validateIntent } from "../logic/transaction/validateIntent";
+import { getBalance } from "../logic/getBalance";
+import { getBlockInfo } from "../logic/getBlockInfo";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
+import { getStakes } from "../logic/getStakes";
+import { getValidators } from "../logic/getValidators";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
+import { craftTransaction, type NearIntent } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { validateIntent } from "../logic/validateIntent";
 
 // CoinModuleApi ("Alpaca") entry point for NEAR. Staking reads are implemented (real pool-contract
 // delegation); getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline throws below for why.

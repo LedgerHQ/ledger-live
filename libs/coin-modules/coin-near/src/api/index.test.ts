@@ -1,26 +1,26 @@
 import { NEAR_BASE_URL_MOCKED } from "../network/node.mock";
-import { getBalance } from "../logic/account/getBalance";
-import { getBlockInfo } from "../logic/history/getBlockInfo";
-import { lastBlock } from "../logic/history/lastBlock";
-import { listOperations } from "../logic/history/listOperations";
-import { getStakes } from "../logic/staking/getStakes";
-import { getValidators } from "../logic/staking/getValidators";
-import { broadcast } from "../logic/transaction/broadcast";
-import { craftTransaction } from "../logic/transaction/craftTransaction";
-import { estimateFees } from "../logic/transaction/estimateFees";
-import { validateIntent } from "../logic/transaction/validateIntent";
+import { getBalance } from "../logic/getBalance";
+import { getBlockInfo } from "../logic/getBlockInfo";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
+import { getStakes } from "../logic/getStakes";
+import { getValidators } from "../logic/getValidators";
+import { broadcast } from "../logic/broadcast";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { validateIntent } from "../logic/validateIntent";
 import { createApi } from "./index";
 
-jest.mock("../logic/account/getBalance", () => ({ getBalance: jest.fn() }));
-jest.mock("../logic/history/getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
-jest.mock("../logic/history/lastBlock", () => ({ lastBlock: jest.fn() }));
-jest.mock("../logic/history/listOperations", () => ({ listOperations: jest.fn() }));
-jest.mock("../logic/staking/getStakes", () => ({ getStakes: jest.fn() }));
-jest.mock("../logic/staking/getValidators", () => ({ getValidators: jest.fn() }));
-jest.mock("../logic/transaction/broadcast", () => ({ broadcast: jest.fn() }));
-jest.mock("../logic/transaction/craftTransaction", () => ({ craftTransaction: jest.fn() }));
-jest.mock("../logic/transaction/estimateFees", () => ({ estimateFees: jest.fn() }));
-jest.mock("../logic/transaction/validateIntent", () => ({ validateIntent: jest.fn() }));
+jest.mock("../logic/getBalance", () => ({ getBalance: jest.fn() }));
+jest.mock("../logic/getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
+jest.mock("../logic/lastBlock", () => ({ lastBlock: jest.fn() }));
+jest.mock("../logic/listOperations", () => ({ listOperations: jest.fn() }));
+jest.mock("../logic/getStakes", () => ({ getStakes: jest.fn() }));
+jest.mock("../logic/getValidators", () => ({ getValidators: jest.fn() }));
+jest.mock("../logic/broadcast", () => ({ broadcast: jest.fn() }));
+jest.mock("../logic/craftTransaction", () => ({ craftTransaction: jest.fn() }));
+jest.mock("../logic/estimateFees", () => ({ estimateFees: jest.fn() }));
+jest.mock("../logic/validateIntent", () => ({ validateIntent: jest.fn() }));
 
 const config = () => ({
   status: { type: "active" as const },

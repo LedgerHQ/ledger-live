@@ -1,5 +1,5 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { getLastBlockHeader } from "../../network";
+import { getLastBlockHeader } from "../network";
 import { toBlockInfo } from "./getBlockInfo";
 
 /** Metadata of the latest final block. */

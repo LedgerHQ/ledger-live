@@ -5,7 +5,7 @@ import type {
 import { BigNumber } from "bignumber.js";
 import { getActionCosts, getGasPrice, getStakingPositions } from "../../network";
 import { getCurrentNearPreloadData } from "../../preload-data";
-import { estimateFees } from "./estimateFees";
+import { estimateFees } from "../estimateFees";
 
 jest.mock("../../network", () => ({
   getActionCosts: jest.fn(),
@@ -25,6 +25,8 @@ const COSTS = {
   createAccountCostExecution: new BigNumber(99607375000),
   addKeyCostSend: new BigNumber(101765125000),
   addKeyCostExecution: new BigNumber(101765125000),
+  minGasPurchasePrice: new BigNumber(0),
+  accountCreationCharge: new BigNumber(0),
 };
 
 /** exactOptionalPropertyTypes is on, so an explicit `undefined` override needs the union. */

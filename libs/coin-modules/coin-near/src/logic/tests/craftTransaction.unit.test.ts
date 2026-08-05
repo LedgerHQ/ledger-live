@@ -4,7 +4,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
 import { getAccessKey } from "../../network";
-import { craftTransaction } from "./craftTransaction";
+import { craftTransaction } from "../craftTransaction";
 
 jest.mock("../../network", () => ({ getAccessKey: jest.fn() }));
 

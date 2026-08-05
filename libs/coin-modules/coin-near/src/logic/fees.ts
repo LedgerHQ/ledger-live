@@ -39,5 +39,9 @@ export const computeFees = ({
       .plus(costs.addKeyCostExecution);
   }
 
-  return sendFee.multipliedBy(gasPrice).plus(executionFee.multipliedBy(gasPrice));
+  // nearcore floors the gas price on the execution half only (runtime/runtime/src/config.rs) —
+  // the send half is always priced at the raw gas price.
+  const executionGasPrice = BigNumber.max(gasPrice, costs.minGasPurchasePrice);
+
+  return sendFee.multipliedBy(gasPrice).plus(executionFee.multipliedBy(executionGasPrice));
 };

@@ -152,6 +152,8 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
       addKeyCostExecution: new BigNumber(0),
       receiptCreationSend: new BigNumber(0),
       receiptCreationExecution: new BigNumber(0),
+      minGasPurchasePrice: new BigNumber(0),
+      accountCreationCharge: new BigNumber(0),
       validators: [],
     });
 
@@ -160,6 +162,11 @@ describe("CoinModuleApi vs account bridge (integration)", () => {
 
     expect(fromApi.value).toBeGreaterThan(0n);
     expect(fromBridge.isZero()).toBe(true);
+
+    // storageUsageBalance (part of `locked`) must also come from getActionCosts(), not the
+    // zeroed preload cache — otherwise it would silently diverge from the bridge's reserve.
+    const [native] = await api.getBalance(ACCOUNT);
+    expect(native.locked).toBeGreaterThan(0n);
 
     setNearPreloadData(await preload());
   }, 120_000);

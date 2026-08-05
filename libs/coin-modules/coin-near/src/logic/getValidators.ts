@@ -1,6 +1,6 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import { VALIDATORS_COUNT } from "../../constants";
-import { getValidators as fetchValidators } from "../../network";
+import { VALIDATORS_COUNT } from "../constants";
+import { getValidators as fetchValidators } from "../network";
 
 /**
  * Staking pools available for delegation. The indexer call is LRU-cached upstream and returns a

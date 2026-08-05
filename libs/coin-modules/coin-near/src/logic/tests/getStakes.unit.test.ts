@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { getStakingPositions } from "../../network";
 import type { NearStakingPosition } from "../../network/sdk.types";
 import { getYoctoThreshold } from "../../logic";
-import { getStakes, toStakes } from "./getStakes";
+import { getStakes, toStakes } from "../getStakes";
 
 jest.mock("../../network", () => ({ getStakingPositions: jest.fn() }));
 

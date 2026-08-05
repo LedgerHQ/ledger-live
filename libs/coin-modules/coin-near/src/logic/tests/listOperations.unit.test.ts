@@ -1,6 +1,6 @@
 import { fetchTransactionsPage } from "../../network";
 import type { NearTransaction } from "../../network/sdk.types";
-import { listOperations, toOperation } from "./listOperations";
+import { listOperations, toOperation } from "../listOperations";
 
 jest.mock("../../network", () => ({ fetchTransactionsPage: jest.fn() }));
 

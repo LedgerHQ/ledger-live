@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getAccount } from "../../network";
 import { getYoctoThreshold } from "../../logic";
-import { getBalance } from "./getBalance";
+import { getBalance } from "../getBalance";
 
 jest.mock("../../network", () => ({ getAccount: jest.fn() }));
 

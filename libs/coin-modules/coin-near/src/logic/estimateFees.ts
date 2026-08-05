@@ -1,8 +1,8 @@
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { BigNumber } from "bignumber.js";
-import { getActionCosts, getGasPrice } from "../../network";
-import { computeFees } from "../fees";
-import { pooledAmount } from "../staking/pooledAmount";
+import { getActionCosts, getGasPrice } from "../network";
+import { computeFees } from "./fees";
+import { pooledAmount } from "./pooledAmount";
 import { resolveTarget, type NearIntent } from "./craftTransaction";
 
 /** A caller-supplied gas price, if it is a usable positive integer. */

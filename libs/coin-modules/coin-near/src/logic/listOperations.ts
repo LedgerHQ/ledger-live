@@ -4,9 +4,9 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { fetchTransactionsPage } from "../../network";
-import { getOperationType } from "../../network/indexer";
-import type { NearTransaction } from "../../network/sdk.types";
+import { fetchTransactionsPage } from "../network";
+import { getOperationType } from "../network/indexer";
+import type { NearTransaction } from "../network/sdk.types";
 
 /** The indexer defaults to 25 and 422s on anything outside this range. */
 const MIN_PAGE_SIZE = 1;
