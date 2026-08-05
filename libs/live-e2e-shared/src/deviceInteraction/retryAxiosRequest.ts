@@ -30,14 +30,25 @@ export async function retryAxiosRequest<T>(
 
       const ax = axios.isAxiosError(error) ? error : null;
 
-      const isRetryableStatus = !!ax?.response && retryableStatusCodes.includes(ax.response.status);
+      // `live-network` installs a GLOBAL axios response interceptor that rewrites
+      // transport failures into `@ledgerhq/errors` classes before they ever reach
+      // this catch: 5xx/4xx responses become LedgerAPI5xx/LedgerAPI4xx (which carry
+      // a numeric `.status`), and no-response failures become NetworkDown. In that
+      // runtime the caught value is no longer an AxiosError, so gating retries on
+      // `axios.isAxiosError` alone silently disables them — we must also inspect the
+      // transformed error's own shape.
+      const err = error as { status?: number; name?: string; code?: string } | null;
+      const status = ax?.response?.status ?? err?.status;
+      const code = ax?.code ?? err?.code;
+      const message = error instanceof Error ? error.message : String(error);
 
-      const isNetworkError = !!ax && !ax.response;
+      const isRetryableStatus = typeof status === "number" && retryableStatusCodes.includes(status);
 
-      const socketHangUp =
-        !!ax && typeof ax.message === "string" && ax.message.includes("socket hang up");
+      const isNetworkError = (!!ax && !ax.response) || err?.name === "NetworkDown";
 
-      const isRetryableCode = !!ax?.code && RETRYABLE_NODE_CODES.has(ax.code);
+      const socketHangUp = message.includes("socket hang up");
+
+      const isRetryableCode = !!code && RETRYABLE_NODE_CODES.has(code);
 
       if (
         (isRetryableStatus || isNetworkError || socketHangUp || isRetryableCode) &&
@@ -47,8 +58,8 @@ export async function retryAxiosRequest<T>(
         console.warn(
           `Axios request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms...`,
           {
-            status: ax?.response?.status ?? "network error",
-            message: ax?.message ?? (error as Error).message,
+            status: status ?? err?.name ?? "network error",
+            message,
           },
         );
         await new Promise(resolve => setTimeout(resolve, delay));
