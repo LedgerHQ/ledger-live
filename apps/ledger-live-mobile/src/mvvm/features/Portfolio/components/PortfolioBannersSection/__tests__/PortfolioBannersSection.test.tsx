@@ -29,7 +29,6 @@ const hiddenLazyOnboardingBanner = {
   isShown: false,
   title: "Discover Ledger devices",
   description: "Explore our latest products and accessories",
-  imageUrl: "lazy-onboarding-banner.webp",
   onPress: jest.fn(),
   onClose: jest.fn(),
 };
@@ -101,7 +100,7 @@ describe("PortfolioBannersSection", () => {
     render(<PortfolioBannersSection isFirst={false} isLNUpsellBannerShown />);
 
     expect(screen.getByText("Discover Ledger devices")).toBeVisible();
-    expect(screen.queryByTestId("mock-lns-banner")).toBeNull();
+    expect(screen.queryByTestId("mock-ln-banner")).toBeNull();
     expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
     expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
   });
