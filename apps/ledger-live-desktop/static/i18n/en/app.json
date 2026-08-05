@@ -9371,6 +9371,18 @@
       "confirm": "Delete",
       "cancel": "Cancel"
     },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
+    },
     "editSigner": {
       "title": "Confirm on your device",
       "description": "Connect and unlock your Ledger device to confirm this change.",

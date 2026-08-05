@@ -37,6 +37,7 @@ import { useContactsFeatureIntroductionPreference } from "../../hooks/useContact
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
 import type {
@@ -50,6 +51,7 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
     editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
+    addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
     onClearSearch: () => void;
   }>;
 
@@ -222,8 +224,14 @@ export function useContactsViewModel(): ContactsPageViewModel {
       t,
     ],
   );
-  const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =
-    useContactDetailPaneAdapter(onAddAddress);
+  const {
+    detail,
+    addressDetailDialog,
+    editDeleteDialogs,
+    addressDetailActionsDialogs,
+    onOpenMe,
+    onOpenContact,
+  } = useContactDetailPaneAdapter(onAddAddress);
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -289,6 +297,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addAddressFlowDialog,
     addressDetailDialog,
     editDeleteDialogs,
+    addressDetailActionsDialogs,
     viewModel,
     labels,
     searchQuery,
