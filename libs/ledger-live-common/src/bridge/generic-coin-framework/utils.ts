@@ -28,6 +28,7 @@ import type {
   OperationCommon,
 } from "./types";
 import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
   ? bigint
@@ -333,6 +334,20 @@ export function cleanedOperation(operation: OperationCommon): OperationCommon {
   return { ...operation, extra: cleanedExtra };
 }
 
+/**
+ * The one `details` key a coin module owns outright; its contents are never inspected here. Only this
+ * reserved key is forwarded, never every unrecognised `details` key: `Operation.extra` is persisted,
+ * so a blanket forward would let a non-JSON value reach storage.
+ */
+const FAMILY_EXTRA_DETAILS_KEY = "familyExtra";
+
+function readFamilyExtra(details: CoreOperation["details"]): Record<string, unknown> {
+  const familyExtra = details?.[FAMILY_EXTRA_DETAILS_KEY];
+  return familyExtra && typeof familyExtra === "object" && !Array.isArray(familyExtra)
+    ? (familyExtra as Record<string, unknown>)
+    : {};
+}
+
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
   const opType = op.type as OperationType;
 
@@ -431,7 +446,8 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
       ? new BigNumber(op.details?.sequence.toString())
       : undefined,
     hasFailed,
-    extra,
+    // Family-owned keys first so a framework-owned key can never be shadowed by a coin module.
+    extra: { ...readFamilyExtra(op.details), ...extra },
   };
 
   return res;
@@ -494,6 +510,7 @@ export function transactionToIntent(
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
   craftTransactionData?: (intent: TransactionIntent) => TxData,
+  buildIntentData?: BridgeApi["buildIntentData"],
 ): GenericCoinFrameworkTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
   const isStaking = ["stake", "unstake", "finalize_unstake"].includes(intentType);
@@ -544,15 +561,28 @@ export function transactionToIntent(
     res.memo = { type: "NO_MEMO" };
   }
 
-  if (!transaction.data || transaction.data.length === 0) {
-    const resolvedCraftTransactionData = craftTransactionData ?? defaultCraftTransactionData;
-    res.data = resolvedCraftTransactionData(res);
-  } else {
-    // We assume that if the transaction data is a buffer, the intent expect a buffer too
-    res.data = { type: "buffer", value: transaction.data };
-  }
+  res.data = resolveIntentData(transaction, res, craftTransactionData, buildIntentData);
 
   return res;
+}
+
+/**
+ * A transaction that already carries data wins over both crafting paths, since a buffer is already
+ * the crafted form. Otherwise the family's hook takes precedence over the coin module's crafting.
+ */
+function resolveIntentData(
+  transaction: GenericTransaction,
+  intent: GenericCoinFrameworkTransactionIntent,
+  craftTransactionData?: (intent: TransactionIntent) => TxData,
+  buildIntentData?: BridgeApi["buildIntentData"],
+): GenericCoinFrameworkTxData {
+  if (transaction.data && transaction.data.length > 0) {
+    return { type: "buffer", value: transaction.data };
+  }
+  if (buildIntentData) {
+    return buildIntentData(transaction);
+  }
+  return (craftTransactionData ?? defaultCraftTransactionData)(intent);
 }
 
 function toFeeDataRaw(data: FeeData): FeeDataRaw {
@@ -669,48 +699,48 @@ function toGenericTransactionRaw(transaction: GenericTransaction): GenericTransa
     raw.dstValAddress = transaction.dstValAddress;
   }
 
+  if ("familySpecificData" in transaction) {
+    raw.familySpecificData = transaction.familySpecificData;
+  }
+
   return raw;
+}
+
+function defaultOperationType(mode: GenericTransaction["mode"]): OperationType {
+  switch (mode) {
+    case "changeTrust":
+      return "OPT_IN";
+    case "delegate":
+      return "DELEGATE";
+    case "redelegate":
+      return "REDELEGATE";
+    case "undelegate":
+      return "UNDELEGATE";
+    case "withdraw":
+      return "WITHDRAW_UNBONDED";
+    case "stake":
+      return "STAKE";
+    case "unstake":
+      return "UNSTAKE";
+    case "finalize_unstake":
+      return "FINALIZE_UNSTAKE";
+    case "claimReward":
+    case "compoundReward":
+      return "REWARD";
+    default:
+      return "OUT";
+  }
 }
 
 export const buildOptimisticOperation = (
   account: Account,
   transaction: GenericTransaction,
   sequenceNumber?: bigint,
+  describeOptimisticOperation?: BridgeApi["describeOptimisticOperation"],
 ): Operation => {
-  let type: OperationType;
-  switch (transaction.mode) {
-    case "changeTrust":
-      type = "OPT_IN";
-      break;
-    case "delegate":
-      type = "DELEGATE";
-      break;
-    case "redelegate":
-      type = "REDELEGATE";
-      break;
-    case "undelegate":
-      type = "UNDELEGATE";
-      break;
-    case "withdraw":
-      type = "WITHDRAW_UNBONDED";
-      break;
-    case "stake":
-      type = "STAKE";
-      break;
-    case "unstake":
-      type = "UNSTAKE";
-      break;
-    case "finalize_unstake":
-      type = "FINALIZE_UNSTAKE";
-      break;
-    case "claimReward":
-    case "compoundReward":
-      type = "REWARD";
-      break;
-    default:
-      type = "OUT";
-      break;
-  }
+  const { mode } = transaction;
+  const described = mode !== undefined ? describeOptimisticOperation?.(mode, account) : undefined;
+  const type: OperationType = described?.type ?? defaultOperationType(mode);
   // toFixed, not toString: BigNumber goes exponential above 1e21, which BigInt can't parse.
   const fees = transaction.fees ? BigInt(transaction.fees.toFixed()) : 0n;
   const { subAccountId } = transaction;
@@ -726,7 +756,9 @@ export const buildOptimisticOperation = (
     id: encodeOperationId(account.id, "", parentType),
     hash: "",
     type: parentType,
-    value: subAccountId ? new BigNumber(fees.toString()) : transaction.amount, // match old behavior
+    value: subAccountId
+      ? new BigNumber(fees.toString()) // match old behavior
+      : (described?.value ?? transaction.amount),
     fee: new BigNumber(fees.toString()),
     blockHash: null,
     blockHeight: null,

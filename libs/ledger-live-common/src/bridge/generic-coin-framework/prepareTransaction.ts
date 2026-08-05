@@ -10,6 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
+import isEqual from "lodash/isEqual";
 import type { AssetInfo, FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { TokenCurrency } from "@domain/entity-currency-token";
@@ -113,6 +114,7 @@ export function genericPrepareTransaction(
       },
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
+      bridgeApi.buildIntentData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       feesStrategy: transaction.feesStrategy ?? undefined,
@@ -141,11 +143,17 @@ export function genericPrepareTransaction(
         : computeUseAllAmount(estimation, getNativeSpendableAfterPending(account));
     }
 
+    // Part of the identity check: the fee *value* can hold while the breakdown behind it moves (a
+    // different recipient can change what a chain charges without changing the total), and a restored
+    // transaction has persisted fees but no `feeParameters` — returning early leaves it stale or unset.
+    const nextFeeParameters = estimation.parameters;
+
     if (
       bnEq(transaction.fees, fees) &&
       bnEq(transaction.amount, nextAmount) &&
       (transaction.assetReference ?? "") === assetReference &&
-      (transaction.assetOwner ?? "") === assetOwner
+      (transaction.assetOwner ?? "") === assetOwner &&
+      isEqual(transaction.feeParameters, nextFeeParameters)
     ) {
       return transaction;
     }
@@ -161,6 +169,11 @@ export function genericPrepareTransaction(
           fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
         },
       },
+      // Assigned wholesale, never merged: an estimation returning no parameters clears the previous
+      // figures rather than leaving them to be read as current for a new amount. A custom fee skips
+      // estimation entirely, so it clears them too — the breakdown belongs to a fee this transaction
+      // no longer uses.
+      feeParameters: nextFeeParameters,
     };
 
     // Propagate needed fields
