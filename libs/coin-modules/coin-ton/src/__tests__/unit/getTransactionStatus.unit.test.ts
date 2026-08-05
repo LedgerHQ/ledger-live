@@ -6,7 +6,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
-import { TonCommentInvalid, TonExcessFee } from "../../errors";
+import { TonCommentInvalid, TonExcessFee, TonMinimumRequired } from "../../errors";
 import getTransactionStatus from "../../getTransactionStatus";
 import {
   account,
@@ -89,6 +89,58 @@ describe("getTransactionStatus", () => {
           amount: new NotEnoughBalance(),
         }),
       );
+    });
+
+    it("should return NotEnoughBalance (not TonMinimumRequired) when balance is below 0.02 and amount exceeds balance", async () => {
+      const lowBalanceAccount = { ...account, balance: new BigNumber("10000000") };
+      const transaction = {
+        ...baseTransaction,
+        amount: new BigNumber("200000000"),
+        fees: new BigNumber("1000"),
+      };
+      const res = await getTransactionStatus(lowBalanceAccount, transaction);
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          amount: new NotEnoughBalance(),
+        }),
+      );
+    });
+
+    it("should return TonMinimumRequired when balance is below 0.02 and the amount is otherwise affordable", async () => {
+      const lowBalanceAccount = { ...account, balance: new BigNumber("15000000") };
+      const transaction = {
+        ...baseTransaction,
+        amount: new BigNumber("1000000"),
+        fees: new BigNumber("1000"),
+      };
+      const res = await getTransactionStatus(lowBalanceAccount, transaction);
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          amount: new TonMinimumRequired(),
+        }),
+      );
+    });
+
+    it("should return AmountRequired (not TonMinimumRequired) when amount is zero and balance is below 0.02", async () => {
+      const lowBalanceAccount = { ...account, balance: new BigNumber("10000000") };
+      const transaction = { ...baseTransaction, amount: new BigNumber(0) };
+      const res = await getTransactionStatus(lowBalanceAccount, transaction);
+      expect(res.errors).toEqual(
+        expect.objectContaining({
+          amount: new AmountRequired(),
+        }),
+      );
+    });
+
+    it("should not trigger TonMinimumRequired when balance is exactly 0.02 TON", async () => {
+      const boundaryAccount = { ...account, balance: new BigNumber("20000000") };
+      const transaction = {
+        ...baseTransaction,
+        amount: new BigNumber("1000000"),
+        fees: new BigNumber("1000"),
+      };
+      const res = await getTransactionStatus(boundaryAccount, transaction);
+      expect(res.errors.amount).toBeUndefined();
     });
 
     it("should detect the amount is greater than the spendable amount of the token account and have an error", async () => {
