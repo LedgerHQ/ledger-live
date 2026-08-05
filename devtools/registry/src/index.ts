@@ -1,4 +1,4 @@
-import { featureFlags, type FeatureFlagsToolProps } from "./metadata/team-platform/feature-flags";
+import { featureFlags, type FeatureFlagsToolProps } from "./metadata/platform";
 
 export * from "./types";
 

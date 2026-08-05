@@ -1,1 +1,1 @@
-export * from "./team-platform";
+export * from "./platform";
