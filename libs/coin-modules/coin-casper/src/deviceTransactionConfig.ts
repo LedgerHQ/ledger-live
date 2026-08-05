@@ -22,27 +22,12 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<DeviceTransactionField>> {
-  const fields: Array<DeviceTransactionField> = [];
-  fields.push({
-    type: "text",
-    label: "Type",
-    value: methodToString(0),
-  });
-  fields.push({
-    type: "text",
-    label: "Chain ID",
-    value: CASPER_NETWORK,
-  });
-  fields.push({
-    type: "casper.extendedAmount",
-    label: "Fee",
-    value: transaction.fees,
-  });
-  fields.push({
-    type: "casper.extendedAmount",
-    label: "Amount",
-    value: transaction.amount,
-  });
+  const fields: Array<DeviceTransactionField> = [
+    { type: "text", label: "Type", value: methodToString(0) },
+    { type: "text", label: "Chain ID", value: CASPER_NETWORK },
+    { type: "casper.extendedAmount", label: "Fee", value: transaction.fees },
+    { type: "casper.extendedAmount", label: "Amount", value: transaction.amount },
+  ];
 
   if (transaction.transferId) {
     fields.push({

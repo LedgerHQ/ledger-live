@@ -30,7 +30,7 @@ export const createNewTransaction = async (
     amount.toString(),
     fees.toNumber(),
     CASPER_DEFAULT_TTL,
-    parseInt(transferId ?? "0"),
+    Number.parseInt(transferId ?? "0"),
   );
 
   return tx;

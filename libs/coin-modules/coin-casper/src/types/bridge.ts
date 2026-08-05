@@ -15,18 +15,18 @@ export type CasperAccount = Account;
 export type Transaction = TransactionCommon & {
   family: FamilyType;
   fees: BigNumber;
-  transferId?: string | undefined;
+  transferId: string | undefined;
 };
 
 export type CasperOperation = Operation<CasperOperationExtra>;
 
 interface CasperOperationExtra {
-  transferId?: string | undefined;
+  transferId: string | undefined;
 }
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: FamilyType;
-  transferId?: string | undefined;
+  transferId: string | undefined;
   fees: string;
 };
 
