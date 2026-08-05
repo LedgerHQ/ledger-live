@@ -61,6 +61,7 @@ describe("Receive", () => {
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+    const scannedAccounts = await app.addAccount.getNumberOfScannedAccounts();
 
     await app.receive.continueCreateAccount();
     await app.receive.doNotVerifyAddress();
@@ -75,7 +76,7 @@ describe("Receive", () => {
 
     await app.modularDrawer.selectCurrencyByTicker(Account.ETH_1.currency.ticker);
     await app.modularDrawer.selectNetwork(Currency.BASE.name);
-    await app.modularDrawer.validateNumberOfAccounts(3);
+    await app.modularDrawer.validateNumberOfAccounts(scannedAccounts - 1);
   });
 
   $TmsLink("B2CQA-650");
