@@ -85,7 +85,7 @@ export function usePerpsDepositViewModel(
   const receiverAccountCounterValue = useMemo(() => {
     const counterValue =
       calculateCountervalue(receiverCurrency, receiverAccount.spendableBalance) ?? new BigNumber(0);
-    return formatCurrencyUnit(counterValueUnit, counterValue, { showCode: true, locale });
+    return formatCurrencyUnit(counterValueUnit, counterValue, { showCode: false, locale });
   }, [
     calculateCountervalue,
     counterValueUnit,
@@ -102,7 +102,7 @@ export function usePerpsDepositViewModel(
   const depositAccountCounterValue = useMemo(() => {
     if (!depositAccountBalanceCounterValue) return null;
     return formatCurrencyUnit(counterValueUnit, depositAccountBalanceCounterValue, {
-      showCode: true,
+      showCode: false,
       locale,
     });
   }, [counterValueUnit, depositAccountBalanceCounterValue, locale]);
@@ -119,7 +119,7 @@ export function usePerpsDepositViewModel(
       formatCurrencyUnit(
         counterValueUnit,
         valueFromUnit(new BigNumber(depositAmount), counterValueUnit),
-        { showCode: true, locale },
+        { showCode: false, locale },
       ),
     [counterValueUnit, depositAmount, locale],
   );
