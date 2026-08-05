@@ -23,7 +23,7 @@ export type PerpsDepositAmount = {
 };
 
 export type PerpsDepositParams = {
-  receiverAccountId: string;
+  receiverWalletAccountId: string;
 };
 
 export type PerpsDepositResult = Record<string, never>;
