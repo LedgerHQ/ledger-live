@@ -17,6 +17,16 @@ export function DepositAmountStatus({
 }: DepositAmountStatusProps) {
   const { t } = useTranslation();
 
+  const errorMessage = error?.isVisible ? (
+    <div className="body-3 text-error" data-testid="perps-deposit-form-error">
+      {t(error.labelKey)}
+    </div>
+  ) : null;
+
+  const amountHint = hasAmount ? (
+    <div className="body-3 text-muted">{t("perpsDeposit.inputSubText")}</div>
+  ) : null;
+
   return (
     <div className="mb-40 flex flex-col items-center gap-8 text-center">
       <div className="body-3 text-muted">
@@ -25,13 +35,7 @@ export function DepositAmountStatus({
           currencyTicker,
         })}
       </div>
-      {error?.isVisible ? (
-        <div className="body-3 text-error" data-testid="perps-deposit-form-error">
-          {t(error.labelKey)}
-        </div>
-      ) : hasAmount ? (
-        <div className="body-3 text-muted">{t("perpsDeposit.inputSubText")}</div>
-      ) : null}
+      {errorMessage ?? amountHint}
     </div>
   );
 }
