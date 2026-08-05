@@ -216,12 +216,9 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
     const contact = mockContactWithAddress();
     const address = contact.addresses[0]!;
     const Wrapper = makeWrapper([mockMeContact(), contact]);
+    const initialProps: { addressId: ContactAddressId | undefined } = { addressId: address.id };
     const { result, rerender } = renderHook(
-      ({
-        addressId,
-      }: {
-        addressId: ContactAddressId | undefined;
-      }) =>
+      ({ addressId }) =>
         useContactAddressDetailActionsFlowViewModel({
           contactId: contact.id,
           addressId,
@@ -229,7 +226,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
         }),
       {
         wrapper: Wrapper,
-        initialProps: { addressId: address.id },
+        initialProps,
       },
     );
 
@@ -239,7 +236,7 @@ describe("useContactAddressDetailActionsFlowViewModel", () => {
 
     expect(result.current.editUiState).toBe("signer-open");
 
-    rerender({ addressId: undefined } as { addressId: ContactAddressId | undefined });
+    rerender({ addressId: undefined });
 
     expect(result.current.editUiState).toBe("closed");
     expect(result.current.canSend).toBe(false);
