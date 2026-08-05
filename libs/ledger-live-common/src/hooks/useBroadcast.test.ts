@@ -6,6 +6,14 @@ import { act, renderHook } from "@testing-library/react";
 import { setEnv } from "@shared/env";
 import { getAccountBridge } from "../bridge/index";
 import { useBroadcast } from "./useBroadcast";
+import type {
+  Account,
+  AccountLike,
+  BroadcastConfig,
+  ResolvedAccountBridge,
+  SignedOperation,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 
 jest.mock("../bridge/index", () => ({
   getAccountBridge: jest.fn(),
@@ -15,13 +23,13 @@ jest.mock("../promise", () => ({
   execAndWaitAtLeast: <A>(_ms: number, cb: () => Promise<A>) => cb(),
 }));
 
-const defaultSignedOperation = { operation: { type: "OUT" } } as any;
+const defaultSignedOperation = { operation: { type: "OUT" } } as unknown as SignedOperation;
 
 describe("useBroadcast", () => {
   const mockBroadcast = jest.fn();
-  jest.mocked(getAccountBridge).mockReturnValue({
+  jest.mocked(getAccountBridge).mockResolvedValue({
     broadcast: mockBroadcast,
-  } as any);
+  } as unknown as ResolvedAccountBridge<any>);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,11 +38,18 @@ describe("useBroadcast", () => {
   it("does not broadcast when 'DISABLE_TRANSACTION_BROADCAST' is true", async () => {
     setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-    const { result } = renderHook(() => useBroadcast({ account: {}, parentAccount: {} } as any));
+    const { result } = renderHook(() =>
+      useBroadcast({
+        account: {} as unknown as AccountLike,
+        parentAccount: {} as unknown as Account,
+      }),
+    );
 
     let value: unknown;
     await act(async () => {
-      value = await result.current({ operation: { id: "operation-id" } } as any);
+      value = await result.current({
+        operation: { id: "operation-id" },
+      } as unknown as SignedOperation);
     });
 
     expect(mockBroadcast).not.toHaveBeenCalled();
@@ -55,7 +70,7 @@ describe("useBroadcast", () => {
       "token-id",
     ],
   ])("%s", (_s, account, parentAccount, expectedTokenId) => {
-    const transaction = { useAllAmount: true } as any;
+    const transaction = { useAllAmount: true } as unknown as TransactionCommon;
 
     it("logs on success", async () => {
       const logger = jest.fn();
@@ -66,12 +81,14 @@ describe("useBroadcast", () => {
 
       const { result } = renderHook(() =>
         useBroadcast({
-          account,
-          parentAccount,
-          transaction,
-          broadcastConfig: { source: { type: "coin-module", name: "ledger-live-desktop" } },
+          account: account as unknown as AccountLike,
+          parentAccount: parentAccount as unknown as Account,
+          transaction: transaction as unknown as TransactionCommon,
+          broadcastConfig: {
+            source: { type: "coin-module", name: "ledger-live-desktop" },
+          } as unknown as BroadcastConfig,
           logger,
-        } as any),
+        }),
       );
 
       let value: unknown;
@@ -102,12 +119,14 @@ describe("useBroadcast", () => {
 
       const { result } = renderHook(() =>
         useBroadcast({
-          account,
-          parentAccount,
-          transaction,
-          broadcastConfig: { source: { type: "coin-module", name: "ledger-live-desktop" } },
+          account: account as unknown as AccountLike,
+          parentAccount: parentAccount as unknown as Account,
+          transaction: transaction as unknown as TransactionCommon,
+          broadcastConfig: {
+            source: { type: "coin-module", name: "ledger-live-desktop" },
+          } as unknown as BroadcastConfig,
           logger,
-        } as any),
+        }),
       );
 
       await act(async () => {
@@ -116,7 +135,7 @@ describe("useBroadcast", () => {
             signature: "signed-transaction",
             rawData: { raw_hex: "raw-hex" },
             operation: { type: "OUT" },
-          } as any),
+          } as unknown as SignedOperation),
         ).rejects.toThrow(new Error("Broadcast failed"));
       });
 
@@ -150,10 +169,10 @@ describe("useBroadcast", () => {
 
     const { result } = renderHook(() =>
       useBroadcast({
-        account,
-        parentAccount: account,
+        account: account as unknown as AccountLike,
+        parentAccount: account as unknown as Account,
         logger,
-      } as any),
+      }),
     );
 
     await act(async () => {
@@ -175,19 +194,19 @@ describe("useBroadcast", () => {
       id: "main-account-id",
       type: "Account",
       currency: { id: "ethereum_sepolia", family: "evm", isTestnetFor: "ethereum" },
-    };
+    } as unknown as AccountLike;
 
     const { result } = renderHook(() =>
       useBroadcast({
         account,
-        parentAccount: account,
+        parentAccount: account as unknown as Account,
         logger,
-        transaction: { mode: "send" },
-      } as any),
+        transaction: { mode: "send" } as unknown as TransactionCommon,
+      }),
     );
 
     await act(async () => {
-      await result.current({ operation: { type: "IN" } });
+      await result.current({ operation: { type: "IN" } } as unknown as SignedOperation);
     });
 
     expect(logger).toHaveBeenCalledWith(expect.objectContaining({ intentType: "send" }));
@@ -203,15 +222,15 @@ describe("useBroadcast", () => {
       id: "main-account-id",
       type: "Account",
       currency: { id: "ethereum_sepolia", family: "evm", isTestnetFor: "ethereum" },
-    };
+    } as unknown as AccountLike;
 
     const { result } = renderHook(() =>
       useBroadcast({
         account,
-        parentAccount: account,
+        parentAccount: account as unknown as Account,
         logger,
-        transaction: {},
-      } as any),
+        transaction: {} as unknown as TransactionCommon,
+      }),
     );
 
     await act(async () => {
