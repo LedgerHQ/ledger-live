@@ -150,15 +150,14 @@ describe("useLargeScreenUpsellEligibility", () => {
     expect(result.current).toEqual({ isEligible: false, reason: "model_disabled" });
   });
 
-  it("should treat a null onboarding date as today and apply cooldown", () => {
+  it("should treat a null onboarding date as the legacy date and apply cooldown", () => {
     const { result } = renderEligibility({
       knownDeviceModelIds: [DeviceModelId.nanoX],
       onboardingDate: null,
     });
 
     expect(result.current).toEqual({
-      isEligible: false,
-      reason: "cooldown",
+      isEligible: true,
       deviceModelId: DeviceModelId.nanoX,
       cooldownDays: 30,
     });
