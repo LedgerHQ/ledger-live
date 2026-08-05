@@ -16,17 +16,17 @@ catalogs:
       specifier: 30.2.0
       version: 30.2.0
     '@ledgerhq/coin-hypercore':
-      specifier: 0.4.3
-      version: 0.4.3
+      specifier: 0.4.4
+      version: 0.4.4
     '@ledgerhq/coin-module-framework':
       specifier: 4.3.0
       version: 4.3.0
     '@ledgerhq/coin-stellar':
-      specifier: 6.26.4
-      version: 6.26.4
+      specifier: 6.26.5
+      version: 6.26.5
     '@ledgerhq/coin-xrp':
-      specifier: 7.25.2
-      version: 7.25.2
+      specifier: 7.25.3
+      version: 7.25.3
     '@ledgerhq/crypto-icons':
       specifier: 2.0.4
       version: 2.0.4
@@ -7599,9 +7599,6 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 4.3.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/ledger-wallet-framework':
-        specifier: workspace:^
-        version: link:../../ledger-wallet-framework
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -8565,7 +8562,7 @@ importers:
     dependencies:
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 6.26.5(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -8875,7 +8872,7 @@ importers:
         version: link:../../coin-tester
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 7.25.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/ledger-wallet-framework':
         specifier: workspace:^
         version: link:../../ledger-wallet-framework
@@ -9645,7 +9642,7 @@ importers:
         version: link:../coin-modules/coin-hedera
       '@ledgerhq/coin-hypercore':
         specifier: 'catalog:'
-        version: 0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 0.4.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-icon':
         specifier: workspace:^
         version: link:../coin-modules/coin-icon
@@ -9678,7 +9675,7 @@ importers:
         version: link:../coin-modules/coin-stacks
       '@ledgerhq/coin-stellar':
         specifier: 'catalog:'
-        version: 6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 6.26.5(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-sui':
         specifier: workspace:^
         version: link:../coin-modules/coin-sui
@@ -9696,7 +9693,7 @@ importers:
         version: link:../coin-modules/coin-vechain
       '@ledgerhq/coin-xrp':
         specifier: 'catalog:'
-        version: 7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
+        version: 7.25.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)
       '@ledgerhq/coin-zcash':
         specifier: workspace:^
         version: link:../coin-modules/coin-zcash
@@ -18967,30 +18964,27 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/coin-hypercore@0.4.3':
-    resolution: {integrity: sha512-da1KB1ul/hJS+joTxLrTVab9mn3Gs1ZFSyOaFqPEypBFUHsgyWrQqHs6CH4uzailNhNeLyNY/uIV5SifVErBvw==}
+  '@ledgerhq/coin-hypercore@0.4.4':
+    resolution: {integrity: sha512-Uswmvyh7RzFOSHdbw0XrXeobfyPbhI0VkcefhUc59zHyCAEVbJgh7Rq6xde6JzAJdYck+rWWU2rDJDGXYCsMFw==}
     peerDependencies:
-      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
-
-  '@ledgerhq/coin-module-framework@4.0.2':
-    resolution: {integrity: sha512-uYbsVd6t5qzgSEyINEhfuruTO74wAEi+lpMvAPF67F9gWAsFC7109kxlG1AgRdIQmmW5cCMYaSMt69DrhN0BuQ==}
 
   '@ledgerhq/coin-module-framework@4.3.0':
     resolution: {integrity: sha512-ntj6HbhI6fV30sW7qDSyAVxE/U9Gy3QpGnkgMqsFLoZ469aJxIdA1gDyimv4MkvjXv3czmTpYtvs03BSXB7J+g==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.0.0
 
-  '@ledgerhq/coin-stellar@6.26.4':
-    resolution: {integrity: sha512-KZgJHQ2TcK20ZXK+2qM06lS45bi44uk2dXJ69iXK6ZUVBEtWuMrxbvqVjrlrfuFZzZ/EN8bZ468LyRT00yqxQQ==}
+  '@ledgerhq/coin-stellar@6.26.5':
+    resolution: {integrity: sha512-NX3uFFgAZ4d4V79diufh1pbtas3ytk0tKR3VmDJ1sylD2QKICKX0iS3JHTshIvGH/aNYumQoMQo+0pqpfIJT2Q==}
     peerDependencies:
-      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
-  '@ledgerhq/coin-xrp@7.25.2':
-    resolution: {integrity: sha512-KYEB7D/VZwgiYc4EWMWErPiL5yQDNb2dQZKaMaKChy751gH5AIc6LH2wfLSse5zkn9s6X1r12kAE9GVvWCmZ+w==}
+  '@ledgerhq/coin-xrp@7.25.3':
+    resolution: {integrity: sha512-oKbm+HCOz83HMuwrh6oc90DZuYrgLyqG0g+p284qYzX08NbwWdF0vEXCGjMdttPlpWOiDoTLSuFwfe4GijS15g==}
     peerDependencies:
-      '@ledgerhq/live-network': ^2.4.0
+      '@ledgerhq/live-network': ^3.0.0
       '@ledgerhq/logs': ^6.17.0
 
   '@ledgerhq/context-module@2.3.1':
@@ -46919,17 +46913,12 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/coin-hypercore@0.4.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-hypercore@0.4.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 4.3.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
-
-  '@ledgerhq/coin-module-framework@4.0.2':
-    dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
-      bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@4.3.0':
     dependencies:
@@ -46942,19 +46931,19 @@ snapshots:
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-stellar@6.26.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-stellar@6.26.5(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
-      '@ledgerhq/coin-module-framework': 4.0.2
+      '@ledgerhq/coin-module-framework': 4.3.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       '@stellar/stellar-sdk': 14.0.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/coin-xrp@7.25.2(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
+  '@ledgerhq/coin-xrp@7.25.3(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
-      '@ledgerhq/coin-module-framework': 4.0.2
+      '@ledgerhq/coin-module-framework': 4.3.0(@ledgerhq/live-network@libs+live-network)
       '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
