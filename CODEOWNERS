@@ -233,6 +233,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
+features/flow/pay-card-auth/                                             @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
