@@ -145,22 +145,24 @@ export function ModularDialogFlow({
         })
       : undefined;
 
-  const { isPerpsWithoutVariant, hasVariant } = parseUiUseCase(uiUseCase);
-  const { title, description } = ((): { title: string; description?: string } => {
-    if (currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION && hasVariant) {
+  const { isPerpsWithoutVariant, isPerpsDeposit } = parseUiUseCase(uiUseCase);
+  const { title, flowDescription } = ((): { title: string; flowDescription?: string } => {
+    if (currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION && isPerpsDeposit) {
       return {
         title: t("modularAssetDrawer.selectDepositCurrencyTitle"),
-        description: t("modularAssetDrawer.selectDepositCurrencyDescription"),
+        flowDescription: t("modularAssetDrawer.selectDepositCurrencyDescription"),
       };
     }
     if (currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && isPerpsWithoutVariant) {
       return {
         title: t("modularAssetDrawer.selectAccountPerpsTitle"),
-        description: t("modularAssetDrawer.selectAccountPerpsDescription"),
+        flowDescription: t("modularAssetDrawer.selectAccountPerpsDescription"),
       };
     }
-    return { title: t(TRANSLATION_KEYS[currentStep]), description: accountSelectionDescription };
+    return { title: t(TRANSLATION_KEYS[currentStep]) };
   })();
+
+  const description = accountSelectionDescription ?? flowDescription;
 
   return (
     <>
