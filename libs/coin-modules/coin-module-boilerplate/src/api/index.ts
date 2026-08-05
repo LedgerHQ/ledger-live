@@ -17,17 +17,15 @@ import {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import BigNumber from "bignumber.js";
+import { broadcast } from "../logic/broadcast";
+import { combine } from "../logic/combine";
 import coinConfig, { type BoilerplateConfig } from "../config";
-import {
-  broadcast,
-  combine,
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  getNextValidSequence,
-  lastBlock,
-  listOperations,
-} from "../logic";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
+import { getBalance } from "../logic/getBalance";
+import { getNextSequence } from "../logic/getNextSequence";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 
 export function createApi(config: BoilerplateConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -85,7 +83,7 @@ export function createApi(config: BoilerplateConfig): CoinModuleApi {
 }
 
 async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
+  const nextSequenceNumber = await getNextSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     {

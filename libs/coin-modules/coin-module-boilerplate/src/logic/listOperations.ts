@@ -3,8 +3,8 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { getTransactions } from "../../network/indexer";
-import { BoilerplateOperation } from "../../network/types";
+import { getTransactions } from "../network/indexer";
+import { BoilerplateOperation } from "../network/types";
 
 /**
  * Returns list of operations associated to an account.

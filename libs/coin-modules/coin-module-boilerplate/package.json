@@ -31,9 +31,6 @@
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
       ],
-      "logic": [
-        "lib/logic/index"
-      ],
       "specs": [
         "lib/test/bot-specs"
       ],
@@ -65,11 +62,6 @@
       "@ledgerhq/source": "./src/bridge/deviceTransactionConfig.ts",
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
-    },
-    "./logic": {
-      "@ledgerhq/source": "./src/logic/index.ts",
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
     },
     "./signer": {
       "@ledgerhq/source": "./src/signer/index.ts",

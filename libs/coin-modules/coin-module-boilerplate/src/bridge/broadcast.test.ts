@@ -1,10 +1,10 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Account, BroadcastArg } from "@ledgerhq/types-live";
-import { broadcast as broadcastLogic } from "../logic";
+import { broadcast as broadcastLogic } from "../logic/broadcast";
 import { broadcast } from "./broadcast";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
-jest.mock("../logic");
+jest.mock("../logic/broadcast");
 
 describe("broadcast", () => {
   let patchOperationSpy: jest.SpyInstance;

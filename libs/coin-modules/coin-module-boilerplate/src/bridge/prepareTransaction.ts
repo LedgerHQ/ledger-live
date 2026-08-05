@@ -1,6 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { craftTransaction, estimateFees } from "../logic";
+import { craftTransaction } from "../logic/craftTransaction";
+import { estimateFees } from "../logic/estimateFees";
 import { getNextSequence } from "../network/node";
 import { Transaction } from "../types";
 

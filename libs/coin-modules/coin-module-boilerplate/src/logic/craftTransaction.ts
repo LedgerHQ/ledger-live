@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { BoilerplateNativeTransaction } from "../../types";
+import { BoilerplateNativeTransaction } from "../types";
 
 const encodeNativeTx = (nativeTx: BoilerplateNativeTransaction) => JSON.stringify(nativeTx);
 
