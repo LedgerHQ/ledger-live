@@ -1,5 +1,7 @@
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { NetworkInfo } from "../schema";
 import type { PartialMarketItemResponse } from "../internals/market";
 
 /** DADA names every aggregated asset with this prefix. */
@@ -42,8 +44,8 @@ export function buildCategoryResponse(assets: CategoryAssetSpec[]) {
     return { ...asset, slug, id: metaCurrencyId(slug), name: asset.name ?? asset.ticker };
   });
 
-  const networks: Record<string, { id: string; name: string }> = {};
-  const cryptoOrTokenCurrencies: Record<string, unknown> = {};
+  const networks: Record<string, NetworkInfo> = {};
+  const cryptoOrTokenCurrencies: Record<string, CryptoOrTokenCurrency> = {};
   const markets: Record<string, PartialMarketItemResponse> = {};
 
   for (const asset of resolved) {
