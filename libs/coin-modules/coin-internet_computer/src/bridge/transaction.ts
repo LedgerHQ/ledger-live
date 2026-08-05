@@ -28,10 +28,32 @@ SEND ${
 }
 TO ${recipient}`;
 
+// ICP-specific transaction fields carried verbatim through (de)serialization (all JSON-native).
+// Undefined fields are omitted (not set to undefined) to satisfy exactOptionalPropertyTypes.
+const icpFields = (t: Transaction | TransactionRaw) => ({
+  // Default the type for TransactionRaw persisted before neuron staking (pre-`type`), so a plain
+  // transfer never deserializes to `undefined` and mis-routes as a governance op.
+  type: t.type ?? "send",
+  ...(t.neuronId !== undefined && { neuronId: t.neuronId }),
+  ...(t.stakeNonce !== undefined && { stakeNonce: t.stakeNonce }),
+  ...(t.percentageToStake !== undefined && { percentageToStake: t.percentageToStake }),
+  ...(t.percentageToSpawn !== undefined && { percentageToSpawn: t.percentageToSpawn }),
+  ...(t.dissolveDelay !== undefined && { dissolveDelay: t.dissolveDelay }),
+  ...(t.additionalDissolveDelay !== undefined && {
+    additionalDissolveDelay: t.additionalDissolveDelay,
+  }),
+  ...(t.autoStakeMaturity !== undefined && { autoStakeMaturity: t.autoStakeMaturity }),
+  ...(t.hotKeyToRemove !== undefined && { hotKeyToRemove: t.hotKeyToRemove }),
+  ...(t.hotKeyToAdd !== undefined && { hotKeyToAdd: t.hotKeyToAdd }),
+  ...(t.followTopic !== undefined && { followTopic: t.followTopic }),
+  ...(t.followeesIds !== undefined && { followeesIds: t.followeesIds }),
+});
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
+    ...icpFields(tr),
     family: tr.family,
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
@@ -44,6 +66,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
 
   return {
     ...common,
+    ...icpFields(t),
     family: t.family,
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),

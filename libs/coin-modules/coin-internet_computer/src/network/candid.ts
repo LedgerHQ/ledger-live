@@ -3,6 +3,7 @@ import invariant from "invariant";
 
 export { idlFactory as ledgerIdlFactory } from "./idl/ledger.idl";
 export { idlFactory as indexIdlFactory } from "./idl/index.idl";
+export { idlFactory as governanceIdlFactory } from "./idl/governance.idl";
 
 // A factory rebuilds its whole service definition on every call; memoize it per factory
 // (the factories are stable module-level references).

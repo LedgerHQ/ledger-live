@@ -126,6 +126,8 @@ const iconsComponent = {
   UNSTAKE: IconUndelegate,
   WITHDRAW_UNSTAKED: IconCoins,
   FINALIZE_UNSTAKE: IconCoins,
+  STAKE_NEURON: IconDelegate,
+  TOP_UP_NEURON: IconDelegate,
   UNKNOWN: IconCheck,
   BURN: IconTrash,
   ASSOCIATE_TOKEN: IconPlus,

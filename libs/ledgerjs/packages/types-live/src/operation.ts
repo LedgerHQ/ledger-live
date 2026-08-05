@@ -74,7 +74,10 @@ export type OperationType =
   | "SHIELDED_TX_ORCHARD_OUT"
   | "SHIELDED_TX_IRONWOOD_IN"
   | "SHIELDED_TX_IRONWOOD_OUT"
-  | "SHIELDED_TX_INTERNAL";
+  | "SHIELDED_TX_INTERNAL"
+  // INTERNET COMPUTER
+  | "STAKE_NEURON"
+  | "TOP_UP_NEURON";
 
 export type OperationExtra = unknown;
 /**

@@ -3025,6 +3025,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "FINALIZE_UNSTAKE": "Unstaked",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Stake increased",
       "ASSOCIATE_TOKEN": "Associate token",
       "CONTRACT_CALL": "Contract call",
       "UPDATE_ACCOUNT": "Updated account"
