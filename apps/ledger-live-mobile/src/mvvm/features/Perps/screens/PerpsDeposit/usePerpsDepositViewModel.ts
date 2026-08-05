@@ -21,9 +21,11 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
+import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { AMOUNT_MAX_INTEGER_DIGITS, applyAmountKey, toAmountText } from "./utils/amountKeys";
 import { toAmountValue } from "./utils/toAmountValue";
+import { toFundingAmount } from "./utils/toFundingAmount";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
 type NavigationProps = RootComposite<
@@ -54,6 +56,9 @@ export type PerpsDepositViewModel = Readonly<{
   missingAccount: boolean;
   pickDepositAccount: () => void;
   handleReview: () => void;
+  isReviewOpen: boolean;
+  reviewParams: PerpsReviewParams | null;
+  closeReview: () => void;
 }>;
 
 export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepositViewModel {
@@ -66,6 +71,7 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
 
   const [depositAccount, setDepositAccount] = useState<AccountLike | undefined>(undefined);
   const [amountText, setAmountText] = useState("");
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
 
   const depositAmount = useMemo(() => {
     const parsed = Number(amountText.replace(/[^0-9.]/g, ""));
@@ -206,7 +212,30 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     });
   }, [openDrawer]);
 
-  const handleReview = useCallback(() => undefined, []);
+  const reviewParams = useMemo<PerpsReviewParams | null>(() => {
+    if (!depositAccount || !depositCurrency) return null;
+
+    return {
+      depositAccount,
+      receiverAccount,
+      amountSent: {
+        value: toFundingAmount({
+          counterValueAmount: depositAmount,
+          maxCounterValueAmount: maxAmount,
+          spendableBalance: depositAccount.spendableBalance,
+          magnitude: depositCurrency.units[0].magnitude,
+        }),
+        currencyId: depositCurrency.id,
+      },
+    };
+  }, [depositAccount, depositAmount, depositCurrency, maxAmount, receiverAccount]);
+
+  const handleReview = useCallback(() => {
+    if (!canReview) return;
+    setIsReviewOpen(true);
+  }, [canReview]);
+
+  const closeReview = useCallback(() => setIsReviewOpen(false), []);
 
   return {
     headerDescription: `${receiverAccountName} · ${receiverAccountCounterValue}`,
@@ -234,5 +263,8 @@ export function usePerpsDepositViewModel({ route }: NavigationProps): PerpsDepos
     missingAccount,
     pickDepositAccount,
     handleReview,
+    isReviewOpen,
+    reviewParams,
+    closeReview,
   };
 }

@@ -3,4 +3,4 @@
 "live-mobile": minor
 ---
 
-Add the Perps deposit review step on desktop and mobile, showing the swap and deposit details before the user confirms.
+Add the Perps deposit review step on desktop and mobile, reached from the deposit form, showing the swap and deposit details before the user confirms.

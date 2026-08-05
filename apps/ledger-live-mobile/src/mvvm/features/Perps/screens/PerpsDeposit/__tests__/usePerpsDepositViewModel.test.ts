@@ -189,4 +189,34 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.isQuoteLoading).toBe(false);
     expect(result.current.canReview).toBe(false);
   });
+
+  it("opens the review with the amount converted into the funding currency", () => {
+    const { props } = createProps();
+    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+
+    act(() => result.current.pickDepositAccount());
+    selectFundingAccount();
+    typeAmount(result.current.pressAmountKey, "20");
+
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(true);
+    // 20 of a 100 ceiling is a fifth of the 10_000 balance, in ETH's 18 decimals.
+    expect(result.current.reviewParams).toEqual({
+      depositAccount: fundingAccount,
+      receiverAccount,
+      amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
+    });
+  });
+
+  it("keeps the review closed while the form is incomplete", () => {
+    const { props } = createProps();
+    const { result } = renderHook(() => usePerpsDepositViewModel(props));
+
+    typeAmount(result.current.pressAmountKey, "20");
+    act(() => result.current.handleReview());
+
+    expect(result.current.isReviewOpen).toBe(false);
+    expect(result.current.reviewParams).toBeNull();
+  });
 });

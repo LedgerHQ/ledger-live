@@ -19,9 +19,11 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
+import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyRatio } from "./utils/applyRatio";
 import { toAmountValue } from "./utils/toAmountValue";
+import { toFundingAmount } from "./utils/toFundingAmount";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
 /** Snapshot of the amount-entry form, used to restore it when re-opened. */
@@ -206,8 +208,31 @@ export function usePerpsDepositViewModel(
 
   const handleReview = useCallback(() => {
     if (!canReview || !depositAccount || !depositCurrency) return;
+
+    openPerpsReview({
+      receiverAccount,
+      depositAccount,
+      amountSent: {
+        value: toFundingAmount({
+          counterValueAmount: depositAmount,
+          maxCounterValueAmount: maxAmount,
+          spendableBalance: depositAccount.spendableBalance,
+          magnitude: depositCurrency.units[0].magnitude,
+        }),
+        currencyId: depositCurrency.id,
+      },
+      draft: { depositAccount, depositAmount },
+    });
     onClose();
-  }, [canReview, depositAccount, depositCurrency, onClose]);
+  }, [
+    canReview,
+    depositAccount,
+    depositAmount,
+    depositCurrency,
+    maxAmount,
+    onClose,
+    receiverAccount,
+  ]);
 
   const headerDescription = `${receiverAccountName} · ${receiverAccountCounterValue}`;
 

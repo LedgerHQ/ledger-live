@@ -11,6 +11,11 @@ jest.mock("LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer", () 
   }),
 }));
 
+const mockOpenPerpsReview = jest.fn();
+jest.mock("../../PerpsReview/PerpsReviewDialog", () => ({
+  openPerpsReview: (data: unknown) => mockOpenPerpsReview(data),
+}));
+
 // Countervalues are priced 1:1 with the account balance so the form ceiling is
 // predictable: a balance of 10_000 (2 decimals for USD) means a $100 maximum.
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
@@ -165,13 +170,30 @@ describe("usePerpsDepositViewModel", () => {
     expect(result.current.canReview).toBe(false);
   });
 
-  it("closes the dialog when the form is ready to review", () => {
+  it("hands the review the amount converted into the funding currency", () => {
     const { result, onClose } = renderViewModel({
       draft: { depositAccount: fundingAccount, depositAmount: 20 },
     });
 
     act(() => result.current.handleReview());
 
+    // 20 of a 100 ceiling is a fifth of the 10_000 balance, in ETH's 18 decimals.
+    expect(mockOpenPerpsReview).toHaveBeenCalledWith({
+      receiverAccount,
+      depositAccount: fundingAccount,
+      amountSent: { value: "0.000000000000002", currencyId: "ethereum" },
+      draft: { depositAccount: fundingAccount, depositAmount: 20 },
+    });
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("does not open the review while the form is incomplete", () => {
+    const { result, onClose } = renderViewModel();
+
+    act(() => result.current.changeDepositAmount("20"));
+    act(() => result.current.handleReview());
+
+    expect(mockOpenPerpsReview).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
