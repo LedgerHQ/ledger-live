@@ -113,13 +113,7 @@ export function ModularDialogFlow({
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return (
-            <AccountSelector
-              asset={selectedAsset}
-              onAccountSelected={onAccountSelected}
-              uiUseCase={uiUseCase}
-            />
-          );
+          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
         }
         return null;
       default:
