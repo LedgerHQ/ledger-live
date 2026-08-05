@@ -6,7 +6,7 @@ import type {
 import { getEnv } from "@shared/env";
 import type { RawApiResponse } from "../schema";
 import type { GetAssetsByCategoryParams } from "../types";
-import { assertDadaApiUrl } from "./assertDadaApiUrl";
+import { assertDadaApiUrl } from "./utils";
 
 /**
  * Walks every page of a category and collects one projection per asset.

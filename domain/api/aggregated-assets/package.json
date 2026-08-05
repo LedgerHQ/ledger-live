@@ -7,9 +7,9 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./mock": "./src/assetsData.mock.ts",
-    "./mock/stocks": "./src/stocks.mock.ts",
-    "./mock/stablecoins": "./src/stablecoins.mock.ts",
+    "./mock": "./src/fixtures/assetsData.mock.ts",
+    "./mock/stocks": "./src/fixtures/stocks.mock.ts",
+    "./mock/stablecoins": "./src/fixtures/stablecoins.mock.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

@@ -2,7 +2,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
 import type { CurrenciesOrder, NetworkInfo } from "./schema";
-import type { PartialMarketItemResponse } from "./market";
+import type { PartialMarketItemResponse } from "./internals/market";
 
 // Types for transformed API response (after transformation)
 export interface AssetsData {
@@ -56,8 +56,6 @@ export interface AssetsDataWithPagination extends AssetsData {
     nextCursor?: string;
   };
 }
-
-export const ONE_DAY_IN_SECONDS = 86_400;
 
 export interface GetAssetsByCategoryParams {
   category: AssetCategory;

@@ -2,7 +2,7 @@ import { getEnv } from "@shared/env";
 import type { RawApiResponse } from "./schema";
 import { AssetsAdditionalData, type AssetsData, type GetAssetsDataParams } from "./types";
 import { convertApiAssets } from "./transforms";
-import { assertDadaApiUrl } from "./internals/assertDadaApiUrl";
+import { assertDadaApiUrl } from "./internals/utils";
 
 export function buildAssetsQueryParams(
   queryArg: GetAssetsDataParams,

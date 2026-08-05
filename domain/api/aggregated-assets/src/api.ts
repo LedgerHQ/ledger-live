@@ -1,20 +1,22 @@
 import { dadaApi } from "@shared/api-services";
 import {
   AssetsDataTags,
-  ONE_DAY_IN_SECONDS,
   type AssetsData,
   type AssetsDataWithPagination,
   type GetAssetsByCategoryParams,
   type GetAssetsDataParams,
   type PageParam,
 } from "./types";
+import { ONE_DAY_IN_SECONDS } from "./constants";
 import { transformAssetsResponse } from "./transforms";
 import { fetchAllAssetCurrencyIdsByCategory, fetchAllAssetsByCategory } from "./accessors";
 import { buildAssetsQueryParams, fetchAssetsPage, resolveBaseUrl } from "./requests";
-import { chunkCurrencyIds } from "./internals/chunkCurrencyIds";
-import { deepMergeCryptoAssets } from "./internals/deepMergeCryptoAssets";
-import { emptyAssetsData } from "./internals/emptyAssetsData";
-import { allSettled } from "./internals/allSettled";
+import {
+  allSettled,
+  chunkCurrencyIds,
+  deepMergeCryptoAssets,
+  emptyAssetsData,
+} from "./internals/utils";
 
 /*
  * `injectEndpoints` adds this use case's endpoints to the shared DADA service api, and
