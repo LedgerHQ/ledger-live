@@ -7,6 +7,7 @@ import {
   getRecipientDisplayValue,
   getRecipientSearchPrefillValue,
 } from "@ledgerhq/live-common/flows/send/utils";
+import { buildTransactionPatchFromURIScheme } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import {
   SendFlowBusinessContext,
   useSendFlowActions,
@@ -165,11 +166,20 @@ export function useSendHeaderModel({
 
   const handleScanPicked = useCallback(
     (code: string) => {
-      const { address } = decodeURIScheme(code);
-      recipientSearch.setValue(address);
+      const decoded = decodeURIScheme(code);
+      recipientSearch.setValue(decoded.address);
+
+      const currentTransaction = state.transaction.transaction;
+      if (currentTransaction) {
+        const patch = buildTransactionPatchFromURIScheme(currentTransaction, decoded);
+        if (Object.keys(patch).length > 0) {
+          transaction.updateTransaction(tx => ({ ...tx, ...patch }) as typeof tx);
+        }
+      }
+
       closeScanner();
     },
-    [closeScanner, recipientSearch],
+    [closeScanner, recipientSearch, state.transaction.transaction, transaction],
   );
 
   const transactionError = state.transaction.status?.errors?.transaction;

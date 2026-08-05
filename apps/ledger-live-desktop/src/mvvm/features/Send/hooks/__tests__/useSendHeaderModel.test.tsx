@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { BigNumber } from "bignumber.js";
 import { act } from "tests/testSetup";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import { useSendHeaderModel } from "../useSendHeaderModel";
@@ -313,7 +314,17 @@ describe("useSendHeaderModel", () => {
     const baseState = {
       account: { currency: { ticker: "ETH" }, account: {} },
       recipient: null,
-      transaction: { status: {} },
+      transaction: {
+        status: {},
+        transaction: {
+          family: "evm",
+          amount: { isZero: () => true },
+          recipient: "",
+          useAllAmount: false,
+          userGasLimit: undefined,
+          gasPrice: undefined,
+        },
+      },
     };
 
     it("is closed by default and toggles open then closed, tracking both", () => {
@@ -383,12 +394,33 @@ describe("useSendHeaderModel", () => {
     });
 
     it("sets the decoded address and closes the scanner on a successful scan", () => {
-      mockActions();
+      const { updateTransaction } = mockActions();
       const search = mockData(baseState);
       mockRecipientStep();
       (decodeURIScheme as jest.Mock).mockReturnValue({
         address: "0xAbC",
-        amount: 1,
+        currency: { id: "ethereum" },
+      });
+
+      renderHook();
+      act(() => latestVM?.handleQrCodeClick());
+      act(() => latestVM?.handleScanPicked("ethereum:0xAbC"));
+
+      expect(decodeURIScheme).toHaveBeenCalledWith("ethereum:0xAbC");
+      expect(search.setValue).toHaveBeenCalledWith("0xAbC");
+      expect(search.setValue).toHaveBeenCalledTimes(1);
+      expect(updateTransaction).not.toHaveBeenCalled();
+      expect(latestVM?.isScannerOpen).toBe(false);
+    });
+
+    it("prefills the transaction amount from a BIP21/EIP-681 URI while staying on recipient", () => {
+      const amount = new BigNumber(1);
+      const { updateTransaction } = mockActions();
+      const search = mockData(baseState);
+      mockRecipientStep();
+      (decodeURIScheme as jest.Mock).mockReturnValue({
+        address: "0xAbC",
+        amount,
         currency: { id: "ethereum" },
       });
 
@@ -396,9 +428,15 @@ describe("useSendHeaderModel", () => {
       act(() => latestVM?.handleQrCodeClick());
       act(() => latestVM?.handleScanPicked("ethereum:0xAbC?value=1"));
 
-      expect(decodeURIScheme).toHaveBeenCalledWith("ethereum:0xAbC?value=1");
       expect(search.setValue).toHaveBeenCalledWith("0xAbC");
-      expect(search.setValue).toHaveBeenCalledTimes(1);
+      expect(updateTransaction).toHaveBeenCalledTimes(1);
+      const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
+      expect(updater({ family: "evm", amount: new BigNumber(0), useAllAmount: true })).toEqual(
+        expect.objectContaining({
+          amount,
+          useAllAmount: false,
+        }),
+      );
       expect(latestVM?.isScannerOpen).toBe(false);
     });
   });
