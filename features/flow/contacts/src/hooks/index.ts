@@ -1,6 +1,6 @@
 export { useContacts } from "./useContacts";
 export { useContactsEditDeletePorts } from "./useContactsEditDeletePorts";
-export { useContactsAddressEditPorts } from "./useContactsAddressEditPorts";
+export { useContactsAddressDetailActionsPorts } from "./useContactsAddressDetailActionsPorts";
 export type {
   ContactAddressSignerLookup,
   ContactSignerValidationPort,
