@@ -68,7 +68,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./features/**" --filter="./shared/**" --filter="./domain/**"
+        run: pnpm i --filter="@features/*..." --filter="./shared/**" --filter="./domain/**"
 
       - name: Run coverage on feature packages
         run: |
