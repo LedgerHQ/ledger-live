@@ -1,5 +1,4 @@
 import test from "../../fixtures/common";
-import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
 import { FirmwareUpdate } from "../../page/drawer/firmwareUpdate.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
@@ -49,9 +48,8 @@ test("Firmware Update @smoke", async ({ page }) => {
     // await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-done.png");
   });
 
-  await test.step("Modal is closed", async () => {
-    // TODO rewrite this to fit a drawer model, not a modal one.
-    await firmwareUpdateDrawer.drawerClose.click();
-    await expect.soft(page).toHaveScreenshot("modal-closed.png");
+  await test.step("Drawer is closed", async () => {
+    await firmwareUpdateDrawer.finishButton.click();
+    await firmwareUpdateDrawer.waitForDrawerToDisappear();
   });
 });

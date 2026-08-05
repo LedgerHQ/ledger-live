@@ -3,6 +3,7 @@ import { Drawer } from "tests/component/drawer.component";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
 
 export class FirmwareUpdate extends Drawer {
+  readonly finishButton = this.page.getByRole("button", { name: "Finish" });
   readonly downloadProgress = this.page.getByTestId("firmware-update-download-progress");
   readonly flashProgress = this.page.getByTestId("firmware-update-flash-mcu-progress");
   readonly updateDone = this.page.getByTestId("firmware-update-done");
