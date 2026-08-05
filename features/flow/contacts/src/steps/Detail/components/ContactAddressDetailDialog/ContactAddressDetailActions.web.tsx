@@ -7,16 +7,28 @@ type ContactAddressDetailActionsProps = Readonly<{
   labels: ContactAddressDetailDialogLabels;
   hasCopied: boolean;
   onCopy: () => void;
+  onSend?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  canSend?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }>;
 
 export function ContactAddressDetailActions({
   labels,
   hasCopied,
   onCopy,
+  onSend,
+  onEdit,
+  onDelete,
+  canSend = false,
+  canEdit = false,
+  canDelete = false,
 }: ContactAddressDetailActionsProps): React.ReactNode {
   return (
     <div className="grid w-full grid-cols-4 gap-8">
-      <TileButton icon={ArrowUp} isFull disabled>
+      <TileButton icon={ArrowUp} isFull disabled={!canSend} onClick={onSend}>
         {labels.send}
       </TileButton>
       <TileButton
@@ -27,7 +39,7 @@ export function ContactAddressDetailActions({
       >
         {hasCopied ? labels.copied : labels.copy}
       </TileButton>
-      <TileButton icon={PenEdit} isFull disabled>
+      <TileButton icon={PenEdit} isFull disabled={!canEdit} onClick={onEdit}>
         {labels.edit}
       </TileButton>
       <TileButton
@@ -35,7 +47,8 @@ export function ContactAddressDetailActions({
         appearance="red"
         data-testid="contacts-address-detail-delete"
         isFull
-        disabled
+        disabled={!canDelete}
+        onClick={onDelete}
       >
         {labels.delete}
       </TileButton>
