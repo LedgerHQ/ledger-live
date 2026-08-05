@@ -31,6 +31,7 @@ function makeTransport(
     url: "ws://localhost",
     origin: "test-origin",
     socketFactory: factory,
+    reconnection: { enabled: false },
     ...overrides,
   };
   const proto: TransportProtocol<TestMap> = {
@@ -244,6 +245,63 @@ describe("createTransport — setUrl()", () => {
     const { transport } = makeTransport();
     transport.setUrl("ws://newhost");
     expect(transport.getState().url).toBe("ws://newhost");
+  });
+});
+
+describe("createTransport — reconnection", () => {
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  it("should attempt reconnect after socket error once the delay elapses", () => {
+    const { transport, mock, factory } = makeTransport({
+      reconnection: { delay: 1000, factor: 1 },
+    });
+    transport.connect();
+    mock.error();
+    expect(transport.getState().status).toBe("error");
+    jest.advanceTimersByTime(1001); // past delay * 1^1 = 1000
+    expect(factory).toHaveBeenCalledTimes(2);
+    expect(transport.getState().status).toBe("connecting");
+  });
+
+  it("should attempt reconnect when the socket factory throws", () => {
+    let calls = 0;
+    const { socket } = makeMockSocket();
+    const factory = jest.fn(() => {
+      if (calls++ === 0) throw new Error("refused");
+      return socket;
+    });
+    const { transport } = makeTransport({
+      socketFactory: factory,
+      reconnection: { delay: 1000, factor: 1 },
+    });
+    transport.connect();
+    expect(transport.getState().status).toBe("error");
+    jest.advanceTimersByTime(1001);
+    expect(factory).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not reconnect when reconnection is disabled", () => {
+    const { transport, mock, factory } = makeTransport({
+      reconnection: { enabled: false },
+    });
+    transport.connect();
+    mock.error();
+    jest.runAllTimers();
+    expect(factory).toHaveBeenCalledTimes(1);
+  });
+
+  it("should stop reconnecting once the connection opens", () => {
+    const { transport, mock, factory } = makeTransport({
+      reconnection: { delay: 1000, factor: 1 },
+    });
+    transport.connect();
+    mock.open();
+    jest.runAllTimers();
+    expect(factory).toHaveBeenCalledTimes(1);
   });
 });
 
