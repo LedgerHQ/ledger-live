@@ -47,3 +47,11 @@ function randomIntFromInterval(min: number, max: number): string {
 export function getRandomTransferID(): string {
   return randomIntFromInterval(0, Number.MAX_SAFE_INTEGER);
 }
+
+export function toSafeNumber(value: bigint): number {
+  if (value < Number.MIN_SAFE_INTEGER || value > Number.MAX_SAFE_INTEGER) {
+    throw new RangeError(`value ${value} exceeds the safe integer range`);
+  }
+
+  return Number(value);
+}
