@@ -81,9 +81,11 @@ const AccountSelectionContent = ({
       ? t("modularDrawer.emptyAccounts", { network: asset.name })
       : undefined;
 
-  const headerDescription = isPerpsWithoutVariant
+  const perpsDescription = isPerpsWithoutVariant
     ? t("modularDrawer.selectAccountPerpsDescription")
-    : emptyAccountsDescription;
+    : undefined;
+
+  const headerDescription = emptyAccountsDescription ?? perpsDescription;
 
   return (
     <>
