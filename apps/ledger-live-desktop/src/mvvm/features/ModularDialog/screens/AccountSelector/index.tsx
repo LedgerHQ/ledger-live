@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { Banner } from "@ledgerhq/lumen-ui-react";
 import { AddAccountButton } from "./components/AddAccountButton";
 import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -28,18 +27,15 @@ export const AccountSelector = ({
   overridePageName,
   uiUseCase,
 }: Props) => {
-  const { t } = useTranslation();
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     onAccountSelected,
   );
 
   const BottomComponent = (
-    <>
       <AddAccountContainer>
         <AddAccountButton onAddAccountClick={onAddAccountClick} />
       </AddAccountContainer>
-    </>
   );
 
   return (
