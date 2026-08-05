@@ -15,12 +15,20 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
   const { account, parentAccount } = useAccountScreen(route);
   const bridge = useAccountBridgeOrNull<Transaction>(account ?? null, parentAccount);
   const onScanned = route.params?.onScanned;
+  const onScannedURI = route.params?.onScannedURI;
 
   const onResult = useCallback(
     (result: string) => {
-      const { amount, address, currency: _currency, ...rest } = decodeURIScheme(result);
+      const decoded = decodeURIScheme(result);
+      const { amount, address, currency: _currency, ...rest } = decoded;
 
-      // New Send flow: hand the address back to the caller and dismiss the scanner.
+      // full decoded URI (address + optional amount)
+      if (onScannedURI) {
+        onScannedURI(decoded);
+        navigation.goBack();
+        return;
+      }
+
       if (onScanned) {
         onScanned(address);
         navigation.goBack();
@@ -56,7 +64,7 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         },
       });
     },
-    [account, bridge, navigation, onScanned, parentAccount, route.params],
+    [account, bridge, navigation, onScanned, onScannedURI, parentAccount, route.params],
   );
 
   useEffect(() => {

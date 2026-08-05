@@ -674,6 +674,7 @@
     "src/flows/send/utils/gas.ts",
     "src/flows/send/utils/memoFamilyCurrencyId.ts",
     "src/flows/send/utils/networkFeesDisplay.ts",
+    "src/flows/send/utils/uriScheme.ts",
     "src/flows/send/utils.ts",
     "src/flows/wizard/types.ts",
     "src/genericAwarenessModal/build/buildCarousel.ts",
