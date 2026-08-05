@@ -9,25 +9,43 @@
  * A rule fires only when the source package has the sourceTag. Legacy
  * packages without matching tags (libs/, apps/, e2e/, tools/) are
  * unconstrained on purpose.
+ *
+ * `scope:support` is allowed as a target everywhere: support packages are development tooling,
+ * taken as devDependencies, and the Nx graph does not distinguish those from runtime dependencies.
+ * It has no rule as a *source* for the same reason — one would constrain a support package's own
+ * test-tooling dependencies (lumen, react-native) for no benefit.
  */
 const DEP_CONSTRAINTS = [
-  { sourceTag: "scope:shared", onlyDependOnLibsWithTags: ["scope:shared"] },
-  { sourceTag: "scope:domain", onlyDependOnLibsWithTags: ["scope:domain", "scope:shared"] },
+  { sourceTag: "scope:shared", onlyDependOnLibsWithTags: ["scope:shared", "scope:support"] },
+  {
+    sourceTag: "scope:domain",
+    onlyDependOnLibsWithTags: ["scope:domain", "scope:shared", "scope:support"],
+  },
   {
     sourceTag: "scope:features",
-    onlyDependOnLibsWithTags: ["scope:features", "scope:domain", "scope:shared"],
+    onlyDependOnLibsWithTags: ["scope:features", "scope:domain", "scope:shared", "scope:support"],
   },
   {
     sourceTag: "type:domain-entity",
-    onlyDependOnLibsWithTags: ["type:domain-entity", "scope:shared"],
+    onlyDependOnLibsWithTags: ["type:domain-entity", "scope:shared", "scope:support"],
   },
   {
     sourceTag: "type:domain-api",
-    onlyDependOnLibsWithTags: ["type:domain-entity", "type:domain-api", "scope:shared"],
+    onlyDependOnLibsWithTags: [
+      "type:domain-entity",
+      "type:domain-api",
+      "scope:shared",
+      "scope:support",
+    ],
   },
   {
     sourceTag: "type:feature-platform",
-    onlyDependOnLibsWithTags: ["type:feature-platform", "scope:domain", "scope:shared"],
+    onlyDependOnLibsWithTags: [
+      "type:feature-platform",
+      "scope:domain",
+      "scope:shared",
+      "scope:support",
+    ],
   },
   {
     sourceTag: "type:feature-flow",
@@ -36,6 +54,7 @@ const DEP_CONSTRAINTS = [
       "type:feature-platform",
       "scope:domain",
       "scope:shared",
+      "scope:support",
     ],
   },
 ];
