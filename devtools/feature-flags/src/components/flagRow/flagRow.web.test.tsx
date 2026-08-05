@@ -1,4 +1,4 @@
-import { render, screen } from "jest/render";
+import { render, screen } from "@support/jest-devtools-fixtures/web";
 import userEvent from "@testing-library/user-event";
 import type { FlagDisplayState } from "../../types";
 import { FlagRow } from "../../components";

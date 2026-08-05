@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { act, renderHook } from "jest/render.native";
+import { act, renderHook } from "@support/jest-devtools-fixtures/native";
 import { useBottomSheetRef } from "@ledgerhq/lumen-ui-rnative";
 import type { FeatureId } from "@shared/feature-flags";
 import {

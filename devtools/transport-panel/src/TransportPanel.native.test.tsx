@@ -1,4 +1,4 @@
-import { render, screen } from "jest/render.native";
+import { render, screen } from "@support/jest-devtools-fixtures/native";
 import { mockTransportPanelProps, mockTransport } from "jest/mocks/transport";
 import { TransportPanel } from "./TransportPanel";
 

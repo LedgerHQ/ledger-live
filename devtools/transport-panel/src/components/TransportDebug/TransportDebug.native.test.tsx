@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "jest/render.native";
+import { render, screen, fireEvent } from "@support/jest-devtools-fixtures/native";
 import { mockTransport, mockTransportPanelProps } from "jest/mocks/transport";
 import { TransportDebug } from "./TransportDebug.native";
 

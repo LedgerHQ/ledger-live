@@ -1,4 +1,4 @@
-import { renderHook, act } from "jest/render.native";
+import { renderHook, act } from "@support/jest-devtools-fixtures/native";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { FeatureFlagsToolProps } from "../../types";
 import { useFlagListViewModel } from "./useFlagListViewModel";

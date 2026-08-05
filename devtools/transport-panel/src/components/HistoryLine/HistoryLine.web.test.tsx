@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "jest/render";
+import { render, screen, fireEvent } from "@support/jest-devtools-fixtures/web";
 import type { Envelope, MessageMap } from "@devtools/transport";
 import { HistoryLine } from "./HistoryLine.web";
 

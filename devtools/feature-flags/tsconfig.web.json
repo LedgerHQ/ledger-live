@@ -4,6 +4,6 @@
         "moduleSuffixes": [".web", ""],
         "types": ["jest", "@testing-library/jest-dom"]
     },
-    "include": ["src/**/*", "jest/**/*", "**/*.d.ts"],
-    "exclude": ["node_modules", "jest/**/*.native.*", "src/**/*.native.*"]
+    "include": ["src/**/*", "**/*.d.ts"],
+    "exclude": ["node_modules", "src/**/*.native.*"]
 }

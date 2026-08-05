@@ -1,4 +1,4 @@
-import { render, screen } from "jest/render";
+import { render, screen } from "@support/jest-devtools-fixtures/web";
 import { FlagListSummary } from "./FlagListSummary";
 
 describe("FlagListSummary", () => {

@@ -1,4 +1,4 @@
-import { render, screen } from "jest/render.native";
+import { render, screen } from "@support/jest-devtools-fixtures/native";
 import { FlagCountIndicator } from "./FlagCountIndicator";
 
 describe("FlagCountIndicator (native)", () => {

@@ -1,5 +1,5 @@
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "jest/render";
+import { render, screen } from "@support/jest-devtools-fixtures/web";
 import { makeTool } from "jest/fixtures";
 import { Overview } from "./Overview";
 import { Category } from "@devtools/registry";

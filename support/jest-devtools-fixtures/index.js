@@ -100,7 +100,6 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
     transformIgnorePatterns: [`node_modules/(?!(${NATIVE_TRANSFORM_ALLOWLIST.join("|")})/.)`],
     modulePaths: ["<rootDir>"],
     moduleNameMapper: {
-      "^jest/render\\.native$": "<rootDir>/jest/render/index.native.tsx",
       // resolved in the consumer: each devtools package declares lumen itself
       "^@ledgerhq/lumen-ui-rnative$":
         "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",

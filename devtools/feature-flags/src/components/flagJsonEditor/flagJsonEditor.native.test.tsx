@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from "jest/render.native";
+import { render, screen, userEvent } from "@support/jest-devtools-fixtures/native";
 import type { DiffLine } from "../../utils";
 import { FlagJsonEditor, type FlagJsonEditorProps } from "./flagJsonEditor";
 
