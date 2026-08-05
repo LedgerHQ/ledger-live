@@ -3,6 +3,8 @@ export * from "./steps/List/native";
 export * from "@features/flow-contacts-add-contact";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/native";
+export * from "./steps/EditAddress";
+export * from "./steps/EditAddress/native";
 export * from "./steps/AddAddress";
 export * from "./steps/AddAddress/native";
 export * from "./steps/Introduction";

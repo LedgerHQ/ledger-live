@@ -9,7 +9,7 @@ import { useTranslation } from "~/context/Locale";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import { useContactsCurrencySelectionAdapter } from "../../../../hooks/useContactsCurrencySelectionAdapter";
+import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
 
 function resolveDrawerStep(

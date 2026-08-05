@@ -29,6 +29,7 @@ import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddr
 import type { ContactsAddAddressFlowDrawerProps } from "./components/ContactsAddAddressFlowDrawer/types";
 import type { ContactDetailEditDeleteFlowProps } from "./hooks/useContactDetailEditDeleteAdapter";
 import { useContactDetailEditDeleteAdapter } from "./hooks/useContactDetailEditDeleteAdapter";
+import { useContactAddressDetailActionsAdapter } from "../../hooks/useContactAddressDetailActionsAdapter";
 
 const MANUAL_ADDRESS_VALIDATION_DEBOUNCE_MS = 200;
 
@@ -40,6 +41,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
       addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
     }>;
 
@@ -182,6 +184,27 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     navigation.navigate(ScreenName.MyWalletContacts);
   }, [navigation]);
   const editDeleteFlow = useContactDetailEditDeleteAdapter(route.params.contactId, onDeleteSuccess);
+  const addressDetailActions = useContactAddressDetailActionsAdapter(
+    route.params.contactId,
+    selection?.row?.addressId,
+    onCloseAddressDetail,
+  );
+  const onCloseAddressDetailSheet = useCallback(() => {
+    if (
+      addressDetailActions.deleteSheet.isOpen ||
+      addressDetailActions.renameSheet.isOpen ||
+      addressDetailActions.signerSheet.isOpen
+    ) {
+      return;
+    }
+
+    onCloseAddressDetail();
+  }, [
+    addressDetailActions.deleteSheet.isOpen,
+    addressDetailActions.renameSheet.isOpen,
+    addressDetailActions.signerSheet.isOpen,
+    onCloseAddressDetail,
+  ]);
   const shouldRedirect = !isEnabled || !contact;
 
   useLayoutEffect(() => {
@@ -234,8 +257,10 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
-      onClose: onCloseAddressDetail,
+      onClose: onCloseAddressDetailSheet,
+      ...addressDetailActions.addressDetailDialog,
     },
+    addressDetailActions,
     editDeleteFlow,
   };
 }

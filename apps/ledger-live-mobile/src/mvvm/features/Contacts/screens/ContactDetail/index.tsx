@@ -2,6 +2,7 @@ import React from "react";
 import { ContactDetailView } from "@features/flow-contacts";
 import { TrackScreen } from "~/analytics";
 import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlowDrawer";
+import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDetailActionsSheets";
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
@@ -26,6 +27,11 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         <ContactsAddAddressFlowDrawer {...viewModel.addAddressFlowProps} />
       ) : null}
       <ContactAddressDetailDialogSheet {...viewModel.addressDetailDialog} />
+      <ContactAddressDetailActionsSheets
+        deleteSheet={viewModel.addressDetailActions.deleteSheet}
+        renameSheet={viewModel.addressDetailActions.renameSheet}
+        signerSheet={viewModel.addressDetailActions.signerSheet}
+      />
       <ContactDetailEditDeleteSheets {...viewModel.editDeleteFlow} />
     </>
   );

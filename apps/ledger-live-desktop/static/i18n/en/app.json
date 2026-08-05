@@ -9363,6 +9363,7 @@
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
       "applyChanges": "Apply changes",
+      "confirmName": "Confirm name",
       "invalidNameError": "Special characters are not allowed."
     },
     "deleteContact": {
