@@ -5,7 +5,10 @@ import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 
 export function usePayTabViewModel() {
   const { top } = useNavigationBarHeights();
-  const openHostedLogin: OpenHostedLogin = useCallback(loginUrl => Linking.openURL(loginUrl), []);
+  const openHostedLogin: OpenHostedLogin = useCallback(
+    (loginUrl: string) => Linking.openURL(loginUrl),
+    [],
+  );
 
   return { top, openHostedLogin };
 }
