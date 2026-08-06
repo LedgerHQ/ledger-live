@@ -3514,6 +3514,34 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   domain/api/aggregated-assets:
+    dependencies:
+      '@domain/api-currency-token':
+        specifier: workspace:^
+        version: link:../currency-token
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:*
+        version: link:../../entity/aggregated-asset
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../entity/currency
+      '@domain/entity-currency-crypto':
+        specifier: workspace:^
+        version: link:../../entity/currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:^
+        version: link:../../entity/currency-token
+      '@domain/entity-interest-rate':
+        specifier: workspace:*
+        version: link:../../entity/interest-rate
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(react@19.1.4))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -3533,6 +3561,12 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(react@19.1.4)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -3876,6 +3910,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   domain/entity/aggregated-asset:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -4158,6 +4196,10 @@ importers:
         version: '@typescript/typescript6@6.0.2'
 
   domain/entity/interest-rate:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@jest/globals':
         specifier: 'catalog:'
@@ -9586,12 +9628,18 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
+      '@domain/api-aggregated-assets':
+        specifier: workspace:^
+        version: link:../../domain/api/aggregated-assets
       '@domain/api-currency-token':
         specifier: workspace:^
         version: link:../../domain/api/currency-token
       '@domain/api-swap-quotes':
         specifier: workspace:^
         version: link:../../domain/api/swap-quotes
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:^
+        version: link:../../domain/entity/aggregated-asset
       '@domain/entity-client-identity':
         specifier: workspace:^
         version: link:../../domain/entity/client-identity
@@ -9610,6 +9658,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@domain/entity-interest-rate':
+        specifier: workspace:^
+        version: link:../../domain/entity/interest-rate
       '@features/platform-env':
         specifier: workspace:^
         version: link:../../features/platform/env

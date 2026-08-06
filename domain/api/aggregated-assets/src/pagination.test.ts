@@ -1,5 +1,5 @@
-import { mergeAssetsDataPages } from "../mergeAssetsDataPages";
-import type { AssetsDataWithPagination } from "../../state-manager/types";
+import { mergeAssetsDataPages } from "./pagination";
+import type { AssetsDataWithPagination } from "./types";
 
 const makePage = (overrides: Partial<AssetsDataWithPagination> = {}): AssetsDataWithPagination => ({
   cryptoAssets: {},
