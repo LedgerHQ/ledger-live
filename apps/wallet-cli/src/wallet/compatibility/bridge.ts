@@ -8,7 +8,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import { accountDataToAccount } from "@ledgerhq/live-wallet/liveqr/cross";
+import { descriptorToAccount } from "@ledgerhq/live-wallet/accounts";
 import type { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
@@ -346,7 +346,7 @@ export class BridgeAdapter {
   }
 
   private buildAccount(descriptor: AccountDescriptor): Account {
-    const [account] = accountDataToAccount({ ...descriptor, balance: "0", name: "" });
+    const account = descriptorToAccount(descriptor);
     return account;
   }
 

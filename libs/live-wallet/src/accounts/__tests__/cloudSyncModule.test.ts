@@ -8,7 +8,7 @@ import manager, {
   CloudSyncDataManagerResolutionContext,
 } from "../cloudSyncModule";
 import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
-import { accountDataToAccount } from "../../liveqr/cross";
+import { descriptorToAccount } from "../descriptorToAccount";
 
 timemachine.config({
   dateString: "February 22, 2021 13:12:59",
@@ -64,7 +64,7 @@ function unmigrate(account: Account): Account {
 
 function placeholderAccountFromDescriptor(descriptor: AccountDescriptor): Account {
   // NB: this is the current implementation of the module giving the account state before it has opportunity to update, may change over time
-  return accountDataToAccount({ ...descriptor, balance: "0", name: "" })[0];
+  return descriptorToAccount(descriptor);
 }
 
 const dummyContext: CloudSyncDataManagerResolutionContext = {

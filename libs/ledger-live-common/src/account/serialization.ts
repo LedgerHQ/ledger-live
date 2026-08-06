@@ -1,5 +1,6 @@
 import memoize from "lodash/memoize";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getDefaultAccountNameForCurrencyIndex } from "@domain/entity-account-name";
 import type {
   Account,
   AccountBridge,
@@ -97,6 +98,26 @@ export async function toAccountRaw(
 
   return commonAccountRaw;
 }
+
+export const accountRawToAccountUserData = (raw: AccountRaw): AccountUserData => {
+  const { id } = raw;
+  const name =
+    raw.name ||
+    getDefaultAccountNameForCurrencyIndex({
+      currency: getCryptoCurrencyById(raw.currencyId),
+      index: raw.index,
+    });
+  const starredIds: string[] = [];
+  if (raw.starred) {
+    starredIds.push(raw.id);
+  }
+  for (const t of raw.subAccounts || []) {
+    if (t.starred) {
+      starredIds.push(t.id);
+    }
+  }
+  return { id, name, starredIds };
+};
 
 const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(
   accountId => {

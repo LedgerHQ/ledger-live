@@ -1,3 +1,17 @@
+import { z } from "zod";
+
+/** Minimal account identity exchanged over wallet sync. Rehydrated by descriptorToAccount(). */
+export const accountDescriptorSchema = z.object({
+  id: z.string(),
+  currencyId: z.string(),
+  freshAddress: z.string(),
+  seedIdentifier: z.string(),
+  derivationMode: z.string(),
+  index: z.number(),
+});
+
+export type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
+
 export type NonImportedAccountInfo = {
   id: string;
   attempts: number;

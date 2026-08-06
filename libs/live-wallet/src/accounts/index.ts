@@ -1,6 +1,6 @@
+export * from "./descriptorToAccount";
 export * from "./schema";
 export * from "./slice";
-export * from "./utils";
 
 export {
   default as accountsSyncModule,

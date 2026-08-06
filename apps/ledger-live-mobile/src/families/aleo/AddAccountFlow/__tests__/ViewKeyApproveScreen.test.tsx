@@ -138,7 +138,7 @@ jest.mock("~/reducers/wallet", () => ({
   useAccountName: jest.fn((account: Account) => account.id),
 }));
 
-jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
+jest.mock("@ledgerhq/live-common/account/addAccounts", () => ({
   addAccountsAction: jest.fn(() => ({ type: "ADD_ACCOUNTS" })),
 }));
 

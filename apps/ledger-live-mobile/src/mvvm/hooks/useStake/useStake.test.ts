@@ -4,7 +4,7 @@ import {
   customRenderHookWithLiveAppProvider as renderHook,
   withFlagOverrides,
 } from "@tests/test-renderer";
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/accounts";
+import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index";
 import type { WalletState } from "~/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";

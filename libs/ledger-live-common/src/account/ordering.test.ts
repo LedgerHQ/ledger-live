@@ -1,10 +1,15 @@
 // TODO rewrite the test
 
 import type { AccountRaw } from "@ledgerhq/types-live";
-import { sortAccountsComparatorFromOrder } from "./ordering";
+import {
+  flattenSortAccounts,
+  nestedSortAccounts,
+  sortAccountsComparatorFromOrder,
+  type AccountComparator,
+} from "./ordering";
 import { fromAccountRaw } from "@ledgerhq/ledger-wallet-framework/serialization/account";
 import type { AccountNamesState } from "@domain/entity-account-name";
-import { accountRawToAccountUserData } from "./accounts";
+import { accountRawToAccountUserData } from "./serialization";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 const raws: AccountRaw[] = [
@@ -164,4 +169,23 @@ test("Accounts ordering | balance desc", () => {
     "B",
     "A",
   ]);
+});
+
+const byName: AccountComparator = (a, b) =>
+  (accountNames.get(a.id) || "").localeCompare(accountNames.get(b.id) || "");
+
+test("flattenSortAccounts", () => {
+  expect(flattenSortAccounts(accounts, byName).map(a => accountNames.get(a.id))).toEqual([
+    "A",
+    "AA",
+    "B",
+    "C",
+    "CA",
+  ]);
+});
+
+test("nestedSortAccounts keeps the same reference when the order is already correct", () => {
+  const sorted = nestedSortAccounts(accounts, byName);
+  expect(sorted.map(a => accountNames.get(a.id))).toEqual(["A", "AA", "B", "C", "CA"]);
+  expect(nestedSortAccounts(sorted, byName)).toBe(sorted);
 });

@@ -17,7 +17,7 @@ import noAssociatedAccountsByFamily from "~/generated/NoAssociatedAccounts";
 import { getCustomAddAccountFlow } from "LLM/features/Accounts/utils/customAddAccountFlow";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { useMaybeAccountName, setAccountName } from "~/reducers/wallet";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";

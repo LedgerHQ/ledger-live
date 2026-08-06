@@ -13,7 +13,7 @@ import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-wallet/ordering";
+} from "@ledgerhq/live-common/account/ordering";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
 import {
   useAssetDistribution,

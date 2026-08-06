@@ -28,7 +28,6 @@ import { useSelector } from "~/context/hooks";
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
-  AccountsImportAccountsPayload,
   AccountsPayload,
   AccountsReorderPayload,
   AccountsUpdateAccountWithUpdaterPayload,
@@ -44,9 +43,8 @@ import {
   accountUserDataExportSelector,
   walletSelector,
 } from "./wallet";
-import { importAccountsReduce } from "@ledgerhq/live-wallet/liveqr/importAccounts";
-import { nestedSortAccounts } from "@ledgerhq/live-wallet/ordering";
-import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { nestedSortAccounts } from "@ledgerhq/live-common/account/ordering";
+import { AddAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 
 export const INITIAL_STATE: AccountsState = {
   active: [],
@@ -55,13 +53,6 @@ const handlers: ReducerMap<AccountsState, Payload> = {
   INIT_ACCOUNTS: (_, action) => ({
     active: (action.payload as { accounts: Account[]; accountsUserData: AccountUserData[] })
       .accounts,
-  }),
-
-  [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (s, action) => ({
-    active: importAccountsReduce(
-      s.active,
-      (action as Action<AccountsImportAccountsPayload>).payload,
-    ),
   }),
 
   [AccountsActionTypes.ADD_ACCOUNT]: (state, action) => {

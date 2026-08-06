@@ -23,7 +23,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
   }),
 }));
-jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
+jest.mock("@ledgerhq/live-common/account/addAccounts", () => ({
   addAccountsAction: jest.fn(params => ({
     type: "ADD_ACCOUNTS",
     payload: params,
