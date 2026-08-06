@@ -7,13 +7,16 @@ import type { FlattenAccountsOptions } from "@ledgerhq/ledger-wallet-framework/a
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { WalletState, accountNameWithDefaultSelector } from "./store";
+import {
+  type AccountNamesState,
+  accountNameWithDefaultSelector,
+} from "@domain/entity-account-name";
 
 export type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
 export const sortAccountsComparatorFromOrder = (
   orderAccounts: string,
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber,
@@ -25,8 +28,8 @@ export const sortAccountsComparatorFromOrder = (
   if (order === "name") {
     return (a, b) =>
       ascValue *
-      accountNameWithDefaultSelector(walletState, a).localeCompare(
-        accountNameWithDefaultSelector(walletState, b),
+      accountNameWithDefaultSelector(accountNames, a).localeCompare(
+        accountNameWithDefaultSelector(accountNames, b),
         undefined,
         { numeric: true },
       );
@@ -44,8 +47,8 @@ export const sortAccountsComparatorFromOrder = (
   return (a, b) => {
     const diff = ascValue * lazyCalcCV(a).minus(lazyCalcCV(b)).toNumber();
     if (diff === 0)
-      return accountNameWithDefaultSelector(walletState, a).localeCompare(
-        accountNameWithDefaultSelector(walletState, b),
+      return accountNameWithDefaultSelector(accountNames, a).localeCompare(
+        accountNameWithDefaultSelector(accountNames, b),
       );
     return diff;
   };

@@ -13,7 +13,7 @@ import {
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";

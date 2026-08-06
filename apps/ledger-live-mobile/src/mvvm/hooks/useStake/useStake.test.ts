@@ -4,7 +4,8 @@ import {
   customRenderHookWithLiveAppProvider as renderHook,
   withFlagOverrides,
 } from "@tests/test-renderer";
-import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/accounts";
+import type { WalletState } from "~/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
@@ -119,10 +120,7 @@ const mockUSDSTokenAccount: TokenAccount = {
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  walletSyncState: {
-    data: null,
-    version: 0,
-  },
+  walletSync: { walletSyncState: { data: null, version: 0 } },
   nonImportedAccountInfos: [],
   recentAddresses: {},
 };

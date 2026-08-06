@@ -50,7 +50,7 @@ export const useTranslateToSwapAccount = (
 
     if (defaultAccount) {
       newParams.toAccountId = walletApi.accountToWalletAPIAccount(
-        walletState,
+        walletState.accountNames,
         defaultAccount,
         params?.defaultParentAccount,
       ).id;
@@ -79,5 +79,5 @@ export const useTranslateToSwapAccount = (
     }
 
     return newParams;
-  }, [params, walletState]);
+  }, [params, walletState.accountNames]);
 };

@@ -1,0 +1,28 @@
+{
+  "name": "@support/jest-features-flow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared jest config + generic Lumen stubs for features/flow packages (dual web/native projects)",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "index.js",
+    "mocks",
+    "setup"
+  ],
+  "scripts": {
+    "format": "oxfmt index.js mocks setup",
+    "format:check": "oxfmt index.js mocks setup --check",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "react": "catalog:"
+  }
+}

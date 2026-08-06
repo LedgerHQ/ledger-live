@@ -10,13 +10,11 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@ledgerhq/live-wallet/accountName";
+import { normalizeName, MAX_ACCOUNT_NAME_LENGTH } from "@domain/entity-account-name";
 import { Chip } from "./Chip";
 import { track } from "~/renderer/analytics/segment";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
-
-/** How long after opening to ignore outside-click closes (ghost-click guard). */
-const GHOST_CLICK_GUARD_MS = 300;
+import { isWithinGhostClickGuard } from "./ghostClickGuard";
 
 type EditCryptoAddressNameDialogProps = {
   children: React.ReactNode;
@@ -52,7 +50,7 @@ export const EditCryptoAddressNameDialog = ({
   const handlePointerDownOutside: NonNullable<
     React.ComponentProps<typeof DialogContent>["onPointerDownOutside"]
   > = e => {
-    if (Date.now() - openedAtRef.current < GHOST_CLICK_GUARD_MS) {
+    if (isWithinGhostClickGuard(openedAtRef.current)) {
       e.preventDefault();
     }
   };

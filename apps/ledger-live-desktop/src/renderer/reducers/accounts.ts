@@ -11,7 +11,7 @@ import isEqual from "lodash/isEqual";
 import { State } from ".";
 import { Handlers } from "./types";
 import { walletSelector } from "./wallet";
-import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
+import { isStarredAccountSelector } from "~/renderer/reducers/wallet";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 

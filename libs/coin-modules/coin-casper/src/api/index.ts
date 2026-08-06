@@ -15,15 +15,15 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { type CasperCoinConfig, setCoinConfig } from "../config";
+import { setCoinConfig } from "../config";
+import { lastBlock } from "../logic/lastBlock";
+import type { CasperCoinConfig } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
   setCoinConfig(config);
 
   return {
-    lastBlock(): Promise<BlockInfo> {
-      throw new Error("lastBlock is not supported");
-    },
+    lastBlock,
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },

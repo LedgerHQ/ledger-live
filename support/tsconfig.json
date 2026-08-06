@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "./jest-devtools" }]
+  "references": [{ "path": "./jest-devtools" }, { "path": "./jest-features-flow" }]
 }

@@ -1,9 +1,8 @@
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
-import { walletSelector } from "~/renderer/reducers/wallet";
 import { getAccountProtocol } from "./getAccountProtocol";
 import { FormattedAccount } from "./types";
 

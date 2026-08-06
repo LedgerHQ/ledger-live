@@ -63,7 +63,7 @@ export function useSortAccountsComparator() {
   const orderAccounts = useSelector(getOrderAccounts);
   const calc = useCalculateCountervalueCallback();
   const walletState = useSelector(walletSelector);
-  return sortAccountsComparatorFromOrder(orderAccounts, walletState, calc);
+  return sortAccountsComparatorFromOrder(orderAccounts, walletState.accountNames, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);

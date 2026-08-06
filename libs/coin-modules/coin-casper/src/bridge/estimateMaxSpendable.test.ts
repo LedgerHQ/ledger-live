@@ -1,12 +1,12 @@
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { createMockAccount } from "../test/fixtures";
+import { createMockAccount } from "../__tests__/fixtures";
 import { Transaction } from "../types";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { getEstimatedFees } from "../logic/estimateFees";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 
 // Mock the fee helper
-jest.mock("./bridgeHelpers/fee", () => ({
+jest.mock("../logic/estimateFees", () => ({
   getEstimatedFees: jest.fn().mockReturnValue(new BigNumber(1000000)),
 }));
 

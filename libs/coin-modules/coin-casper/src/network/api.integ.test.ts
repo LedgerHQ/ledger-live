@@ -1,7 +1,7 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
 import { getCoinConfig } from "../config";
-import { fetchAccountStateInfo, fetchBalance, fetchBlockHeight, fetchTxs } from "./api";
+import { fetchAccountStateInfo, fetchBalance, fetchLastBlock, fetchTxs } from "./api";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
 
 const pubkey = "0202664e3958608cd8dc2b80d4c73f18f76ef197f1cccca2f4f817c70bb050b248bd";
@@ -17,8 +17,8 @@ describe("Casper API", () => {
     },
   });
   it("should be able to fetch the network status", async () => {
-    const blockHeight = await fetchBlockHeight();
-    expect(blockHeight).toBeGreaterThan(0);
+    const { height } = await fetchLastBlock();
+    expect(height).toBeGreaterThan(0);
   });
 
   it("shouldnt fetch account state info if account doesnt exist", async () => {

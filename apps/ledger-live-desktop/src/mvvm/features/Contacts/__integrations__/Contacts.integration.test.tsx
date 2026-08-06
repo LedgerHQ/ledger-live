@@ -3,6 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { resolveEligibleAddressCurrencyIds } from "@features/flow-contacts";
+import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import {
   mockContact,
   mockMeContact,
@@ -22,9 +23,11 @@ import { useContactsViewModel } from "LLD/features/Contacts/screens/Contacts/use
 import ContextMenuContext from "LLD/features/MyWallet/components/ContextMenuContext";
 import { ContextMenu } from "LLD/features/MyWallet/components/ContextMenu";
 import { CONTEXT_MENU_VIEW } from "LLD/features/MyWallet/components/ContextMenu/types";
+import { openURL } from "~/renderer/linking";
 
 const mockNavigate = jest.fn();
 const mockClose = jest.fn();
+const mockValidateAddress = jest.fn();
 const meContactId = mockMeContact().id;
 const savedContactId = mockContact({ id: "contact-ada" }).id;
 
@@ -44,8 +47,16 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     "@ledgerhq/live-common/bridge/index",
   ),
   getAccountBridgeByFamily: jest.fn().mockResolvedValue({
-    validateAddress: jest.fn().mockResolvedValue(true),
+    validateAddress: (...args: unknown[]) => mockValidateAddress(...args),
   }),
+}));
+
+jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
+  isAddressSanctioned: jest.fn(),
+}));
+
+jest.mock("~/renderer/linking", () => ({
+  openURL: jest.fn(),
 }));
 
 const contextMenuValue = {
@@ -138,6 +149,8 @@ function ContactsViewModelProbe({
 describe("Contacts integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockValidateAddress.mockResolvedValue(true);
+    jest.mocked(isAddressSanctioned).mockResolvedValue(false);
   });
 
   it("should not render the Contacts button when lwdContacts is disabled", () => {
@@ -578,6 +591,63 @@ describe("Contacts integration", () => {
     await user.click(screen.getByRole("button", { name: "Continue address review" }));
 
     expect(screen.getByTestId("contacts-add-address-flow-state")).toHaveTextContent("closed");
+  });
+
+  it("should render an invalid-format helper and block address confirmation", async () => {
+    mockValidateAddress.mockResolvedValue(false);
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Incorrect address format.")).toBeVisible();
+      expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+    });
+    expect(screen.queryByTestId("contacts-sanctioned-address-banner")).not.toBeInTheDocument();
+  });
+
+  it("should render sanctioned feedback, block confirmation, and open the Help Center", async () => {
+    jest.mocked(isAddressSanctioned).mockResolvedValue(true);
+    const { store, user } = renderContactsScreen();
+
+    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+    act(() => {
+      store
+        .getState()
+        .modularDialog.dialogParams?.onAssetSelected?.(getCryptoCurrencyById("ethereum"));
+    });
+
+    const addressInput = await screen.findByTestId("contacts-add-address-input");
+    fireEvent.change(addressInput, {
+      target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Sanctioned address.")).toBeVisible();
+      expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
+      expect(
+        screen.getByText(
+          "This wallet address is sanctioned by international laws and regulations.",
+        ),
+      ).toBeVisible();
+      expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Learn more" }));
+
+    expect(openURL).toHaveBeenCalledTimes(1);
   });
 
   it("should expose the Add Address session started for Me", async () => {

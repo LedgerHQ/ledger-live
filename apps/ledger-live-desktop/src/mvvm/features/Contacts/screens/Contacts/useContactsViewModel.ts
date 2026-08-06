@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import { v4 as uuid } from "uuid";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
@@ -54,6 +57,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
+  const handleSanctionedAddressLearnMore = useCallback(() => {
+    openURL(helpCenterUrl);
+  }, [helpCenterUrl]);
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
@@ -180,6 +187,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     () => ({
       state: addAddressFlowState,
       entryLabels: addAddressEntryLabels,
+      sanctionedAddressBanner: {
+        description: t("contacts.addAddressEntry.sanctioned.description"),
+        actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
+        onAction: handleSanctionedAddressLearnMore,
+      },
       nameLabels: addAddressNameLabels,
       reviewLabels: addAddressReviewLabels,
       onAddressChange: (address, inputMethod) => {
@@ -195,6 +207,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [
       addAddressEntryLabels,
+      handleSanctionedAddressLearnMore,
       addAddressNameLabels,
       addAddressReviewLabels,
       addAddressFlowState,
@@ -206,6 +219,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       continueFromName,
       saveAddressFromReview,
       completeMockConfirmation,
+      t,
     ],
   );
   const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =

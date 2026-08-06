@@ -8,7 +8,7 @@ import {
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";

@@ -3,8 +3,9 @@ import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName, initFromUserData } from "@domain/entity-account-name";
 import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
+import { initStarredFromIds } from "@domain/entity-starred-account";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import logger from "~/renderer/logger";
 import { ThunkResult } from "./types";
@@ -14,25 +15,29 @@ export const removeAccount = (payload: Account) => ({
   payload,
 });
 
-export const initAccounts = (data: [Account, AccountUserData][]) => {
-  const supported = data.filter(([account]) => {
-    const error = checkAccountSupported(account);
-    if (!error) return true;
-    logger.warn(`dropping account ${account.id}: ${error.message}`);
-    return false;
-  });
-  const accounts = supported.map(([account]) => account);
-  const accountsUserData = supported
-    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
-    .map(([, userData]) => userData);
-  return {
-    type: "INIT_ACCOUNTS",
-    payload: {
-      accounts,
-      accountsUserData,
-    },
+export const initAccounts =
+  (data: [Account, AccountUserData][]): ThunkResult =>
+  dispatch => {
+    const supported = data.filter(([account]) => {
+      const error = checkAccountSupported(account);
+      if (!error) return true;
+      logger.warn(`dropping account ${account.id}: ${error.message}`);
+      return false;
+    });
+    const accounts = supported.map(([account]) => account);
+    const accountsUserData = supported
+      .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
+      .map(([, userData]) => userData);
+    dispatch({
+      type: "INIT_ACCOUNTS",
+      payload: {
+        accounts,
+        accountsUserData,
+      },
+    });
+    dispatch(initFromUserData(accountsUserData.map(({ id, name }) => ({ id, name }))));
+    dispatch(initStarredFromIds(supported.flatMap(([, userData]) => userData.starredIds)));
   };
-};
 
 export const replaceAccounts = (accounts: Account[]) => ({
   type: "REPLACE_ACCOUNTS",

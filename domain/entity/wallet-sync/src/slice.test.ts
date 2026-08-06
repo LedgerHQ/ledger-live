@@ -1,12 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { walletSyncSlice, walletSyncUpdate } from "./slice";
-import { walletSyncStateSelector } from "./selectors";
 
 function makeStore() {
   const store = configureStore({ reducer: { walletSync: walletSyncSlice.reducer } });
   return {
     dispatch: store.dispatch,
-    ws: () => walletSyncStateSelector(store.getState()),
+    ws: () => store.getState().walletSync.walletSyncState,
   };
 }
 

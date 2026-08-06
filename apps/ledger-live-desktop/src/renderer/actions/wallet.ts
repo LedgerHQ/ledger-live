@@ -1,4 +1,4 @@
-import { importWalletState, setAccountStarred } from "@ledgerhq/live-wallet/store";
+import { importWalletState, setAccountStarred } from "~/renderer/reducers/wallet";
 import { getKey } from "../storage";
 import { ThunkResult } from "./types";
 

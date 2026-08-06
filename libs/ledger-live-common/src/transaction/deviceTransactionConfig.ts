@@ -3,7 +3,7 @@ import { loadDeviceTxConfigForFamily } from "../coin-modules/registry";
 import type { Transaction, TransactionStatus } from "../coin-modules/transaction-types";
 import { getMainAccount } from "../account";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
+import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";

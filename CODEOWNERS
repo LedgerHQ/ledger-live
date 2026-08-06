@@ -77,7 +77,8 @@ devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
 
 # Platform — support
-support/jest-devtools/                           @ledgerhq/platform
+support/jest-devtools/                                   @ledgerhq/platform
+support/jest-features-flow/                          @ledgerhq/platform
 
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
@@ -115,6 +116,7 @@ apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
 apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
 # Wallet — Contacts
+domain/entity/contact/                                   @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)

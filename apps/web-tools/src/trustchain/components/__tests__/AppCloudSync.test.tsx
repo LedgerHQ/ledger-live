@@ -19,11 +19,12 @@ jest.mock("@ledgerhq/coin-module-framework/mocks/account", () => ({
   genAccount: (...args: unknown[]) => Reflect.apply(mockGenAccount, null, args),
 }));
 
-jest.mock("@ledgerhq/live-wallet/accountName", () => ({
+jest.mock("@domain/entity-account-name", () => ({
   getDefaultAccountName: jest.fn((account: { id: string }) => `Account ${account.id}`),
 }));
 
-jest.mock("@ledgerhq/live-wallet/cloudsync/index", () => ({
+jest.mock("@shared/cloud-sync", () => ({
+  ...jest.requireActual("@shared/cloud-sync"),
   CloudSyncSDK: jest.fn().mockImplementation(() => ({
     pull: jest.fn(),
     push: jest.fn(),
@@ -34,11 +35,9 @@ jest.mock("@ledgerhq/live-wallet/cloudsync/index", () => ({
   })),
 }));
 
-jest.mock("@ledgerhq/live-wallet/walletsync/index", () => ({
+jest.mock("../walletSync", () => ({
   __esModule: true,
-  default: {
-    schema: { parse: jest.fn((d: unknown) => d) },
-  },
+  liveSchema: { parse: jest.fn((d: unknown) => d) },
   liveSlug: "test",
 }));
 

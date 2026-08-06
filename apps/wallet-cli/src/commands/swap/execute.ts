@@ -12,7 +12,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCurrencyForAccount, type Account, type AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
+import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 import { createCommandOutput } from "../../output";
 import {
   accountOption,

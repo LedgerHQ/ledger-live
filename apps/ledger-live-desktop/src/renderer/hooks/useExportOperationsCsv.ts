@@ -85,7 +85,7 @@ export function useExportOperationsCsv({
           accounts.filter(a => checkedIds.includes(a.id)),
           countervalueCurrency,
           countervalueState,
-          walletState,
+          walletState.accountNames,
         );
         const ok = await saveOperationsToFile(path, csv);
         if (ok) {
@@ -109,7 +109,7 @@ export function useExportOperationsCsv({
     getDateTxt,
     onError,
     onSuccess,
-    walletState,
+    walletState.accountNames,
   ]);
 
   const resetState = useCallback(() => {

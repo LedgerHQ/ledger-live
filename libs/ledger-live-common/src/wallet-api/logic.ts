@@ -26,7 +26,7 @@ import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { type AccountNamesState } from "@domain/entity-account-name";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/getWalletAccount";
 import type { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -45,7 +45,7 @@ export type WalletAPIContext = {
 };
 
 export async function receiveOnAccountLogic(
-  walletState: WalletState,
+  accountNames: AccountNamesState,
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   uiNavigation: (
@@ -74,7 +74,7 @@ export async function receiveOnAccountLogic(
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-  const accountAddress = accountToWalletAPIAccount(walletState, account, parentAccount).address;
+  const accountAddress = accountToWalletAPIAccount(accountNames, account, parentAccount).address;
   return uiNavigation(receivingAccount, parentAccount, accountAddress);
 }
 

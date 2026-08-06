@@ -1,11 +1,11 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { BigNumber } from "bignumber.js";
-import { createMockAccount, createMockTransaction } from "../test/fixtures";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { createMockAccount, createMockTransaction } from "../__tests__/fixtures";
+import { getEstimatedFees } from "../logic/estimateFees";
 import { prepareTransaction } from "./prepareTransaction";
 
 // Mock dependencies
-jest.mock("./bridgeHelpers/fee", () => ({
+jest.mock("../logic/estimateFees", () => ({
   getEstimatedFees: jest.fn(),
 }));
 

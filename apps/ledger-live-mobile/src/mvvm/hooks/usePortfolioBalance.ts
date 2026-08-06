@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { accountsWithUpToDateCheckSelector, hasNoAccountsSelector } from "~/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useAccountsSyncStatus,

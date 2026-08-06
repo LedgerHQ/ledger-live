@@ -1,7 +1,7 @@
 import type { Action } from "redux-actions";
 import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Account, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
+import type { Account, AccountUserData, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
@@ -25,7 +25,6 @@ import type {
   InViewState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
@@ -58,7 +57,7 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsReplacePayload = Account[];
 export type AccountsPayload =
-  | HandlersPayloads["INIT_ACCOUNTS"]
+  | { accounts: Account[]; accountsUserData: AccountUserData[] }
   | AccountsReorderPayload
   | AccountsImportAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload

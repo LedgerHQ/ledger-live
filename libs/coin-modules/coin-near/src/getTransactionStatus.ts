@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { fetchAccountDetails } from "./api";
+import { fetchAccountDetails } from "./network";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 import {
   NearNewAccountWarning,

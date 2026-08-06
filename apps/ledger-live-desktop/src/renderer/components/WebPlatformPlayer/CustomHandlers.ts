@@ -16,7 +16,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { replaceAccounts, updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { WebviewProps } from "../Web3AppWebview/types";
-import { setAccountName } from "@ledgerhq/live-wallet/store";
+import { setAccountName } from "~/renderer/reducers/wallet";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";

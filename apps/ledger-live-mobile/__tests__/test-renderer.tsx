@@ -4,7 +4,7 @@ import { initialIdentitiesState } from "@domain/entity-client-identity";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
-import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { INITIAL_STATE as WALLET_INITIAL_STATE } from "~/reducers/wallet";
 import { NavigationContainer, type InitialState } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

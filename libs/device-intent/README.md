@@ -76,11 +76,12 @@ platform-specific components.
 
 ### LWD (Ledger Wallet Desktop)
 
-Not yet integrated — coming soon. The wrapper will mirror the LWM one
-(planned as `DeviceIntentExecutorLWD`) and inject desktop-specific platform
-components for the connection, initialisation, and error screens. The
-shared core (`DeviceIntentExecutor`, state machine, intent definitions, initialization logic via `ensureAppReadyUseCase`) is
-already platform-agnostic, so the wiring is the only missing piece.
+Supported via the `DeviceIntentExecutorLWD` wrapper at
+`apps/ledger-live-desktop/src/mvvm/components/DeviceIntentExecutor/`. It mirrors
+the LWM integration and injects desktop-specific platform components for the
+connection, context-initialisation, and error screens. The shared core
+(`DeviceIntentExecutor`, state machine, intent definitions, initialization logic
+via `ensureAppReadyUseCase`) remains platform-agnostic.
 
 ### CLI
 
@@ -348,6 +349,10 @@ mounts that wrapper and passes all the required props:
 Do not import the raw `DeviceIntentExecutor` from `@ledgerhq/device-intent`;
 always use the existing platform wrapper.
 
+Both platform wrappers require a `sourceFlow` value for analytics. It is
+passed as a property on all DIE tracking events so they can be attributed to
+the originating user flow.
+
 ```tsx
 import { createIntent } from "@ledgerhq/device-intent";
 
@@ -361,6 +366,7 @@ function MyFlowScreen({ enabled, onDone }: Props) {
   return (
     <DeviceIntentExecutorLWM
       enabled={enabled}
+      sourceFlow="send" // several possible values (e.g "receive", "wallet_api" etc.)
       deviceConnectionParams={{ acceptedDeviceModelIds: [] }}
       deviceInitializationInput={{
         appName: "Ethereum",

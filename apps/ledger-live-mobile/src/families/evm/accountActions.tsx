@@ -14,7 +14,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { type WalletState } from "~/reducers/wallet";
 import { StakingDrawerNavigationProps } from "~/components/Stake/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { canDelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
@@ -124,7 +124,11 @@ function getNavigatorParams<T extends TransactionCommon>({
     ];
   }
 
-  const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
+  const walletApiAccount = accountToWalletAPIAccount(
+    walletState.accountNames,
+    account,
+    parentAccount,
+  );
 
   const params: {
     screen: ScreenName;

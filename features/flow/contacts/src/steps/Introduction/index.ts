@@ -20,7 +20,6 @@ export type {
   ContactsFeatureIntroductionHighlight,
   ContactsFeatureIntroductionHighlightIcon,
   ContactsLedgerSyncIntroduction,
-  ContactsLedgerSyncStatus,
 } from "./types";
 export type { ContactsLedgerSyncIntroductionContentProps } from "./LedgerSync";
 export type { ContactsFeatureIntroductionContentProps } from "./Feature";
