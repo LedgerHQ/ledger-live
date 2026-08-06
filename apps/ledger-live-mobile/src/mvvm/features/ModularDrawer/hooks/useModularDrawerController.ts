@@ -30,6 +30,7 @@ export const useModularDrawerController = () => {
     isOpen,
     preselectedCurrencies,
     callbackId,
+    cancelCallbackId,
     enableAccountSelection,
     completionMode,
     presentation,
@@ -43,6 +44,7 @@ export const useModularDrawerController = () => {
       isOpen: state.modularDrawer.isOpen,
       preselectedCurrencies: state.modularDrawer.preselectedCurrencies,
       callbackId: state.modularDrawer.callbackId,
+      cancelCallbackId: state.modularDrawer.cancelCallbackId,
       enableAccountSelection: state.modularDrawer.enableAccountSelection,
       completionMode: state.modularDrawer.completionMode,
       presentation: state.modularDrawer.presentation,
@@ -60,12 +62,14 @@ export const useModularDrawerController = () => {
     executeCallback,
     registerCurrencyCallback,
     executeCurrencyCallback,
+    registerCancelCallback,
+    executeCancelCallback,
     resetAll,
   } = useCallbackRegistry();
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
-      const { onAccountSelected, onCurrencySelected, ...otherParams } = params ?? {};
+      const { onAccountSelected, onCurrencySelected, onCancel, ...otherParams } = params ?? {};
 
       if (completionMode === "currency" && callbackId) {
         executeCurrencyCallback(callbackId, null);
@@ -88,9 +92,17 @@ export const useModularDrawerController = () => {
         callbackIdToUse = id;
       }
 
+      let cancelCallbackIdToUse: string | undefined;
+      if (onCancel) {
+        const id = generateCallbackId();
+        registerCancelCallback(id, onCancel);
+        cancelCallbackIdToUse = id;
+      }
+
       const paramsWithIds: DrawerRemoteParams = {
         ...otherParams,
         callbackId: callbackIdToUse,
+        cancelCallbackId: cancelCallbackIdToUse,
       };
 
       dispatch(openModularDrawer(paramsWithIds));
@@ -102,6 +114,7 @@ export const useModularDrawerController = () => {
       executeCurrencyCallback,
       registerCallback,
       registerCurrencyCallback,
+      registerCancelCallback,
       resetAll,
     ],
   );
@@ -110,17 +123,20 @@ export const useModularDrawerController = () => {
     if (completionMode === "currency" && callbackId) {
       executeCurrencyCallback(callbackId, null);
     }
+    if (cancelCallbackId) {
+      executeCancelCallback(cancelCallbackId);
+    }
     dispatch(closeModularDrawer());
-  }, [callbackId, completionMode, dispatch, executeCurrencyCallback]);
+  }, [callbackId, cancelCallbackId, completionMode, dispatch, executeCurrencyCallback, executeCancelCallback]);
 
   const handleAccountSelected = useCallback(
     (account: AccountLike, parentAccount?: AccountLike) => {
       if (callbackId) {
         executeCallback(callbackId, account, parentAccount);
       }
-      closeDrawer();
+      dispatch(closeModularDrawer());
     },
-    [callbackId, executeCallback, closeDrawer],
+    [callbackId, dispatch, executeCallback],
   );
 
   const handleCurrencySelected = useCallback(

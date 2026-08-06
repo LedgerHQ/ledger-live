@@ -58,6 +58,45 @@ describe("useModularDrawerController", () => {
     expect(store.getState().modularDrawer.isOpen).toBe(false);
   });
 
+  describe("onCancel callback", () => {
+    it("should invoke onCancel when closeDrawer is called", () => {
+      const onCancel = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({ flow: "test_flow", source: "test_source", onCancel });
+      });
+
+      act(() => {
+        result.current.closeDrawer();
+      });
+
+      expect(onCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not invoke onCancel when handleAccountSelected is used", () => {
+      const onCancel = jest.fn();
+      const onAccountSelected = jest.fn();
+      const { result } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          onCancel,
+          onAccountSelected,
+        });
+      });
+
+      act(() => {
+        result.current.handleAccountSelected(mockAccount);
+      });
+
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(onAccountSelected).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("handleAccountSelected", () => {
     it("should invoke registered onAccountSelected callback and close the drawer", () => {
       const onAccountSelected = jest.fn();
