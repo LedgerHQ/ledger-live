@@ -9306,6 +9306,8 @@
     },
     "addAddressName": {
       "inputLabel": "Address name",
+      "namingDisclaimer": "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
+      "namingDisclaimerAccessibilityLabel": "Address name information",
       "continueToReview": "Continue to review",
       "invalidLabel": "Special characters are not allowed.",
       "duplicateLabel": "This address name is already used for this contact.",

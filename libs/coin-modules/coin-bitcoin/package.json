@@ -36,14 +36,6 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./chain-adapters/zcash/ZCash": {
-      "react-native": "./src/chain-adapters/zcash/stubs/ZCash.native.ts",
-      "@ledgerhq/source": "./src/chain-adapters/zcash/ZCash.ts",
-      "types": "./lib/chain-adapters/zcash/ZCash.d.ts",
-      "import": "./lib-es/chain-adapters/zcash/ZCash.js",
-      "require": "./lib/chain-adapters/zcash/ZCash.js",
-      "default": "./lib-es/chain-adapters/zcash/ZCash.js"
-    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -62,7 +54,6 @@
     "@ledgerhq/psbtv2": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
-    "@ledgerhq/zcash-utils": "catalog:",
     "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^6.1.7",

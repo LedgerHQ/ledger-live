@@ -55,6 +55,10 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:devtools");
   }
 
+  if (projectRoot.startsWith("support/")) {
+    tags.add("scope:support");
+  }
+
   if (projectRoot.startsWith("e2e/")) {
     tags.add("scope:e2e");
   }
@@ -105,16 +109,10 @@ function inferTags(projectRoot, packageName) {
   } else if (projectRoot === "apps/web-tools" || packageName === "@ledgerhq/web-tools") {
     tags.add("scope:apps");
     tags.add("type:app-web-tools");
-  } else if (
-    packageName === "ledger-live-desktop-e2e-tests" ||
-    projectRoot === "e2e/desktop"
-  ) {
+  } else if (packageName === "ledger-live-desktop-e2e-tests" || projectRoot === "e2e/desktop") {
     tags.add("scope:apps");
     tags.add("type:e2e-desktop");
-  } else if (
-    packageName === "ledger-live-mobile-e2e-tests" ||
-    projectRoot === "e2e/mobile"
-  ) {
+  } else if (packageName === "ledger-live-mobile-e2e-tests" || projectRoot === "e2e/mobile") {
     tags.add("scope:apps");
     tags.add("type:e2e-mobile");
   }
@@ -134,7 +132,7 @@ const plugin = {
   createNodesV2: [
     combineGlobPatterns("package.json", "**/package.json"),
     (configFiles, _options, context) => {
-      const readJson = (f) => readJsonFile(path.join(context.workspaceRoot, f));
+      const readJson = f => readJsonFile(path.join(context.workspaceRoot, f));
       const patterns = buildPackageJsonPatterns(context.workspaceRoot, readJson);
       const isInPackageManagerWorkspaces = buildPackageJsonWorkspacesMatcher(patterns);
 
@@ -147,11 +145,7 @@ const plugin = {
         }
 
         const projectRoot = normalizeProjectRoot(file);
-        const siblingProjectJson = path.join(
-          context.workspaceRoot,
-          projectRoot,
-          "project.json",
-        );
+        const siblingProjectJson = path.join(context.workspaceRoot, projectRoot, "project.json");
         const nextToProjectJson = existsSync(siblingProjectJson);
 
         if (!isInPackageManagerWorkspaces(file) && !nextToProjectJson) {

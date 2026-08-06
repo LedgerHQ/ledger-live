@@ -8,6 +8,7 @@ import {
   isCooldownElapsed,
   shouldThrottle,
 } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
+import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
 import {
@@ -108,7 +109,11 @@ function deriveDebugDecision({
   const resolvedCooldownDays =
     "cooldownDays" in eligibility ? eligibility.cooldownDays : cooldownDaysDefault;
 
-  const cooldownElapsed = isCooldownElapsed(onboardingDate, resolvedCooldownDays ?? 0, now);
+  const cooldownElapsed = isCooldownElapsed(
+    resolveOnboardingDateForUpsell(onboardingDate),
+    resolvedCooldownDays ?? 0,
+    now,
+  );
 
   const throttled =
     killThreshold != null && cadenceDays != null

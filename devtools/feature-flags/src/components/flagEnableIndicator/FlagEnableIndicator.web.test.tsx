@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@support/jest-devtools/web";
 import { FlagEnableIndicator } from "./FlagEnableIndicator";
 
 describe("FlagEnableIndicator", () => {

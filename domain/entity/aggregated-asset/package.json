@@ -12,10 +12,13 @@
   "sideEffects": false,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/aggregated-asset"
+  },
+  "dependencies": {
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",

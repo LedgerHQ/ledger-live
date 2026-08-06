@@ -1,4 +1,4 @@
-import { render, screen, userEvent, BottomSheetWrapper } from "jest/render.native";
+import { render, screen, userEvent, BottomSheetWrapper } from "@support/jest-devtools/native";
 import { useJsonEditor, type JsonEditorPropsState } from "../../hooks/useJsonEditor";
 import type { FlagDisplayState } from "../../types";
 import { FlagEditorBottomSheetContent } from "./FlagEditorBottomSheetContent";

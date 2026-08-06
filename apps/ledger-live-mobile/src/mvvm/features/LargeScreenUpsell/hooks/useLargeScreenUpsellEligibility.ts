@@ -1,3 +1,4 @@
+import { resolveOnboardingDateForUpsell } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { isCooldownElapsed } from "@ledgerhq/live-common/postOnboarding/logic/upsellFrequency";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { DeviceModelId, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
@@ -91,7 +92,7 @@ export function useLargeScreenUpsellEligibility(): LargeScreenUpsellEligibility 
   const deviceModelId = selectCooldownDeviceModelId(enabledNanoDeviceModelIds, params.cooldownDays);
   const cooldownDays = resolveCooldownDays(params.cooldownDays, deviceModelId);
   const now = new Date();
-  const onboardingDateForEligibility = onboardingDate ?? now;
+  const onboardingDateForEligibility = resolveOnboardingDateForUpsell(onboardingDate);
 
   if (!isCooldownElapsed(onboardingDateForEligibility, cooldownDays, now)) {
     return { isEligible: false, reason: "cooldown", deviceModelId, cooldownDays };

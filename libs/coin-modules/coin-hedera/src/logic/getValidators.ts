@@ -19,6 +19,7 @@ export async function getValidators({
   return {
     next: res.nextCursor ?? undefined,
     items: res.nodes.map(node => ({
+      id: node.node_id.toString(),
       address: node.node_account_id,
       nodeId: node.node_id.toString(),
       name: extractCompanyFromNodeDescription(node.description),

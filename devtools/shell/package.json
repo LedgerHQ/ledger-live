@@ -102,6 +102,7 @@
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "7.27.1",
     "@jest/globals": "catalog:",
+    "@support/jest-devtools": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
