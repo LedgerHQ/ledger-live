@@ -4749,9 +4749,6 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/qr-code
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.23
@@ -4779,6 +4776,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4942,9 +4942,6 @@ importers:
 
   features/flow/market-banner:
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(@types/react@19.0.14)(react-native-reanimated@4.3.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
@@ -4957,6 +4954,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.52(8f2c508bbb7b9fda5127db56feef203c)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5055,9 +5055,6 @@ importers:
         specifier: workspace:^
         version: link:../../../domain/entity/pay-card
     devDependencies:
-      '@features/platform-jest-config':
-        specifier: workspace:*
-        version: link:../../platform/jest-config
       '@features/platform-style':
         specifier: workspace:*
         version: link:../../platform/style
@@ -5079,6 +5076,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/jest-features-flow':
+        specifier: workspace:*
+        version: link:../../../support/jest-features-flow
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5347,12 +5347,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
-
-  features/platform/jest-config:
-    devDependencies:
-      react:
-        specifier: 19.1.4
-        version: 19.1.4
 
   features/platform/style:
     dependencies:
@@ -14613,6 +14607,12 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+
+  support/jest-features-flow:
+    devDependencies:
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
 
   tests/dummy-live-app:
     dependencies:
