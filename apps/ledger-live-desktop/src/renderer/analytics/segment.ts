@@ -156,6 +156,16 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getPayTabAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const payTab = analyticsFeatureFlagMethod("lwdPayTab");
+
+  return {
+    isEnabled: payTab?.enabled ?? false,
+    card: payTab?.params?.card ?? false,
+  };
+};
+
 const getLargeScreenUpsellAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const flag = analyticsFeatureFlagMethod("largeScreenUpsell");
@@ -286,6 +296,7 @@ const extraProperties = (store: ReduxStore) => {
   const addAccountAttributes = getAddAccountAttributes();
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const payTabAttributes = getPayTabAttributes();
   const largeScreenUpsellAttributes = getLargeScreenUpsellAttributes();
 
   const deviceInfo = device
@@ -376,6 +387,7 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    payTabAttributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
