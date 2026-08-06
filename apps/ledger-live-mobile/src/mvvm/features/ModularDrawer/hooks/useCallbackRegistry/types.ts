@@ -16,6 +16,7 @@ export interface RegistryManager {
   executeCurrencyCallback: (id: string, currency: CryptoOrTokenCurrency | null) => void;
   registerCancelCallback: (id: string, callback: CancelCallback) => void;
   executeCancelCallback: (id: string) => void;
+  unregisterCancelCallback: (id: string) => void;
   clearCallbacks: () => void;
   getCallbackKeys: () => string[];
 

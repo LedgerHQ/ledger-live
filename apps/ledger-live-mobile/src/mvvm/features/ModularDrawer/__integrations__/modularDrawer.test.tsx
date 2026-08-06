@@ -30,12 +30,9 @@ import {
   type NetInfoUnknownState,
 } from "@react-native-community/netinfo";
 
-jest.mock(
-  "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency",
-  () => ({
-    useAcceptedCurrency: () => mockUseAcceptedCurrency(),
-  })
-);
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
+}));
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
@@ -118,7 +115,7 @@ describe.each(DRAWER_VARIANTS)(
     it("should allow full navigation: asset → network → Device Selection, with back navigation at each step", async () => {
       const { getByText, getByTestId, user } = render(
         <ModularDrawerSharedNavigator />,
-        renderOptions
+        renderOptions,
       );
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -147,10 +144,7 @@ describe.each(DRAWER_VARIANTS)(
     });
 
     it("should go directly to Device selection for Bitcoin", async () => {
-      const { getByText, user } = render(
-        <ModularDrawerSharedNavigator />,
-        renderOptions
-      );
+      const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
       advanceTimers();
@@ -164,7 +158,7 @@ describe.each(DRAWER_VARIANTS)(
     it("should allow searching for assets", async () => {
       const { getByText, queryByText, getByPlaceholderText, user } = render(
         <ModularDrawerSharedNavigator />,
-        renderOptions
+        renderOptions,
       );
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -182,7 +176,7 @@ describe.each(DRAWER_VARIANTS)(
     it("should show the empty state when no assets are found", async () => {
       const { getByText, queryByText, getByPlaceholderText, user } = render(
         <ModularDrawerSharedNavigator />,
-        renderOptions
+        renderOptions,
       );
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -190,15 +184,13 @@ describe.each(DRAWER_VARIANTS)(
 
       await user.type(getByPlaceholderText(/search/i), "ttttttt");
 
-      await waitFor(() =>
-        expect(queryByText(/no assets found/i)).toBeVisible()
-      );
+      await waitFor(() => expect(queryByText(/no assets found/i)).toBeVisible());
     });
 
     it("should not crash when tapping search input with empty asset list", async () => {
       const { getByText, getByPlaceholderText, getByTestId, user } = render(
         <ModularDrawerSharedNavigator />,
-        renderOptions
+        renderOptions,
       );
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -219,7 +211,7 @@ describe.each(DRAWER_VARIANTS)(
     it("should expand to full height when tapping search input with non-empty list", async () => {
       const { getByText, getByPlaceholderText, user } = render(
         <ModularDrawerSharedNavigator />,
-        renderOptions
+        renderOptions,
       );
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
@@ -275,23 +267,14 @@ describe.each(DRAWER_VARIANTS)(
     });
 
     it("should display generic error when a Backend error occurs", async () => {
-      server.use(
-        http.get("https://dada.api.ledger.com/v1/assets", () =>
-          HttpResponse.error()
-        )
-      );
-      const { getByText, user } = render(
-        <ModularDrawerSharedNavigator />,
-        renderOptions
-      );
+      server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
+      const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
       advanceTimers();
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
       expect(
-        await screen.findByText(
-          /Something went wrong on our end\. Please try again later/i
-        )
+        await screen.findByText(/Something went wrong on our end\. Please try again later/i),
       ).toBeVisible();
     });
 
@@ -302,21 +285,16 @@ describe.each(DRAWER_VARIANTS)(
         type: NetInfoStateType.none,
       });
 
-      const { getByText, user } = render(
-        <ModularDrawerSharedNavigator />,
-        renderOptions
-      );
+      const { getByText, user } = render(<ModularDrawerSharedNavigator />, renderOptions);
 
       await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
       advanceTimers();
 
       await waitFor(() =>
-        expect(
-          getByText(/No internet connection. Please try again/i)
-        ).toBeVisible()
+        expect(getByText(/No internet connection. Please try again/i)).toBeVisible(),
       );
     });
-  }
+  },
 );
 
 describe("ModularDrawer — onCancel callback", () => {
@@ -327,11 +305,7 @@ describe("ModularDrawer — onCancel callback", () => {
     jest.mocked(mockUseAcceptedCurrency).mockReturnValue(() => true);
   });
 
-  const CancelCallbackTestComponent = ({
-    onCancel,
-  }: {
-    onCancel: () => void;
-  }) => {
+  const CancelCallbackTestComponent = ({ onCancel }: { onCancel: () => void }) => {
     const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
 
     const handleOpen = useCallback(() => {
@@ -342,23 +316,16 @@ describe("ModularDrawer — onCancel callback", () => {
       <>
         <Button onPress={handleOpen}>Open Drawer</Button>
         <Button onPress={closeDrawer}>Close Drawer</Button>
-        <ModularDrawer
-          isOpen={isOpen}
-          onClose={closeDrawer}
-          onAccountSelected={jest.fn()}
-        />
+        <ModularDrawer isOpen={isOpen} onClose={closeDrawer} onAccountSelected={jest.fn()} />
       </>
     );
   };
 
   it("should invoke onCancel when the drawer is closed without selecting an account", async () => {
-    const { getByText, user } = render(
-      <CancelCallbackTestComponent onCancel={mockOnCancel} />,
-      {
-        overrideInitialState: (state: State) =>
-          withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
-      }
-    );
+    const { getByText, user } = render(<CancelCallbackTestComponent onCancel={mockOnCancel} />, {
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
+    });
 
     await user.press(getByText("Open Drawer"));
     act(() => {
@@ -374,13 +341,10 @@ describe("ModularDrawer — onCancel callback", () => {
   });
 
   it("should not invoke onCancel when the drawer is not closed", async () => {
-    const { getByText, user } = render(
-      <CancelCallbackTestComponent onCancel={mockOnCancel} />,
-      {
-        overrideInitialState: (state: State) =>
-          withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
-      }
-    );
+    const { getByText, user } = render(<CancelCallbackTestComponent onCancel={mockOnCancel} />, {
+      overrideInitialState: (state: State) =>
+        withFlagOverrides({ ...mockedFF })(withReadOnlyDisabled(state)),
+    });
 
     await user.press(getByText("Open Drawer"));
     act(() => jest.advanceTimersByTime(500));
@@ -403,7 +367,7 @@ describe("ModularDrawer — Lumen BottomSheet specific", () => {
   it("should show BottomSheetHeader title and hide legacy Title when Lumen path is active", async () => {
     const { getByText, queryByTestId, getByTestId, user } = render(
       <ModularDrawerSharedNavigator />,
-      lumenOverride
+      lumenOverride,
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
