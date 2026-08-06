@@ -1,5 +1,5 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 

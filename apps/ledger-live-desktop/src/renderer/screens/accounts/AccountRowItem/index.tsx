@@ -20,9 +20,8 @@ import Button from "~/renderer/components/Button";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { useSelector } from "LLD/hooks/redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { walletSelector } from "~/renderer/reducers/wallet";
-import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { getDefaultAccountName } from "@domain/entity-account-name";
+import { walletSelector, accountNameSelector } from "~/renderer/reducers/wallet";
 const Row = styled(Box)`
   background: ${p => p.theme.colors.background.card};
   border-radius: 4px;

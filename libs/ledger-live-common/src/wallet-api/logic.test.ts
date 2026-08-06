@@ -42,7 +42,7 @@ import {
 } from "@domain/entity-currency-crypto";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import { TrackingAPI } from "./tracking";
-import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+const walletState = new Map<string, string>();
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 
 // Setup mock store for unit tests

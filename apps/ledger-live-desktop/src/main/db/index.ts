@@ -8,7 +8,10 @@ import fs from "fs/promises";
 import { getEnv } from "@shared/env";
 import { NoDBPathGiven, DBWrongPassword } from "../../errors";
 import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { exportWalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import {
+  exportWalletState,
+  initialState as walletInitialState,
+} from "~/renderer/reducers/wallet.core";
 import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";

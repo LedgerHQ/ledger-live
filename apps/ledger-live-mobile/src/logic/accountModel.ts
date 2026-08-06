@@ -2,7 +2,7 @@ import { createDataModel } from "@ledgerhq/live-common/DataModel";
 import type { DataModel } from "@ledgerhq/live-common/DataModel";
 import type { Account, AccountRaw, Operation, AccountUserData } from "@ledgerhq/types-live";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/account/index";
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
+import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/accounts";
 
 /**
  * @memberof models/account

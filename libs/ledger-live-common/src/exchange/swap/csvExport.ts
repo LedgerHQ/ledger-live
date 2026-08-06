@@ -1,7 +1,7 @@
 import { formatCurrencyUnit } from "../../currencies";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import type { SwapHistorySection, MappedSwapOperation } from "./types";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 type Field = {
   title: string;
   cell: (arg0: MappedSwapOperation) => string;

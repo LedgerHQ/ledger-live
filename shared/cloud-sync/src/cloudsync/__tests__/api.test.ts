@@ -84,6 +84,44 @@ describe("getApi", () => {
     );
   });
 
+  it("exposes the HTTP status on a 401 so JWT expiration handling can react", async () => {
+    server.use(
+      http.get(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.fetchData(jwt, "live", undefined, trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "GET" });
+    expect(error.message).toBe("JWT is expired");
+  });
+
+  it("exposes the HTTP status on a 401 upload", async () => {
+    server.use(
+      http.post(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.uploadData(jwt, "live", 1, "payload", trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "POST" });
+  });
+
+  it("exposes the HTTP status on a 401 delete", async () => {
+    server.use(
+      http.delete(`${base}/atomic/v1/:slug`, () =>
+        HttpResponse.json({ message: "JWT is expired" }, { status: 401 }),
+      ),
+    );
+    const error = await api.deleteData(jwt, "live", trustchain).catch(e => e);
+    expect(error).toMatchObject({ status: 401, method: "DELETE" });
+  });
+
+  it("falls back to a status message when the error body carries none", async () => {
+    server.use(http.get(`${base}/atomic/v1/:slug`, () => HttpResponse.json({}, { status: 403 })));
+    const error = await api.fetchData(jwt, "live", undefined, trustchain).catch(e => e);
+    expect(error.status).toBe(403);
+    expect(error.message).toContain("HTTP 403");
+  });
+
   it("fetchStatus returns service info", async () => {
     await expect(api.fetchStatus()).resolves.toEqual({ name: "cloud-sync", version: "1.0.0" });
   });

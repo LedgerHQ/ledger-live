@@ -332,7 +332,7 @@ function useWebView(
   const walletState = useSelector(walletSelector);
 
   const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
-    walletState,
+    accountNames: walletState.accountNames,
     manifest,
     accounts,
     tracking,

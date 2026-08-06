@@ -3,9 +3,8 @@ import {
   RecentAddressesCache,
   getRecentAddressesStore,
 } from "@ledgerhq/live-common/account/index";
-import { updateRecentAddresses } from "@ledgerhq/live-wallet/store";
+import { updateRecentAddresses, recentAddressesSelector } from "~/reducers/wallet";
 import type { StoreType } from "~/state-manager/configureStore";
-import { recentAddressesSelector } from "~/reducers/wallet";
 import { Unsubscribe } from "@reduxjs/toolkit";
 
 let unsubscribe: Unsubscribe;

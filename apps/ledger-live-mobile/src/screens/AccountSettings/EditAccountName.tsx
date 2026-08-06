@@ -14,8 +14,8 @@ import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/ty
 import {
   accountNameWithDefaultSelector,
   setAccountName as setAccountNameStore,
-} from "@ledgerhq/live-wallet/store";
-import { walletSelector } from "~/reducers/wallet";
+  walletSelector,
+} from "~/reducers/wallet";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import invariant from "invariant";
 import { updateAccount } from "~/actions/accounts";
