@@ -12,6 +12,10 @@ hooks {
             ["gitleaks"] {
                 check = "gitleaks git --pre-commit --staged --redact --no-banner --verbose --config .gitleaks.toml"
             }
+            ["validate-tsconfig-presets"] {
+                glob = List("**/tsconfig*.json")
+                check = "tsx tools/scripts/validate-tsconfig-presets.mts {{ files }}"
+            }
         }
     }
 }
