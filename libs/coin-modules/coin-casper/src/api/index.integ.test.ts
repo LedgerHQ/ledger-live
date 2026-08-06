@@ -1,12 +1,8 @@
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "./index";
+import { FUNDED_MAINNET_PUBLIC_KEY } from "../__tests__/fixtures/addresses.fixture";
 import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
-
-// Live mainnet account, declared here rather than pulled from the mock fixtures so that
-// refreshing one never silently moves the other.
-const FUNDED_MAINNET_PUBLIC_KEY =
-  "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
 
 describe("Casper Api (mainnet)", () => {
   let api: CoinModuleApi;

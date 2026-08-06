@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { FUNDED_ACCOUNT } from "../__tests__/fixtures/accountState.fixture";
+import { createMockAccount } from "../__tests__/fixtures/account.fixture";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
 import { fetchAccountStateInfo, fetchBalance } from "../network/api";
 import { getBalance } from "./getBalance";
@@ -12,6 +12,13 @@ jest.mock("../network/api", () => ({
 const mockedFetchAccountStateInfo = jest.mocked(fetchAccountStateInfo);
 const mockedFetchBalance = jest.mocked(fetchBalance);
 
+const FUNDED_ACCOUNT = createMockAccount();
+const FUNDED_ACCOUNT_STATE = {
+  accountHash: "account-hash-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  purseUref: "uref-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-007",
+};
+const FUNDED_ACCOUNT_MOTES = FUNDED_ACCOUNT.balance.toFixed(0);
+
 const EXPONENTIAL_NOTATION_THRESHOLD_MOTES = "1000000000000000000000"; // 1e21
 
 describe("getBalance", () => {
@@ -20,21 +27,16 @@ describe("getBalance", () => {
   });
 
   it("returns the native CSPR balance for a funded account", async () => {
-    mockedFetchAccountStateInfo.mockResolvedValue({
-      purseUref: FUNDED_ACCOUNT.purseUref,
-      accountHash: FUNDED_ACCOUNT.accountHash,
-    });
-    mockedFetchBalance.mockResolvedValue(new BigNumber(FUNDED_ACCOUNT.balanceMotes));
+    mockedFetchAccountStateInfo.mockResolvedValue(FUNDED_ACCOUNT_STATE);
+    mockedFetchBalance.mockResolvedValue(new BigNumber(FUNDED_ACCOUNT_MOTES));
 
-    const result = await getBalance(FUNDED_ACCOUNT.publicKey);
+    const result = await getBalance(FUNDED_ACCOUNT.freshAddress);
 
     expect(mockedFetchAccountStateInfo).toHaveBeenCalledTimes(1);
-    expect(mockedFetchAccountStateInfo).toHaveBeenCalledWith(FUNDED_ACCOUNT.publicKey);
+    expect(mockedFetchAccountStateInfo).toHaveBeenCalledWith(FUNDED_ACCOUNT.freshAddress);
     expect(mockedFetchBalance).toHaveBeenCalledTimes(1);
-    expect(mockedFetchBalance).toHaveBeenCalledWith(FUNDED_ACCOUNT.purseUref);
-    expect(result).toEqual([
-      { value: BigInt(FUNDED_ACCOUNT.balanceMotes), asset: { type: "native" } },
-    ]);
+    expect(mockedFetchBalance).toHaveBeenCalledWith(FUNDED_ACCOUNT_STATE.purseUref);
+    expect(result).toEqual([{ value: BigInt(FUNDED_ACCOUNT_MOTES), asset: { type: "native" } }]);
   });
 
   it("returns a zero native balance when the account has no main purse", async () => {
@@ -50,13 +52,10 @@ describe("getBalance", () => {
   });
 
   it("converts balances above the exponential-notation threshold without loss", async () => {
-    mockedFetchAccountStateInfo.mockResolvedValue({
-      purseUref: FUNDED_ACCOUNT.purseUref,
-      accountHash: FUNDED_ACCOUNT.accountHash,
-    });
+    mockedFetchAccountStateInfo.mockResolvedValue(FUNDED_ACCOUNT_STATE);
     mockedFetchBalance.mockResolvedValue(new BigNumber(EXPONENTIAL_NOTATION_THRESHOLD_MOTES));
 
-    const result = await getBalance(FUNDED_ACCOUNT.publicKey);
+    const result = await getBalance(FUNDED_ACCOUNT.freshAddress);
 
     expect(result).toEqual([
       { value: BigInt(EXPONENTIAL_NOTATION_THRESHOLD_MOTES), asset: { type: "native" } },
@@ -64,13 +63,10 @@ describe("getBalance", () => {
   });
 
   it("propagates errors from fetchBalance", async () => {
-    mockedFetchAccountStateInfo.mockResolvedValue({
-      purseUref: FUNDED_ACCOUNT.purseUref,
-      accountHash: FUNDED_ACCOUNT.accountHash,
-    });
+    mockedFetchAccountStateInfo.mockResolvedValue(FUNDED_ACCOUNT_STATE);
     mockedFetchBalance.mockRejectedValue(new Error("state root hash unavailable"));
 
-    await expect(getBalance(FUNDED_ACCOUNT.publicKey)).rejects.toThrow(
+    await expect(getBalance(FUNDED_ACCOUNT.freshAddress)).rejects.toThrow(
       "state root hash unavailable",
     );
   });
