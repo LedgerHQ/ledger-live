@@ -1,6 +1,7 @@
 # @shared/cloud-sync-module
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated CloudSync DDD architecture; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Context-free aggregation core for Ledger Live cloud synchronisation.
 

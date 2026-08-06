@@ -1,6 +1,7 @@
 # @domain/entity-recent-addresses
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync DDD architecture; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Schemas, RTK slice, in-memory store and WalletSync module for recently used recipient addresses.
 

@@ -1,6 +1,7 @@
 # @domain/entity-account-name
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync DDD architecture; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 RTK slice and WalletSync module for user-defined account names.
 

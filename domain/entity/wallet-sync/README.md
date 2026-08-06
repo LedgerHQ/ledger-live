@@ -1,6 +1,7 @@
 # @domain/entity-wallet-sync
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync DDD architecture; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 RTK slice for WalletSync protocol state (distant data + version).
 
