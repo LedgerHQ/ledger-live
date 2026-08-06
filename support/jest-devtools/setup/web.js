@@ -1,4 +1,4 @@
-import "@testing-library/jest-dom";
+// jsdom setup shared by the devtools packages' web test projects.
 
 const originalError = console.error;
 

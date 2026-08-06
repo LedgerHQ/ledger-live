@@ -1,9 +1,8 @@
-import React, { type ComponentType, type ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import { render as rntlRender, RenderOptions, RenderResult } from "@testing-library/react-native";
 import { ThemeProvider, BottomSheet } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
-
-type Wrapper = ComponentType<{ readonly children: ReactNode }>;
+import type { Wrapper } from "./types";
 
 function ThemeProviders({ children }: { readonly children: ReactNode }) {
   return <ThemeProvider themes={ledgerLiveThemes}>{children}</ThemeProvider>;
@@ -39,3 +38,4 @@ function BottomSheetWrapper({ children }: { readonly children: ReactNode }) {
 
 export * from "@testing-library/react-native";
 export { render, BottomSheetWrapper };
+export type { RenderConfig, Wrapper };
