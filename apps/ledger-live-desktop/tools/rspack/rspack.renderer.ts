@@ -274,25 +274,6 @@ export function createRendererConfig(
             filename: "assets/[name]-[hash][ext]",
           },
         },
-        // JSON files in src/ - emit as assets and load via require() at runtime (prod only)
-        // In dev mode, rspack's default JSON handler inlines them for HMR compatibility
-        // In prod mode, this replicates esbuild's JsonPlugin behavior for reduced bundle size
-        ...(isDev
-          ? []
-          : [
-              {
-                test: /\.json$/,
-                include: [
-                  path.resolve(rootFolder, "src"),
-                  // Animation JSON owned by a new-architecture package (e.g.
-                  // @features/platform-device-action-content) resolves outside the app, so it
-                  // needs the same treatment or it gets inlined into the renderer bundle.
-                  /[\\/]features[\\/].*[\\/]animations[\\/]/,
-                ],
-                type: "javascript/auto" as const,
-                use: [path.resolve(__dirname, "animationJsonLoader.cjs")],
-              },
-            ]),
       ],
     },
     plugins: [
