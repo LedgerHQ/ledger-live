@@ -11,7 +11,8 @@ export function ContactDetailView({
   labels,
   meAvatarSrc,
   onAddAddress,
-  onOpenLedgerWalletAddresses,
+  ledgerWalletAccountsIntent,
+  onLedgerWalletAccountsPress,
   addressGroups,
   onAddressRowPress,
 }: ContactDetailViewProps): React.JSX.Element {
@@ -25,10 +26,11 @@ export function ContactDetailView({
         meAvatarSrc={meAvatarSrc}
         onAddAddress={onAddAddress}
       />
-      {contact.isMe && labels.ledgerWalletAddresses && onOpenLedgerWalletAddresses ? (
+      {ledgerWalletAccountsIntent && labels.ledgerWalletAddresses && onLedgerWalletAccountsPress ? (
         <LedgerWalletAddressesCard
           label={labels.ledgerWalletAddresses}
-          onPress={onOpenLedgerWalletAddresses}
+          intent={ledgerWalletAccountsIntent}
+          onPress={onLedgerWalletAccountsPress}
         />
       ) : null}
       {hasPopulatedAddresses ? (

@@ -246,6 +246,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
       searchNoResults: t("contacts.searchNoResults"),
       addContact: t("contacts.addContact"),
       formatAddressCount: count => t("contacts.addressCount", { count }),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
     }),
     [t],
   );
@@ -260,11 +261,16 @@ export function useContactsViewModel(): ContactsPageViewModel {
   );
   const viewModel = useMemo(() => {
     if (searchQuery.trim().length > 0) {
-      return createContactsSearchViewModel(meContact, contacts, searchQuery);
+      return createContactsSearchViewModel(
+        meContact,
+        contacts,
+        searchQuery,
+        labels.formatMeDisplayName,
+      );
     }
 
-    return createContactsListViewModel(meContact, contacts);
-  }, [contacts, meContact, searchQuery]);
+    return createContactsListViewModel(meContact, contacts, labels.formatMeDisplayName);
+  }, [contacts, labels.formatMeDisplayName, meContact, searchQuery]);
   const onSearchInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   }, []);

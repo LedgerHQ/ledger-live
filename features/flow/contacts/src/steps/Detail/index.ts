@@ -1,5 +1,6 @@
 export { useEmptyContactDetail } from "./useEmptyContactDetail";
 export { usePopulatedContactDetail } from "./usePopulatedContactDetail";
+export { useContactDetailSharedState } from "./useContactDetailSharedState";
 export { useContactAddressDetailDialog } from "./useContactAddressDetailDialog";
 export { useContactDetailActionsViewModel } from "./useContactDetailActionsViewModel";
 export { createContactDetailActionsPorts } from "./createContactDetailActionsPorts";
@@ -27,6 +28,11 @@ export {
   createContactDetailAddressRowIntent,
   createPopulatedContactDetailViewModel,
 } from "./model/viewModel";
+export {
+  createContactDetailLedgerWalletAccountsIntent,
+  createContactDetailSharedState,
+} from "./model/contactDetailSharedState";
+export type { ContactDetailSharedState } from "./model/contactDetailSharedState";
 export {
   createContactDetailDeleteIntent,
   createContactDetailEditIntent,
@@ -84,6 +90,7 @@ export type {
   ContactDetailAddressRowIntent,
   ContactDetailDeleteIntent,
   ContactDetailEditIntent,
+  ContactDetailLedgerWalletAccountsIntent,
   ContactDetailLabels,
   ContactDetailViewProps,
   ContactDetailActionsLabels,

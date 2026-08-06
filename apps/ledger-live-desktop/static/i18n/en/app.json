@@ -9339,6 +9339,7 @@
     },
     "detail": {
       "meDisplayName": "{{name}} (Me)",
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
