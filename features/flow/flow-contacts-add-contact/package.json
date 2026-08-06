@@ -55,6 +55,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
