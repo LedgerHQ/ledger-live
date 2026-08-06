@@ -26,7 +26,7 @@ export const payCardSlice = createSlice({
       state,
       action: PayloadAction<Partial<PayCardPersistedState>>,
     ) => {
-      const { hasSeenFeatureTour } = action.payload;
+      const { hasSeenFeatureTour } = action.payload ?? {};
       if (typeof hasSeenFeatureTour === "boolean") {
         state.hasSeenFeatureTour = hasSeenFeatureTour;
       }

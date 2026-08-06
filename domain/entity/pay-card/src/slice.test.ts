@@ -49,6 +49,15 @@ describe("restorePayCardPersistedState", () => {
     expect(state.hasSeenFeatureTour).toBe(true);
   });
 
+  it("is a no-op when dispatched with an undefined payload (nothing persisted yet)", () => {
+    const state = reducer(
+      undefined,
+      // @ts-expect-error - simulating a restore with no persisted data
+      restorePayCardPersistedState(undefined),
+    );
+    expect(state).toEqual(payCardInitialState);
+  });
+
   it("ignores non-boolean values", () => {
     const state = reducer(
       undefined,
