@@ -18,10 +18,25 @@ composition root.
 
 ## Platform resolution
 
+Platform files live side by side (`.web` / `.native`). Imports omit the suffix; TypeScript
+`moduleSuffixes` and the bundlers resolve the right file:
+
+```ts
+import { CardLoginView } from "./CardLoginView";
+// → CardLoginView.web.tsx (desktop) or CardLoginView.native.tsx (mobile)
+```
+
+| Tooling | How it resolves |
+| ------- | --------------- |
+| TypeScript (IDE) | Solution-style `tsconfig.json` → `tsconfig.web.json` / `tsconfig.native.json` |
+| Desktop (Rspack) | `.web` / unsuffixed |
+| Mobile (Metro) | `.native` / unsuffixed |
+| Jest | Tests import `.web` / `.native` files explicitly |
+
 | Platform         | File resolved                        |
 | ---------------- | ------------------------------------ |
 | Mobile (Metro)   | `CardLogin/index.native.tsx`         |
-| Desktop (Rspack) | `CardLogin/index.tsx`                |
+| Desktop (Rspack) | `CardLogin/index.web.tsx`            |
 
 ## Structure
 
@@ -39,7 +54,7 @@ pay-card-auth/
     │       ├── CardLoginView.native.tsx     # Native presentational UI
     │       ├── CardLoginView.web.tsx        # Web presentational UI
     │       ├── index.native.tsx             # Native component container
-    │       ├── index.tsx                    # Web component container
+    │       ├── index.web.tsx                # Web component container
     │       ├── types.ts                     # Component contracts
     │       └── useCardLoginViewModel.ts     # Shared state and orchestration
     ├── hooks/                              # Flow-local hooks

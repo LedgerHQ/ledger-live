@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLoginView } from "./CardLoginView.web";
+import { CardLoginView } from "./CardLoginView";
 import type { CardLoginProps } from "./types";
 import { useCardLoginViewModel } from "./useCardLoginViewModel";
 
