@@ -18,6 +18,10 @@ hooks {
                 glob = List(".github/workflows/*.yml", "tools/actions/**/*.yml")
                 check = "zizmor --no-progress {{ files }} --min-severity=high"
             }
+            ["validate-tsconfig-presets"] {
+                glob = List("**/tsconfig*.json")
+                check = "tsx tools/scripts/validate-tsconfig-presets.mts {{ files }}"
+            }
         }
     }
     ["commit-msg"] {

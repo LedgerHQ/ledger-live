@@ -252,6 +252,7 @@
     "oxlint": "catalog:",
     "rimraf": "4.4.1",
     "@typescript/native": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "unimported": "1.30.0",
     "zx": "8.8.5"

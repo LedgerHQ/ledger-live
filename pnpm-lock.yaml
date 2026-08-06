@@ -697,6 +697,9 @@ importers:
       rimraf:
         specifier: 4.4.1
         version: 4.4.1
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
