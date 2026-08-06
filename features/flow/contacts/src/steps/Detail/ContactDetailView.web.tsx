@@ -4,12 +4,15 @@ import { ContactDetailActions } from "./components/ContactDetailActions/ContactD
 import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.web";
 import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.web";
 import { ContactDetailHeader } from "./components/ContactDetailHeader.web";
+import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard.web";
 
 export function ContactDetailView({
   contact,
   labels,
   meAvatarSrc,
   onAddAddress,
+  ledgerWalletAccountsIntent,
+  onLedgerWalletAccountsPress,
   addressGroups,
   onAddressRowPress,
   detailActions,
@@ -28,6 +31,13 @@ export function ContactDetailView({
         meAvatarSrc={meAvatarSrc}
         onAddAddress={onAddAddress}
       />
+      {ledgerWalletAccountsIntent && labels.ledgerWalletAddresses && onLedgerWalletAccountsPress ? (
+        <LedgerWalletAddressesCard
+          label={labels.ledgerWalletAddresses}
+          intent={ledgerWalletAccountsIntent}
+          onPress={onLedgerWalletAccountsPress}
+        />
+      ) : null}
       {hasPopulatedAddresses ? (
         <ContactDetailAddressList
           addressGroups={addressGroups}

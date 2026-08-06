@@ -10235,6 +10235,7 @@
       "addressCount_other": "{{count}} addresses"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
       "ledgerWalletAddresses": "Ledger Wallet addresses",
       "myAddresses": "My addresses",
       "emptyState": {

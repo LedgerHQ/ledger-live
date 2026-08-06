@@ -4,6 +4,7 @@ import type { ContactId } from "@domain/entity-contact";
 import {
   type AddAddressContact,
   useContactsMeContact,
+  useContactDetailSharedState,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   useContactAddressDetailDialog,
@@ -63,6 +64,10 @@ export function useContactDetailPaneAdapter(
     }),
     [t],
   );
+  const detailSharedState = useContactDetailSharedState(
+    detailContactId,
+    labels.formatMeDisplayName,
+  );
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
     () => ({
       send: t("contacts.addressDetail.send"),
@@ -83,33 +88,28 @@ export function useContactDetailPaneAdapter(
     [clearSelection],
   );
   const detail = useMemo<ContactDetailViewProps | undefined>(() => {
-    const baseDetail = {
-      labels,
-      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
-    };
+    const contact = populatedContactDetail?.contact ?? emptyContact;
 
-    if (populatedContactDetail) {
-      return {
-        ...baseDetail,
-        contact: populatedContactDetail.contact,
-        onAddAddress: () => onAddAddress(populatedContactDetail.contact),
-        addressGroups: populatedContactDetail.addressGroups,
-        onAddressRowPress,
-        detailActions: editDeleteDialogs.detailActions,
-      };
-    }
-
-    if (!emptyContact) {
+    if (!contact) {
       return undefined;
     }
 
     return {
-      ...baseDetail,
-      contact: emptyContact,
-      onAddAddress: () => onAddAddress(emptyContact),
+      labels,
+      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
+      contact,
+      onAddAddress: () => onAddAddress(contact),
+      ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
+      ...(populatedContactDetail
+        ? {
+            addressGroups: populatedContactDetail.addressGroups,
+            onAddressRowPress,
+          }
+        : {}),
       detailActions: editDeleteDialogs.detailActions,
     };
   }, [
+    detailSharedState?.ledgerWalletAccountsIntent,
     emptyContact,
     editDeleteDialogs.detailActions,
     labels,
