@@ -31,8 +31,10 @@ export function createRendererConfig(
     ...commonConfig,
     name: "renderer",
     mode,
-    // Use electron-renderer target - ElectronTargetPlugin handles node builtins
-    target: "electron-renderer",
+    // The renderer has no Node access under contextIsolation, so it is built as an ordinary
+    // web target. "es2022" pins output.environment explicitly — with no browserslist config
+    // a bare "web" target falls back to conservative codegen. Electron 43 ships Chromium 150.
+    target: ["web", "es2022"],
     entry: {
       // The process shim must run before the application's first module: many modules read
       // process.env at module scope, and DefinePlugin rewrites those reads to globals this
@@ -42,6 +44,12 @@ export function createRendererConfig(
     output: {
       ...commonConfig.output,
       filename: "renderer.bundle.js",
+      // The chunk-loading runtime otherwise emits `global[...]`, because electron-renderer
+      // is a Node-ish target. `global` does not exist in the renderer's main world once
+      // contextIsolation is on, so the very first chunk load throws
+      // "ReferenceError: global is not defined". DefinePlugin cannot fix this — it does not
+      // rewrite the bundler's own runtime.
+      globalObject: "globalThis",
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
@@ -77,6 +85,41 @@ export function createRendererConfig(
             ".lottie",
           ],
       mainFields: ["browser", "module", "main"],
+      // Honour package.json `browser` field *object* mappings, e.g. {"crypto": false}.
+      // mainFields only covers the string form; without this, packages that ship a browser
+      // build keep resolving their Node entry and drag builtins back in.
+      aliasFields: ["browser"],
+      // Node builtins the dependency tree still reaches for. Deliberately explicit rather
+      // than a blanket polyfill plugin: each entry that is actually used is a bundle-size
+      // regression worth seeing in review.
+      //
+      // `crypto` maps to crypto-browserify only because an audit showed the libs use just
+      // randomBytes/createHash/createHmac/createSign. It has NO AES-GCM (browserify-cipher
+      // omits it), so if a GCM user is ever reintroduced this will build green and throw at
+      // runtime — that is why hw-ledger-key-ring-protocol was moved to @noble instead.
+      //
+      // `os` is deliberately absent: os-browserify reports type() === "Browser" and an empty
+      // hostname(), which would silently mislabel the Ledger Sync instance name.
+      fallback: {
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("readable-stream"),
+        string_decoder: require.resolve("string_decoder/"),
+        url: require.resolve("url/"),
+        querystring: require.resolve("querystring-es3"),
+        path: require.resolve("path-browserify"),
+        util: require.resolve("util/"),
+        assert: require.resolve("assert/"),
+        buffer: require.resolve("buffer/"),
+        // Unreachable in a browser build: live-network gates its keep-alive agent on
+        // process.release, which is defined away above.
+        http: false,
+        https: false,
+        net: false,
+        tls: false,
+        zlib: false,
+        fs: false,
+        child_process: false,
+      },
       // Don't require file extensions in imports for ESM modules
       fullySpecified: false,
       // Module resolution paths - needed for features folder to find react, etc.
@@ -97,20 +140,9 @@ export function createRendererConfig(
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
-        // Force rspack to use node/esm builds for these packages to reduce bundle size
-        // These packages have browser field pointing to larger UMD/web bundles
-        "icon-sdk-js": path.resolve(
-          rootFolder,
-          "..",
-          "..",
-          "node_modules",
-          ".pnpm",
-          "icon-sdk-js@1.5.2",
-          "node_modules",
-          "icon-sdk-js",
-          "build",
-          "icon-sdk-js.node.min.js",
-        ),
+        // NB icon-sdk-js was aliased to its .node.min.js build for bundle size. That build
+        // pulls in net, tls, os, http, https, util and zlib, so it resolves to its browser
+        // entry again under a web target. Costs size; correctness wins.
         // @stellar/stellar-sdk: browser field is dist/stellar-sdk.min.js (915KB), main is lib/index.js (smaller, tree-shakeable)
         "@stellar/stellar-sdk": path.resolve(
           rootFolder,
@@ -278,8 +310,6 @@ export function createRendererConfig(
     },
     plugins: [
       ...getRsdoctorPlugin("renderer"),
-      // ElectronTargetPlugin for proper node/electron module handling
-      new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
@@ -302,6 +332,16 @@ export function createRendererConfig(
         // `require("https")` keep-alive agent on `process.release?.name === "node"`.
         // Defining it away removes that branch from a browser-shaped bundle.
         "process.release": "undefined",
+        // Third-party code reaching for the Node `global`. Only aliased `window` because
+        // nodeIntegration was on; it does not exist under contextIsolation.
+        global: "globalThis",
+      }),
+      // `Buffer` is a Node global that the coin/crypto stack uses as a free variable in
+      // hundreds of places. Unlike the DefinePlugin-introduced identifiers above,
+      // ProvidePlugin works here: it rewrites free variables it sees while parsing source,
+      // and `Buffer` genuinely is one.
+      new rspack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
       }),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(rootFolder, "src", "renderer", "index.html"),

@@ -1242,9 +1242,15 @@ importers:
       allure-commandline:
         specifier: 2.28.0
         version: 2.28.0
+      assert:
+        specifier: ^2.1.0
+        version: 2.1.0
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       chart.js:
         specifier: 2.9.4
         version: 2.9.4
@@ -1257,6 +1263,9 @@ importers:
       color:
         specifier: 4.2.3
         version: 4.2.3
+      crypto-browserify:
+        specifier: ^3.12.1
+        version: 3.12.1
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
@@ -1305,6 +1314,9 @@ importers:
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
+      path-browserify:
+        specifier: ^1.0.1
+        version: 1.0.1
       prando:
         specifier: 5.1.2
         version: 5.1.2
@@ -1314,6 +1326,9 @@ importers:
       qrcode:
         specifier: 'catalog:'
         version: 1.5.4
+      querystring-es3:
+        specifier: ^0.2.1
+        version: 0.2.1
       react:
         specifier: 19.1.4
         version: 19.1.4
@@ -1353,6 +1368,9 @@ importers:
       react-transition-group:
         specifier: 4.4.5
         version: 4.4.5(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      readable-stream:
+        specifier: ^4.7.0
+        version: 4.7.0
       redux:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1371,6 +1389,9 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.3
+      string_decoder:
+        specifier: ^1.3.0
+        version: 1.3.0
       styled-components:
         specifier: 'catalog:'
         version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1392,6 +1413,12 @@ importers:
       undici:
         specifier: 'catalog:'
         version: 7.18.2
+      url:
+        specifier: ^0.11.4
+        version: 0.11.4
+      util:
+        specifier: ^0.12.5
+        version: 0.12.5
       uuid:
         specifier: 9.0.1
         version: 9.0.1
@@ -1534,9 +1561,6 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.13.5
-      buffer:
-        specifier: 6.0.3
-        version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       chalk:
         specifier: 4.1.2
         version: 4.1.2
@@ -29097,10 +29121,6 @@ packages:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
     engines: {node: '>= 0.4'}
 
-  call-bind@1.0.7:
-    resolution: {integrity: sha512-GHTSNSYICQ7scH7sZ+M2rFopRoLh8t2bLSW6BbgrtLsahOIB5iyAVJf9GjWK3cYTDaMj4XdBpM1cA6pIS0Kv2w==}
-    engines: {node: '>= 0.4'}
-
   call-bind@1.0.8:
     resolution: {integrity: sha512-oKlSFMcMwpUg2ednkhQ454wfWiU/ul3CkJe/PEHcTKuiX6RpbehUiFMXu13HalGZxfUwCQzZG747YXBn1im9ww==}
     engines: {node: '>= 0.4'}
@@ -30017,9 +30037,6 @@ packages:
 
   crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
-
-  crypto-browserify@3.12.0:
-    resolution: {integrity: sha512-fz4spIh+znjO2VjL+IdhEpRJ3YN6sMzITSBijk6FK2UvTqruSQW+/cCZTSNsMiZNvUeq0CqurF+dAbyiGOY6Wg==}
 
   crypto-browserify@3.12.1:
     resolution: {integrity: sha512-r4ESw/IlusD17lgQi1O20Fa3qNnsckR126TdUuBgAu7GBYSIPvdNyONd3Zrxh0xCwA4+6w/TDArBPsMvhur+KQ==}
@@ -33151,10 +33168,6 @@ packages:
     resolution: {integrity: sha512-9gGx6GTtCQM73BgmHQXfDmLtfjjTUDSyoxTCbp5WtoixAhfgsDirWIcVQ/IHpvI5Vgd5i/J5F7B9cN/WlVbC/w==}
     engines: {node: '>= 0.4'}
 
-  is-typed-array@1.1.13:
-    resolution: {integrity: sha512-uZ25/bUAlUY5fR4OKT4rZQEBrzQWYV9ZJYGGsUmEJ6thodVJ1HX64ePQ6Z0qPWP+m+Uq6e9UugrE38jeYsDSMw==}
-    engines: {node: '>= 0.4'}
-
   is-typed-array@1.1.15:
     resolution: {integrity: sha512-p3EcsicXjit7SaskXHs1hA91QxgTw46Fv6EFKKGS5DRFLD8yKnohjF3hxoju94b/OcMZoQukzpPpBE9uLVKzgQ==}
     engines: {node: '>= 0.4'}
@@ -35683,10 +35696,6 @@ packages:
   object-path@0.11.8:
     resolution: {integrity: sha512-YJjNZrlXJFM42wTBn6zgOJVar9KFJvzx6sTWDte8sWZF//cnjl0BxHNpfZx+ZffXX63A9q0b1zsFiBX4g4X5KA==}
     engines: {node: '>= 10.12.0'}
-
-  object.assign@4.1.5:
-    resolution: {integrity: sha512-byy+U7gp+FVwmyzKPYhW2h5l3crpmGsxl7X2s8y43IgxvG4g3QZ6CffDtsNQy1WsmZpQbO+ybo0AlW7TY6DcBQ==}
-    engines: {node: '>= 0.4'}
 
   object.assign@4.1.7:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
@@ -39868,9 +39877,6 @@ packages:
   url-parse@1.5.10:
     resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
 
-  url@0.11.3:
-    resolution: {integrity: sha512-6hxOLGfZASQK/cijlZnZJTq8OXAkt/3YGfQX45vvMYXpZoo8NdWZcY73K108Jf759lS1Bv/8wXnHDTSz17dSRw==}
-
   url@0.11.4:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
@@ -40354,10 +40360,6 @@ packages:
   which-pm@2.2.0:
     resolution: {integrity: sha512-MOiaDbA5ZZgUjkeMWM5EkJp4loW5ZRoa5bc3/aeMox/PJelMhE6t7S/mLuiY43DBupyxH+S0U1bTui9kWUlmsw==}
     engines: {node: '>=8.15'}
-
-  which-typed-array@1.1.15:
-    resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
-    engines: {node: '>= 0.4'}
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
@@ -56533,10 +56535,10 @@ snapshots:
 
   assert@2.1.0:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       is-nan: 1.3.2
       object-is: 1.1.6
-      object.assign: 4.1.5
+      object.assign: 4.1.7
       util: 0.12.5
 
   assertion-error@1.1.0: {}
@@ -57670,14 +57672,6 @@ snapshots:
       es-errors: 1.3.0
       function-bind: 1.1.2
 
-  call-bind@1.0.7:
-    dependencies:
-      es-define-property: 1.0.1
-      es-errors: 1.3.0
-      function-bind: 1.1.2
-      get-intrinsic: 1.3.0
-      set-function-length: 1.2.2
-
   call-bind@1.0.8:
     dependencies:
       call-bind-apply-helpers: 1.0.2
@@ -58522,20 +58516,6 @@ snapshots:
       uncrypto: 0.1.3
 
   crypt@0.0.2: {}
-
-  crypto-browserify@3.12.0:
-    dependencies:
-      browserify-cipher: 1.0.1
-      browserify-sign: 4.2.3
-      create-ecdh: 4.0.4
-      create-hash: 1.2.0
-      create-hmac: 1.1.7
-      diffie-hellman: 5.0.3
-      inherits: 2.0.4
-      pbkdf2: 3.1.2
-      public-encrypt: 4.0.3
-      randombytes: 2.1.0
-      randomfill: 1.0.4
 
   crypto-browserify@3.12.1:
     dependencies:
@@ -61921,7 +61901,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       bufferutil: 4.1.0
       core-js: 3.36.1
-      crypto-browserify: 3.12.0
+      crypto-browserify: 3.12.1
       js-sha3: 0.8.0
       readable-stream: 4.7.0
       secp256k1: 5.0.0
@@ -62299,10 +62279,6 @@ snapshots:
       call-bound: 1.0.4
       has-symbols: 1.1.0
       safe-regex-test: 1.1.0
-
-  is-typed-array@1.1.13:
-    dependencies:
-      which-typed-array: 1.1.19
 
   is-typed-array@1.1.15:
     dependencies:
@@ -64808,9 +64784,7 @@ snapshots:
     optionalDependencies:
       metro-transform-worker: 0.81.5
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   metro-config@0.83.3(metro-transform-worker@0.83.3):
     dependencies:
@@ -66060,7 +66034,7 @@ snapshots:
       string_decoder: 1.3.0
       timers-browserify: 2.0.12
       tty-browserify: 0.0.0
-      url: 0.11.3
+      url: 0.11.4
       util: 0.10.4
 
   node-mock-http@1.0.4: {}
@@ -66360,13 +66334,6 @@ snapshots:
   object-keys@1.1.1: {}
 
   object-path@0.11.8: {}
-
-  object.assign@4.1.5:
-    dependencies:
-      call-bind: 1.0.8
-      define-properties: 1.2.1
-      has-symbols: 1.1.0
-      object-keys: 1.1.1
 
   object.assign@4.1.7:
     dependencies:
@@ -71535,11 +71502,6 @@ snapshots:
       querystringify: 2.2.0
       requires-port: 1.0.0
 
-  url@0.11.3:
-    dependencies:
-      punycode: 1.4.1
-      qs: 6.14.1
-
   url@0.11.4:
     dependencies:
       punycode: 1.4.1
@@ -71620,8 +71582,8 @@ snapshots:
       inherits: 2.0.4
       is-arguments: 1.1.1
       is-generator-function: 1.0.10
-      is-typed-array: 1.1.13
-      which-typed-array: 1.1.15
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   utila@0.4.0: {}
 
@@ -72137,14 +72099,6 @@ snapshots:
     dependencies:
       load-yaml-file: 0.2.0
       path-exists: 4.0.0
-
-  which-typed-array@1.1.15:
-    dependencies:
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      for-each: 0.3.5
-      gopd: 1.2.0
-      has-tostringtag: 1.0.2
 
   which-typed-array@1.1.19:
     dependencies:
