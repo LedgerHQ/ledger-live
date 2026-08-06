@@ -12,4 +12,5 @@ export * from "./steps/Detail";
 export * from "./steps/Detail/native";
 export * from "./components/index.native";
 export * from "./hooks";
+export * from "./ledgerSync";
 export * from "./featureFlags";
