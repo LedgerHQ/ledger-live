@@ -19,7 +19,7 @@ const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - qu
 // swap-live-app is mid-rollout of a new Lumen-design-system quote card (`ptxLumenQuoteCard`
 // feature flag, owned entirely inside swap-live-app). The provider-name element's data-testid
 // prefix is the only thing that differs between the two variants.
-export type QuoteCardVariant = "legacy" | "lumen";
+type QuoteCardVariant = "legacy" | "lumen";
 
 export default class SwapLiveAppPage {
   private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
@@ -27,10 +27,8 @@ export default class SwapLiveAppPage {
     lumen: "lumen-quote-card-provider-name-",
   };
 
-  // null = auto-detect which quote card variant is currently rendered. Forced explicitly via
-  // setQuoteCardVariant() when a test needs a specific one.
-  private quoteCardVariant: QuoteCardVariant | null = null;
   // Cached for the current quote-selection step so repeated lookups don't re-probe the DOM.
+  private quoteCardVariant: QuoteCardVariant | null = null;
   private resolvedProviderNamePrefix: string | null = null;
 
   fromSelector = "from-account-coin-selector";
@@ -182,38 +180,6 @@ export default class SwapLiveAppPage {
         SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant()];
     }
     return this.resolvedProviderNamePrefix;
-  }
-
-  @Step("Force quote card variant: $0")
-  async setQuoteCardVariant(variant: QuoteCardVariant) {
-    await this.swapMainContainerWebElement.runScript(
-      (_el: HTMLElement, v: string) => {
-        localStorage.setItem(
-          "feature-flag-overrides",
-          JSON.stringify({
-            ptxLumenQuoteCard: {
-              enabled: v === "lumen",
-              variant: v === "lumen" ? "ptxLumenQuoteCardEnabled" : "ptxLumenQuoteCardDisabled",
-            },
-          }),
-        );
-        window.location.reload();
-      },
-      [variant],
-    );
-    // The override is only read once, at atom-init time, so it only takes effect after a reload.
-    await waitWebElementByTestId(this.fromSelector, { timeout: 30000 });
-    this.quoteCardVariant = variant;
-    this.resolvedProviderNamePrefix = null; // re-resolve against the freshly-reloaded DOM
-  }
-
-  @Step("Check active quote card variant is: $0")
-  async checkActiveQuoteCardVariant(expected: QuoteCardVariant) {
-    const cards = await getWebElementsText(
-      this.swapMainContainerWebElement,
-      `[data-testid^='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[expected]}']`,
-    );
-    jestExpect(cards.length).toBeGreaterThan(0);
   }
 
   @Step("Wait for quotes countdown to be stable")

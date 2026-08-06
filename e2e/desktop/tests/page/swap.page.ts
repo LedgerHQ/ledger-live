@@ -25,7 +25,7 @@ type PercentageKey = "25%" | "50%" | "75%";
 // (`ptxLumenQuoteCard` feature flag, owned entirely inside swap-live-app). The
 // provider-name element's data-testid prefix is the only thing that differs
 // between the two variants; everything else quote-card-related is identical.
-export type QuoteCardVariant = "legacy" | "lumen";
+type QuoteCardVariant = "legacy" | "lumen";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -51,9 +51,6 @@ export class SwapPage extends WebViewAppPage {
   private readonly noQuotesPlaceholder = "quotes-error-state";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
-  // null = auto-detect which quote card variant is currently rendered.
-  // Forced explicitly via setQuoteCardVariant() when a test needs a specific one.
-  private quoteCardVariant: QuoteCardVariant | null = null;
   // Cached for the current quote-selection step so repeated lookups (getProviderList
   // followed by a click helper) don't re-probe the DOM each time.
   private resolvedProviderNamePrefix: string | null = null;
@@ -122,18 +119,10 @@ export class SwapPage extends WebViewAppPage {
   }
 
   // Resolves which quote card variant is rendered so the provider-name testid
-  // prefix can be built. Returns the forced variant's prefix if one was set via
-  // setQuoteCardVariant(); otherwise auto-detects by probing for the new Lumen
-  // markup, falling back to the legacy prefix. Cached per quote-selection step.
+  // prefix can be built: auto-detects by probing for the new Lumen markup,
+  // falling back to the legacy prefix. Cached per quote-selection step.
   private async resolveProviderNamePrefix(webview: Page): Promise<string> {
-    if (this.resolvedProviderNamePrefix) {
-      return this.resolvedProviderNamePrefix;
-    }
-
-    if (this.quoteCardVariant) {
-      this.resolvedProviderNamePrefix =
-        SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[this.quoteCardVariant];
-    } else {
+    if (!this.resolvedProviderNamePrefix) {
       const lumenCount = await webview
         .locator(`[data-testid^='${SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`)
         .count();
@@ -141,38 +130,6 @@ export class SwapPage extends WebViewAppPage {
         SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[lumenCount > 0 ? "lumen" : "legacy"];
     }
     return this.resolvedProviderNamePrefix;
-  }
-
-  @step("Force quote card variant: $0")
-  async setQuoteCardVariant(variant: QuoteCardVariant) {
-    const webview = await this.getWebView();
-    await webview.evaluate(forcedVariant => {
-      localStorage.setItem(
-        "feature-flag-overrides",
-        JSON.stringify({
-          ptxLumenQuoteCard: {
-            enabled: forcedVariant === "lumen",
-            variant:
-              forcedVariant === "lumen" ? "ptxLumenQuoteCardEnabled" : "ptxLumenQuoteCardDisabled",
-          },
-        }),
-      );
-    }, variant);
-    // The override is only read once, at atom-init time, so it only takes
-    // effect after a reload.
-    await webview.reload();
-    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toBeVisible({
-      timeout: 30_000,
-    });
-    this.quoteCardVariant = variant;
-    this.resolvedProviderNamePrefix = null; // re-resolve against the freshly-reloaded DOM
-  }
-
-  @step("Check active quote card variant is: $0")
-  async checkActiveQuoteCardVariant(expected: QuoteCardVariant) {
-    const webview = await this.getWebView();
-    const prefix = SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[expected];
-    await expect(webview.locator(`[data-testid^='${prefix}']`).first()).toBeVisible();
   }
 
   @step("Get provider list")

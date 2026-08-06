@@ -6,7 +6,6 @@ import { getEnv } from "@shared/env";
 import BigNumber from "bignumber.js";
 import { deleteSpeculos, launchSpeculos, registerSpeculos } from "./speculosUtils";
 import { log } from "detox";
-import type { QuoteCardVariant } from "../page/liveApps/swapLiveApp";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -53,13 +52,7 @@ export async function performSwapUntilQuoteSelectionStep(
   amount: string,
   continueToQuotes: boolean = true,
   selectSpecificToAccount: boolean = false,
-  quoteCardVariant?: QuoteCardVariant,
 ) {
-  if (quoteCardVariant) {
-    // No account/amount has been selected inside the webview yet at this point, so forcing
-    // the variant (which reloads the webview) loses no test state.
-    await app.swapLiveApp.setQuoteCardVariant(quoteCardVariant);
-  }
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false, selectSpecificToAccount);
   await app.swapLiveApp.inputAmount(amount);

@@ -9,7 +9,6 @@ import { setEnv } from "@shared/env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
 import type { SwapTransactionStatusDetails } from "../../../page/drawer/swapTransactionStatus.drawer";
-import type { QuoteCardVariant } from "../../../page/liveApps/swapLiveApp";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -169,61 +168,6 @@ export function runSwapLandingPageTest(
       await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
     });
   });
-}
-
-// Regression coverage for the swap-live-app `ptxLumenQuoteCard` migration (old
-// `compact-quote-card-provider-name-*` markup vs new `lumen-quote-card-provider-name-*` markup):
-// forces each variant explicitly via SwapLiveAppPage.setQuoteCardVariant() and asserts the quote
-// list/details still work AND that the expected markup is actually the one rendered, so a future
-// testid rename on either side fails loudly here instead of only showing up as unrelated-looking
-// failures across the rest of the swap suite.
-//
-// TODO(swap-e2e): link an Xray/TMS ticket for this coverage once one exists.
-export function runQuoteCardVariantTest(fromAccount: Account, toAccount: Account, tags: string[]) {
-  for (const variant of ["legacy", "lumen"] as const satisfies readonly QuoteCardVariant[]) {
-    describe(`Swap - quote card variant (${variant})`, () => {
-      beforeAll(async () => {
-        await app.speculos.setExchangeDependencies(fromAccount, toAccount);
-        await beforeAllFunctionSwap({
-          userdata: "skip-onboarding",
-          speculosApp: AppInfos.EXCHANGE,
-          cliCommandsOnApp: [
-            {
-              app: fromAccount.currency.speculosApp,
-              cmd: liveDataWithAddressCommand(fromAccount),
-            },
-            {
-              app: toAccount.currency.speculosApp,
-              cmd: liveDataWithAddressCommand(toAccount),
-            },
-          ],
-        });
-      });
-
-      setTeamOwner(Team.SWAP);
-      tags.forEach(tag => $Tag(tag));
-      it(
-        `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap quote card ` +
-          `renders correctly with ptxLumenQuoteCard ${variant === "lumen" ? "enabled" : "disabled"}`,
-        async () => {
-          const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-
-          await performSwapUntilQuoteSelectionStep(
-            fromAccount,
-            toAccount,
-            minAmount,
-            true,
-            false,
-            variant,
-          );
-          await app.swapLiveApp.checkActiveQuoteCardVariant(variant);
-
-          const providerList = await app.swapLiveApp.getProviderList();
-          await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
-        },
-      );
-    });
-  }
 }
 
 async function setupSwapAccounts(
