@@ -68,7 +68,7 @@ export function buildDotEnvDefine(envPath: string): Record<string, string> {
 /**
  * Env vars the app reads through `@shared/env` (getEnv/useEnv) instead of as a literal
  * `process.env.X` expression. DefinePlugin cannot reach those, so they travel as one object
- * that src/renderer/env.ts merges into `process.env` at boot.
+ * that src/renderer/bootstrap/process.ts merges into the renderer environment at boot.
  */
 const BUILD_ENV_NAMES = [
   "CARD_BAANX_API_URL",
