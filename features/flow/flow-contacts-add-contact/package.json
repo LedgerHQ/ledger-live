@@ -55,6 +55,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -62,6 +63,7 @@
     "react-dom": "catalog:",
     "react-native": "catalog:",
     "react-redux": "catalog:",
+    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }
