@@ -18,7 +18,7 @@ export interface ITxnHistoryData {
   timestamp: string;
   status: string;
   args: {
-    id: {
+    id?: {
       parsed?: number | null;
       cl_type: {
         Option: string;

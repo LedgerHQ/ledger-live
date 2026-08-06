@@ -226,6 +226,42 @@ describe("txn", () => {
       expect(operations[0].extra).toEqual({});
     });
 
+    test("should map a transaction whose args omit the transfer id entirely", () => {
+      const fixtureData = createMockAccountShapeData();
+      const txData: ITxnHistoryData = {
+        ...fixtureData.mockTxs[0],
+        timestamp: mockTimestamp,
+        caller_public_key: "owner-public-key",
+        args: {
+          target: {
+            cl_type: "PublicKey",
+            parsed: "recipient-public-key",
+          },
+          amount: {
+            parsed: "5000000000",
+            cl_type: "U512",
+          },
+          // the indexer omits the `id` arg altogether for most transfers sent without one
+        },
+        deploy_hash: "test-deploy-hash",
+        status: "success",
+        amount: "5000000000",
+      };
+
+      (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
+        "account-hash-owner-public-key",
+      );
+      (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
+        "account-hash-recipient-public-key",
+      );
+
+      const mapper = mapTxToOps(mockAccountId, "account-hash-owner-public-key", fees);
+      const operations = mapper(txData);
+
+      expect(operations).toHaveLength(1);
+      expect(operations[0].extra).toEqual({});
+    });
+
     test("should map a failed transaction correctly", () => {
       const fixtureData = createMockAccountShapeData();
       const txData: ITxnHistoryData = {

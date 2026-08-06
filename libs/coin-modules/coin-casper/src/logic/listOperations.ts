@@ -38,8 +38,9 @@ export function mapTxToOps(
       const isSending = addressHash.toLowerCase() === fromAccount.toLowerCase();
       const isReceiving = addressHash.toLowerCase() === toAccount.toLowerCase();
 
-      // the indexer returns `null` for transfers sent without a transfer id
-      const transferId = txArgs.id.parsed?.toString();
+      // for transfers sent without a transfer id, the indexer either omits the `id` arg
+      // entirely or returns it with a `null` value
+      const transferId = txArgs.id?.parsed?.toString();
 
       if (isSending) {
         ops.push({
