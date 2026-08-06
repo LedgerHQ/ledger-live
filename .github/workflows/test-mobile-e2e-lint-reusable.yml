@@ -44,6 +44,7 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
+          skip-pnpm-cache: false
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --no-frozen-lockfile --unsafe-perm

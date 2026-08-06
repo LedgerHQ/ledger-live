@@ -222,7 +222,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@feature/QAA-1412
     secrets: inherit
 
   test-desktop-e2e-lint:
@@ -232,7 +232,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@feature/QAA-1412
     secrets: inherit
 
   notify-e2e-required:
