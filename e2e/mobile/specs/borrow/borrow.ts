@@ -14,8 +14,8 @@ import {
   signEvmContractOnDevice,
   signTokenApprovalOnDevice,
 } from "../../utils/borrowUtils";
+import { FF_BORROW_E2E } from "../../utils/featureFlagUtils";
 import {
-  BORROW_FEATURE_FLAGS,
   BORROW_COLD_START_TEST_TIMEOUT_MS,
   BORROW_HOOK_TIMEOUT_MS,
   BORROW_TEST_TIMEOUT_MS,
@@ -35,7 +35,7 @@ export function runBorrowColdStartTest(tags: string[]) {
     beforeAll(async () => {
       await beforeAllFunctionBorrow({
         userdata: "speculos-x-other-account",
-        featureFlags: BORROW_FEATURE_FLAGS,
+        featureFlags: FF_BORROW_E2E,
       });
     }, BORROW_HOOK_TIMEOUT_MS);
 
@@ -65,7 +65,7 @@ export function runBorrowOpenLoanTest(tags: string[]) {
     beforeAll(async () => {
       await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
       await releaseSpeculosDmkSessions();
-      await beforeAllFunctionBorrow(borrowOnChainInitOptions(), { freshInstance: true });
+      await beforeAllFunctionBorrow(borrowOnChainInitOptions());
     }, BORROW_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
@@ -119,7 +119,7 @@ export function runBorrowRepayTest(tags: string[]) {
   (runHere ? describe : describe.skip)("Borrow - Repay on-chain", () => {
     beforeAll(async () => {
       await releaseSpeculosDmkSessions();
-      await beforeAllFunctionBorrow(borrowOnChainInitOptions(), { freshInstance: true });
+      await beforeAllFunctionBorrow(borrowOnChainInitOptions());
       await ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
       await releaseSpeculosDmkSessions();
     }, BORROW_HOOK_TIMEOUT_MS * 2);
@@ -166,7 +166,7 @@ export function runBorrowWithdrawTest(tags: string[]) {
   (runHere ? describe : describe.skip)("Borrow - Withdraw on-chain", () => {
     beforeAll(async () => {
       await releaseSpeculosDmkSessions();
-      await beforeAllFunctionBorrow(borrowOnChainInitOptions(), { freshInstance: true });
+      await beforeAllFunctionBorrow(borrowOnChainInitOptions());
       await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG_PATH });
       await releaseSpeculosDmkSessions();
     }, BORROW_HOOK_TIMEOUT_MS * 2);

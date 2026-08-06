@@ -55,6 +55,19 @@ export const FF_BORROW_MOBILE = {
   },
 } satisfies OptionalFeatureMap;
 
+/** Wallet 4.0 + borrow live app + PnL for mobile borrow E2E. */
+export const FF_BORROW_E2E = {
+  ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
+  ...FF_BORROW_MOBILE,
+  lwmWallet40: {
+    ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT.lwmWallet40,
+    params: {
+      ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT.lwmWallet40?.params,
+      pnl: true,
+    },
+  },
+} satisfies OptionalFeatureMap;
+
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
   newSendFlowFirstInteractionBanner: { enabled: true },
 } satisfies OptionalFeatureMap;
