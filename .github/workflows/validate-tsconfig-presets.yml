@@ -1,0 +1,43 @@
+name: "[Support] - Validate tsconfig presets"
+
+# Runs only when tsconfig files change. Checks that consumers of @support/ts-config-*
+# presets do not re-declare compilerOptions already set by the preset.
+
+on:
+  pull_request:
+    paths:
+      - "**/tsconfig*.json"
+      - "support/ts-config-*/tsconfig*.json"
+      - "tools/scripts/validate-tsconfig-presets.mts"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: "tsconfig preset compliance"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24"
+
+      - name: Get changed tsconfig files
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- '**/tsconfig*.json' | tr '\n' ' ')
+          echo "files=${CHANGED}" >> "$GITHUB_OUTPUT"
+          if [ -n "${CHANGED}" ]; then
+            echo "Changed tsconfig files: ${CHANGED}"
+          else
+            echo "No tsconfig files changed."
+          fi
+
+      - name: Validate tsconfig preset compliance
+        if: steps.changed.outputs.files != ''
+        run: npx --yes tsx tools/scripts/validate-tsconfig-presets.mts ${{ steps.changed.outputs.files }}
