@@ -24,10 +24,11 @@
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
-    "@types/node": "catalog:",
+    "@support/ts-config-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/uuid": "^9.0.0",
     "jest": "catalog:",
     "typescript": "catalog:"
