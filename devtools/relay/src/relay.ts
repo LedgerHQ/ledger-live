@@ -91,18 +91,22 @@ export function createRelayHub(options: RelayHubOptions = {}) {
     if (attached.status === "sessionless") {
       warn(msg.sessionless(me.id));
     } else {
-      if (attached.evicted) log(msg.evicted(attached.role, attached.descriptor?.uid ?? "unknown"));
       log(msg.attached(attached.role, me.id, attached.descriptor?.uid ?? "unknown"));
       if (attached.paired) log(msg.paired(attached.descriptor?.uid ?? "unknown"));
     }
 
     const peerRole = me.role === "tool" ? "host" : "tool";
     socket.on("message", (data, isBinary) => {
-      const peer = registry.peerOf(socket);
+      const peers = registry.peersOf(socket);
       const kind = isBinary ? "binary" : "text";
-      if (peer && peer.readyState === WebSocket.OPEN) {
-        peer.send(data, { binary: isBinary });
-        trace(msg.forwarded(me.id, peerRole, kind));
+      if (peers) {
+        for (const peer of peers)
+          if (peer && peer.readyState === WebSocket.OPEN) {
+            peer.send(data, { binary: isBinary });
+            trace(msg.forwarded(me.id, peerRole, kind));
+          } else {
+            trace(msg.dropped(me.id, kind, peerRole));
+          }
       } else {
         trace(msg.dropped(me.id, kind, peerRole));
       }
