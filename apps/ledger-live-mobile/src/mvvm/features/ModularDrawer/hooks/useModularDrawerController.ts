@@ -75,6 +75,9 @@ export const useModularDrawerController = () => {
       if (completionMode === "currency" && callbackId) {
         executeCurrencyCallback(callbackId, null);
       }
+      if (cancelCallbackId) {
+        executeCancelCallback(cancelCallbackId);
+      }
       resetAll();
 
       let callbackIdToUse: string | undefined;
@@ -110,8 +113,10 @@ export const useModularDrawerController = () => {
     },
     [
       callbackId,
+      cancelCallbackId,
       completionMode,
       dispatch,
+      executeCancelCallback,
       executeCurrencyCallback,
       registerCallback,
       registerCurrencyCallback,
