@@ -5069,6 +5069,9 @@ importers:
       '@jest/globals':
         specifier: 'catalog:'
         version: 30.2.0
+      '@support/ts-config-base':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-base
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5185,6 +5188,9 @@ importers:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.49(@ledgerhq/lumen-design-core@0.1.23)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+      '@support/ts-config-web':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5595,6 +5601,9 @@ importers:
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
+      '@support/ts-config-web':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5663,6 +5672,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/ts-config-web':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

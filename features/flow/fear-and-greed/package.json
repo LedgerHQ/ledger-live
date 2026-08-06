@@ -20,6 +20,7 @@
   "dependencies": {},
   "devDependencies": {
     "@jest/globals": "catalog:",
+    "@support/ts-config-base": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
