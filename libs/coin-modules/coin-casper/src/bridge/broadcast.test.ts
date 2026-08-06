@@ -5,7 +5,7 @@ import {
   createMockAccount,
   createMockTransaction,
   createMockSignedOperation,
-} from "../test/fixtures";
+} from "../__tests__/fixtures";
 import { broadcast } from "./broadcast";
 
 // Mock the dependencies

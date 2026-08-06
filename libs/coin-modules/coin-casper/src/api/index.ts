@@ -15,7 +15,8 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { type CasperCoinConfig, setCoinConfig } from "../config";
+import { setCoinConfig } from "../config";
+import type { CasperCoinConfig } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
   setCoinConfig(config);

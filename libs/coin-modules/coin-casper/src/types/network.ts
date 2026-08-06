@@ -19,7 +19,7 @@ export interface ITxnHistoryData {
   status: string;
   args: {
     id: {
-      parsed?: number;
+      parsed?: number | null;
       cl_type: {
         Option: string;
       };
