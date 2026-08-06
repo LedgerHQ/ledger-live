@@ -261,15 +261,22 @@ export function createZCashIPCClient(
 
 let cachedIpcRenderer: IpcRendererLike | null = null;
 
+/**
+ * Supplies the IPC channel this module talks over.
+ *
+ * Injected rather than obtained with `require("electron")`, because a context-isolated
+ * renderer has neither `require` nor the `electron` module — the host passes in whatever it
+ * exposes across its preload bridge. Call once during startup.
+ */
+export function setZCashIpcRenderer(ipcRenderer: IpcRendererLike): void {
+  cachedIpcRenderer = ipcRenderer;
+}
+
 function getIpcRenderer(): IpcRendererLike {
   if (cachedIpcRenderer) return cachedIpcRenderer;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const electron = require("electron") as { ipcRenderer?: IpcRendererLike };
-  if (!electron?.ipcRenderer) {
-    throw new Error("ZCashIPC: electron.ipcRenderer not available in this context");
-  }
-  cachedIpcRenderer = electron.ipcRenderer;
-  return cachedIpcRenderer;
+  throw new Error(
+    "ZCashIPC: no IPC channel configured — call setZCashIpcRenderer() during startup",
+  );
 }
 
 /**
