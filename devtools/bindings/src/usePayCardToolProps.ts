@@ -1,7 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOverride } from "@shared/feature-flags";
 import { useFeature } from "@features/platform-feature-flags";
+import {
+  resetPayCardFeatureTourSeen,
+  selectPayCardHasSeenFeatureTour,
+} from "@domain/entity-pay-card";
 import type { DevToolsConfig } from "@devtools/registry";
 
 type PayCardToolProps = Extract<DevToolsConfig[number], { id: "pay-card" }>["config"];
@@ -74,6 +78,12 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
     [dispatch],
   );
 
+  const hasSeenFeatureTour = useSelector(selectPayCardHasSeenFeatureTour);
+
+  const resetFeatureTour = useCallback(() => {
+    dispatch(resetPayCardFeatureTourSeen());
+  }, [dispatch]);
+
   const setStepDone = useCallback((id: string, done: boolean) => {
     setSteps(current => {
       if (id === "all") {
@@ -97,5 +107,13 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
 
   const onboarding = useMemo(() => ({ steps, setStepDone }), [steps, setStepDone]);
 
-  return useMemo(() => ({ flags, onboarding }), [flags, onboarding]);
+  return useMemo(
+    () => ({
+      flags,
+      onboarding,
+      hasSeenFeatureTour,
+      resetPayCardFeatureTourSeen: resetFeatureTour,
+    }),
+    [flags, onboarding, hasSeenFeatureTour, resetFeatureTour],
+  );
 }

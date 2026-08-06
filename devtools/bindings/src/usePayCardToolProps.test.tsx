@@ -3,11 +3,12 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import featureFlagsReducer, { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { payCardSlice, markPayCardFeatureTourSeen } from "@domain/entity-pay-card";
 import { usePayCardToolProps } from "./usePayCardToolProps";
 
 function buildStore() {
   return configureStore({
-    reducer: { featureFlags: featureFlagsReducer },
+    reducer: { featureFlags: featureFlagsReducer, payCard: payCardSlice.reducer },
     middleware: gdm => gdm().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
   });
 }
@@ -131,5 +132,26 @@ describe("usePayCardToolProps", () => {
       result.current.onboarding.setStepDone("all", false);
     });
     expect(result.current.onboarding.steps.every(step => !step.done)).toBe(true);
+  });
+
+  it("exposes hasSeenFeatureTour from the payCard slice", () => {
+    store.dispatch(markPayCardFeatureTourSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    expect(result.current.hasSeenFeatureTour).toBe(true);
+  });
+
+  it("resetPayCardFeatureTourSeen clears the seen flag", () => {
+    store.dispatch(markPayCardFeatureTourSeen());
+
+    const { result } = renderHook(() => usePayCardToolProps(), { wrapper: withStore(store) });
+
+    act(() => {
+      result.current.resetPayCardFeatureTourSeen();
+    });
+
+    expect(store.getState().payCard.hasSeenFeatureTour).toBe(false);
+    expect(result.current.hasSeenFeatureTour).toBe(false);
   });
 });

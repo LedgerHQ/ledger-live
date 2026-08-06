@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import { Box, Button, Divider } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, Divider, Tag } from "@ledgerhq/lumen-ui-rnative";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
@@ -7,7 +7,7 @@ import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 const BUTTON_ROW_STYLE = { flexDirection: "row", flexWrap: "wrap", gap: 8 } as const;
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const { flags, onboarding } = props;
+  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen } = props;
 
   return (
     <ScrollView>
@@ -53,6 +53,23 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         <Box style={BUTTON_ROW_STYLE}>
           <Button appearance="gray" size="sm" onPress={() => onboarding.setStepDone("all", false)}>
             Reset onboarding widget
+          </Button>
+        </Box>
+      </Section>
+
+      <Divider />
+
+      <Section title="Feature tour">
+        <Box style={BUTTON_ROW_STYLE}>
+          <Tag
+            size="sm"
+            appearance={hasSeenFeatureTour ? "success" : "gray"}
+            label={hasSeenFeatureTour ? "Seen" : "Not seen"}
+          />
+        </Box>
+        <Box style={BUTTON_ROW_STYLE}>
+          <Button appearance="gray" size="sm" onPress={resetPayCardFeatureTourSeen}>
+            Reset feature tour
           </Button>
         </Box>
       </Section>
