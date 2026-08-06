@@ -16,7 +16,10 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { AccountLike } from "@ledgerhq/types-live";
-import { parseUiUseCase } from "../../utils/parseUiUseCase";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
@@ -69,9 +72,9 @@ const AccountSelectionContent = ({
     );
   }, [onAddNewAccountOnClick, t]);
 
-  const { isPerpsWithoutVariant } = parseUiUseCase(uiUseCase);
+  const isPerpsReceive = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.receive;
 
-  const headerTitle = isPerpsWithoutVariant
+  const headerTitle = isPerpsReceive
     ? t("modularDrawer.selectAccountPerpsTitle")
     : t("modularDrawer.selectAccount");
 
@@ -80,7 +83,7 @@ const AccountSelectionContent = ({
       ? t("modularDrawer.emptyAccounts", { network: asset.name })
       : undefined;
 
-  const perpsDescription = isPerpsWithoutVariant
+  const perpsDescription = isPerpsReceive
     ? t("modularDrawer.selectAccountPerpsDescription")
     : undefined;
 
