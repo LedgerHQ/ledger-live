@@ -27,17 +27,17 @@ function broadcastRotationIndex(): number {
 
 /**
  * Whether a broadcast flow should run in THIS platform's job on this run:
- *  - broadcast off                  → no (broadcast is Wednesday for iOS, Friday for Android on the
- *                                     nightlies, or an explicit enable_broadcast run)
- *  - broadcast on, one platform     → yes (a single broadcasting platform owns the account alone)
- *  - broadcast on, both platforms   → only on the flow's assigned platform this run (rotated)
+ *  - broadcast off for this platform  → no
+ *  - broadcast on, this platform only → yes (it owns the shared account alone)
+ *  - broadcast on for both platforms  → only on the flow's assigned platform this run (rotated)
  *
- * `E2E_BOTH_PLATFORMS` is set by the workflow when both platforms broadcast in the same run — the
- * only case that can collide. The nightlies never do: they broadcast one platform per day.
+ * Broadcast is on for a platform on its own nightly (iOS Wednesday, Android Friday) or on an
+ * explicit enable_broadcast run. `E2E_BROADCAST_BOTH_MOBILE_PLATFORMS` marks the only case that
+ * can collide — both platforms broadcasting in the same run — which the nightlies never do.
  */
 export function shouldRunBroadcastFlow(flow: BroadcastFlow): boolean {
   if (process.env.DISABLE_TRANSACTION_BROADCAST !== "0") return false;
-  if (process.env.E2E_BOTH_PLATFORMS !== "true") return true;
+  if (process.env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS !== "true") return true;
 
   const assigned = PLATFORM_SLOTS[(broadcastRotationIndex() + flow) % PLATFORM_SLOTS.length];
   return currentPlatform() === assigned;

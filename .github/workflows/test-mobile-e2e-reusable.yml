@@ -228,9 +228,11 @@ env:
   IOS_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 3' }}
   ANDROID_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 0 * * 5' }}
   # True only when BOTH platforms broadcast in the same run, which the nightlies never do: only an
-  # explicit enable_broadcast dispatch covering both platforms. broadcastRotation.ts then pins each
-  # broadcast swap flow to one platform per run, avoiding the shared-EOA nonce race. (QAA-1411)
-  E2E_BOTH_PLATFORMS: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
+  # explicit enable_broadcast dispatch covering both platforms. Equivalent to
+  # IOS_BROADCAST_ENABLED && ANDROID_BROADCAST_ENABLED, which the env context cannot express here.
+  # broadcastRotation.ts then pins each broadcast swap flow to one platform per run, avoiding the
+  # shared-EOA nonce race. (QAA-1411)
+  E2E_BROADCAST_BOTH_MOBILE_PLATFORMS: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
