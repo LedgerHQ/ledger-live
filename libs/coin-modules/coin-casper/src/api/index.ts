@@ -17,6 +17,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { setCoinConfig } from "../config";
+import { combine } from "../logic/combine";
 import { lastBlock } from "../logic/lastBlock";
 import { getBalance as getAccountBalance } from "../logic/getBalance";
 import type { CasperCoinConfig } from "../types";
@@ -64,9 +65,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     estimateFees(_intent: TransactionIntent<MemoNotSupported>): Promise<FeeEstimation> {
       throw new Error("estimateFees is not supported");
     },
-    combine(_tx: string, _signature: string, _pubkey?: string): string {
-      throw new Error("combine is not supported");
-    },
+    combine,
     broadcast(_tx: string): Promise<string> {
       throw new Error("broadcast is not supported");
     },
