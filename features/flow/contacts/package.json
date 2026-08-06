@@ -60,6 +60,7 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@tanstack/react-table": "catalog:",
+    "@support/ts-config-web-x-native": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

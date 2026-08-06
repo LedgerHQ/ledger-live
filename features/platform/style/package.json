@@ -31,6 +31,7 @@
     "styled-components": ">=6"
   },
   "devDependencies": {
+    "@support/ts-config-web-x-native": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

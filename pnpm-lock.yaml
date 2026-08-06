@@ -4197,6 +4197,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/ts-config-web-x-native':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web-x-native
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4331,6 +4334,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      '@support/ts-config-web-x-native':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web-x-native
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4509,6 +4515,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.50(2812f392da264d034b5b92f00c4afea1)
+      '@support/ts-config-web-x-native':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web-x-native
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -4744,6 +4753,9 @@ importers:
         specifier: 'catalog:'
         version: 3.4.0
     devDependencies:
+      '@support/ts-config-web-x-native':
+        specifier: workspace:*
+        version: link:../../../support/ts-config-web-x-native
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11

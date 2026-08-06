@@ -31,6 +31,7 @@
     "eslint-plugin-better-tailwindcss": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "@gorhom/bottom-sheet": "catalog:",
+    "@support/ts-config-web-x-native": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
