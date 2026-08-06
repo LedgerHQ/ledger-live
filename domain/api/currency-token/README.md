@@ -1,7 +1,7 @@
 # @domain/api-currency-token
 
-> [!CAUTION]
-> **Status: UNSTABLE** — Part of the emerging DDD layer; under active development.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Domain API client for **token currencies**, backed by the Crypto Asset List (CAL). RTK Query
 endpoints and helpers, typed on the Zod-first `@domain/entity-currency-token` entity. Owns no

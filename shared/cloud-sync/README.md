@@ -1,6 +1,7 @@
 # @shared/cloud-sync
 
-> **Status: UNSTABLE** — This package is incrementally shipping the validated WalletSync DDD architecture; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Generic cloud sync networking layer for Ledger Live wallet synchronisation.
 
