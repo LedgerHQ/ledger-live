@@ -11,9 +11,6 @@ permissions:
 jobs:
   nightly-release:
     name: Nightly Release
-    permissions:
-      id-token: write
-      contents: read
     runs-on: ledger-live-linux-8CPU-32RAM
     permissions:
       contents: read
