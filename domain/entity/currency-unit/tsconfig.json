@@ -1,14 +1,10 @@
 {
-  "extends": "../../../tsconfig.base.json",
+  "extends": "@support/ts-config-base",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "paths": { "*": ["./*"] },
-    "noEmit": true,
-    "types": ["jest"]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    }
+  }
 }
