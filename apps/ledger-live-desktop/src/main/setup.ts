@@ -2,12 +2,13 @@ import { getEnv, setEnvUnsafe } from "@shared/env";
 import "./env";
 import "./live-common-setup-main";
 import "./bootstrap";
-import { app, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
+import { app, clipboard, dialog, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import fs from "fs/promises";
 import updater from "./updater";
 import { mergeAllLogsJSON } from "./mergeAllLogs";
 import { InMemoryLogger } from "./logger";
+import { openURL } from "./openURL";
 
 /**
  * Sets env variables for the main process.
@@ -59,6 +60,21 @@ ipcMain.handle(
 );
 
 ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+
+/**
+ * Opens a URL in the user's browser. `openURL` validates the scheme, so a renderer that
+ * has been compromised cannot use this to launch arbitrary protocol handlers.
+ */
+ipcMain.on("shell:open-external", (_event, url: string) => openURL(url));
+
+/**
+ * Clipboard access on the renderer's behalf. Done here rather than via
+ * `navigator.clipboard` because the window grants only the `hid` permission, so a
+ * clipboard-read request from the renderer would be denied.
+ */
+ipcMain.on("clipboard:write-text", (_event, text: string) => clipboard.writeText(text));
+
+ipcMain.handle("clipboard:read-text", () => clipboard.readText());
 
 /**
  * Dev-only: reads a per-environment dotenv file for the renderer's config-mismatch

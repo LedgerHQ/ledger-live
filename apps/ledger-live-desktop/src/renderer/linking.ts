@@ -1,5 +1,5 @@
 import { track } from "~/renderer/analytics/segment";
-import { shell } from "electron";
+import { shell } from "~/renderer/bridge";
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 
 export const openURL = (url: string, customEventName = "OpenURL", extraParams: object = {}) => {
@@ -13,5 +13,5 @@ export const openURL = (url: string, customEventName = "OpenURL", extraParams: o
       url,
     });
   }
-  return shell.openExternal(url);
+  shell.openExternal(url);
 };

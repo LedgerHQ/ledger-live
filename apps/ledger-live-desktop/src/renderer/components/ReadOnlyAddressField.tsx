@@ -83,8 +83,8 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
     writeText(address);
     setCopyFeedback(true);
     clearTimeout(copyTimeout.current);
-    setTimeout(() => {
-      const copiedAddress = readText();
+    setTimeout(async () => {
+      const copiedAddress = await readText();
       // `null` means the clipboard could not be read, which is not a tampering signal.
       if (copiedAddress !== null && copiedAddress !== address) {
         setClipboardChanged(true);
