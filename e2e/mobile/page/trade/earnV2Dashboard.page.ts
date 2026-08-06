@@ -205,7 +205,18 @@ export default class EarnV2DashboardPage {
   @Step("Expand v2 ETH provider card: $0")
   async expandV2EthProviderCard(providerId: string) {
     await waitWebElementByTestId(this.ethProviderPanel);
-    await tapWebElementByTestId(this.ethProviderCardTestId(providerId));
+    const depositCtaId = this.ethProviderDepositCta(
+      EarnV2DashboardPage.resolveEthProviderCardId(providerId),
+    );
+    // The card may already be expanded (e.g. auto-selected on load). Tapping an expanded card
+    // toggles it closed, so only tap if the deposit CTA isn't already visible.
+    const alreadyExpanded = await waitWebElementByTestId(depositCtaId, {
+      timeout: 1000,
+      throwOnTimeout: false,
+    });
+    if (!alreadyExpanded) {
+      await tapWebElementByTestId(this.ethProviderCardTestId(providerId));
+    }
   }
 
   @Step("Verify v2 ETH provider deposit CTA is visible: $0")
