@@ -36,8 +36,8 @@
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check"
   },
   "dependencies": {
-    "@ledgerhq/wallet-api-client": "^1.15.3",
-    "@ledgerhq/wallet-api-core": "^2.0.0",
+    "@ledgerhq/wallet-api-client": "catalog:",
+    "@ledgerhq/wallet-api-core": "catalog:",
     "bignumber.js": "9.1.2"
   },
   "devDependencies": {

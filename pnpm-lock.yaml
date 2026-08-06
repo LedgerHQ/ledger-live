@@ -90,6 +90,21 @@ catalogs:
     '@ledgerhq/speculos-device-controller':
       specifier: 0.3.0
       version: 0.3.0
+    '@ledgerhq/wallet-api-client':
+      specifier: ^1.15.3
+      version: 1.15.3
+    '@ledgerhq/wallet-api-client-react':
+      specifier: ^1.4.34
+      version: 1.4.34
+    '@ledgerhq/wallet-api-core':
+      specifier: ^2.0.0
+      version: 2.0.0
+    '@ledgerhq/wallet-api-server':
+      specifier: ^3.4.3
+      version: 3.4.3
+    '@ledgerhq/wallet-api-simulator':
+      specifier: ^2.3.3
+      version: 2.3.3
     '@ledgerhq/zcash-utils':
       specifier: 1.1.1
       version: 1.1.1
@@ -9352,10 +9367,10 @@ importers:
   libs/deeplink-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
@@ -9737,10 +9752,10 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: 9.1.2
@@ -9759,10 +9774,10 @@ importers:
   libs/feature-flag-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
@@ -10252,16 +10267,16 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^3.4.3
+        specifier: 'catalog:'
         version: 3.4.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-btc':
         specifier: workspace:^
@@ -14285,10 +14300,10 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
@@ -14914,16 +14929,16 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.15.3
+        specifier: 'catalog:'
         version: 1.15.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.4.34
+        specifier: 'catalog:'
         version: 1.4.34(@ton/crypto@3.3.0)(react@19.1.4)
       '@ledgerhq/wallet-api-deeplink-module':
         specifier: workspace:*
         version: link:../../libs/deeplink-module
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^2.3.3
+        specifier: 'catalog:'
         version: 2.3.3(@ton/crypto@3.3.0)
       '@solana/web3.js':
         specifier: 'catalog:'
@@ -15224,7 +15239,7 @@ packages:
   '@apollo/server@4.12.2':
     resolution: {integrity: sha512-jKRlf+sBMMdKYrjMoiWKne42Eb6paBfDOr08KJnUaeaiyWFj+/040FjVPQI7YGLfdwnYIsl1NUUqS2UdgezJDg==}
     engines: {node: '>=14.16.0'}
-    deprecated: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+    deprecated: Apollo Server v4 is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
     peerDependencies:
       graphql: ^16.6.0
 
@@ -35358,6 +35373,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
