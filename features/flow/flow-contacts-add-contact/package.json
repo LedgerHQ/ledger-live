@@ -1,8 +1,8 @@
 {
-  "name": "@features/flow-contacts",
-  "version": "0.4.0",
+  "name": "@features/flow-contacts-add-contact",
+  "version": "0.1.0",
   "private": true,
-  "description": "Shared Contacts flow package",
+  "description": "Shared Add contact flow for Desktop and Mobile",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -11,7 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
-    "./jest.native": "./src/jest.native.ts",
+    "./native": "./src/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -22,19 +22,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/contacts"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/flow-contacts-add-contact"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
-    "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-token": "workspace:*",
-    "@features/flow-contacts-add-contact": "workspace:^",
     "@features/platform-contacts": "workspace:^",
-    "@ledgerhq/crypto-icons": "catalog:",
-    "@features/platform-feature-flags": "workspace:^",
-    "@shared/feature-flags": "workspace:^",
-    "@shared/name": "workspace:^",
-    "@shared/qr-code": "workspace:*"
+    "@shared/name": "workspace:^"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -42,48 +35,26 @@
     "react-redux": ">=9.0.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "react-native-svg": ">=13.0.0"
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependenciesMeta": {
-    "@ledgerhq/lumen-ui-react": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-ui-rnative": {
-      "optional": true
-    },
-    "@ledgerhq/lumen-design-core": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    },
-    "react-native-svg": {
-      "optional": true
-    }
+    "react-native": { "optional": true },
+    "@ledgerhq/lumen-design-core": { "optional": true },
+    "@ledgerhq/lumen-ui-react": { "optional": true },
+    "@ledgerhq/lumen-ui-rnative": { "optional": true }
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
-    "@radix-ui/react-dialog": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
-    "@radix-ui/react-tooltip": "catalog:",
-    "@reduxjs/toolkit": "catalog:",
-    "@tanstack/react-table": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
-    "@testing-library/react-native": "catalog:",
-    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "jest": "catalog:",
@@ -92,10 +63,6 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
-    "react-native-reanimated": "catalog:",
-    "react-native-safe-area-context": "catalog:",
-    "react-native-svg": "catalog:",
-    "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:"

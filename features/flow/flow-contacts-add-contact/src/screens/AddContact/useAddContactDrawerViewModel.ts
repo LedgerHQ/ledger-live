@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { CONTACT_NAME_MAX_LENGTH } from "./model/constants";
+import { CONTACT_NAME_MAX_LENGTH } from "../../components/ContactNameInput/constants";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 import type { AddContactDrawerViewModel, UseAddContactDrawerViewModelOptions } from "./types";
 

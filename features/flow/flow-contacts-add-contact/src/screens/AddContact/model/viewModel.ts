@@ -1,5 +1,5 @@
 import { getContactNameValidationError, type ContactName } from "@domain/entity-contact";
-import { getContactInitial } from "../../../utils";
+import { getNameInitial } from "@shared/name";
 import type { AddContactViewModel } from "./types";
 
 export function createAddContactViewModel(
@@ -11,7 +11,7 @@ export function createAddContactViewModel(
 
   return {
     draftName,
-    avatarInitial: getContactInitial(trimmedDraftName),
+    avatarInitial: getNameInitial(trimmedDraftName),
     invalidNameError,
     isSaveEnabled: trimmedDraftName.length > 0 && invalidNameError === null,
   };

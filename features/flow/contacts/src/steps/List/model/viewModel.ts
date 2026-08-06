@@ -1,18 +1,18 @@
 import type { Contact } from "@domain/entity-contact";
+import { getNameInitial } from "@shared/name";
 import type {
   ContactsSearchViewModel,
   ContactsListItem,
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
 } from "../types";
-import { getContactInitial } from "../../../utils";
 import { createContactsListSections } from "../utils";
 
 function createContactsListItem(contact: Contact): ContactsListItem {
   return {
     contactId: contact.id,
     name: contact.name,
-    initial: getContactInitial(contact.name),
+    initial: getNameInitial(contact.name),
     addressCount: contact.addresses.length,
   };
 }

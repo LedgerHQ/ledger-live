@@ -1,4 +1,4 @@
-export { useContacts } from "./useContacts";
+export { useContacts } from "@features/platform-contacts";
 export { useContactsEditDeletePorts } from "./useContactsEditDeletePorts";
 export { useContactsAddressDetailActionsPorts } from "./useContactsAddressDetailActionsPorts";
 export type {

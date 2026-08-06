@@ -8,7 +8,7 @@ import {
   Button,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ContactNameInput } from "../../steps/AddContact/components/ContactNameInput";
+import { ContactNameInput } from "../ContactNameInput";
 
 export type ContactsContactNameDrawerLabels = Readonly<{
   title: string;

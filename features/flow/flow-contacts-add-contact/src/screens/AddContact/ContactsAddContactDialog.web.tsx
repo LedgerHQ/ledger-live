@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { ContactNameInput } from "./components/ContactNameInput/ContactNameInput.web";
-import { ContactsAddContactNamingDisclaimer } from "./ContactsAddContactNamingDisclaimer.web";
+import { ContactNameInput } from "../../components/ContactNameInput/ContactNameInput.web";
+import { ContactsAddContactNamingDisclaimer } from "../../components/ContactsAddContactNamingDisclaimer.web";
 import type { ContactsAddContactDialogProps } from "./types";
 
 const NAMING_DISCLAIMER_ID = "contacts-add-contact-naming-disclaimer";
