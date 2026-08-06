@@ -290,12 +290,14 @@ describe("getTransactionStatus", () => {
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
   });
 
-  // LIVE-32775: adding the sponsoring context must be inert until later tickets (LIVE-32776 /
-  // LIVE-32892) price it. Presence of energyProviderInfo must not change fees or status yet.
-  describe("energyProviderInfo sponsoring context (LIVE-32775)", () => {
+  // LIVE-32776: the sponsoring context now exposes an informational savings estimate on the status,
+  // but must still NOT re-price the send — that is LIVE-32892. So fees/energy/warnings/errors stay
+  // identical to a standard send, and only the additive `sponsoredEnergy` field appears.
+  describe("energyProviderInfo sponsoring context (LIVE-32776)", () => {
     const energyProviderInfo = { providerId: "tronify", orderId: "order-123" };
+    const TRONIFY = { id: "tronify", name: "Tronify" };
 
-    it("does not change fee or status for a covered TRC20 send (standard crafting unchanged)", async () => {
+    it("adds the savings estimate without changing fee or status for a covered TRC20 send", async () => {
       const tokenAccount = createTrc20TokenAccount();
       const account = createAccount({ subAccounts: [tokenAccount] });
       mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
@@ -309,14 +311,37 @@ describe("getTransactionStatus", () => {
         createTransaction({ subAccountId: tokenAccount.id, energyProviderInfo }),
       );
 
+      // Re-pricing is out of scope (LIVE-32892): fees/energy/warnings/errors unchanged.
       expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
       expect(sponsored.energyRequired).toEqual(baseline.energyRequired);
       expect(sponsored.energyAvailable).toEqual(baseline.energyAvailable);
       expect(sponsored.warnings).toEqual(baseline.warnings);
       expect(sponsored.errors).toEqual(baseline.errors);
+
+      // A standard send exposes no estimate; the sponsored one exposes provider + full energy cost
+      // (energyRequired × energyFee = 1000 × 210).
+      expect(baseline.sponsoredEnergy).toBeNull();
+      expect(sponsored.sponsoredEnergy?.provider).toEqual(TRONIFY);
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(210_000));
     });
 
-    it("does not change fee or status for an energy-short TRC20 send", async () => {
+    it("exposes the full-energy-cost saving even when the account has staked energy to cover it", async () => {
+      // Covered send (energyAvailable 100_000 >= energy_used 1000): a non-sponsored send would burn
+      // 0 TRX, yet the estimate reports the FULL energy cost, not the account-specific shortfall.
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id, energyProviderInfo }),
+      );
+
+      expect(sponsored.estimatedFees.isZero()).toBe(true);
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(210_000));
+    });
+
+    it("adds the savings estimate without changing fee or status for an energy-short TRC20 send", async () => {
       const tokenAccount = createTrc20TokenAccount();
       const account = createAccount({ subAccounts: [tokenAccount] });
       const overrides = {
@@ -334,6 +359,27 @@ describe("getTransactionStatus", () => {
       expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
       expect(sponsored.warnings).toEqual(baseline.warnings);
       expect(sponsored.errors).toEqual(baseline.errors);
+
+      expect(baseline.sponsoredEnergy).toBeNull();
+      expect(sponsored.sponsoredEnergy?.provider).toEqual(TRONIFY);
+      // Full energy cost = 31_895 × 210.
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(6_697_950));
+    });
+
+    it("exposes no estimate for an unknown provider id", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          energyProviderInfo: { providerId: "unknown", orderId: "order-123" },
+        }),
+      );
+
+      expect(sponsored.sponsoredEnergy).toBeNull();
     });
   });
 

@@ -17,7 +17,12 @@ import {
   getDelegatedResource,
   getTronSuperRepresentatives,
 } from "../network";
-import { Transaction, TransactionStatus, TronAccount } from "../types";
+import type {
+  SponsoredEnergyEstimate,
+  Transaction,
+  TransactionStatus,
+  TronAccount,
+} from "../types";
 import {
   NotEnoughGas,
   TronInvalidFreezeAmount,
@@ -36,7 +41,10 @@ import {
   TronUnfreezeNotExpired,
   TronVoteRequired,
 } from "../types/errors";
-import getEstimatedFees, { getFeeResourceBreakdown } from "./getEstimateFees";
+import getEstimatedFees, {
+  computeSponsoredEnergyEstimate,
+  getFeeResourceBreakdown,
+} from "./getEstimateFees";
 
 const getTransactionStatus = async (
   acc: TronAccount,
@@ -197,6 +205,8 @@ const getTransactionStatus = async (
   let bandwidthRequired = new BigNumber(0);
   let bandwidthAvailable = new BigNumber(0);
   let estimatedFees = new BigNumber(0);
+  // Informational savings estimate for a sponsored (Tronify) send (LIVE-32776); null otherwise.
+  let sponsoredEnergy: SponsoredEnergyEstimate | null = null;
 
   if (!hasErrors) {
     const resourceBreakdown = await getFeeResourceBreakdown(acc, transaction, tokenAccount);
@@ -205,6 +215,7 @@ const getTransactionStatus = async (
     bandwidthRequired = resourceBreakdown.bandwidthRequired;
     bandwidthAvailable = resourceBreakdown.bandwidthAvailable;
     estimatedFees = await getEstimatedFees(acc, transaction, tokenAccount, resourceBreakdown);
+    sponsoredEnergy = await computeSponsoredEnergyEstimate(transaction, resourceBreakdown);
   }
 
   const balance =
@@ -287,6 +298,7 @@ const getTransactionStatus = async (
     energyAvailable,
     bandwidthRequired,
     bandwidthAvailable,
+    sponsoredEnergy,
   });
 };
 
