@@ -2,6 +2,7 @@ import { element, by } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, isAndroid } from "../../helpers/commonHelpers";
 import { retryUntilTimeout } from "../../utils/retry";
+import { TIMEOUT } from "../../utils/timeouts";
 import { isMyWalletEnabled } from "../../utils/initUtil";
 import {
   ANALYTICS_CONSENT_DRAWER_ID,
@@ -44,16 +45,16 @@ export default class MainNavigationPage {
   // =====================
 
   @Step("Wait for Wallet 4.0 navigation to be ready")
-  async waitForWallet40Ready(timeout = 60000) {
+  async waitForWallet40Ready(timeout = TIMEOUT.l) {
     await retryUntilTimeout(
       async () => {
-        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_DRAWER_ID, 500))) {
-          if (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, 1000)) {
+        if (isAndroid() && (await IsIdVisible(ANALYTICS_CONSENT_DRAWER_ID, TIMEOUT.xxs))) {
+          if (await IsIdVisible(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID, TIMEOUT.xs)) {
             await tapById(ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID);
           }
           throw new Error("analytics consent drawer still present");
         }
-        if (!(await IsIdVisible(this.topBarDiscoverId, 500))) {
+        if (!(await IsIdVisible(this.topBarDiscoverId, TIMEOUT.xxs))) {
           throw new Error(`"${this.topBarDiscoverId}" not visible yet`);
         }
       },
@@ -195,7 +196,7 @@ export default class MainNavigationPage {
   // =====================
 
   @Step("Open Portfolio via deeplink (W40)")
-  async openPortfolioViaDeeplink(timeout = 60000) {
+  async openPortfolioViaDeeplink(timeout = TIMEOUT.l) {
     await openDeeplink("portfolio");
     await this.waitForWallet40Ready(timeout);
   }

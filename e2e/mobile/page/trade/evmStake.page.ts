@@ -1,10 +1,12 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "../../utils/timeouts";
 
 const VALIDATOR_ROW_REGEX = /^evm-validator-row-.+$/;
 // The staking quick-action testID suffix depends on account state: `cta` when the account has no
 // delegation yet, `addDelegation` once it already delegates. Both navigate to the validator list.
 const START_DELEGATE_CTA_REGEX = /^account-quick-action-button-(cta|addDelegation)$/;
-const FEE_ESTIMATION_TIMEOUT = 120000;
+// Fee estimation round-trips to the node before the continue button enables.
+const FEE_ESTIMATION_TIMEOUT = TIMEOUT.xl;
 
 export default class EvmStakePage {
   addDelegationCtaId = "account-quick-action-button-addDelegation";

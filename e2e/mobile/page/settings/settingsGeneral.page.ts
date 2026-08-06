@@ -1,5 +1,6 @@
 import { device } from "detox";
 import { Step } from "jest-allure2-reporter/api";
+import { INTERVAL } from "../../utils/timeouts";
 import { delay, isAndroid } from "../../helpers/commonHelpers";
 
 export default class SettingsGeneralPage {
@@ -104,7 +105,7 @@ export default class SettingsGeneralPage {
        * permalink: https://github.com/LedgerHQ/ledger-live/blob/9a9d649c1175ecf1a884a0ae615dba96b208c374/apps/ledger-live-mobile/src/context/AuthPass/auth.hooks.ts#L54-L61
        * ticket reference: https://ledgerhq.atlassian.net/browse/LIVE-20822
        */
-      await delay(2000);
+      await delay(INTERVAL.long);
     }
     await device.launchApp({ newInstance: false }); // bring back from background
     await app.common.enableSynchronization();

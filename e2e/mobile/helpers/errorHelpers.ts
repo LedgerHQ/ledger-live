@@ -1,6 +1,8 @@
+import { TIMEOUT } from "../utils/timeouts";
+
 export const ERROR_MODAL_SELECTORS = ["generic-error-modal"] as const;
 
-export async function detectErrorModal(timeout: number = 1000): Promise<string | null> {
+export async function detectErrorModal(timeout: number = TIMEOUT.xs): Promise<string | null> {
   for (const errorSelector of ERROR_MODAL_SELECTORS) {
     const isErrorVisible = await IsIdVisible(errorSelector, timeout);
     if (isErrorVisible) {
@@ -11,7 +13,7 @@ export async function detectErrorModal(timeout: number = 1000): Promise<string |
 }
 
 export async function checkForErrorModals(
-  timeout: number = 1000,
+  timeout: number = TIMEOUT.xs,
   customMessage?: string,
 ): Promise<void> {
   const detectedError = await detectErrorModal(timeout);

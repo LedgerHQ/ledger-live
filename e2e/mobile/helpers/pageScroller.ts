@@ -2,10 +2,10 @@ import { element, by, waitFor, log } from "detox";
 import { Direction, NativeElement, NativeMatcher } from "detox/detox";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isAndroid } from "./commonHelpers";
+import { INTERVAL, TIMEOUT } from "../utils/timeouts";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;
-const ANDROID_SCROLL_DELAY = 500;
 
 // A swipe is the inverse gesture of the scroll it produces: revealing content below is
 // scroll "down" but swipe "up".
@@ -28,7 +28,7 @@ export class PageScroller {
     scrollViewId?: string | RegExp,
     pixels = 300,
     initialDirection: Direction = "down",
-    timeout = ANDROID_SCROLL_DELAY,
+    timeout = TIMEOUT.xxs,
   ): Promise<void> {
     if (await this.isVisible(matcher, timeout)) {
       return;
@@ -92,7 +92,7 @@ export class PageScroller {
   ): Promise<Detox.IndexableNativeElement | NativeElement> {
     if (scrollViewId) {
       const scrollElement = by.id(scrollViewId);
-      if (await this.isVisible(scrollElement, 2000)) {
+      if (await this.isVisible(scrollElement, TIMEOUT.s)) {
         return element(scrollElement);
       } else {
         throw new Error(`Scroll view with id ${scrollViewId} not found or not visible.`);
@@ -186,6 +186,6 @@ export class PageScroller {
   }
 
   async waitForScrollToSettle(): Promise<void> {
-    await delay(1_000);
+    await delay(INTERVAL.medium);
   }
 }

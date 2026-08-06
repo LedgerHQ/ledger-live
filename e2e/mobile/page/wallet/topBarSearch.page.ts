@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "../../utils/timeouts";
 import { retryUntilTimeout } from "../../utils/retry";
 
 export default class TopBarSearchPage {
@@ -21,7 +22,7 @@ export default class TopBarSearchPage {
     await retryUntilTimeout(async () => {
       if (await IsIdPresent(this.screenId)) return;
       await tapById(this.topBarSearchButtonId);
-      await waitForElementById(this.screenId, 5000);
+      await waitForElementById(this.screenId, TIMEOUT.s);
     });
     await waitForElementById(this.defaultSectionsId, undefined, {
       errorElementId: this.defaultsErrorId,

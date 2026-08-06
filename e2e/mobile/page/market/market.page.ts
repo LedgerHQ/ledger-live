@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "../../utils/timeouts";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 import {
@@ -111,7 +112,7 @@ export default class MarketPage {
       await waitForElementById(this.headerBackButtonId);
       await tapById(this.headerBackButtonId);
     } else {
-      await waitForElementById(this.backButtonId, 5000);
+      await waitForElementById(this.backButtonId, TIMEOUT.s);
       await tapById(this.backButtonId);
     }
   }

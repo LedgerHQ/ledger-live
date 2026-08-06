@@ -40,46 +40,48 @@ import type { ServerData } from "../../apps/ledger-live-mobile/src/e2e/bridge/ty
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
 import { withTimeout } from "./utils/withTimeout";
-
-const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
-const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
+import {
+  BRIDGE_LOGS_TIMEOUT,
+  FAST_DIAGNOSTIC_TIMEOUT,
+  SLOW_DIAGNOSTIC_TIMEOUT,
+} from "./utils/timeouts";
 
 async function captureFailureDiagnostics(): Promise<void> {
-  await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
+  await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT, "takeSpeculosScreenshot");
   await withTimeout(
     attachSpeculinhoLogsToAllure(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
+    SLOW_DIAGNOSTIC_TIMEOUT,
     "attachSpeculinhoLogsToAllure",
   );
   await withTimeout(
     takeAppScreenshot("Test Failure"),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    FAST_DIAGNOSTIC_TIMEOUT,
     "takeAppScreenshot",
   );
   await withTimeout(
     attachTestExecutionConsoleToAllure(),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    FAST_DIAGNOSTIC_TIMEOUT,
     "attachTestExecutionConsoleToAllure",
   );
   await withTimeout(
     attachSpeculosStartupErrorToAllure(),
-    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    FAST_DIAGNOSTIC_TIMEOUT,
     "attachSpeculosStartupErrorToAllure",
   );
-  // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
-  // is just defense-in-depth in case the inner timer is starved on a wedged worker.
-  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  // Outer bound only: getLogs is already capped by the bridge's own response timeout.
+  // This is defense-in-depth for a wedged worker where that inner timer is starved.
+  let logs = await withTimeout(getLogs(), BRIDGE_LOGS_TIMEOUT, "getLogs");
   if (logs)
     await withTimeout(
       attachFailureLogsToAllure(logs),
-      SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      SLOW_DIAGNOSTIC_TIMEOUT,
       "attachFailureLogsToAllure",
     );
   logs = "";
 
   await withTimeout(
     captureNativeViewHierarchy(),
-    SLOW_DIAGNOSTIC_TIMEOUT_MS,
+    SLOW_DIAGNOSTIC_TIMEOUT,
     "captureNativeViewHierarchy",
   );
   console.info("Failure diagnostics capture completed");
@@ -99,7 +101,7 @@ function installSpeculosTerminationHandlers() {
     try {
       await withTimeout(
         cleanupAllSpeculos(),
-        SLOW_DIAGNOSTIC_TIMEOUT_MS,
+        SLOW_DIAGNOSTIC_TIMEOUT,
         `cleanupAllSpeculos(${reason})`,
       );
     } catch (error) {
@@ -258,7 +260,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
   async teardown() {
     try {
-      await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT_MS, "cleanupAllSpeculos");
+      await withTimeout(cleanupAllSpeculos(), SLOW_DIAGNOSTIC_TIMEOUT, "cleanupAllSpeculos");
     } catch (error) {
       console.info("Speculos cleanup on teardown failed:", sanitizeError(error));
     }

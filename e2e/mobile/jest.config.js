@@ -112,7 +112,7 @@ const config = {
   testMatch: ["<rootDir>/specs/**/*.spec.ts"],
   // CI shards exclude `.skip.spec.ts` (apps/ledger-live-mobile/scripts/shard-tests.mjs).
   testPathIgnorePatterns: ["\\.skip\\.spec\\.ts$"],
-  testTimeout: 60_000 * 6,
+  testTimeout: TEST_TIMEOUT,
   reporters: [
     "detox/runners/jest/reporter",
     ["jest-allure2-reporter", jestAllure2ReporterOptions],

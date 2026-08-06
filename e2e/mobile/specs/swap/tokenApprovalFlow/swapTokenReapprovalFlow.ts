@@ -1,4 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TOKEN_REAPPROVAL_TEST_TIMEOUT } from "../../../utils/timeouts";
 import {
   ensureTokenApproval,
   performSwapUntilQuoteSelectionStep,
@@ -53,33 +54,37 @@ export function runSwapTokenReapprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`, async () => {
-      const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
-      await app.swap.logSelectedProvider(provider.uiName);
-      await revokeTokenApproval(fromAccount, provider);
-      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
-      const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
-      await ensureTokenApproval(fromAccount, provider, smallAmount);
-      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        minAmount,
-        true,
-      );
-      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      // Allowance only covers smallAmount, not the full swap, so the CTA reads "Continue".
-      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      await app.swapLiveApp.expectResetApprovalScreen();
-      await app.swapLiveApp.tapRevokeApprovalButton();
-      await app.send.summaryContinue();
-      await app.speculos.signTokenApproval();
-      await app.swapLiveApp.expectTwoStepApprovalScreen();
-      await app.swapLiveApp.tapGiveApprovalButton();
-      await app.send.summaryContinue();
-      await app.speculos.signTokenApproval();
-      await app.swapLiveApp.expectExecuteSwapOnStepApproval();
-    }, 600_000);
+    it(
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`,
+      async () => {
+        const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
+        await app.swap.logSelectedProvider(provider.uiName);
+        await revokeTokenApproval(fromAccount, provider);
+        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+        const smallAmount = new BigNumber(minAmount).div(4).toFixed(6, BigNumber.ROUND_DOWN);
+        await ensureTokenApproval(fromAccount, provider, smallAmount);
+        const swap = new Swap(fromAccount, toAccount, minAmount, provider);
+        await performSwapUntilQuoteSelectionStep(
+          swap.accountToDebit,
+          swap.accountToCredit,
+          minAmount,
+          true,
+        );
+        await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+        // Allowance only covers smallAmount, not the full swap, so the CTA reads "Continue".
+        await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
+        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+        await app.swapLiveApp.expectResetApprovalScreen();
+        await app.swapLiveApp.tapRevokeApprovalButton();
+        await app.send.summaryContinue();
+        await app.speculos.signTokenApproval();
+        await app.swapLiveApp.expectTwoStepApprovalScreen();
+        await app.swapLiveApp.tapGiveApprovalButton();
+        await app.send.summaryContinue();
+        await app.speculos.signTokenApproval();
+        await app.swapLiveApp.expectExecuteSwapOnStepApproval();
+      },
+      TOKEN_REAPPROVAL_TEST_TIMEOUT,
+    );
   });
 }

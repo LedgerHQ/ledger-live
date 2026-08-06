@@ -1,4 +1,5 @@
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TOKEN_APPROVAL_TEST_TIMEOUT } from "../../../utils/timeouts";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
@@ -48,34 +49,38 @@ export function runSwapTokenApprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`, async () => {
-      const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
-      await app.swap.logSelectedProvider(provider.uiName);
-      await revokeTokenApproval(fromAccount, provider);
-      const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
-      if (amountToSwap === null) {
-        throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
-      }
-      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
-      await performSwapUntilQuoteSelectionStep(
-        swap.accountToDebit,
-        swap.accountToCredit,
-        amountToSwap.toString(),
-        true,
-      );
-      await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      // Allowance was revoked above, so the CTA reads "Continue".
-      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      await app.swapLiveApp.expectTwoStepApprovalScreen();
-      await app.swapLiveApp.tapGiveApprovalButton();
-      await app.send.summaryContinue();
-      await app.speculos.signTokenApproval();
-      if (provider === SwapProvider.UNISWAP) {
-        await app.swapLiveApp.tapGiveAuthorizationButton();
-        await app.speculos.signTypedMessage();
-      }
-      await app.swapLiveApp.expectExecuteSwapOnStepApproval();
-    }, 480_000);
+    it(
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`,
+      async () => {
+        const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
+        await app.swap.logSelectedProvider(provider.uiName);
+        await revokeTokenApproval(fromAccount, provider);
+        const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
+        if (amountToSwap === null) {
+          throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
+        }
+        const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+        await performSwapUntilQuoteSelectionStep(
+          swap.accountToDebit,
+          swap.accountToCredit,
+          amountToSwap.toString(),
+          true,
+        );
+        await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+        // Allowance was revoked above, so the CTA reads "Continue".
+        await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
+        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+        await app.swapLiveApp.expectTwoStepApprovalScreen();
+        await app.swapLiveApp.tapGiveApprovalButton();
+        await app.send.summaryContinue();
+        await app.speculos.signTokenApproval();
+        if (provider === SwapProvider.UNISWAP) {
+          await app.swapLiveApp.tapGiveAuthorizationButton();
+          await app.speculos.signTypedMessage();
+        }
+        await app.swapLiveApp.expectExecuteSwapOnStepApproval();
+      },
+      TOKEN_APPROVAL_TEST_TIMEOUT,
+    );
   });
 }

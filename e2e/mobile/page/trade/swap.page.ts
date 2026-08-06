@@ -8,6 +8,7 @@ import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
+import { TIMEOUT } from "../../utils/timeouts";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -54,7 +55,7 @@ export default class SwapPage extends CommonPage {
 
   @Step("Go to swap history")
   async goToSwapHistory() {
-    if (await IsIdVisible(this.topBarSwapHistoryButton, 5000)) {
+    if (await IsIdVisible(this.topBarSwapHistoryButton, TIMEOUT.s)) {
       await tapById(this.topBarSwapHistoryButton);
     } else {
       await tapById(this.historyButton);
@@ -87,7 +88,7 @@ export default class SwapPage extends CommonPage {
   async clickExportOperations() {
     await tapById(this.exportOperationsButton);
     const filePath = path.resolve(__dirname, "../../artifacts/ledgerwallet-swap-history.csv");
-    const fileExists = await FileUtils.waitForFileToExist(filePath, 5000);
+    const fileExists = await FileUtils.waitForFileToExist(filePath);
     jestExpect(fileExists).toBeTruthy();
   }
 
@@ -140,7 +141,7 @@ export default class SwapPage extends CommonPage {
 
   @Step("Wait for swap success and continue")
   async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 120000, {
+    await waitForElementById(this.swapSuccessTitleId, TIMEOUT.xl, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);
@@ -148,20 +149,20 @@ export default class SwapPage extends CommonPage {
 
   @Step("Wait for swap success and close")
   async waitForSuccessAndClose() {
-    await waitForElementById(this.swapSuccessTitleId, 120000, {
+    await waitForElementById(this.swapSuccessTitleId, TIMEOUT.xl, {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     let tapped = false;
     await retryUntilTimeout(async () => {
-      if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, 500))) {
+      if (tapped && !(await IsIdVisible(this.swapSuccessTitleId, TIMEOUT.xxs))) {
         return; // already dismissed by a previous tap — nothing left to do
       }
       await app.common.closePage();
       tapped = true;
-      if (await IsIdVisible(this.swapSuccessTitleId, 1000)) {
+      if (await IsIdVisible(this.swapSuccessTitleId, TIMEOUT.xs)) {
         throw new Error("swap-success-title still visible after close tap");
       }
-    }, 60000);
+    }, TIMEOUT.l);
   }
 
   @Step("Selected provider: {{{0}}}")

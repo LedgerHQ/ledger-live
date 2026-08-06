@@ -5,6 +5,7 @@ import { delay, isAndroid, isIos } from "./commonHelpers";
 import { retryUntilTimeout } from "../utils/retry";
 import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
+import { INTERVAL, TIMEOUT } from "../utils/timeouts";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 
 interface IndexedWebElement extends WebElement {
@@ -30,11 +31,7 @@ function hasMatcherProperty(obj: unknown): obj is WebElementWithMatcher {
 
 const scroller = new PageScroller();
 
-export const DEFAULT_TIMEOUT = 60000;
-export const VISIBILITY_PROBE_TIMEOUT = 1000;
-export const QUICK_VISIBILITY_PROBE_TIMEOUT = 500;
-
-const DEFAULT_WEB_ELEMENT_INTERVAL = 2000;
+const DEFAULT_WEB_ELEMENT_INTERVAL = INTERVAL.long;
 
 /** How far past the viewport edge revealForTap pushes a target so an overlay cannot intercept it. */
 const EDGE_CLEARANCE_PIXELS = 200;
@@ -80,16 +77,16 @@ export const NativeElementHelpers = {
    *
    * @example
    * // With error checking
-   * await waitForElement(myElement, 60000, {
+   * await waitForElement(myElement, TIMEOUT.l, {
    *   errorElementId: "error-description-deviceAction"
    * });
    */
   async waitForElement(
     nativeElement: NativeElement,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.s,
     options?: WaitForElementOptions,
   ) {
-    const errorCheckTimeout = options?.errorCheckTimeout ?? 500;
+    const errorCheckTimeout = options?.errorCheckTimeout ?? TIMEOUT.xxs;
     const checkVisibility = options?.checkVisibility ?? true;
     const waitCondition = checkVisibility
       ? waitFor(nativeElement).toBeVisible(options?.visibilityPercentage)
@@ -111,7 +108,7 @@ export const NativeElementHelpers = {
 
       await checkForErrorElement(options.errorElementId, errorCheckTimeout);
 
-      await delay(200);
+      await delay(INTERVAL.tick);
     }
 
     throw new Error(
@@ -123,26 +120,26 @@ export const NativeElementHelpers = {
 
   async waitForElementById(
     id: string | RegExp,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.s,
     options?: WaitForElementOptions,
   ) {
     return NativeElementHelpers.waitForElement(element(by.id(id)), timeout, options);
   },
 
   /** Detox's default is 75%, which a sliding bottom sheet satisfies before it settles. */
-  async waitForFullyVisibleById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  async waitForFullyVisibleById(id: string | RegExp, timeout: number = TIMEOUT.s) {
     return NativeElementHelpers.waitForElementById(id, timeout, { visibilityPercentage: 100 });
   },
 
   async waitForElementByText(
     text: string | RegExp,
-    timeout: number = DEFAULT_TIMEOUT,
+    timeout: number = TIMEOUT.s,
     options?: WaitForElementOptions,
   ) {
     return NativeElementHelpers.waitForElement(element(by.text(text)), timeout, options);
   },
 
-  async waitForElementNotVisible(id: string | RegExp, timeout = DEFAULT_TIMEOUT): Promise<boolean> {
+  async waitForElementNotVisible(id: string | RegExp, timeout = TIMEOUT.s): Promise<boolean> {
     const el = element(by.id(id));
 
     try {
@@ -228,7 +225,7 @@ export const NativeElementHelpers = {
     return element(matcher);
   },
 
-  async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
+  async isIdVisible(id: string | RegExp, timeout: number = TIMEOUT.xs): Promise<boolean> {
     try {
       await waitFor(NativeElementHelpers.getElementById(id)).toBeVisible().withTimeout(timeout);
       return true;
@@ -237,7 +234,7 @@ export const NativeElementHelpers = {
     }
   },
 
-  async isIdPresent(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
+  async isIdPresent(id: string | RegExp, timeout: number = TIMEOUT.xs): Promise<boolean> {
     try {
       await waitFor(NativeElementHelpers.getElementById(id)).toExist().withTimeout(timeout);
       return true;
@@ -262,7 +259,7 @@ export const NativeElementHelpers = {
     id: string | RegExp,
     opts: { index?: number; timeout?: number; disappearTimeout?: number } = {},
   ) {
-    const { index = 0, timeout = 60000, disappearTimeout = 1000 } = opts;
+    const { index = 0, timeout = TIMEOUT.s, disappearTimeout = TIMEOUT.xs } = opts;
     let tapped = false;
     await retryUntilTimeout(async () => {
       if (tapped) {
@@ -310,9 +307,15 @@ export const NativeElementHelpers = {
     scrollViewId?: string | RegExp,
     pixels?: number,
     direction?: Direction,
-    androidDelay?: number,
+    visibilityProbeTimeout?: number,
   ): Promise<void> {
-    await scroller.performScroll(by.text(text), scrollViewId, pixels, direction, androidDelay);
+    await scroller.performScroll(
+      by.text(text),
+      scrollViewId,
+      pixels,
+      direction,
+      visibilityProbeTimeout,
+    );
   },
 
   async scrollToId(
@@ -320,9 +323,15 @@ export const NativeElementHelpers = {
     scrollViewId?: string | RegExp,
     pixels?: number,
     direction?: Direction,
-    androidDelay?: number,
+    visibilityProbeTimeout?: number,
   ): Promise<void> {
-    await scroller.performScroll(by.id(id), scrollViewId, pixels, direction, androidDelay);
+    await scroller.performScroll(
+      by.id(id),
+      scrollViewId,
+      pixels,
+      direction,
+      visibilityProbeTimeout,
+    );
   },
 
   async scrollByPixels(
@@ -457,7 +466,7 @@ export const WebElementHelpers = {
 
   async waitWebElement(
     webElement: WebElement,
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.s,
     throwOnTimeout = true,
   ): Promise<WebElement | undefined> {
     try {
@@ -481,7 +490,7 @@ export const WebElementHelpers = {
     id: string,
     options?: { timeout?: number; throwOnTimeout?: boolean; index?: number; testIdSuffix?: string },
   ): Promise<WebElement | undefined> {
-    const timeout = options?.timeout ?? DEFAULT_TIMEOUT;
+    const timeout = options?.timeout ?? TIMEOUT.s;
     const webElement = WebElementHelpers.getWebElementByTestId(id, {
       testIdSuffix: options?.testIdSuffix,
       index: options?.index,
@@ -508,7 +517,7 @@ export const WebElementHelpers = {
     await retryUntilTimeout(async () => WebElementHelpers.getWebElementByTestId(id, options).tap());
   },
 
-  async tapWebElementByElement(element: WebElement, timeout = DEFAULT_TIMEOUT / 10): Promise<void> {
+  async tapWebElementByElement(element: WebElement, timeout = TIMEOUT.s): Promise<void> {
     await retryUntilTimeout(async () => element.tap(), timeout);
   },
 
@@ -527,7 +536,7 @@ export const WebElementHelpers = {
           },
           [text],
         ),
-      DEFAULT_TIMEOUT,
+      TIMEOUT.l,
       DEFAULT_WEB_ELEMENT_INTERVAL,
     );
   },
@@ -536,7 +545,7 @@ export const WebElementHelpers = {
     const raw = await retryUntilTimeout(
       () =>
         WebElementHelpers.getWebElementByTestId(id).runScript((el: HTMLInputElement) => el.value),
-      DEFAULT_TIMEOUT,
+      TIMEOUT.l,
       DEFAULT_WEB_ELEMENT_INTERVAL,
     );
 
@@ -555,7 +564,7 @@ export const WebElementHelpers = {
             if (!el?.isConnected) throw new Error("element not ready");
             el.scrollIntoView({ behavior: "smooth" });
           }),
-        DEFAULT_TIMEOUT,
+        TIMEOUT.l,
         DEFAULT_WEB_ELEMENT_INTERVAL,
       );
     } catch (error) {
@@ -583,7 +592,7 @@ export const WebElementHelpers = {
     return String(url);
   },
 
-  async waitForCurrentWebviewUrlToContain(substring: string, timeout = 10000): Promise<string> {
+  async waitForCurrentWebviewUrlToContain(substring: string, timeout = TIMEOUT.s): Promise<string> {
     let currentUrl = "";
     await retryUntilTimeout(
       async () => {
@@ -606,7 +615,7 @@ export const WebElementHelpers = {
    * button, form, image, link). Throws if it stays blank until `timeout`.
    */
   async waitForWebviewContentToRender(
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.s,
   ): Promise<{ height: number; textLength: number; contentElements: number }> {
     let snapshot = { height: 0, textLength: 0, contentElements: 0 };
     await retryUntilTimeout(
@@ -644,7 +653,7 @@ export const WebElementHelpers = {
   async waitForWebElementToMatchRegex(
     webElementId: string,
     regexPattern: RegExp,
-    timeout = 10000,
+    timeout = TIMEOUT.s,
   ): Promise<string> {
     let webElementText = "";
     await retryUntilTimeout(
@@ -675,7 +684,7 @@ export const WebElementHelpers = {
 
   async waitForWebElementToBeEnabled(
     id: string,
-    timeout = DEFAULT_TIMEOUT,
+    timeout = TIMEOUT.s,
     options?: { index?: number },
   ): Promise<void> {
     const start = Date.now();
@@ -691,7 +700,7 @@ export const WebElementHelpers = {
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
       }
-      await delay(1000);
+      await delay(INTERVAL.medium);
     }
 
     throw new Error(

@@ -1,5 +1,12 @@
 const os = require("os");
 const path = require("path");
+// Node strips the types at require time, so the whole suite shares one timeout scale.
+const {
+  DETOX_DEBUG_SYNCHRONIZATION,
+  DETOX_SETUP_TIMEOUT,
+  DETOX_TEARDOWN_TIMEOUT,
+} = require("./utils/timeouts.ts");
+
 const iosArch = "arm64";
 // Host-keyed so an inherited CI variable cannot select the wrong ABI. Override: E2E_ANDROID_ABI.
 // process.arch is "x64" under Rosetta; os.cpus() still reports the host's "Apple ..." brand string.
@@ -45,8 +52,8 @@ module.exports = {
       config: "jest.config.js",
     },
     jest: {
-      setupTimeout: 500000,
-      teardownTimeout: 120000,
+      setupTimeout: DETOX_SETUP_TIMEOUT,
+      teardownTimeout: DETOX_TEARDOWN_TIMEOUT,
     },
     noRetryArgs: ["json", "outputFile"],
     // Local default. CI passes --retries on the CLI, which takes precedence.
@@ -60,7 +67,7 @@ module.exports = {
     // Only governs how long Detox waits before printing "The app is busy with: <resources>", which
     // is the most useful clue when a wait never resolves. 10s is what was in force while this key
     // sat under `behavior`, where Detox does not read it.
-    debugSynchronization: 10000,
+    debugSynchronization: DETOX_DEBUG_SYNCHRONIZATION,
   },
   // Specified in full rather than inherited from detox-allure2-adapter/preset-detox: `pnpm mobile
   // e2e:build` installs only the app's dependencies, and that preset belongs to this package, so

@@ -1,6 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import * as fs from "fs/promises";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
+import { INTERVAL, TIMEOUT } from "./timeouts";
 
 export class FileUtils {
   @Step("get app.json size {{{0}}}")
@@ -15,7 +16,7 @@ export class FileUtils {
   }
 
   @Step("Wait for file to exist after clicking download {{{0}}}")
-  static async waitForFileToExist(filePath: string, timeout: number = 5000): Promise<boolean> {
+  static async waitForFileToExist(filePath: string, timeout: number = TIMEOUT.s): Promise<boolean> {
     const startTime = Date.now();
     while (Date.now() - startTime < timeout) {
       try {
@@ -23,7 +24,7 @@ export class FileUtils {
         return true;
       } catch (error) {
         console.error("Error in waitForFileToExist:", sanitizeError(error));
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, INTERVAL.tick));
       }
     }
 

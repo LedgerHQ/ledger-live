@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "../../utils/timeouts";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-e2e-shared/models/BuySell";
 import { BuySellProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
@@ -41,12 +42,12 @@ export default class BuySellPage {
   @Step("Open page via deeplink {{{0}}}")
   async openViaDeeplink(page: "Buy" | "Sell") {
     await openDeeplink(page.toLowerCase());
-    await waitForElementById(app.common.walletApiWebview, 60000, { checkVisibility: false });
+    await waitForElementById(app.common.walletApiWebview, TIMEOUT.l, { checkVisibility: false });
   }
 
   // App-side CAL lookup for the Buy screen's currencies (700+ ids) measures 60-90s;
   // 60s flakes on that alone. Latency is tracked separately, not fixed here.
-  cryptoCurrencySelectorTimeout = 120000;
+  cryptoCurrencySelectorTimeout = TIMEOUT.xl;
 
   @Step("Expect Buy screen to be visible")
   async expectBuyScreenToBeVisible() {
@@ -158,7 +159,7 @@ export default class BuySellPage {
   async getAvailableProviders(): Promise<string[]> {
     await waitWebElementByTestId(this.providersList);
     const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: 2000,
+      timeout: TIMEOUT.s,
       throwOnTimeout: false,
     });
     if (expandButton) {
@@ -185,7 +186,7 @@ export default class BuySellPage {
   async selectProvider(provider: string) {
     await waitWebElementByTestId(this.providersList);
     const expandButton = await waitWebElementByTestId(this.expandButtonId, {
-      timeout: 2000,
+      timeout: TIMEOUT.s,
       throwOnTimeout: false,
     });
     if (expandButton) {
@@ -208,7 +209,7 @@ export default class BuySellPage {
       const url = await getPtxHandoff();
       if (!url) throw new Error("No Buy/Sell handoff URL recorded by the app yet");
       return url;
-    }, 30000);
+    }, TIMEOUT.m);
 
     const partnerUrl = new URL(extractGoToUrl(rawHandoffUrl));
 

@@ -1,7 +1,9 @@
+import { INTERVAL, TIMEOUT } from "./timeouts";
+
 export async function retryUntilTimeout<T>(
   fn: () => Promise<T>,
-  timeout = 60_000,
-  interval = 500,
+  timeout = TIMEOUT.l,
+  interval = INTERVAL.short,
 ): Promise<T> {
   const start = Date.now();
   let lastError: unknown;

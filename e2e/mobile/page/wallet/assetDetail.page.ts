@@ -1,9 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { delay, normalizeText, parseTickerAmount } from "../../helpers/commonHelpers";
-import {
-  QUICK_VISIBILITY_PROBE_TIMEOUT,
-  VISIBILITY_PROBE_TIMEOUT,
-} from "../../helpers/elementHelpers";
+import { INTERVAL, TIMEOUT } from "../../utils/timeouts";
 
 type HoldingAddressExpectation = {
   accountId: string;
@@ -12,7 +9,7 @@ type HoldingAddressExpectation = {
 };
 
 const TOKEN_BALANCE_DECIMAL_PRECISION = 5;
-const OPERATION_DETAILS_OPEN_TIMEOUT = 5000;
+const OPERATION_DETAILS_OPEN_TIMEOUT = TIMEOUT.s;
 
 export default class AssetDetailPage {
   screenId = "asset-detail-screen";
@@ -69,7 +66,7 @@ export default class AssetDetailPage {
     for (let attempt = 0; attempt < 3; attempt++) {
       await tapById(this.operationsListItemId, 0);
       if (await IsIdVisible(this.operationDetailsTitleId, OPERATION_DETAILS_OPEN_TIMEOUT)) return;
-      await delay(500);
+      await delay(INTERVAL.short);
     }
     throw new Error("Operation details did not open after tapping the transaction");
   }
@@ -82,7 +79,7 @@ export default class AssetDetailPage {
   }
 
   private async openCoinOptions() {
-    if (await IsIdVisible(this.coinOptionsFavouriteRowId, QUICK_VISIBILITY_PROBE_TIMEOUT)) {
+    if (await IsIdVisible(this.coinOptionsFavouriteRowId, TIMEOUT.xxs)) {
       return;
     }
 
@@ -114,12 +111,12 @@ export default class AssetDetailPage {
   }
 
   @Step("Check if Asset Detail page is visible")
-  async isAssetDetailPageVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isAssetDetailPageVisible(timeout = TIMEOUT.xs) {
     return await IsIdVisible(this.scrollViewId, timeout);
   }
 
   @Step("Check if Asset Detail page for ticker is visible {{{0}}}")
-  async isAssetDetailPageForTickerVisible(ticker: string, timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isAssetDetailPageForTickerVisible(ticker: string, timeout = TIMEOUT.xs) {
     return (
       (await IsIdVisible(this.scrollViewId, timeout)) &&
       (await IsIdVisible(this.coinCapsuleIconId(ticker), timeout))

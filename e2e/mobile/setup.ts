@@ -4,9 +4,7 @@ import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge } from "./bridge/server";
 import { setAllureDescription } from "./helpers/allure/allure-helper";
-
-const LAUNCH_TIMEOUT = 150_000;
-const TEARDOWN_TIMEOUT = 60_000;
+import { SUITE_SETUP_TIMEOUT, SUITE_TEARDOWN_TIMEOUT } from "./utils/timeouts";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
@@ -17,7 +15,7 @@ beforeAll(async () => {
   await device.reverseTcpPort(port);
   await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
   setAllureDescription();
-}, LAUNCH_TIMEOUT);
+}, SUITE_SETUP_TIMEOUT);
 
 afterAll(async () => {
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
@@ -41,4 +39,4 @@ afterAll(async () => {
   } catch (e) {
     log.warn(`setup afterAll closeBridge failed: ${sanitizeError(e)}`);
   }
-}, TEARDOWN_TIMEOUT);
+}, SUITE_TEARDOWN_TIMEOUT);

@@ -4,6 +4,7 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
 import { retryUntilTimeout } from "../../utils/retry";
 import { checkForErrorModals } from "../../helpers/errorHelpers";
+import { ACCOUNT_DISCOVERY_TIMEOUT, TIMEOUT } from "../../utils/timeouts";
 
 // Short enough that retryUntilTimeout's own budget still allows a re-tap; the default 60s would
 // consume the whole budget in a single attempt.
@@ -33,20 +34,19 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
-    const DISCOVERY_TIMEOUT = 240_000;
     const startTime = Date.now();
 
     // disable sync to avoid Detox hanging during busy account discovery and UI animations
     await device.disableSynchronization();
     try {
-      while (Date.now() - startTime < DISCOVERY_TIMEOUT) {
+      while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
         if (await IsIdVisible(this.continueButtonId, 10_000)) {
           return;
         }
-        await checkForErrorModals(1_000, "Account discovery failed");
+        await checkForErrorModals(TIMEOUT.xs, "Account discovery failed");
       }
       throw new Error(
-        `Account discovery timed out after ${DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
+        `Account discovery timed out after ${ACCOUNT_DISCOVERY_TIMEOUT}ms. Expected button "${this.continueButtonId}" not found.`,
       );
     } finally {
       await device.enableSynchronization();

@@ -1,6 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
-import { VISIBILITY_PROBE_TIMEOUT } from "../../helpers/elementHelpers";
+import { TIMEOUT } from "../../utils/timeouts";
 import { Account, AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 
 export default class AccountPage {
@@ -60,7 +60,7 @@ export default class AccountPage {
   }
 
   @Step("Check if account detail is visible")
-  async isAccountDetailVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
+  async isAccountDetailVisible(timeout = TIMEOUT.xs) {
     return await IsIdVisible(this.accountScreenScrollView, timeout);
   }
 

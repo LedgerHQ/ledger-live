@@ -28,6 +28,7 @@ import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { withTimeout } from "./utils/withTimeout";
+import { GLOBAL_TEARDOWN_APP_READY_TIMEOUT } from "./utils/timeouts";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -50,7 +51,10 @@ export default async () => {
       await launchApp({ newInstance: true });
       await setFeatureFlags(getMergedFeatureFlags());
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-      await NativeElementHelpers.waitForElementById("topbar-discover", 120_000);
+      await NativeElementHelpers.waitForElementById(
+        "topbar-discover",
+        GLOBAL_TEARDOWN_APP_READY_TIMEOUT,
+      );
     } catch (err) {
       log.warn("Error starting the app in CI global teardown:", sanitizeError(err));
     }

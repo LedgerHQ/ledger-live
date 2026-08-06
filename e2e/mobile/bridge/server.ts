@@ -15,8 +15,7 @@ import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
-
-const RESPONSE_TIMEOUT = 10000;
+import { BRIDGE_RESPONSE_TIMEOUT, TIMEOUT } from "../utils/timeouts";
 
 export async function findFreePort(): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -152,11 +151,11 @@ export async function swapSetup() {
 }
 
 export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, TIMEOUT.m);
 }
 
 export async function waitEarnReady() {
-  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.m);
 }
 
 export async function getLogs() {
@@ -176,7 +175,7 @@ export async function getPtxHandoff() {
   return fetchData({ type: "getPtxHandoff", id: uniqueId() });
 }
 
-async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
+async function fetchData(message: MessageData, timeout = BRIDGE_RESPONSE_TIMEOUT): Promise<string> {
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {

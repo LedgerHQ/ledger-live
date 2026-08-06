@@ -3,6 +3,7 @@ import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
+import { TIMEOUT } from "../../utils/timeouts";
 import { floatNumberRegex } from "@ledgerhq/live-e2e-shared/data/regexes";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
@@ -154,7 +155,7 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Wait for quotes countdown to be stable")
-  async waitForQuotesStable(timeout: number = 20000) {
+  async waitForQuotesStable(timeout: number = TIMEOUT.m) {
     await retryUntilTimeout(async () => {
       const countdownText = await getWebElementText(this.quotesCountDown);
       const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
@@ -229,7 +230,7 @@ export default class SwapLiveAppPage {
       }
 
       return providerList;
-    }, 30000);
+    }, TIMEOUT.m);
   }
 
   @Step("Check error message: {{{0}}}")
@@ -515,7 +516,7 @@ export default class SwapLiveAppPage {
         this.incompatibilityBannerPartnerSelector(provider),
       );
       jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
-    }, 20000);
+    }, TIMEOUT.m);
   }
 
   @Step("Select specific provider {{{0}}}")

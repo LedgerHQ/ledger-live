@@ -1,9 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { isAndroid } from "../../helpers/commonHelpers";
-import {
-  QUICK_VISIBILITY_PROBE_TIMEOUT,
-  VISIBILITY_PROBE_TIMEOUT,
-} from "../../helpers/elementHelpers";
+import { TIMEOUT } from "../../utils/timeouts";
 
 export const ANALYTICS_CONSENT_DRAWER_ID = "analytics-consent-drawer";
 export const ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID = "analytics-consent-drawer-secondary-button";
@@ -13,7 +10,7 @@ export default class Wallet40DrawersPage {
   analyticsConsentRefuseAllButtonId = ANALYTICS_CONSENT_REFUSE_ALL_BUTTON_ID;
 
   @Step("Close analytics consent drawer if visible")
-  async closeAnalyticsConsentDrawerIfVisible(timeout = VISIBILITY_PROBE_TIMEOUT): Promise<boolean> {
+  async closeAnalyticsConsentDrawerIfVisible(timeout = TIMEOUT.xs): Promise<boolean> {
     if (await IsIdVisible(this.analyticsConsentRefuseAllButtonId, timeout)) {
       await tapById(this.analyticsConsentRefuseAllButtonId);
       await waitForElementNotVisible(this.analyticsConsentRefuseAllButtonId);
@@ -30,8 +27,8 @@ export default class Wallet40DrawersPage {
   }
 
   @Step("Close Wallet 4.0 blocking drawers if visible")
-  async closeWallet40BlockingDrawersIfVisible(timeout = VISIBILITY_PROBE_TIMEOUT) {
-    const drawerTimeout = isAndroid() ? timeout : QUICK_VISIBILITY_PROBE_TIMEOUT;
+  async closeWallet40BlockingDrawersIfVisible(timeout = TIMEOUT.xs) {
+    const drawerTimeout = isAndroid() ? timeout : TIMEOUT.xxs;
     await this.closeAnalyticsConsentDrawerIfVisible(drawerTimeout);
   }
 }
