@@ -19,6 +19,7 @@ describe("getValidators", () => {
 
     expect(page.items).toEqual([
       {
+        id: "astro-stakers.poolv1.near",
         address: "astro-stakers.poolv1.near",
         name: "astro-stakers.poolv1.near",
         balance: 31516203410952749364980772561846n,

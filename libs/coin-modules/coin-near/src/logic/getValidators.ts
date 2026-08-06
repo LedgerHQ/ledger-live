@@ -10,6 +10,7 @@ export async function getValidators(_cursor?: Cursor): Promise<Page<Validator>> 
   const validators = await fetchValidators({ total: VALIDATORS_COUNT });
 
   const items: Validator[] = validators.map(({ account_id, stake, commission }) => ({
+    id: account_id,
     address: account_id,
     name: account_id,
     balance: BigInt(stake || "0"),
