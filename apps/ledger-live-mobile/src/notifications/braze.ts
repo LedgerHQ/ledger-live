@@ -26,7 +26,12 @@ export const start = (
   Braze.changeUser(isTrackedUser ? userId.exportUserIdForBraze() : generateAnonymousId());
 };
 
-export const updateUserPreferences = (notificationsPreferences: NotificationsSettings) => {
+export const updateUserPreferences = (
+  notificationsPreferences: NotificationsSettings,
+  isTrackedUser: boolean,
+) => {
+  if (!isTrackedUser) return;
+
   const notificationsOptedIn = {
     optInAnnouncements: notificationsPreferences.announcementsCategory,
     optInLargeMovers: notificationsPreferences.largeMoverCategory,

@@ -17,7 +17,7 @@ import {
   notificationsModalOpenSelector,
 } from "~/reducers/notifications";
 import { ratingsModalOpenSelector } from "~/reducers/ratings";
-import { notificationsSelector } from "~/reducers/settings";
+import { notificationsSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { type NotificationsState } from "~/reducers/types";
 import { type DataOfUser, type NotificationPromptTarget } from "../types";
 import { resolveDrawerPromptTargetForAnalytics } from "../new/notificationsPromptAnalytics";
@@ -61,6 +61,7 @@ export const useNotificationsDrawer = ({
   const drawerSource = useSelector(notificationsDrawerSource);
   const drawerPromptTarget = useSelector(notificationsDrawerPromptTarget);
   const notifications = useSelector(notificationsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
 
   const dispatch = useDispatch();
   const eventTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -294,10 +295,13 @@ export const useNotificationsDrawer = ({
           transactionsAlertsCategory: true,
         }),
       );
-      updateUserPreferences({
-        ...notifications,
-        transactionsAlertsCategory: true,
-      });
+      updateUserPreferences(
+        {
+          ...notifications,
+          transactionsAlertsCategory: true,
+        },
+        isTrackedUser,
+      );
       markUserAsOptIn();
       return;
     }
@@ -327,6 +331,7 @@ export const useNotificationsDrawer = ({
     drawerPromptTarget,
     dispatch,
     notifications,
+    isTrackedUser,
     permissionStatus,
     requestPushNotificationsPermission,
     drawerSource,

@@ -51,8 +51,8 @@ const HookNotifications = () => {
   }, [syncBrazeIdentity]);
 
   useEffect(() => {
-    updateUserPreferences(notifications);
-  }, [notifications]);
+    updateUserPreferences(notifications, isTrackedUser);
+  }, [notifications, isTrackedUser]);
 
   return null;
 };

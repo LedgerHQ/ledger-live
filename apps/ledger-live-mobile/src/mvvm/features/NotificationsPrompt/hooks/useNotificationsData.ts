@@ -2,7 +2,11 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
+import {
+  notificationsSelector,
+  trackingEnabledSelector,
+  INITIAL_STATE as settingsInitialState,
+} from "~/reducers/settings";
 import { setNotifications } from "~/actions/settings";
 import { setNotificationsDataOfUser } from "~/actions/notifications";
 import { notificationsDataOfUserSelector } from "~/reducers/notifications";
@@ -24,6 +28,7 @@ const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
 
 export const useNotificationsData = () => {
   const notifications = useSelector(notificationsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
   const dispatch = useDispatch();
 
@@ -56,8 +61,8 @@ export const useNotificationsData = () => {
     };
 
     dispatch(setNotifications(updatedNotifications));
-    updateUserPreferences(updatedNotifications);
-  }, [dispatch, notifications]);
+    updateUserPreferences(updatedNotifications, isTrackedUser);
+  }, [dispatch, isTrackedUser, notifications]);
 
   const markUserAsOptOut = useCallback(
     (promptTarget?: NotificationPromptTarget) => {
