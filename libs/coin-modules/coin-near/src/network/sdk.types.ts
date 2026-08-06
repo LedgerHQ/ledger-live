@@ -35,9 +35,20 @@ export type NearTransaction = {
   }[];
 };
 
+export type NearBlockHeader = {
+  height: number;
+  hash: string;
+  /** Block time in nanoseconds since the epoch. */
+  timestamp: number;
+};
+
 export type NearProtocolConfig = {
   runtime_config: {
     storage_amount_per_byte: string;
+    /** Floor on the execution-half gas price, in effect since protocol 85. `#[serde(default)]` — absent (≡ 0) on older protocol versions. */
+    min_gas_purchase_price?: string;
+    /** Yocto cost of activating a new account, in effect since protocol 85. `#[serde(default)]` — absent (≡ 0) on older protocol versions. */
+    account_creation_charge?: string;
     transaction_costs: {
       action_creation_config: {
         add_key_cost: {

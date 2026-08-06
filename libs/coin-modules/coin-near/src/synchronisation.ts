@@ -1,7 +1,7 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getAccount, getOperations } from "./api";
+import { getAccount, getOperations } from "./network";
 import { NearAccount } from "./types";
 
 export const getAccountShape: GetAccountShape<NearAccount> = async info => {
