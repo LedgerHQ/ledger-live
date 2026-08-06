@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, Text } from "@ledgerhq/lumen-ui-rnative";
+import { Linking } from "react-native";
+import { Text } from "@ledgerhq/lumen-ui-rnative";
 import {
   dexProvidersContractAddress,
   privacyPolicy,
@@ -15,6 +16,28 @@ export type TermsAndConditionsFooterProps = Readonly<{
   /** Transaction recipient, used to resolve the DEX provider from its router address. */
   recipient?: string;
 }>;
+
+type InlineTextLinkProps = Readonly<{
+  children?: React.ReactNode;
+  href: string;
+}>;
+
+function InlineTextLink({ children, href }: InlineTextLinkProps) {
+  const handlePress = () => {
+    void Linking.openURL(href);
+  };
+
+  return (
+    <Text
+      typography="body2"
+      lx={{ color: "muted", textDecorationLine: "underline" }}
+      onPress={handlePress}
+      accessibilityRole="link"
+    >
+      {children}
+    </Text>
+  );
+}
 
 /**
  * Non-blocking terms of use notice shown while the user confirms a wallet-api swap on
@@ -38,8 +61,8 @@ export function TermsAndConditionsFooter({
   const appName = appNameByAddr || manifestName || manifestId;
 
   const linkComponents = [
-    <Link key="terms" size="sm" href={termsOfUseUrl} />,
-    ...(privacyUrl ? [<Link key="privacy" size="sm" href={privacyUrl} />] : []),
+    <InlineTextLink key="terms" href={termsOfUseUrl} />,
+    ...(privacyUrl ? [<InlineTextLink key="privacy" href={privacyUrl} />] : []),
   ];
 
   return (

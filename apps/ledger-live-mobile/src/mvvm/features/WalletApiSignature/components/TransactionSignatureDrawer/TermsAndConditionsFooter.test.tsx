@@ -7,6 +7,7 @@ import { TermsAndConditionsFooter } from "./TermsAndConditionsFooter";
 const UNISWAP_ROUTER = "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad";
 const UNISWAP_UNIVERSAL_ROUTER_V2 = "0x66a9893cC07D91D95644AEDD05D03f95e1dBA8Af";
 const ONEINCH_ROUTER = "0x111111125421ca6dc452d289314280a0f8842a65";
+const KILN_CONTRACT = "0x334F5d28a71432f8fc21C7B2B6F5dBbcD8B32A7b";
 
 describe("TermsAndConditionsFooter", () => {
   beforeEach(() => {
@@ -67,6 +68,24 @@ describe("TermsAndConditionsFooter", () => {
     fireEvent.press(links[1]);
     expect(Linking.openURL).toHaveBeenCalledWith("https://uniswap.org/terms-of-service");
     expect(Linking.openURL).toHaveBeenCalledWith("https://uniswap.org/privacy-policy");
+  });
+
+  it("should render Kiln's terms and privacy policy for its contract address", () => {
+    const { getAllByRole } = render(
+      <TermsAndConditionsFooter
+        manifestId="swap-live-app"
+        manifestName="Swap"
+        recipient={KILN_CONTRACT}
+      />,
+    );
+
+    const links = getAllByRole("link");
+    expect(links).toHaveLength(2);
+
+    fireEvent.press(links[0]);
+    fireEvent.press(links[1]);
+    expect(Linking.openURL).toHaveBeenCalledWith("https://www.kiln.fi/terms-and-conditions");
+    expect(Linking.openURL).toHaveBeenCalledWith("https://www.kiln.fi/legal#Privacy-Policy");
   });
 
   it("should fall back to the manifest id when no recipient matches a DEX router", () => {
