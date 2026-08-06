@@ -14,6 +14,10 @@ export type ContactDetailEditIntent = Readonly<{
   editRequirement: ContactEditRequirement;
 }>;
 
+export type ContactDetailLedgerWalletAccountsIntent = Readonly<{
+  type: "open-ledger-wallet-accounts";
+}>;
+
 export type ContactDetailDeleteIntent = Readonly<{
   type: "delete-contact";
   contactId: ContactId;
@@ -78,7 +82,8 @@ export type ContactDetailViewProps = Readonly<{
   labels: ContactDetailLabels;
   meAvatarSrc: string;
   onAddAddress: () => void;
-  onOpenLedgerWalletAddresses?: () => void;
+  ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
+  onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;
   addressGroups?: readonly ContactDetailAddressNetworkGroup[];
   onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
   detailActions?: Readonly<{

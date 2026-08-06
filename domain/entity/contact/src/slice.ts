@@ -1,12 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { DEFAULT_ME_CONTACT_ID, DEFAULT_ME_CONTACT_NAME } from "./constants";
 import { contact } from "./define";
 import { normalizeContacts } from "./internals";
 import type { Contact, ContactAddress, ContactId, ContactName, ContactsState } from "./types";
 
 const defaultMeContact = contact({
-  id: "contact-me",
+  id: DEFAULT_ME_CONTACT_ID,
   isMe: true,
-  name: "Me",
+  name: DEFAULT_ME_CONTACT_NAME,
   addresses: [],
 });
 
