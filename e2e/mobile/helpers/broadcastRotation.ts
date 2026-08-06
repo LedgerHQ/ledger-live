@@ -1,8 +1,8 @@
 /**
  * Decide whether this platform should run a broadcast-gated swap flow.
  *
- * On broadcast nightlies iOS+Android share the same on-chain account, so running both can race on
- * allowance/nonce. We pin each flow to one platform per run and rotate assignments.
+ * When iOS and Android broadcast in the same run they share the same on-chain account, so running
+ * both can race on allowance/nonce. We pin each flow to one platform per run and rotate assignments.
  * See: https://ledgerhq.atlassian.net/browse/QAA-1411
  */
 
@@ -27,16 +27,17 @@ function broadcastRotationIndex(): number {
 
 /**
  * Whether a broadcast flow should run in THIS platform's job on this run:
- *  - broadcast off                  → no (these flows are Monday-nightly / enable_broadcast only)
- *  - broadcast on, one platform     → yes (a single-platform run owns the account alone)
- *  - broadcast on, both platforms   → only on the flow's assigned platform this run (rotated)
+ *  - broadcast off for this platform  → no
+ *  - broadcast on, this platform only → yes (it owns the shared account alone)
+ *  - broadcast on for both platforms  → only on the flow's assigned platform this run (rotated)
  *
- * `E2E_BOTH_PLATFORMS` is set by the workflow to `tests_type != 'iOS Only' && != 'Android Only'`
- * — i.e. whether both platform jobs run this workflow (the only case that can collide).
+ * Broadcast is on for a platform on its own nightly (iOS Wednesday, Android Friday) or on an
+ * explicit enable_broadcast run. `E2E_BROADCAST_BOTH_MOBILE_PLATFORMS` marks the only case that
+ * can collide — both platforms broadcasting in the same run — which the nightlies never do.
  */
 export function shouldRunBroadcastFlow(flow: BroadcastFlow): boolean {
   if (process.env.DISABLE_TRANSACTION_BROADCAST !== "0") return false;
-  if (process.env.E2E_BOTH_PLATFORMS !== "true") return true;
+  if (process.env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS !== "true") return true;
 
   const assigned = PLATFORM_SLOTS[(broadcastRotationIndex() + flow) % PLATFORM_SLOTS.length];
   return currentPlatform() === assigned;
