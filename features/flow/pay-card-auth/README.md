@@ -18,18 +18,21 @@ composition root.
 
 ## Card API
 
-The three endpoints this flow calls live in `src/state/api.ts`, injected into the endpoint-less
-`payCardApi` service from [`@shared/api-services`](../../../shared/api-services/README.md):
+The flow owns its Card API wire contract and endpoint in `src/state/`. The endpoint is injected into
+the endpoint-less `payCardApi` service from
+[`@shared/api-services`](../../../shared/api-services/README.md):
 
 | Endpoint | Method | Purpose |
 | -------- | ------ | ------- |
 | `/card/v1/pre-auth` | POST | Exchange a provider for the hosted login URL |
-| `/card/v1/auth` | POST | Exchange the OAuth `state` and `code` for an app session token |
-| `/card/v1/me` | GET | Read the card holder's verification and card status |
 
-Reaching the backend — base URL (`PAY_CARD_API_BASE_URL`, staging is VPN-only) and the bearer token —
-belongs to the service; the flow owns only the wire contracts in `src/state/schema.ts` and the
-endpoints. Apps register `payCardApi`; importing this flow is what injects the endpoints into it.
+Reaching the backend — including the base URL (`PAY_CARD_API_BASE_URL`; staging is VPN-only) —
+belongs to the shared service. Both apps register `payCardApi`; importing this flow injects the
+endpoint into that same API instance. Responses are validated against
+`PayCardPreAuthResponseSchema` before they reach the view model.
+
+The OAuth code exchange (`/card/v1/auth`) and card status read (`/card/v1/me`) are intentionally
+deferred until the callback and status steps can also provide session-token handling.
 
 ## Platform resolution
 
@@ -76,10 +79,12 @@ pay-card-auth/
     ├── router/                             # Flow-local routing
     ├── state/
     │   ├── __tests__/
-    │   │   └── api.test.ts                 # Endpoint contract tests
-    │   ├── api.ts                          # Card API endpoints, injected into payCardApi
+    │   │   ├── api.native.test.ts          # Endpoint contract tests (Node environment)
+    │   │   └── schema.native.test.ts       # Wire contract tests (Node environment)
+    │   ├── api.ts                          # Card API endpoint, injected into payCardApi
     │   ├── index.ts                        # Flow-local state surface
-    │   └── schema.ts                       # Card API wire contracts
+    │   ├── schema.ts                       # Card API wire contracts
+    │   └── types.ts                        # Types inferred from those contracts
     ├── utils/                              # Flow-local helpers
     ├── index.native.ts                     # Native public API
     └── index.ts                            # Default/web public API

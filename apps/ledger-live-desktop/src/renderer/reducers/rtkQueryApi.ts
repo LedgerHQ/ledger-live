@@ -14,7 +14,8 @@ import {
 import { counterValuesApi } from "@ledgerhq/live-common/counterValues/state-manager/api";
 
 // Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
-// injected by the `@domain/api-*` use-case packages, which the view-models import directly.
+// injected by the use-case package that owns them (`@domain/api-*`, or the owning `features/flow/*`),
+// which the view-models import directly.
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
   [calApi.reducerPath]: calApi,

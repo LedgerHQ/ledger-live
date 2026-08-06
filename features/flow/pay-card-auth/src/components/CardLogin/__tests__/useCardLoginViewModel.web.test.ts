@@ -46,6 +46,22 @@ describe("useCardLoginViewModel", () => {
     });
   });
 
+  it("should not surface internal RTK error text", async () => {
+    const openHostedLogin = jest.fn();
+    unwrap.mockRejectedValue({
+      status: "CUSTOM_ERROR",
+      error: "payCardApiExtra not configured in store extraArgument",
+    });
+    const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
+
+    act(() => result.current.onLoginPress());
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toBe("Unable to start login");
+      expect(openHostedLogin).not.toHaveBeenCalled();
+    });
+  });
+
   it("should reject an insecure hosted login URL", async () => {
     const openHostedLogin = jest.fn();
     unwrap.mockResolvedValue({ loginUrl: "javascript:alert('login')" });

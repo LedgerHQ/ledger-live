@@ -53,38 +53,23 @@ describe("payCardBaseQuery", () => {
   });
 
   it("resolves requests against the configured base url", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ ok: true }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
-    );
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ ok: true }));
 
     const { api, store } = probeStore(payCardApiExtra(valid));
     const result = await store.dispatch(api.endpoints.probe.initiate());
 
     expect(result.data).toEqual({ ok: true });
-    const request = fetchSpy.mock.calls[0][0] as Request;
-    expect(request.url).toBe("https://card.test/probe");
-    expect(request.headers.get("accept")).toBe("application/json");
-    expect(request.headers.get("authorization")).toBeNull();
+    expect(request(fetchSpy).url).toBe("https://card.test/probe");
   });
 
-  it("sends the app session token as a bearer once the flow has one", async () => {
-    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ ok: true }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
-    );
+  it("asks for json and sends no credentials", async () => {
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({}));
 
-    const { api, store } = probeStore(
-      payCardApiExtra({ ...valid, getPayCardSessionToken: () => "cs_example-session-token" }),
-    );
+    const { api, store } = probeStore(payCardApiExtra(valid));
     await store.dispatch(api.endpoints.probe.initiate());
 
-    const request = fetchSpy.mock.calls[0][0] as Request;
-    expect(request.headers.get("authorization")).toBe("Bearer cs_example-session-token");
+    expect(request(fetchSpy).headers.get("accept")).toBe("application/json");
+    expect(request(fetchSpy).headers.get("authorization")).toBeNull();
   });
 
   it("fails without fetching when the extraArgument is not configured", async () => {
@@ -100,3 +85,14 @@ describe("payCardBaseQuery", () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
+
+function jsonResponse(body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
+
+function request(spy: jest.SpyInstance): Request {
+  return spy.mock.calls[0][0] as Request;
+}

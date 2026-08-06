@@ -10,14 +10,9 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   return url.toString();
 }
 
+// Only genuine `Error` messages reach the user. RTK rejections carry internal strings such as the
+// base query's `CUSTOM_ERROR` text, which must not be rendered.
 function getLoginErrorMessage(error: unknown): string {
-  if (typeof error === "object" && error !== null && "error" in error) {
-    const message = error.error;
-    if (typeof message === "string") {
-      return message;
-    }
-  }
-
   if (error instanceof Error && error.message) {
     return error.message;
   }

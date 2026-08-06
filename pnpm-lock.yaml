@@ -5302,9 +5302,6 @@ importers:
 
   features/flow/pay-card-auth:
     dependencies:
-      '@domain/entity-pay-card':
-        specifier: workspace:^
-        version: link:../../../domain/entity/pay-card
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../../shared/api-services

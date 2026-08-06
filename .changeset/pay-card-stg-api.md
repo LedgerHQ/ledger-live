@@ -6,10 +6,14 @@
 "live-mobile": minor
 ---
 
-Integrate the staging Card API and drop the Pay Card mocks
+Integrate the staging Card API pre-auth flow and remove the Pay Card mocks
 
 `@shared/api-services` gains `services/pay-card`, the endpoint-less api owning the Card API base URL
-(`PAY_CARD_API_BASE_URL`, VPN-only staging) and the app session bearer. The pre-auth, auth and me
-endpoints now live with the flow that calls them, in `@features/flow-pay-card-auth`, injected into
-that service; `@domain/api-pay-card` and its in-process mock transport are removed. `/me` follows the
-staging contract, replacing `providerUserId` and `phase` with the card status fields.
+(`PAY_CARD_API_BASE_URL`, VPN-only staging). The `pre-auth` endpoint now lives with the flow that
+calls it, in `@features/flow-pay-card-auth`, injected into that service along with its wire
+contracts; `@domain/api-pay-card` and its in-process mock transport are removed.
+
+Only `pre-auth` ships in this change. The OAuth code exchange and card status read are deferred until
+the callback and status steps can also provide session-token handling. `@domain/entity-pay-card` is
+reduced to the Redux state registered by both apps, while Card API schemas remain local to the auth
+flow.

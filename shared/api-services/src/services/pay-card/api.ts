@@ -18,23 +18,19 @@ export function payCardApiExtra(extra: PayCardApiExtra): PayCardApiExtra {
   return PayCardApiExtraSchema.parse(extra);
 }
 
-/** Extracts the {@link PayCardApiExtra} from the `extraArgument` of the api. */
-export function getPayCardExtra(api: { extra: unknown }): PayCardApiExtra {
-  return api.extra as PayCardApiExtra;
-}
-
 /**
- * Reads the injected {@link PayCardApiExtra} and delegates to {@link fetchBaseQuery}, attaching the
- * app session token as a bearer once the authentication flow has one.
+ * Reads the injected {@link PayCardApiExtra} and delegates to {@link fetchBaseQuery}.
  *
- * Not wrapped in `retry`: authentication exchanges a single-use OAuth code, which must not be
- * replayed.
+ * Not wrapped in `retry`: the OAuth code exchange that lands on this service next is single-use and
+ * must not be replayed.
  */
 const payCardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = (
   args,
   api,
   extraOptions,
 ) => {
+  // `safeParse` rather than the cast the sibling services use: it turns a misconfigured store into a
+  // handled error instead of a request against an undefined base URL.
   const parsed = PayCardApiExtraSchema.safeParse(api.extra);
   if (!parsed.success) {
     return {
@@ -44,15 +40,10 @@ const payCardBaseQuery: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryE
       },
     };
   }
-  const extra = parsed.data;
   return fetchBaseQuery({
-    baseUrl: extra.payCardApiBaseUrl,
+    baseUrl: parsed.data.payCardApiBaseUrl,
     prepareHeaders: headers => {
       headers.set("accept", "application/json");
-      const sessionToken = extra.getPayCardSessionToken?.();
-      if (sessionToken) {
-        headers.set("authorization", `Bearer ${sessionToken}`);
-      }
       return headers;
     },
   })(args, api, extraOptions);

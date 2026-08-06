@@ -28,7 +28,6 @@
     "unimported": "pnpm knip --directory ../../.. -W features/flow/pay-card-auth"
   },
   "dependencies": {
-    "@domain/entity-pay-card": "workspace:^",
     "@shared/api-services": "workspace:^",
     "zod": "catalog:"
   },

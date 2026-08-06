@@ -1,4 +1,4 @@
-import type { PayCardProvider } from "@domain/entity-pay-card";
+import type { PayCardProvider } from "../../state";
 
 export type OpenHostedLogin = (loginUrl: string) => Promise<void> | void;
 

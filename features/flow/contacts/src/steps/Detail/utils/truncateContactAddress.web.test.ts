@@ -6,17 +6,17 @@ describe("truncateContactAddress", () => {
   });
 
   it("returns addresses up to the truncation length unchanged", () => {
-    const address = "0x12345678901234567";
+    const address = "0x1234567890123456789";
 
     expect(address).toHaveLength(19);
     expect(truncateContactAddress(address)).toBe(address);
   });
 
   it("truncates addresses longer than the truncation length", () => {
-    const address = "0x123456789012345678";
+    const address = "0x12345678901234567890";
 
     expect(address).toHaveLength(20);
-    expect(truncateContactAddress(address)).toBe("0x123456...12345678");
+    expect(truncateContactAddress(address)).toBe("0x123456...34567890");
   });
 
   it("truncates long addresses with ellipsis", () => {
