@@ -318,7 +318,8 @@ export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
 // estimatedFees (that re-pricing is LIVE-32892).
 export type SponsoredEnergyEstimate = {
   provider: EnergyProvider;
-  // TRX a non-sponsored USDT send would burn on energy (full energy cost: energyRequired × energyFee).
+  // What a non-sponsored USDT send would burn on energy, in SUN (native TRX's base unit) — the full
+  // energy cost energyRequired × energyFee. The front end converts SUN to fiat for display.
   avoidedEnergyFees: BigNumber;
 };
 // Additive resource-breakdown fields for the send-flow UI. Sufficiency is: energyRequired <=
@@ -329,7 +330,8 @@ export type TransactionStatus = TransactionStatusCommon & {
   energyAvailable: BigNumber;
   bandwidthRequired: BigNumber;
   bandwidthAvailable: BigNumber;
-  // Set only for sponsored sends (see SponsoredEnergyEstimate); absent for standard crafting.
+  // A SponsoredEnergyEstimate for sponsored sends; null for standard crafting. getTransactionStatus
+  // always sets the field (never omits it), so consumers can read it without a presence check.
   sponsoredEnergy?: SponsoredEnergyEstimate | null;
 };
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

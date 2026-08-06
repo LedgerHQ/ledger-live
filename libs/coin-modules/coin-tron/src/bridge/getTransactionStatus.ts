@@ -17,7 +17,12 @@ import {
   getDelegatedResource,
   getTronSuperRepresentatives,
 } from "../network";
-import { SponsoredEnergyEstimate, Transaction, TransactionStatus, TronAccount } from "../types";
+import type {
+  SponsoredEnergyEstimate,
+  Transaction,
+  TransactionStatus,
+  TronAccount,
+} from "../types";
 import {
   NotEnoughGas,
   TronInvalidFreezeAmount,

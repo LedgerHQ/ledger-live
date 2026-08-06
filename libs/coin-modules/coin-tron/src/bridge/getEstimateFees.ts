@@ -175,11 +175,19 @@ export const computeSponsoredEnergyEstimate = async (
   // misleading "Saved $0.00 with <provider>" third-party disclosure on an unsponsored tx.
   if (breakdown.energyRequired.lte(0)) return null;
 
-  const params: ChainParameters = await getChainParameters();
-  const avoidedEnergyFees = breakdown.energyRequired
-    .multipliedBy(params.energyFee)
-    .integerValue(BigNumber.ROUND_CEIL);
-  return { provider, avoidedEnergyFees };
+  try {
+    const params: ChainParameters = await getChainParameters();
+    const avoidedEnergyFees = breakdown.energyRequired
+      .multipliedBy(params.energyFee)
+      .integerValue(BigNumber.ROUND_CEIL);
+    return { provider, avoidedEnergyFees };
+  } catch (err) {
+    // Informational only: a chain-params fetch failure must not break the whole status computation.
+    log("tron/computeSponsoredEnergyEstimate", "chain params unavailable, omitting estimate", {
+      err,
+    });
+    return null;
+  }
 };
 
 // Energy-aware fee for an active-recipient TRC20 transfer: 0 when energy and bandwidth cover it, the

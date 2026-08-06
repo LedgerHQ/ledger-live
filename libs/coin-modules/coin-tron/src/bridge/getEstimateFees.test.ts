@@ -509,7 +509,10 @@ describe("getEstimatedFees", () => {
     });
 
     it("returns null for a 0-energy transfer (native/TRC10 — nothing to disclose)", async () => {
-      const breakdown: FeeResourceBreakdown = { ...baseBreakdown, energyRequired: new BigNumber(0) };
+      const breakdown: FeeResourceBreakdown = {
+        ...baseBreakdown,
+        energyRequired: new BigNumber(0),
+      };
       expect(await computeSponsoredEnergyEstimate(sponsoredTx, breakdown)).toBeNull();
     });
   });
