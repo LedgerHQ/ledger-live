@@ -263,16 +263,13 @@ export default class SwapLiveAppPage {
         getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-slippage-infoIcon" }),
       ).toExist();
     }
-    await this.checkExchangeButtonHasProviderName(providerList[0]);
+    await this.checkQuoteCardCta(providerList[0]);
   }
 
   // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
   // in swapUtils.ts, rather than guessing it here.
   @Step("Check exchange CTA text: $0")
-  async checkExchangeButtonHasProviderName(
-    provider: string,
-    approvalRequired = false,
-  ): Promise<string> {
+  async checkQuoteCardCta(provider: string, approvalRequired = false): Promise<void> {
     if (!SwapProvider.getNameByUiName(provider)) {
       throw new Error(`Unknown provider UI name: "${provider}"`);
     }
@@ -285,7 +282,6 @@ export default class SwapLiveAppPage {
     // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
     const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
     jestExpect(actualButtonText).toMatch(expected);
-    return actualButtonText;
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
@@ -480,6 +476,9 @@ export default class SwapLiveAppPage {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
     const providerName = SwapProvider.getNameByUiName(provider);
+    if (!providerName) {
+      throw new Error(`Unknown provider UI name: "${provider}"`);
+    }
     const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}`;
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);
@@ -489,14 +488,8 @@ export default class SwapLiveAppPage {
   async goToProviderLiveApp(provider: string) {
     const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
     await detoxExpect(button).toExist();
-    const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
+    await app.swapLiveApp.checkQuoteCardCta(provider);
     await app.swapLiveApp.tapExecuteSwap(provider);
-    if (provider === "1inch" && actualButtonText.includes("Swap with")) {
-      await app.swapLiveApp.tapExecuteSwapOnStepApproval();
-      const summaryContinueButton = app.send.summaryContinueButton();
-      await waitForElement(summaryContinueButton);
-      await tapByElement(summaryContinueButton);
-    }
   }
 
   @Step("Verify live app title contains $0")

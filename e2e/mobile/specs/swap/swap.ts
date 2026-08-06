@@ -57,7 +57,7 @@ export function runSwapTest(
 
       const provider = await app.swapLiveApp.selectExchange();
       const approvalRequired = await isTokenApprovalExpected(accountToDebit, provider, swapAmount);
-      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName, approvalRequired);
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, approvalRequired);
       if (approvalRequired) {
         console.warn(
           `[swap] ${provider.uiName} requires token approval for ${accountToDebit.currency.name}; ` +

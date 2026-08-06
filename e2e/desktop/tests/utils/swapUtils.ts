@@ -105,7 +105,7 @@ export async function handleSwapErrorOrSuccess(
 ) {
   const provider = await app.swap.selectExchangeWithoutKyc(swap);
   // Only called with native fromAccounts, so approval never applies here.
-  await app.swap.checkExchangeButtonHasProviderName(provider.uiName);
+  await app.swap.checkQuoteCardCta(provider.uiName);
   await app.swap.clickExchangeButton(provider.name);
 
   const deviceId = getSpeculosModel();
