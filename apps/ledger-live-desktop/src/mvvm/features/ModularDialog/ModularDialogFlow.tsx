@@ -3,6 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import {
   modularDialogConfigurationSelector,
   modularDialogFlowSelector,
   modularDialogIsOpenSelector,
@@ -20,7 +24,6 @@ import { useHasAccountsForAsset } from "./hooks/useHasAccountsForAsset";
 import { useModularDialogNavigation } from "./hooks/useModularDialogNavigation";
 import { useModularDialogRemoteData } from "./hooks/useModularDialogRemoteData";
 import { MODULAR_DIALOG_STEP, type ModularDialogFlowProps, type ModularDialogStep } from "./types";
-import { parseUiUseCase } from "./utils/parseUiUseCase";
 
 const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.ASSET_SELECTION]: "modularAssetDrawer.selectAsset",
@@ -113,7 +116,13 @@ export function ModularDialogFlow({
         );
       case MODULAR_DIALOG_STEP.ACCOUNT_SELECTION:
         if (selectedAsset && selectedNetwork && onAccountSelected) {
-          return <AccountSelector asset={selectedAsset} onAccountSelected={onAccountSelected} />;
+          return (
+            <AccountSelector
+              asset={selectedAsset}
+              onAccountSelected={onAccountSelected}
+              uiUseCase={uiUseCase}
+            />
+          );
         }
         return null;
       default:
@@ -139,15 +148,21 @@ export function ModularDialogFlow({
         })
       : undefined;
 
-  const { isPerpsWithoutVariant, isPerpsDeposit } = parseUiUseCase(uiUseCase);
+  const perpsUseCase = getPerpsUiUseCase(uiUseCase);
   const { title, flowDescription } = ((): { title: string; flowDescription?: string } => {
-    if (currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION && isPerpsDeposit) {
+    if (
+      currentStep === MODULAR_DIALOG_STEP.ASSET_SELECTION &&
+      perpsUseCase === PERPS_UI_USE_CASE.fund
+    ) {
       return {
         title: t("modularAssetDrawer.selectDepositCurrencyTitle"),
         flowDescription: t("modularAssetDrawer.selectDepositCurrencyDescription"),
       };
     }
-    if (currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION && isPerpsWithoutVariant) {
+    if (
+      currentStep === MODULAR_DIALOG_STEP.ACCOUNT_SELECTION &&
+      perpsUseCase === PERPS_UI_USE_CASE.receive
+    ) {
       return {
         title: t("modularAssetDrawer.selectAccountPerpsTitle"),
         flowDescription: t("modularAssetDrawer.selectAccountPerpsDescription"),
