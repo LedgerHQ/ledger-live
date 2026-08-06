@@ -1,5 +1,3 @@
-export type ContactsLedgerSyncStatus = "ready" | "checking" | "inactive";
-
 export type ContactsLedgerSyncIntroduction = Readonly<{
   isOpen: boolean;
   description: string;
