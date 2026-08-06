@@ -72,6 +72,7 @@ import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { isDatadogEnabled } from "~/datadog";
 import { DdLogs } from "@datadog/mobile-react-native";
+import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -228,7 +229,9 @@ const getMEVAttributes = (state: State) => {
 const getMandatoryProperties = (store: AppStore) => {
   const state: State = store.getState();
   const userId = userIdSelector(state);
-  const userIdStr = isDummyUserId(userId) ? undefined : userId.exportUserIdForAnalytics();
+  const includeIdentity = shouldIncludeSegmentIdentity(state);
+  const userIdStr =
+    includeIdentity && !isDummyUserId(userId) ? userId.exportUserIdForAnalytics() : undefined;
   const analyticsEnabled = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
@@ -239,8 +242,7 @@ const getMandatoryProperties = (store: AppStore) => {
   const notificationsOptInAttributes = getNotificationsOptInAttributes();
 
   return {
-    userId: userIdStr,
-    braze_external_id: userIdStr, // Needed for braze with this exact name
+    ...(userIdStr ? { userId: userIdStr, braze_external_id: userIdStr } : {}),
     devModeEnabled,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
@@ -592,7 +594,10 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
     : baseProperties;
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, allProperties);
+  const segmentUserId = shouldIncludeSegmentIdentity(state)
+    ? userExtraProperties.userId
+    : undefined;
+  await segmentClient?.identify(segmentUserId, allProperties);
 };
 
 type Properties = Error | Record<string, unknown> | null;

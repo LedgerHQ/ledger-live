@@ -5,6 +5,7 @@ import {
   isDummyUserId,
   type IdentitiesState,
 } from "@domain/entity-client-identity";
+import { shouldIncludeSegmentIdentity } from "./segmentIdentity";
 
 export class UserIdPlugin extends Plugin {
   type = PluginType.enrichment;
@@ -17,6 +18,10 @@ export class UserIdPlugin extends Plugin {
 
   execute(event: SegmentEvent) {
     const state = this.store.getState();
+    if (!shouldIncludeSegmentIdentity(state)) {
+      return event;
+    }
+
     const userId = userIdSelector(state);
     if (!isDummyUserId(userId) && event) {
       // eslint-disable-next-line no-param-reassign
