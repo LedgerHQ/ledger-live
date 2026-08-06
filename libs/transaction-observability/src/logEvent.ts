@@ -121,6 +121,63 @@ export type LogEvent = SuccessLogEvent | FailureLogEvent | StartedLogEvent;
 /** A function that consumes a transaction {@link LogEvent}, injected by each host app (e.g. to forward to Datadog). */
 export type TransactionLogger = (event: LogEvent) => void;
 
+const namedError = (name: string, message = ""): Error =>
+  Object.assign(new Error(message), { name });
+
+/**
+ * Unwrap an RPC failure envelope so the real cause is what gets classified and reported.
+ *
+ * Neither the Wallet API's `RpcError`/`ServerError` nor Ledger Wallet's own dApp-path
+ * `RpcError` sets `name` — it stays the default "Error" — and the cause sits behind
+ * accessors, so the envelope on its own always classifies as unknown. Device and coin
+ * errors skip this: the RPC layer round-trips those through `@ledgerhq/errors`, so
+ * their `name` survives.
+ */
+export function unwrapRpcError(error: unknown): unknown {
+  if (!error || typeof error !== "object") return error;
+
+  // Ledger Wallet's EIP-1193 provider error (dApp path): code + reason, no name.
+  const provider = error as { isRpcError?: unknown; code?: unknown; reason?: unknown };
+  if (provider.isRpcError === true) {
+    const message = typeof provider.reason === "string" ? provider.reason : "";
+    // EIP-1193: 4001 is the user declining the request.
+    return provider.code === 4001
+      ? namedError("UserRejectedRequest", message)
+      : namedError(`rpc_${String(provider.code)}`, message);
+  }
+
+  // Wallet API envelopes: the cause is behind getData() / getCode().
+  const envelope = error as { getData?: () => unknown; getCode?: () => unknown };
+  if (typeof envelope.getData !== "function") return error;
+
+  const data = envelope.getData();
+  if (data && typeof data === "object") {
+    // A serialised error forwarded verbatim keeps its name; prefer it.
+    const nested = ((data as { data?: unknown }).data ?? data) as {
+      name?: unknown;
+      message?: unknown;
+      statusCode?: unknown;
+    };
+    if (typeof nested.name === "string") {
+      const unwrapped = namedError(
+        nested.name,
+        typeof nested.message === "string" ? nested.message : "",
+      );
+      return typeof nested.statusCode === "number"
+        ? Object.assign(unwrapped, { statusCode: nested.statusCode })
+        : unwrapped;
+    }
+
+    const { code, message } = data as { code?: unknown; message?: unknown };
+    if (typeof code === "string") {
+      return namedError(code, typeof message === "string" ? message : "");
+    }
+  }
+
+  const code = envelope.getCode?.();
+  return code === undefined ? error : namedError(`rpc_${String(code)}`);
+}
+
 export function toError(err: unknown): Error {
   if (err instanceof Error) return err;
   if (typeof err === "string") return new Error(err);
@@ -242,6 +299,10 @@ export function classifyTransactionError(error: Error): ErrorCategory {
     case "UserRefusedAllowManager":
     case "TransactionRefusedOnDevice":
       return ErrorCategory.UserDeviceRefused;
+    // EIP-1193 4001, unwrapped from a dApp provider error: declined in the UI, not on
+    // the device.
+    case "UserRejectedRequest":
+      return ErrorCategory.UserModalDismissed;
     case "InsufficientFunds":
     case "NotEnoughBalance":
       return ErrorCategory.GasInsufficientBalance;
@@ -370,7 +431,9 @@ export function buildTransactionFailureEvent(
   common: CommonLogEvent,
   { stage, error, signedOperation }: BuildTransactionFailureParams,
 ): FailureLogEvent {
-  const err = toError(error);
+  // Unwrapped once, here, so both the category and the reported `error.name` describe
+  // the real cause rather than an RPC envelope.
+  const err = toError(unwrapRpcError(error));
   return {
     status: "failure",
     stage,

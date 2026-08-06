@@ -3,6 +3,7 @@ export {
   TransactionStage,
   ErrorCategory,
   toError,
+  unwrapRpcError,
   getRawTransactionType,
   getStakeTarget,
   classifyTransactionError,

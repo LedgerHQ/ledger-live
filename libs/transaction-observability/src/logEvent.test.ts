@@ -158,6 +158,68 @@ describe("buildTransactionSuccessEvent / buildTransactionFailureEvent", () => {
   });
 });
 
+// Neither the Wallet API's RpcError/ServerError nor Ledger Wallet's dApp-path RpcError
+// sets `name`, so without unwrapping every RPC failure would be unknown/"Error".
+describe("buildTransactionFailureEvent — RPC envelope unwrapping", () => {
+  const common = buildTransactionCommonEvent({
+    account: mainAccount,
+    mainAccount,
+    flow: TransactionFlow.Dapp,
+  });
+
+  const failure = (error: unknown) =>
+    buildTransactionFailureEvent(common, { stage: TransactionStage.Sign, error });
+
+  it("unwraps a dApp provider rejection (EIP-1193 4001) as a dismissal", () => {
+    const event = failure({ isRpcError: true, code: 4001, reason: "User rejected" });
+    expect(event.errorCategory).toBe(ErrorCategory.UserModalDismissed);
+    expect(event.error.name).toBe("UserRejectedRequest");
+  });
+
+  it("keeps the rpc code as the reported name for other provider errors", () => {
+    const event = failure({ isRpcError: true, code: 4900, reason: "Disconnected" });
+    expect(event.error.name).toBe("rpc_4900");
+  });
+
+  it("unwraps the original error forwarded inside a Wallet API envelope", () => {
+    const event = failure({
+      getCode: () => -32000,
+      getData: () => ({
+        code: "UNKNOWN_ERROR",
+        data: { name: "UserRefusedOnDevice", message: "declined" },
+      }),
+    });
+    expect(event.errorCategory).toBe(ErrorCategory.UserDeviceRefused);
+    expect(event.error.name).toBe("UserRefusedOnDevice");
+  });
+
+  it("preserves a nested device status code so it can still be categorised", () => {
+    const event = failure({
+      getCode: () => -32000,
+      getData: () => ({
+        code: "UNKNOWN_ERROR",
+        data: { name: "DeviceStatusError", message: "", statusCode: 0x6985 },
+      }),
+    });
+    expect(event.errorCategory).toBe(ErrorCategory.UserDeviceRefused);
+  });
+
+  it("falls back to the protocol code as the reported name", () => {
+    const event = failure({
+      getCode: () => -32000,
+      getData: () => ({ code: "ACCOUNT_NOT_FOUND" }),
+    });
+    expect(event.error.name).toBe("ACCOUNT_NOT_FOUND");
+    expect(event.errorCategory).toBe(ErrorCategory.Unknown);
+  });
+
+  it("leaves a plain error untouched", () => {
+    const event = failure(Object.assign(new Error("x"), { name: "NotEnoughBalance" }));
+    expect(event.error.name).toBe("NotEnoughBalance");
+    expect(event.errorCategory).toBe(ErrorCategory.GasInsufficientBalance);
+  });
+});
+
 describe("classifyTransactionError", () => {
   it.each([
     // device / user (sign stage)
