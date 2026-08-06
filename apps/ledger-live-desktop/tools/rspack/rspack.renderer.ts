@@ -14,6 +14,9 @@ import {
 /**
  * Creates the rspack configuration for the Electron renderer process
  */
+// Supplies the `process.*` stand-ins the DefinePlugin entries below rewrite reads to.
+const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
+
 export function createRendererConfig(
   mode: "development" | "production",
   options?: { devServer?: boolean },
@@ -31,7 +34,10 @@ export function createRendererConfig(
     // Use electron-renderer target - ElectronTargetPlugin handles node builtins
     target: "electron-renderer",
     entry: {
-      renderer: path.resolve(rootFolder, "src", "renderer", "index.ts"),
+      // The process shim must run before the application's first module: many modules read
+      // process.env at module scope, and DefinePlugin rewrites those reads to globals this
+      // module assigns.
+      renderer: [rendererProcessShim, path.resolve(rootFolder, "src", "renderer", "index.ts")],
     },
     output: {
       ...commonConfig.output,
@@ -296,6 +302,25 @@ export function createRendererConfig(
       new rspack.DefinePlugin({
         ...buildRendererEnv(mode),
         ...buildDotEnvDefine(DOTENV_FILE),
+        // A context-isolated renderer has no `process`. These reads are rewritten to
+        // globals assigned by src/renderer/bootstrap/process.ts, which is prepended to the
+        // entry so it runs before the application's first module.
+        //
+        // ProvidePlugin cannot be used for this: it only rewrites free variables it sees
+        // while parsing source, and these identifiers are introduced by DefinePlugin
+        // afterwards, so it never observes them.
+        //
+        // Note the more specific keys above (process.env.NODE_ENV and the dotenv entries)
+        // still win for those exact expressions; this only catches everything else.
+        "process.env": "globalThis.__LLD_PROCESS_ENV__",
+        "process.platform": "globalThis.__LLD_PROCESS_PLATFORM__",
+        "process.mas": "globalThis.__LLD_PROCESS_MAS__",
+        "process.windowsStore": "globalThis.__LLD_PROCESS_WINDOWS_STORE__",
+        "process.type": JSON.stringify("renderer"),
+        // Deliberately undefined, not merely absent: libs/live-network gates a
+        // `require("https")` keep-alive agent on `process.release?.name === "node"`.
+        // Defining it away removes that branch from a browser-shaped bundle.
+        "process.release": "undefined",
       }),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(rootFolder, "src", "renderer", "index.html"),
