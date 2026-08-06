@@ -1,6 +1,6 @@
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../network/api";
+import { fetchBalance, fetchLastBlock, fetchAccountStateInfo, fetchTxs } from "../network/api";
 import { createMockAccountShapeData } from "../__tests__/fixtures";
 import { getAccountShape } from "./sync";
 import { mapTxToOps } from "../logic/listOperations";
@@ -34,7 +34,11 @@ describe("getAccountShape", () => {
       accountHash: mockAccountHash,
     });
 
-    (fetchBlockHeight as jest.Mock).mockResolvedValue(mockBlockHeight);
+    (fetchLastBlock as jest.Mock).mockResolvedValue({
+      height: mockBlockHeight,
+      hash: "0xmockhash",
+      time: new Date(),
+    });
 
     (fetchBalance as jest.Mock).mockResolvedValue(mockBalance);
 
@@ -47,7 +51,7 @@ describe("getAccountShape", () => {
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
     expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
-    expect(fetchBlockHeight).toHaveBeenCalled();
+    expect(fetchLastBlock).toHaveBeenCalled();
     expect(fetchBalance).toHaveBeenCalledWith(mockPurseUref);
     expect(fetchTxs).toHaveBeenCalledWith(mockAddress);
     expect(mapTxToOps).toHaveBeenCalledWith(mockAccountId, mockAccountHash);
@@ -70,7 +74,7 @@ describe("getAccountShape", () => {
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
     expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
-    expect(fetchBlockHeight).toHaveBeenCalled();
+    expect(fetchLastBlock).toHaveBeenCalled();
     expect(fetchBalance).not.toHaveBeenCalled();
     expect(fetchTxs).not.toHaveBeenCalled();
 
@@ -92,7 +96,7 @@ describe("getAccountShape", () => {
     const accountShape = await getAccountShape(mockAccountInfo, mockSyncConfig);
 
     expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
-    expect(fetchBlockHeight).toHaveBeenCalled();
+    expect(fetchLastBlock).toHaveBeenCalled();
     expect(fetchBalance).toHaveBeenCalledWith(mockPurseUref);
     expect(fetchTxs).toHaveBeenCalledWith(mockAddress);
     expect(mapTxToOps).toHaveBeenCalledWith(mockAccountId, "");
@@ -113,7 +117,7 @@ describe("getAccountShape", () => {
     await expect(getAccountShape(mockAccountInfo, mockSyncConfig)).rejects.toThrow(errorMessage);
 
     expect(fetchAccountStateInfo).toHaveBeenCalledWith(mockAddress);
-    expect(fetchBlockHeight).not.toHaveBeenCalled();
+    expect(fetchLastBlock).not.toHaveBeenCalled();
     expect(fetchBalance).not.toHaveBeenCalled();
     expect(fetchTxs).not.toHaveBeenCalled();
   });
