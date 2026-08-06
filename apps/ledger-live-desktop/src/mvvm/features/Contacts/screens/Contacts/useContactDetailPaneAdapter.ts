@@ -129,6 +129,7 @@ export function useContactDetailPaneAdapter(
     const isAddressActionDialogOpen =
       addressDetailActionsDialogs.deleteDialog.isOpen ||
       addressDetailActionsDialogs.signerDialog.isOpen ||
+      addressDetailActionsDialogs.signerMismatchDialog.isOpen ||
       addressDetailActionsDialogs.renameDialog.isOpen;
 
     return {
@@ -145,6 +146,7 @@ export function useContactDetailPaneAdapter(
     addressDetailActionsDialogs.deleteDialog.isOpen,
     addressDetailActionsDialogs.renameDialog.isOpen,
     addressDetailActionsDialogs.signerDialog.isOpen,
+    addressDetailActionsDialogs.signerMismatchDialog.isOpen,
     addressDetailDialogLabels,
     emptyContact?.name,
     isOpen,

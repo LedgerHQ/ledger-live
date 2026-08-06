@@ -9,6 +9,7 @@ import {
 import {
   type ContactsDeleteAddressDialogProps,
   type ContactsEditSignerDialogProps,
+  type ContactsEditSignerMismatchDialogProps,
   type ContactsRenameAddressDialogProps,
   type ContactAddressDetailDialogProps,
   type ContactAddressDetailSendIntent,
@@ -27,6 +28,7 @@ export type ContactAddressDetailActionsDialogProps = Readonly<{
   deleteDialog: ContactsDeleteAddressDialogProps;
   renameDialog: ContactsRenameAddressDialogProps;
   signerDialog: ContactsEditSignerDialogProps;
+  signerMismatchDialog: ContactsEditSignerMismatchDialogProps;
 }>;
 
 export function useContactAddressDetailActionsAdapter(
@@ -87,6 +89,16 @@ export function useContactAddressDetailActionsAdapter(
     [t],
   );
 
+  const signerMismatchLabels = useMemo(
+    () => ({
+      title: t("contacts.editSignerMismatch.title"),
+      description: t("contacts.editSignerMismatch.description"),
+      connectDifferentDevice: t("contacts.editSignerMismatch.connectDifferentDevice"),
+      cancel: t("contacts.editSignerMismatch.cancel"),
+    }),
+    [t],
+  );
+
   if (!isSelectionActive) {
     return {
       addressDetailDialog: {
@@ -119,6 +131,12 @@ export function useContactAddressDetailActionsAdapter(
         onConfirm: () => undefined,
         onCancel: () => undefined,
       },
+      signerMismatchDialog: {
+        isOpen: false,
+        labels: signerMismatchLabels,
+        onConnectDifferentDevice: () => undefined,
+        onCancel: () => undefined,
+      },
     };
   }
 
@@ -147,6 +165,12 @@ export function useContactAddressDetailActionsAdapter(
       labels: signerLabels,
       onConfirm: flow.onSignerConfirm,
       onCancel: flow.onSignerCancel,
+    },
+    signerMismatchDialog: {
+      isOpen: flow.editUiState === "signer-mismatch",
+      labels: signerMismatchLabels,
+      onConnectDifferentDevice: flow.onConnectDifferentDevice,
+      onCancel: flow.onSignerMismatchCancel,
     },
   };
 }

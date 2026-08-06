@@ -52,4 +52,31 @@ describe("useContactEditSignerUiState", () => {
 
     expect(result.current.editUiState).toBe("closed");
   });
+
+  it("should open the signer mismatch dialog and close it on cancel", () => {
+    const { result } = renderHook(() => useContactEditSignerUiState());
+
+    act(() => {
+      result.current.openSignerMismatchDialog();
+    });
+
+    expect(result.current.editUiState).toBe("signer-mismatch");
+
+    act(() => {
+      result.current.onSignerMismatchCancel();
+    });
+
+    expect(result.current.editUiState).toBe("closed");
+  });
+
+  it("should return to the signer dialog when connecting a different device", () => {
+    const { result } = renderHook(() => useContactEditSignerUiState());
+
+    act(() => {
+      result.current.openSignerMismatchDialog();
+      result.current.onConnectDifferentDevice();
+    });
+
+    expect(result.current.editUiState).toBe("signer-open");
+  });
 });
