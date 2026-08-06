@@ -119,11 +119,12 @@ export class BuyAndSellPage extends WebViewAppPage {
       try {
         await expect(selector).toBeVisible({ timeout: readyTimeout });
         return;
-      } catch {
+      } catch (error) {
         if (attempt >= maxReloads) {
           throw new Error(
             `Buy/Sell web app did not render the crypto selector "${this.cryptoCurrencySelector}" ` +
               `after ${maxReloads + 1} attempts — webview stuck loading.`,
+            { cause: error },
           );
         }
         await webview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
