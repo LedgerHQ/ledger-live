@@ -1,5 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+import { Banner } from "@ledgerhq/lumen-ui-react";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { AddAccountButton } from "./components/AddAccountButton";
 import { AccountSelectorContent } from "./components/AccountSelectorContent";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -15,6 +21,7 @@ type Props = {
   asset: CryptoOrTokenCurrency;
   hideAddAccountButton?: boolean;
   overridePageName?: ModularDialogEventName;
+  uiUseCase?: string;
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
@@ -23,16 +30,27 @@ export const AccountSelector = ({
   onAccountSelected,
   hideAddAccountButton,
   overridePageName,
+  uiUseCase,
 }: Props) => {
+  const { t } = useTranslation();
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
     onAccountSelected,
   );
 
   const BottomComponent = (
-    <AddAccountContainer>
-      <AddAccountButton onAddAccountClick={onAddAccountClick} />
-    </AddAccountContainer>
+    <>
+      {getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.legacy && (
+        <Banner
+          appearance="info"
+          title={t("drawers.selectAccount.perpetualsBanner")}
+          className="mt-16"
+        />
+      )}
+      <AddAccountContainer>
+        <AddAccountButton onAddAccountClick={onAddAccountClick} />
+      </AddAccountContainer>
+    </>
   );
 
   return (

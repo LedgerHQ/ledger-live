@@ -32,7 +32,10 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByAsset";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { parseUiUseCase } from "../../utils/parseUiUseCase";
+import {
+  getPerpsUiUseCase,
+  PERPS_UI_USE_CASE,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -64,13 +67,13 @@ const AssetSelection = ({
   const { t } = useTranslation();
   const { isInternetReachable } = useNetInfo();
 
-  const { isPerpsDeposit } = parseUiUseCase(uiUseCase);
+  const isPerpsFund = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.fund;
 
-  const headerTitle = isPerpsDeposit
+  const headerTitle = isPerpsFund
     ? t("modularDrawer.selectDepositCurrencyTitle")
     : t("modularDrawer.selectAsset");
 
-  const headerDescription = isPerpsDeposit
+  const headerDescription = isPerpsFund
     ? t("modularDrawer.selectDepositCurrencyDescription")
     : undefined;
 
