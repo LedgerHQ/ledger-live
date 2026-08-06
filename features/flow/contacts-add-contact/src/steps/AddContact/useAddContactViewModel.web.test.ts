@@ -5,11 +5,11 @@ import {
   contact,
 } from "@domain/entity-contact";
 import { mockContact, mockMeContact } from "@domain/entity-contact/schema.mock";
-import { useContacts } from "../../hooks";
+import { useContacts } from "@features/platform-contacts";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 
-jest.mock("../../hooks", () => ({ useContacts: jest.fn() }));
+jest.mock("@features/platform-contacts", () => ({ useContacts: jest.fn() }));
 
 const mockedUseContacts = jest.mocked(useContacts);
 

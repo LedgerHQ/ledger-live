@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsContactNameDrawerContent } from "../../components/ContactsContactNameDrawer/ContactsContactNameDrawerContent.native";
+import { ContactsContactNameDrawerContent } from "@features/flow-contacts-add-contact/native";
 import type { ContactsRenameContactDrawerProps } from "./types";
 
 export function ContactsRenameContactDrawer({

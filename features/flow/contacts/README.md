@@ -13,7 +13,8 @@ Shared Contacts flow package for Desktop and Mobile.
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - Contact address detail view model (selected address payload, QR payload string, and not-found state)
 - Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
-- `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
+- Contacts orchestration, compatibility exports for `@features/flow-contacts-add-contact`, and
+  `useContactsFeatureIntroductionState` (app wiring injects ports)
 - Add Address session, address-entry validation state, and address-label state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
@@ -51,7 +52,7 @@ Consume the package from `@features/flow-contacts`. The root entry point resolve
 appropriate Web or React Native API. Folders under `src/` are internal implementation details
 and are not exported as package subpaths.
 
-Each user-facing screen lives under `src/steps/` and follows the MVVM split used by the app
+Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split used by the app
 features (View + ViewModel + types + colocated components). Web and React Native export their
 respective `ContactsListView` and `ContactDetailView` implementations through the root entry point. The native entry also
 exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
@@ -67,7 +68,7 @@ exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
 Each `steps/<Step>/` is an MVVM screen: `index.ts` (neutral barrel) + `web.ts` / `native.ts`
 (platform Views) + `XxxView.web/.native.tsx` (dumb View) + `types.ts` + colocated `components/`,
 mirroring the app `mvvm/features/*` folders. View-model logic lives at the step root for small
-steps (e.g. `AddContact`) or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
+steps or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
 for larger steps (e.g. `List`). Every folder under `components/` is a PascalCase UI concept; a
 "block" owns its sub-parts as nested folders.
 
@@ -85,12 +86,6 @@ src/
 │   │   │   └── PageLayout/              # web page layout (Header, ListPane, DetailPane)
 │   │   ├── utils/                       # createContactsListSections, getContactAvatarColorClass
 │   │   └── index.ts / web.ts / native.ts
-│   ├── AddContact/                      # Web dialog + native drawer
-│   │   ├── ContactsAddContactDialog.web.tsx / ContactsAddContactDrawer.native.tsx
-│   │   ├── useAddContactViewModel.ts / useAddContactDrawerViewModel.ts / types.ts
-│   │   ├── components/ContactNameInput/ (web + native)
-│   │   ├── model/                       # Contact-name validation and creation contract
-│   │   └── index.ts / web.ts / native.ts
 │   ├── AddAddress/                      # Shared address-entry flow and native step content
 │   │   ├── model/                       # Network resolver, MAD port and address validation
 │   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
@@ -107,10 +102,13 @@ src/
 ├── components/                          # Cross-step shared UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 │   └── ContactAvatar/                   # Shared native list and detail avatar
-├── hooks/                               # useContacts, useContactsMeContact
-├── utils/                               # getContactInitial (shared List + AddContact)
+├── hooks/                               # Contacts flow-only hooks
+├── utils/                               # Contacts flow-only utilities
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── featureFlags.ts
 ├── index.ts                             # Web public API
 └── index.native.ts                      # React Native public API
 ```
+
+`@features/flow-contacts-add-contact` owns the Add contact step. This package re-exports its
+public API as a compatibility façade while the remaining Contacts journeys are extracted.

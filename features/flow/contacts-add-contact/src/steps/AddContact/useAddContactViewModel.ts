@@ -1,6 +1,6 @@
 import type { Contact } from "@domain/entity-contact";
+import { useContacts } from "@features/platform-contacts";
 import { useCallback, useMemo, useState } from "react";
-import { useContacts } from "../../hooks";
 import { createAddContactController } from "./model/controller";
 import type { ContactCreationPort } from "./model/ports";
 import type { AddContactViewModel } from "./model/types";
