@@ -344,6 +344,8 @@ jobs:
         with:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
       - name: Create mobile metafile
         run: |
           echo "{
