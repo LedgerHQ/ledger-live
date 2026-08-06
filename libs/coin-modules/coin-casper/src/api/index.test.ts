@@ -1,5 +1,6 @@
 import { setCoinConfig } from "../config";
 import { lastBlock as lastBlockLogic } from "../logic/lastBlock";
+import { listOperations as listOperationsLogic } from "../logic/listOperations";
 import { createApi } from "./index";
 
 jest.mock("../config", () => ({
@@ -8,6 +9,10 @@ jest.mock("../config", () => ({
 
 jest.mock("../logic/lastBlock", () => ({
   lastBlock: jest.fn(),
+}));
+
+jest.mock("../logic/listOperations", () => ({
+  listOperations: jest.fn(),
 }));
 
 const mockConfig = jest.fn().mockReturnValue({
@@ -75,5 +80,17 @@ describe("createApi", () => {
 
     expect(lastBlockLogic).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockBlock);
+  });
+
+  it("listOperations delegates to logic/listOperations", async () => {
+    const page = { items: [], next: undefined };
+    (listOperationsLogic as jest.Mock).mockResolvedValue(page);
+
+    const api = createApi(mockConfig);
+    const options = { minHeight: 0, order: "desc" as const };
+    const result = await api.listOperations("some-public-key", options);
+
+    expect(listOperationsLogic).toHaveBeenCalledWith("some-public-key", options);
+    expect(result).toBe(page);
   });
 });

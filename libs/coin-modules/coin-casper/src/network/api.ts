@@ -107,21 +107,33 @@ export const fetchLastBlock = async (): Promise<{ height: number; hash: string; 
   }
 };
 
+/**
+ * The indexer serves a fixed 10 records per page and ignores any `limit` query parameter.
+ * Verified against mainnet: `limit=5` and `limit=100` both return 10 items for a 49-record account.
+ */
+export const CASPER_INDEXER_PAGE_SIZE = 10;
+
+/**
+ * Fetch a single page of an account's deploy history, newest first.
+ *
+ * Pages are 1-indexed — `page=0` is a 400. A page past the end is a 200 with an empty `data`.
+ */
+export const fetchTxsPage = async (
+  addr: string,
+  page: number,
+): Promise<IndexerResponseRoot<ITxnHistoryData>> =>
+  casperIndexerWrapper<ITxnHistoryData>(`accounts/${addr}/ledgerlive-deploys?page=${page}`);
+
 export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   let page = 1;
   let res: ITxnHistoryData[] = [];
-  const limit = 100;
 
-  let response = await casperIndexerWrapper<ITxnHistoryData>(
-    `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
-  );
+  let response = await fetchTxsPage(addr, page);
   res = res.concat(response.data);
 
   while (response.page_count > page) {
     page++;
-    response = await casperIndexerWrapper<ITxnHistoryData>(
-      `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
-    );
+    response = await fetchTxsPage(addr, page);
     res = res.concat(response.data);
   }
   return res;

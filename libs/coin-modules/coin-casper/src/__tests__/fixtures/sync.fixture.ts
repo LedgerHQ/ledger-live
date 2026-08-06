@@ -35,10 +35,21 @@ export const createMockAccountShapeData = () => {
     {
       deploy_hash: "deploy-hash-1",
       block_hash: "block-hash-1",
+      block_height: 1272937,
+      caller_hash: "",
       caller_public_key: mockAddress,
       execution_type_id: 1,
+      entry_point_id: 10,
+      runtime_type_id: 0,
+      pricing_mode_id: 0,
+      version_id: 0,
+      gas_price_limit: 1,
+      is_standard_payment: false,
       cost: "10000",
+      consumed_gas: "10000",
       payment_amount: "100000000",
+      refund_amount: "0",
+      error_message: null,
       timestamp: "2023-01-01T12:00:00Z",
       status: "success",
       args: {
@@ -55,7 +66,6 @@ export const createMockAccountShapeData = () => {
           cl_type: "PublicKey",
         },
       },
-      amount: "500000000",
     },
   ];
 

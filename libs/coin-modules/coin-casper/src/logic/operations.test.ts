@@ -95,7 +95,6 @@ describe("txn", () => {
         },
         deploy_hash: "test-deploy-hash",
         status: "success",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -153,7 +152,6 @@ describe("txn", () => {
         },
         deploy_hash: "test-deploy-hash",
         status: "success",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -209,7 +207,6 @@ describe("txn", () => {
         },
         deploy_hash: "test-deploy-hash",
         status: "success",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -245,7 +242,6 @@ describe("txn", () => {
         },
         deploy_hash: "test-deploy-hash",
         status: "success",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -287,7 +283,6 @@ describe("txn", () => {
         deploy_hash: "test-deploy-hash",
         error_message: "Transaction failed due to insufficient funds",
         status: "failure",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -330,7 +325,6 @@ describe("txn", () => {
         },
         deploy_hash: "test-deploy-hash",
         status: "success",
-        amount: "5000000000",
       };
 
       (casperAccountHashFromPublicKey as jest.Mock).mockReturnValueOnce(
@@ -360,7 +354,6 @@ describe("txn", () => {
         cost: "100000",
         payment_amount: "100000000",
         status: "success",
-        amount: "5000000000",
       };
 
       const mapper = mapTxToOps(mockAccountId, "account-hash-owner-public-key", fees);

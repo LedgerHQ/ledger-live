@@ -23,7 +23,6 @@ const MOCK_PUBLIC_KEY = TEST_ADDRESSES.SECP256K1;
 const MOCK_PURSE_UREF = "uref-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-007";
 const MOCK_ACCOUNT_HASH =
   "account-hash-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
-const DEFAULT_LIMIT = 100;
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs", () => ({
@@ -108,7 +107,6 @@ const createNetworkMock = <T>(responseData: T[], pageCount = 1, itemCount = resp
       data: responseData,
       page_count: pageCount,
       item_count: itemCount,
-      pages: [],
     },
     status: 200,
   }) as MockedNetworkResponse<T>;
@@ -317,10 +315,21 @@ describe("Casper API Unit Tests", () => {
     const createMockTxData = (hash: string): ITxnHistoryData => ({
       deploy_hash: hash,
       block_hash: "block-hash-1",
+      block_height: 1272937,
+      caller_hash: "",
       caller_public_key: MOCK_PUBLIC_KEY,
       execution_type_id: 1,
+      entry_point_id: 10,
+      runtime_type_id: 0,
+      pricing_mode_id: 0,
+      version_id: 0,
+      gas_price_limit: 1,
+      is_standard_payment: false,
       cost: "10000",
+      consumed_gas: "10000",
       payment_amount: "100000000",
+      refund_amount: "0",
+      error_message: null,
       timestamp: "2023-01-01T12:00:00Z",
       status: "success",
       args: {
@@ -339,14 +348,13 @@ describe("Casper API Unit Tests", () => {
           cl_type: "PublicKey",
         },
       },
-      amount: "500000000",
     });
 
     const mockTxData = [createMockTxData("deploy-hash-1")];
 
     const getExpectedNetworkCall = (page: number) => ({
       method: "GET",
-      url: `${MOCK_INDEXER_URL}/accounts/${MOCK_PUBLIC_KEY}/ledgerlive-deploys?limit=${DEFAULT_LIMIT}&page=${page}`,
+      url: `${MOCK_INDEXER_URL}/accounts/${MOCK_PUBLIC_KEY}/ledgerlive-deploys?page=${page}`,
     });
 
     it("should fetch transactions successfully (single page)", async () => {

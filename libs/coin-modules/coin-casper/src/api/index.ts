@@ -17,6 +17,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { setCoinConfig } from "../config";
 import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
 import type { CasperCoinConfig } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
@@ -39,9 +40,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     getBalance(_address: string, _options?: BalanceOptions) {
       throw new Error("getBalance is not supported");
     },
-    listOperations(_address: string, _options?: unknown) {
-      throw new Error("listOperations is not supported");
-    },
+    listOperations,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
