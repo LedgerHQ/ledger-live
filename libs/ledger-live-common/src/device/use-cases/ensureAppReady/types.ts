@@ -51,6 +51,10 @@ export type ConnectAppInitSideEffects = {
   onLastSeenDeviceInfoObserved: (params: {
     modelId: DeviceModelId;
     deviceInfo: DeviceInfo;
+    apps: Array<{
+      name: string;
+      version: string;
+    }>;
     latestFirmware: FirmwareUpdateContext | null;
   }) => void;
 };
