@@ -226,11 +226,26 @@ export type SystemBridge = {
   getResourceUsage(): Electron.ResourceUsage | undefined;
 };
 
+/**
+ * ZCash shielded-sync IPC.
+ *
+ * This is the one place a channel-parameterised method is acceptable: the caller is
+ * `@ledgerhq/coin-bitcoin`, whose own `ZCASH_IPC` constant is a closed `as const` list, and
+ * the preload validates every channel against it. Naming each operation here would just
+ * duplicate that contract in a second place that could drift.
+ */
+export type ZcashBridge = {
+  invoke(channel: string, args: unknown): Promise<unknown>;
+  /** Returns an unsubscribe closure; listener identity does not survive the bridge. */
+  subscribe(channel: string, callback: (payload: unknown) => void): Unsubscribe;
+};
+
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
   shell: ShellBridge;
   system: SystemBridge;
+  zcash: ZcashBridge;
   db: DbBridge;
   transport: TransportBridge;
   updater: UpdaterBridge;
