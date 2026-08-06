@@ -8,6 +8,8 @@ import type {
 
 export type ContactsAddAddressNameLabels = Readonly<{
   inputLabel: string;
+  namingDisclaimer: string;
+  namingDisclaimerAccessibilityLabel: string;
   continueToReview: string;
   validAddress: string;
   validationErrors: Record<ContactAddressLabelValidationErrorName, string>;
