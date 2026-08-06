@@ -152,12 +152,15 @@ export const useModularDrawerController = () => {
 
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
+      if (cancelCallbackId) {
+        unregisterCancelCallback(cancelCallbackId);
+      }
       if (callbackId) {
         executeCurrencyCallback(callbackId, currency);
       }
       dispatch(closeModularDrawer());
     },
-    [callbackId, dispatch, executeCurrencyCallback],
+    [callbackId, cancelCallbackId, dispatch, executeCurrencyCallback, unregisterCancelCallback],
   );
 
   return {
