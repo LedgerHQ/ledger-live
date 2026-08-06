@@ -1,5 +1,6 @@
 export * from "./craftTransaction";
 export * from "./estimateFees";
+export * from "./lastBlock";
 export * from "./listOperations";
 export * from "./utils";
 export * from "./validateAddress";

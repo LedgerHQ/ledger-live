@@ -1,8 +1,13 @@
 import { setCoinConfig } from "../config";
+import { lastBlock as lastBlockLogic } from "../logic/lastBlock";
 import { createApi } from "./index";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
+}));
+
+jest.mock("../logic/lastBlock", () => ({
+  lastBlock: jest.fn(),
 }));
 
 const mockConfig = jest.fn().mockReturnValue({
@@ -51,7 +56,6 @@ describe("createApi", () => {
   });
 
   it.each([
-    ["lastBlock", []],
     ["getBalance", ["someAddress"]],
     ["broadcast", ["rawTx"]],
     ["combine", ["tx", "sig"]],
@@ -60,5 +64,16 @@ describe("createApi", () => {
     const api = createApi(mockConfig);
     const fn = api[_method as keyof typeof api] as (...a: unknown[]) => unknown;
     expect(() => fn(...args)).toThrow(`${_method} is not supported`);
+  });
+
+  it("lastBlock delegates to logic/lastBlock", async () => {
+    const mockBlock = { height: 42, hash: "0xdeadbeef", time: new Date("2024-01-01T00:00:00Z") };
+    (lastBlockLogic as jest.Mock).mockResolvedValue(mockBlock);
+
+    const api = createApi(mockConfig);
+    const result = await api.lastBlock();
+
+    expect(lastBlockLogic).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockBlock);
   });
 });
