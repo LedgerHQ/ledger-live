@@ -94,6 +94,8 @@ const validatorsMap = {
   addKeyCostExecution: new BigNumber("101765125000"),
   receiptCreationSend: new BigNumber("108059500000"),
   receiptCreationExecution: new BigNumber("108059500000"),
+  minGasPurchasePrice: new BigNumber(0),
+  accountCreationCharge: new BigNumber(0),
   validators,
 };
 
