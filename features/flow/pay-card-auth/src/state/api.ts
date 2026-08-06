@@ -63,4 +63,6 @@ export const payCardAuthApi = payCardApi
     }),
   });
 
-export const { usePreAuthMutation, useAuthenticateMutation, useGetMeQuery } = payCardAuthApi;
+// The `authenticate` and `getMe` hooks are added when the callback and status steps land; the
+// endpoints themselves are already part of the api above.
+export const { usePreAuthMutation } = payCardAuthApi;
