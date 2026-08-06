@@ -2,7 +2,11 @@ import { SwapType } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { setEnv } from "@shared/env";
-import { performSwapUntilQuoteSelectionStep, truncateSwapAmount } from "../../utils/swapUtils";
+import {
+  isTokenApprovalExpected,
+  performSwapUntilQuoteSelectionStep,
+  truncateSwapAmount,
+} from "../../utils/swapUtils";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
@@ -52,11 +56,9 @@ export function runSwapTest(
       await performSwapUntilQuoteSelectionStep(accountToDebit, accountToCredit, swapAmount);
 
       const provider = await app.swapLiveApp.selectExchange();
-      const exchangeButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(
-        provider.uiName,
-        true,
-      );
-      if (app.swapLiveApp.isApprovalRequired(exchangeButtonText, provider.uiName)) {
+      const approvalRequired = await isTokenApprovalExpected(accountToDebit, provider, swapAmount);
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, approvalRequired);
+      if (approvalRequired) {
         console.warn(
           `[swap] ${provider.uiName} requires token approval for ${accountToDebit.currency.name}; ` +
             `skipping swap completion (covered by the token-approval spec).`,
