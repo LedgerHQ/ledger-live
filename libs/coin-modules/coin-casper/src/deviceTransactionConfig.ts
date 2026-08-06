@@ -2,9 +2,9 @@ import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-frame
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { methodToString } from "../common-logic";
-import { CASPER_NETWORK } from "../constants";
-import { Transaction, TransactionStatus } from "../types";
+import { CASPER_NETWORK } from "./constants";
+import { methodToString } from "./logic";
+import { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField = {
   type: "casper.extendedAmount";
@@ -22,27 +22,12 @@ async function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Promise<Array<DeviceTransactionField>> {
-  const fields: Array<DeviceTransactionField> = [];
-  fields.push({
-    type: "text",
-    label: "Type",
-    value: methodToString(0),
-  });
-  fields.push({
-    type: "text",
-    label: "Chain ID",
-    value: CASPER_NETWORK,
-  });
-  fields.push({
-    type: "casper.extendedAmount",
-    label: "Fee",
-    value: transaction.fees,
-  });
-  fields.push({
-    type: "casper.extendedAmount",
-    label: "Amount",
-    value: transaction.amount,
-  });
+  const fields: Array<DeviceTransactionField> = [
+    { type: "text", label: "Type", value: methodToString(0) },
+    { type: "text", label: "Chain ID", value: CASPER_NETWORK },
+    { type: "casper.extendedAmount", label: "Fee", value: transaction.fees },
+    { type: "casper.extendedAmount", label: "Amount", value: transaction.amount },
+  ];
 
   if (transaction.transferId) {
     fields.push({

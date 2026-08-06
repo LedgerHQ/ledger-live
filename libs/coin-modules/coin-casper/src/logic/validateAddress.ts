@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { PublicKey, KeyAlgorithm } from "casper-js-sdk";
+import { KeyAlgorithm, PublicKey } from "casper-js-sdk";
 
 export const getAddress = (
   a: Account,

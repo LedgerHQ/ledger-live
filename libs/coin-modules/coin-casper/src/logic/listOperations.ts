@@ -1,17 +1,13 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
-import { InvalidAddress } from "@ledgerhq/ledger-wallet-framework/errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/ledger-wallet-framework/types";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { CasperNetwork, PublicKey, Transaction } from "casper-js-sdk";
 import invariant from "invariant";
-import { getCasperNodeRpcClient } from "../../network/api";
-import { ITxnHistoryData } from "../../types/network";
-import { CASPER_DEFAULT_TTL, CASPER_NETWORK } from "../../constants";
-import { CasperOperation } from "../../types";
-import { casperAccountHashFromPublicKey, isAddressValid } from "./addresses";
-import { getEstimatedFees } from "./fee";
+import { ITxnHistoryData } from "../types/network";
+import { CasperOperation } from "../types";
+import { getEstimatedFees } from "./estimateFees";
+import { casperAccountHashFromPublicKey } from "./validateAddress";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
@@ -42,6 +38,9 @@ export function mapTxToOps(
       const isSending = addressHash.toLowerCase() === fromAccount.toLowerCase();
       const isReceiving = addressHash.toLowerCase() === toAccount.toLowerCase();
 
+      // the indexer returns `null` for transfers sent without a transfer id
+      const transferId = txArgs.id.parsed?.toString();
+
       if (isSending) {
         ops.push({
           id: encodeOperationId(accountId, deploy_hash, "OUT"),
@@ -50,14 +49,14 @@ export function mapTxToOps(
           value: value.plus(feeToUse),
           fee: feeToUse,
           blockHeight: 1,
-          hasFailed: error_message ? true : false,
+          hasFailed: Boolean(error_message),
           blockHash: null,
           accountId,
           senders: [fromAccount],
           recipients: [toAccount],
           date,
           extra: {
-            transferId: txArgs.id.parsed?.toString(),
+            ...(transferId !== undefined && { transferId }),
           },
         });
       }
@@ -71,13 +70,13 @@ export function mapTxToOps(
           fee: feeToUse,
           blockHeight: 1,
           blockHash: null,
-          hasFailed: error_message ? true : false,
+          hasFailed: Boolean(error_message),
           accountId,
           senders: [fromAccount],
           recipients: [toAccount],
           date,
           extra: {
-            transferId: txArgs.id.parsed?.toString(),
+            ...(transferId !== undefined && { transferId }),
           },
         });
       }
@@ -89,33 +88,3 @@ export function mapTxToOps(
     }
   };
 }
-
-export const createNewTransaction = async (
-  sender: string,
-  recipient: string,
-  amount: BigNumber,
-  fees: BigNumber,
-  transferId?: string,
-  network = CASPER_NETWORK,
-): Promise<Transaction> => {
-  log("debug", `Creating new Transaction: ${sender}, ${recipient}, ${network}`);
-
-  if (recipient && !isAddressValid(recipient)) {
-    throw new InvalidAddress(`Invalid recipient Address ${recipient}`);
-  }
-
-  const client = getCasperNodeRpcClient();
-  const helper = await CasperNetwork.create(client);
-
-  const tx = helper.createTransferTransaction(
-    PublicKey.fromHex(sender),
-    PublicKey.fromHex(recipient),
-    network,
-    amount.toString(),
-    fees.toNumber(),
-    CASPER_DEFAULT_TTL,
-    parseInt(transferId ?? "0"),
-  );
-
-  return tx;
-};

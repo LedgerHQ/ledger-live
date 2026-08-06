@@ -8,7 +8,7 @@ const validBase64RegExp = new RegExp(
 export const isNoErrorReturnCode = (code: number): boolean => code === 0x9000;
 
 export const getPath = (path: string): string =>
-  path && path.substring(0, 2) !== "m/" ? `m/${path}` : path;
+  path && !path.startsWith("m/") ? `m/${path}` : path;
 
 export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
 export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);
@@ -18,12 +18,8 @@ export const isError = (r: { returnCode: number; errorMessage: string }): void =
 };
 
 export const methodToString = (method: number): string => {
-  switch (method) {
-    case 0:
-      return "Token transfer";
-    default:
-      return "Unknown";
-  }
+  if (method === 0) return "Token transfer";
+  return "Unknown";
 };
 
 export const getBufferFromString = (message: string): Buffer => {
