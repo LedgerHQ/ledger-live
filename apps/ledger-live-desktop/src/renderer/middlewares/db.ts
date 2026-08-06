@@ -32,6 +32,7 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
+import { payCardPersistedSelector } from "@domain/entity-pay-card";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 
 let DB_MIDDLEWARE_ENABLED = true;
@@ -127,6 +128,13 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
     const res = next(action);
     const state = store.getState();
     setKey("app", LARGE_SCREEN_UPSELL_MODAL, persistedLargeScreenUpsellModalSelector(state));
+    return res;
+  }
+
+  if (action.type.startsWith("payCard/")) {
+    const res = next(action);
+    const state = store.getState();
+    setKey("app", "payCard", payCardPersistedSelector(state));
     return res;
   }
 

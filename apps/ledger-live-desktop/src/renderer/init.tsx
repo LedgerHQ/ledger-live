@@ -11,6 +11,7 @@ import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
 } from "@features/flow-large-screen-upsell";
+import { restorePayCardPersistedState } from "@domain/entity-pay-card";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -332,6 +333,11 @@ async function init() {
   const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
   if (largeScreenUpsellModalState !== undefined) {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
+
+  const payCardState = await getKey("app", "payCard");
+  if (payCardState !== undefined) {
+    store.dispatch(restorePayCardPersistedState(payCardState));
   }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);
