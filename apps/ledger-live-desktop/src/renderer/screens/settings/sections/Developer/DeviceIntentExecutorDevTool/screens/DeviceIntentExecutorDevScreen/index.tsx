@@ -11,6 +11,7 @@ import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import {
   DeviceIntentExecutorLWD,
   type InitializationInput,
+  type SourceFlow,
 } from "LLD/components/DeviceIntentExecutor";
 import type { InitializerConfig } from "LLD/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWD";
 import { INITIALIZATION_SCENARIOS } from "../../initializationScenarios";
@@ -27,6 +28,7 @@ type InitializationExecutorProps = DeviceIntentExecutorProps<
   InitializationInput
 > & {
   initializerConfig?: InitializerConfig;
+  sourceFlow: SourceFlow;
 };
 
 const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
@@ -102,6 +104,7 @@ function InitializationMode() {
   const executorProps = useMemo<InitializationExecutorProps>(
     () => ({
       enabled: true,
+      sourceFlow: "debug",
       deviceConnectionParams: DEFAULT_CONNECTION_PARAMS,
       deviceInitializationInput: selectedScenario.input,
       initializerConfig: selectedScenario.initializerConfig,
