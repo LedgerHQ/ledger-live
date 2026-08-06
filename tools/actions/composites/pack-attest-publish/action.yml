@@ -12,25 +12,35 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Pack all public packages
+    - name: Pack unpublished public packages
+      id: pack
       shell: bash
       run: |
         set -euo pipefail
         DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
         mkdir -p "$DIST_DIR"
         pnpm -r list --json --depth -1 \
-          | jq -r '.[] | select(.private != true) | .name' \
-          | while IFS= read -r name; do
-              echo "Packing $name..."
-              pnpm --filter "$name" pack --pack-destination "$DIST_DIR"
+          | jq -r '.[] | select(.private != true) | [.name, .version] | @tsv' \
+          | while IFS=$'\t' read -r name version; do
+              if npm view "${name}@${version}" version &>/dev/null 2>&1; then
+                echo "Skipping $name@$version (already published)"
+              else
+                echo "Packing $name@$version..."
+                pnpm --filter "$name" pack --pack-destination "$DIST_DIR"
+              fi
             done
+        shopt -s nullglob
+        tarballs=("$DIST_DIR"/*.tgz)
+        echo "count=${#tarballs[@]}" >> "$GITHUB_OUTPUT"
 
-    - name: Attest all tarballs
+    - name: Attest tarballs
+      if: steps.pack.outputs.count != '0'
       uses: LedgerHQ/actions-security/actions/attest-for-npmsjs-com@attest-npm-dir-support
       with:
         subject-path: '${{ runner.temp }}/pack-attest-publish'
 
     - name: Publish packages
+      if: steps.pack.outputs.count != '0'
       shell: bash
       env:
         DIST_TAG: ${{ inputs.dist-tag }}
@@ -39,13 +49,8 @@ runs:
         set -euo pipefail
         DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
         for tarball in "$DIST_DIR"/*.tgz; do
-          [ -f "$tarball" ] || { echo "No tarballs found in $DIST_DIR"; exit 1; }
           pkg_name=$(tar -xOf "$tarball" package/package.json | jq -r '.name')
           pkg_version=$(tar -xOf "$tarball" package/package.json | jq -r '.version')
-          if npm view "${pkg_name}@${pkg_version}" version &>/dev/null 2>&1; then
-            echo "Skipping $pkg_name@$pkg_version (already published)"
-            continue
-          fi
           echo "Publishing $pkg_name@$pkg_version with tag $DIST_TAG"
           npm publish "$tarball" --tag "$DIST_TAG" --access public
         done
