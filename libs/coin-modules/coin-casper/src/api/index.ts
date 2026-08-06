@@ -15,8 +15,10 @@ import type {
   TransactionValidation,
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { setCoinConfig } from "../config";
 import { lastBlock } from "../logic/lastBlock";
+import { getBalance as getAccountBalance } from "../logic/getBalance";
 import type { CasperCoinConfig } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
@@ -36,8 +38,8 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getBalance(_address: string, _options?: BalanceOptions) {
-      throw new Error("getBalance is not supported");
+    getBalance(address: string, options?: BalanceOptions): Promise<Balance[]> {
+      return rejectBalanceOptions(() => getAccountBalance(address), options);
     },
     listOperations(_address: string, _options?: unknown) {
       throw new Error("listOperations is not supported");

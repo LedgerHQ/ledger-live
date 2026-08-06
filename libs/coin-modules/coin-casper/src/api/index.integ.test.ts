@@ -1,19 +1,14 @@
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "./index";
+import { FUNDED_MAINNET_PUBLIC_KEY } from "../__tests__/fixtures/addresses.fixture";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
+import { CASPER_DUMMY_ADDRESS } from "../constants";
 
-const config = () => ({
-  status: { type: "active" as const },
-  infra: {
-    API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
-    API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",
-  },
-});
-
-describe("createApi (integration)", () => {
+describe("Casper Api (mainnet)", () => {
   let api: CoinModuleApi;
 
   beforeAll(() => {
-    api = createApi(config);
+    api = createApi(casperMainnetConfig);
   });
 
   describe("lastBlock", () => {
@@ -28,6 +23,21 @@ describe("createApi (integration)", () => {
       expect(block.time).toBeInstanceOf(Date);
       expect(block.time?.getTime()).toBeGreaterThan(Date.now() - oneDayMs);
       expect(block.time?.getTime()).toBeLessThanOrEqual(Date.now());
+    });
+  });
+
+  describe("getBalance", () => {
+    it("returns the native CSPR balance of a funded account", async () => {
+      const balances = await api.getBalance(FUNDED_MAINNET_PUBLIC_KEY);
+
+      expect(balances).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
+      expect(balances[0].value).toBeGreaterThan(0n);
+    });
+
+    it("returns a zero native balance for an account that was never funded", async () => {
+      const balances = await api.getBalance(CASPER_DUMMY_ADDRESS);
+
+      expect(balances).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
   });
 });
