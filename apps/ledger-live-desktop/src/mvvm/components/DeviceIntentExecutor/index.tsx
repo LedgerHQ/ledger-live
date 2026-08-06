@@ -61,7 +61,8 @@ const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
 export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement | null {
-  const { wrappedProps, onOpenChange, onClose } = useDeviceIntentExecutorLWDViewModel(props);
+  const { wrappedProps, onOpenChange, onHeaderClosePressed, onOverlayDismiss, onEscapeKeyDown } =
+    useDeviceIntentExecutorLWDViewModel(props);
   const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
   const trackingContextValue = React.useMemo(
     () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
@@ -76,10 +77,12 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
         aria-describedby={undefined}
         className="max-h-[90vh] w-[400px] bg-base p-0"
         data-testid="device-intent-executor-dialog"
+        onPointerDownOutside={onOverlayDismiss}
+        onEscapeKeyDown={onEscapeKeyDown}
       >
         <DialogBackgroundToneProvider>
           <DeviceIntentTrackingProvider value={trackingContextValue}>
-            <DialogHeader density="compact" onClose={onClose} className="!mb-0" />
+            <DialogHeader density="compact" onClose={onHeaderClosePressed} className="!mb-0" />
             <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
               <DeviceIntentExecutor
                 {...wrappedProps}
