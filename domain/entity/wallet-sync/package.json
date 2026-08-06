@@ -18,7 +18,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/wallet-sync"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@swc/core": "catalog:",
