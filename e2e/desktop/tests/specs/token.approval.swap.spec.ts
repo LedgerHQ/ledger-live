@@ -76,7 +76,7 @@ test.describe("Swap - token approval", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.swap.selectSpecificProvider(provider);
-      // Allowance was just revoked above, so the CTA must read "Continue" (approval pending).
+      // Allowance was revoked above, so the CTA reads "Continue".
       await app.swap.checkExchangeButtonHasProviderName(provider.uiName, true);
       await app.swap.clickExchangeButton(provider.name);
       await app.swap.expectTwoStepApprovalScreen();

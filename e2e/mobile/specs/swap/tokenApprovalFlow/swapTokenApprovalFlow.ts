@@ -64,7 +64,7 @@ export function runSwapTokenApprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      // Allowance was just revoked above, so the CTA must read "Continue" (approval pending).
+      // Allowance was revoked above, so the CTA reads "Continue".
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName, true);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();

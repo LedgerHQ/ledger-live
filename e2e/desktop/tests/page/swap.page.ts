@@ -106,9 +106,8 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
-  // approvalRequired must reflect the real on-chain allowance state (e.g. via
-  // isTokenApprovalExpected in swapUtils.ts): native assets, deposit-based providers
-  // (no contractAddress), and already-approved tokens are never approval-required.
+  // approvalRequired must reflect real allowance state: false for native assets,
+  // deposit-based providers (no contractAddress), or an already-approved token.
   @step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(
     providerUiName: string,
@@ -123,8 +122,7 @@ export class SwapPage extends WebViewAppPage {
     await expect(buttonLocator).toBeVisible();
     const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
 
-    // The CTA never interpolates the provider name: it's a fixed "Review" (ready to swap)
-    // or "Continue" (token approval required first) regardless of provider.
+    // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
     const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
     expect(actualButtonText).toMatch(expected);
     return actualButtonText;

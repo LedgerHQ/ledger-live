@@ -54,7 +54,7 @@ export function runSwapDexNativeFlow(
       );
 
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      // fromAccount is a native asset here, so approval never applies — CTA is always "Review".
+      // fromAccount is native, so approval never applies — CTA is always "Review".
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();

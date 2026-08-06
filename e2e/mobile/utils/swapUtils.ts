@@ -95,9 +95,8 @@ export async function ensureTokenApproval(
   }
 }
 
-// Mirrors swap-live-app's own approval check: no contract (native asset) or no provider
-// contract (deposit-based provider, e.g. NEAR Intents/MoonPay) means there's nothing to
-// approve, so the swap CTA always reads "Review"; otherwise it reflects current allowance.
+// Mirrors swap-live-app's approval check: no contractAddress (native asset or a
+// deposit-based provider, e.g. NEAR Intents/MoonPay) means nothing to approve.
 export async function isTokenApprovalExpected(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,

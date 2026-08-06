@@ -266,9 +266,8 @@ export default class SwapLiveAppPage {
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
-  // approvalRequired must reflect the real on-chain allowance state (e.g. via
-  // isTokenApprovalExpected in swapUtils.ts): native assets, deposit-based providers
-  // (no contractAddress), and already-approved tokens are never approval-required.
+  // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
+  // in swapUtils.ts, rather than guessing it here.
   @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(
     provider: string,
@@ -280,8 +279,7 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
-    // The CTA never interpolates the provider name: it's a fixed "Review" (ready to swap)
-    // or "Continue" (token approval required first) regardless of provider.
+    // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
     const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
     jestExpect(actualButtonText).toMatch(expected);
     return actualButtonText;
