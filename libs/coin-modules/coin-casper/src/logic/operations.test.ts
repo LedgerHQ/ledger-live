@@ -1,32 +1,8 @@
 import BigNumber from "bignumber.js";
 import { ITxnHistoryData } from "../types/network";
-import { TEST_ADDRESSES, TEST_TRANSFER_IDS } from "../__tests__/fixtures/addresses.fixture";
 import { createMockAccountShapeData } from "../__tests__/fixtures/sync.fixture";
-import { casperAccountHashFromPublicKey, isAddressValid } from "./validateAddress";
+import { casperAccountHashFromPublicKey } from "./validateAddress";
 import { getUnit, mapTxToOps } from "./listOperations";
-import { createNewTransaction as testCreateNewTransaction } from "./craftTransaction";
-
-// Import Casper SDK mock for direct access to mocks
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mockCasperSDK = require("casper-js-sdk");
-
-// Mock the entire Casper SDK
-jest.mock("casper-js-sdk", () => {
-  const mockTransaction = { id: "mock-transaction" };
-  const mockHelper = {
-    createTransferTransaction: jest.fn().mockReturnValue(mockTransaction),
-  };
-
-  return {
-    CasperNetwork: {
-      create: jest.fn().mockResolvedValue(mockHelper),
-    },
-    PublicKey: {
-      fromHex: jest.fn().mockReturnValue({ value: "mocked-public-key" }),
-    },
-    Transaction: jest.fn().mockImplementation(() => mockTransaction),
-  };
-});
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   encodeOperationId: jest.fn(
@@ -36,11 +12,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
 
 jest.mock("./validateAddress", () => ({
   casperAccountHashFromPublicKey: jest.fn((key: string) => `account-hash-${key}`),
-  isAddressValid: jest.fn(),
-}));
-
-jest.mock("../network/api", () => ({
-  getCasperNodeRpcClient: jest.fn(),
 }));
 
 describe("txn", () => {
@@ -331,46 +302,6 @@ describe("txn", () => {
       const operations = mapper(txData as any);
 
       expect(operations).toEqual([]);
-    });
-  });
-
-  describe("createNewTransaction", () => {
-    const { mockAddress: mockSender } = createMockAccountShapeData();
-    const mockRecipient = TEST_ADDRESSES.RECIPIENT_SECP256K1;
-    const mockAmount = new BigNumber("5000000000");
-    const mockFees = new BigNumber("100000000");
-    const mockTransferId = TEST_TRANSFER_IDS.VALID;
-
-    const mockCreateNetwork = mockCasperSDK.CasperNetwork.create;
-    const mockPublicKeyFromHex = mockCasperSDK.PublicKey.fromHex;
-
-    beforeEach(() => {
-      (isAddressValid as jest.Mock).mockReturnValue(true);
-    });
-
-    test("should throw error if recipient address is invalid", async () => {
-      (isAddressValid as jest.Mock).mockReturnValue(false);
-
-      await expect(
-        testCreateNewTransaction(mockSender, mockRecipient, mockAmount, mockFees),
-      ).rejects.toThrow();
-    });
-
-    test("should create a new transaction with valid parameters", async () => {
-      const expectedTransaction = { id: "mock-transaction" };
-
-      const result = await testCreateNewTransaction(
-        mockSender,
-        mockRecipient,
-        mockAmount,
-        mockFees,
-        mockTransferId,
-      );
-
-      expect(result).toEqual(expectedTransaction);
-      expect(mockCreateNetwork).toHaveBeenCalled();
-      expect(mockPublicKeyFromHex).toHaveBeenCalledWith(mockSender);
-      expect(mockPublicKeyFromHex).toHaveBeenCalledWith(mockRecipient);
     });
   });
 });

@@ -7,7 +7,6 @@ import type {
   CraftedTransaction,
   Cursor,
   FeeEstimation,
-  MemoNotSupported,
   Page,
   Reward,
   Stake,
@@ -18,11 +17,12 @@ import type {
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import { setCoinConfig } from "../config";
 import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
 import { lastBlock } from "../logic/lastBlock";
 import { getBalance as getAccountBalance } from "../logic/getBalance";
-import type { CasperCoinConfig } from "../types";
+import type { CasperCoinConfig, CasperMemo } from "../types";
 
-export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSupported> {
+export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
   setCoinConfig(config);
 
   return {
@@ -51,9 +51,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    craftTransaction(_intent: TransactionIntent<MemoNotSupported>): Promise<CraftedTransaction> {
-      throw new Error("craftTransaction is not supported");
-    },
+    craftTransaction,
     craftRawTransaction(
       _transaction: string,
       _sender: string,
@@ -62,7 +60,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     ): Promise<CraftedTransaction> {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees(_intent: TransactionIntent<MemoNotSupported>): Promise<FeeEstimation> {
+    estimateFees(_intent: TransactionIntent<CasperMemo>): Promise<FeeEstimation> {
       throw new Error("estimateFees is not supported");
     },
     combine,
@@ -70,7 +68,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
       throw new Error("broadcast is not supported");
     },
     validateIntent(
-      _intent: TransactionIntent<MemoNotSupported>,
+      _intent: TransactionIntent<CasperMemo>,
       _balances: Balance[],
       _customFees?: FeeEstimation,
     ): Promise<TransactionValidation> {
@@ -82,7 +80,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<MemoNotSuppor
     validateAddress(_address: string, _parameters: unknown): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData(_intent: TransactionIntent<MemoNotSupported>) {
+    craftTransactionData(_intent: TransactionIntent<CasperMemo>) {
       throw new Error("craftTransactionData is not supported");
     },
   };

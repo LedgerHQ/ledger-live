@@ -10,9 +10,10 @@ import {
   CASPER_NETWORK,
 } from "../constants";
 import { getCasperNodeRpcClient } from "../network/api";
+import type { CasperMemo } from "../types";
 
 describe("Casper Api (mainnet)", () => {
-  let api: CoinModuleApi;
+  let api: CoinModuleApi<CasperMemo>;
 
   beforeAll(() => {
     api = createApi(casperMainnetConfig);
@@ -64,6 +65,48 @@ describe("Casper Api (mainnet)", () => {
       expect(() => api.combine(unsignedTxJson, taggedSignature, undefined)).toThrow(
         "casper: combine requires the signer public key",
       );
+    });
+  });
+
+  describe("craftTransaction", () => {
+    it("crafts a native transfer with a transfer id that Transaction.fromJSON verifies", async () => {
+      const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
+      const recipient = PrivateKey.generate(KeyAlgorithm.SECP256K1);
+
+      const { transaction } = await api.craftTransaction({
+        intentType: "transaction",
+        type: "send",
+        sender: sender.publicKey.toHex(),
+        recipient: recipient.publicKey.toHex(),
+        amount: 2_500_000_000n,
+        asset: { type: "native" },
+        memo: { type: "string", kind: "transferId", value: "123456" },
+      });
+
+      expect(() => Transaction.fromJSON(transaction)).not.toThrow();
+    });
+
+    it("produces a transaction that combine can sign end to end", async () => {
+      const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
+      const recipient = PrivateKey.generate(KeyAlgorithm.SECP256K1);
+
+      const { transaction } = await api.craftTransaction({
+        intentType: "transaction",
+        type: "send",
+        sender: sender.publicKey.toHex(),
+        recipient: recipient.publicKey.toHex(),
+        amount: 2_500_000_000n,
+        asset: { type: "native" },
+      });
+
+      const unsignedTx = Transaction.fromJSON(transaction);
+      const taggedSignature = Buffer.from(
+        sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
+      ).toString("hex");
+
+      const combined = await api.combine(transaction, taggedSignature, sender.publicKey.toHex());
+
+      expect(() => Transaction.fromJSON(combined)).not.toThrow();
     });
   });
 

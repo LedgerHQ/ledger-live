@@ -4,6 +4,7 @@ import {
   isError,
   methodToString,
   getRandomTransferID,
+  toSafeNumber,
 } from "./utils";
 
 describe("Casper utils", () => {
@@ -70,6 +71,25 @@ describe("Casper utils", () => {
 
       // There's a very small chance these could be the same, but it's extremely unlikely
       expect(new Set([id1, id2, id3]).size).toBeGreaterThan(0);
+    });
+  });
+
+  describe("toSafeNumber", () => {
+    test("should convert a bigint within the safe integer range", () => {
+      expect(toSafeNumber(999_000_000n)).toBe(999_000_000);
+    });
+
+    test("should accept the exact safe integer bounds", () => {
+      expect(toSafeNumber(BigInt(Number.MAX_SAFE_INTEGER))).toBe(Number.MAX_SAFE_INTEGER);
+      expect(toSafeNumber(BigInt(Number.MIN_SAFE_INTEGER))).toBe(Number.MIN_SAFE_INTEGER);
+    });
+
+    test("should throw for a value above the safe integer range", () => {
+      expect(() => toSafeNumber(BigInt(Number.MAX_SAFE_INTEGER) + 1n)).toThrow(RangeError);
+    });
+
+    test("should throw for a value below the safe integer range", () => {
+      expect(() => toSafeNumber(BigInt(Number.MIN_SAFE_INTEGER) - 1n)).toThrow(RangeError);
     });
   });
 });
