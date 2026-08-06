@@ -81,7 +81,7 @@ export const prepareTransaction: AccountBridge<
 
   const transactions = account.privateInfo?.transactions ?? [];
   const allNotes = collectIronwoodSpendableNotes(transactions);
-  const reserved = getReservedNullifiers(account.id);
+  const reserved = getReservedNullifiers(account);
   const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
   return prepareNoteTransaction(notes, tx);
 };

@@ -7,7 +7,11 @@ import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcast } from "./broadcast";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
-import { reserveNotes, getReservedNullifiers, _resetReservationsForTest } from "./note-reservation";
+import {
+  reserveNotes,
+  getSessionReservedNullifiers,
+  _resetReservationsForTest,
+} from "./note-reservation";
 import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 
 jest.mock("./getWalletAccount");
@@ -81,7 +85,7 @@ describe("broadcast", () => {
 
       await expect(submit({ zcashShielded: true }, TXID)).rejects.toThrow("network down");
 
-      expect(getReservedNullifiers(account.id).size).toBe(0);
+      expect(getSessionReservedNullifiers(account.id).size).toBe(0);
     });
 
     it("keeps them reserved once the send is out", async () => {
@@ -89,7 +93,7 @@ describe("broadcast", () => {
 
       await submit({ zcashShielded: true }, TXID);
 
-      expect(getReservedNullifiers(account.id).has(NULLIFIER)).toBe(true);
+      expect(getSessionReservedNullifiers(account.id).has(NULLIFIER)).toBe(true);
     });
   });
 });

@@ -412,4 +412,44 @@ describe("reserved notes", () => {
       changeAmount: new BigNumber(0),
     });
   });
+
+  // A send broadcast in a session that ended before it confirmed: the store is
+  // empty, and the notes it spends are known only from the optimistic operation
+  // the account persisted. Selecting them again would double-spend.
+  describe("a send left in flight by a previous session", () => {
+    const withPendingSend = (nullifiers: string[]) =>
+      ({
+        ...acc(),
+        pendingOperations: [
+          {
+            hash: IN_FLIGHT_TX,
+            extra: { zcashShielded: true, shieldedNullifiers: nullifiers },
+          },
+        ],
+      }) as unknown as ZcashAccount;
+
+    it("passes over the notes its pending operation holds", async () => {
+      const prepared = await prepareTransaction(
+        withPendingSend([ironwoodNullifier(0)]),
+        shielded({ amount: new BigNumber(15_000) }),
+      );
+
+      expect(prepared.selectedNotes?.map(n => n.amount.toNumber())).toEqual([30_000]);
+    });
+
+    it("clears the selection when its pending operation holds every note", async () => {
+      const prepared = await prepareTransaction(
+        withPendingSend([ironwoodNullifier(0), ironwoodNullifier(1)]),
+        shielded({ amount: new BigNumber(15_000) }),
+      );
+
+      expect(prepared.selectedNotes).toEqual([]);
+    });
+
+    it("drops those notes from the max spendable too", async () => {
+      expect(await maxShielded(withPendingSend([ironwoodNullifier(0)]))).toEqual(
+        new BigNumber(20_000),
+      );
+    });
+  });
 });

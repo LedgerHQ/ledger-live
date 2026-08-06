@@ -14,7 +14,7 @@ import { combine } from "../logic/transaction/combine";
 import { assertCanSend } from "../logic/engineClient";
 import { getWalletAccount } from "./getWalletAccount";
 import {
-  getReservedNullifiers,
+  getSessionReservedNullifiers,
   releaseRetiredReservations,
   _resetReservationsForTest,
 } from "./note-reservation";
@@ -404,14 +404,14 @@ describe("bridge/signOperation", () => {
       } as never);
       const signedEvent = events.find(e => e.type === "signed");
 
-      expect(getReservedNullifiers(account.id).has(nullifier)).toBe(true);
+      expect(getSessionReservedNullifiers(account.id).has(nullifier)).toBe(true);
       if (signedEvent?.type === "signed") {
         releaseRetiredReservations(
           account.id,
           new Set([signedEvent.signedOperation.operation.hash]),
         );
       }
-      expect(getReservedNullifiers(account.id).size).toBe(0);
+      expect(getSessionReservedNullifiers(account.id).size).toBe(0);
     });
   });
 });

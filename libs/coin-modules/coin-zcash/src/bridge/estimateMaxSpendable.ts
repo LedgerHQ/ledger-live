@@ -30,7 +30,7 @@ export const estimateMaxSpendable: AccountBridge<
 
   const transactions = mainAccount.privateInfo?.transactions ?? [];
   const allNotes = collectIronwoodSpendableNotes(transactions);
-  const reserved = getReservedNullifiers(mainAccount.id);
+  const reserved = getReservedNullifiers(mainAccount);
   const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
   return estimateMaxSpendableAmount(notes, transferType);
 };

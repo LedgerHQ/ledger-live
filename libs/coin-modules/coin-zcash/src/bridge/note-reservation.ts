@@ -1,7 +1,11 @@
 import { getEnv } from "@ledgerhq/live-env";
+import type { Operation } from "@ledgerhq/types-live";
+import type { ZcashOperationExtra } from "../types/bridge";
 
 /**
- * Session-scoped, in-memory reservation store for shielded note nullifiers.
+ * Reservation store for shielded note nullifiers: an in-memory part scoped to
+ * the session, and a persisted part read back off the account's pending
+ * operations.
  *
  * After a shielded send is built and signed, the notes it spends are reserved
  * under the hash of the operation spending them, so that a concurrent or
@@ -29,12 +33,17 @@ import { getEnv } from "@ledgerhq/live-env";
  * a block (~75s) at the very least to confirm.
  *
  * Scope: single-user desktop/mobile session. The store is module-level and
- * therefore shared for the lifetime of the process. It is not persisted across
- * restarts — on the next startup, sync will re-establish isSpent: true for any
- * confirmed notes, which is the durable exclusion mechanism.
+ * therefore shared for the lifetime of the process. It does not survive a
+ * restart, and does not need to: `signOperation` also records the nullifiers on
+ * the optimistic operation it produces, and that operation is persisted, so
+ * `getReservedNullifiers` reads a still-in-flight spend back from
+ * `account.pendingOperations` on the next startup. Notes of a spend that did
+ * confirm are excluded by isSpent: true from then on.
  *
- * The transparent analog is inputRefs written into operation.extra; the
- * reservation store provides the same intra-session dedup for shielded spends.
+ * The transparent analog is inputRefs written into operation.extra; shielded
+ * spends record shieldedNullifiers the same way. What this store adds is the
+ * precision the persisted list cannot have on its own: notes are committed from
+ * signing, while a pending operation exists only from broadcast onwards.
  */
 
 type Reservation = {
@@ -136,10 +145,14 @@ export function releaseReservation(accountId: string, operationHash: string): vo
 }
 
 /**
- * Returns the nullifiers reserved across the account's in-flight operations
- * (read-only). Returns an empty set when nothing is reserved.
+ * Returns the nullifiers this session holds for the account, across every
+ * operation reserved in it. Empty when nothing is reserved.
+ *
+ * Covers the running process only. Callers deciding what a new spend may select
+ * want `getReservedNullifiers`, which also accounts for a spend in flight from
+ * a previous session.
  */
-export function getReservedNullifiers(accountId: string): ReadonlySet<string> {
+export function getSessionReservedNullifiers(accountId: string): ReadonlySet<string> {
   const byOperation = _reserved.get(accountId);
   if (!byOperation) return new Set<string>();
   const reserved = new Set<string>();
@@ -147,6 +160,47 @@ export function getReservedNullifiers(accountId: string): ReadonlySet<string> {
     for (const nf of reservation.nullifiers) {
       reserved.add(nf);
     }
+  }
+  return reserved;
+}
+
+/** Only `extra` is read off a pending operation. */
+type ReservingAccount = {
+  id: string;
+  pendingOperations?: ReadonlyArray<Pick<Operation, "extra">>;
+};
+
+/**
+ * The nullifiers the account's pending operations still hold.
+ *
+ * `extra` is persisted verbatim and typed `unknown` on the way back in, hence
+ * the narrowing — the same shape coin-bitcoin's `isBtcOperationExtra` guards.
+ */
+function pendingReservedNullifiers(
+  pendingOperations: ReadonlyArray<Pick<Operation, "extra">>,
+): string[] {
+  return pendingOperations.flatMap(({ extra }) => {
+    if (extra === null || typeof extra !== "object") return [];
+    const nullifiers = (extra as ZcashOperationExtra).shieldedNullifiers;
+    if (!Array.isArray(nullifiers)) return [];
+    return nullifiers.filter(nf => typeof nf === "string");
+  });
+}
+
+/**
+ * The nullifiers unavailable to a new spend: what this session reserved, plus
+ * what the account's pending operations hold.
+ *
+ * Nothing releases the pending-operation half, because the operation carrying it
+ * is what expires. It leaves `pendingOperations` once a confirmed counterpart
+ * retires it — its notes read isSpent: true from then on — or once it ages past
+ * OPERATION_OPTIMISTIC_RETENTION, the window `releaseRetiredReservations`
+ * measures too. A broadcast that failed never became a pending operation.
+ */
+export function getReservedNullifiers(account: ReservingAccount): ReadonlySet<string> {
+  const reserved = new Set(pendingReservedNullifiers(account.pendingOperations ?? []));
+  for (const nf of getSessionReservedNullifiers(account.id)) {
+    reserved.add(nf);
   }
   return reserved;
 }

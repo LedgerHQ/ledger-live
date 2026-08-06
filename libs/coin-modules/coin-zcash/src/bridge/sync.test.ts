@@ -1,7 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { reduceShieldedSyncResult, postSync } from "./sync";
-import { reserveNotes, getReservedNullifiers, _resetReservationsForTest } from "./note-reservation";
+import {
+  reserveNotes,
+  getSessionReservedNullifiers,
+  _resetReservationsForTest,
+} from "./note-reservation";
 import type { ZcashAccount } from "../types/bridge";
 import type { ShieldedSyncResult, ShieldedTransaction } from "../network/types";
 import type { BtcOperation } from "../types/bridge";
@@ -268,7 +272,7 @@ describe("reduceShieldedSyncResult", () => {
           "acc-1",
         );
 
-        const reserved = getReservedNullifiers("acc-1");
+        const reserved = getSessionReservedNullifiers("acc-1");
         expect(reserved.has(RESERVED_A)).toBe(false);
         expect(reserved.has(RESERVED_B)).toBe(true);
       });
@@ -286,7 +290,7 @@ describe("reduceShieldedSyncResult", () => {
           "acc-1",
         );
 
-        expect(getReservedNullifiers("acc-1").size).toBe(2);
+        expect(getSessionReservedNullifiers("acc-1").size).toBe(2);
       });
 
       it("keeps the reservations of the accounts it is not syncing", () => {
@@ -306,8 +310,8 @@ describe("reduceShieldedSyncResult", () => {
           "acc-1",
         );
 
-        expect(getReservedNullifiers("acc-1").size).toBe(0);
-        expect(getReservedNullifiers("acc-2").has(RESERVED_B)).toBe(true);
+        expect(getSessionReservedNullifiers("acc-1").size).toBe(0);
+        expect(getSessionReservedNullifiers("acc-2").has(RESERVED_B)).toBe(true);
       });
     });
   });
@@ -391,7 +395,7 @@ describe("postSync", () => {
 
       postSync(account([], []), account([confirmed], []));
 
-      expect(getReservedNullifiers("acc-1").size).toBe(0);
+      expect(getSessionReservedNullifiers("acc-1").size).toBe(0);
     });
 
     // The double-spend race the reservation store exists for: a sync lands
@@ -403,7 +407,7 @@ describe("postSync", () => {
 
       postSync(account([], []), account([unrelated], [optimistic]));
 
-      expect(getReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
+      expect(getSessionReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
     });
 
     // A scan of an account carries no pending operation at all, and a send is
@@ -414,7 +418,7 @@ describe("postSync", () => {
 
       postSync(account([], []), account([], []));
 
-      expect(getReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
+      expect(getSessionReservedNullifiers("acc-1").has(RESERVED)).toBe(true);
     });
   });
 });
