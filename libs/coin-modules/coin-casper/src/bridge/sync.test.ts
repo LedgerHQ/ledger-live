@@ -1,13 +1,13 @@
 import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../../network/api";
-import { createMockAccountShapeData } from "../../test/fixtures";
-import { getAccountShape } from "./accountShape";
-import { mapTxToOps } from "./txn";
+import { fetchBalance, fetchBlockHeight, fetchAccountStateInfo, fetchTxs } from "../network/api";
+import { createMockAccountShapeData } from "../__tests__/fixtures";
+import { getAccountShape } from "./sync";
+import { mapTxToOps } from "../logic/listOperations";
 
 // Mock dependencies
-jest.mock("../../network/api");
-jest.mock("./txn");
+jest.mock("../network/api");
+jest.mock("../logic/listOperations");
 
 describe("getAccountShape", () => {
   const {
@@ -22,7 +22,6 @@ describe("getAccountShape", () => {
     mockOperations,
   } = createMockAccountShapeData();
 
-  // Define a mock SyncConfig as required by the getAccountShape function
   const mockSyncConfig: SyncConfig = {
     paginationConfig: {},
   };
@@ -30,7 +29,6 @@ describe("getAccountShape", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Default mock implementations
     (fetchAccountStateInfo as jest.Mock).mockResolvedValue({
       purseUref: mockPurseUref,
       accountHash: mockAccountHash,

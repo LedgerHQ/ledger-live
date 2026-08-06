@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
 import { getCoinConfig } from "../config";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../constants";
-import { TEST_ADDRESSES } from "../test/fixtures";
+import { TEST_ADDRESSES } from "../__tests__/fixtures";
 import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "../types/network";
 import {
   fetchAccountStateInfo,

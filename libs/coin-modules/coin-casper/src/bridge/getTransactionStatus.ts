@@ -16,7 +16,7 @@ import {
 import { CasperInvalidTransferId } from "../errors";
 import { validateMemo } from "../logic/validateMemo";
 import { CasperAccount, Transaction, TransactionStatus } from "../types";
-import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
+import { getAddress, isAddressValid } from "../logic/validateAddress";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

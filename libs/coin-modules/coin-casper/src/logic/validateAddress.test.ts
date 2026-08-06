@@ -1,5 +1,5 @@
 import { KeyAlgorithm } from "casper-js-sdk";
-import { casperAddressFromPubKey, isAddressValid } from "../bridge/bridgeHelpers/addresses";
+import { casperAddressFromPubKey, isAddressValid } from "./validateAddress";
 
 describe("Casper addresses", () => {
   const pubKeys = {
@@ -33,12 +33,6 @@ describe("Casper addresses", () => {
   });
 
   test("Get the address from the publick key", () => {
-    /**
-     * Extracts the public key and key signature from a given Casper address.
-     *
-     * @param {string} address - The Casper address from which to extract the public key and key signature.
-     * @returns {{ pubkey: Buffer, keySig: CLPublicKeyTag }} An object containing the public key as a Buffer and the key signature as a CLPublicKeyTag.
-     */
     function casperPubKeyFromAddress(address: string): {
       pubkey: Buffer;
       keySig: KeyAlgorithm;

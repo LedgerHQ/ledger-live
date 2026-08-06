@@ -1,12 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { KeyAlgorithm } from "casper-js-sdk";
-import * as addressHelpers from "../bridge/bridgeHelpers/addresses";
+import * as addressHelpers from "../logic/validateAddress";
 import { CasperSigner, CasperGetAddrResponse } from "../types";
 import getAddressResolver from "./getAddress";
 
-jest.mock("../bridge/bridgeHelpers/addresses", () => ({
-  ...jest.requireActual("../bridge/bridgeHelpers/addresses"),
+jest.mock("../logic/validateAddress", () => ({
+  ...jest.requireActual("../logic/validateAddress"),
   casperAddressFromPubKey: jest.fn(),
 }));
 
