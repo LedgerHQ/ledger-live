@@ -1,0 +1,11 @@
+{
+  "name": "@support/ts-config-root",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Package wrapper for the monorepo root tsconfig.base.json — use this instead of a relative path",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./package.json": "./package.json"
+  }
+}
