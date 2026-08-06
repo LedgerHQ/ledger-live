@@ -1,7 +1,10 @@
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   reserveNotes,
-  reconcileReservations,
+  releaseConfirmedNullifiers,
+  releaseRetiredReservations,
+  releaseReservation,
   getReservedNullifiers,
   _resetReservationsForTest,
 } from "./note-reservation";
@@ -10,9 +13,13 @@ import type { SpendableNote } from "../network/types";
 
 const ACCOUNT_A = "account-a";
 const ACCOUNT_B = "account-b";
+const OP_1 = "76ec3b38";
+const OP_2 = "91ba4c07";
 const NF1 = "nf1111";
 const NF2 = "nf2222";
 const NF3 = "nf3333";
+
+const RETENTION = getEnv("OPERATION_OPTIMISTIC_RETENTION");
 
 function makeNote(overrides: Partial<SpendableNote> & { amount: BigNumber }): SpendableNote {
   return {
@@ -34,22 +41,30 @@ beforeEach(() => {
 
 describe("reserveNotes", () => {
   it("adds nullifiers to the store for the given account", () => {
-    reserveNotes(ACCOUNT_A, [NF1, NF2]);
+    reserveNotes(ACCOUNT_A, OP_1, [NF1, NF2]);
     const reserved = getReservedNullifiers(ACCOUNT_A);
     expect(reserved.has(NF1)).toBe(true);
     expect(reserved.has(NF2)).toBe(true);
   });
 
-  it("unions with the existing set on a second call — does not overwrite", () => {
-    reserveNotes(ACCOUNT_A, [NF1]);
-    reserveNotes(ACCOUNT_A, [NF2]);
+  it("unions with what the same operation already holds — does not overwrite", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_A, OP_1, [NF2]);
+    const reserved = getReservedNullifiers(ACCOUNT_A);
+    expect(reserved.has(NF1)).toBe(true);
+    expect(reserved.has(NF2)).toBe(true);
+  });
+
+  it("holds the reservations of two operations in flight at once", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_A, OP_2, [NF2]);
     const reserved = getReservedNullifiers(ACCOUNT_A);
     expect(reserved.has(NF1)).toBe(true);
     expect(reserved.has(NF2)).toBe(true);
   });
 
   it("is a no-op for an empty nullifier array", () => {
-    reserveNotes(ACCOUNT_A, []);
+    reserveNotes(ACCOUNT_A, OP_1, []);
     expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
   });
 });
@@ -61,59 +76,115 @@ describe("getReservedNullifiers", () => {
   });
 });
 
-describe("reconcileReservations", () => {
-  it("removes confirmed-spent nullifiers from the store", () => {
-    reserveNotes(ACCOUNT_A, [NF1, NF2, NF3]);
-    reconcileReservations(ACCOUNT_A, [NF1], false);
+describe("releaseConfirmedNullifiers", () => {
+  it("removes the nullifiers the scan reported spent", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1, NF2, NF3]);
+    releaseConfirmedNullifiers(ACCOUNT_A, [NF1]);
     const reserved = getReservedNullifiers(ACCOUNT_A);
     expect(reserved.has(NF1)).toBe(false);
     expect(reserved.has(NF2)).toBe(true);
     expect(reserved.has(NF3)).toBe(true);
   });
 
-  it("with syncComplete=false does NOT clear unconfirmed reservations", () => {
-    reserveNotes(ACCOUNT_A, [NF1, NF2]);
-    reconcileReservations(ACCOUNT_A, [], false);
-    const reserved = getReservedNullifiers(ACCOUNT_A);
-    expect(reserved.has(NF1)).toBe(true);
-    expect(reserved.has(NF2)).toBe(true);
+  it("reaches the nullifiers of every operation in flight", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_A, OP_2, [NF2]);
+    releaseConfirmedNullifiers(ACCOUNT_A, [NF1, NF2]);
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
   });
 
-  it("with syncComplete=true clears ALL remaining reservations for the account", () => {
-    reserveNotes(ACCOUNT_A, [NF1, NF2, NF3]);
-    // NF1 is confirmed-spent; NF2 and NF3 were never broadcast or rejected
-    reconcileReservations(ACCOUNT_A, [NF1], true);
-    const reserved = getReservedNullifiers(ACCOUNT_A);
-    expect(reserved.size).toBe(0);
+  it("keeps everything when the scan reported nothing spent", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1, NF2]);
+    releaseConfirmedNullifiers(ACCOUNT_A, []);
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(2);
   });
 
   it("is a no-op on an unknown account (no throw)", () => {
-    expect(() => reconcileReservations("no-such-account", [NF1], true)).not.toThrow();
+    expect(() => releaseConfirmedNullifiers("no-such-account", [NF1])).not.toThrow();
   });
 
-  it("isolates accounts — reconciling account A does not affect account B", () => {
-    reserveNotes(ACCOUNT_A, [NF1]);
-    reserveNotes(ACCOUNT_B, [NF2]);
-    reconcileReservations(ACCOUNT_A, [NF1], true);
+  it("isolates accounts", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_B, OP_1, [NF1]);
+    releaseConfirmedNullifiers(ACCOUNT_A, [NF1]);
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
+    expect(getReservedNullifiers(ACCOUNT_B).has(NF1)).toBe(true);
+  });
+});
+
+describe("releaseRetiredReservations", () => {
+  it("releases the reservation of an operation that has confirmed", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    releaseRetiredReservations(ACCOUNT_A, new Set([OP_1]));
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
+  });
+
+  it("leaves the operations still in flight reserved", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_A, OP_2, [NF2]);
+    releaseRetiredReservations(ACCOUNT_A, new Set([OP_1]));
+    const reserved = getReservedNullifiers(ACCOUNT_A);
+    expect(reserved.has(NF1)).toBe(false);
+    expect(reserved.has(NF2)).toBe(true);
+  });
+
+  // The premature release this store exists to avoid: a send is signed, a sync
+  // runs and confirms nothing about it, and its notes must stay off the table.
+  it("holds a reservation no confirmed operation accounts for", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1, NF2]);
+    releaseRetiredReservations(ACCOUNT_A, new Set(["some-other-transaction"]));
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(2);
+  });
+
+  it("holds a reservation right up to the end of the optimistic window", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION - 1);
+    expect(getReservedNullifiers(ACCOUNT_A).has(NF1)).toBe(true);
+  });
+
+  // Past that window Ledger Wallet drops the optimistic operation itself, so a
+  // broadcast that never confirmed stops holding notes at the same moment.
+  it("releases a reservation that outlived the optimistic window", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    releaseRetiredReservations(ACCOUNT_A, new Set(), Date.now() + RETENTION + 1);
+    expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
+  });
+
+  it("is a no-op on an unknown account (no throw)", () => {
+    expect(() => releaseRetiredReservations("no-such-account", new Set([OP_1]))).not.toThrow();
+  });
+
+  it("isolates accounts — retiring account A's operation leaves account B alone", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_B, OP_1, [NF2]);
+    releaseRetiredReservations(ACCOUNT_A, new Set([OP_1]));
     expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
     expect(getReservedNullifiers(ACCOUNT_B).has(NF2)).toBe(true);
   });
 });
 
-describe("account isolation", () => {
-  it("reservations for account A do not appear in account B's set", () => {
-    reserveNotes(ACCOUNT_A, [NF1, NF2]);
-    reserveNotes(ACCOUNT_B, [NF3]);
-    expect(getReservedNullifiers(ACCOUNT_A).has(NF3)).toBe(false);
-    expect(getReservedNullifiers(ACCOUNT_B).has(NF1)).toBe(false);
-    expect(getReservedNullifiers(ACCOUNT_B).has(NF2)).toBe(false);
+describe("releaseReservation", () => {
+  it("hands back the notes of the operation named, and only those", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_A, OP_2, [NF2]);
+    releaseReservation(ACCOUNT_A, OP_1);
+    const reserved = getReservedNullifiers(ACCOUNT_A);
+    expect(reserved.has(NF1)).toBe(false);
+    expect(reserved.has(NF2)).toBe(true);
+  });
+
+  it("is a no-op for an operation or account it holds nothing for", () => {
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    releaseReservation(ACCOUNT_A, "no-such-operation");
+    releaseReservation("no-such-account", OP_1);
+    expect(getReservedNullifiers(ACCOUNT_A).has(NF1)).toBe(true);
   });
 });
 
 describe("_resetReservationsForTest", () => {
   it("empties all state — getReservedNullifiers returns empty after reset", () => {
-    reserveNotes(ACCOUNT_A, [NF1]);
-    reserveNotes(ACCOUNT_B, [NF2]);
+    reserveNotes(ACCOUNT_A, OP_1, [NF1]);
+    reserveNotes(ACCOUNT_B, OP_1, [NF2]);
     _resetReservationsForTest();
     expect(getReservedNullifiers(ACCOUNT_A).size).toBe(0);
     expect(getReservedNullifiers(ACCOUNT_B).size).toBe(0);
@@ -150,7 +221,7 @@ describe("reservation filtering", () => {
     const firstNullifiers = first!.selectedNotes.map(n => n.nullifier);
 
     // Reserve the first selection
-    reserveNotes(ACCOUNT_ID, firstNullifiers);
+    reserveNotes(ACCOUNT_ID, OP_1, firstNullifiers);
 
     // Second send: filter reserved notes, then select
     const reserved = getReservedNullifiers(ACCOUNT_ID);
@@ -172,7 +243,7 @@ describe("reservation filtering", () => {
       amount: new BigNumber(600_000),
     });
 
-    reserveNotes(ACCOUNT_ID, [note.nullifier]);
+    reserveNotes(ACCOUNT_ID, OP_1, [note.nullifier]);
 
     const reserved = getReservedNullifiers(ACCOUNT_ID);
     const filtered = [note].filter(n => !reserved.has(n.nullifier));
@@ -191,7 +262,7 @@ describe("reservation filtering", () => {
       amount: new BigNumber(600_000),
     });
 
-    reserveNotes(ACCOUNT_ID, [note.nullifier]);
+    reserveNotes(ACCOUNT_ID, OP_1, [note.nullifier]);
 
     // Verify reserved before reset
     expect(getReservedNullifiers(ACCOUNT_ID).has(note.nullifier)).toBe(true);

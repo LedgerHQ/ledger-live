@@ -45,7 +45,7 @@ import { DEFAULT_ZCASH_PRIVATE_INFO, getZainoEndpoint, ZCASH_LOG_TYPE } from "..
 import { getZCashClient } from "../logic/engineClient";
 import { resolveTransactionDetails, type ResolvedTransactions } from "./transaction-details";
 import { composeXpub } from "../signer/xpub";
-import { reconcileReservations } from "./note-reservation";
+import { releaseConfirmedNullifiers, releaseRetiredReservations } from "./note-reservation";
 
 export { removeReplaced } from "@ledgerhq/wallet-btc/operations";
 
@@ -722,7 +722,7 @@ function reduceUnchangedShieldedChunk(
     ironwoodBalance,
   });
 
-  reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
+  releaseConfirmedNullifiers(accountId, spentNfs);
 
   return {
     ...accumulated,
@@ -831,7 +831,7 @@ export function reduceShieldedSyncResult(
     (info.initialAccount?.operationsCount ?? 0) - (info.initialAccount?.operations?.length ?? 0),
   );
 
-  reconcileReservations(accountId, spentNfs, result.remainingBlocks === 0);
+  releaseConfirmedNullifiers(accountId, spentNfs);
 
   return {
     processedOperations: [...result.transactions],
@@ -997,5 +997,13 @@ function reconcileConfirmedPendingOperations(account: ZcashAccount): ZcashAccoun
   return { ...account, operations, pendingOperations };
 }
 
-export const postSync = (_initial: ZcashAccount, synced: ZcashAccount): ZcashAccount =>
-  reconcileConfirmedPendingOperations(synced);
+/**
+ * Note reservations hang off the same lifecycle: the notes a shielded send spends
+ * stay reserved until the operation spending them is retired, matched on the very
+ * hashes `reconcileConfirmedPendingOperations` resolves the optimistic operation
+ * by.
+ */
+export const postSync = (_initial: ZcashAccount, synced: ZcashAccount): ZcashAccount => {
+  releaseRetiredReservations(synced.id, new Set(synced.operations.map(op => op.hash)));
+  return reconcileConfirmedPendingOperations(synced);
+};

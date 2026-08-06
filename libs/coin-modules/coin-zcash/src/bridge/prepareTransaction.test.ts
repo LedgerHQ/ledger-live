@@ -9,6 +9,8 @@ const T_ADDRESS = "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8";
 const U_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
 const ACCOUNT_ID = "js:2:zcash:xpub6D:";
+// Reservations are held under the hash of the send that spends the notes.
+const IN_FLIGHT_TX = "76ec3b38";
 // The account fixture offsets the Ironwood pool by this much so the two pools
 // never share a nullifier or a position.
 const IRONWOOD_INDEX_OFFSET = 100;
@@ -333,7 +335,7 @@ describe("reserved notes", () => {
     estimateMaxSpendable({ account: a, transaction: shielded() } as never);
 
   it("passes over a reserved note and spends the next one down", async () => {
-    reserveNotes(ACCOUNT_ID, [ironwoodNullifier(0)]);
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
 
     const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
 
@@ -351,7 +353,7 @@ describe("reserved notes", () => {
   });
 
   it("clears the selection once every note is reserved", async () => {
-    reserveNotes(ACCOUNT_ID, [ironwoodNullifier(0), ironwoodNullifier(1)]);
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0), ironwoodNullifier(1)]);
 
     const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
 
@@ -362,7 +364,10 @@ describe("reserved notes", () => {
   // Reservations are keyed by account: another account's in-flight send must not
   // take notes out of this one's pool.
   it("ignores a reservation held against another account", async () => {
-    reserveNotes("js:2:zcash:xpubOTHER:", [ironwoodNullifier(0), ironwoodNullifier(1)]);
+    reserveNotes("js:2:zcash:xpubOTHER:", IN_FLIGHT_TX, [
+      ironwoodNullifier(0),
+      ironwoodNullifier(1),
+    ]);
 
     const prepared = await prepareTransaction(acc(), shielded({ amount: new BigNumber(15_000) }));
 
@@ -370,7 +375,10 @@ describe("reserved notes", () => {
   });
 
   it("counts a note another account has reserved as spendable", async () => {
-    reserveNotes("js:2:zcash:xpubOTHER:", [ironwoodNullifier(0), ironwoodNullifier(1)]);
+    reserveNotes("js:2:zcash:xpubOTHER:", IN_FLIGHT_TX, [
+      ironwoodNullifier(0),
+      ironwoodNullifier(1),
+    ]);
 
     // The whole 70k pool, minus the 2-action fee for spending both notes.
     expect(await maxShielded(acc())).toEqual(new BigNumber(60_000));
@@ -378,13 +386,13 @@ describe("reserved notes", () => {
 
   it("drops reserved notes from the max spendable", async () => {
     // The free 30k note minus the 2-action fee, not the 60k the whole pool offers.
-    reserveNotes(ACCOUNT_ID, [ironwoodNullifier(0)]);
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
 
     expect(await maxShielded(acc())).toEqual(new BigNumber(20_000));
   });
 
   it("answers zero for the max spendable once every note is reserved", async () => {
-    reserveNotes(ACCOUNT_ID, [ironwoodNullifier(0), ironwoodNullifier(1)]);
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0), ironwoodNullifier(1)]);
 
     expect(await maxShielded(acc())).toEqual(new BigNumber(0));
   });
@@ -392,7 +400,7 @@ describe("reserved notes", () => {
   // Both call sites filter the pool themselves, so they can disagree: a max the
   // send cannot then price is a "send max" the user cannot complete.
   it("prices a max send over the notes the max spendable counted", async () => {
-    reserveNotes(ACCOUNT_ID, [ironwoodNullifier(0)]);
+    reserveNotes(ACCOUNT_ID, IN_FLIGHT_TX, [ironwoodNullifier(0)]);
     const spendable = await maxShielded(acc());
 
     const prepared = await prepareTransaction(acc(), shielded({ useAllAmount: true }));

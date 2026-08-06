@@ -7,6 +7,7 @@ import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcast } from "./broadcast";
 import { getWalletAccount } from "./getWalletAccount";
 import { broadcast as broadcastLogic } from "../logic/transaction/broadcast";
+import { reserveNotes, getReservedNullifiers, _resetReservationsForTest } from "./note-reservation";
 import type { ZcashAccount, ZcashOperationExtra } from "../types/bridge";
 
 jest.mock("./getWalletAccount");
@@ -22,17 +23,18 @@ const TX_HEX = "05" + "00".repeat(63);
 const fetchUtxoTx = jest.fn();
 const account = { id: "js:2:zcash:xpub:", currency: { id: "zcash" } } as unknown as ZcashAccount;
 
-const submit = (extra: ZcashOperationExtra) =>
+const submit = (extra: ZcashOperationExtra, hash = "") =>
   broadcast({
     account,
     signedOperation: {
       signature: TX_HEX,
-      operation: { id: "op1", hash: "", extra } as unknown as Operation,
+      operation: { id: "op1", hash, extra } as unknown as Operation,
     } as SignedOperation,
   });
 
 beforeEach(() => {
   jest.clearAllMocks();
+  _resetReservationsForTest();
   mockBroadcastLogic.mockResolvedValue(TXID);
   mockGetWalletAccount.mockReturnValue({
     xpub: { explorer: { fetchUtxoTx } },
@@ -66,5 +68,28 @@ describe("broadcast", () => {
 
     expect(mockBroadcastLogic).toHaveBeenCalledWith(TX_HEX, undefined);
     expect(mockGetWalletAccount).not.toHaveBeenCalled();
+  });
+
+  // Signing reserves the notes it spends. A send that never reached the network
+  // cannot spend them, and the user is about to retry with those very notes.
+  describe("note reservations", () => {
+    const NULLIFIER = "11".repeat(32);
+
+    it("hands the reserved notes back when the send does not go out", async () => {
+      reserveNotes(account.id, TXID, [NULLIFIER]);
+      mockBroadcastLogic.mockRejectedValue(new Error("network down"));
+
+      await expect(submit({ zcashShielded: true }, TXID)).rejects.toThrow("network down");
+
+      expect(getReservedNullifiers(account.id).size).toBe(0);
+    });
+
+    it("keeps them reserved once the send is out", async () => {
+      reserveNotes(account.id, TXID, [NULLIFIER]);
+
+      await submit({ zcashShielded: true }, TXID);
+
+      expect(getReservedNullifiers(account.id).has(NULLIFIER)).toBe(true);
+    });
   });
 });

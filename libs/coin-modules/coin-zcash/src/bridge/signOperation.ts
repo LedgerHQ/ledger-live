@@ -127,7 +127,7 @@ export const buildSignOperation =
 
         const ironwoodNullifiers = transaction.selectedNotes.map(n => n.nullifier);
         if (ironwoodNullifiers.length > 0) {
-          reserveNotes(account.id, ironwoodNullifiers);
+          reserveNotes(account.id, finalizeResult.txid, ironwoodNullifiers);
         }
 
         const operation: Operation = {
