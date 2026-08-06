@@ -18,6 +18,7 @@ import { getEnv } from "@shared/env";
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
 import { launchSpeculos, cleanSpeculos } from "./speculosUtils";
+import { QuoteCardVariant } from "tests/page/swap.page";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   test.use({
@@ -39,6 +40,7 @@ export async function performSwapUntilQuoteSelectionStep(
   app: Application,
   swap: Swap,
   minAmount: string,
+  quoteCardVariant?: QuoteCardVariant,
 ) {
   if (swap.accountToDebit.currency === Currency.APT) {
     await checkAccountFromIsSynchronised(app, swap);
@@ -46,6 +48,11 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swap.goAndWaitForSwapToBeReady(() =>
     app.mainNavigation.openTargetFromMainNavigation("swap"),
   );
+  if (quoteCardVariant) {
+    // No account/amount has been selected inside the webview yet at this point,
+    // so forcing the variant (which reloads the webview) loses no test state.
+    await app.swap.setQuoteCardVariant(quoteCardVariant);
+  }
   const isAssetFromSelected = await app.swap.checkIfFromAssetIsAlreadySelected(
     swap.accountToDebit.currency.ticker,
   );
