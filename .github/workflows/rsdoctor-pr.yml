@@ -74,7 +74,7 @@ jobs:
         run: pnpm --filter live-mobile run doctor
 
       - name: Bundle Analysis (Desktop + Mobile)
-        uses: web-infra-dev/rsdoctor-action@71406dd7d0b4815e7e1be27928961544ed618530
+        uses: web-infra-dev/rsdoctor-action@2fbd50933702502f12d2bbef5273afbfd829a289 # v1.1.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           file_path: rsdoctor/*/rsdoctor-data.json
