@@ -15,10 +15,7 @@ jest.mock("@ledgerhq/lumen-ui-react", () => {
       description: string;
       primaryAction?: React.ReactNode;
     }) => React.createElement("div", props, description, primaryAction),
-    Button: ({
-      children,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) =>
+    Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) =>
       React.createElement("button", { type: "button", ...props }, children),
   };
 });
@@ -33,15 +30,11 @@ describe("SanctionedAddressBanner", () => {
         description="This wallet address is sanctioned."
         actionLabel="Learn more"
         onAction={onAction}
-      />
+      />,
     );
 
-    expect(
-      screen.getByTestId("contacts-sanctioned-address-banner")
-    ).toBeVisible();
-    expect(
-      screen.getByText("This wallet address is sanctioned.")
-    ).toBeVisible();
+    expect(screen.getByTestId("contacts-sanctioned-address-banner")).toBeVisible();
+    expect(screen.getByText("This wallet address is sanctioned.")).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "Learn more" }));
 
