@@ -399,8 +399,7 @@ export async function performTransparentSync(
   }
 
   const newOperations = (resolved?.transactions ?? transactions)
-    ?.map(tx => mapTxToOperations(tx, accountId, accountAddresses, changeAddresses))
-    .flat()
+    ?.flatMap(tx => mapTxToOperations(tx, accountId, accountAddresses, changeAddresses))
     .map(op => withRecoveredRecipients(op, resolved?.payeesByTxId, changeAddresses));
 
   const newUniqueOperations = deduplicateOperations(newOperations);
