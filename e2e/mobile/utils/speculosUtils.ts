@@ -15,7 +15,7 @@ import {
   fetchSpeculinhoStatus,
   getSpeculinhoRunIdFromError,
 } from "@ledgerhq/live-e2e-shared/speculosCI";
-import { delay, ensureBridgeReady, isSpeculosRemote } from "../helpers/commonHelpers";
+import { delay, isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
 import { promises as fs } from "fs";
@@ -333,17 +333,12 @@ async function waitForBridgeEnv(
   attempts = 24,
   delayMs = 500,
 ): Promise<void> {
-  let bridgeRelaunched = false;
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const envsRaw = await getEnvs();
       if (envsRaw) {
         const envs = JSON.parse(envsRaw) as Record<string, string | undefined>;
         if ((envs[key] ?? "") === expectedValue) return;
-      } else if (!bridgeRelaunched && attempt >= 3) {
-        await ensureBridgeReady();
-        bridgeRelaunched = true;
-        continue;
       }
     } catch {
       // retry until timeout
@@ -362,7 +357,6 @@ export async function releaseSpeculosDmkSessions(): Promise<void> {
 }
 
 export async function registerKnownSpeculos(speculosPort: number) {
-  await ensureBridgeReady();
   const address = getKnownSpeculosAddress(speculosPort);
   await addKnownSpeculos(address);
   await waitForBridgeEnv("DEVICE_PROXY_URL", address);
@@ -432,7 +426,6 @@ export async function removeSpeculosAndDeregisterKnownSpeculos(deviceId?: string
     } catch (e) {
       log.warn(`unreverseTcpPort(${speculosPort}) failed: ${sanitizeError(e)}`);
     }
-    await ensureBridgeReady();
     await removeKnownSpeculos(getKnownSpeculosAddress(speculosPort));
     await waitForBridgeEnv("DEVICE_PROXY_URL", "");
     delete process.env.DEVICE_PROXY_URL;

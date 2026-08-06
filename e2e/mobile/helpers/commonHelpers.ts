@@ -1,4 +1,4 @@
-import { close as closeBridge, findFreePort, getEnvs, init as initBridge } from "../bridge/server";
+import { close as closeBridge, findFreePort, init as initBridge } from "../bridge/server";
 import { getEnv, setEnv } from "@shared/env";
 import { exec } from "child_process";
 import { device, log } from "detox";
@@ -93,26 +93,6 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
     ...customConfig,
   });
   return port;
-}
-
-export async function ensureBridgeReady(): Promise<void> {
-  const envs = await getEnvs();
-  if (envs) return;
-
-  log.warn("E2E Bridge not responding — relaunching app to restore WebSocket");
-  const port = await launchApp({ newInstance: true });
-  await device.reverseTcpPort(port);
-
-  const deadline = Date.now() + 60_000;
-  while (Date.now() < deadline) {
-    const envsAfterRelaunch = await getEnvs();
-    if (envsAfterRelaunch) return;
-    await delay(500);
-  }
-
-  throw new Error(
-    "E2E bridge not responding after app relaunch. Restart the emulator, stop stale Speculos containers, then retry.",
-  );
 }
 
 export function setupEnvironment() {

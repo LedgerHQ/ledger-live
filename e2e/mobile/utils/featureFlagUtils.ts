@@ -43,26 +43,17 @@ export const FF_LWM_WALLET_40_Q2 = {
   },
 } satisfies OptionalFeatureMap;
 
-export const FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT = {
+/** Wallet 4.0 + borrow live app + PnL for mobile borrow E2E. */
+export const FF_BORROW_ENABLED = {
   ...FF_LWM_WALLET_40_Q2,
-  analyticsOptIn: { enabled: false },
-} satisfies OptionalFeatureMap;
-
-export const FF_BORROW_MOBILE = {
   ptxBorrowLiveApp: {
     enabled: true,
     params: { manifest_id: "borrow" },
   },
-} satisfies OptionalFeatureMap;
-
-/** Wallet 4.0 + borrow live app + PnL for mobile borrow E2E. */
-export const FF_BORROW_E2E = {
-  ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
-  ...FF_BORROW_MOBILE,
   lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT.lwmWallet40,
+    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
     params: {
-      ...FF_LWM_WALLET_40_Q2_NO_ANALYTICS_CONSENT.lwmWallet40?.params,
+      ...FF_LWM_WALLET_40_Q2.lwmWallet40?.params,
       pnl: true,
     },
   },
