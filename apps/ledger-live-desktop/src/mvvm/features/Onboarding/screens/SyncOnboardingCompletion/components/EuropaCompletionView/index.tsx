@@ -5,6 +5,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme } from "styled-components";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
+import { useAnimationData } from "~/renderer/animations";
 import Europa from "../../assets/europa-success.png";
 
 const confettiLayerStyle: React.CSSProperties = {
@@ -16,7 +17,11 @@ const confettiLayerStyle: React.CSSProperties = {
 
 export default function EuropaCompletionView() {
   const { theme } = useTheme();
-  const animation = getDeviceAnimation(DeviceModelId.europa, theme, "onboardingSuccess");
+  // Device animations are code-split, so getDeviceAnimation returns a loader. This screen
+  // renders Lottie directly rather than through the shared Animation component, whose
+  // wrapper caps the size and would clip this full-screen confetti layer.
+  const animationSource = getDeviceAnimation(DeviceModelId.europa, theme, "onboardingSuccess");
+  const animation = useAnimationData(animationSource);
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
   return (
