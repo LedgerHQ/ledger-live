@@ -6,6 +6,7 @@ import { transport } from "./transport";
 import { deeplink, updater } from "./push";
 import { app, dialogs, files, power, store } from "./shell";
 import { shell, system } from "./system";
+import { zcash } from "./zcash";
 
 /**
  * Assembles and publishes the `window.ledger` bridge.
@@ -33,6 +34,7 @@ export function installBridge(): void {
     store,
     shell,
     system,
+    zcash,
   };
 
   // `lld`, not `ledger`: the renderer already installs a `window.ledger` debug handle for
