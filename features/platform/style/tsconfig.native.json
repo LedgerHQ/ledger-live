@@ -1,7 +1,6 @@
 {
   "extends": "@support/ts-config-web-x-native/tsconfig.native.json",
   "compilerOptions": {
-    "paths": { "*": ["./*"] },
-    "types": ["jest", "node"]
+    "paths": { "*": ["./*"] }
   }
 }

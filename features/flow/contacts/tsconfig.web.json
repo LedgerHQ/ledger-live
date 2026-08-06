@@ -2,7 +2,6 @@
   "extends": "@support/ts-config-web-x-native/tsconfig.web.json",
   "compilerOptions": {
     "lib": ["ES2022", "DOM"],
-    "paths": { "*": ["./*"] },
-    "types": ["jest", "node", "@testing-library/jest-dom"]
+    "types": ["jest", "@testing-library/jest-dom"]
   }
 }
