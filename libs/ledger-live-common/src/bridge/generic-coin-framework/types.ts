@@ -17,7 +17,7 @@ import BigNumber from "bignumber.js";
  * `undefined` is permitted so that an optional field typechecks; a round trip drops it, so an absent
  * key and an `undefined` value have to mean the same thing to every consumer.
  */
-type JsonSafe =
+export type JsonSafe =
   | string
   | number
   | boolean
@@ -129,10 +129,12 @@ export type GenericTransaction = TransactionCommon & {
    * a restore. `prepareTransaction` treats it as part of the transaction's identity, so it is
    * recomputed even when the fee value has not moved.
    *
-   * Typed exactly as its source so no assertion can lie; values are commonly `bigint`, hence not
-   * `JsonSafeRecord`.
+   * `JsonSafeRecord`, not the raw estimation shape: this bag rides on the live `GenericTransaction`,
+   * which the swap flow serialises with `JSON.stringify` — and that throws on a `bigint`. So
+   * `prepareTransaction` normalises the estimation's `bigint` values to decimal strings before
+   * storing them here (see `feeParametersToJsonSafe`).
    */
-  feeParameters?: Record<string, unknown>;
+  feeParameters?: JsonSafeRecord;
 };
 
 export type GenericTransactionRaw = TransactionCommonRaw & {

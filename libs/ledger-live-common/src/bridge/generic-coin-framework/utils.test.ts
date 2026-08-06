@@ -1577,6 +1577,56 @@ describe("coin-framework utils", () => {
 
       expect((operation.extra as Record<string, unknown>).familyExtra).toBeUndefined();
     });
+
+    it("normalises bigint/BigNumber inside familyExtra so the persisted operation stays JSON-safe", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", {
+        ...coreOperation,
+        details: {
+          ledgerOpType: "FREEZE",
+          familyExtra: {
+            frozenAmount: 42n,
+            reward: new BigNumber(1000),
+            huge: new BigNumber("1e21"),
+            votes: ["v1"],
+          },
+        },
+      } as CoreOperation);
+
+      expect(() => JSON.stringify(operation)).not.toThrow();
+      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+        frozenAmount: "42",
+        reward: "1000",
+        huge: "1000000000000000000000",
+        votes: ["v1"],
+      });
+    });
+
+    it("normalises familyExtra exactly as a JSON round-trip would", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", {
+        ...coreOperation,
+        details: {
+          ledgerOpType: "FREEZE",
+          familyExtra: {
+            claimedAt: new Date("2026-01-01T00:00:00.000Z"), // toJSON -> ISO string
+            keep: "x",
+            ok: true,
+            fn: () => {}, // dropped
+            sym: Symbol("s"), // dropped
+            bad: NaN, // -> null
+            gone: undefined, // dropped
+            seq: [1, undefined, NaN, "x"], // holes -> null, length preserved
+          },
+        },
+      } as CoreOperation);
+
+      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+        claimedAt: "2026-01-01T00:00:00.000Z",
+        keep: "x",
+        ok: true,
+        bad: null,
+        seq: [1, null, null, "x"],
+      });
+    });
   });
 
   describe("framework extra serialization", () => {
