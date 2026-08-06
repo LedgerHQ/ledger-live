@@ -18,7 +18,9 @@ The Lumen barrels and subpaths (`@ledgerhq/lumen-ui-react`, `@ledgerhq/lumen-ui-
 and `@ledgerhq/crypto-icons` are heavy ESM packages with large peer graphs. Instead of
 transforming them and installing every peer, this package redirects them (via
 `moduleNameMapper`) to a generic **Proxy passthrough stub**: every named export becomes
-a component that just renders its children.
+a component that renders its children. Native `Banner` and `Button` expose their visible
+description, actions, and labels, while web tooltip primitives and `InteractiveIcon` retain their
+accessible test shape.
 
 As a result:
 
