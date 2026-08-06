@@ -138,6 +138,15 @@ export type SystemBridge = {
   getResourceUsage(): Electron.ResourceUsage | undefined;
 };
 
+/**
+ * The one place a channel name is a parameter. Safe only because the preload validates
+ * every channel against `@ledgerhq/coin-zcash`'s own closed `ZCASH_IPC` list.
+ */
+export type ZcashBridge = {
+  invoke(channel: string, args: unknown): Promise<unknown>;
+  subscribe(channel: string, callback: (payload: unknown) => void): Unsubscribe;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -148,6 +157,7 @@ export type LedgerBridge = {
   bootstrap: Bootstrap;
   shell: ShellBridge;
   system: SystemBridge;
+  zcash: ZcashBridge;
   db: DbBridge;
   transport: TransportBridge;
   updater: UpdaterBridge;
