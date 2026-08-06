@@ -68,6 +68,9 @@ export function runSwapTokenReapprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      // Allowance only covers smallAmount, not the full minAmount swap, so the CTA must
+      // read "Continue" (approval pending) rather than "Review".
+      await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName, true);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectResetApprovalScreen();
       await app.swapLiveApp.tapRevokeApprovalButton();

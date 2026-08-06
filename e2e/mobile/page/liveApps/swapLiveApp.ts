@@ -301,10 +301,13 @@ export default class SwapLiveAppPage {
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
+  // approvalRequired must reflect the real on-chain allowance state (e.g. via
+  // isTokenApprovalExpected in swapUtils.ts): native assets, deposit-based providers
+  // (no contractAddress), and already-approved tokens are never approval-required.
   @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(
     provider: string,
-    allowApprovalCta = false,
+    approvalRequired = false,
   ): Promise<string> {
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
@@ -315,22 +318,15 @@ export default class SwapLiveAppPage {
     if ((await this.resolveQuoteCardVariant()) === "lumen") {
       // The Lumen CTA never interpolates the provider name: it's a fixed "Review" (ready to
       // swap) or "Continue" (token approval required first) regardless of provider.
-      const expected = allowApprovalCta ? /^(Review|Continue)$/i : /^Review$/i;
+      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
       jestExpect(actualButtonText).toMatch(expected);
     } else {
-      const ctaVerbs = allowApprovalCta ? "Swap|Continue|Approve spending" : "Swap|Continue";
+      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
       jestExpect(actualButtonText).toMatch(
         new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
       );
     }
     return actualButtonText;
-  }
-
-  isApprovalRequired(buttonText: string, provider: string): boolean {
-    return (
-      new RegExp(`^Approve spending with ${escapeRegExp(provider)}$`, "i").test(buttonText) ||
-      /^continue$/i.test(buttonText.trim())
-    );
   }
 
   @Step('Check "Best Offer" corresponds to the best quote')
