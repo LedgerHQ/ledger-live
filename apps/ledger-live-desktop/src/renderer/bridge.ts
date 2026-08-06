@@ -30,4 +30,6 @@ export const dialogs = bridge.dialogs;
 export const files = bridge.files;
 export const power = bridge.power;
 export const store = bridge.store;
+export const shell = bridge.shell;
+export const system = bridge.system;
 export const cardSession = bridge.cardSession;

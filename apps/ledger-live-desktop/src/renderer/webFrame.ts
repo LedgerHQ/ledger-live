@@ -1,8 +1,7 @@
-import { webFrame } from "electron";
+import { system } from "~/renderer/bridge";
 
 export const setVisualZoomLevelLimits = (minimum: number, maximum: number): void => {
-  webFrame.setVisualZoomLevelLimits(minimum, maximum);
+  system.setVisualZoomLevelLimits(minimum, maximum);
 };
 
-export const getResourceUsage = (): Electron.ResourceUsage | undefined =>
-  webFrame.getResourceUsage();
+export const getResourceUsage = (): Electron.ResourceUsage | undefined => system.getResourceUsage();

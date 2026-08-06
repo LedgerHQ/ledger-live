@@ -1,13 +1,7 @@
-import { clipboard } from "electron";
+import { system } from "~/renderer/bridge";
 
 export const writeText = (text: string): void => {
-  clipboard.writeText(text);
+  system.clipboardWriteText(text);
 };
 
-export const readText = (): string | null => {
-  try {
-    return clipboard.readText();
-  } catch {
-    return null;
-  }
-};
+export const readText = (): Promise<string | null> => system.clipboardReadText();

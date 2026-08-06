@@ -166,6 +166,30 @@ export type StoreBridge = {
   clear(): void;
 };
 
+/**
+ * Kept as its own group rather than folded into `system`, so the existing lint guardrail
+ * that matches on a `shell` object keeps working against the bridge facade.
+ */
+export type ShellBridge = {
+  /** Validated in the main process before anything is launched. */
+  openExternal(url: string): void;
+};
+
+export type SystemBridge = {
+  /**
+   * Clipboard access goes through the main process rather than `navigator.clipboard`.
+   * The window's permission check handler grants only `hid`, so a `clipboard-read`
+   * request from the renderer would be denied — and widening that policy to work around
+   * it would undo part of what this migration is for.
+   */
+  clipboardWriteText(text: string): void;
+  /** Resolves null when the clipboard cannot be read, which is not the same as empty. */
+  clipboardReadText(): Promise<string | null>;
+  /** `webFrame` is available to the preload even under sandbox, so these stay synchronous. */
+  setVisualZoomLevelLimits(minimum: number, maximum: number): void;
+  getResourceUsage(): Electron.ResourceUsage | undefined;
+};
+
 /** Hands over `CARD_SESSION_BOOTSTRAP` once per page load, in dev and E2E only. */
 export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
@@ -174,6 +198,8 @@ export type CardSessionBridge = {
 export type LedgerBridge = {
   version: 1;
   bootstrap: Bootstrap;
+  shell: ShellBridge;
+  system: SystemBridge;
   db: DbBridge;
   transport: TransportBridge;
   updater: UpdaterBridge;
@@ -218,5 +244,8 @@ export const CHANNELS = {
   openUserDataDirectory: "openUserDataDirectory",
   keepScreenAwake: "activate-keep-screen-awake",
   releaseScreenAwake: "deactivate-keep-screen-awake",
+  openExternal: "shell:open-external",
+  clipboardWriteText: "clipboard:write-text",
+  clipboardReadText: "clipboard:read-text",
   cardSessionBootstrap: "card-session:bootstrap",
 } as const;

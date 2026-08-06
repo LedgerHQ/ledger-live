@@ -79,12 +79,14 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [clibboardChanged, setClipboardChanged] = useState(false);
   const copyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+  const tamperTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const onCopy = useCallback(() => {
     writeText(address);
     setCopyFeedback(true);
     clearTimeout(copyTimeout.current);
-    setTimeout(() => {
-      const copiedAddress = readText();
+    clearTimeout(tamperTimeout.current);
+    tamperTimeout.current = setTimeout(async () => {
+      const copiedAddress = await readText();
       const clipboardReadable = copiedAddress !== null;
       if (clipboardReadable && copiedAddress !== address) {
         setClipboardChanged(true);
@@ -95,6 +97,7 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
   useEffect(() => {
     return () => {
       clearTimeout(copyTimeout.current);
+      clearTimeout(tamperTimeout.current);
     };
   }, []);
 
