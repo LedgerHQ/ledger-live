@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.15.0-next.1
+
+### Minor Changes
+
+- [#20496](https://github.com/LedgerHQ/ledger-live/pull/20496) [`aa367b0`](https://github.com/LedgerHQ/ledger-live/commit/aa367b0d4c042b12c7cd57c69910774062d29422) Thanks [@desirendr](https://github.com/desirendr)! - LWD 4.15.0 release notes
+
 ## 4.15.0-next.0
 
 ### Minor Changes
