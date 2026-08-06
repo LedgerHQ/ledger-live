@@ -83,6 +83,13 @@ connection, context-initialisation, and error screens. The shared core
 (`DeviceIntentExecutor`, state machine, intent definitions, initialization logic
 via `ensureAppReadyUseCase`) remains platform-agnostic.
 
+LWD currently differs from LWM only in two dialog-level capabilities:
+
+- it cannot yet lock the dialog while a device-intent phase is in progress
+  ([LIVE-33204](https://ledgerhq.atlassian.net/browse/LIVE-33204));
+- intent components cannot yet override the dialog header
+  ([LIVE-33203](https://ledgerhq.atlassian.net/browse/LIVE-33203)).
+
 ### CLI
 
 Not supported out of the box. DIE is designed for React apps and assumes a
