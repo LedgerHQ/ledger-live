@@ -56,7 +56,7 @@ describe("PerpsDeposit integration", () => {
     await user.click(screen.getByTestId("perps-deposit-select-currency"));
 
     expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
-      expect.objectContaining({ uiUseCase: "perpetuals:deposit" }),
+      expect.objectContaining({ uiUseCase: "perpetuals:fund" }),
     );
   });
 

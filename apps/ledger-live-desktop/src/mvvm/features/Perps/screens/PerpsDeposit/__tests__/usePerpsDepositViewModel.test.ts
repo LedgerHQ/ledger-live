@@ -89,7 +89,7 @@ describe("usePerpsDepositViewModel", () => {
     await pickFundingAccount(result);
 
     expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
-      expect.objectContaining({ uiUseCase: "perpetuals:deposit" }),
+      expect.objectContaining({ uiUseCase: "perpetuals:fund" }),
     );
 
     expect(result.current.depositCurrencyTicker).toBe("ETH");

@@ -6,6 +6,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useSelector } from "LLD/hooks/redux";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -13,7 +14,6 @@ import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebvie
 import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_CURRENCY_ID,
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
-  PERPS_DEPOSIT_FUNDING_UI_USE_CASE,
 } from "../../constants/depositFunding";
 import { validateDepositFlow } from "./utils/validateDepositFlow";
 
@@ -140,7 +140,7 @@ export function usePerpsDepositViewModel(
 
   const pickDepositAccount = useCallback(() => {
     void openAssetAndAccountPromise({
-      uiUseCase: PERPS_DEPOSIT_FUNDING_UI_USE_CASE,
+      uiUseCase: PERPS_UI_USE_CASE.fund,
       areCurrenciesFiltered: false,
     })
       .then(({ account }) => {

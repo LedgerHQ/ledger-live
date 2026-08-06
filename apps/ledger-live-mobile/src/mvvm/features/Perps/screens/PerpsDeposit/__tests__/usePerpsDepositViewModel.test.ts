@@ -113,7 +113,7 @@ describe("usePerpsDepositViewModel", () => {
     expect(mockOpenDrawer).toHaveBeenCalledWith(
       expect.objectContaining({
         enableAccountSelection: true,
-        uiUseCase: "perpetuals:deposit",
+        uiUseCase: "perpetuals:fund",
       }),
     );
 
