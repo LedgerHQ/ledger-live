@@ -16,20 +16,8 @@ const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\
 // Net value of a quote as shown on screen: amount received minus network fees (both in fiat).
 const quoteNetValue = (quote: { rate: number; fees: number }) => quote.rate - quote.fees;
 
-// swap-live-app is mid-rollout of a new Lumen-design-system quote card (`ptxLumenQuoteCard`
-// feature flag, owned entirely inside swap-live-app). The provider-name element's data-testid
-// prefix is the only thing that differs between the two variants.
-type QuoteCardVariant = "legacy" | "lumen";
-
 export default class SwapLiveAppPage {
-  private static readonly QUOTE_CARD_PROVIDER_NAME_PREFIX: Record<QuoteCardVariant, string> = {
-    legacy: "compact-quote-card-provider-name-",
-    lumen: "lumen-quote-card-provider-name-",
-  };
-
-  // Cached for the current quote-selection step so repeated lookups don't re-probe the DOM.
-  private quoteCardVariant: QuoteCardVariant | null = null;
-  private resolvedProviderNamePrefix: string | null = null;
+  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
 
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -146,12 +134,11 @@ export default class SwapLiveAppPage {
     const providersList = (await this.getProviderList()).filter(
       name => name !== SwapProvider.LIFI.uiName,
     );
-    const prefix = await this.resolveProviderNamePrefix();
 
     for (const providerName of providersList) {
       const provider = SwapProvider.getByUiName(providerName);
       if (provider && !provider.kyc && !provider.app) {
-        const providerTestId = `${prefix}${provider.name}`;
+        const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${provider.name}`;
         await waitWebElementByTestId(providerTestId);
         await tapWebElementByTestId(providerTestId);
 
@@ -159,27 +146,6 @@ export default class SwapLiveAppPage {
       }
     }
     throw new Error("No single-app exchange providers found");
-  }
-
-  @Step("Resolve active quote card variant")
-  private async resolveQuoteCardVariant(): Promise<QuoteCardVariant> {
-    if (!this.quoteCardVariant) {
-      const lumenCards = await getWebElementsText(
-        this.swapMainContainerWebElement,
-        `[data-testid^='${SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX.lumen}']`,
-      );
-      this.quoteCardVariant = lumenCards.length > 0 ? "lumen" : "legacy";
-    }
-    return this.quoteCardVariant;
-  }
-
-  @Step("Resolve active quote card provider-name testid prefix")
-  private async resolveProviderNamePrefix(): Promise<string> {
-    if (!this.resolvedProviderNamePrefix) {
-      this.resolvedProviderNamePrefix =
-        SwapLiveAppPage.QUOTE_CARD_PROVIDER_NAME_PREFIX[await this.resolveQuoteCardVariant()];
-    }
-    return this.resolvedProviderNamePrefix;
   }
 
   @Step("Wait for quotes countdown to be stable")
@@ -241,10 +207,9 @@ export default class SwapLiveAppPage {
 
     return await retryUntilTimeout(async () => {
       const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
-      const prefix = await this.resolveProviderNamePrefix();
       const providerList = await getWebElementsText(
         this.swapMainContainerWebElement,
-        `[data-testid^='${prefix}']`,
+        `[data-testid^='${SwapLiveAppPage.PROVIDER_NAME_PREFIX}']`,
       );
 
       if (!numberOfQuotesText.match(new RegExp(`^${providerList.length} quotes? found$`))) {
@@ -315,17 +280,10 @@ export default class SwapLiveAppPage {
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
-    if ((await this.resolveQuoteCardVariant()) === "lumen") {
-      // The Lumen CTA never interpolates the provider name: it's a fixed "Review" (ready to
-      // swap) or "Continue" (token approval required first) regardless of provider.
-      const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
-      jestExpect(actualButtonText).toMatch(expected);
-    } else {
-      const ctaVerbs = approvalRequired ? "Continue|Approve spending" : "Swap|Continue";
-      jestExpect(actualButtonText).toMatch(
-        new RegExp(`^(${ctaVerbs}) with ${escapeRegExp(provider)}$`, "i"),
-      );
-    }
+    // The CTA never interpolates the provider name: it's a fixed "Review" (ready to swap)
+    // or "Continue" (token approval required first) regardless of provider.
+    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
+    jestExpect(actualButtonText).toMatch(expected);
     return actualButtonText;
   }
 
@@ -521,7 +479,7 @@ export default class SwapLiveAppPage {
       throw new Error(`Provider "${provider}" not found in the list`);
     }
     const providerName = SwapProvider.getNameByUiName(provider);
-    const providerTestId = `${await this.resolveProviderNamePrefix()}${providerName}`;
+    const providerTestId = `${SwapLiveAppPage.PROVIDER_NAME_PREFIX}${providerName}`;
     await waitWebElementByTestId(providerTestId);
     await tapWebElementByTestId(providerTestId);
   }
