@@ -11,6 +11,10 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 | `scope:libs-ui` | Under `libs/ui/` |
 | `scope:libs-ledgerjs` | Under `libs/ledgerjs/` |
 | `scope:features` | Under `features/` |
+| `scope:domain` | Under `domain/` |
+| `scope:shared` | Under `shared/` |
+| `scope:support` | Under `support/` — development-only tooling, consumed as a `devDependency` |
+| `scope:devtools` | Under `devtools/` |
 | `scope:apps` | Desktop, mobile, CLI, web-tools, or Playwright/Detox E2E app projects (see type tags) |
 | `scope:e2e` | Under `e2e/` |
 | `scope:tools` | Under `tools/` |

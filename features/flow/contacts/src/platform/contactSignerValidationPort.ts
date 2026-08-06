@@ -19,10 +19,7 @@ export type CreateMockContactSignerValidationPortOptions = Readonly<{
 export function createMockContactSignerValidationPort(
   options: CreateMockContactSignerValidationPortOptions = {},
 ): ContactSignerValidationPort {
-  const {
-    expectedSignerId = "signer-a",
-    currentSignerId = "signer-a",
-  } = options;
+  const { expectedSignerId = "signer-a", currentSignerId = "signer-a" } = options;
 
   return {
     getExpectedSignerId: async () => expectedSignerId,

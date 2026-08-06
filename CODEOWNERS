@@ -76,6 +76,9 @@ devtools/protocols/                                      @ledgerhq/platform
 devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
 
+# Platform — support
+support/jest-devtools/                           @ledgerhq/platform
+
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp
@@ -233,6 +236,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
+features/flow/pay-card-auth/                                             @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx

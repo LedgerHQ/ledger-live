@@ -1,4 +1,9 @@
-import type { ContactAddress, ContactAddressId, ContactAddressLabel, ContactId } from "@domain/entity-contact";
+import type {
+  ContactAddress,
+  ContactAddressId,
+  ContactAddressLabel,
+  ContactId,
+} from "@domain/entity-contact";
 import { useCallback, useMemo } from "react";
 import type { ContactAddressEditPort } from "../Detail/model/ports";
 import { createRenameAddressController } from "./model/controller";

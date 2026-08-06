@@ -307,6 +307,7 @@ describe("createApi", () => {
     jest.mocked(getValidators).mockResolvedValueOnce({
       items: [
         {
+          id: "validator",
           address: "validator",
           name: "validator",
           balance: 10n,
@@ -324,6 +325,7 @@ describe("createApi", () => {
     expect(result).toEqual({
       items: [
         {
+          id: "validator",
           address: "validator",
           name: "validator",
           balance: 10n,

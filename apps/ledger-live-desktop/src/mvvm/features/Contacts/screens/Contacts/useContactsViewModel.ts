@@ -153,6 +153,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({
       inputLabel: t("contacts.addAddressName.inputLabel"),
+      namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
+      namingDisclaimerAccessibilityLabel: t(
+        "contacts.addAddressName.namingDisclaimerAccessibilityLabel",
+      ),
       continueToReview: t("contacts.addAddressName.continueToReview"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
       validationErrors: {

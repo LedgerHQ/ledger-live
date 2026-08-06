@@ -125,6 +125,7 @@ describe("staking support capability", () => {
     const expectedPage = {
       items: [
         {
+          id: "seivaloper1validator",
           address: "seivaloper1validator",
           name: "Validator One",
           balance: 1234n,

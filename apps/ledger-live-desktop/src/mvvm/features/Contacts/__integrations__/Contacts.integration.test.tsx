@@ -487,6 +487,15 @@ describe("Contacts integration", () => {
     expect(addressNameInput).toHaveAttribute("maxlength", "32");
     expect(screen.getByTestId("contacts-add-address-confirm")).toBeDisabled();
 
+    const namingDisclaimer = screen.getByRole("button", {
+      name: "Address name information",
+    });
+    await user.hover(namingDisclaimer);
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
+    );
+    expect(addressNameInput).toHaveValue("Ethereum");
+
     fireEvent.change(addressInput, {
       target: { value: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034" },
     });
