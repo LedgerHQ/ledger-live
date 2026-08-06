@@ -184,6 +184,52 @@ describe("useAddressValidation", () => {
     });
   });
 
+  it("revalidates sanctions against the resolved ENS address", async () => {
+    const ensResolution = {
+      domain: "sanctioned.eth",
+      address: "0xSanctioned",
+      type: "forward" as const,
+      registry: "ens" as const,
+    };
+    const validationProps = {
+      searchValue: ensResolution.domain,
+      currency: mockEthereumAccount.currency,
+      account: mockEthereumAccount,
+      recipientSupportsDomain: true,
+    };
+    mockedUseDomain.mockReturnValue({ status: "loading" });
+    mockedIsAddressSanctioned.mockImplementation(
+      async (_currency, address) => address === ensResolution.address,
+    );
+
+    const { result, rerender } = renderHook(
+      (props: typeof validationProps) => useAddressValidation(props),
+      { initialProps: validationProps },
+    );
+
+    await waitFor(() => {
+      expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+        mockEthereumAccount.currency,
+        ensResolution.domain,
+      );
+    });
+
+    mockedUseDomain.mockReturnValue({
+      status: "loaded",
+      resolutions: [ensResolution],
+      updatedAt: Date.now(),
+    });
+    rerender(validationProps);
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("sanctioned");
+    });
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
+      ensResolution.address,
+    );
+  });
+
   it("shows loading state during ENS resolution", () => {
     mockedUseDomain.mockReturnValue({
       status: "loading",
