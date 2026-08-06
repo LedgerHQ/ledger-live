@@ -155,7 +155,7 @@ describe("getAccountRawAssignHooks — round trip through the serialization laye
       stake: { address: "v", amount: new BigNumber(2500) },
     });
 
-    const raw = toOperationRaw(op, undefined, toOperationExtraRaw);
+    const raw = toOperationRaw(op, undefined, toOperationExtraRaw) as any;
     expect(raw.extra.ledgerOpType).toBe("FREEZE");
     expect(raw.extra.memo).toBe("hi");
     expect(raw.extra.frozenAmount).toBe("1000");
@@ -164,7 +164,7 @@ describe("getAccountRawAssignHooks — round trip through the serialization laye
     const persisted = JSON.parse(JSON.stringify(raw));
     expect(persisted.extra.stake.amount).toBe("2500");
 
-    const revived = fromOperationRaw(persisted, "accId", null, fromOperationExtraRaw);
+    const revived = fromOperationRaw(persisted, "accId", null, fromOperationExtraRaw) as any;
     expect(revived.extra.ledgerOpType).toBe("FREEZE");
     expect(revived.extra.memo).toBe("hi");
     expect(revived.extra.frozenAmount).toEqual(new BigNumber(1000));
@@ -179,7 +179,7 @@ describe("getAccountRawAssignHooks — round trip through the serialization laye
     expect(persisted.extra.stake.amount).toBe("2500");
     expect(JSON.stringify(new BigNumber(2500))).toBe('"2500"');
 
-    const revived = fromOperationRaw(persisted, "accId", null, undefined);
+    const revived = fromOperationRaw(persisted, "accId", null, undefined) as any;
     expect(typeof revived.extra.stake.amount).toBe("string");
     expect(BigNumber.isBigNumber(revived.extra.stake.amount)).toBe(false);
   });

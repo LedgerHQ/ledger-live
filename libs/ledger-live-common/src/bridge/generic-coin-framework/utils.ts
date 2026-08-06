@@ -31,6 +31,8 @@ import type {
   GasOptionsRaw,
   GenericTransaction,
   GenericTransactionRaw,
+  JsonSafe,
+  JsonSafeRecord,
   OperationCommon,
 } from "./types";
 import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -57,6 +59,33 @@ export function bigNumberToBigIntDeep<T>(obj: T): BigNumberToBigIntDeep<T> {
     ) as BigNumberToBigIntDeep<T>;
 
   return obj as BigNumberToBigIntDeep<T>;
+}
+
+function toJsonSafe(value: unknown): JsonSafe | undefined {
+  const json = JSON.stringify(value, jsonSafeReplacer);
+  return json === undefined ? undefined : (JSON.parse(json) as JsonSafe);
+}
+
+function jsonSafeReplacer(this: Record<string, unknown>, key: string, value: unknown): unknown {
+  const raw = this[key];
+  if (typeof raw === "bigint") return raw.toString();
+  if (BigNumber.isBigNumber(raw)) return raw.toFixed();
+  if (typeof value === "bigint") return value.toString();
+  return value;
+}
+
+/**
+ * Normalises a fee-estimation parameter bag into a JSON-safe record for `GenericTransaction.feeParameters`.
+ * `bigint`/`BigNumber` values become decimal strings; everything else is carried through. The bag
+ * rides on the live transaction, which the swap flow serialises with `JSON.stringify` — storing the
+ * estimation's raw `bigint` values there crashed EVM swaps on mobile and stalled them on desktop
+ * (LIVE-35482). Returns `undefined` for a missing bag so callers keep clearing stale figures.
+ */
+export function feeParametersToJsonSafe(
+  parameters: Record<string, unknown> | undefined,
+): JsonSafeRecord | undefined {
+  if (!parameters) return undefined;
+  return toJsonSafe(parameters) as JsonSafeRecord;
 }
 
 function toFeeDataFromUnknown(value: unknown): FeeData {
@@ -353,8 +382,9 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
     : undefined;
 }
 
-function readFamilyExtra(details: CoreOperation["details"]): Record<string, unknown> | undefined {
-  return asRecord(details?.[FAMILY_EXTRA_DETAILS_KEY]);
+function readFamilyExtra(details: CoreOperation["details"]): JsonSafeRecord | undefined {
+  const raw = asRecord(details?.[FAMILY_EXTRA_DETAILS_KEY]);
+  return raw ? (toJsonSafe(raw) as JsonSafeRecord) : undefined;
 }
 
 /**
@@ -417,7 +447,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     internal?: boolean;
     feePayer?: string;
     stake?: { address: string; amount: BigNumber };
-    familyExtra?: Record<string, unknown>;
+    familyExtra?: JsonSafeRecord;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {

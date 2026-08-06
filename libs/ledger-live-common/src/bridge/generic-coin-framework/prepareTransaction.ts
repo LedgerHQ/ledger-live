@@ -4,6 +4,7 @@ import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
+  feeParametersToJsonSafe,
   getNativeSpendableAfterPending,
   getPendingTokenSpent,
   toGasOptionsFromUnknown,
@@ -146,7 +147,9 @@ export function genericPrepareTransaction(
     // Part of the identity check: the fee *value* can hold while the breakdown behind it moves (a
     // different recipient can change what a chain charges without changing the total), and a restored
     // transaction has persisted fees but no `feeParameters` — returning early leaves it stale or unset.
-    const nextFeeParameters = estimation.parameters;
+    // Normalised to a JSON-safe record (bigint → string) because this bag rides on the live
+    // transaction the swap flow serialises with `JSON.stringify`, which throws on a raw bigint.
+    const nextFeeParameters = feeParametersToJsonSafe(estimation.parameters);
 
     if (
       bnEq(transaction.fees, fees) &&

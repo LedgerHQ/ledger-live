@@ -310,12 +310,56 @@ describe("genericPrepareTransaction", () => {
     const result = await prepareTransaction(account, { ...baseTransaction });
 
     // The whole bag rides through, including the keys `propagateField` recognises — the framework
-    // does not curate what a family's fee descriptor is allowed to read.
+    // does not curate what a family's fee descriptor is allowed to read. `bigint` values are
+    // normalised to decimal strings so the bag stays JSON-safe (see the serialization test below).
     expect((result as any).feeParameters).toEqual({
-      gasLimit: 21000n,
+      gasLimit: "21000",
       energyRequired: "1200",
       bandwidthRequired: "268",
     });
+  });
+
+  it("keeps the prepared transaction JSON-serializable when the estimation returns bigint fees", async () => {
+    // The regression that crashed EVM swaps (LIVE-35482): `estimation.parameters` holds native
+    // `bigint`, and storing it raw on `feeParameters` made `JSON.stringify(transaction)` throw
+    // "Do not know how to serialize a BigInt" the moment the swap flow serialised the transaction.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 700n,
+        parameters: {
+          gasLimit: 21000n,
+          maxFeePerGas: 30_000_000_000n,
+          gasOptions: { fast: { maxFeePerGas: 30n, maxPriorityFeePerGas: 5n } },
+        },
+      }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    expect(() => JSON.stringify(result)).not.toThrow();
+    expect((result as any).feeParameters).toEqual({
+      gasLimit: "21000",
+      maxFeePerGas: "30000000000",
+      gasOptions: { fast: { maxFeePerGas: "30", maxPriorityFeePerGas: "5" } },
+    });
+  });
+
+  it("still hits the early return when a bigint estimation stringifies to the stored feeParameters", async () => {
+    // The identity check compares a previously-stored (already string) `feeParameters` against a
+    // fresh estimation whose values are `bigint`. Normalising the fresh bag to strings first keeps
+    // the two comparable, so an unchanged breakdown does not churn referential equality.
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: BigInt(baseTransaction.fees.toFixed()),
+        parameters: { gasLimit: 21000n },
+      }),
+    });
+
+    const original = { ...baseTransaction, feeParameters: { gasLimit: "21000" } } as any;
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    expect(await prepareTransaction(account, original)).toBe(original);
   });
 
   it("refreshes feeParameters when the fee value is unchanged but the breakdown is not", async () => {
