@@ -235,7 +235,7 @@ describe("Trustchain SDK", () => {
     apiMocks.postAuthenticate.mockReturnValueOnce({ ...initialJwt, access_token: "NEW TOKEN" });
     await sdk.withAuth(trustchain, alice, async jwt => {
       if (jwt.accessToken === "NEW TOKEN") return;
-      throw new LedgerAPI4xx("Permission denied");
+      throw new LedgerAPI4xx("Permission denied", { status: 401 });
     });
 
     expect(apiMocks.getChalenge).toHaveBeenCalledTimes(2);
