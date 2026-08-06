@@ -6,6 +6,7 @@ import {
   PublicKey,
   Transaction as CasperDeployTransaction,
 } from "casper-js-sdk";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import { getCasperNodeRpcClient } from "../network/api";
 import { setCoinConfig } from "../config";
 import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
@@ -13,13 +14,7 @@ import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      infra: {
-        API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
-        API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",
-      },
-    }));
+    setCoinConfig(casperMainnetConfig);
   });
 
   it("throws on insufficient funds", async () => {

@@ -1,5 +1,5 @@
-import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import BigNumber from "bignumber.js";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import { getCoinConfig } from "../config";
 import { fetchAccountStateInfo, fetchBalance, fetchLastBlock, fetchTxs } from "./api";
 import { CASPER_DUMMY_ADDRESS } from "../constants";
@@ -9,13 +9,8 @@ const pubkeyAbandon = CASPER_DUMMY_ADDRESS;
 
 jest.mock("../config");
 describe("Casper API", () => {
-  jest.mocked(getCoinConfig).mockReturnValue({
-    ...({} as unknown as CurrencyConfig),
-    infra: {
-      API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
-      API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",
-    },
-  });
+  jest.mocked(getCoinConfig).mockReturnValue(casperMainnetConfig());
+
   it("should be able to fetch the network status", async () => {
     const { height } = await fetchLastBlock();
     expect(height).toBeGreaterThan(0);
