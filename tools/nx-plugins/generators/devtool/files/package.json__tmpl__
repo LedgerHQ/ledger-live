@@ -1,0 +1,9 @@
+{
+  "name": "@devtools/<%= fileName %>",
+  "version": "0.1.0",
+  "private": true,
+  "description": "<%= description %>",
+  "main": "src/index.ts",<% if (platform !== 'web') { %>
+  "react-native": "src/index.native.ts",<% } %>
+  "types": "src/index.ts"
+}

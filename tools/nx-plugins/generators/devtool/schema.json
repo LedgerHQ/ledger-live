@@ -1,0 +1,103 @@
+{
+  "cli": "nx",
+  "id": "devtool-generator",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Tool id — kebab-case, used as the package name (@devtools/<name>) and directory name",
+      "$default": { "$source": "argv", "index": 0 },
+      "x-prompt": "Tool id (kebab-case, e.g. my-tool)?"
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable label shown in the DevTools UI",
+      "x-prompt": "Display label (e.g. My Tool)?"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Team that owns this tool — used as the metadata sub-folder in the registry",
+      "default": "platform",
+      "x-prompt": {
+        "message": "Owning team?",
+        "type": "list",
+        "items": [
+          "platform",
+          "ptx",
+          "wallet-xp",
+          "engagement",
+          "live-devices",
+          "coin-integration",
+          "qaa",
+          "blockchain-support",
+          "cloud-wallet",
+          "recover-software",
+          "wallet-ci"
+        ]
+      }
+    },
+    "category": {
+      "type": "string",
+      "description": "Category shown in the DevTools UI sidebar",
+      "x-prompt": {
+        "message": "Category?",
+        "type": "list",
+        "items": [
+          {
+            "value": "CONFIGURATION",
+            "label": "Configuration — flags, settings, toggles"
+          },
+          {
+            "value": "FEATURES_AND_FLOWS",
+            "label": "Features & flows — user journeys, A/B"
+          },
+          {
+            "value": "DEBUGGING",
+            "label": "Debugging — errors, logs, state dumps"
+          },
+          {
+            "value": "CONNECTIVITY",
+            "label": "Connectivity — transport, relay, sockets"
+          },
+          {
+            "value": "INFORMATION",
+            "label": "Information — versions, build info, env"
+          },
+          {
+            "value": "PERFORMANCE",
+            "label": "Performance — timings, memory, renders"
+          },
+          {
+            "value": "PLAYGROUND",
+            "label": "Playground — experiments, sandboxes"
+          },
+          {
+            "value": "GENERATORS",
+            "label": "Generators — data factories, mocks"
+          }
+        ]
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description shown in the DevTools UI",
+      "default": "",
+      "x-prompt": "Short description (optional)?"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Target platform(s) for this tool",
+      "enum": ["both", "web", "native"],
+      "x-prompt": {
+        "message": "Platform?",
+        "type": "list",
+        "items": ["both", "web", "native"]
+      }
+    },
+    "hasProps": {
+      "type": "boolean",
+      "x-prompt": "Does this tool receive props from the host? (creates an empty MyToolProps interface to fill in)"
+    }
+  },
+  "required": ["name", "label", "category", "platform", "hasProps"]
+}

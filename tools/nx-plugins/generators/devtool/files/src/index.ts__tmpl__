@@ -1,0 +1,4 @@
+<% if (platform !== 'native') { %>
+import <%=className%> from "./<%=fileName%>/<%=className%>";
+export default <%=className%>;
+<% } %>
