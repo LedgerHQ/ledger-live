@@ -22,7 +22,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W features/flow-contacts-add-contact"
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/flow-contacts-add-contact"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",
