@@ -3,7 +3,13 @@ import {
   OPERATION_TYPE_OUT_FAMILY,
   OPERATION_TYPE_STAKE_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type {
+  Account,
+  Operation,
+  OperationExtra,
+  OperationExtraRaw,
+  OperationType,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-module-framework/utils";
 import type {
@@ -341,11 +347,58 @@ export function cleanedOperation(operation: OperationCommon): OperationCommon {
  */
 const FAMILY_EXTRA_DETAILS_KEY = "familyExtra";
 
-function readFamilyExtra(details: CoreOperation["details"]): Record<string, unknown> {
-  const familyExtra = details?.[FAMILY_EXTRA_DETAILS_KEY];
-  return familyExtra && typeof familyExtra === "object" && !Array.isArray(familyExtra)
-    ? (familyExtra as Record<string, unknown>)
-    : {};
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+function readFamilyExtra(details: CoreOperation["details"]): Record<string, unknown> | undefined {
+  return asRecord(details?.[FAMILY_EXTRA_DETAILS_KEY]);
+}
+
+/**
+ * Every framework-owned `extra` key is a JSON-safe string, string array or boolean except
+ * `stake.amount`, a `BigNumber`. These two return **only** that converted key, never the whole bag:
+ * `mergeExtra` applies them last, so the framework can serialize its own half
+ * (`accountRawAssign.ts`) without a family hook that spreads the input being able to put the
+ * unconverted value back.
+ *
+ * A `stake.amount` that is not the expected type is left alone rather than coerced: it belongs to a
+ * shape this layer did not write, and `new BigNumber()` on it would store a NaN over real data.
+ */
+export function frameworkExtraToRaw(extra: OperationExtra): Record<string, unknown> | undefined {
+  const stake = asRecord(asRecord(extra)?.stake);
+  if (!stake || !BigNumber.isBigNumber(stake.amount)) return undefined;
+  return { stake: { ...stake, amount: stake.amount.toFixed() } };
+}
+
+export function frameworkExtraFromRaw(
+  extraRaw: OperationExtraRaw,
+): Record<string, unknown> | undefined {
+  const stake = asRecord(asRecord(extraRaw)?.stake);
+  if (!stake || typeof stake.amount !== "string") return undefined;
+  return { stake: { ...stake, amount: new BigNumber(stake.amount) } };
+}
+
+/**
+ * Precedence is per key, not per bag. `passthrough` (the untouched input) carries every key neither
+ * side maps, so a family mapping only its own keys cannot drop `ledgerOpType` or `memo`;
+ * `frameworkOwned` is applied last, so a hook written as `extra => ({ ...extra, ...ownKeys })`
+ * cannot carry an unconverted `stake` back over the framework's conversion.
+ *
+ * A family hook returning nothing usable leaves the passthrough plus the framework's own keys, rather
+ * than handing the serialization layer `undefined` and dropping the whole bag.
+ */
+export function mergeExtra(
+  passthrough: unknown,
+  familyPart: unknown,
+  frameworkOwned: Record<string, unknown> | undefined,
+): unknown {
+  const base = asRecord(passthrough);
+  const family = asRecord(familyPart);
+  if (!base) return family ? { ...family, ...frameworkOwned } : passthrough;
+  return { ...base, ...family, ...frameworkOwned };
 }
 
 export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation): Operation {
@@ -364,6 +417,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     internal?: boolean;
     feePayer?: string;
     stake?: { address: string; amount: BigNumber };
+    familyExtra?: Record<string, unknown>;
   } = {};
 
   if (op.details?.ledgerOpType !== undefined) {
@@ -407,6 +461,16 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     extra.feePayer = op.tx.feesPayer;
   }
 
+  // Nested under one key the family owns rather than flattened beside the framework's. Every key
+  // above is written *conditionally*, and `pagingToken` is read but never written here, so a
+  // flattened bag would supply the framework's own answer on any operation where the framework
+  // wrote neither: a `familyExtra.internal` reroutes a plain transfer into the internal-operations
+  // bucket, a `familyExtra.pagingToken` becomes the next sync's cursor.
+  const familyExtra = readFamilyExtra(op.details);
+  if (familyExtra) {
+    extra.familyExtra = familyExtra;
+  }
+
   if (op.details?.stake && typeof op.details.stake === "object") {
     const s = op.details.stake as { address?: string; amount?: bigint };
     extra.stake = {
@@ -446,8 +510,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
       ? new BigNumber(op.details?.sequence.toString())
       : undefined,
     hasFailed,
-    // Family-owned keys first so a framework-owned key can never be shadowed by a coin module.
-    extra: { ...readFamilyExtra(op.details), ...extra },
+    extra,
   };
 
   return res;

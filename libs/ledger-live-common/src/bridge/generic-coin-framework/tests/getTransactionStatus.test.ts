@@ -111,8 +111,26 @@ describe("genericGetTransactionStatus", () => {
       familySpecificData,
     } as any);
 
-    // The draft is a field-by-field allowlist: a field missing from it vanishes with no type error.
     expect(buildIntentData).toHaveBeenCalledWith(expect.objectContaining({ familySpecificData }));
+  });
+
+  it("builds the intent data from the real transaction, not the draft", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "none" });
+    mockGetBridgeApi.mockResolvedValue({ buildIntentData });
+    const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+    const transaction = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xRecipient",
+      family: "evm",
+      withdrawId: "unbonding-7",
+      nonce: new BigNumber(4),
+      sponsored: true,
+    } as any;
+    await getStatus(account, transaction);
+
+    expect(buildIntentData).toHaveBeenCalledWith(transaction);
   });
 
   it("leaves the intent's data to the coin module when the family declares no buildIntentData", async () => {

@@ -7,6 +7,9 @@ import {
   extractBalance,
   extractBalances,
   findCryptoCurrencyByNetwork,
+  frameworkExtraFromRaw,
+  frameworkExtraToRaw,
+  mergeExtra,
   nextSequenceWithPending,
   toGasOptionsFromUnknown,
   transactionToIntent,
@@ -489,6 +492,28 @@ describe("coin-framework utils", () => {
       ).toEqual(familySpecificData);
     });
 
+    it("omits feeParameters from transactionRaw (derived, recomputed on restore)", () => {
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+        } as Account,
+        {
+          family: "familyx",
+          amount: new BigNumber(100),
+          recipient: "TRecipient",
+          feeParameters: { energyRequired: "1200" },
+        } as unknown as GenericTransaction,
+        3n,
+      );
+
+      const raw = operation.transactionRaw as
+        | (GenericTransactionRaw & { feeParameters?: unknown })
+        | undefined;
+      expect(raw?.feeParameters).toBeUndefined();
+      expect(raw && "feeParameters" in raw).toBe(false);
+    });
+
     it("takes a described type and value from the family", () => {
       const describeOptimisticOperation = jest.fn().mockReturnValue({
         type: "FREEZE" as const,
@@ -730,6 +755,26 @@ describe("coin-framework utils", () => {
 
         expect(craftTransactionDataMock).not.toHaveBeenCalled();
         expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
+      });
+
+      it("prefers transaction.data over a family buildIntentData too", () => {
+        const buildIntentData = jest.fn();
+        const craftTransactionDataMock = jest.fn();
+        const expectedData = Buffer.from("deadbeef", "hex");
+
+        const intent = transactionToIntent(
+          {
+            currency: { name: "ethereum", units: ["wei"] },
+          } as unknown as Account,
+          { data: expectedData } as unknown as GenericTransaction,
+          undefined,
+          craftTransactionDataMock,
+          buildIntentData,
+        );
+
+        expect(intent).toMatchObject({ data: { type: "buffer", value: expectedData } });
+        expect(buildIntentData).not.toHaveBeenCalled();
+        expect(craftTransactionDataMock).not.toHaveBeenCalled();
       });
     });
 
@@ -1502,17 +1547,101 @@ describe("coin-framework utils", () => {
     it("forwards the family's own extras bag onto the operation", () => {
       const operation = adaptCoreOperationToLiveOperation("accountId", coreOperation);
 
-      expect((operation.extra as Record<string, unknown>).frozenAmount).toBe("42");
-      expect((operation.extra as Record<string, unknown>).votes).toEqual([]);
+      expect((operation.extra as Record<string, unknown>).familyExtra).toEqual({
+        frozenAmount: "42",
+        votes: [],
+      });
     });
 
     it("never lets the family shadow a framework-owned extra", () => {
+      // Including `pagingToken`, which the framework only reads and never writes here.
       const operation = adaptCoreOperationToLiveOperation("accountId", {
         ...coreOperation,
-        details: { ledgerOpType: "FREEZE", familyExtra: { ledgerOpType: "HIJACKED" } },
+        details: {
+          ledgerOpType: "FREEZE",
+          familyExtra: { ledgerOpType: "HIJACKED", internal: true, pagingToken: "hijacked" },
+        },
+      });
+      const extra = operation.extra as Record<string, unknown>;
+
+      expect(extra.ledgerOpType).toBe("FREEZE");
+      expect(extra.internal).toBeUndefined();
+      expect(extra.pagingToken).toBeUndefined();
+    });
+
+    it("omits familyExtra entirely when the coin module sends none", () => {
+      const operation = adaptCoreOperationToLiveOperation("accountId", {
+        ...coreOperation,
+        details: { ledgerOpType: "FREEZE" },
       });
 
-      expect((operation.extra as Record<string, unknown>).ledgerOpType).toBe("FREEZE");
+      expect((operation.extra as Record<string, unknown>).familyExtra).toBeUndefined();
+    });
+  });
+
+  describe("framework extra serialization", () => {
+    describe("frameworkExtraToRaw", () => {
+      it("returns only the converted stake, never the rest of the bag", () => {
+        const converted = frameworkExtraToRaw({
+          ledgerOpType: "FREEZE",
+          stake: { address: "validator", amount: new BigNumber(2_500) },
+        }) as Record<string, unknown>;
+
+        expect(converted).toEqual({ stake: { address: "validator", amount: "2500" } });
+      });
+
+      it("returns undefined when there is nothing of its own to convert", () => {
+        expect(frameworkExtraToRaw({ ledgerOpType: "FREEZE" })).toBeUndefined();
+        expect(frameworkExtraToRaw(undefined)).toBeUndefined();
+        expect(frameworkExtraToRaw("not-a-bag")).toBeUndefined();
+      });
+
+      it("leaves a stake.amount it did not write alone rather than coercing it", () => {
+        expect(frameworkExtraToRaw({ stake: { address: "v", amount: 2500 } })).toBeUndefined();
+        expect(frameworkExtraToRaw({ stake: { address: "v", amount: "2500" } })).toBeUndefined();
+      });
+    });
+
+    describe("frameworkExtraFromRaw", () => {
+      it("revives the stake amount as a BigNumber", () => {
+        const revived = frameworkExtraFromRaw({
+          stake: { address: "validator", amount: "2500" },
+        }) as Record<string, any>;
+
+        expect(revived).toEqual({
+          stake: { address: "validator", amount: new BigNumber(2_500) },
+        });
+      });
+
+      it("returns undefined for an amount that is not a persisted string", () => {
+        expect(frameworkExtraFromRaw({ stake: { address: "v", amount: 2500 } })).toBeUndefined();
+        expect(frameworkExtraFromRaw({ ledgerOpType: "FREEZE" })).toBeUndefined();
+        expect(frameworkExtraFromRaw(undefined)).toBeUndefined();
+      });
+    });
+
+    describe("mergeExtra", () => {
+      it("layers passthrough, then the family, then the framework's own keys", () => {
+        expect(
+          mergeExtra({ memo: "kept", frozen: 1, stake: "raw" }, { frozen: 2 }, { stake: "owned" }),
+        ).toEqual({ memo: "kept", frozen: 2, stake: "owned" });
+      });
+
+      it("keeps the passthrough when the family maps nothing", () => {
+        expect(mergeExtra({ memo: "kept" }, undefined, undefined)).toEqual({ memo: "kept" });
+      });
+
+      it("falls back to the family's result when the passthrough is not a bag", () => {
+        expect(mergeExtra(undefined, { frozen: 1 }, undefined)).toEqual({ frozen: 1 });
+        expect(mergeExtra(undefined, undefined, undefined)).toBeUndefined();
+      });
+
+      it("creates own properties, so a __proto__ key cannot reach the prototype", () => {
+        const merged = mergeExtra({}, JSON.parse('{"__proto__":{"polluted":true}}'), undefined);
+
+        expect(Object.getPrototypeOf(merged)).toBe(Object.prototype);
+        expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+      });
     });
   });
 });

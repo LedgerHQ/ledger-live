@@ -140,6 +140,55 @@ describe("genericSignOperation", () => {
     );
   });
 
+  it("keeps the account's derivationMode when the family declares one of its own", async () => {
+    const getDeviceSignOptions = jest.fn().mockReturnValue({ derivationMode: "tezosSecp256k1" });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ getDeviceSignOptions });
+
+    const signOperation = genericSignOperation("mainnet", "tezos")(mockSignerContext);
+    const observable = signOperation({
+      account: { ...account, derivationMode: "tezosbip32-ed25519" },
+      transaction,
+      deviceId: "",
+    });
+
+    await lastValueFrom(observable.pipe(toArray()));
+
+    expect(mockSigner.signTransaction).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.anything(),
+      expect.objectContaining({ derivationMode: "tezosbip32-ed25519" }),
+    );
+  });
+
+  it("crafts from the family's own intent data", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
+    (getBridgeApi as jest.Mock).mockResolvedValue({ buildIntentData });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(buildIntentData).toHaveBeenCalledWith(transaction);
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { type: "familyx" } }),
+      expect.anything(),
+    );
+  });
+
+  it("hands the family's optimistic-operation descriptor to buildOptimisticOperation", async () => {
+    const describeOptimisticOperation = jest.fn();
+    (getBridgeApi as jest.Mock).mockResolvedValue({ describeOptimisticOperation });
+
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(buildOptimisticOperation).toHaveBeenCalledWith(
+      account,
+      transaction,
+      expect.anything(),
+      describeOptimisticOperation,
+    );
+  });
+
   it("throws FeeNotLoaded if fees are missing", async () => {
     const txWithoutFees = { ...transaction };
     delete txWithoutFees.fees;

@@ -84,8 +84,8 @@ export const genericSignOperation =
           /* Sign on Ledger device */
           const txnSig = await signer.signTransaction(derivationPath, unsigned, {
             ...transaction.recipientDomain,
-            derivationMode: account.derivationMode,
             ...bridgeApi.getDeviceSignOptions?.(transaction, account),
+            derivationMode: account.derivationMode,
           });
           return {
             unsigned,

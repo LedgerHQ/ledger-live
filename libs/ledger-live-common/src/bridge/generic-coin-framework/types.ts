@@ -13,6 +13,9 @@ import BigNumber from "bignumber.js";
  * Values that are JSON-serializable. Used for the parts of a transaction that are persisted
  * verbatim, so a `BigNumber`, `bigint` or class instance is rejected at the point it is written
  * rather than silently corrupted on revival.
+ *
+ * `undefined` is permitted so that an optional field typechecks; a round trip drops it, so an absent
+ * key and an `undefined` value have to mean the same thing to every consumer.
  */
 type JsonSafe =
   | string
@@ -107,7 +110,12 @@ export type GenericTransaction = TransactionCommon & {
   /**
    * Chain-specific transaction fields with no generic equivalent; the owning family maps them onto
    * the intent's `TxData` via `BridgeApi.buildIntentData` (ADR-047). `JsonSafe` is load-bearing: the
-   * bag round-trips through `GenericTransactionRaw` verbatim; a non-JSON value corrupts on revival.
+   * bag is written to `GenericTransactionRaw` verbatim, so a non-JSON value corrupts on revival.
+   *
+   * Only the write half is generic. There is no generic raw-to-transaction converter — each family's
+   * own `fromTransactionRaw` enumerates the fields it revives (`families/evm/transaction.ts`) — so a
+   * family adopting this bag has to revive it there, or a flow rebuilding from
+   * `Operation.transactionRaw` crafts a different intent than the one that was signed.
    *
    * Holds user inputs only. Chain-computed values travel in `feeParameters`, so nothing here has to
    * be merged or invalidated between fee estimations.
@@ -191,8 +199,15 @@ export type AccountRawAssignHooks = {
    * pair — `fromSignedOperationRaw` has no account in hand.
    *
    * The serialization layer calls these with the **whole** `Operation.extra` — the family's keys
-   * merged with the framework's — and replaces `extra` wholesale with what is returned, so an
-   * implementation that maps only its own keys silently drops every framework-owned key.
+   * merged with the framework's — and replaces `extra` wholesale with what is returned. Mapping only
+   * the family's own keys is safe regardless: `accountRawAssign.ts` converts the framework-owned keys
+   * itself and spreads this result over them, so a family cannot drop `ledgerOpType` or `stake`.
+   *
+   * The cost of that is no key can be dropped: the untouched input is the merge's base layer, so a
+   * key these hooks omit is persisted verbatim rather than filtered out. A legacy bridge's hooks of
+   * the same name replace instead of merge, so an allowlist ported from one (`coin-sui`'s
+   * `bridge/formatters.ts` omits a `BigNumber` on purpose) stops filtering here — map such a key to a
+   * JSON-safe form rather than relying on omission.
    */
   fromOperationExtraRaw?: AccountBridge<GenericTransaction>["fromOperationExtraRaw"];
   toOperationExtraRaw?: AccountBridge<GenericTransaction>["toOperationExtraRaw"];
