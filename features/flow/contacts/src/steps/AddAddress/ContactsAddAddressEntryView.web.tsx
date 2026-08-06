@@ -1,17 +1,9 @@
 import React from "react";
-import {
-  AddressInput,
-  Banner,
-  Button,
-  InteractiveIcon,
-  TextInput,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@ledgerhq/lumen-ui-react";
-import { InformationFill, LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
+import { AddressInput, Banner, Button, TextInput } from "@ledgerhq/lumen-ui-react";
+import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
 import type { ContactsAddAddressEntryWebViewProps } from "./ContactsAddAddressEntry.web.types";
+import { AddressNameDisclaimer } from "./components/AddressNameDisclaimer/AddressNameDisclaimer.web";
 
 export function ContactsAddAddressEntryView({
   value,
@@ -65,21 +57,10 @@ export function ContactsAddAddressEntryView({
           spellCheck={false}
           status={addressLabel.status === "invalid" ? "error" : undefined}
           suffix={
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <InteractiveIcon
-                  aria-label={nameLabels.namingDisclaimerAccessibilityLabel}
-                  data-testid="contacts-add-address-name-disclaimer"
-                  icon={InformationFill}
-                  iconType="filled"
-                  size={20}
-                  type="button"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="max-w-256 text-center">{nameLabels.namingDisclaimer}</div>
-              </TooltipContent>
-            </Tooltip>
+            <AddressNameDisclaimer
+              accessibilityLabel={nameLabels.namingDisclaimerAccessibilityLabel}
+              description={nameLabels.namingDisclaimer}
+            />
           }
           value={addressLabel.value}
         />
