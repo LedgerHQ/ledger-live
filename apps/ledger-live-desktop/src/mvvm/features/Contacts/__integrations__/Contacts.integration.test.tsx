@@ -28,12 +28,17 @@ import { openURL } from "~/renderer/linking";
 const mockNavigate = jest.fn();
 const mockClose = jest.fn();
 const mockValidateAddress = jest.fn();
+const mockOpenSendFlow = jest.fn();
 const meContactId = mockMeContact().id;
 const savedContactId = mockContact({ id: "contact-ada" }).id;
 
 jest.mock("react-router", () => ({
   ...jest.requireActual<typeof import("react-router")>("react-router"),
   useNavigate: () => mockNavigate,
+}));
+
+jest.mock("LLD/features/Send/hooks/useOpenSendFlow", () => ({
+  useOpenSendFlow: () => mockOpenSendFlow,
 }));
 
 jest.mock("~/renderer/store", () => ({
@@ -895,6 +900,101 @@ describe("Contacts integration", () => {
       expect(screen.queryByTestId("contacts-delete-contact-dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("contacts-saved-row-contact-ada")).not.toBeInTheDocument();
       expect(screen.getByTestId("contacts-detail-name")).toHaveTextContent("Me");
+    });
+  });
+
+  it("should open the send flow from the address detail dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-send"));
+
+    expect(mockOpenSendFlow).toHaveBeenCalledWith({
+      currencyIds: ["ethereum"],
+      recipient: "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034",
+    });
+    expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+  });
+
+  it("should open the delete address dialog from the address detail dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
+
+    expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-delete-address-dialog")).toBeVisible();
+  });
+
+  it("should delete an address and close the address detail dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+    await user.click(screen.getByTestId("contacts-address-detail-delete"));
+    await user.click(screen.getByTestId("contacts-delete-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-delete-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+    });
+
+    const detailScreen = screen.getByTestId("contacts-detail-screen");
+    expect(within(detailScreen).getByText("1 address")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("contacts-detail-address-row-address-ethereum"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("contacts-detail-address-row-address-polygon")).toBeInTheDocument();
+  });
+
+  it("should open the rename address dialog after signer confirmation", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-edit-signer-dialog")).toBeVisible();
+    });
+
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-edit-signer-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+  });
+
+  it("should rename an address and close the edit dialog", async () => {
+    const { user } = renderContactsScreen(populatedContactsPageState);
+
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ben"));
+    await user.click(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
+
+    await user.click(screen.getByTestId("contacts-address-detail-edit"));
+    await user.click(screen.getByTestId("contacts-edit-signer-confirm"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("contacts-rename-address-dialog")).toBeVisible();
+    });
+
+    fireEvent.change(screen.getByTestId("contacts-rename-address-input"), {
+      target: { value: "Main ETH" },
+    });
+    await user.click(screen.getByTestId("contacts-rename-address-confirm"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("contacts-rename-address-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).not.toBeInTheDocument();
+      expect(screen.getByTestId("contacts-detail-address-row-address-ethereum")).toHaveTextContent(
+        "Main ETH",
+      );
     });
   });
 });

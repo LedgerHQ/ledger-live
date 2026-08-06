@@ -15,6 +15,7 @@ import {
 } from "@features/flow-contacts";
 import { MY_WALLET_AVATAR_USER_URL } from "LLD/features/MyWallet/components/UserAvatar/constants";
 import { useContactsAddressCurrencyAdapter } from "../../hooks/useContactsAddressCurrencyAdapter";
+import { useContactAddressDetailActionsAdapter } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 
 export function useContactDetailPaneAdapter(
@@ -23,6 +24,7 @@ export function useContactDetailPaneAdapter(
   detail: ContactDetailViewProps | undefined;
   addressDetailDialog: ContactAddressDetailDialogProps;
   editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
+  addressDetailActionsDialogs: ReturnType<typeof useContactAddressDetailActionsAdapter>;
   onOpenMe: ContactsListViewProps["onOpenMe"];
   onOpenContact: ContactsListViewProps["onOpenContact"];
 }> {
@@ -43,6 +45,11 @@ export function useContactDetailPaneAdapter(
     onClose: onCloseAddressDetail,
     clearSelection,
   } = useContactAddressDetailDialog(populatedContactDetail);
+  const addressDetailActionsDialogs = useContactAddressDetailActionsAdapter(
+    detailContactId,
+    selection?.row?.addressId,
+    onCloseAddressDetail,
+  );
   const labels = useMemo<ContactDetailLabels>(
     () => ({
       addAddress: t("contacts.addAddress"),
@@ -110,30 +117,40 @@ export function useContactDetailPaneAdapter(
     onAddressRowPress,
     populatedContactDetail,
   ]);
-  const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(
-    () => ({
-      isOpen,
+  const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {
+    const isAddressActionDialogOpen =
+      addressDetailActionsDialogs.deleteDialog.isOpen ||
+      addressDetailActionsDialogs.signerDialog.isOpen ||
+      addressDetailActionsDialogs.renameDialog.isOpen;
+
+    return {
+      isOpen: isOpen && !isAddressActionDialogOpen,
       contactName: populatedContactDetail?.contact.name ?? emptyContact?.name ?? "",
       row: selection?.row,
       network: selection?.network,
       labels: addressDetailDialogLabels,
       onClose: onCloseAddressDetail,
-    }),
-    [
-      addressDetailDialogLabels,
-      emptyContact?.name,
-      isOpen,
-      onCloseAddressDetail,
-      populatedContactDetail?.contact.name,
-      selection?.network,
-      selection?.row,
-    ],
-  );
+      ...addressDetailActionsDialogs.addressDetailDialog,
+    };
+  }, [
+    addressDetailActionsDialogs.addressDetailDialog,
+    addressDetailActionsDialogs.deleteDialog.isOpen,
+    addressDetailActionsDialogs.renameDialog.isOpen,
+    addressDetailActionsDialogs.signerDialog.isOpen,
+    addressDetailDialogLabels,
+    emptyContact?.name,
+    isOpen,
+    onCloseAddressDetail,
+    populatedContactDetail?.contact.name,
+    selection?.network,
+    selection?.row,
+  ]);
 
   return {
     detail,
     addressDetailDialog,
     editDeleteDialogs,
+    addressDetailActionsDialogs,
     onOpenMe: openContact,
     onOpenContact: openContact,
   };
