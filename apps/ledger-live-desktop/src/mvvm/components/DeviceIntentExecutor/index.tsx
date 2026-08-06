@@ -4,6 +4,11 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
+import {
+  DeviceIntentTrackingProvider,
+  type DeviceIntentTrackingProperties,
+  type SourceFlow,
+} from "@ledgerhq/live-dmk-shared";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "LLD/components/DialogBackgroundGradient";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
@@ -24,6 +29,7 @@ export type { InitializationInput } from "./types";
 export { ContinueOnDevice } from "./components/DeviceGenericStates/ContinueOnDevice";
 export { RetryableDeviceLocked } from "./components/DeviceGenericStates/RetryableDeviceLocked";
 export { UnlockDevice } from "./components/DeviceGenericStates/UnlockDevice";
+export type { DeviceIntentTrackingProperties, SourceFlow } from "@ledgerhq/live-dmk-shared";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -32,6 +38,14 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   InitializationInput
 > & {
   initializerConfig?: InitializerConfig;
+  /**
+   * Originating user intent that initiated the device flow. Required for analytics.
+   */
+  sourceFlow: SourceFlow;
+  /**
+   * Generic analytics bag merged into the deviceUxV2 funnel events emitted by this flow.
+   */
+  analyticsProperties?: DeviceIntentTrackingProperties;
 };
 
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
@@ -42,10 +56,17 @@ const platformConfig: ExecutorPlatformConfiguration<InitializationInput, Initial
   InvalidOperationComponent: InvalidOperation,
 };
 
+const emptyAnalyticsProperties: DeviceIntentTrackingProperties = {};
+
 export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement | null {
   const { wrappedProps, onOpenChange, onClose } = useDeviceIntentExecutorLWDViewModel(props);
+  const analyticsProperties = props.analyticsProperties ?? emptyAnalyticsProperties;
+  const trackingContextValue = React.useMemo(
+    () => ({ sourceFlow: props.sourceFlow, analyticsProperties }),
+    [props.sourceFlow, analyticsProperties],
+  );
 
   if (!wrappedProps.enabled) return null;
 
@@ -57,14 +78,16 @@ export function DeviceIntentExecutorLWD<JobState, Input, ExtraProps>(
         data-testid="device-intent-executor-dialog"
       >
         <DialogBackgroundToneProvider>
-          <DialogHeader density="compact" onClose={onClose} className="!mb-0" />
-          <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
-            <DeviceIntentExecutor
-              {...wrappedProps}
-              platformConfig={platformConfig}
-              initializerConfig={wrappedProps.initializerConfig}
-            />
-          </DialogBody>
+          <DeviceIntentTrackingProvider value={trackingContextValue}>
+            <DialogHeader density="compact" onClose={onClose} className="!mb-0" />
+            <DialogBody className="!mb-0 flex min-h-0 flex-col px-24 pb-24">
+              <DeviceIntentExecutor
+                {...wrappedProps}
+                platformConfig={platformConfig}
+                initializerConfig={wrappedProps.initializerConfig}
+              />
+            </DialogBody>
+          </DeviceIntentTrackingProvider>
         </DialogBackgroundToneProvider>
       </DialogContent>
     </Dialog>
