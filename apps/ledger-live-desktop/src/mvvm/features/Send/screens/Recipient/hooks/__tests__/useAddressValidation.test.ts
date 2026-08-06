@@ -5,6 +5,7 @@ import { InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/ledger-w
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
+import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -13,6 +14,7 @@ import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import {
   createMockAccount,
   createMockCurrency,
+  createMockTokenCurrency,
 } from "../../__integrations__/__fixtures__/accounts";
 import { useAddressValidation } from "../useAddressValidation";
 import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
@@ -131,6 +133,29 @@ describe("useAddressValidation", () => {
       expect(result.current.result.status).toBe("sanctioned");
       expect(result.current.result.error).toBe("sanctioned");
     });
+  });
+
+  it("checks token recipients against the parent currency sanctions", async () => {
+    const tokenCurrency = createMockTokenCurrency();
+    const tokenAccount = genTokenAccount(0, mockEthereumAccount, tokenCurrency);
+    mockedIsAddressSanctioned.mockResolvedValue(true);
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "sanctioned_address",
+        currency: tokenCurrency,
+        account: tokenAccount,
+        parentAccount: mockEthereumAccount,
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.result.status).toBe("sanctioned");
+    });
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(
+      mockEthereumAccount.currency,
+      "sanctioned_address",
+    );
   });
 
   it("resolves ENS names when recipientSupportsDomain is true", async () => {

@@ -213,9 +213,9 @@ export function useAddressValidation({
     try {
       const addressToCheck = ensResolution?.address ?? searchValue;
 
-      const isCryptoCurrency = "id" in currency && !("tokenType" in currency);
-      if (isCryptoCurrency) {
-        const sanctioned = await isAddressSanctioned(currency, addressToCheck);
+      const sanctionCurrency = currency.type === "TokenCurrency" ? mainAccount?.currency : currency;
+      if (sanctionCurrency) {
+        const sanctioned = await isAddressSanctioned(sanctionCurrency, addressToCheck);
         if (sanctioned) {
           setValidationState({
             status: "sanctioned",
@@ -247,7 +247,7 @@ export function useAddressValidation({
         isSanctioned: false,
       });
     }
-  }, [searchValue, ensResolution, currency]);
+  }, [searchValue, ensResolution, currency, mainAccount]);
 
   // Auto-validate when searchValue changes
   if (searchValue !== lastSearchValueRef.current) {
