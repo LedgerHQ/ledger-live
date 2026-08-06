@@ -13,6 +13,7 @@ import {
   type ContactDetailViewProps,
   resolveEligibleAddressCurrencyIds,
   useAddAddressFlowViewModel,
+  useContactDetailSharedState,
   useContactAddressDetailDialog,
   useContactsFeature,
   useEmptyContactDetail,
@@ -123,7 +124,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     [addAddressFlowState, completeCurrencySelection],
   );
-  const onOpenLedgerWalletAddresses = useCallback(() => {
+  const onLedgerWalletAccountsPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.CryptoAddresses,
       params: {
@@ -160,9 +161,14 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
       emptyContactDescription: name => t("contacts.detail.emptyState.contactDescription", { name }),
       ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       myAddresses: t("contacts.detail.myAddresses"),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
+  );
+  const detailSharedState = useContactDetailSharedState(
+    route.params.contactId,
+    labels.formatMeDisplayName,
   );
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogNativeLabels>(
     () => ({
@@ -203,7 +209,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     labels,
     meAvatarSrc: USER_AVATAR_URL,
     onAddAddress,
-    onOpenLedgerWalletAddresses,
+    ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
+    onLedgerWalletAccountsPress,
     ...(populatedContactDetail
       ? {
           addressGroups: populatedContactDetail.addressGroups,
