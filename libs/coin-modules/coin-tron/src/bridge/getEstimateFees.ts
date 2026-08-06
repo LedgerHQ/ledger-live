@@ -4,10 +4,11 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
+import { getEnergyProvider } from "../logic/energyProviders";
 import { computeBandwidthFee, computeEnergyFee, estimateEnergy } from "../logic/estimateFees";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import type { AccountTronAPI, ChainParameters } from "../network/types";
-import type { NetworkInfo, Transaction } from "../types";
+import type { NetworkInfo, SponsoredEnergyEstimate, Transaction } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
@@ -52,8 +53,8 @@ export const getFeeResourceBreakdown = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<FeeResourceBreakdown> => {
-  // TODO(LIVE-32776/LIVE-32892): when `transaction.energyProviderInfo` is set, augment energy
-  // availability with rented (sponsored) energy. Dormant for now.
+  // TODO(LIVE-32892): when `transaction.energyProviderInfo` is set, augment energy availability with
+  // rented (sponsored) energy. Dormant for now — LIVE-32776 only exposes the informational estimate.
 
   // Energy is only required for an actual TRC20 transfer — native/TRC10 use none, non-"send" modes
   // don't transfer, and a zero-amount non-max send is headed for AmountRequired. Compute it up front
@@ -154,6 +155,33 @@ export const getFeeResourceBreakdown = async (
   }
 };
 
+// LIVE-32776: informational savings estimate for a sponsored send. Purely additive — it does NOT
+// change fees (that re-pricing is LIVE-32892). The avoided cost is the full energy cost of the
+// transfer (energyRequired × energyFee), independent of the user's own staked energy, matching the
+// PRD framing ("every USDT transfer burns ~6.4 TRX"). Returns null when the send isn't sponsored,
+// the provider id is unknown, or energy couldn't be reliably estimated (so we never surface a number
+// derived from the failure sentinel). Reuses the breakdown already computed by the status path, so
+// it adds no network round trips (getChainParameters is LRU-cached).
+export const computeSponsoredEnergyEstimate = async (
+  transaction: Transaction,
+  breakdown: FeeResourceBreakdown,
+): Promise<SponsoredEnergyEstimate | null> => {
+  const info = transaction.energyProviderInfo;
+  if (!info) return null;
+  const provider = getEnergyProvider(info.providerId);
+  if (!provider || !breakdown.energyEstimated) return null;
+  // Only an energy-bearing TRC20 transfer has a saving to disclose. Native/TRC10 and non-"send"
+  // modes report energyRequired 0 — surfacing a {provider, 0} estimate there would render a
+  // misleading "Saved $0.00 with <provider>" third-party disclosure on an unsponsored tx.
+  if (breakdown.energyRequired.lte(0)) return null;
+
+  const params: ChainParameters = await getChainParameters();
+  const avoidedEnergyFees = breakdown.energyRequired
+    .multipliedBy(params.energyFee)
+    .integerValue(BigNumber.ROUND_CEIL);
+  return { provider, avoidedEnergyFees };
+};
+
 // Energy-aware fee for an active-recipient TRC20 transfer: 0 when energy and bandwidth cover it, the
 // real shortfall otherwise, and the flat STANDARD_FEES_TRC_20 on any uncertainty.
 const computeActiveRecipientTrc20Fee = async (
@@ -162,8 +190,8 @@ const computeActiveRecipientTrc20Fee = async (
   tokenAccount: TokenAccount,
   breakdown?: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
-  // TODO(LIVE-32776/LIVE-32892): when `transaction.energyProviderInfo` is set, price the send as
-  // energy-rented (sponsored) instead of burning TRX. Dormant for now.
+  // TODO(LIVE-32892): when `transaction.energyProviderInfo` is set, price the send as energy-rented
+  // (sponsored) instead of burning TRX. Dormant for now — LIVE-32776 only exposes the estimate.
 
   try {
     const resourceBreakdown =
