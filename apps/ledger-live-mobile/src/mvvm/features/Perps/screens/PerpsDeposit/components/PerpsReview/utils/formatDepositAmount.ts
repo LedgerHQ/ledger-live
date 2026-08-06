@@ -24,6 +24,5 @@ export function formatDepositAmount(amount: PerpsDepositAmount, account: Account
 
   return formatCurrencyUnit(unit, parseCurrencyUnit(unit, amount.value), {
     showCode: true,
-    disableRounding: true,
   });
 }

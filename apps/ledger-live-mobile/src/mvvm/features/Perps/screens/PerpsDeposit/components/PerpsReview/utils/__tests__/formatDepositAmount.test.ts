@@ -18,6 +18,12 @@ describe("formatDepositAmount", () => {
     );
   });
 
+  it("should round to significant digits rather than the currency's atomic precision", () => {
+    expect(
+      formatDepositAmount({ value: "0.005133456789012345", currencyId: "ethereum" }, account),
+    ).toMatch(/^0\.00513345[\s\u00A0]ETH$/);
+  });
+
   it("should return an empty string when the amount has no value", () => {
     expect(formatDepositAmount({ value: "", currencyId: "ethereum" }, account)).toBe("");
   });
