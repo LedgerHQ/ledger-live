@@ -1133,6 +1133,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "hypercore",
+    ticker: "USDC",
+    name: "Hyperliquid",
+    family: "hypercore",
+    color: "#97FCE4",
+    decimals: 6,
+  },
+  {
+    type: "CryptoCurrency",
     id: "internet_computer",
     ticker: "ICP",
     name: "Internet Computer",

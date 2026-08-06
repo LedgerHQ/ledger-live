@@ -45,6 +45,12 @@ catalog:
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.29
   "@ledgerhq/lumen-ui-react-visualization": 0.1.28
   "@ledgerhq/lumen-utils-shared": "0.1.7"
+  # Wallet API
+  "@ledgerhq/wallet-api-client": 1.15.3
+  "@ledgerhq/wallet-api-client-react": 1.4.34
+  "@ledgerhq/wallet-api-core": 2.0.0
+  "@ledgerhq/wallet-api-server": 3.4.3
+  "@ledgerhq/wallet-api-simulator": 2.3.3
   "@ledgerhq/zcash-utils": 2.0.0
   # React Native
   react-native: 0.81.6
