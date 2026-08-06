@@ -7,8 +7,11 @@ import {
   setNonImportedAccounts,
   type NonImportedAccountInfo,
 } from "@ledgerhq/live-wallet/accounts";
-import { recentAddressesSlice, updateRecentAddresses } from "@domain/entity-recent-addresses";
-import type { RecentAddressesState } from "@ledgerhq/types-live";
+import {
+  recentAddressesSlice,
+  updateRecentAddresses,
+  type RecentAddressesState,
+} from "@domain/entity-recent-addresses";
 
 export const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,

@@ -64,4 +64,4 @@ The [CloudSyncDataManager](./05-wallet-sync-data-manager.md) is tested per modul
 
 - **Accounts** — [`libs/live-wallet/src/accounts/__tests__/cloudSyncModule.test.ts`](../../libs/live-wallet/src/accounts/__tests__/cloudSyncModule.test.ts)
 - **Account names** — [`domain/entity/account-name/src/__tests__/`](../../domain/entity/account-name/src/__tests__/)
-- **Recent addresses** — [`domain/entity/recent-addresses/src/__tests__/`](../../domain/entity/recent-addresses/src/__tests__/)
+- **Recent addresses** — [`domain/entity/recent-addresses/src/cloudSyncModule.test.ts`](../../domain/entity/recent-addresses/src/cloudSyncModule.test.ts)

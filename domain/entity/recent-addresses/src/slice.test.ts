@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { recentAddressesSlice, updateRecentAddresses } from "../slice";
-import type { RecentAddressesState } from "../schema";
+import { recentAddressesSlice, updateRecentAddresses } from "./slice";
+import type { RecentAddressesState } from "./schema";
 
 function makeStore() {
   return configureStore({ reducer: { recentAddresses: recentAddressesSlice.reducer } });

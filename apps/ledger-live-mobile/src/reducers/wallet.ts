@@ -19,16 +19,15 @@ import {
   setNonImportedAccounts,
   type NonImportedAccountInfo,
 } from "@ledgerhq/live-wallet/accounts";
-import { recentAddressesSlice, updateRecentAddresses } from "@domain/entity-recent-addresses";
+import {
+  recentAddressesSlice,
+  updateRecentAddresses,
+  type RecentAddressesState,
+} from "@domain/entity-recent-addresses";
 import type { State } from "./types";
 import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
-import type {
-  Account,
-  AccountLike,
-  AccountUserData,
-  RecentAddressesState,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
 
 const walletReducer = combineReducers({
   accountNames: accountNamesSlice.reducer,

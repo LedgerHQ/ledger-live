@@ -1,5 +1,5 @@
-import { recentAddressesSyncModule, recentAddressesSchema } from "../cloudSyncModule";
-import type { RecentAddressesState } from "../schema";
+import { recentAddressesSyncModule, RecentAddressesDistantSchema } from "./cloudSyncModule";
+import type { RecentAddressesState } from "./schema";
 import { describeCloudSyncModuleContract } from "@shared/cloud-sync-module/moduleRequirements";
 
 describeCloudSyncModuleContract("recentAddressesSyncModule contract", recentAddressesSyncModule, {
@@ -10,17 +10,17 @@ describeCloudSyncModuleContract("recentAddressesSyncModule contract", recentAddr
 
 const addr = (address: string, lastUsed = 1000) => ({ address, lastUsed });
 
-describe("recentAddressesSchema", () => {
+describe("RecentAddressesDistantSchema", () => {
   it("parses valid distant state", () => {
     const input = { bitcoin: [{ address: "bc1q", index: 0, lastUsed: 1000 }] };
-    expect(recentAddressesSchema.parse(input)).toEqual(input);
+    expect(RecentAddressesDistantSchema.parse(input)).toEqual(input);
   });
 
   it("filters out invalid entries, keeps valid ones", () => {
     const input = {
       bitcoin: [{ address: "bc1q", index: 0 }, "invalid", null, { address: "bc1b", index: 1 }],
     };
-    const parsed = recentAddressesSchema.parse(input);
+    const parsed = RecentAddressesDistantSchema.parse(input);
     expect(parsed.bitcoin).toHaveLength(2);
     expect(parsed.bitcoin[0].address).toBe("bc1q");
     expect(parsed.bitcoin[1].address).toBe("bc1b");
@@ -30,7 +30,7 @@ describe("recentAddressesSchema", () => {
     const input = {
       bitcoin: [{ address: { address: "bc1q", lastUsed: 500 }, index: 0, lastUsed: 600 }],
     };
-    const parsed = recentAddressesSchema.parse(input);
+    const parsed = RecentAddressesDistantSchema.parse(input);
     expect(parsed.bitcoin[0].address).toBe("bc1q");
     expect(parsed.bitcoin[0].lastUsed).toBe(500);
   });
@@ -44,7 +44,7 @@ describe("recentAddressesSchema", () => {
         },
       ],
     };
-    const parsed = recentAddressesSchema.parse(input);
+    const parsed = RecentAddressesDistantSchema.parse(input);
     expect(parsed.bitcoin[0].address).toBe("bc1q");
   });
 });

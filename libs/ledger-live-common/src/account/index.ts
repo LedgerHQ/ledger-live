@@ -21,5 +21,4 @@ export {
   RecentAddressesStore,
   getRecentAddressesStore,
   setupRecentAddressesStore,
-  RecentAddressesCache,
 } from "./recentAddresses";

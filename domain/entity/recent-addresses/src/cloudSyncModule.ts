@@ -2,13 +2,13 @@ import { z } from "zod";
 import type { CloudSyncDataManager } from "@shared/cloud-sync-module";
 import type { RecentAddressesState } from "./schema";
 
-export const CorrectDistantAddressSchema = z.object({
+const CorrectAddressDistantSchema = z.object({
   address: z.string(),
   index: z.number(),
   lastUsed: z.number().optional(),
 });
 
-export const CorruptedNestedDistantAddressSchema = z
+const CorruptedNestedAddressDistantSchema = z
   .object({
     address: z.object({
       address: z.string(),
@@ -24,24 +24,24 @@ export const CorruptedNestedDistantAddressSchema = z
     lastUsed: entry.address.lastUsed ?? entry.lastUsed,
   }));
 
-export const RecentAddressSchema = z.union([
-  CorrectDistantAddressSchema,
-  CorruptedNestedDistantAddressSchema,
+const RecentAddressDistantSchema = z.union([
+  CorrectAddressDistantSchema,
+  CorruptedNestedAddressDistantSchema,
 ]);
 
-export const recentAddressesSchema = z.record(
+export const RecentAddressesDistantSchema = z.record(
   z.string(),
   z.array(z.unknown()).transform(entries =>
     entries
       .map(entry => {
-        const result = RecentAddressSchema.safeParse(entry);
+        const result = RecentAddressDistantSchema.safeParse(entry);
         return result.success ? result.data : null;
       })
-      .filter((entry): entry is z.infer<typeof CorrectDistantAddressSchema> => entry !== null),
+      .filter((entry): entry is z.infer<typeof CorrectAddressDistantSchema> => entry !== null),
   ),
 );
 
-type DistantRecentAddressesState = z.infer<typeof recentAddressesSchema>;
+type DistantRecentAddressesState = z.infer<typeof RecentAddressesDistantSchema>;
 
 function toDistantState(addressesByCurrency: RecentAddressesState): DistantRecentAddressesState {
   const state: DistantRecentAddressesState = {};
@@ -89,9 +89,9 @@ function sameDistantState(
 export const recentAddressesSyncModule: CloudSyncDataManager<
   RecentAddressesState,
   RecentAddressesState,
-  typeof recentAddressesSchema
+  typeof RecentAddressesDistantSchema
 > = {
-  schema: recentAddressesSchema,
+  schema: RecentAddressesDistantSchema,
 
   diffLocalToDistant(
     localData: RecentAddressesState,

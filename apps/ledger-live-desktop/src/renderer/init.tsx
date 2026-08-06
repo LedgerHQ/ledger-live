@@ -55,7 +55,8 @@ import { importMarketBannerState } from "./reducers/marketBanner";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
-import { setupRecentAddressesStore } from "./recentAddresses";
+import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
+import { recentAddressesSelector } from "~/renderer/reducers/wallet";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import {
@@ -132,7 +133,7 @@ async function init() {
   const dispatch: AppDispatch = store.dispatch;
 
   setupListeners(store.dispatch);
-  setupRecentAddressesStore(store);
+  connectRecentAddressesStore(store, recentAddressesSelector);
   setupCryptoAssetsStore(store);
   setSwapQuotesStore(store.dispatch);
 
