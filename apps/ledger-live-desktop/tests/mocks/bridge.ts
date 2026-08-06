@@ -10,6 +10,8 @@ import type {
   FilesBridge,
   PowerBridge,
   StoreBridge,
+  ShellBridge,
+  SystemBridge,
 } from "~/bridge/contract";
 
 /**
@@ -112,4 +114,15 @@ export const power: jest.Mocked<PowerBridge> = {
 export const store: jest.Mocked<StoreBridge> = {
   set: jest.fn(),
   clear: jest.fn(),
+};
+
+export const shell: jest.Mocked<ShellBridge> = {
+  openExternal: jest.fn(),
+};
+
+export const system: jest.Mocked<SystemBridge> = {
+  clipboardWriteText: jest.fn(),
+  clipboardReadText: jest.fn().mockResolvedValue(null),
+  setVisualZoomLevelLimits: jest.fn(),
+  getResourceUsage: jest.fn(() => undefined),
 };
