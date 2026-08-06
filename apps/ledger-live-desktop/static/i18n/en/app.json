@@ -9298,9 +9298,13 @@
       "confirmAddress": "Continue to review",
       "validatingAddress": "Validating address",
       "validAddress": "Valid address",
-      "invalidAddress": "Invalid address",
+      "invalidAddress": "Incorrect address format.",
       "domainNotFound": "Domain not found",
-      "sanctionedAddress": "This address is sanctioned and cannot be used.",
+      "sanctionedAddress": "Sanctioned address.",
+      "sanctioned": {
+        "description": "This wallet address is sanctioned by international laws and regulations.",
+        "learnMore": "Learn more"
+      },
       "validationUnavailable": "Address validation is temporarily unavailable.",
       "ensDisclaimer": "This ENS name resolves to the address shown above."
     },

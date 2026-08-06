@@ -2,6 +2,7 @@ import React from "react";
 import { AddressInput, Banner, Button, TextInput } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
+import { SanctionedAddressBanner } from "./components/SanctionedAddressBanner/SanctionedAddressBanner.web";
 import type { ContactsAddAddressEntryWebViewProps } from "./ContactsAddAddressEntry.web.types";
 import { AddressNameDisclaimer } from "./components/AddressNameDisclaimer/AddressNameDisclaimer.web";
 
@@ -10,6 +11,7 @@ export function ContactsAddAddressEntryView({
   labels,
   inputStatus,
   helperText,
+  sanctionedAddressBanner,
   showEnsDisclaimer,
   addressLabel,
   nameLabels,
@@ -65,6 +67,7 @@ export function ContactsAddAddressEntryView({
           value={addressLabel.value}
         />
       ) : null}
+      {sanctionedAddressBanner ? <SanctionedAddressBanner {...sanctionedAddressBanner} /> : null}
       <Button
         appearance="base"
         className="w-full"

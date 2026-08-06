@@ -4,6 +4,7 @@ import type {
   AddAddressInputSource,
   ContactsAddAddressEntryLabels,
   ContactsAddAddressNameLabels,
+  SanctionedAddressBannerProps,
 } from "@features/flow-contacts";
 
 export type ContactsAddAddressReviewLabels = AddAddressCompletionLabels;
@@ -11,6 +12,7 @@ export type ContactsAddAddressReviewLabels = AddAddressCompletionLabels;
 export type ContactsAddAddressFlowDialogProps = Readonly<{
   state: AddAddressFlowState;
   entryLabels: ContactsAddAddressEntryLabels;
+  sanctionedAddressBanner: SanctionedAddressBannerProps;
   nameLabels: ContactsAddAddressNameLabels;
   reviewLabels: ContactsAddAddressReviewLabels;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
