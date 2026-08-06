@@ -3,7 +3,10 @@ import { shallowEqual } from "react-redux";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { openModularDrawer, closeModularDrawer } from "~/reducers/modularDrawer";
+import {
+  openModularDrawer,
+  closeModularDrawer,
+} from "~/reducers/modularDrawer";
 import type { State } from "~/reducers/types";
 import { DrawerParams, DrawerRemoteParams } from "../types";
 import { useCallbackRegistry } from "./useCallbackRegistry";
@@ -54,7 +57,7 @@ export const useModularDrawerController = () => {
       uiUseCase: state.modularDrawer.uiUseCase,
       areCurrenciesFiltered: state.modularDrawer.areCurrenciesFiltered,
     }),
-    shallowEqual,
+    shallowEqual
   );
 
   const {
@@ -69,7 +72,12 @@ export const useModularDrawerController = () => {
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
-      const { onAccountSelected, onCurrencySelected, onCancel, ...otherParams } = params ?? {};
+      const {
+        onAccountSelected,
+        onCurrencySelected,
+        onCancel,
+        ...otherParams
+      } = params ?? {};
 
       if (completionMode === "currency" && callbackId) {
         executeCurrencyCallback(callbackId, null);
@@ -79,9 +87,14 @@ export const useModularDrawerController = () => {
       let callbackIdToUse: string | undefined;
       if (onAccountSelected) {
         const id = generateCallbackId();
-        const wrappedCallback = (account: AccountLike, parentAccount?: AccountLike) => {
+        const wrappedCallback = (
+          account: AccountLike,
+          parentAccount?: AccountLike
+        ) => {
           const typedParentAccount =
-            parentAccount && "derivationMode" in parentAccount ? parentAccount : undefined;
+            parentAccount && "derivationMode" in parentAccount
+              ? parentAccount
+              : undefined;
           onAccountSelected(account, typedParentAccount);
         };
         registerCallback(id, wrappedCallback);
@@ -116,7 +129,7 @@ export const useModularDrawerController = () => {
       registerCurrencyCallback,
       registerCancelCallback,
       resetAll,
-    ],
+    ]
   );
 
   const closeDrawer = useCallback(() => {
@@ -127,7 +140,14 @@ export const useModularDrawerController = () => {
       executeCancelCallback(cancelCallbackId);
     }
     dispatch(closeModularDrawer());
-  }, [callbackId, cancelCallbackId, completionMode, dispatch, executeCurrencyCallback, executeCancelCallback]);
+  }, [
+    callbackId,
+    cancelCallbackId,
+    completionMode,
+    dispatch,
+    executeCurrencyCallback,
+    executeCancelCallback,
+  ]);
 
   const handleAccountSelected = useCallback(
     (account: AccountLike, parentAccount?: AccountLike) => {
@@ -136,7 +156,7 @@ export const useModularDrawerController = () => {
       }
       dispatch(closeModularDrawer());
     },
-    [callbackId, dispatch, executeCallback],
+    [callbackId, dispatch, executeCallback]
   );
 
   const handleCurrencySelected = useCallback(
@@ -146,7 +166,7 @@ export const useModularDrawerController = () => {
       }
       dispatch(closeModularDrawer());
     },
-    [callbackId, dispatch, executeCurrencyCallback],
+    [callbackId, dispatch, executeCurrencyCallback]
   );
 
   return {

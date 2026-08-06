@@ -1,6 +1,11 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { Registry } from "./Registry";
-import { AccountCallback, CancelCallback, CurrencyCallback, RegistryManager } from "./types";
+import {
+  AccountCallback,
+  CancelCallback,
+  CurrencyCallback,
+  RegistryManager,
+} from "./types";
 
 // Global registries that persist across re-renders
 export const callbackRegistry = new Registry<AccountCallback>();
@@ -20,13 +25,18 @@ export const registryActions: RegistryManager = {
   registerCallback: (id: string, callback: AccountCallback) =>
     callbackRegistry.register(id, callback),
 
-  getCallback: (id: string): AccountCallback | undefined => callbackRegistry.get(id),
+  getCallback: (id: string): AccountCallback | undefined =>
+    callbackRegistry.get(id),
 
   unregisterCallback: (id: string): boolean => callbackRegistry.unregister(id),
 
   hasCallback: (id: string): boolean => callbackRegistry.has(id),
 
-  executeCallback: (id: string, account: AccountLike, parentAccount?: AccountLike) => {
+  executeCallback: (
+    id: string,
+    account: AccountLike,
+    parentAccount?: AccountLike
+  ) => {
     const callback = callbackRegistry.get(id);
     if (callback) {
       callback(account, parentAccount);
@@ -34,7 +44,8 @@ export const registryActions: RegistryManager = {
     }
   },
 
-  registerCurrencyCallback: (id, callback) => currencyCallbackRegistry.register(id, callback),
+  registerCurrencyCallback: (id, callback) =>
+    currencyCallbackRegistry.register(id, callback),
 
   executeCurrencyCallback: (id, currency) => {
     const callback = currencyCallbackRegistry.get(id);
@@ -44,7 +55,8 @@ export const registryActions: RegistryManager = {
     }
   },
 
-  registerCancelCallback: (id, callback) => cancelCallbackRegistry.register(id, callback),
+  registerCancelCallback: (id, callback) =>
+    cancelCallbackRegistry.register(id, callback),
 
   executeCancelCallback: (id) => {
     const callback = cancelCallbackRegistry.get(id);
@@ -56,7 +68,10 @@ export const registryActions: RegistryManager = {
 
   clearCallbacks: () => resetAllRegistries(),
 
-  getCallbackKeys: (): string[] => [...callbackRegistry.keys(), ...currencyCallbackRegistry.keys()],
+  getCallbackKeys: (): string[] => [
+    ...callbackRegistry.keys(),
+    ...currencyCallbackRegistry.keys(),
+  ],
 
   resetAll: () => resetAllRegistries(),
 };

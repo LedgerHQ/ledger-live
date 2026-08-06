@@ -42,11 +42,11 @@ type CurrencyDrawerCompletion = {
   onCurrencySelected: (currency: CryptoOrTokenCurrency | null) => void;
 };
 
-export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
-  (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) & {
-    onCancel?: () => void;
-  } &
-  TExtras;
+export type DrawerParams<TExtras extends object = DrawerExtras> =
+  DrawerBaseParams &
+    (AccountOrDeviceDrawerCompletion | CurrencyDrawerCompletion) & {
+      onCancel?: () => void;
+    } & TExtras;
 
 type AccountOrDeviceDrawerRemoteCompletion = {
   callbackId?: string;
@@ -60,12 +60,12 @@ type CurrencyDrawerRemoteCompletion = {
   presentation?: ModularDrawerPresentation;
 };
 
-export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams &
-  (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) & {
-    cancelCallbackId?: string;
-  } &
-  TExtras;
+export type DrawerRemoteParams<TExtras extends object = DrawerExtras> =
+  DrawerBaseParams &
+    (AccountOrDeviceDrawerRemoteCompletion | CurrencyDrawerRemoteCompletion) & {
+      cancelCallbackId?: string;
+    } & TExtras;
 
 export type OpenDrawer<TExtras extends object = DrawerExtras> = (
-  params?: DrawerParams<TExtras>,
+  params?: DrawerParams<TExtras>
 ) => void;
