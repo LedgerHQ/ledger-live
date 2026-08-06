@@ -19,6 +19,7 @@ import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/s
 import i18n from "~/renderer/i18n/init";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
 import { deeplink } from "~/renderer/bridge";
+import { setupZCashIpc } from "~/renderer/zcash";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
@@ -86,6 +87,9 @@ import { initHistory } from "~/renderer/reducers/history";
 const rootNode = document.getElementById("react-root");
 
 async function init() {
+  // ZCash sync talks over IPC; give the coin module its channel before anything uses it.
+  setupZCashIpc();
+
   // at this step. we know the app error handling will happen here. so we can unset the global onerror
   window.onerror = null;
 
