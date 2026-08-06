@@ -26,7 +26,7 @@ runs:
             done
 
     - name: Attest all tarballs
-      uses: LedgerHQ/actions-security/actions/attest-for-npmsjs-com@c92cff0840fbb28663c0061698e5e8ac5228dcce # actions/attest-for-npmsjs-com-0.1.2
+      uses: LedgerHQ/actions-security/actions/attest-for-npmsjs-com@attest-npm-dir-support
       with:
         subject-path: '${{ runner.temp }}/pack-attest-publish'
 
