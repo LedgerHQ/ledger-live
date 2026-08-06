@@ -27,16 +27,19 @@ function ContactsScreenContent() {
     onSearchQueryChange("");
   }, [onSearchQueryChange]);
   const addContactDrawer = useContactsAddContactDrawerAdapter(onSaveSuccess);
+  const onAddContact = useCallback(() => {
+    pageViewModel.onRequestAddContact(addContactDrawer.onOpen);
+  }, [addContactDrawer.onOpen, pageViewModel]);
   const viewModel = {
     ...pageViewModel,
-    onAddContact: addContactDrawer.onOpen,
+    onAddContact,
     addContactDrawer,
   };
 
   useContactsPageNavigationViewModel(
     pageViewModel.labels.addContact,
     !isContactsSearchNoResultsViewModel(pageViewModel.viewModel),
-    addContactDrawer.onOpen,
+    onAddContact,
   );
 
   return <ContactsPageContent {...viewModel} />;

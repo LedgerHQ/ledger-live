@@ -9,7 +9,8 @@ export type ContactsLedgerSyncMutationIntent =
 export type ContactsLedgerSyncMutationRequest =
   | Readonly<{ status: "allowed"; intent: ContactsLedgerSyncMutationIntent }>
   | Readonly<{ status: "blocked"; intent: ContactsLedgerSyncMutationIntent }>
-  | Readonly<{ status: "checking" }>;
+  | Readonly<{ status: "checking" }>
+  | Readonly<{ status: "unavailable" }>;
 
 export function useContactsLedgerSyncMutationGuard() {
   const [pendingIntent, setPendingIntent] = useState<ContactsLedgerSyncMutationIntent>();
@@ -24,7 +25,13 @@ export function useContactsLedgerSyncMutationGuard() {
       }
 
       if (ledgerSyncStatus === "checking") {
+        setPendingIntent(undefined);
         return { status: "checking" };
+      }
+
+      if (ledgerSyncStatus === "unavailable") {
+        setPendingIntent(undefined);
+        return { status: "unavailable" };
       }
 
       setPendingIntent(intent);

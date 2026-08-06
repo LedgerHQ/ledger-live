@@ -4,6 +4,7 @@ import { ContactsAddAddressFlowDrawer } from "./components/ContactsAddAddressFlo
 import { ContactAddressDetailActionsSheets } from "./components/ContactAddressDetailActionsSheets";
 import { ContactAddressDetailDialogSheet } from "./components/ContactAddressDetailDialogSheet";
 import { ContactDetailEditDeleteSheets } from "./components/ContactDetailEditDeleteSheets";
+import { ContactsLedgerSyncIntroductionSheet } from "../../components/ContactsLedgerSyncIntroductionSheet";
 import { useContactDetailNavigationViewModel } from "./hooks/useContactDetailNavigationViewModel";
 import { useContactDetailScreenViewModel } from "./useContactDetailScreenViewModel";
 
@@ -32,6 +33,10 @@ export function ContactDetailScreen(): React.JSX.Element | null {
         signerMismatchSheet={viewModel.addressDetailActions.signerMismatchSheet}
       />
       <ContactDetailEditDeleteSheets {...viewModel.editDeleteFlow} />
+      <ContactsLedgerSyncIntroductionSheet
+        {...viewModel.ledgerSyncIntroduction}
+        {...viewModel.ledgerSyncIntroductionContent}
+      />
     </>
   );
 }

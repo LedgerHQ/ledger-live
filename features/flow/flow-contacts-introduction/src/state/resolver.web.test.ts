@@ -63,6 +63,16 @@ describe("resolveContactsLedgerSyncIntroductionOpen", () => {
     ).toBe(false);
   });
 
+  it("does not open the Ledger Sync introduction while sync is unavailable", () => {
+    expect(
+      resolveContactsLedgerSyncIntroductionOpen({
+        isFeatureIntroductionRequested: false,
+        ledgerSyncStatus: "unavailable",
+        isLedgerSyncIntroductionDismissed: false,
+      }),
+    ).toBe(false);
+  });
+
   it("does not reopen the Ledger Sync introduction after session dismissal", () => {
     expect(
       resolveContactsLedgerSyncIntroductionOpen({

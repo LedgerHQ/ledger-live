@@ -11,7 +11,7 @@ function createViewModel({
   onDismiss = jest.fn(),
   onActivate = jest.fn(),
 }: {
-  ledgerSyncStatus?: "ready" | "checking" | "inactive";
+  ledgerSyncStatus?: "ready" | "checking" | "inactive" | "unavailable";
   isIntroductionOpen?: boolean;
   isFeatureIntroductionOpen?: boolean;
   onDismiss?: jest.Mock;
