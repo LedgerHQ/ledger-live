@@ -338,6 +338,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // `getAccountInfo` (ADR-045) is fetched only when a family declares a mapper: coin-tezos
     // implements the fetch without one, so an unconditional call would add a request to every tezos
     // sync for a result nothing reads.
+    //
+    // Deliberately uncaught, unlike `validatorsPromise` / `readinessPromise` below: those are the
+    // framework's own optional enrichments, whereas what this hook returns is the family's contract —
+    // it may be fields that family's screens require (a tron account derives `isAccountEmpty` from
+    // `tronResources.bandwidth.freeLimit`, so a missing `tronResources` breaks that check and hides
+    // its staking actions) or something cosmetic, and the framework cannot tell. Catching here would impose degradation on every family with no way back; a family whose
+    // contribution is optional catches inside its own hook and returns undefined, which this path
+    // already treats as nothing to contribute.
     const buildShape = bridgeApi.buildAccountShape;
     const chainSpecificShapePromise = buildShape
       ? Promise.resolve(coinModuleApi.getAccountInfo?.(address)).then(accountInfo =>

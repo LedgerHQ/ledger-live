@@ -170,9 +170,10 @@ export function genericPrepareTransaction(
         },
       },
       // Assigned wholesale, never merged: an estimation returning no parameters clears the previous
-      // figures rather than leaving them to be read as current for a new amount. A custom fee skips
-      // estimation entirely, so it clears them too — the breakdown belongs to a fee this transaction
-      // no longer uses.
+      // figures rather than leaving them to be read as current for a new amount. A custom fee that
+      // skips estimation clears them for the same reason — the breakdown belongs to a fee this
+      // transaction no longer uses. A custom fee *with* send-max still estimates (the max amount
+      // needs it), and keeps the breakdown that estimation produced.
       feeParameters: nextFeeParameters,
     };
 

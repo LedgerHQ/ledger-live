@@ -38,7 +38,6 @@ const defaultBridgeApi = () => ({
   getChainSpecificRules: {
     getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
   },
-  buildAccountShape: (...a: any[]) => buildAccountShapeMock(...a),
   refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
 });
 getBridgeApiMock.mockImplementation(defaultBridgeApi);
@@ -853,6 +852,13 @@ describe("genericGetAccountShape", () => {
     const currency = { id: "familyx", name: "FamilyX" };
 
     beforeEach(() => {
+      // Opted in here rather than in `defaultBridgeApi`, matching `getAccountReadiness` above: no
+      // family declares this hook, so the default bridge must keep modelling one that does not —
+      // and declaring it there makes every unrelated suite spend a `getAccountInfo` call.
+      getBridgeApiMock.mockImplementation(() => ({
+        ...defaultBridgeApi(),
+        buildAccountShape: (...a: any[]) => buildAccountShapeMock(...a),
+      }));
       getSyncHashMock.mockReturnValue("sync-hash");
       getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n, locked: 0n }]);
       extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
@@ -862,6 +868,10 @@ describe("genericGetAccountShape", () => {
       mergeOpsMock.mockImplementation((_old: any[], newOps: any[]) => newOps ?? []);
       cleanedOperationMock.mockImplementation((op: any) => op);
       inferSubOperationsMock.mockReturnValue([]);
+    });
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
     });
 
     test("spreads a family-contributed account shape into the synced account", async () => {
@@ -946,7 +956,20 @@ describe("genericGetAccountShape", () => {
       ).rejects.toThrow(burnAddressError);
     });
 
-    test("a colliding framework-owned field from the family hook does not win", async () => {
+    test("fails the sync when the family mapper rejects, rather than persisting a partial account", async () => {
+      buildAccountShapeMock.mockRejectedValueOnce(new Error("trongrid down"));
+
+      const getShape = genericGetAccountShape(network, currency.id);
+
+      await expect(
+        getShape(
+          { address: "addr5", initialAccount: undefined, currency, derivationMode: "" } as any,
+          { paginationConfig: {} as any },
+        ),
+      ).rejects.toThrow("trongrid down");
+    });
+
+    test("keeps operations and syncHash when the family hook collides with them", async () => {
       // Give the framework a real, non-empty `operations` result so a family-contributed
       // `operations: []` collision is actually observable (both would otherwise be `[]`).
       listOperationsMock.mockResolvedValueOnce({

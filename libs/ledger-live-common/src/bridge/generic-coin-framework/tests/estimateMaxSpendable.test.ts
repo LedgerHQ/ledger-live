@@ -12,6 +12,11 @@ jest.mock("../createTransaction", () => ({
   createTransaction: jest.fn().mockReturnValue({}),
 }));
 
+const getBridgeApiMock = jest.fn().mockResolvedValue({});
+jest.mock("../bridge", () => ({
+  getBridgeApi: (...a: unknown[]) => getBridgeApiMock(...a),
+}));
+
 const mockedGetCoinModuleApi = coinframework.getCoinModuleApi as jest.Mock;
 
 describe("genericEstimateMaxSpendable", () => {
@@ -62,6 +67,31 @@ describe("genericEstimateMaxSpendable", () => {
     });
 
     expect(result.toString()).toBe("49990000");
+  });
+
+  it("prices the send-max against the family's own intent data", async () => {
+    const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
+    getBridgeApiMock.mockResolvedValueOnce({ buildIntentData });
+    mockedGetCoinModuleApi.mockReturnValue({
+      estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: { familySpecificData: { resource: "ENERGY" } } as any,
+    });
+
+    expect(buildIntentData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        useAllAmount: true,
+        familySpecificData: { resource: "ENERGY" },
+      }),
+    );
+    expect(estimateFeesMock).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { type: "familyx" } }),
+    );
   });
 
   it("subtracts additionalFees surfaced in parameters", async () => {

@@ -44,12 +44,18 @@ export function genericGetTransactionStatus(
       }
     }
 
+    const buildIntentData = bridgeApi.buildIntentData;
     const intent = transactionToIntent(
       account,
       draftTransaction,
       bridgeApi.computeIntentType,
       coinModuleApi.craftTransactionData,
-      bridgeApi.buildIntentData,
+      // The real transaction, not the draft: the draft is a field-by-field allowlist, so a field it
+      // omits reads as `undefined` inside the hook with no type error, and this path would validate
+      // an intent whose `data` differs from the one `signOperation` hands the device. Everything the
+      // framework itself derives keeps using the draft, so families that declare no hook are
+      // untouched.
+      buildIntentData && (() => buildIntentData(transaction)),
     );
 
     const customFees = bigNumberToBigIntDeep({
