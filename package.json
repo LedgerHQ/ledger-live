@@ -123,7 +123,6 @@
     "coin:stacks": "pnpm --filter coin-stacks",
     "coin:icon": "pnpm --filter coin-icon",
     "coin:internet_computer": "pnpm --filter coin-internet_computer",
-    "coin:tezos": "pnpm --filter coin-tezos",
     "coin:tron": "pnpm --filter coin-tron",
     "coin:vechain": "pnpm --filter coin-vechain",
     "coin:xrp": "pnpm --filter coin-xrp",

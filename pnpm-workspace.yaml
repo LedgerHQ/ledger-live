@@ -215,6 +215,7 @@ catalog:
   "@ledgerhq/coin-module-framework": 5.0.0
   "@ledgerhq/coin-stellar": 6.26.6
   "@ledgerhq/coin-xrp": 7.25.4
+  "@ledgerhq/coin-tezos": 7.12.0
   detox: 20.51.3
 
 overrides:
