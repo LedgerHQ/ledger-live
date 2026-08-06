@@ -6,7 +6,11 @@ import {
   type ConnectDeviceUIState,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
-import { ledgerToDmkDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceIntentTrackingProvider,
+  ledgerToDmkDeviceIdMap,
+  type KnownDevice,
+} from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import React from "react";
@@ -96,7 +100,11 @@ function renderViewModel({
 function TestWrapper({ children, store }: { children: React.ReactNode; store: ReduxStore }) {
   return (
     <Provider store={store}>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter>
+        <DeviceIntentTrackingProvider value={{ sourceFlow: "swap" }}>
+          {children}
+        </DeviceIntentTrackingProvider>
+      </MemoryRouter>
     </Provider>
   );
 }

@@ -3,7 +3,11 @@ import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
-import { makeDisplayedDevice, makeKnownDevice } from "../testUtils";
+import {
+  DeviceIntentTrackingTestWrapper,
+  makeDisplayedDevice,
+  makeKnownDevice,
+} from "../testUtils";
 import { DiscoveringState } from "./DiscoveringState";
 
 type DiscoveringUIState = Extract<
@@ -29,6 +33,7 @@ function renderState(state: Partial<DiscoveringUIState> = {}) {
         ...state,
       }}
     />,
+    { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 
