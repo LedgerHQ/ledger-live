@@ -268,11 +268,14 @@ export default class SwapLiveAppPage {
 
   // approvalRequired must reflect real allowance state — see isTokenApprovalExpected
   // in swapUtils.ts, rather than guessing it here.
-  @Step("Check exchange button has provider name: $0")
+  @Step("Check exchange CTA text: $0")
   async checkExchangeButtonHasProviderName(
     provider: string,
     approvalRequired = false,
   ): Promise<string> {
+    if (!SwapProvider.getNameByUiName(provider)) {
+      throw new Error(`Unknown provider UI name: "${provider}"`);
+    }
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);

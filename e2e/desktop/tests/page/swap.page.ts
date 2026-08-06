@@ -108,18 +108,22 @@ export class SwapPage extends WebViewAppPage {
 
   // approvalRequired must reflect real allowance state: false for native assets,
   // deposit-based providers (no contractAddress), or an already-approved token.
-  @step("Check exchange button has provider name: $0")
+  @step("Check exchange CTA text: $0")
   async checkExchangeButtonHasProviderName(
     providerUiName: string,
     approvalRequired = false,
   ): Promise<string> {
     const webview = await this.getWebView();
     const providerName = SwapProvider.getNameByUiName(providerUiName);
+    if (!providerName) {
+      throw new Error(`Unknown provider UI name: "${providerUiName}"`);
+    }
     const buttonLocator = webview
       .locator(this.providerContainerSelector(providerName))
       .getByTestId(this.swapBtn)
       .first();
     await expect(buttonLocator).toBeVisible();
+    await expect(buttonLocator).toBeEnabled();
     const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
 
     // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
