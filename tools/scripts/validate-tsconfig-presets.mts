@@ -32,14 +32,31 @@ function resolveNodeModule(
   packageName: string,
   subPath: string,
 ): string | null {
+  // Try node_modules walk first (works after pnpm install).
   let dir = startDir;
   while (true) {
     const candidate = join(dir, "node_modules", packageName, subPath);
     if (existsSync(candidate)) return candidate;
     const parent = dirname(dir);
-    if (parent === dir) return null;
+    if (parent === dir) break;
     dir = parent;
   }
+
+  // Fallback: resolve @support/* directly from workspace source (works in CI
+  // without pnpm install, since support/ is always in the checkout).
+  if (packageName.startsWith("@support/")) {
+    const pkgFolder = packageName.slice("@support/".length);
+    let root = startDir;
+    while (true) {
+      const candidate = join(root, "support", pkgFolder, subPath);
+      if (existsSync(candidate)) return candidate;
+      const parent = dirname(root);
+      if (parent === root) break;
+      root = parent;
+    }
+  }
+
+  return null;
 }
 
 /** Splits "@support/ts-config-web-x-native/tsconfig.web.json" into
