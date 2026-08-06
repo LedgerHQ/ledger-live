@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@shared/feature-flags": "workspace:^",
+    "@support/ts-config-web": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
