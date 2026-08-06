@@ -1,27 +1,22 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { Transaction as CasperTransaction } from "casper-js-sdk";
 import {
   createMockAccount,
   createMockTransaction,
   createMockSignedOperation,
 } from "../__tests__/fixtures";
+import { broadcast as logicBroadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
-import { broadcastTx } from "../network/api";
 import { broadcast } from "./broadcast";
-
-jest.mock("casper-js-sdk", () => ({
-  Transaction: {
-    fromJSON: jest.fn().mockReturnValue("mockedParsedTx"),
-  },
-}));
 
 jest.mock("../logic/combine", () => ({
   combine: jest.fn().mockReturnValue("mockedCombinedTx"),
 }));
 
-jest.mock("../network/api", () => ({
-  broadcastTx: jest.fn().mockResolvedValue("mockedTxHash"),
+jest.mock("../logic/broadcast", () => ({
+  broadcast: jest.fn().mockResolvedValue("mockedTxHash"),
 }));
+
+const mockLogicBroadcast = jest.mocked(logicBroadcast);
 
 describe("broadcast", () => {
   const mockAccount = createMockAccount();
@@ -48,10 +43,8 @@ describe("broadcast", () => {
       mockAccount.freshAddress,
     );
 
-    expect(CasperTransaction.fromJSON).toHaveBeenCalledTimes(1);
-    expect(CasperTransaction.fromJSON).toHaveBeenCalledWith("mockedCombinedTx");
-    expect(broadcastTx).toHaveBeenCalledTimes(1);
-    expect(broadcastTx).toHaveBeenCalledWith("mockedParsedTx");
+    expect(logicBroadcast).toHaveBeenCalledTimes(1);
+    expect(logicBroadcast).toHaveBeenCalledWith("mockedCombinedTx");
 
     expect(result.hash).toBe("mockedTxHash");
     expect(result).toEqual({
@@ -93,7 +86,8 @@ describe("broadcast", () => {
   });
 
   test("should throw if broadcast fails to return a hash", async () => {
-    (broadcastTx as jest.Mock).mockResolvedValueOnce(null);
+    // @ts-expect-error - null on purpose to test the error case
+    mockLogicBroadcast.mockResolvedValueOnce(null);
 
     await expect(
       broadcast({
