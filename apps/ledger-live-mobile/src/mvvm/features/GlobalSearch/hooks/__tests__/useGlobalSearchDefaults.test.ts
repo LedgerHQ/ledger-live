@@ -2,13 +2,11 @@ import { renderHook } from "@tests/test-renderer";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
 import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
-import { selectCurrencyForMetaId } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useGlobalSearchDefaults } from "../useGlobalSearchDefaults";
 
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useStocksData");
 jest.mock("@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers");
-jest.mock("@ledgerhq/live-common/dada-client/utils/currencySelection");
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));
@@ -16,7 +14,6 @@ jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
 const mockedAssets = jest.mocked(useAssetsData);
 const mockedStocks = jest.mocked(useStocksData);
 const mockedStablecoinTickers = jest.mocked(useStablecoinTickers);
-const mockedSelectCurrency = jest.mocked(selectCurrencyForMetaId);
 
 const makeMeta = (id: string, ticker: string) => ({
   id,
@@ -46,13 +43,18 @@ function buildDadaData(ids: string[]) {
     currenciesOrder: { metaCurrencyIds: ids, key: "marketCap", order: "desc" },
     cryptoAssets: Object.fromEntries(ids.map(id => [id, makeMeta(id, id.toUpperCase())])),
     markets: Object.fromEntries(ids.map((id, i) => [id, makeMarket(id, i + 1)])),
+    cryptoOrTokenCurrencies: Object.fromEntries(
+      ids.map(id => [
+        `${id}-ledger`,
+        { id, ticker: id.toUpperCase(), type: "CryptoCurrency" as const },
+      ]),
+    ),
   };
 }
 
 describe("useGlobalSearchDefaults", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedSelectCurrency.mockImplementation((metaId: string) => ({ id: metaId }) as never);
     mockedStablecoinTickers.mockReturnValue({
       tickers: new Set(["USDT", "USDC"]),
       isLoading: false,
