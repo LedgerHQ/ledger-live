@@ -1,10 +1,10 @@
-import { Button, Divider } from "@ledgerhq/lumen-ui-react";
+import { Button, Divider, Tag } from "@ledgerhq/lumen-ui-react";
 import type { PayCardToolProps } from "../types";
 import { Section } from "../components/Section/Section";
 import { ToggleRow } from "../components/ToggleRow/ToggleRow";
 
 export function PayCard(props: Readonly<PayCardToolProps>) {
-  const { flags, onboarding } = props;
+  const { flags, onboarding, hasSeenFeatureTour, resetPayCardFeatureTourSeen } = props;
 
   return (
     <div className="flex flex-col overflow-y-auto">
@@ -50,6 +50,23 @@ export function PayCard(props: Readonly<PayCardToolProps>) {
         <div className="flex flex-wrap gap-8">
           <Button appearance="gray" size="sm" onClick={() => onboarding.setStepDone("all", false)}>
             Reset onboarding widget
+          </Button>
+        </div>
+      </Section>
+
+      <Divider />
+
+      <Section title="Feature tour">
+        <div>
+          <Tag
+            size="sm"
+            appearance={hasSeenFeatureTour ? "success" : "gray"}
+            label={hasSeenFeatureTour ? "Seen" : "Not seen"}
+          />
+        </div>
+        <div className="flex flex-wrap gap-8">
+          <Button appearance="gray" size="sm" onClick={resetPayCardFeatureTourSeen}>
+            Reset feature tour
           </Button>
         </div>
       </Section>

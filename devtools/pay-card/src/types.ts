@@ -41,4 +41,8 @@ export interface PayCardOnboardingProps {
 export interface PayCardToolProps {
   readonly flags: PayCardFlagsProps;
   readonly onboarding: PayCardOnboardingProps;
+  /** Whether the user has already seen the Pay feature tour. */
+  readonly hasSeenFeatureTour: boolean;
+  /** Resets the feature tour so it plays again on the next Pay visit. */
+  readonly resetPayCardFeatureTourSeen: () => void;
 }

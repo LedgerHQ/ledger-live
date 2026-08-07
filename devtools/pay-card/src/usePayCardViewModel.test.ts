@@ -27,6 +27,8 @@ function buildProps(overrides: Partial<PayCardToolProps> = {}): PayCardToolProps
       setStepDone: jest.fn(),
       ...overrides.onboarding,
     },
+    hasSeenFeatureTour: overrides.hasSeenFeatureTour ?? false,
+    resetPayCardFeatureTourSeen: overrides.resetPayCardFeatureTourSeen ?? jest.fn(),
   };
 }
 

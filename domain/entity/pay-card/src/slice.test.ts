@@ -4,6 +4,7 @@ import {
   openPayCard,
   closePayCard,
   markPayCardFeatureTourSeen,
+  resetPayCardFeatureTourSeen,
   restorePayCardPersistedState,
 } from "./slice";
 import {
@@ -40,6 +41,12 @@ describe("payCard slice", () => {
   it("marks the feature tour as seen", () => {
     const state = reducer(undefined, markPayCardFeatureTourSeen());
     expect(state.hasSeenFeatureTour).toBe(true);
+  });
+
+  it("resets the feature tour to unseen", () => {
+    const seen = reducer(undefined, markPayCardFeatureTourSeen());
+    const state = reducer(seen, resetPayCardFeatureTourSeen());
+    expect(state.hasSeenFeatureTour).toBe(false);
   });
 });
 

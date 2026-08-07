@@ -22,6 +22,9 @@ export const payCardSlice = createSlice({
     markPayCardFeatureTourSeen: state => {
       state.hasSeenFeatureTour = true;
     },
+    resetPayCardFeatureTourSeen: state => {
+      state.hasSeenFeatureTour = false;
+    },
     restorePayCardPersistedState: (
       state,
       action: PayloadAction<Partial<PayCardPersistedState>>,
@@ -38,5 +41,6 @@ export const {
   openPayCard,
   closePayCard,
   markPayCardFeatureTourSeen,
+  resetPayCardFeatureTourSeen,
   restorePayCardPersistedState,
 } = payCardSlice.actions;

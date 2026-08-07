@@ -22,6 +22,8 @@ function buildProps(): PayCardToolProps {
       ],
       setStepDone: jest.fn(),
     },
+    hasSeenFeatureTour: false,
+    resetPayCardFeatureTourSeen: jest.fn(),
   };
 }
 
@@ -30,6 +32,16 @@ describe("PayCard (native)", () => {
     render(<PayCard {...buildProps()} />);
     expect(screen.getByText("Feature flags")).toBeTruthy();
     expect(screen.getByText("Onboarding")).toBeTruthy();
+    expect(screen.getByText("Feature tour")).toBeTruthy();
+  });
+
+  it("resets the feature tour", async () => {
+    const user = userEvent.setup();
+    const props = buildProps();
+    render(<PayCard {...props} />);
+
+    await user.press(screen.getByText("Reset feature tour"));
+    expect(props.resetPayCardFeatureTourSeen).toHaveBeenCalledTimes(1);
   });
 
   it("wires onboarding actions", async () => {
