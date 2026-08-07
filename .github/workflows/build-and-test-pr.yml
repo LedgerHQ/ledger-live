@@ -67,7 +67,7 @@ jobs:
       contents: read
     needs: [determine-affected]
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-desktop:
@@ -77,7 +77,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   codecheck-desktop:
@@ -87,7 +87,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-mobile:
@@ -97,7 +97,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   build-test-mobile:
@@ -107,7 +107,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
@@ -121,7 +121,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-features:
@@ -131,7 +131,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-shared:
@@ -141,7 +141,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-domain:
@@ -151,7 +151,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-devtools:
@@ -161,7 +161,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   enforce-boundaries:
@@ -171,7 +171,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-design-system:
@@ -181,7 +181,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   build-web-tools:
@@ -192,7 +192,7 @@ jobs:
       pull-requests: write
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
     with:
       build-web-tools: ${{ contains(needs.determine-affected.outputs.paths, 'apps/web-tools') }}
@@ -206,7 +206,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   build-wallet-cli:
@@ -216,13 +216,13 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-additional:
     name: "Test Additional"
     if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-mobile-e2e-lint:
@@ -232,7 +232,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-desktop-e2e-lint:
@@ -242,7 +242,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   notify-e2e-required:
@@ -252,7 +252,7 @@ jobs:
       pull-requests: write
     needs: determine-affected
     if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
     with:
       affected_paths: ${{ needs.determine-affected.outputs.paths }}
