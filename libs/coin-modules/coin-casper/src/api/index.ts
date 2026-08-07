@@ -21,6 +21,7 @@ import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { lastBlock } from "../logic/lastBlock";
 import { getBalance as getAccountBalance } from "../logic/getBalance";
+import { listOperations } from "../logic/listOperations";
 import type { CasperCoinConfig, CasperMemo } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
@@ -43,9 +44,7 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
     getBalance(address: string, options?: BalanceOptions): Promise<Balance[]> {
       return rejectBalanceOptions(() => getAccountBalance(address), options);
     },
-    listOperations(_address: string, _options?: unknown) {
-      throw new Error("listOperations is not supported");
-    },
+    listOperations,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },

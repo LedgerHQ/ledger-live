@@ -13,6 +13,9 @@ export const CASPER_DEFAULT_TTL = 1800000;
 
 export const CASPER_MAX_TRANSFER_ID = "18446744073709551615";
 
+/** Largest page the indexer accepts; above it the request is a 400. */
+export const CASPER_INDEXER_MAX_PAGE_SIZE = 250;
+
 export const MayBlockAccountError = new MayBlockAccount("", {
   minAmount: `${CASPER_MINIMUM_VALID_AMOUNT_CSPR + CASPER_FEES_CSPR} CSPR`,
 });
