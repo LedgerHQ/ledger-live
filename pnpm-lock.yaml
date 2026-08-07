@@ -520,7 +520,6 @@ overrides:
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': workspace:*
-  '@ledgerhq/errors': workspace:*
   '@ledgerhq/hw-transport': workspace:*
   '@ledgerhq/context-module': 2.3.1
   tslib: 2.6.2
@@ -535,7 +534,7 @@ overrides:
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
   '@ton/ton>zod': 4.3.6
 
-packageExtensionsChecksum: sha256-TOUMIYD04Sso33eHAaHi3luSO5Tbf6bgBpAG7b/7AcY=
+packageExtensionsChecksum: sha256-ncotzmACiC2rOyyMil4Rrs2djdIDzC2+p16TbkRXDRA=
 
 pnpmfileChecksum: sha256-xLqSS12ZnNWPulG7lBzO/RFXZkVYpafIseIHU3FfiO4=
 
@@ -10898,36 +10897,6 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21)
 
-  libs/ledgerjs/packages/errors:
-    devDependencies:
-      '@swc/core':
-        specifier: 'catalog:'
-        version: 1.15.11
-      '@swc/jest':
-        specifier: 'catalog:'
-        version: 0.2.39(@swc/core@1.15.11)
-      '@types/jest':
-        specifier: 'catalog:'
-        version: 30.0.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.12.0
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
-      jest:
-        specifier: 'catalog:'
-        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21))
-      rimraf:
-        specifier: ^4.4.1
-        version: 4.4.1
-      source-map-support:
-        specifier: ^0.5.21
-        version: 0.5.21
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(@typescript/typescript6@6.0.2)(source-map-support@0.5.21)
-
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
       '@ledgerhq/hw-transport':
@@ -19596,6 +19565,12 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.7.0
       rxjs: 7.8.2
+
+  '@ledgerhq/errors@5.50.0':
+    resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
+
+  '@ledgerhq/errors@6.37.0':
+    resolution: {integrity: sha512-T5yiKI5UX7ugeocdTF3TUsCIN2BH41Bio4ZeN410YFjFOf3es08n/5JyMzzKwzRgP0blG3HfBf7s7vJKqCSAeg==}
 
   '@ledgerhq/hw-bolos@6.35.1':
     resolution: {integrity: sha512-+osQFmZAKv1JOMZPiYU3G8wgW/JqxA0HCe/Y/O+b72TyH0SOyiXybdyIc1//We6AUyrJ2CiG8cev3vPYfjsjwQ==}
@@ -47581,18 +47556,15 @@ snapshots:
   '@ledgerhq/coin-hypercore@0.4.5(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 5.0.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
 
   '@ledgerhq/coin-module-framework@5.0.0':
     dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       bignumber.js: 9.1.2
 
   '@ledgerhq/coin-module-framework@5.0.0(@ledgerhq/live-network@libs+live-network)':
     dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       bignumber.js: 9.1.2
 
@@ -47600,7 +47572,6 @@ snapshots:
     dependencies:
       '@exodus/patch-broken-hermes-typed-arrays': 1.0.0-alpha.1(patch_hash=7deb6c5bd39ee007fca03da7609b2e0dee99dbb9962c3c8715edfd026da0a732)
       '@ledgerhq/coin-module-framework': 5.0.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       '@stellar/stellar-sdk': 14.0.0
@@ -47631,7 +47602,6 @@ snapshots:
   '@ledgerhq/coin-xrp@7.25.4(@ledgerhq/live-network@libs+live-network)(@ledgerhq/logs@6.17.0)':
     dependencies:
       '@ledgerhq/coin-module-framework': 5.0.0(@ledgerhq/live-network@libs+live-network)
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
       '@ledgerhq/live-network': link:libs/live-network
       '@ledgerhq/logs': 6.17.0
       bignumber.js: 9.1.2
@@ -47888,13 +47858,17 @@ snapshots:
       rxjs: 7.8.2
       uuid: 11.0.3
 
+  '@ledgerhq/errors@5.50.0': {}
+
+  '@ledgerhq/errors@6.37.0': {}
+
   '@ledgerhq/hw-bolos@6.35.1':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
     dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/errors': 5.50.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/logs': 5.50.0
       u2f-api: 0.2.7
@@ -47924,7 +47898,7 @@ snapshots:
 
   '@ledgerhq/live-network@2.4.3':
     dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/errors': 6.37.0
       '@ledgerhq/live-env': 2.31.0
       '@ledgerhq/live-promise': 0.2.2
       '@ledgerhq/logs': 6.17.0
@@ -48255,7 +48229,7 @@ snapshots:
 
   '@ledgerhq/wallet-api-core@1.35.0(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/errors': 6.37.0
       '@stacks/transactions': 6.17.0
       '@ton/core': 0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
@@ -48444,7 +48418,7 @@ snapshots:
   '@mysten/ledgerjs-hw-app-sui@0.8.0':
     dependencies:
       '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/errors': 6.37.0
       '@ledgerhq/hw-bolos': 6.35.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/ledger-cal-service': 1.15.1
@@ -63939,7 +63913,7 @@ snapshots:
   iso-filecoin@7.4.7(@typescript/typescript6@6.0.2):
     dependencies:
       '@ipld/dag-cbor': 9.2.7
-      '@ledgerhq/errors': link:libs/ledgerjs/packages/errors
+      '@ledgerhq/errors': 6.37.0
       '@noble/curves': 1.9.7
       '@noble/hashes': 2.0.1
       '@scure/bip32': 1.7.0
