@@ -114,6 +114,7 @@
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-pay-card-auth": "workspace:^",
     "@features/flow-contacts": "workspace:^",
+    "@features/flow-contacts-add-contact": "workspace:^",
     "@features/flow-fear-and-greed": "workspace:^",
     "@features/flow-lazy-onboarding-banner": "workspace:^",
     "@features/platform-wallet-sync": "workspace:^",

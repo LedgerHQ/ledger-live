@@ -1,6 +1,5 @@
 export * from "./steps/List";
 export * from "./steps/List/web";
-export * from "@features/flow-contacts-add-contact";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/web";
 export * from "./steps/EditAddress";

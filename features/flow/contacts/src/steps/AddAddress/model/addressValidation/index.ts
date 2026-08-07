@@ -1,9 +1,3 @@
-export { createContactsAddressValidationDependencies } from "./dependencies";
-export { createContactsAddressValidationService } from "./service";
-export type {
-  ContactsAddressValidationDependencies,
-  ContactsAddressValidationGateway,
-  ContactsAddressValidationInput,
-  ContactsAddressValidationPort,
-  ContactsAddressValidationResult,
-} from "./types";
+export * from "./dependencies";
+export * from "./service";
+export * from "./types";

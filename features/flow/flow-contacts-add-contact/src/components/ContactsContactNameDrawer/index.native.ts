@@ -1,5 +1,1 @@
-export {
-  ContactsContactNameDrawerContent,
-  type ContactsContactNameDrawerContentProps,
-  type ContactsContactNameDrawerLabels,
-} from "./ContactsContactNameDrawerContent.native";
+export * from "./ContactsContactNameDrawerContent.native";

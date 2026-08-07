@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import {
   ContactsAddContactDrawer,
   type ContactsAddContactDrawerProps,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";

@@ -1,1 +1,1 @@
-export type { ContactsFeatureIntroductionContentProps } from "./types";
+export * from "./types";

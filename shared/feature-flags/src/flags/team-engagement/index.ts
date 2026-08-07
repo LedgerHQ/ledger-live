@@ -14,7 +14,7 @@ export * from "./lldOnboardingEnableSync";
 export * from "./largeScreenUpsell";
 export * from "./lazyOnboardingBanner";
 export * from "./lwdProductTour";
-export { analyticsOptIn } from "./analyticsOptIn";
+export * from "./analyticsOptIn";
 export * from "./llmNanoOnboardingFundWallet";
 export * from "./llmOnboardingEnableSync";
 export * from "./lwmNotificationsOptIn";
