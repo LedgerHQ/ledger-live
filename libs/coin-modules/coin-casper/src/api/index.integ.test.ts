@@ -1,15 +1,36 @@
 import { Transaction, CasperNetwork, KeyAlgorithm, PrivateKey } from "casper-js-sdk";
-import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  CoinModuleApi,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from "./index";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import {
   BUSY_MAINNET_PUBLIC_KEY,
   FUNDED_MAINNET_PUBLIC_KEY,
   UNFUNDED_MAINNET_PUBLIC_KEY,
+  TEST_ADDRESSES,
 } from "../__tests__/fixtures/addresses.fixture";
-import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
-import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
+import {
+  CASPER_DEFAULT_TTL,
+  CASPER_FEES_MOTES,
+  CASPER_NETWORK,
+  CASPER_DUMMY_ADDRESS,
+} from "../constants";
 import { getCasperNodeRpcClient } from "../network/api";
 import type { CasperMemo } from "../types";
+import { LANE_KEYS, LANE_LIMIT_TUPLE_INDEX } from "../constants";
+import { fetchChainspecToml } from "../network/api";
+
+const nativeTransferIntent: TransactionIntent<MemoNotSupported> = {
+  intentType: "transaction",
+  type: "send",
+  sender: TEST_ADDRESSES.SECP256K1,
+  recipient: CASPER_DUMMY_ADDRESS,
+  amount: 3_000_000_000n,
+  asset: { type: "native" },
+};
 
 describe("Casper Api (mainnet)", () => {
   let api: CoinModuleApi<CasperMemo>;
@@ -237,6 +258,28 @@ describe("Casper Api (mainnet)", () => {
       const balances = await api.getBalance(UNFUNDED_MAINNET_PUBLIC_KEY);
 
       expect(balances).toEqual([{ value: 0n, asset: { type: "native" } }]);
+    });
+  });
+
+  describe("estimateFees", () => {
+    it("estimates a native transfer at the live native mint lane limit", async () => {
+      // Parsed independently: a hardcoded limit goes stale on the next protocol upgrade, and
+      // reusing the implementation's regex would hide a bug in it.
+      const toml = await fetchChainspecToml();
+      const laneLine = toml
+        .split("\n")
+        .map(line => line.trim())
+        .find(line => line.startsWith(LANE_KEYS.nativeMint));
+      if (!laneLine) throw new Error(`live chainspec has no ${LANE_KEYS.nativeMint} entry`);
+
+      const tuple = laneLine.slice(laneLine.indexOf("[") + 1, laneLine.indexOf("]")).split(",");
+      const expected = BigInt(tuple[LANE_LIMIT_TUPLE_INDEX].replace(/_/g, "").trim());
+      expect(expected).toBeGreaterThan(0n);
+
+      await expect(api.estimateFees(nativeTransferIntent)).resolves.toEqual({
+        value: expected,
+        parameters: { source: "chainspec", lane: "native_mint" },
+      });
     });
   });
 });
