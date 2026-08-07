@@ -655,6 +655,9 @@ importers:
       '@react-native/babel-plugin-codegen':
         specifier: 'catalog:'
         version: 0.81.6
+      '@support/ts-config-base-legacy':
+        specifier: workspace:*
+        version: link:support/ts-config-base-legacy
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -14882,7 +14885,13 @@ importers:
         specifier: 19.1.4
         version: 19.1.4
 
-  support/ts-config-base: {}
+  support/ts-config-base:
+    devDependencies:
+      '@support/ts-config-base-legacy':
+        specifier: workspace:*
+        version: link:../ts-config-base-legacy
+
+  support/ts-config-base-legacy: {}
 
   support/ts-config-web:
     devDependencies:

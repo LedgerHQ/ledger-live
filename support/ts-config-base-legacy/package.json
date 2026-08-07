@@ -1,0 +1,11 @@
+{
+  "name": "@support/ts-config-base-legacy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo base TypeScript config (NodeNext, strict) — extended by root tsconfig.base.json and @support/ts-config-base",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./package.json": "./package.json"
+  }
+}
