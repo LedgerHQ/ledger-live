@@ -59,15 +59,8 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
       };
     }
     case "solana":
-      return {
-        family: currency.family,
-        amount: new BigNumber(0),
-        recipient: "",
-        fees: null,
-        mode: "send",
-      };
+    // hypercore has no send flow; this is a neutral tx used only for (de)serialization.
     case "hypercore":
-      // No send flow; return a neutral tx only for (de)serialization.
       return {
         family: currency.family,
         amount: new BigNumber(0),
@@ -85,12 +78,14 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         useAllAmount: false,
         mode: "send",
       };
+    case "near":
     case "vechain":
     case "cardano":
-      // Neither has an account sequence: Cardano is UTXO, VeChain's nonce is a random uniqueness
-      // field. getNextSequence throws in both modules, and utils.ts maps nonce → intent.sequence,
-      // which lets signOperation skip that call. The value is inert for crafting — both modules
-      // build their own — so the default tx is signable without callers having to set it.
+      // None has an account sequence: Cardano is UTXO, VeChain's nonce is a random uniqueness
+      // field, and a NEAR nonce belongs to an access key rather than the account. getNextSequence
+      // throws in all three modules, and utils.ts maps nonce → intent.sequence, which lets
+      // signOperation skip that call. The value is inert for crafting — each module builds its
+      // own — so the default tx is signable without callers having to set it.
       return {
         family: currency.family,
         amount: new BigNumber(0),

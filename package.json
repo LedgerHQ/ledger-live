@@ -141,6 +141,7 @@
     "coin:tester:stellar": "pnpm --filter coin-tester-stellar",
     "coin:tester:tezos": "pnpm --filter coin-tester-tezos",
     "coin:tester:multiversx": "pnpm --filter coin-tester-multiversx",
+    "coin:tester:near": "pnpm --filter coin-tester-near",
     "coin:tester:tron": "pnpm --filter coin-tester-tron",
     "coin:tester:vechain": "pnpm --filter coin-tester-vechain",
     "coin:tester:xrp": "pnpm --filter coin-tester-xrp",

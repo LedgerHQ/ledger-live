@@ -32,16 +32,18 @@ export const computeFees = ({
   let sendFee = costs.transferCostSend.plus(costs.receiptCreationSend);
   let executionFee = costs.transferCostExecution.plus(costs.receiptCreationExecution);
 
+  // nearcore floors the execution gas price only for the CreateAccount+AddKey receipt a new
+  // implicit account triggers, not a plain transfer (confirmed via near-sandbox: flooring it
+  // there overestimated the fee ~5.5x).
+  let executionGasPrice = gasPrice;
+
   if (isImplicitAccount(recipient)) {
     sendFee = sendFee.plus(costs.createAccountCostSend).plus(costs.addKeyCostSend);
     executionFee = executionFee
       .plus(costs.createAccountCostExecution)
       .plus(costs.addKeyCostExecution);
+    executionGasPrice = BigNumber.max(gasPrice, costs.minGasPurchasePrice);
   }
-
-  // nearcore floors the gas price on the execution half only (runtime/runtime/src/config.rs) —
-  // the send half is always priced at the raw gas price.
-  const executionGasPrice = BigNumber.max(gasPrice, costs.minGasPurchasePrice);
 
   return sendFee.multipliedBy(gasPrice).plus(executionFee.multipliedBy(executionGasPrice));
 };
