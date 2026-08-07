@@ -4223,6 +4223,12 @@ importers:
 
   domain/entity/contact:
     dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
+      '@domain/entity-currency-token':
+        specifier: workspace:*
+        version: link:../currency-token
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2
@@ -4285,9 +4291,6 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:*
         version: link:../currency-unit
-      '@shared/schema-primitives':
-        specifier: workspace:*
-        version: link:../../../shared/schema-primitives
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -4344,12 +4347,12 @@ importers:
 
   domain/entity/currency-token:
     dependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../currency-crypto
       '@domain/entity-currency-unit':
         specifier: workspace:*
         version: link:../currency-unit
-      '@shared/schema-primitives':
-        specifier: workspace:*
-        version: link:../../../shared/schema-primitives
       zod:
         specifier: 'catalog:'
         version: 4.3.6

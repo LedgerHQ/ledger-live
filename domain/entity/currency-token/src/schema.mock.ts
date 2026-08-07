@@ -1,5 +1,5 @@
-import { TokenCurrencyIdSchema, CryptoCurrencyIdSchema } from "@shared/schema-primitives";
-import type { TokenCurrency } from "./schema";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "./schema";
 
 /**
  * Returns a valid {@link TokenCurrency} fixture (USDT on Ethereum, ERC-20).

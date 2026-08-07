@@ -1,5 +1,16 @@
-import { TokenCurrencySchema } from "./schema";
+import { TokenCurrencyIdSchema, TokenCurrencySchema } from "./schema";
 import { mockTokenCurrency } from "./schema.mock";
+
+describe("TokenCurrencyIdSchema", () => {
+  it("accepts a non-empty string", () => {
+    expect(TokenCurrencyIdSchema.parse("ethereum/erc20/usd-tether")).toBe(
+      "ethereum/erc20/usd-tether",
+    );
+  });
+  it("rejects an empty string", () => {
+    expect(() => TokenCurrencyIdSchema.parse("")).toThrow();
+  });
+});
 
 describe("TokenCurrencySchema", () => {
   it("parses a valid token currency from mock factory", () => {
