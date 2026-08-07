@@ -3,7 +3,8 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
 import { CloudSyncSDK, UpdateEvent } from "@shared/cloud-sync";
-import { liveSchema, DistantState as LiveData, liveSlug } from "./walletSync";
+import { liveSchema, liveSlug } from "./walletSync";
+import type { DistantDocument } from "@shared/cloud-sync-module";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { v4 as uuid } from "uuid";
@@ -25,11 +26,11 @@ export function AppWalletSync({
   trustchain: Trustchain;
   setTrustchain: (t: Trustchain | null) => void;
   memberCredentials: MemberCredentials;
-  data: LiveData | null;
-  setData: (d: LiveData | null) => void;
+  data: DistantDocument | null;
+  setData: (d: DistantDocument | null) => void;
   version: number;
   setVersion: (n: number) => void;
-  forceReadOnlyData?: LiveData | null;
+  forceReadOnlyData?: DistantDocument | null;
   readOnly?: boolean;
   takeControl?: () => void;
 }) {
@@ -74,7 +75,7 @@ export function AppWalletSync({
   const getCurrentVersion = useCallback(() => versionRef.current, []);
 
   const saveNewUpdate = useCallback(
-    async (event: UpdateEvent<LiveData>) => {
+    async (event: UpdateEvent<DistantDocument>) => {
       switch (event.type) {
         case "new-data":
           setVersion(event.version);
@@ -98,7 +99,6 @@ export function AppWalletSync({
     return new CloudSyncSDK({
       apiBaseUrl: cloudSyncApiBaseUrl,
       slug: liveSlug,
-      schema: liveSchema,
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,

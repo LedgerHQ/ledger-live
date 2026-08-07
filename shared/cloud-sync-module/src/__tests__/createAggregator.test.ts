@@ -1,9 +1,33 @@
 import { z } from "zod";
-import { createAggregator, mapValues } from "../cloudSyncModule";
+import { createAggregator, isDistantDocument, mapValues } from "../cloudSyncModule";
 
 describe(mapValues.name, () => {
   it("maps object values while preserving keys", () => {
     expect(mapValues({ a: 1, b: 2 }, value => value * 2)).toEqual({ a: 2, b: 4 });
+  });
+});
+
+describe(isDistantDocument.name, () => {
+  it.each([
+    ["an empty object", {}],
+    ["a bag of slices", { accounts: [], unknownKey: 1 }],
+    ["an object with a garbage slice", { accounts: "not a list" }],
+    ["a null-prototype object", Object.create(null)],
+  ])("accepts %s", (_label, value) => {
+    expect(isDistantDocument(value)).toBe(true);
+  });
+
+  // an array or a scalar carries no slice to read, so it can only be treated as an absent document
+  it.each([
+    ["null", null],
+    ["undefined", undefined],
+    ["a number", 42],
+    ["a string", "string"],
+    ["a boolean", true],
+    ["an array", []],
+    ["a function", () => {}],
+  ])("rejects %s", (_label, value) => {
+    expect(isDistantDocument(value)).toBe(false);
   });
 });
 
