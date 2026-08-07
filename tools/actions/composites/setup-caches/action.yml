@@ -9,9 +9,9 @@ inputs:
     description: "use the GITHUB_TOKEN to download binaries and avoid GitHub limits"
     required: false
   skip-pnpm-cache:
-    description: "true to skip pnpm caching, true by default"
+    description: "true to skip pnpm caching, false by default"
     required: false
-    default: "true"
+    default: "false"
   skip-pod-cache:
     description: "false to get cache, true by default"
     required: false
