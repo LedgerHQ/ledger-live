@@ -42,7 +42,6 @@ describe("sessionRegistry — attach", () => {
       expect.objectContaining({
         status: "filed",
         role: "host",
-        evicted: false,
         paired: false,
         descriptor: expect.objectContaining({ uid: "1" }),
       }),
@@ -59,51 +58,60 @@ describe("sessionRegistry — attach", () => {
     expect(result.paired).toBe(true);
   });
 
-  it("evicts the previous tool when a new one targets the same uid", () => {
+  it("reports paired when a second tool attaches to a session that already has a host", () => {
     const registry = createSessionRegistry();
     const { uid } = attachHost(registry);
-    const first = makeSocket();
-    registry.attach({ role: "tool", id: "web-tools", target: uid }, first);
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, makeSocket());
     const result = registry.attach(
       { role: "tool", id: "web-tools-v2", target: uid },
       makeSocket(),
     ) as Extract<AttachResult, { status: "filed" }>;
-    expect(first.closed).toBe(true);
-    expect(result.evicted).toBe(true);
-  });
-
-  it("unpairs the evicted tool from its peer", () => {
-    const registry = createSessionRegistry();
-    const { socket: host, uid } = attachHost(registry);
-    const tool1 = makeSocket();
-    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
-    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, makeSocket());
-    expect(registry.peerOf(tool1)).toBeUndefined();
-    host.close();
+    expect(result.paired).toBe(true);
   });
 });
 
-describe("sessionRegistry — peerOf", () => {
+describe("sessionRegistry — peersOf", () => {
   it("returns undefined when only the host is attached", () => {
     const registry = createSessionRegistry();
     const { socket: host } = attachHost(registry);
-    expect(registry.peerOf(host)).toBeUndefined();
+    expect(registry.peersOf(host)).toBeUndefined();
   });
 
-  it("returns the tool from the host's perspective after pairing", () => {
+  it("returns a Set containing the tool from the host's perspective after pairing", () => {
     const registry = createSessionRegistry();
     const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
     registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
-    expect(registry.peerOf(host)).toBe(tool);
+    expect(registry.peersOf(host)).toEqual(new Set([tool]));
   });
 
-  it("returns the host from the tool's perspective after pairing", () => {
+  it("returns a Set containing the host from the tool's perspective after pairing", () => {
     const registry = createSessionRegistry();
     const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
     registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
-    expect(registry.peerOf(tool)).toBe(host);
+    expect(registry.peersOf(tool)).toEqual(new Set([host]));
+  });
+
+  it("host's peers include all connected tools", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    expect(registry.peersOf(host)).toEqual(new Set([tool1, tool2]));
+  });
+
+  it("each tool's peers include the host and its sibling tools but not itself", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    expect(registry.peersOf(tool1)).toEqual(new Set([host, tool2]));
+    expect(registry.peersOf(tool2)).toEqual(new Set([host, tool1]));
   });
 });
 
@@ -124,13 +132,13 @@ describe("sessionRegistry — detach", () => {
     );
   });
 
-  it("unpairs the peer when a socket detaches", () => {
+  it("unpairs all tools when the host detaches", () => {
     const registry = createSessionRegistry();
     const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
     registry.attach({ role: "tool", id: "web-tools", target: uid }, tool);
     registry.detach(host);
-    expect(registry.peerOf(tool)).toBeUndefined();
+    expect(registry.peersOf(tool)).toBeUndefined();
   });
 
   it("removes the uid from the index when a host detaches", () => {
@@ -141,7 +149,20 @@ describe("sessionRegistry — detach", () => {
     expect(result).toEqual({ status: "sessionless" });
   });
 
-  it("drops the session once both slots are detached, allowing re-registration", () => {
+  it("removes only the detached tool and keeps the rest paired", () => {
+    const registry = createSessionRegistry();
+    const { socket: host, uid } = attachHost(registry);
+    const tool1 = makeSocket();
+    const tool2 = makeSocket();
+    registry.attach({ role: "tool", id: "web-tools", target: uid }, tool1);
+    registry.attach({ role: "tool", id: "web-tools-v2", target: uid }, tool2);
+    registry.detach(tool1);
+    expect(registry.peersOf(tool2)).toEqual(new Set([host]));
+    expect(registry.peersOf(host)).toEqual(new Set([tool2]));
+    expect(registry.peersOf(tool1)).toBeUndefined();
+  });
+
+  it("drops the session once both host and all tools have detached", () => {
     const registry = createSessionRegistry();
     const { socket: host, uid } = attachHost(registry);
     const tool = makeSocket();
@@ -153,7 +174,6 @@ describe("sessionRegistry — detach", () => {
       expect.objectContaining({
         status: "filed",
         role: "host",
-        evicted: false,
         paired: false,
       }),
     );

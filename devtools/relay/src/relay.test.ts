@@ -139,32 +139,3 @@ describe("relay hub — close", () => {
     await expect(hub.close()).resolves.toBeUndefined();
   });
 });
-
-describe("relay hub — eviction", () => {
-  let hub: Hub;
-  let base: string;
-
-  beforeEach(async () => {
-    hub = createRelayHub({
-      port: 0,
-      host: "127.0.0.1",
-      logger: createMockLogger(),
-      getLanIp: nullLanIp,
-    });
-    await waitForListening(hub);
-    base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
-  });
-
-  afterEach(async () => {
-    await hub.close();
-  });
-
-  it("closes the previous tool when a new one reconnects targeting the same host", async () => {
-    await open(`${base}/?role=host&id=app`); // uid = "1"
-    const tool1 = await open(`${base}/?role=tool&id=web-tools&target=1`);
-    const closed1 = waitForClose(tool1);
-    await open(`${base}/?role=tool&id=web-tools&target=1`);
-    await closed1;
-    expect(tool1.readyState).toBe(WebSocket.CLOSED);
-  });
-});
