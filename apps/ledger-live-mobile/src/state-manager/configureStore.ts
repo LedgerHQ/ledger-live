@@ -4,6 +4,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { authApiExtra } from "@shared/auth";
 import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import NetInfo from "@react-native-community/netinfo";
 import { Platform } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -74,12 +75,7 @@ export const store = configureStore({
             ...authApiExtra({
               authFeatureId: "lwmAuth",
               startListening: listenerMiddleware.startListening,
-              providerParams: {
-                identityProvider: new LkrpIdentityProvider<State>({
-                  startListening: listenerMiddleware.startListening,
-                }),
-              },
-              createAuthProvider: (environment, { identityProvider }) =>
+              createAuthProvider: environment =>
                 new AuthSDK(
                   {
                     clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
@@ -87,7 +83,12 @@ export const store = configureStore({
                     keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
                     disablePkce: true,
                   },
-                  { provider: identityProvider, createPkcePair: createPkcePairWithExpoCrypto },
+                  {
+                    provider: new LkrpIdentityProvider(
+                      (): TrustchainStore => store.getState().trustchain,
+                    ),
+                    createPkcePair: createPkcePairWithExpoCrypto,
+                  },
                 ),
             }),
           },

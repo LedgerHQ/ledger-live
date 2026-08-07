@@ -79,11 +79,10 @@ const store = configureStore({
       thunk: {
         extraArgument: {
           ...authApiExtra({
-            startListening: listenerMiddleware.startListening,
             authFeatureId: "lwdAuth",
-            providerParams: { provider: identityProvider },
-            createAuthProvider: (environment, providerParams) =>
-              new AuthSDK(getAuthConfig(environment), providerParams),
+            startListening: listenerMiddleware.startListening,
+            createAuthProvider: environment =>
+              new AuthSDK(getAuthConfig(environment), { provider: identityProvider }),
           }),
         },
       },

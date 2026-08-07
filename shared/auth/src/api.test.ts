@@ -27,7 +27,6 @@ describe("authApiExtra", () => {
     const { authProvider } = authApiExtra({
       startListening: listenerMiddleware.startListening,
       authFeatureId: "lwdAuth",
-      providerParams: undefined,
       createAuthProvider,
     });
     const store = configureStore({
@@ -54,7 +53,6 @@ describe("authApiExtra", () => {
     const { authProvider } = authApiExtra({
       startListening: listenerMiddleware.startListening,
       authFeatureId: "lwdAuth",
-      providerParams: undefined,
       createAuthProvider,
     });
     const store = configureStore({
@@ -74,7 +72,7 @@ describe("authApiExtra", () => {
     store.dispatch(setAuthEnvironment("PROD"));
     await authProvider.withToken({ queryFn });
     expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(createAuthProvider).toHaveBeenCalledWith("PROD", undefined);
+    expect(createAuthProvider).toHaveBeenCalledWith("PROD");
     expect(queryFn).toHaveBeenCalledTimes(1);
     expect(queryFn).toHaveBeenNthCalledWith(1, EXPECTED_TOKEN);
 
@@ -97,7 +95,6 @@ describe("authApiExtra", () => {
     const { authProvider } = authApiExtra({
       startListening: listenerMiddleware.startListening,
       authFeatureId: "lwdAuth",
-      providerParams: undefined,
       createAuthProvider,
     });
     const store = configureStore({
@@ -114,7 +111,7 @@ describe("authApiExtra", () => {
 
     await authProvider.withToken({ queryFn });
     expect(createAuthProvider).toHaveBeenCalledTimes(1);
-    expect(createAuthProvider).toHaveBeenCalledWith("STAGING", undefined);
+    expect(createAuthProvider).toHaveBeenCalledWith("STAGING");
     expect(queryFn).toHaveBeenCalledTimes(1);
     expect(queryFn).toHaveBeenNthCalledWith(1, EXPECTED_TOKEN);
   });

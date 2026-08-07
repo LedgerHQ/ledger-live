@@ -9,6 +9,7 @@ import { AuthSDK } from "@ledgerhq/ledger-auth";
 import { getEnv } from "@shared/env";
 import { authApiExtra } from "@shared/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
+import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   calApiExtra,
   cardApiExtra,
@@ -84,12 +85,7 @@ const customCreateStore = ({
               ...authApiExtra({
                 authFeatureId: "lwdAuth",
                 startListening: listenerMiddleware.startListening,
-                providerParams: {
-                  identityProvider: new LkrpIdentityProvider<State>({
-                    startListening: listenerMiddleware.startListening,
-                  }),
-                },
-                createAuthProvider: (environment, { identityProvider }) =>
+                createAuthProvider: environment =>
                   new AuthSDK(
                     {
                       clientId: getEnv("LEDGER_AUTH_CLIENT_ID"),
@@ -97,7 +93,11 @@ const customCreateStore = ({
                       keycloakRealm: getEnv("LEDGER_AUTH_KEYCLOAK_REALM"),
                       disablePkce: true,
                     },
-                    { provider: identityProvider },
+                    {
+                      provider: new LkrpIdentityProvider(
+                        (): TrustchainStore => store.getState().trustchain,
+                      ),
+                    },
                   ),
               }),
             },

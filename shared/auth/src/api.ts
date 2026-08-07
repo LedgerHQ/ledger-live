@@ -15,12 +15,11 @@ export interface AuthApiExtra {
 
 export type AuthFeatureId = Extract<FeatureId, "lwdAuth" | "lwmAuth">;
 
-export function authApiExtra<State extends StateWithAuthEnvironment, ProviderParams>({
+export function authApiExtra<State extends StateWithAuthEnvironment>({
   startListening,
   authFeatureId,
-  providerParams,
   createAuthProvider,
-}: AuthApiExtraOptions<State, ProviderParams>): AuthApiExtra {
+}: AuthApiExtraOptions<State>): AuthApiExtra {
   let authEnabled = false;
   let provider: AuthProvider | undefined;
 
@@ -33,7 +32,7 @@ export function authApiExtra<State extends StateWithAuthEnvironment, ProviderPar
       if (!authEnabled || provider) return;
       const environment = authEnvironmentSelector(state);
       if (environment) {
-        provider = createAuthProvider(environment, providerParams);
+        provider = createAuthProvider(environment);
       }
     },
   });
@@ -49,11 +48,10 @@ export function authApiExtra<State extends StateWithAuthEnvironment, ProviderPar
   };
 }
 
-export interface AuthApiExtraOptions<State extends StateWithAuthEnvironment, ProviderParams> {
+export interface AuthApiExtraOptions<State extends StateWithAuthEnvironment> {
   startListening: TypedStartListening<State>;
   authFeatureId: AuthFeatureId;
-  providerParams: ProviderParams;
-  createAuthProvider(environment: AuthEnvironment, providerParams: ProviderParams): AuthProvider;
+  createAuthProvider(environment: AuthEnvironment): AuthProvider;
 }
 
 interface StateWithAuthEnvironment extends WithFeatureFlags {
