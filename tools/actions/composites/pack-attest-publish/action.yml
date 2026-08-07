@@ -15,18 +15,28 @@ runs:
     - name: Pack unpublished public packages
       id: pack
       shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.registry-token }}
       run: |
         set -euo pipefail
+        echo "count=0" >> "$GITHUB_OUTPUT"
         DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
         mkdir -p "$DIST_DIR"
         pnpm -r list --json --depth -1 \
           | jq -r '.[] | select(.private != true) | [.name, .version] | @tsv' \
           | while IFS=$'\t' read -r name version; do
-              if npm view "${name}@${version}" version &>/dev/null 2>&1; then
+              if npm_out=$(npm view "${name}@${version}" version 2>&1); then
                 echo "Skipping $name@$version (already published)"
               else
+                if echo "$npm_out" | grep -qiE 'E401|E403|ENEEDAUTH'; then
+                  echo "::error::Registry auth error checking ${name}@${version}"
+                  echo "$npm_out" >&2
+                  exit 1
+                fi
                 echo "Packing $name@$version..."
-                pnpm --filter "$name" pack --pack-destination "$DIST_DIR"
+                # Pipe to dev null - the output is too verbose      
+                pnpm --filter "$name" pack --pack-destination "$DIST_DIR" > /dev/null \
+                  || { echo "::error::Failed to pack ${name}@${version}"; exit 1; }
               fi
             done
         shopt -s nullglob
@@ -48,6 +58,7 @@ runs:
       run: |
         set -euo pipefail
         DIST_DIR="$RUNNER_TEMP/pack-attest-publish"
+        shopt -s nullglob
         for tarball in "$DIST_DIR"/*.tgz; do
           pkg_name=$(tar -xOf "$tarball" package/package.json | jq -r '.name')
           pkg_version=$(tar -xOf "$tarball" package/package.json | jq -r '.version')
