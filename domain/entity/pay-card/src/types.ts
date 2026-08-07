@@ -4,7 +4,6 @@ import { PayCardParamsSchema } from "./schema";
 export type PayCardParams = z.infer<typeof PayCardParamsSchema>;
 
 export type PayCardState = Readonly<{
-  isOpen: boolean;
   params: PayCardParams | null;
   hasSeenFeatureTour: boolean;
 }>;

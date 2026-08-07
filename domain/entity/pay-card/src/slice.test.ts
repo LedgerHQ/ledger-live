@@ -9,7 +9,6 @@ import {
 } from "./slice";
 import {
   selectPayCard,
-  selectPayCardIsOpen,
   selectPayCardParams,
   selectPayCardHasSeenFeatureTour,
   payCardPersistedSelector,
@@ -20,13 +19,13 @@ const params = { platform: "cl-card", name: "CL Card" };
 const root = (state = payCardInitialState) => ({ payCard: state });
 
 describe("payCard slice", () => {
-  it("initializes closed with no params and tour unseen", () => {
+  it("initializes with no params and tour unseen", () => {
     expect(reducer(undefined, { type: "unknown" })).toEqual(payCardInitialState);
   });
 
-  it("opens with the given params", () => {
+  it("stores the given params", () => {
     const state = reducer(undefined, openPayCard(params));
-    expect(state).toEqual({ ...payCardInitialState, isOpen: true, params });
+    expect(state).toEqual({ ...payCardInitialState, params });
   });
 
   it("closes and clears params without touching hasSeenFeatureTour", () => {
@@ -77,7 +76,6 @@ describe("restorePayCardPersistedState", () => {
   it("leaves ephemeral fields untouched", () => {
     const opened = reducer(undefined, openPayCard(params));
     const state = reducer(opened, restorePayCardPersistedState({ hasSeenFeatureTour: true }));
-    expect(state.isOpen).toBe(true);
     expect(state.params).toEqual(params);
     expect(state.hasSeenFeatureTour).toBe(true);
   });
@@ -89,12 +87,7 @@ describe("payCard selectors", () => {
     expect(selectPayCard(root(state))).toEqual(state);
   });
 
-  it("selectPayCardIsOpen reflects open/close", () => {
-    expect(selectPayCardIsOpen(root())).toBe(false);
-    expect(selectPayCardIsOpen(root(reducer(undefined, openPayCard(params))))).toBe(true);
-  });
-
-  it("selectPayCardParams returns params when open, null when closed", () => {
+  it("selectPayCardParams returns stored params and null after clearing", () => {
     expect(selectPayCardParams(root())).toBeNull();
     expect(selectPayCardParams(root(reducer(undefined, openPayCard(params))))).toEqual(params);
   });
