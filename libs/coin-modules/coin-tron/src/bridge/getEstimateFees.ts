@@ -1,10 +1,12 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { log } from "@ledgerhq/logs";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getEnergyProvider } from "../logic/energyProviders";
+import { getEnergyRentQuote } from "../logic/energyRent";
 import { computeBandwidthFee, computeEnergyFee, estimateEnergy } from "../logic/estimateFees";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import type { AccountTronAPI, ChainParameters } from "../network/types";
@@ -187,6 +189,49 @@ export const computeSponsoredEnergyEstimate = async (
       err,
     });
     return null;
+  }
+};
+
+// Rental-quote params for the sponsored-fee guard.
+// TODO(LIVE-32892): align these with the params the real energy-rent order uses at signing time.
+const SPONSORED_RENTAL_DURATION_SECONDS = 600; // 10-min fastTrade window (~200-block lock, per PRD)
+const SPONSORED_RENTAL_EXTRA_TRX = 0.8; // bandwidth top-up Tronify bundles in the USDT-paid flow
+
+// LIVE-32777: the USDT rental fee (in the token's base units) that a sponsored TRC20 send must
+// reserve on top of the transfer amount, so the send can't be confirmed when the USDT balance can't
+// cover fee + amount (the Trust Wallet "Case 2" loss). Live Tronify quote using the breakdown's
+// energyRequired. Returns 0 when not applicable — not sponsored, not a TRC20 send, no reliable
+// energy figure, or the rent is priced in a currency other than the token being sent (Flow 1 / TRX).
+// Never throws: a quote failure degrades to no reservation (mirrors getFeeResourceBreakdown), logged.
+export const computeSponsoredUsdtFee = async (
+  account: Account,
+  transaction: Transaction,
+  tokenAccount: TokenAccount | null | undefined,
+  breakdown: FeeResourceBreakdown,
+): Promise<BigNumber> => {
+  if (!transaction.energyProviderInfo) return new BigNumber(0);
+  if (tokenAccount?.token.tokenType !== "trc20") return new BigNumber(0);
+  if (!breakdown.energyEstimated || breakdown.energyRequired.lte(0)) return new BigNumber(0);
+
+  try {
+    const quote = await getEnergyRentQuote({
+      payerAddress: account.freshAddress,
+      receiverAddress: account.freshAddress,
+      energy: BigInt(breakdown.energyRequired.integerValue(BigNumber.ROUND_CEIL).toFixed()),
+      durationSeconds: SPONSORED_RENTAL_DURATION_SECONDS,
+      extraTrx: SPONSORED_RENTAL_EXTRA_TRX,
+    });
+    // Only reserve when the rent is paid in the SAME asset being sent (Flow 2 / USDT); a TRX-paid
+    // rent (Flow 1) is charged to the parent account, not this token balance.
+    if (quote.payCoinCode.toUpperCase() !== tokenAccount.token.ticker.toUpperCase()) {
+      return new BigNumber(0);
+    }
+    return parseCurrencyUnit(tokenAccount.token.units[0], quote.payCoinAmt);
+  } catch (err) {
+    log("tron/computeSponsoredUsdtFee", "rent quote unavailable, skipping fee reservation", {
+      err,
+    });
+    return new BigNumber(0);
   }
 };
 
