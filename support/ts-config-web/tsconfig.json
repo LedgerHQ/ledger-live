@@ -1,0 +1,11 @@
+{
+  "extends": "@support/ts-config-base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "moduleSuffixes": [".web", ""],
+    "types": ["jest", "@testing-library/jest-dom"]
+  },
+  "include": ["${configDir}/src/**/*"],
+  "exclude": ["node_modules"]
+}

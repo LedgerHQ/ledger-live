@@ -1,0 +1,14 @@
+{
+  "name": "@support/ts-config-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript config preset for web-only new-arch packages (React + DOM)",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./tsconfig.json": "./tsconfig.json",
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {
+    "@support/ts-config-base": "workspace:*"
+  }
+}

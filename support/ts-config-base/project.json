@@ -1,0 +1,6 @@
+{
+  "name": "@support/ts-config-base",
+  "targets": {
+    "build": { "executor": "nx:noop" }
+  }
+}
