@@ -76,6 +76,10 @@ devtools/protocols/                                      @ledgerhq/platform
 devtools/wire/                                           @ledgerhq/platform
 devtools/relay/                                          @ledgerhq/platform
 
+# Platform — support
+support/jest-devtools/                                   @ledgerhq/platform
+support/jest-features-flow/                          @ledgerhq/platform
+
 # Wallet — libs
 libs/live-countervalues-react/                           @ledgerhq/wallet-xp
 libs/live-countervalues/                                 @ledgerhq/wallet-xp
@@ -112,6 +116,7 @@ apps/ledger-live-mobile/src/mvvm/                        @ledgerhq/wallet-xp
 apps/ledger-live-mobile/src/screens/Portfolio/           @ledgerhq/wallet-xp
 
 # Wallet — Contacts
+domain/entity/contact/                                   @ledgerhq/wallet-xp
 features/flow/contacts/                                  @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
@@ -234,6 +239,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/concordium-core/                                                    @ledgerhq/ledger-partner-hoodies
 
 # PTX team
+features/flow/pay-card-auth/                                             @ledgerhq/ptx
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx

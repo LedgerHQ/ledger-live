@@ -10,17 +10,9 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
-// this type is taken from WalletSync, should eventually land in /domain as well
-export const accountDescriptorSchema = z.object({
-  id: z.string(),
-  currencyId: z.string(),
-  freshAddress: z.string(),
-  seedIdentifier: z.string(),
-  derivationMode: z.string(),
-  index: z.number(),
-});
+import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 
-export type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
+export { accountDescriptorSchema, type AccountDescriptor };
 
 /**
  * Raw discovery result from the bridge: V1 descriptor and fresh receive address.

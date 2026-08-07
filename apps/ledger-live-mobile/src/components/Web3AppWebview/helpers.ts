@@ -181,7 +181,7 @@ export function useWebView(
     onLoadError,
     server,
   } = useWalletAPIServer({
-    walletState,
+    accountNames: walletState.accountNames,
     manifest: manifest satisfies AppManifest,
     accounts,
     tracking,

@@ -1,6 +1,5 @@
 import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
-import * as allure from "allure-js-commons";
 import {
   activateLedgerSync,
   expectValidAddressDevice,
@@ -61,7 +60,6 @@ export class SpeculosPage extends AppPage {
   @step("Verify amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
-    await allure.parameter("Swap scenario", scenario);
     try {
       await verifyAmountsAndAcceptSwap(swap, amount);
     } catch (error) {

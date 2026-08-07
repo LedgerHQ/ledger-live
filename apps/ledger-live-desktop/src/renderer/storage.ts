@@ -17,11 +17,12 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { marketStoreSelector } from "./reducers/market";
 import { marketBannerStoreSelector } from "./reducers/marketBanner";
 import { knownDevicesStoreSelector } from "./reducers/knownDevices";
-import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import { ExportedWalletState } from "~/renderer/reducers/wallet";
 import type { PersistedCAL } from "@domain/api-currency-token";
 import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
+import type { PayCardPersistedState } from "@domain/entity-pay-card";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -42,6 +43,7 @@ export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 export type MarketBanner = ReturnType<typeof marketBannerStoreSelector>;
 export type KnownDevices = ReturnType<typeof knownDevicesStoreSelector>;
+export type PayCard = PayCardPersistedState;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
 
@@ -70,6 +72,7 @@ type DatabaseValues = {
     lastScreen: string;
   };
   largeScreenUpsellModal: RestorableLargeScreenUpsellModalState;
+  payCard: PayCard;
 };
 
 // Infers the type seen from the user side (non-raw).

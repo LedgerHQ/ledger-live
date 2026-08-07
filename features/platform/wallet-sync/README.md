@@ -1,5 +1,8 @@
 # @features/platform-wallet-sync
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 Platform-level orchestration for Ledger Live wallet synchronisation.
 
 Wires together `@shared/cloud-sync` (network), `@shared/cloud-sync-module` (aggregation) and the domain entity modules into a runnable watch loop. Exports:

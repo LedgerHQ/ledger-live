@@ -1,0 +1,48 @@
+/**
+ * Feature-flag controls surfaced by the tool.
+ *
+ * `payTabEnabled` drives the Pay tab flag (`lwdPayTab` / `lwmPayTab`) and
+ * `cardParam` its `params.card` sub-flag; `ptxCardEnabled` drives the legacy
+ * `ptxCard` flag.
+ */
+export interface PayCardFlagsProps {
+  readonly payTabEnabled: boolean;
+  readonly cardParam: boolean;
+  readonly ptxCardEnabled: boolean;
+  readonly setPayTabEnabled: (value: boolean) => void;
+  readonly setCardParam: (value: boolean) => void;
+  readonly setPtxCardEnabled: (value: boolean) => void;
+}
+
+/** A single Card onboarding step that can be marked done or not. */
+export interface OnboardingStep {
+  readonly id: string;
+  readonly label: string;
+  readonly done: boolean;
+}
+
+/**
+ * Card onboarding controls.
+ *
+ * Exposes the onboarding steps so each one can be toggled done/not-done to
+ * force the app into a given point of the onboarding flow.
+ */
+export interface PayCardOnboardingProps {
+  readonly steps: readonly OnboardingStep[];
+  readonly setStepDone: (id: string, done: boolean) => void;
+}
+
+/**
+ * Props contract for the Card / Pay DevTool.
+ *
+ * Built by `@devtools/bindings` (`usePayCardToolProps`) from the host's Redux
+ * state and actions. The component never reads app state directly.
+ */
+export interface PayCardToolProps {
+  readonly flags: PayCardFlagsProps;
+  readonly onboarding: PayCardOnboardingProps;
+  /** Whether the user has already seen the Pay feature tour. */
+  readonly hasSeenFeatureTour: boolean;
+  /** Resets the feature tour so it plays again on the next Pay visit. */
+  readonly resetPayCardFeatureTourSeen: () => void;
+}

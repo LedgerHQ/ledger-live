@@ -262,8 +262,9 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
           return null;
       }
     },
-    canUndelegate: delegation => {
-      return delegation.shares?.gte(1e9) ?? true;
+    canUndelegate: stake => {
+      const shares = stake.details?.shares;
+      return typeof shares !== "bigint" || shares >= 10n ** 9n;
     },
     gasMultiplier: ({ mode }) => {
       return (["delegate", "undelegate"] as const).includes(mode as "delegate" | "undelegate")

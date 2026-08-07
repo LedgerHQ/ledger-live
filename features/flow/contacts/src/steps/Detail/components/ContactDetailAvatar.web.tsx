@@ -1,8 +1,8 @@
 import React from "react";
 import { Avatar } from "@ledgerhq/lumen-ui-react";
 import type { Contact } from "@domain/entity-contact";
+import { getNameInitial } from "@shared/name";
 import { getContactAvatarColorClass } from "../../List/utils/getContactAvatarColorClass";
-import { getContactInitial } from "../../../utils/getContactInitial";
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;
@@ -20,7 +20,7 @@ export function ContactDetailAvatar({
   }
 
   const avatarColorClass = getContactAvatarColorClass(contact.id);
-  const initial = getContactInitial(contact.name);
+  const initial = getNameInitial(contact.name);
 
   return (
     <div

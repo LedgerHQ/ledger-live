@@ -92,13 +92,17 @@ export const fetchBalance = async (purseUref: string): Promise<BigNumber> => {
   }
 };
 
-export const fetchBlockHeight = async (): Promise<number> => {
+export const fetchLastBlock = async (): Promise<{ height: number; hash: string; time: Date }> => {
   const client = getCasperNodeRpcClient();
   try {
-    const latestBlock = await client.getLatestBlock();
-    return latestBlock.block.height;
+    const { block } = await client.getLatestBlock();
+    return {
+      height: block.height,
+      hash: block.hash.toHex(),
+      time: block.timestamp.date,
+    };
   } catch (error) {
-    log("error", "Failed to fetch block height", error);
+    log("error", "Failed to fetch last block", error);
     throw error;
   }
 };

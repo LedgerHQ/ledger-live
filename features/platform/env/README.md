@@ -1,5 +1,8 @@
 # @features/platform-env
 
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
+
 React hook for subscribing to typed env var changes in Ledger Live apps.
 
 ## Usage

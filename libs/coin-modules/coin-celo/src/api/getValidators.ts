@@ -15,6 +15,7 @@ export const getValidators = async (_cursor?: Cursor): Promise<Page<Validator>> 
   const groups = await getValidatorGroups();
 
   const items: Validator[] = groups.map(group => ({
+    id: group.address,
     address: group.address,
     name: group.name,
     balance: BigInt(group.votes.toFixed(0)),

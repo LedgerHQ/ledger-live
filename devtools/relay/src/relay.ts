@@ -26,14 +26,13 @@ export type RelayHubOptions = {
 };
 
 /**
- *  A pairing broker
+ * A pairing broker.
  *
  * Identity rides in the connect URL (no hello frame): a client dials
- * `ws://…/?role=tool&id=web-tools&target=desktop`. This function is only the
+ * `ws://…/?role=tool&id=web-tools&target=<uid>`. This function is only the
  * socket shell — it accepts connections, forwards each message to its peer, and
  * logs. All pairing state lives in {@link createSessionRegistry}.
  */
-
 export function createRelayHub(options: RelayHubOptions = {}) {
   const host = options.host ?? "0.0.0.0";
   const port = options.port ?? 9090;
@@ -64,7 +63,7 @@ export function createRelayHub(options: RelayHubOptions = {}) {
         ? `ws://${lanIp}:${actualPort}?token=${token}`
         : `ws://${lanIp}:${actualPort}`;
       log(msg.wifiUrl(url) + "\n");
-      qrcode.generate(url, { small: true }, s => write(s));
+      qrcode.generate(url, { small: true }, (s: string) => write(s));
     } else {
       warn(msg.noWifiIp);
     }
@@ -92,9 +91,9 @@ export function createRelayHub(options: RelayHubOptions = {}) {
     if (attached.status === "sessionless") {
       warn(msg.sessionless(me.id));
     } else {
-      if (attached.evicted) log(msg.evicted(attached.role, attached.hostId));
-      log(msg.attached(attached.role, me.id, attached.hostId));
-      if (attached.paired) log(msg.paired(attached.hostId));
+      if (attached.evicted) log(msg.evicted(attached.role, attached.descriptor?.uid ?? "unknown"));
+      log(msg.attached(attached.role, me.id, attached.descriptor?.uid ?? "unknown"));
+      if (attached.paired) log(msg.paired(attached.descriptor?.uid ?? "unknown"));
     }
 
     const peerRole = me.role === "tool" ? "host" : "tool";
@@ -111,7 +110,7 @@ export function createRelayHub(options: RelayHubOptions = {}) {
 
     socket.on("close", () => {
       const entry = registry.detach(socket);
-      if (entry) log(msg.disconnectedPeer(entry.role, me.id, entry.hostId));
+      if (entry) log(msg.disconnectedPeer(entry.role, me.id, entry.descriptor?.uid ?? "unknown"));
       else log(msg.disconnected(me.id));
       closeLogger();
     });

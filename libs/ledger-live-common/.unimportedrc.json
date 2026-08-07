@@ -1,7 +1,9 @@
 {
   "entry": [
+    "src/account/addAccounts.ts",
     "src/account/helpers.ts",
     "src/account/index.ts",
+    "src/account/ordering.ts",
     "src/account/serialization.ts",
     "src/analytics/featureFlagHelpers/newSendFlow.ts",
     "src/analytics/featureFlagHelpers/onboardingCounterfeitWarning.ts",
@@ -768,6 +770,7 @@
     "src/families/cosmos/coinModuleApi.ts",
     "src/families/cosmos/config.ts",
     "src/families/evm/accountRawAssign.ts",
+    "src/families/evm/serialization.ts",
     "src/families/evm/bridge/api.ts",
     "src/families/evm/coinModuleApi.ts",
     "src/families/evm/config.ts",
@@ -786,6 +789,7 @@
     "src/families/multiversx/bridge/api.ts",
     "src/families/multiversx/coinModuleApi.ts",
     "src/families/multiversx/config.ts",
+    "src/families/near/coinModuleApi.ts",
     "src/families/near/config.ts",
     "src/families/polkadot/config.ts",
     "src/families/solana/bridge/api.ts",

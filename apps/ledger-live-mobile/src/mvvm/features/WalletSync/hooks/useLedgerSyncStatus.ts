@@ -3,9 +3,7 @@ import { QueryKey } from "./type.hooks";
 import getTrustchainApi, {
   StatusAPIResponse as TrustchainStatus,
 } from "@ledgerhq/ledger-key-ring-protocol/api";
-import getCloudSyncApi, {
-  StatusAPIResponse as CloudSyncStatus,
-} from "@ledgerhq/live-wallet/cloudsync/api";
+import { getCloudSyncApi, StatusAPIResponse as CloudSyncStatus } from "@shared/cloud-sync";
 import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 

@@ -17,13 +17,16 @@ import {
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { getEstimatedFees } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/fee";
+import {
+  getAddress,
+  getEstimatedFees,
+  isAddressValid,
+  validateMemo,
+} from "@ledgerhq/coin-casper/logic";
 import {
   getSerializedAddressParameters,
   updateTransaction,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { getAddress, isAddressValid } from "@ledgerhq/coin-casper/bridge/bridgeHelpers/addresses";
-import { validateMemo } from "@ledgerhq/coin-casper/logic/validateMemo";
 import {
   CasperInvalidTransferId,
   InvalidMinimumAmount,

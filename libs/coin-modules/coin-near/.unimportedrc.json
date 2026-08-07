@@ -10,6 +10,7 @@
   ],
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/js.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
@@ -18,8 +19,9 @@
     "src/transaction.ts"
   ],
   "ignoreUnimported": [
-    "src/api/node.mock.ts",
+    "src/network/node.mock.ts",
     "src/test/bridge.dataset.ts",
+    "src/test/coinConfig.ts",
     "src/supportedFeatures.ts"
   ],
   "ignoreUnused": []

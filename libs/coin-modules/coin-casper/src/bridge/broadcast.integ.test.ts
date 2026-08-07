@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import {
   CasperNetwork,
   KeyAlgorithm,
@@ -6,6 +5,7 @@ import {
   PublicKey,
   Transaction as CasperDeployTransaction,
 } from "casper-js-sdk";
+import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
 import { getCasperNodeRpcClient } from "../network/api";
 import { setCoinConfig } from "../config";
 import { CASPER_DEFAULT_TTL, CASPER_FEES_MOTES, CASPER_NETWORK } from "../constants";
@@ -13,13 +13,7 @@ import { broadcast } from "./broadcast";
 
 describe("Broadcast", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
-      status: { type: "active" },
-      infra: {
-        API_CASPER_NODE_ENDPOINT: "https://casper.coin.ledger.com/node/",
-        API_CASPER_INDEXER: "https://casper.coin.ledger.com/indexer/",
-      },
-    }));
+    setCoinConfig(casperMainnetConfig);
   });
 
   it("throws on insufficient funds", async () => {
@@ -27,19 +21,20 @@ describe("Broadcast", () => {
     const senderHex = privateKey.publicKey.toHex();
 
     const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
-    const feeMotes = new BigNumber(CASPER_FEES_MOTES);
     const deploy: CasperDeployTransaction = casperNetwork.createTransferTransaction(
       PublicKey.fromHex(senderHex),
       PublicKey.fromHex(senderHex),
       CASPER_NETWORK,
       "1",
-      feeMotes.toNumber(),
+      CASPER_FEES_MOTES,
       CASPER_DEFAULT_TTL,
       0,
     );
 
+    // Matches TransactionV1.sign()/validate(): the signed message is the transaction hash,
+    // not the serialized transaction bytes.
     const signatureHex = Buffer.from(
-      privateKey.signAndAddAlgorithmBytes(new Uint8Array(deploy.toBytes())),
+      privateKey.signAndAddAlgorithmBytes(new Uint8Array(deploy.hash.toBytes())),
     ).toString("hex");
 
     await expect(

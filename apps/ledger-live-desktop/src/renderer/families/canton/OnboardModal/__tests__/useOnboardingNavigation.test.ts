@@ -1,10 +1,10 @@
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { act, renderHook } from "tests/testSetup";
 import type { NavigationSnapshot } from "../../hooks/topologyChangeError";
 import { useOnboardingNavigation } from "../hooks/useOnboardingNavigation";
 import { createMockAccount, createMockOnboardingResult } from "./testUtils";
 
-jest.mock("@ledgerhq/live-wallet/addAccounts", () => ({
+jest.mock("@ledgerhq/live-common/account/addAccounts", () => ({
   addAccountsAction: jest.fn(() => ({
     type: "ADD_ACCOUNTS",
     payload: {

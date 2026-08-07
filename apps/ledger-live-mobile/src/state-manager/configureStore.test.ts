@@ -22,8 +22,9 @@ jest.mock("~/config/bridge-setup", () => ({
   setupCryptoAssetsStore: jest.fn(),
 }));
 
-jest.mock("LLM/storage/recentAddresses", () => ({
-  setupRecentAddressesStore: jest.fn(),
+jest.mock("@domain/entity-recent-addresses", () => ({
+  ...jest.requireActual("@domain/entity-recent-addresses"),
+  connectRecentAddressesStore: jest.fn(),
 }));
 
 jest.mock(

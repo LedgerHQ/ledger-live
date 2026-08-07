@@ -12,7 +12,7 @@ import {
   type ConnectAppDAState,
 } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { parseDeviceInfo } from "../../../../deviceSDK/tasks/getDeviceInfo";
 import type { ConnectAppInitSideEffects } from "../types";
 
@@ -152,6 +152,10 @@ function mapLatestFirmware(
 export type LastSeenDeviceInfoPayload = {
   modelId: DeviceModelId;
   deviceInfo: DeviceInfo;
+  apps: Array<{
+    name: string;
+    version: string;
+  }>;
   latestFirmware: FirmwareUpdateContext | null;
 };
 
@@ -175,6 +179,10 @@ export function buildLastSeenDeviceInfoPayload(params: {
   return {
     modelId: dmkToLedgerDeviceIdMap[deviceModelId],
     deviceInfo,
+    apps: deviceMetadata.applications.map(({ versionName, version }) => ({
+      name: versionName,
+      version,
+    })),
     latestFirmware: mapLatestFirmware(deviceMetadata?.firmwareUpdateContext),
   };
 }

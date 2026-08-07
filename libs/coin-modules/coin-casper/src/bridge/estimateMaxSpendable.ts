@@ -2,7 +2,7 @@ import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index"
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Transaction } from "../types";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { getEstimatedFees } from "../logic/estimateFees";
 
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

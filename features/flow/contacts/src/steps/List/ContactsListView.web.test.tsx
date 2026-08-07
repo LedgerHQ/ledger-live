@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { ContactsPageViewModel } from "./types";
-import type { ContactsLedgerSyncStatus } from "../Introduction";
+import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 import {
   createContactsSearchViewModel,
   createEmptyContactsListViewModel,

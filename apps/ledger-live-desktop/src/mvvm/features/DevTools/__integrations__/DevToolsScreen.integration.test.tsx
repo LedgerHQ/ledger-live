@@ -25,6 +25,7 @@ jest.mock("@devtools/shell", () => ({
 
 jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
+  usePayCardToolProps: () => ({ marker: "pay-card-props" }),
 }));
 
 jest.mock("@devtools/wire", () => {
@@ -47,12 +48,15 @@ describe("DevToolsScreen", () => {
     devToolsSpy.mockClear();
   });
 
-  it("mounts the DevTools shell with the feature-flags tool config", () => {
+  it("mounts the DevTools shell with feature-flags and pay-card tool configs", () => {
     render(<DevToolsScreen />);
 
     expect(devToolsSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        config: [{ id: "feature-flags", config: { marker: "ff-props" } }],
+        config: [
+          { id: "feature-flags", config: { marker: "ff-props" } },
+          { id: "pay-card", config: { marker: "pay-card-props" } },
+        ],
       }),
     );
   });

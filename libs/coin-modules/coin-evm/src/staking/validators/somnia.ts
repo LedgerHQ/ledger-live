@@ -4,9 +4,8 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
-import type { AssetInfo, Stake } from "@ledgerhq/coin-module-framework/api/types";
+import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
@@ -134,10 +133,10 @@ const fetchValidatorDetails = async (
   iface: ethers.Interface,
   contractAddress: string,
   addresses: string[],
-): Promise<StakingValidatorItem[]> => {
+): Promise<Validator[]> => {
   const names = await validatorNamesCache(currencyId).catch(() => ({}) as ValidatorNamesMap);
 
-  const items: StakingValidatorItem[] = [];
+  const items: Validator[] = [];
 
   for (let i = 0; i < addresses.length; i += DETAILS_BATCH_SIZE) {
     const chunk = addresses.slice(i, i + DETAILS_BATCH_SIZE);
@@ -151,18 +150,17 @@ const fetchValidatorDetails = async (
 
         const validatorAddress = ethers.getAddress(address);
         const name = names[address.toLowerCase()] ?? null;
-        const commission = Math.max(
-          0,
-          1 -
-            Number.parseFloat(ethers.formatUnits(delegateStakeRate, DELEGATE_STAKE_RATE_DECIMALS)),
-        );
+        const rateScale = 10n ** BigInt(DELEGATE_STAKE_RATE_DECIMALS);
+        const commissionBigInt = rateScale > delegateStakeRate ? rateScale - delegateStakeRate : 0n;
+        const commissionRate = ethers.formatUnits(commissionBigInt, DELEGATE_STAKE_RATE_DECIMALS);
 
         return {
-          validatorAddress,
+          id: validatorAddress,
+          address: validatorAddress,
           name: name ?? validatorAddress,
-          commission,
-          tokens: (stakedAmount + delegatedStake).toString(),
-          estimatedYearlyRewardsRate: 0,
+          commissionRate,
+          balance: stakedAmount + delegatedStake,
+          apy: 0,
         };
       }),
     );
@@ -176,14 +174,14 @@ const fetchValidatorDetails = async (
         return;
       }
       if (!res.value) return;
-      items.push({ ...res.value, votingPower: items.length });
+      items.push(res.value);
     });
   }
 
   return items;
 };
 
-const fetchValidators = async (currencyId: string): Promise<Page<StakingValidatorItem>> => {
+const fetchValidators = async (currencyId: string): Promise<Page<Validator>> => {
   const ctx = resolveContext(currencyId);
   if (!ctx) return { items: [], next: undefined };
 

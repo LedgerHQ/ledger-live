@@ -98,11 +98,38 @@ export class BuyAndSellPage extends WebViewAppPage {
 
   @step("Choose crypto asset if not selected")
   async chooseAssetIfNotSelected(account: AccountType) {
+    await this.waitForCryptoSelectorReady();
     if (await this.isCorrectAssetAlreadySelected(account)) return;
-    const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.cryptoCurrencySelector)).toBeEnabled();
     await this.clickElement(this.cryptoCurrencySelector);
     await this.selectAssetInDrawer(account);
+  }
+
+  /**
+   * Workaround: PTX Buy/Sell web app can remain stuck loading; reload the webview and retry.
+   * Mirrors the recovery used in borrow.page.ts.
+   */
+  @step("Wait for the Buy/Sell web app to finish loading")
+  private async waitForCryptoSelectorReady() {
+    const readyTimeout = 30_000;
+    const maxReloads = 2;
+    const webview = await this.getWebView();
+    const selector = webview.getByTestId(this.cryptoCurrencySelector);
+
+    for (let attempt = 0; ; attempt++) {
+      try {
+        await expect(selector).toBeVisible({ timeout: readyTimeout });
+        return;
+      } catch (error) {
+        if (attempt >= maxReloads) {
+          throw new Error(
+            `Buy/Sell web app did not render the crypto selector "${this.cryptoCurrencySelector}" ` +
+              `after ${maxReloads + 1} attempts — webview stuck loading.`,
+            { cause: error },
+          );
+        }
+        await webview.reload({ timeout: readyTimeout, waitUntil: "domcontentloaded" });
+      }
+    }
   }
 
   private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {

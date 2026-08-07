@@ -28,7 +28,13 @@ export function ContactAddressDetailActions({
 }: ContactAddressDetailActionsProps): React.ReactNode {
   return (
     <div className="grid w-full grid-cols-4 gap-8">
-      <TileButton icon={ArrowUp} isFull disabled={!canSend} onClick={onSend}>
+      <TileButton
+        icon={ArrowUp}
+        isFull
+        disabled={!canSend}
+        onClick={onSend}
+        data-testid="contacts-address-detail-send"
+      >
         {labels.send}
       </TileButton>
       <TileButton
@@ -39,7 +45,13 @@ export function ContactAddressDetailActions({
       >
         {hasCopied ? labels.copied : labels.copy}
       </TileButton>
-      <TileButton icon={PenEdit} isFull disabled={!canEdit} onClick={onEdit}>
+      <TileButton
+        icon={PenEdit}
+        isFull
+        disabled={!canEdit}
+        onClick={onEdit}
+        data-testid="contacts-address-detail-edit"
+      >
         {labels.edit}
       </TileButton>
       <TileButton

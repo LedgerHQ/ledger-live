@@ -4,8 +4,8 @@ import type { ContactDetailViewProps } from "../Detail/types";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
-  ContactsLedgerSyncStatus,
 } from "../Introduction/types";
+import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
