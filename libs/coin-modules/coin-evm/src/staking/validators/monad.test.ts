@@ -171,26 +171,24 @@ describe("staking/validators/monad", () => {
     expect(await getValidators("monad")).toStrictEqual({
       items: [
         {
-          validatorAddress: ethers.computeAddress(
+          id: "1",
+          address: ethers.computeAddress(
             "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
           ),
-          validatorId: "1",
           name: "Validator 1",
-          commission: 0.1,
-          tokens: "1000",
-          votingPower: 0,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.1",
+          balance: 1000n,
+          apy: 0,
         },
         {
-          validatorAddress: ethers.computeAddress(
+          id: "2",
+          address: ethers.computeAddress(
             "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
           ),
-          validatorId: "2",
           name: "Validator 2",
-          commission: 0.05,
-          tokens: "500",
-          votingPower: 1,
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: "0.05",
+          balance: 500n,
+          apy: 0,
         },
       ],
       next: undefined,
@@ -223,7 +221,7 @@ describe("staking/validators/monad", () => {
     const page = await getValidators("monad");
 
     expect(page.items[0]).toMatchObject({
-      validatorAddress: ethers.computeAddress(
+      address: ethers.computeAddress(
         "0x03e773631152aa98da046d945f0d410d85369e19764a7f9de77fcb896defe527df",
       ),
       name: "GalaxyDigital",
@@ -256,11 +254,11 @@ describe("staking/validators/monad", () => {
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0]).toMatchObject({
-      validatorAddress: ethers.computeAddress(
+      address: ethers.computeAddress(
         "0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54",
       ),
       name: "Validator 2",
-      tokens: "42",
+      balance: 42n,
     });
   });
 
@@ -381,15 +379,14 @@ describe("staking/validators/monad", () => {
       expect(firstPage).toStrictEqual({
         items: [
           {
-            validatorAddress: ethers.computeAddress(
+            id: "1",
+            address: ethers.computeAddress(
               "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
             ),
-            validatorId: "1",
             name: "Validator 1",
-            commission: 0,
-            tokens: "1",
-            votingPower: 0,
-            estimatedYearlyRewardsRate: 0,
+            commissionRate: "0.0",
+            balance: 1n,
+            apy: 0,
           },
         ],
         next: "100",

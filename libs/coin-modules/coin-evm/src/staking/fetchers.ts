@@ -1,10 +1,9 @@
-import { Stake } from "@ledgerhq/coin-module-framework/api/types";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
+import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { delay } from "@ledgerhq/live-promise";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import type {
   StakeCreate,
   StakingContractConfig,
@@ -27,7 +26,7 @@ const createStakingFetcher = (
   getValidatorsFn: (
     config: StakingContractConfig,
     currency: CryptoCurrency,
-  ) => Promise<StakingValidatorItem[]>,
+  ) => Promise<Validator[]>,
 ) => {
   return async (
     address: string,
@@ -35,7 +34,7 @@ const createStakingFetcher = (
     currency: CryptoCurrency,
   ): Promise<Stake[]> => {
     const validators = await getValidatorsFn(config, currency);
-    const validatorAddresses = validators.map(v => v.validatorAddress);
+    const validatorAddresses = validators.map(v => v.address);
     return getStakesForValidators(address, config, currency, validatorAddresses);
   };
 };
@@ -50,16 +49,10 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
     }),
   },
   celo: {
-    fetcher: createStakingFetcher(async config => [
-      {
-        validatorAddress: config.contractAddress(),
-        name: "",
-        commission: 0,
-        tokens: "0",
-        votingPower: 0,
-        estimatedYearlyRewardsRate: 0,
-      },
-    ]),
+    fetcher: createStakingFetcher(async config => {
+      const address = config.contractAddress();
+      return [{ id: address, address, name: "" }];
+    }),
   },
   monad: {
     fetcher: fetchMonadStakes,

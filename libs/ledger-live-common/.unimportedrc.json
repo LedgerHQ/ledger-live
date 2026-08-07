@@ -768,6 +768,7 @@
     "src/families/cosmos/coinModuleApi.ts",
     "src/families/cosmos/config.ts",
     "src/families/evm/accountRawAssign.ts",
+    "src/families/evm/serialization.ts",
     "src/families/evm/bridge/api.ts",
     "src/families/evm/coinModuleApi.ts",
     "src/families/evm/config.ts",

@@ -6798,9 +6798,6 @@ importers:
       ethers:
         specifier: 6.15.0
         version: 6.15.0
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
       react-native-get-random-values:
         specifier: ^1.8.0
         version: 1.11.0
@@ -6820,9 +6817,6 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11)
-      '@types/invariant':
-        specifier: ^2.2.2
-        version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0

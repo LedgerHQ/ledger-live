@@ -80,15 +80,7 @@ function fromStakingUnbondingRaw(u: StakingUnbondingRaw): StakingUnbonding {
   };
 }
 
-/**
- * Serialize only the `stakingResources` slice of an EVM account.
- *
- * Required `StakingResources` fields are serialized unconditionally. Optional
- * fields are propagated conditionally (for example `validators`), while
- * `fromStakingResourcesRaw` remains tolerant of missing keys from legacy raw
- * payloads by applying defaults during deserialization.
- */
-export function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw {
+function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw {
   const raw: StakingResourcesRaw = {
     delegations: r.delegations.map(toStakingDelegationRaw),
     redelegations: r.redelegations.map(toStakingRedelegationRaw),
@@ -105,7 +97,7 @@ export function toStakingResourcesRaw(r: StakingResources): StakingResourcesRaw 
   return raw;
 }
 
-export function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResources {
+function fromStakingResourcesRaw(r: StakingResourcesRaw): StakingResources {
   const resources: StakingResources = {
     delegations: (r.delegations ?? []).map(fromStakingDelegationRaw),
     redelegations: (r.redelegations ?? []).map(fromStakingRedelegationRaw),
