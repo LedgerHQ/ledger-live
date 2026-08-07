@@ -1548,10 +1548,6 @@
     }
   },
   "graph" : {
-    "week" : "1주",
-    "month" : "1달",
-    "year" : "1년",
-    "all" : "전체",
     "graphNotSupported" : "이 토큰에 대해서는 그래프를 이용할 수 없습니다."
   },
   "carousel" : {
@@ -1697,10 +1693,8 @@
     "cta" : "지금 여러분의 Ledger를 구매하세요",
     "footer" : "이미 Ledger가 있습니다. 설정을 진행합니다",
     "bannerTitle" : "암호화폐 및 NFT를 위한 최고 수준의 보안",
-    "bannerTitle2" : "Ledger Flex로 거래하려면",
     "bannerSubtitle" : "Ledger 장치가 필요합니다",
     "bannerButtonTitle" : "Ledger Flex 살펴보기",
-    "bannerButtonTitle2" : "Ledger 구매",
     "setupCta" : "이미 Ledger가 있습니다. 설정을 진행합니다"
   },
   "rebornBuyDevice" : {
@@ -2829,44 +2823,18 @@
       "skipCTA" : "다음에 결정하기"
     }
   },
-  "tabs" : {
-    "accounts" : "계정",
-    "transfer" : "전송",
-    "manager" : "내 Ledger",
-    "myWallet" : "내 지갑",
-    "settings" : "설정",
-    "platform" : "라이브 앱",
-    "discover" : "탐색",
-    "nanoX" : "Nano X",
-    "market" : "마켓",
-    "earn" : "수익",
-    "card" : "카드",
-    "swap" : "스왑"
-  },
   "portfolio" : {
     "totalBalance" : "총 잔액",
-    "syncError" : "동기화 오류",
-    "syncFailed" : "동기화 실패",
     "syncPending" : "동기화 중...",
     "transactionsPendingConfirmation" : {
       "title" : "동기화되지 않은 잔금",
       "desc" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다."
     },
     "emptyState" : {
-      "noAppsTitle" : "내 장치에 앱을 설치합니다",
-      "noAppsDesc" : "Ledger Wallet에 계정을 추가하기 전에 장치에 앱을 설치하세요. My Ledger로 이동하여 앱을 설치합니다",
-      "noAccountsTitle" : "계정이 없습니다...",
-      "noAccountsDesc" : "포트폴리오에 계정을 추가하세요.",
       "buttons" : {
         "import" : "자산 추가",
-        "buy" : "매수",
         "manager" : "앱 설치하기",
         "managerSecondary" : "내 장치에 앱을 설치합니다"
-      },
-      "addAccounts" : {
-        "addAccounts" : "자산 추가",
-        "title" : "시작하기",
-        "description" : "당사 파트너로부터 암호화폐를 구매하거나 지갑을 설정할 수 있습니다"
       }
     },
     "noOpState" : {
@@ -2874,7 +2842,8 @@
       "desc" : "수신 주소로 암호화 자산을 보내고 앱이 동기화를 마칠 때까지 기다리기만 하면 됩니다."
     },
     "carousel" : {
-      "title" : "고객 맞춤 정보"
+      "title" : "고객 맞춤 정보",
+      "closeAll" : "모두 닫기"
     },
     "perpsEntry" : {
       "title" : "무기한 선물",
@@ -2886,14 +2855,6 @@
       "cardDescription" : "최적의 금리로 대출을 받아보세요",
       "cta" : "탐색"
     },
-    "recommended" : {
-      "title" : "추천"
-    },
-    "topGainers" : {
-      "title" : "최고 상승 목록 (24시간)",
-      "seeMarket" : "모두 보기"
-    },
-    "walletBalance" : "지갑 잔액",
     "balance" : {
       "noSigner" : "믿을 수 있는\n암호화폐 지갑",
       "noAccounts" : "자산을 입금하고\n시작하세요"
@@ -2926,8 +2887,7 @@
       "sell" : "매도",
       "swap" : "스왑",
       "send" : "전송",
-      "deposit" : "수령",
-      "stake" : "스테이킹"
+      "deposit" : "수령"
     },
     "quickActionsCtas" : {
       "transfer" : "전송",
@@ -3740,7 +3700,7 @@
     "debug" : {
       "title" : "디버그",
       "desc" : "사용은 본인의 책임입니다 – 개발자 툴",
-      "featureFlagsTitle" : "Ledger Wallet에서 사용되는 정의된 기능 플래그",
+      "featureFlagsTitle" : "Ledger Wallet에 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
       "featureFlagsRestore" : "복구",
@@ -3865,8 +3825,7 @@
       "learnMore" : "태그/메모에 대해 더 알아보기"
     },
     "send" : {
-      "title" : "전송",
-      "description" : "암호화폐를 다른 지갑으로 전송합니다"
+      "title" : "전송"
     },
     "fees" : {
       "title" : "수수료 편집"
@@ -3999,21 +3958,12 @@
       "title" : "매수",
       "description" : "현금으로 암호화폐를 안전하게 구매하세요."
     },
-    "sell" : {
-      "title" : "매도",
-      "description" : "암호화폐를 안전하게 현금으로 매도하세요."
-    },
     "exchange" : {
       "title" : "매수 / 매도",
       "connectingTo" : "{{provider}}에 연결"
     },
-    "stake" : {
-      "title" : "스테이킹",
-      "description" : "암호화폐로 더 큰 혜택을 누려보세요"
-    },
     "swap" : {
       "title" : "스왑",
-      "description" : "암호화폐끼리 교환하세요.",
       "selectDevice" : "장치를 선택하세요",
       "broadcasting" : "스왑 브로드캐스팅",
       "loadingFees" : "네트워크 수수료 로딩...",
@@ -4493,11 +4443,6 @@
     "walletConnect" : {
       "title" : "WalletConnect",
       "description" : "지갑을 디앱에 연결합니다"
-    },
-    "recover" : {
-      "title" : "Ledger Recover",
-      "description" : "손쉬운 지갑 복구",
-      "tag" : "한 달 무료"
     }
   },
   "signMessage" : {
@@ -4540,6 +4485,11 @@
       "title" : "{{currency}} 전송",
       "available" : "가용 수량: {{amount}}",
       "to" : "받는 사람:",
+      "addressDisclaimer" : {
+        "accessibilityLabel" : "수령인 주소 정보",
+        "title" : "Ledger 장치에서 주소 확인",
+        "description" : "Ledger 장치가 전체 주소를 안전하게 표시합니다. 원본 소스의 주소와 정확히 일치하는지 확인하세요."
+      },
       "placeholder" : "주소 또는 ENS를 입력하세요",
       "placeholderNoENS" : "주소 입력",
       "pasteFromClipboard" : {
@@ -9552,13 +9502,13 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "title" : "Ledger Nano S™ 업그레이드 찬스",
-      "description" : "단독 기회! 최신 Ledger 사이너를 20% 할인된 가격에 만나보세요.",
+      "title" : "더 명확하게, 더 안전하게",
+      "description" : "모든 터치스크린 사이너로 업그레이드 시 20% 할인 혜택이 적용됩니다.",
       "cta" : "내 Ledger 업그레이드"
     },
     "opted_out" : {
-      "title" : "Ledger Nano S™ 업그레이드",
-      "description" : "Ledger Nano S의 메모리 용량 한계로 최신 기능, 블록체인 변경 사항 및 보안 업데이트 이용 및 액세스가 제한됩니다.",
+      "title" : "더 안전하게, 더 자유롭게",
+      "description" : "고급 보안 기능에 대해 자세히 알아보세요.",
       "cta" : "자세히 알아보기"
     }
   },
@@ -10122,7 +10072,7 @@
       "stepViewKeyWarning" : {
         "title" : "Aleo 비공개 잔액 설정하기",
         "description" : "Ledger Wallet은 조회 키(view Key)를 통해 비공개 잔액을 표시하고 타사 서비스를 통해 비공개 트랜잭션을 처리합니다. <0>자세히 알아보기</0>",
-        "bullets" : ["읽기 전용 권한을 통한 비공개 잔액 표시", "Ledger는 사용자의 자금을 전송하거나 사용할 수 없으며,", "자금 사용이나 서명은 사용자 본인만 가능합니다.", "빠른 처리를 위해 증명 생성은 제3자 증명 서비스를 통해 처리되지만,", "이들 서비스는 사용자의 자금에 액세스하거나 사용할 권한은 없습니다."],
+        "bullets" : ["뷰 키(View key)를 사용하면 Ledger Wallet에서 비공개 잔액을 복호화하여 읽기 전용으로 확인할 수 있습니다.", "Ledger 사이너를 통해 오직 본인만이 서명하고 자산을 사용할 수 있습니다.", "Aleo 트랜잭션에는 영지식 증명이 필요하며, 이를 위해 상당한 컴퓨팅 파워가 요구됩니다.", "빠른 트랜잭션 처리를 위해 증명 생성은 외부 Aleo 네트워크 서비스에서 담당합니다."],
         "cta" : {
           "allow" : "허용",
           "cancel" : "취소"
@@ -10232,7 +10182,29 @@
       "namePlaceholder" : "연락처명",
       "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
       "confirmName" : "이름 확인",
-      "invalidNameError" : "특수 문자는 허용되지 않습니다."
+      "invalidNameError" : "특수 문자는 허용되지 않습니다.",
+      "duplicateNameError" : "이미 사용 중인 연락처명입니다."
+    },
+    "addAddressEntry" : {
+      "title" : "주소 입력",
+      "addressPlaceholder" : "주소 또는 ENS",
+      "confirmAddress" : "주소 확인",
+      "validatingAddress" : "주소 확인 중",
+      "validAddress" : "유효한 주소",
+      "invalidAddress" : "유효하지 않은 주소",
+      "domainNotFound" : "이 도메인과 관련하여 발견된 주소가 없습니다",
+      "sanctionedAddress" : "이 주소는 제재 대상이므로 사용할 수 없습니다.",
+      "validationUnavailable" : "주소 확인 기능을 일시적으로 사용할 수 없습니다",
+      "ensDisclaimer" : "ENS 이름은 지갑 주소로 연결됩니다. 계속 진행하기 전 연결된 주소를 항상 확인하세요."
+    },
+    "addAddressName" : {
+      "title" : "주소 별칭 설정",
+      "inputLabel" : "주소 별칭",
+      "namingDisclaimer" : "필요할 때 쉽게 찾을 수 있도록 이 주소에 별칭을 설정하세요. 설정한 이름은 본인에게만 표시됩니다.",
+      "continueToReview" : "검토 계속하기",
+      "invalidLabel" : "특수 문자는 허용되지 않습니다.",
+      "duplicateLabel" : "해당 연락처에서 이미 사용 중인 주소 별칭입니다.",
+      "labelTooLong" : "주소명이 길이 제한을 초과합니다."
     },
     "addressCount_zero" : "0개 주소",
     "addressCount_one" : "{{count}}개 주소",
@@ -10252,6 +10224,42 @@
         "meDescription" : "거래소나 다른 지갑에서 사용 중인 본인의 외부 주소를 미리 저장해 두는 유용한 기능입니다. 주소를 저장해 두면 다음 번에 본인에게 전송할 때, 복잡한 주소 대신 Ledger 장치 화면에 직접 지정한 이름이 표시됩니다.",
         "contactDescription" : "{{name}}님에게 송금하려면 지갑 주소를 저장하세요."
       }
+    },
+    "addressDetail" : {
+      "send" : "전송",
+      "copy" : "복사",
+      "copyAddress" : "주소 복사",
+      "copied" : "복사됨",
+      "edit" : "편집",
+      "share" : "공유",
+      "delete" : "삭제",
+      "networkTag" : "{{name}} 네트워크"
+    },
+    "detailActions" : {
+      "editName" : "이름 편집",
+      "deleteContact" : "연락처 삭제",
+      "menuAccessibilityLabel" : "연락처 옵션"
+    },
+    "editContact" : {
+      "title" : "연락처 수정",
+      "namePlaceholder" : "연락처명",
+      "namingDisclaimer" : "개인 정보 보호를 위해 성과 이름을 모두 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
+      "confirmName" : "이름 확인",
+      "applyChanges" : "변경 사항 적용",
+      "invalidNameError" : "특수 문자는 허용되지 않습니다."
+    },
+    "deleteContact" : {
+      "title" : "연락처를 삭제하시겠습니까?",
+      "description" : "이 연락처를 삭제하면 연결된 모든 주소가 삭제됩니다.",
+      "mobileDescription" : "이 연락처를 삭제하면 연결된 모든 주소가 삭제됩니다.",
+      "confirm" : "삭제",
+      "cancel" : "취소"
+    },
+    "editSigner" : {
+      "title" : "장치에서 확인하세요",
+      "description" : "이 변경 사항을 확인하려면 사용 중인 Ledger 장치를 연결하고 잠금을 해제하세요.",
+      "confirm" : "계속",
+      "cancel" : "취소"
     },
     "ledgerSyncIntroduction" : {
       "title" : "연락처를 저장하려면 Ledger Sync를 활성화하세요",
