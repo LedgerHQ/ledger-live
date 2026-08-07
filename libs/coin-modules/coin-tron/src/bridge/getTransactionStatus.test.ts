@@ -477,7 +477,10 @@ describe("getTransactionStatus", () => {
       mockGetTronSuperRepresentatives.mockResolvedValue([]);
       const status = await getTransactionStatus(
         createAccount(),
-        createTransaction({ mode: "vote", votes: [{ address: RECIPIENT_ADDRESS, voteCount: 1 }] }),
+        createTransaction({
+          mode: "vote",
+          votes: [{ name: null, address: RECIPIENT_ADDRESS, voteCount: 1 }],
+        }),
       );
       expect(status.errors.vote).toBeInstanceOf(InvalidAddress);
     });
@@ -488,7 +491,10 @@ describe("getTransactionStatus", () => {
       ] as unknown as Awaited<ReturnType<typeof getTronSuperRepresentatives>>);
       const status = await getTransactionStatus(
         createAccount({ tronResources: { ...createAccount().tronResources, tronPower: 0 } }),
-        createTransaction({ mode: "vote", votes: [{ address: RECIPIENT_ADDRESS, voteCount: 5 }] }),
+        createTransaction({
+          mode: "vote",
+          votes: [{ name: null, address: RECIPIENT_ADDRESS, voteCount: 5 }],
+        }),
       );
       expect(status.errors.vote).toBeInstanceOf(TronNotEnoughTronPower);
     });

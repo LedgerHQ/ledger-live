@@ -383,15 +383,15 @@ describe("EVM Family", () => {
           },
         }));
 
-        const slowFeeData = await api.getFeeData(currency, {
+        const slowFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "slow",
         } as any);
-        const mediumFeeData = await api.getFeeData(currency, {
+        const mediumFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "medium",
         } as any);
-        const fastFeeData = await api.getFeeData(currency, {
+        const fastFeeData = await api.getFeeData({} as any, currency, {
           type: 2,
           feesStrategy: "fast",
         } as any);
@@ -439,7 +439,7 @@ describe("EVM Family", () => {
           },
         }));
 
-        const feeData = await api.getFeeData(currency, { type: 2 } as any);
+        const feeData = await api.getFeeData({} as any, currency, { type: 2 } as any);
 
         expect(feeData).toEqual({
           maxFeePerGas: new BigNumber(5),

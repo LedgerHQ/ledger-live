@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { BlockFinalizationTag, EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import { BlockFinalizationTag, type EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { lastBlock } from "./lastBlock";
@@ -17,9 +18,8 @@ describe("lastBlock", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency.id);
-      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+      return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
@@ -35,10 +35,10 @@ describe("lastBlock", () => {
     };
     const expectedInfo = { hash: "hash", height: 33, time: new Date("2025-12-31") };
 
-    setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+    const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-    expect(await lastBlock({} as CryptoCurrency)).toEqual(expectedInfo);
+    expect(await lastBlock(context, {} as CryptoCurrency)).toEqual(expectedInfo);
   });
 
   it.each([
@@ -52,10 +52,10 @@ describe("lastBlock", () => {
       timestamp: new Date("2025-12-31").getTime(),
     };
 
-    setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+    const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
     nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-    await lastBlock({} as CryptoCurrency);
+    await lastBlock(context, {} as CryptoCurrency);
 
     expect(nodeApiMock.getBlockByHeight).toHaveBeenCalledWith(expect.anything(), "latest");
   });
@@ -76,12 +76,13 @@ describe("lastBlock", () => {
       };
       const expectedInfo = { hash: "hash", height: 33, time: new Date("2025-12-31") };
 
-      setCoinConfig(
-        () => ({ info: { node: { type }, finalizationLevel } }) as unknown as EvmCoinConfig,
-      );
+      const context = createMockEvmContext({
+        node: { type },
+        finalizationLevel,
+      } as Partial<EvmConfigInfo>);
       nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-      expect(await lastBlock({} as CryptoCurrency)).toEqual(expectedInfo);
+      expect(await lastBlock(context, {} as CryptoCurrency)).toEqual(expectedInfo);
       expect(nodeApiMock.getBlockByHeight).toHaveBeenCalledWith(
         expect.anything(),
         finalizationLevel,

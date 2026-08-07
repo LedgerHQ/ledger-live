@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { generateNonce } from "../common-logic";
-import { getChainTag } from "../config";
+import { getChainTag, getCoinConfig } from "../config";
 import { Transaction } from "../types";
 
 /**
@@ -10,7 +10,7 @@ import { Transaction } from "../types";
  * @returns {Transaction}
  */
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
-  const chainTag = getChainTag();
+  const chainTag = getChainTag(getCoinConfig());
 
   return {
     family: "vechain",

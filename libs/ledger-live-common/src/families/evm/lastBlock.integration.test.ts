@@ -1,6 +1,7 @@
 import "../../__tests__/test-helpers/setup.integration";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { destroyAllRpcProviders } from "@ledgerhq/coin-evm/network/node/rpc.common";
 import { getCurrencyConfiguration } from "../../config";
 import { evmConfig } from "./config";
@@ -38,14 +39,16 @@ afterAll(() => {
 
 describe.each(CURRENCY_IDS)("lastBlock on %s", currencyId => {
   let module: ReturnType<typeof createApi>;
+  let context: Context<EvmConfigInfo>;
 
   beforeAll(() => {
     const config = getCurrencyConfiguration<EvmConfigInfo>(currencyId);
     module = createApi(config, currencyId);
+    context = { config: async () => config, logger: () => {} };
   });
 
   it("returns a valid last block", async () => {
-    const result = await module.lastBlock();
+    const result = await module.lastBlock(context);
 
     expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
     expect(result.height).toBeGreaterThan(0);

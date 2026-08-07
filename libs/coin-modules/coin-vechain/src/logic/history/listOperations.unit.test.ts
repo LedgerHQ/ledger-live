@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Operation as LegacyOperation } from "@ledgerhq/types-live";
 import { getLastBlockHeight, getOperations, getTokenOperations } from "../../network";
+import { createMockVechainContext } from "../../test/context";
 import { listOperations } from "./listOperations";
 
 jest.mock("../../network", () => ({
@@ -10,6 +11,7 @@ jest.mock("../../network", () => ({
 }));
 
 const ADDRESS = "0x0fe6688548f0C303932bB197B0A96034f1d74dba";
+const context = createMockVechainContext();
 
 function makeLegacyOp(overrides: Partial<LegacyOperation> = {}): LegacyOperation {
   return {
@@ -41,7 +43,7 @@ describe("listOperations", () => {
       .mocked(getTokenOperations)
       .mockResolvedValueOnce([makeLegacyOp({ id: "vtho-op", type: "IN" })]);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toHaveLength(2);
     expect(page.items.find(op => op.id === "vet-op")?.asset).toEqual({
@@ -67,7 +69,7 @@ describe("listOperations", () => {
         makeLegacyOp({ id: "vtho-1", date: new Date("2024-01-02T00:00:00Z") }),
       ]);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     const ids = page.items.map(op => op.id);
     expect(ids).toHaveLength(3);
@@ -87,7 +89,7 @@ describe("listOperations", () => {
     jest.mocked(getOperations).mockResolvedValueOnce([outOp]);
     jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     expect(page.items[0].value).toBe(BigInt("1000000000000000000"));
     expect(page.items[0].tx.fees).toBe(0n);
@@ -103,7 +105,7 @@ describe("listOperations", () => {
     jest.mocked(getOperations).mockResolvedValueOnce([]);
     jest.mocked(getTokenOperations).mockResolvedValueOnce([vthoOut]);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     expect(page.items[0].value).toBe(BigInt("5000000000000000000"));
     expect(page.items[0].tx.fees).toBe(BigInt("21000000000000000"));
@@ -112,7 +114,7 @@ describe("listOperations", () => {
   it("returns an empty page (with a resumable cursor) when the range is already exhausted", async () => {
     jest.mocked(getLastBlockHeight).mockResolvedValueOnce(50);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0, cursor: "100" });
+    const page = await listOperations(context, ADDRESS, { minHeight: 0, cursor: "100" });
 
     expect(page.items).toEqual([]);
     expect(getOperations).not.toHaveBeenCalled();
@@ -124,6 +126,8 @@ describe("listOperations", () => {
     jest.mocked(getOperations).mockRejectedValueOnce(new Error("network down"));
     jest.mocked(getTokenOperations).mockResolvedValueOnce([]);
 
-    await expect(listOperations(ADDRESS, { minHeight: 0 })).rejects.toThrow("network down");
+    await expect(listOperations(context, ADDRESS, { minHeight: 0 })).rejects.toThrow(
+      "network down",
+    );
   });
 });

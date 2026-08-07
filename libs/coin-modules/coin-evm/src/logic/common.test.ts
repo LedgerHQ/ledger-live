@@ -2,6 +2,7 @@ import { FeeEstimation, MemoNotSupported } from "@ledgerhq/coin-module-framework
 import { TransactionIntent, BufferTxData } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
+import type { EvmConfigInfo } from "../config";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { buildStakingTransactionParams } from "../staking";
@@ -32,6 +33,11 @@ const mockGetNodeApi = jest.mocked(getNodeApi);
 const mockBuildStakingTransactionParams = jest.mocked(buildStakingTransactionParams);
 
 const getErc20DataMock = getErc20DataModule.getErc20Data as jest.Mock;
+
+const testConfig = {
+  status: { type: "active" },
+  node: { type: "external", uri: "https://test" },
+} as unknown as EvmConfigInfo;
 
 describe("common", () => {
   describe("getCallData", () => {
@@ -191,6 +197,7 @@ describe("common", () => {
         .mockResolvedValueOnce(new BigNumber(70_000));
 
       const result = await prepareUnsignedTxParams(
+        testConfig,
         mockCurrency,
         makeStakingIntent(spendableBalance),
       );
@@ -231,7 +238,7 @@ describe("common", () => {
         .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
         .mockResolvedValueOnce(new BigNumber(70_000));
 
-      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       expect(nodeApiMock.getGasEstimation).toHaveBeenNthCalledWith(
@@ -255,7 +262,7 @@ describe("common", () => {
 
       nodeApiMock.getGasEstimation.mockRejectedValue(GAS_ESTIMATION_ERROR);
 
-      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       expect(result.gasLimit).toEqual(new BigNumber(0));
@@ -280,7 +287,7 @@ describe("common", () => {
         .mockRejectedValueOnce(GAS_ESTIMATION_ERROR)
         .mockResolvedValueOnce(new BigNumber(1_412_179));
 
-      const result = await prepareUnsignedTxParams(mockCurrency, makeStakingIntent(0n));
+      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, makeStakingIntent(0n));
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(2);
       // Retry rebuilds BOTH calldata and value from the min unit (USEI_TO_EVM_SCALE), so the
@@ -308,7 +315,7 @@ describe("common", () => {
       });
       nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
 
-      const result = await prepareUnsignedTxParams(zgCurrency, {
+      const result = await prepareUnsignedTxParams(testConfig, zgCurrency, {
         intentType: "staking",
         type: "staking-eip1559",
         mode: "delegate",
@@ -334,7 +341,7 @@ describe("common", () => {
       });
       nodeApiMock.getGasEstimation.mockResolvedValueOnce(new BigNumber(237_279));
 
-      const result = await prepareUnsignedTxParams(zgCurrency, {
+      const result = await prepareUnsignedTxParams(testConfig, zgCurrency, {
         intentType: "staking",
         type: "staking-eip1559",
         mode: "undelegate",
@@ -360,6 +367,7 @@ describe("common", () => {
       });
 
       const result = await prepareUnsignedTxParams(
+        testConfig,
         zgCurrency,
         {
           intentType: "staking",
@@ -393,7 +401,7 @@ describe("common", () => {
 
       nodeApiMock.getGasEstimation.mockRejectedValueOnce(GAS_ESTIMATION_ERROR);
 
-      const result = await prepareUnsignedTxParams(mockCurrency, sendIntent);
+      const result = await prepareUnsignedTxParams(testConfig, mockCurrency, sendIntent);
 
       expect(nodeApiMock.getGasEstimation).toHaveBeenCalledTimes(1);
       expect(result.gasLimit).toEqual(new BigNumber(0));

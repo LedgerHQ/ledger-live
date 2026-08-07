@@ -3,6 +3,7 @@ import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
+import type { TronCoinConfig, TronContext } from "../config";
 import { createApi } from ".";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
@@ -24,15 +25,21 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: CoinModuleApi;
+  let module: CoinModuleApi<TronCoinConfig>;
   let tronWeb: TronWeb;
 
+  const config = {
+    explorer: { url: TRONGRID_URL },
+    status: { type: "active" },
+  } as TronCoinConfig;
+
+  const context: TronContext = {
+    config: async () => config,
+    logger: () => {},
+  };
+
   beforeAll(() => {
-    module = createApi({
-      explorer: {
-        url: TRONGRID_URL,
-      },
-    });
+    module = createApi();
 
     tronWeb = createTronWeb();
   });
@@ -50,8 +57,8 @@ describe("API", () => {
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
 
     // WHEN
-    const result = await module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
-    const txId = await module.broadcast(result);
+    const result = await module.combine(context, signedTrx.raw_data_hex, signedTrx.signature![0]);
+    const txId = await module.broadcast(context, result);
 
     // THEN
     expect(txId).toEqual(expect.any(String));
@@ -59,10 +66,14 @@ describe("API", () => {
 
   it("returns operations from latest, but in asc order", async () => {
     // When
-    const { items: txDesc } = await module.listOperations("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1", {
-      minHeight: 0,
-      order: "desc",
-    });
+    const { items: txDesc } = await module.listOperations(
+      context,
+      "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
+      {
+        minHeight: 0,
+        order: "desc",
+      },
+    );
 
     // Then
     // Check if the result is sorted in ascending order
@@ -71,14 +82,14 @@ describe("API", () => {
     );
 
     // check format of operations
-    txDesc.forEach(operation => {
+    txDesc.forEach((operation: (typeof txDesc)[number]) => {
       // there is always a fee payer equal to the sender address
       expect(operation.tx.feesPayer).toBe(operation.senders[0]);
     });
   });
 
   it("getAccountInfo returns tron account resources", async () => {
-    const info = await module.getAccountInfo!("TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1");
+    const info = await module.getAccountInfo!(context, "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1");
 
     expect(info).toMatchObject({
       type: "tron",
@@ -87,7 +98,7 @@ describe("API", () => {
       bandwidth: expect.any(Number),
     });
     // available amounts and the limit are never negative
-    const { energyLimit, energy, bandwidth } = info as {
+    const { energyLimit, energy, bandwidth } = info as unknown as {
       energyLimit: number;
       energy: number;
       bandwidth: number;
@@ -98,10 +109,10 @@ describe("API", () => {
   });
 
   it("getBlockInfo returns valid block info", async () => {
-    const lastBlockInfo = await module.lastBlock();
+    const lastBlockInfo = await module.lastBlock(context);
     const blockHeight = lastBlockInfo.height - 10;
 
-    const result = await module.getBlockInfo(blockHeight);
+    const result = await module.getBlockInfo(context, blockHeight);
 
     expect(result).toMatchObject({
       height: blockHeight,
@@ -111,10 +122,10 @@ describe("API", () => {
   });
 
   it("getBlock returns block with info and transactions", async () => {
-    const lastBlockInfo = await module.lastBlock();
+    const lastBlockInfo = await module.lastBlock(context);
     const blockHeight = lastBlockInfo.height - 10;
 
-    const result = await module.getBlock(blockHeight);
+    const result = await module.getBlock(context, blockHeight);
 
     expect(result).toMatchObject({
       info: {

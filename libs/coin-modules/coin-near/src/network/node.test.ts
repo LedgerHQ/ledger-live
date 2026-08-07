@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
+import { mockNearConfig } from "../test/context";
 import {
   broadcastTransaction,
   getAccount,
@@ -123,7 +124,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const gasPrice = await getGasPrice();
+      const gasPrice = await getGasPrice(mockNearConfig);
 
       expect(requestedPath).toBe("/v3/stats");
       expect(gasPrice).toBe("100000000");
@@ -133,7 +134,7 @@ describe("node api (indexer-backed calls)", () => {
       mockStats({ gas_price: null });
       mockRpc();
 
-      const gasPrice = await getGasPrice();
+      const gasPrice = await getGasPrice(mockNearConfig);
 
       expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
@@ -142,7 +143,7 @@ describe("node api (indexer-backed calls)", () => {
       mockStats(null);
       mockRpc();
 
-      const gasPrice = await getGasPrice();
+      const gasPrice = await getGasPrice(mockNearConfig);
 
       expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
@@ -151,7 +152,7 @@ describe("node api (indexer-backed calls)", () => {
       mockStats({ gas_price: "" });
       mockRpc();
 
-      const gasPrice = await getGasPrice();
+      const gasPrice = await getGasPrice(mockNearConfig);
 
       expect(gasPrice).toBe(RPC_GAS_PRICE);
     });
@@ -168,7 +169,7 @@ describe("node api (indexer-backed calls)", () => {
         ),
       );
 
-      await expect(getGasPrice()).rejects.toThrow("node unavailable");
+      await expect(getGasPrice(mockNearConfig)).rejects.toThrow("node unavailable");
     });
   });
 
@@ -206,7 +207,7 @@ describe("node api (indexer-backed calls)", () => {
       // from the live protocol config rather than the preload cache's zeroed/fallback default.
       mockAccount("20000000000000000000");
 
-      const account = await getAccount(ADDRESS);
+      const account = await getAccount(mockNearConfig, ADDRESS);
 
       // storageUsageBalance = storageCost * storage_usage (182) + MIN_ACCOUNT_BALANCE_BUFFER
       expect(account.nearResources.storageUsageBalance.toFixed()).toBe("53640000000000000000000");
@@ -233,7 +234,7 @@ describe("node api (indexer-backed calls)", () => {
         is_account_unstaked_balance_available: false,
       });
 
-      const { stakingPositions, totalStaked } = await getStakingPositions(ADDRESS);
+      const { stakingPositions, totalStaked } = await getStakingPositions(mockNearConfig, ADDRESS);
 
       expect(requestedPath).toBe(`/v3/kitwallet/staking-deposits/${ADDRESS}`);
       expect(totalStaked.toFixed()).toBe("1000000000000000000000000");
@@ -249,7 +250,7 @@ describe("node api (indexer-backed calls)", () => {
       );
       mockRpc();
 
-      const { stakingPositions, totalStaked } = await getStakingPositions(ADDRESS);
+      const { stakingPositions, totalStaked } = await getStakingPositions(mockNearConfig, ADDRESS);
 
       expect(stakingPositions).toEqual([]);
       expect(totalStaked.toFixed()).toBe("0");
@@ -267,7 +268,10 @@ describe("node api (indexer-backed calls)", () => {
         is_account_unstaked_balance_available: true,
       });
 
-      const { stakingPositions, totalAvailable, totalPending } = await getStakingPositions(ADDRESS);
+      const { stakingPositions, totalAvailable, totalPending } = await getStakingPositions(
+        mockNearConfig,
+        ADDRESS,
+      );
 
       expect(totalAvailable.toFixed()).toBe("2000000000000000000000000");
       expect(totalPending.toFixed()).toBe("0");
@@ -286,7 +290,7 @@ describe("node api (indexer-backed calls)", () => {
         is_account_unstaked_balance_available: false,
       });
 
-      const { totalAvailable, totalPending } = await getStakingPositions(ADDRESS);
+      const { totalAvailable, totalPending } = await getStakingPositions(mockNearConfig, ADDRESS);
 
       expect(totalAvailable.toFixed()).toBe("0");
       expect(totalPending.toFixed()).toBe("3000000000000000000000000");
@@ -305,7 +309,7 @@ describe("node api (indexer-backed calls)", () => {
     it("returns the transaction hash on success", async () => {
       mockSendTx({ transaction: { hash: "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w" } });
 
-      await expect(broadcastTransaction("signed-tx")).resolves.toBe(
+      await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe(
         "GkQ7Uh8oPPGtVfyPz1yLKmqPqZ8ZyxvGtN5MmYq8mF1w",
       );
     });
@@ -313,7 +317,7 @@ describe("node api (indexer-backed calls)", () => {
     it("throws when the node responds with no transaction hash", async () => {
       mockSendTx({ transaction: {} });
 
-      await expect(broadcastTransaction("signed-tx")).rejects.toThrow(
+      await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
         "Near: send_tx returned no transaction hash",
       );
     });
@@ -321,7 +325,7 @@ describe("node api (indexer-backed calls)", () => {
     it("propagates a non-timeout node error immediately", async () => {
       mockSendTx(undefined, { cause: { name: "INVALID_TRANSACTION" }, message: "nonce too small" });
 
-      await expect(broadcastTransaction("signed-tx")).rejects.toThrow(
+      await expect(broadcastTransaction(mockNearConfig, "signed-tx")).rejects.toThrow(
         "INVALID_TRANSACTION: nonce too small",
       );
     });
@@ -346,7 +350,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      await expect(broadcastTransaction("signed-tx")).resolves.toBe("retried-hash");
+      await expect(broadcastTransaction(mockNearConfig, "signed-tx")).resolves.toBe("retried-hash");
       expect(attempts).toBe(2);
     });
   });
@@ -361,7 +365,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(requestedUrl?.pathname).toBe("/v3/validators");
       expect(requestedUrl?.searchParams.get("limit")).toBe("100");
@@ -383,7 +387,7 @@ describe("node api (indexer-backed calls)", () => {
         ),
       );
 
-      const [mapped] = await getValidators({ total: 200 });
+      const [mapped] = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(mapped.commission).toBe(7);
     });
@@ -408,7 +412,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(validators).toHaveLength(200);
       expect(receivedCursors).toEqual([null, cursor]);
@@ -433,7 +437,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      await getValidators({ total: 200 });
+      await getValidators({ total: 200, config: mockNearConfig });
 
       expect(receivedCursors[1]).toBe(cursor);
     });
@@ -445,7 +449,7 @@ describe("node api (indexer-backed calls)", () => {
         ),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(validators).toHaveLength(100);
     });
@@ -463,7 +467,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 150 });
+      const validators = await getValidators({ total: 150, config: mockNearConfig });
 
       expect(validators).toHaveLength(150);
     });
@@ -473,7 +477,7 @@ describe("node api (indexer-backed calls)", () => {
         http.get(`${NEAR_BASE_URL_MOCKED}/v3/validators`, () => HttpResponse.json({ data: null })),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(validators).toEqual([]);
     });
@@ -485,7 +489,7 @@ describe("node api (indexer-backed calls)", () => {
         ),
       );
 
-      const [mapped] = await getValidators({ total: 200 });
+      const [mapped] = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(mapped.stake).toBe("0");
     });
@@ -501,7 +505,7 @@ describe("node api (indexer-backed calls)", () => {
         ),
       );
 
-      const [mapped] = await getValidators({ total: 200 });
+      const [mapped] = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(mapped.commission).toBe(0);
     });
@@ -516,7 +520,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(requests).toBe(1);
       expect(validators).toEqual([]);
@@ -535,7 +539,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 200 });
+      const validators = await getValidators({ total: 200, config: mockNearConfig });
 
       expect(requests).toBe(2);
       expect(validators).toHaveLength(2);
@@ -557,7 +561,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 150 });
+      const validators = await getValidators({ total: 150, config: mockNearConfig });
 
       expect(requestedLimits).toEqual(["100", "50"]);
       expect(validators).toHaveLength(150);
@@ -571,8 +575,8 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const five = await getValidators({ total: 5 });
-      const ten = await getValidators({ total: 10 });
+      const five = await getValidators({ total: 5, config: mockNearConfig });
+      const ten = await getValidators({ total: 10, config: mockNearConfig });
 
       expect(five).toHaveLength(5);
       expect(ten).toHaveLength(10);
@@ -588,7 +592,7 @@ describe("node api (indexer-backed calls)", () => {
         }),
       );
 
-      const validators = await getValidators({ total: 20 });
+      const validators = await getValidators({ total: 20, config: mockNearConfig });
 
       expect(requestedLimits).toEqual(["20"]);
       expect(validators).toHaveLength(20);

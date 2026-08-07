@@ -229,7 +229,11 @@ describe("logic/transaction", () => {
 
       await estimateFees("concordium_testnet");
 
-      expect(getTransactionCost).toHaveBeenCalledWith("concordium_testnet", { numSignatures: 1 });
+      expect(getTransactionCost).toHaveBeenCalledWith(
+        "concordium_testnet",
+        { numSignatures: 1 },
+        undefined,
+      );
     });
 
     it("should call getTransactionCost with memoSize when memo provided", async () => {
@@ -237,10 +241,14 @@ describe("logic/transaction", () => {
 
       await estimateFees("concordium_testnet", "test");
 
-      expect(getTransactionCost).toHaveBeenCalledWith("concordium_testnet", {
-        numSignatures: 1,
-        memoSize: 5,
-      });
+      expect(getTransactionCost).toHaveBeenCalledWith(
+        "concordium_testnet",
+        {
+          numSignatures: 1,
+          memoSize: 5,
+        },
+        undefined,
+      );
     });
   });
 
@@ -275,10 +283,14 @@ describe("logic/transaction", () => {
       const result = await broadcast(signedTx, "concordium_testnet");
 
       expect(result).toBe("test-submission-id");
-      expect(submitTransfer).toHaveBeenCalledWith("concordium_testnet", {
-        transaction: "aabbccdd",
-        signatures: { "0": { "0": "11223344" } },
-      });
+      expect(submitTransfer).toHaveBeenCalledWith(
+        "concordium_testnet",
+        {
+          transaction: "aabbccdd",
+          signatures: { "0": { "0": "11223344" } },
+        },
+        undefined,
+      );
     });
 
     it("should parse signed transaction JSON correctly", async () => {
@@ -290,10 +302,14 @@ describe("logic/transaction", () => {
 
       await broadcast(signedTx, "concordium_testnet");
 
-      expect(submitTransfer).toHaveBeenCalledWith("concordium_testnet", {
-        transaction: "deadbeef",
-        signatures: { "0": { "0": "cafebabe" } },
-      });
+      expect(submitTransfer).toHaveBeenCalledWith(
+        "concordium_testnet",
+        {
+          transaction: "deadbeef",
+          signatures: { "0": { "0": "cafebabe" } },
+        },
+        undefined,
+      );
     });
 
     it("should throw on invalid JSON", async () => {

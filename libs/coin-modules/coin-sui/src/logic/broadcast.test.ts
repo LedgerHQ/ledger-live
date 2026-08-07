@@ -32,6 +32,7 @@ describe("broadcast", () => {
           },
         },
         undefined,
+        undefined,
       );
     });
 
@@ -77,6 +78,7 @@ describe("broadcast", () => {
             showEffects: true,
           },
         },
+        undefined,
         undefined,
       );
     });

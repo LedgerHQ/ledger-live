@@ -1,4 +1,4 @@
-import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import type { Context, CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 
 export type ConcordiumNetwork = "mainnet" | "testnet";
 
@@ -9,3 +9,13 @@ export type ConcordiumConfig = {
 };
 
 export type ConcordiumCoinConfig = CurrencyConfig & ConcordiumConfig;
+
+/**
+ * The {@link Context} threaded through the coin-concordium API layer (ADR-019).
+ *
+ * The context carries `{ config, logger }`. Each API method resolves its coin configuration from
+ * `context.config()` and threads it explicitly into the network/logic layers. The `currencyId`
+ * used for chain selection is captured once from `createApi(currencyId)` and forwarded from the
+ * API closure — it is not read off the context.
+ */
+export type ConcordiumContext = Context<ConcordiumCoinConfig>;

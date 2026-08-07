@@ -186,7 +186,7 @@ describe("getBalance", () => {
     const balance = await getBalance(address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 0n }]);
-    expect(mockedFetchTronAccount).toHaveBeenCalledWith(address);
+    expect(mockedFetchTronAccount).toHaveBeenCalledWith(address, undefined);
   });
 
   it("returns native + trc10 + trc20 balances", async () => {

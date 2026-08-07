@@ -1,9 +1,5 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
 import { EvmConfig } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 /**
@@ -25,25 +21,25 @@ describe("Linea (etherscan explorer)", () => {
     const FROM = "0x224D8Fd7aB6AD4c6eb4611Ce56EF35Dec2277F03";
     const TO = "0x9F41fE989C556d8b312Ce398b7f7B5Ac90919a73";
 
-    let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+    let module: ReturnType<typeof createApi>;
+    const lineaConfig: EvmConfig = {
+      node: {
+        type: "external",
+        uri: "https://rpc.linea.build",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59144",
+      },
+      showNfts: false,
+    };
 
     beforeAll(() => {
-      const lineaConfig: EvmConfig = {
-        node: {
-          type: "external",
-          uri: "https://rpc.linea.build",
-        },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/59144",
-        },
-        showNfts: false,
-      };
-      module = createApi(lineaConfig, "linea");
+      module = createApi("linea");
     });
 
     it("should include internal native transfer in block transaction", async () => {
-      const block = await module.getBlock(BLOCK_HEIGHT);
+      const block = await module.getBlock(createMockEvmContext(lineaConfig), BLOCK_HEIGHT);
 
       expect(block.info.height).toBe(BLOCK_HEIGHT);
 
@@ -70,7 +66,7 @@ describe("Linea (etherscan explorer)", () => {
       const txHash = "0x86130492fc3195c7163f5b1a3b42d79c737d20834365bff434cd6ab94832d610";
       const sender = "0x9F41fE989C556d8b312Ce398b7f7B5Ac90919a73";
       const recipient = "0x5d50bE703836C330Fc2d147a631CDd7bb8D7171c";
-      const block = await module.getBlock(blockHeight);
+      const block = await module.getBlock(createMockEvmContext(lineaConfig), blockHeight);
       const tx = block.transactions.find(t => t.hash === txHash);
       if (!tx) {
         fail(`Transaction ${txHash} not found in block ${blockHeight}`);

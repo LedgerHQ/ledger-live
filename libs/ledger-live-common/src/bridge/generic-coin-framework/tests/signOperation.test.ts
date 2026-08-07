@@ -35,6 +35,9 @@ describe("genericSignOperation", () => {
   } as any;
 
   const craftTransaction = jest.fn();
+  // The framework threads a context and calls `craftTransactionData(context, intent)`; mirror the
+  // default impl (`{ type: "none" }`).
+  const craftTransactionData = () => ({ type: "none" });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,6 +45,7 @@ describe("genericSignOperation", () => {
     craftTransaction.mockResolvedValue({ transaction: "unsignedTx" });
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       craftTransaction,
+      craftTransactionData,
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
       getNextSequence: jest.fn().mockResolvedValue(1n),
@@ -83,6 +87,7 @@ describe("genericSignOperation", () => {
       derivationMode: undefined,
     });
     expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({
         memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
       }),
@@ -94,6 +99,7 @@ describe("genericSignOperation", () => {
     const validateIntent = jest.fn();
     (getCoinModuleApi as jest.Mock).mockReturnValue({
       craftTransaction,
+      craftTransactionData,
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
       getNextSequence: jest.fn().mockResolvedValue(1n),
@@ -111,6 +117,7 @@ describe("genericSignOperation", () => {
 
     expect(validateIntent).not.toHaveBeenCalled();
     expect(craftTransaction).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({ amount: 100000n }),
       expect.anything(),
     );

@@ -3,42 +3,41 @@ import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import type { FilecoinCoinConfig } from "../config";
 import { TEST_ADDRESSES } from "../test/fixtures";
-
-// Minimal config for createApi — uses default API_FILECOIN_ENDPOINT from getEnv
-const config: FilecoinCoinConfig = {
-  status: { type: "active" as const },
-};
+import { createMockFilecoinContext } from "../test/context";
 
 describe("createApi (integration)", () => {
-  let api: CoinModuleApi;
+  let api: CoinModuleApi<FilecoinCoinConfig>;
+  const context = createMockFilecoinContext();
 
   beforeAll(() => {
-    api = createApi(config);
+    api = createApi();
   });
 
   describe("unsupported methods", () => {
     it("getStakes throws not supported", () => {
-      expect(() => api.getStakes(TEST_ADDRESSES.F1_ADDRESS)).toThrow(/not supported/);
+      expect(() => api.getStakes(context, TEST_ADDRESSES.F1_ADDRESS)).toThrow(/not supported/);
     });
 
     it("getRewards throws not supported", () => {
-      expect(() => api.getRewards(TEST_ADDRESSES.F1_ADDRESS)).toThrow(/not supported/);
+      expect(() => api.getRewards(context, TEST_ADDRESSES.F1_ADDRESS)).toThrow(/not supported/);
     });
 
     it("getValidators throws not supported", () => {
-      expect(() => api.getValidators()).toThrow(/not supported/);
+      expect(() => api.getValidators(context)).toThrow(/not supported/);
     });
 
     it("getBlock throws not supported", () => {
-      expect(() => api.getBlock(1000)).toThrow(/not supported/);
+      expect(() => api.getBlock(context, 1000)).toThrow(/not supported/);
     });
 
     it("getBlockInfo throws not supported", () => {
-      expect(() => api.getBlockInfo(1000)).toThrow(/not supported/);
+      expect(() => api.getBlockInfo(context, 1000)).toThrow(/not supported/);
     });
 
     it("craftRawTransaction throws not supported", () => {
-      expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 0n)).toThrow(/not supported/);
+      expect(() => api.craftRawTransaction(context, "tx", "sender", "pubkey", 0n)).toThrow(
+        /not supported/,
+      );
     });
   });
 
@@ -49,6 +48,7 @@ describe("createApi (integration)", () => {
       const recipient = accountFromMnemonic(mnemonic, "SECP256K1", "m/44'/461'/0'/0/1");
 
       const crafted = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           type: "send",
@@ -59,18 +59,20 @@ describe("createApi (integration)", () => {
           useAllAmount: false,
         },
         {
-          value: 150_000_000_000n,
-          parameters: {
-            gasFeeCap: "150000",
-            gasLimit: "1000000",
-            gasPremium: "125000",
+          customFees: {
+            value: 150_000_000_000n,
+            parameters: {
+              gasFeeCap: "150000",
+              gasLimit: "1000000",
+              gasPremium: "125000",
+            },
           },
         },
       );
 
       // Combine with a mock signature (base64-encoded)
       const mockSignature = Buffer.from("a]fake-signature-bytes-for-testing").toString("base64");
-      const signed = await api.combine(crafted.transaction, mockSignature);
+      const signed = await api.combine(context, crafted.transaction, mockSignature);
 
       const parsed = JSON.parse(signed);
       expect(parsed.message.from).toBe(sender.address.toString());

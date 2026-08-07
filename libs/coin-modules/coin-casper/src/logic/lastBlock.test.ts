@@ -1,9 +1,12 @@
+import { createMockContext } from "../__tests__/fixtures/config.fixture";
 import { fetchLastBlock } from "../network/api";
 import { lastBlock } from "./lastBlock";
 
 jest.mock("../network/api", () => ({
   fetchLastBlock: jest.fn(),
 }));
+
+const context = createMockContext();
 
 describe("lastBlock", () => {
   beforeEach(() => {
@@ -18,7 +21,7 @@ describe("lastBlock", () => {
     };
     (fetchLastBlock as jest.Mock).mockResolvedValue(mockData);
 
-    const result = await lastBlock();
+    const result = await lastBlock(context);
 
     expect(fetchLastBlock).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockData);
@@ -27,6 +30,6 @@ describe("lastBlock", () => {
   it("propagates errors from the network layer", async () => {
     (fetchLastBlock as jest.Mock).mockRejectedValue(new Error("network failure"));
 
-    await expect(lastBlock()).rejects.toThrow("network failure");
+    await expect(lastBlock(context)).rejects.toThrow("network failure");
   });
 });

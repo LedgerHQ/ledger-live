@@ -19,7 +19,7 @@ import type {
   BalanceOptions,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import coinConfig, { type PolkadotConfig } from "../config";
+import type { PolkadotCoinConfig, PolkadotContext } from "../config";
 import {
   broadcast,
   craftEstimationTransaction,
@@ -32,20 +32,26 @@ import {
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 
-export function createApi(config: PolkadotConfig): CoinModuleApi {
-  coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
-
+// The caller builds the PolkadotContext and passes it to each method (ADR-019). The network + the
+// classic bridge still resolve config through the currency-keyed singleton, so createApi keeps its
+// `config` param and seeds it via setCoinConfig.
+export function createApi(): CoinModuleApi<PolkadotCoinConfig> {
   return {
-    broadcast: (transaction: string, _broadcastConfig?: BroadcastConfig) =>
-      broadcast(transaction, "polkadot"),
-    async call() {
+    broadcast: (
+      _context: PolkadotContext,
+      transaction: string,
+      _options?: { broadcastConfig?: BroadcastConfig },
+    ) => broadcast(transaction, "polkadot"),
+    async call(_context: PolkadotContext) {
       throw new Error("call is not supported");
     },
-    combine: () => {
+    combine: (_context: PolkadotContext) => {
       throw new Error("UnsupportedMethod");
     },
-    craftTransaction: craft,
+    craftTransaction: (context, transactionIntent, options) =>
+      craft(context, transactionIntent, options?.customFees),
     craftRawTransaction: (
+      _context: PolkadotContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -53,42 +59,58 @@ export function createApi(config: PolkadotConfig): CoinModuleApi {
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees: estimate,
-    getBalance: (address: string, options?: BalanceOptions) =>
+    estimateFees: (context, transactionIntent) => estimate(context, transactionIntent),
+    getBalance: (_context: PolkadotContext, address: string, options?: BalanceOptions) =>
       rejectBalanceOptions(() => getBalance(address), options),
-    lastBlock,
-    listOperations: operations,
-    getBlock(_height): Promise<Block> {
+    lastBlock: _context => lastBlock(),
+    listOperations: (context, address, options) => operations(context, address, options),
+    getBlock(_context: PolkadotContext, _height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context: PolkadotContext, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(
+      _context: PolkadotContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: PolkadotContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(
+      _context: PolkadotContext,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
     validateIntent: async (
+      _context: PolkadotContext,
       _transactionIntent: TransactionIntent,
       _balances: Balance[],
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> => {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence: async (_address: string) => {
+    getNextSequence: async (_context: PolkadotContext, _address: string) => {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress,
-    craftTransactionData,
+    validateAddress: (_context, address, parameters) => validateAddress(address, parameters),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
+async function craft(
+  _context: PolkadotContext,
+  transactionIntent: TransactionIntent,
+  _customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
@@ -99,13 +121,17 @@ async function craft(transactionIntent: TransactionIntent): Promise<CraftedTrans
   return { transaction: extrinsic.toHex() };
 }
 
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
+async function estimate(
+  _context: PolkadotContext,
+  transactionIntent: TransactionIntent,
+): Promise<FeeEstimation> {
   const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
   const value = await estimateFees(tx);
   return { value };
 }
 
 async function operations(
+  _context: PolkadotContext,
   address: string,
   { minHeight }: ListOperationsOptions,
 ): Promise<Page<Operation>> {

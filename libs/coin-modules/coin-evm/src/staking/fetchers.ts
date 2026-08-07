@@ -1,7 +1,7 @@
 import type { Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { delay } from "@ledgerhq/live-promise";
-import { getCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
 import type {
@@ -24,18 +24,20 @@ import { fetchSomniaStakes } from "./validators/somnia";
  */
 const createStakingFetcher = (
   getValidatorsFn: (
+    evmConfig: EvmConfigInfo,
     config: StakingContractConfig,
     currency: CryptoCurrency,
   ) => Promise<Validator[]>,
 ) => {
   return async (
+    evmConfig: EvmConfigInfo,
     address: string,
     config: StakingContractConfig,
     currency: CryptoCurrency,
   ): Promise<Stake[]> => {
-    const validators = await getValidatorsFn(config, currency);
+    const validators = await getValidatorsFn(evmConfig, config, currency);
     const validatorAddresses = validators.map(v => v.address);
-    return getStakesForValidators(address, config, currency, validatorAddresses);
+    return getStakesForValidators(evmConfig, address, config, currency, validatorAddresses);
   };
 };
 
@@ -43,13 +45,13 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
   sei_evm: {
     // Sei returns its whole validator set in a single page, so the first page's
     // items are the complete list.
-    fetcher: createStakingFetcher(async (_config, currency) => {
-      const { items } = await getValidators(currency.id);
+    fetcher: createStakingFetcher(async (evmConfig, _config, currency) => {
+      const { items } = await getValidators(evmConfig, currency.id);
       return items;
     }),
   },
   celo: {
-    fetcher: createStakingFetcher(async config => {
+    fetcher: createStakingFetcher(async (_evmConfig, config) => {
       const address = config.contractAddress();
       return [{ id: address, address, name: "" }];
     }),
@@ -107,9 +109,12 @@ const isSeiMissingDelegationError = (currencyId: string, error: unknown): boolea
 const STAKING_RETRY_DELAY_MS = 300;
 
 // TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
-const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
+const createStakeFromContract = async (
+  evmConfig: EvmConfigInfo,
+  stakingContract: StakeCreate,
+): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
-  const node = getCoinConfig(currency.id).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
@@ -200,6 +205,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
 const STAKE_FETCH_BATCH_SIZE = 10;
 
 const getStakesForValidators = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   config: StakingContractConfig,
   currency: CryptoCurrency,
@@ -213,7 +219,9 @@ const getStakesForValidators = async (
   // Fired here so its latency overlaps the precompile batch loop below;
   // awaited at the end. Any failure resolves to an empty map so the staking
   // sync never blocks on the off-chain rewards call.
-  const rewardsPromise = fetchRewards(currency.id, address).catch(() => new Map<string, bigint>());
+  const rewardsPromise = fetchRewards(evmConfig, currency.id, address).catch(
+    () => new Map<string, bigint>(),
+  );
 
   const allResults: PromiseSettledResult<Stake | null>[] = [];
 
@@ -224,7 +232,7 @@ const getStakesForValidators = async (
   for (let i = 0; i < validators.length; i += STAKE_FETCH_BATCH_SIZE) {
     const chunk = validators.slice(i, i + STAKE_FETCH_BATCH_SIZE);
     const chunkPromises = chunk.map(validator =>
-      createStakeFromContract({
+      createStakeFromContract(evmConfig, {
         address,
         config,
         currencyId: currency.id,

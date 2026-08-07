@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import { UnknownNode } from "../../errors";
 import { createLedgerNodeApi } from "./ledger";
 import { createNodeApi } from "./rpc";
@@ -18,8 +18,7 @@ function cacheKey(currencyId: string, node: { type: string; [key: string]: unkno
   return `${currencyId}:${JSON.stringify(node)}`;
 }
 
-export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
-  const config = getCoinConfig(currency.id).info;
+export const getNodeApi = (config: EvmConfigInfo, currency: CryptoCurrency): NodeApi => {
   const node = config?.node;
   const type = node?.type;
 

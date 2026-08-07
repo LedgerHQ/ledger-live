@@ -19,6 +19,7 @@ import {
   type AlgoTransaction,
   AlgoTransactionType,
 } from "./network";
+import { getCoinConfig } from "./config";
 import { addPrefixToken, extractTokenId } from "./tokens";
 import { AlgorandAccount, AlgorandOperation } from "./types";
 
@@ -232,7 +233,7 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
     derivationMode,
   });
 
-  const { round, balance, pendingRewards, assets } = await getAccount(address);
+  const { round, balance, pendingRewards, assets } = await getAccount(getCoinConfig(), address);
 
   const nbAssets = assets.length;
 
@@ -243,7 +244,11 @@ export const getAccountShape: GetAccountShape<AlgorandAccount> = async (info, sy
     mode: "send",
   });
 
-  const newTransactions: AlgoTransaction[] = await getAllAccountTransactions(address, startAt);
+  const newTransactions: AlgoTransaction[] = await getAllAccountTransactions(
+    getCoinConfig(),
+    address,
+    startAt,
+  );
 
   const subAccounts = await buildSubAccounts({
     currency,

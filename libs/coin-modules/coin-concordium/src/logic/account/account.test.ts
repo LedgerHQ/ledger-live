@@ -34,7 +34,11 @@ describe("logic/account", () => {
 
       await getBalance(VALID_ADDRESS, "concordium_testnet");
 
-      expect(getAccountBalance).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS);
+      expect(getAccountBalance).toHaveBeenCalledWith(
+        "concordium_testnet",
+        VALID_ADDRESS,
+        undefined,
+      );
     });
 
     it("should handle zero balance", async () => {
@@ -81,7 +85,7 @@ describe("logic/account", () => {
 
       await getNextValidSequence(VALID_ADDRESS, "concordium_testnet");
 
-      expect(getAccountNonce).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS);
+      expect(getAccountNonce).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, undefined);
     });
 
     it("should handle nonce of 0", async () => {

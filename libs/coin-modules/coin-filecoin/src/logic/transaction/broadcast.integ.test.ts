@@ -8,7 +8,7 @@ describe("broadcast (integration)", () => {
     const recipient = accountFromMnemonic(mnemonic, "SECP256K1", "m/44'/461'/0'/0/1");
 
     const message = {
-      version: 0,
+      version: 0 as const,
       to: recipient.address.toString(),
       from: sender.address.toString(),
       nonce: 0,

@@ -77,6 +77,7 @@ describe("List Operations", () => {
       withApi,
       undefined,
       undefined,
+      undefined,
     );
   });
 
@@ -106,6 +107,7 @@ describe("List Operations", () => {
       "asc",
       withApi,
       mockCursor,
+      undefined,
       undefined,
     );
   });

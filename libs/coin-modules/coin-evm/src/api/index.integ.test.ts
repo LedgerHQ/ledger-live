@@ -1,5 +1,4 @@
 import {
-  CoinModuleApi,
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
@@ -7,7 +6,8 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { ethers } from "ethers";
-import { EvmConfig } from "../config";
+import { EvmConfig, EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe.each([
@@ -34,29 +34,32 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
+  // The logic layer resolves config from the threaded context (ADR-019), so the context must
+  // carry this suite's node/explorer config — not the empty default fixture.
+  const context = createMockEvmContext(config as Partial<EvmConfigInfo>);
 
   beforeAll(() => {
-    module = createApi(config as EvmConfig, "ethereum");
+    module = createApi("ethereum");
   });
 
   describe("getNextSequence", () => {
     it("returns 0 as next sequence for a pristine account", async () => {
-      expect(await module.getNextSequence("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551")).toEqual(
-        0n,
-      );
+      expect(
+        await module.getNextSequence(context, "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551"),
+      ).toEqual(0n);
     });
 
     it("returns next sequence for an address", async () => {
       expect(
-        await module.getNextSequence("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
+        await module.getNextSequence(context, "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1"),
       ).toBeGreaterThanOrEqual(17n);
     });
   });
 
   describe("lastBlock", () => {
     it("returns last block info", async () => {
-      const result = await module.lastBlock();
+      const result = await module.lastBlock(context);
 
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.height).toBeGreaterThan(0);
@@ -66,8 +69,8 @@ describe.each([
 
   describe("getBlockInfo", () => {
     it("returns block info for a specific height", async () => {
-      const lastBlock = await module.lastBlock();
-      const result = await module.getBlockInfo(lastBlock.height);
+      const lastBlock = await module.lastBlock(context);
+      const result = await module.getBlockInfo(context, lastBlock.height);
 
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.height).toBe(lastBlock.height);
@@ -75,7 +78,7 @@ describe.each([
     });
 
     it("returns block info for an older block", async () => {
-      const result = await module.getBlockInfo(20000000);
+      const result = await module.getBlockInfo(context, 20000000);
 
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.height).toBe(20000000);
@@ -84,7 +87,7 @@ describe.each([
     });
 
     it("returns block info with parent for a block with height > 0", async () => {
-      const result = await module.getBlockInfo(20000000);
+      const result = await module.getBlockInfo(context, 20000000);
 
       expect(result.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.parent?.height).toBe(19999999);
@@ -92,7 +95,7 @@ describe.each([
     });
 
     it("returns block info without parent for genesis block", async () => {
-      const result = await module.getBlockInfo(0);
+      const result = await module.getBlockInfo(context, 0);
 
       expect(result.height).toBe(0);
       expect(result.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
@@ -101,7 +104,7 @@ describe.each([
     });
 
     it("ensures parent block structure is correct", async () => {
-      const result = await module.getBlockInfo(20000000);
+      const result = await module.getBlockInfo(context, 20000000);
 
       if (result.parent) {
         expect(result.parent.height).toBeGreaterThanOrEqual(0);
@@ -113,8 +116,8 @@ describe.each([
 
   describe("getBlock", () => {
     it("returns block with transactions for a specific height", async () => {
-      const lastBlock = await module.lastBlock();
-      const result = await module.getBlock(lastBlock.height);
+      const lastBlock = await module.lastBlock(context);
+      const result = await module.getBlock(context, lastBlock.height);
 
       expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.height).toBe(lastBlock.height);
@@ -136,7 +139,7 @@ describe.each([
     });
 
     it("returns block with transactions for an older block", async () => {
-      const result = await module.getBlock(20000000);
+      const result = await module.getBlock(context, 20000000);
 
       expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.height).toBe(20000000);
@@ -147,7 +150,7 @@ describe.each([
     });
 
     it("returns block with parent for a block with height > 0", async () => {
-      const result = await module.getBlock(20000000);
+      const result = await module.getBlock(context, 20000000);
 
       expect(result.info.parent?.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
       expect(result.info.parent?.height).toBe(19999999);
@@ -155,7 +158,7 @@ describe.each([
     });
 
     it("returns block without parent for genesis block", async () => {
-      const result = await module.getBlock(0);
+      const result = await module.getBlock(context, 0);
 
       expect(result.info.height).toBe(0);
       expect(result.info.hash).toMatch(/^0x[A-Fa-f0-9]{64}$/);
@@ -164,7 +167,7 @@ describe.each([
     });
 
     it("returns block with operations extracted from transactions", async () => {
-      const result = await module.getBlock(20000000);
+      const result = await module.getBlock(context, 20000000);
 
       // Check that at least some transactions have operations
       const transactionsWithOps = result.transactions.filter(tx => tx.operations.length > 0);
@@ -207,7 +210,7 @@ describe.each([
     ],
   ])("craftTransaction", (mode, expectTransactionForMode) => {
     it("crafts a transaction with the native asset", async () => {
-      const { transaction: result } = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction(context, {
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 10n,
@@ -228,7 +231,7 @@ describe.each([
     });
 
     it("crafts a transaction with the USDC asset", async () => {
-      const { transaction: result } = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction(context, {
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 10n,
@@ -252,7 +255,7 @@ describe.each([
 
   describe("getBalance", () => {
     it("returns empty balance for a pristine account", async () => {
-      const result = await module.getBalance("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551");
+      const result = await module.getBalance(context, "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551");
 
       expect(result).toEqual([
         {
@@ -263,13 +266,13 @@ describe.each([
     });
 
     it("returns 0 when address is not found", async () => {
-      const result = await module.getBalance("0xcafebabe00000000000000000000000000000000");
+      const result = await module.getBalance(context, "0xcafebabe00000000000000000000000000000000");
 
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
     });
 
     it("returns balance for an address", async () => {
-      const result = await module.getBalance("0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3");
+      const result = await module.getBalance(context, "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3");
 
       expect(result).toBeInstanceOf(Array);
       expect(result[0]).toEqual({
@@ -288,21 +291,20 @@ describe.each([
      * "To send batches over 10 items, consider using a dedicated API provider"
      */
     it("returns at least 10 token balances on Optimisim", async () => {
-      const module = createApi(
-        {
-          node: {
-            type: "external",
-            uri: "https://mainnet.optimism.io",
-          },
-          explorer: {
-            type: "blockscout",
-            uri: "https://optimism.blockscout.com/api",
-          },
-        } as EvmConfig,
-        "optimism",
-      );
+      const config = {
+        node: {
+          type: "external",
+          uri: "https://mainnet.optimism.io",
+        },
+        explorer: {
+          type: "blockscout",
+          uri: "https://optimism.blockscout.com/api",
+        },
+      };
+      const module = createApi("optimism");
 
-      const result = await module.getBalance("0x1CDDb825910426644e00e769072Ce1Ea7d4e34BB");
+      const context = createMockEvmContext(config as Partial<EvmConfigInfo>);
+      const result = await module.getBalance(context, "0x1CDDb825910426644e00e769072Ce1Ea7d4e34BB");
 
       expect(result.length).toBeGreaterThan(10);
     });
@@ -311,7 +313,7 @@ describe.each([
   describe("listOperations", () => {
     it("returns empty operation list for a pristine account", async () => {
       expect(
-        await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
+        await module.listOperations(context, "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
           order: "asc",
         }),
@@ -335,6 +337,7 @@ describe.each([
       "lists operations for an address with %s order",
       async (_s, order, isCorrectlyOrdered) => {
         const { items: result } = await module.listOperations(
+          context,
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
           { minHeight: 200, order },
         );
@@ -396,7 +399,7 @@ describe.each([
 
         // -- Page 1
 
-        const { items: p1Ops, next: p1Token } = await module.listOperations(address, {
+        const { items: p1Ops, next: p1Token } = await module.listOperations(context, address, {
           minHeight: 200,
           order,
           limit,
@@ -410,7 +413,7 @@ describe.each([
 
         // -- Page 2
 
-        const { items: p2Ops, next: p2Token } = await module.listOperations(address, {
+        const { items: p2Ops, next: p2Token } = await module.listOperations(context, address, {
           minHeight: 200,
           order,
           limit,
@@ -453,6 +456,7 @@ describe.each([
 
         // First call
         const { items: firstCallResult, next: firstCallToken } = await module.listOperations(
+          context,
           address,
           {
             minHeight: 200,
@@ -462,28 +466,28 @@ describe.each([
         );
 
         // Same call again - should return same result (cached or not)
-        const { items: cachedResult } = await module.listOperations(address, {
+        const { items: cachedResult } = await module.listOperations(context, address, {
           minHeight: 200,
           order: "desc",
           limit: 5,
         });
 
         // Different limit - should return different results
-        const { items: greaterLimitResult } = await module.listOperations(address, {
+        const { items: greaterLimitResult } = await module.listOperations(context, address, {
           minHeight: 200,
           order: "desc",
           limit: 10,
         });
 
         // Different order - should return different results
-        const { items: differentOrderResult } = await module.listOperations(address, {
+        const { items: differentOrderResult } = await module.listOperations(context, address, {
           minHeight: 200,
           order: "asc",
           limit: 5,
         });
 
         // Different pagingToken - should return different results
-        const { items: differentTokenResult } = await module.listOperations(address, {
+        const { items: differentTokenResult } = await module.listOperations(context, address, {
           minHeight: 200,
           order: "desc",
           limit: 5,
@@ -526,12 +530,12 @@ describe.each([
         const sender = "0x12644b85A2F20F39Ade7543FBA1C0C9DFE289580";
         const recipient = "0xD017e1a34648521E7959F0AfDb5d359c979f5E2f";
 
-        const { items: senderOps } = await module.listOperations(sender, {
+        const { items: senderOps } = await module.listOperations(context, sender, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
         });
-        const { items: recipientOps } = await module.listOperations(recipient, {
+        const { items: recipientOps } = await module.listOperations(context, recipient, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -571,12 +575,12 @@ describe.each([
         const recipient = "0x1f2F2d487C79822dc59550d87Bd5B32234F6F387";
         const contract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 
-        const { items: senderOps } = await module.listOperations(sender, {
+        const { items: senderOps } = await module.listOperations(context, sender, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
         });
-        const { items: recipientOps } = await module.listOperations(recipient, {
+        const { items: recipientOps } = await module.listOperations(context, recipient, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -625,7 +629,7 @@ describe.each([
         const lidoContract = "0xae7ab96520de3a18e5e111b5eaab095312d7fe84";
         const zeroAddress = "0x0000000000000000000000000000000000000000";
 
-        const { items } = await module.listOperations(sender, {
+        const { items } = await module.listOperations(context, sender, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -670,7 +674,7 @@ describe.each([
         const caller = "0x6b2ae7cc19eda092476f32cced9311da568a823c";
         const spoofedSender = "0x7d75Acd9B52e01B149557ed230717ECd088b898a";
 
-        const { items: spoofedSenderOps } = await module.listOperations(spoofedSender, {
+        const { items: spoofedSenderOps } = await module.listOperations(context, spoofedSender, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -736,7 +740,7 @@ describe.each([
     ],
   ])("estimateFees for %s transaction", (mode, expectEstimationForMode) => {
     it("estimates fees for native asset transfer", async () => {
-      const result = await module.estimateFees({
+      const result = await module.estimateFees(context, {
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
@@ -752,7 +756,7 @@ describe.each([
     });
 
     it("estimates fees for USDC token transfer", async () => {
-      const result = await module.estimateFees({
+      const result = await module.estimateFees(context, {
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 1000000n, // 1 USDC (6 decimals)
@@ -771,26 +775,25 @@ describe.each([
 });
 
 describe("EVM Api: external node and explorer ONLY", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
+  const config = {
+    node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
+    },
+    showNfts: true,
+  } as EvmConfig;
+  const context = createMockEvmContext(config);
 
   beforeAll(() => {
-    module = createApi(
-      {
-        node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
-        },
-        showNfts: true,
-      } as EvmConfig,
-      "ethereum",
-    );
+    module = createApi("ethereum");
   });
 
   describe("getBlock", () => {
     it("returns details for a smart contract creation tx in block 24883766", async () => {
       const txHash = "0xd66967e32c71db2f1ecaed67d710efc3fa97f498d25499cc5817563e4c2ae863";
-      const result = await module.getBlock(24883766);
+      const result = await module.getBlock(context, 24883766);
       const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
 
       expect(tx!.details).toMatchObject({
@@ -802,7 +805,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
 
     it("returns details for a smart contract interaction tx in block 24883766", async () => {
       const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
-      const result = await module.getBlock(24883766);
+      const result = await module.getBlock(context, 24883766);
       const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
 
       expect(tx!.details).toMatchObject({
@@ -823,7 +826,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
         const blockHeight = 24883766;
         const deployer = "0x2463BF4cf17c040ea7beB1F46847c91D45e34608";
 
-        const { items } = await module.listOperations(deployer, {
+        const { items } = await module.listOperations(context, deployer, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -842,7 +845,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
         const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
         const blockHeight = 24883766;
         const caller = "0x11f84552D846325385eCB2242e2887e3f5B535Ea";
-        const { items } = await module.listOperations(caller, {
+        const { items } = await module.listOperations(context, caller, {
           minHeight: blockHeight,
           order: "asc",
           limit: 50,
@@ -861,20 +864,19 @@ describe("EVM Api: external node and explorer ONLY", () => {
 });
 
 describe("EVM Api (Moonbeam Network)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
+  const config = {
+    node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
+    },
+    showNfts: false,
+  } as EvmConfig;
+  const context = createMockEvmContext(config);
 
   beforeAll(() => {
-    module = createApi(
-      {
-        node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1284",
-        },
-        showNfts: false,
-      } as EvmConfig,
-      "moonbeam",
-    );
+    module = createApi("moonbeam");
   });
 
   describe("listOperations", () => {
@@ -885,11 +887,15 @@ describe("EVM Api (Moonbeam Network)", () => {
      * @see https://coin-service.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
      */
     it("returns no operations with empty string recipients or senders", async () => {
-      const { items } = await module.listOperations("0x2a9c55b6dc56da178f9f9a566f1161237b73ba66", {
-        minHeight: 0,
-        order: "desc",
-        limit: 100,
-      });
+      const { items } = await module.listOperations(
+        context,
+        "0x2a9c55b6dc56da178f9f9a566f1161237b73ba66",
+        {
+          minHeight: 0,
+          order: "desc",
+          limit: 100,
+        },
+      );
 
       expect(items.length).toBeGreaterThan(0);
       items.forEach(op => {
@@ -905,23 +911,24 @@ describe("EVM Api (Moonbeam Network)", () => {
 });
 
 describe("EVM Api (SEI Network)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
   const seiStakingSender = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
   const seiStakingRecipient = "0x0000000000000000000000000000000000001005";
   const seiStakingDelegationAmount = 1000000000000000n; // 0.001 SEI
+  const config = {
+    node: {
+      type: "external",
+      uri: "https://sei-evm-rpc.publicnode.com",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+    },
+  } as EvmConfig;
+  const context = createMockEvmContext(config);
 
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://sei-evm-rpc.publicnode.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
-      },
-    };
-    module = createApi(config as EvmConfig, "sei_evm");
+    module = createApi("sei_evm");
   });
 
   describe.each([
@@ -946,7 +953,7 @@ describe("EVM Api (SEI Network)", () => {
     ],
   ])("craftTransaction", (mode, expectTransactionForMode) => {
     it("crafts a delegate transaction", async () => {
-      const { transaction: result } = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction(context, {
         type: `staking-${mode}`,
         intentType: "staking" as const,
         amount: seiStakingDelegationAmount,
@@ -1010,7 +1017,7 @@ describe("EVM Api (SEI Network)", () => {
     ],
   ])("estimateFees for %s transaction", (mode, expectEstimationForMode) => {
     it("estimates fees for staking delegation", async () => {
-      const result = await module.estimateFees({
+      const result = await module.estimateFees(context, {
         type: `staking-${mode}`,
         intentType: "staking" as const,
         amount: seiStakingDelegationAmount,
@@ -1030,21 +1037,22 @@ describe("EVM Api (SEI Network)", () => {
 });
 
 describe("EVM Api (Zero Gravity)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
+  const config = {
+    node: {
+      type: "external",
+      uri: "https://evmrpc.0g.ai",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://chainscan.0g.ai/open/api",
+      maxLimit: 99, // use 99 so internal `limit + 1` probing stays within the explorer's hard max of 100
+    },
+  } as EvmConfig;
+  const context = createMockEvmContext(config);
 
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://evmrpc.0g.ai",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://chainscan.0g.ai/open/api",
-        maxLimit: 99, // use 99 so internal `limit + 1` probing stays within the explorer's hard max of 100
-      },
-    };
-    module = createApi(config as EvmConfig, "zero_gravity");
+    module = createApi("zero_gravity");
   });
 
   describe("listOperations", () => {
@@ -1056,9 +1064,9 @@ describe("EVM Api (Zero Gravity)", () => {
       };
 
       const [limit99, limit100, limit101] = await Promise.all([
-        module.listOperations(address, { ...commonParams, limit: 99 }),
-        module.listOperations(address, { ...commonParams, limit: 100 }),
-        module.listOperations(address, { ...commonParams, limit: 101 }),
+        module.listOperations(context, address, { ...commonParams, limit: 99 }),
+        module.listOperations(context, address, { ...commonParams, limit: 100 }),
+        module.listOperations(context, address, { ...commonParams, limit: 101 }),
       ]);
 
       const allResults = [limit99, limit100, limit101];
@@ -1093,7 +1101,7 @@ describe("EVM Api (Zero Gravity)", () => {
       // Regression test: chainscan.0g.ai returns "timestamp" (lowercase) instead of the
       // standard etherscan "timeStamp" (camelCase), causing op.tx.date to be an Invalid Date.
       const address = "0xa86a063a764f96cdb64dac0e5e780d5ade6bdbd5";
-      const result = await module.listOperations(address, {
+      const result = await module.listOperations(context, address, {
         minHeight: 0,
         order: "desc",
         limit: 10,

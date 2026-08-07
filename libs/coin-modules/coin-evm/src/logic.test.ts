@@ -206,9 +206,9 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees(optimism, {} as any);
+        await getAdditionalLayer2Fees({} as any, optimism, {} as any);
         expect(mockGetOptimismAdditionalFees).toHaveBeenCalled();
-        await getAdditionalLayer2Fees(scroll, {} as any);
+        await getAdditionalLayer2Fees({} as any, scroll, {} as any);
         expect(mockGetScrollAdditionalFees).toHaveBeenCalled();
       });
 
@@ -216,7 +216,7 @@ describe("EVM Family", () => {
         mockGetOptimismAdditionalFees.mockClear();
         mockGetScrollAdditionalFees.mockClear();
 
-        await getAdditionalLayer2Fees(ethereum, {} as any);
+        await getAdditionalLayer2Fees({} as any, ethereum, {} as any);
         expect(mockGetOptimismAdditionalFees).not.toHaveBeenCalled();
         expect(mockGetScrollAdditionalFees).not.toHaveBeenCalled();
       });

@@ -1,5 +1,6 @@
 import type { AccountInfo } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
+import type { TronCoinConfig } from "../config";
 import { getTronAccountNetwork } from "../network";
 
 /**
@@ -21,8 +22,11 @@ export type TronAccountInfo = {
   bandwidth: number;
 };
 
-export async function getAccountInfo(address: string): Promise<AccountInfo> {
-  const networkInfo = await getTronAccountNetwork(address);
+export async function getAccountInfo(
+  address: string,
+  config?: TronCoinConfig,
+): Promise<AccountInfo> {
+  const networkInfo = await getTronAccountNetwork(address, config);
 
   const energy = BigNumber.maximum(0, networkInfo.energyLimit.minus(networkInfo.energyUsed));
   const freeBandwidth = BigNumber.maximum(

@@ -1,4 +1,5 @@
 import type { Cursor, Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
+import type { NearContext } from "../config";
 import { VALIDATORS_COUNT } from "../constants";
 import { getValidators as fetchValidators } from "../network";
 
@@ -6,8 +7,12 @@ import { getValidators as fetchValidators } from "../network";
  * Staking pools available for delegation. The indexer call is LRU-cached upstream and returns a
  * single capped page, so `next` is always undefined.
  */
-export async function getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
-  const validators = await fetchValidators({ total: VALIDATORS_COUNT });
+export async function getValidators(
+  context: NearContext,
+  _cursor?: Cursor,
+): Promise<Page<Validator>> {
+  const config = await context.config();
+  const validators = await fetchValidators({ total: VALIDATORS_COUNT, config });
 
   const items: Validator[] = validators.map(({ account_id, stake, commission }) => ({
     id: account_id,

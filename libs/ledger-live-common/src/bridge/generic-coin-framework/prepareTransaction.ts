@@ -1,5 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
@@ -75,6 +76,7 @@ export function genericPrepareTransaction(
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
+    const context = buildContext(account.currency.id);
     const bridgeApi = await getBridgeApi(account.currency, network);
 
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
@@ -112,7 +114,7 @@ export function genericPrepareTransaction(
         amount,
       },
       bridgeApi.computeIntentType,
-      coinModuleApi.craftTransactionData,
+      intent => coinModuleApi.craftTransactionData(context, intent),
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       feesStrategy: transaction.feesStrategy ?? undefined,
@@ -127,7 +129,7 @@ export function genericPrepareTransaction(
     const estimated =
       customParametersFees && !transaction.useAllAmount
         ? undefined
-        : await coinModuleApi.estimateFees(intent, customFeesParameters);
+        : await coinModuleApi.estimateFees(context, intent, { customFeesParameters });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
       : (estimated as FeeEstimation);

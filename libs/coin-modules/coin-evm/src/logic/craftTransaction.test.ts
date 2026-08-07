@@ -6,7 +6,8 @@ import {
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { craftTransaction } from "./craftTransaction";
@@ -23,15 +24,18 @@ describe("craftTransaction", () => {
   const ledgerMocks = mockNodeApi();
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency.id);
-      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+      return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
   it("fails to craft an unknown intent type", async () => {
     await expect(
-      craftTransaction({} as CryptoCurrency, { transactionIntent: { type: "any" } } as any),
+      craftTransaction(
+        createMockEvmContext(),
+        {} as CryptoCurrency,
+        { transactionIntent: { type: "any" } } as any,
+      ),
     ).rejects.toThrow(
       "Unsupported intent type 'any'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'",
     );
@@ -68,12 +72,13 @@ describe("craftTransaction", () => {
       ["an external node", "external", externalMocks],
       ["a ledger node", "ledger", ledgerMocks],
     ] as const)("crafts a transaction with the native asset using %s", async (_, type, mocks) => {
-      setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+      const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
       mocks.getTransactionCount.mockResolvedValue(18);
       mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
       mocks.getFeeData.mockResolvedValue(feeData);
 
       const { transaction } = await craftTransaction(
+        context,
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
         {
           transactionIntent: {
@@ -110,12 +115,13 @@ describe("craftTransaction", () => {
       ["an external node", "external", externalMocks],
       ["a ledger node", "ledger", ledgerMocks],
     ] as const)("crafts a transaction with a token asset using %s", async (_, type, mocks) => {
-      setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+      const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
       mocks.getTransactionCount.mockResolvedValue(18);
       mocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
       mocks.getFeeData.mockResolvedValue(feeData);
 
       const { transaction } = await craftTransaction(
+        context,
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
         {
           transactionIntent: {
@@ -163,10 +169,11 @@ describe("craftTransaction", () => {
     ] as const)(
       "crafts a transaction without %s when custom fees are passed",
       async (_, type, mocks) => {
-        setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+        const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
         mocks.getTransactionCount.mockResolvedValue(18);
 
         const { transaction } = await craftTransaction(
+          context,
           { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
           {
             transactionIntent: {
@@ -220,7 +227,7 @@ describe("craftTransaction", () => {
   });
 
   it("preserves passed calldata", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    const context = createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>);
     externalMocks.getTransactionCount.mockResolvedValue(18);
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
@@ -231,6 +238,7 @@ describe("craftTransaction", () => {
     });
 
     const { transaction } = await craftTransaction(
+      context,
       { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
       {
         transactionIntent: {
@@ -259,7 +267,7 @@ describe("craftTransaction", () => {
   });
 
   it("preserves passed sequence", async () => {
-    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    const context = createMockEvmContext({ node: { type: "external" } } as Partial<EvmConfigInfo>);
     externalMocks.getGasEstimation.mockResolvedValue(new BigNumber(2300));
     externalMocks.getFeeData.mockResolvedValue({
       gasPrice: new BigNumber(5),
@@ -269,6 +277,7 @@ describe("craftTransaction", () => {
     });
 
     const { transaction } = await craftTransaction(
+      context,
       { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
       {
         transactionIntent: {
@@ -335,12 +344,13 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a SEI staking delegate transaction using %s",
           async (_, type, mocks) => {
-            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(25);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(45000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
             const { transaction } = await craftTransaction(
+              context,
               {
                 id: "sei_evm",
                 ethereumLikeInfo: { chainId: 42 },
@@ -379,12 +389,13 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a SEI staking undelegate transaction using %s",
           async (_, type, mocks) => {
-            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(26);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(50000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
             const { transaction } = await craftTransaction(
+              context,
               {
                 id: "sei_evm",
                 ethereumLikeInfo: { chainId: 42 },
@@ -423,12 +434,13 @@ describe("craftTransaction", () => {
         ] as const)(
           "crafts a CELO staking delegate transaction using %s",
           async (_, type, mocks) => {
-            setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+            const context = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
             mocks.getTransactionCount.mockResolvedValue(30);
             mocks.getGasEstimation.mockResolvedValue(new BigNumber(60000));
             mocks.getFeeData.mockResolvedValue(feeData);
 
             const { transaction } = await craftTransaction(
+              context,
               {
                 id: "celo",
                 ethereumLikeInfo: { chainId: 42220 },
@@ -464,10 +476,13 @@ describe("craftTransaction", () => {
     );
 
     it("fails to craft staking transaction for unsupported currency", async () => {
-      setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+      const context = createMockEvmContext({
+        node: { type: "external" },
+      } as Partial<EvmConfigInfo>);
 
       await expect(
         craftTransaction(
+          context,
           {
             id: "unsupported_network",
             ethereumLikeInfo: { chainId: 999 },
@@ -490,10 +505,13 @@ describe("craftTransaction", () => {
     });
 
     it("fails to craft staking transaction with unsupported operation", async () => {
-      setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+      const context = createMockEvmContext({
+        node: { type: "external" },
+      } as Partial<EvmConfigInfo>);
 
       await expect(
         craftTransaction(
+          context,
           {
             id: "sei_evm",
             ethereumLikeInfo: { chainId: 42 },

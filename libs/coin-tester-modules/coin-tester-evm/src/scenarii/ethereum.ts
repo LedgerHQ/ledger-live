@@ -4,7 +4,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "../fixtures";
-import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, expectAddressInList, getBridges, VITALIK } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
@@ -87,51 +87,32 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
     const signer = await buildSigner();
     await spawnAnvil("https://ethereum-rpc.publicnode.com", signer.exportMnemonic());
 
-    setCoinConfig(() => ({
-      info: {
-        status: {
-          type: "active",
-        },
-        gasTracker: {
-          type: "ledger",
-          explorerId: "eth",
-        },
-        node: {
-          type: "external",
-          uri: "http://127.0.0.1:8545",
-        },
-        explorer: {
-          type: "ledger",
-          explorerId: "eth",
-        },
-        showNfts: true,
+    const info: EvmConfigInfo = {
+      status: {
+        type: "active",
       },
-    }));
+      gasTracker: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+      node: {
+        type: "external",
+        uri: "http://127.0.0.1:8545",
+      },
+      explorer: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+      showNfts: true,
+    };
     LiveConfig.setConfig({
       config_currency_ethereum: {
         type: "object",
-        default: {
-          status: {
-            type: "active",
-          },
-          gasTracker: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-          node: {
-            type: "external",
-            uri: "http://127.0.0.1:8545",
-          },
-          explorer: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-          showNfts: true,
-        },
+        default: info,
       },
     });
 
-    initMswHandlers(getCoinConfig(ethereum.id).info);
+    initMswHandlers(info);
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {

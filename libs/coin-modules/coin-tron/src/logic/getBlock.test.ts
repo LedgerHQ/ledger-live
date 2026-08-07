@@ -42,7 +42,7 @@ describe("getBlockInfo", () => {
       hash: "blockhash",
       time: new Date(1700000000000),
     });
-    expect(networkGetBlock).toHaveBeenCalledWith(100);
+    expect(networkGetBlock).toHaveBeenCalledWith(100, undefined);
   });
 });
 
@@ -103,7 +103,7 @@ describe("getBlock", () => {
       asset: { type: "native" },
       amount: BigInt(1000000),
     });
-    expect(getBlockWithTransactions).toHaveBeenCalledWith(100);
+    expect(getBlockWithTransactions).toHaveBeenCalledWith(100, undefined);
   });
 
   it("should map TRC10 transfer to transfer operations", async () => {
@@ -374,7 +374,7 @@ describe("getBlock", () => {
 
     const result = await getBlock(100);
 
-    expect(mockGetTransactionInfoByBlockNum).toHaveBeenCalledWith(100);
+    expect(mockGetTransactionInfoByBlockNum).toHaveBeenCalledWith(100, undefined);
     expect(result.transactions[0].fees).toBe(BigInt(2500));
   });
 

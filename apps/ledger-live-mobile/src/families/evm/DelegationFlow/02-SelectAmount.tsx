@@ -12,6 +12,8 @@ import {
   isSeiAccountUnassociated,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { Flex, Text, Alert } from "@ledgerhq/native-ui";
 import AlertComponent from "~/components/Alert";
@@ -93,7 +95,11 @@ export default function SelectAmount({ navigation, route }: Props) {
   useEffect(() => {
     let cancelled = false;
     setCheckingSeiAssociation(true);
-    isSeiAccountUnassociated(account.currency.id, account.freshAddress)
+    isSeiAccountUnassociated(
+      getCurrencyConfiguration<EvmConfigInfo>(account.currency.id),
+      account.currency.id,
+      account.freshAddress,
+    )
       .then(unassociated => {
         if (!cancelled) setShowSeiAssociationWarning(unassociated);
       })

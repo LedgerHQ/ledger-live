@@ -2,7 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import type { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
-import { EvmConfigInfo, getCoinConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 import { GasOptions } from "../../types";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
@@ -30,16 +30,16 @@ const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
 
 export const getGasOptions = async ({
   currency,
+  config,
   options,
 }: {
   currency: CryptoCurrency;
+  config: EvmConfigInfo;
   options?: {
     useEIP1559: boolean;
     overrideGasTracker?: EvmConfigInfo["gasTracker"];
   };
 }): Promise<GasOptions> => {
-  const config = getCoinConfig(currency.id).info;
-
   const gasTracker =
     options?.overrideGasTracker ||
     config.gasTracker ||

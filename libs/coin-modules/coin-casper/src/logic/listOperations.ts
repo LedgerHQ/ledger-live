@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import { fetchTxsPage } from "../network/api";
 import { ITxnHistoryData, TransferArgs } from "../types/network";
 import { CasperOperation } from "../types";
+import type { CasperContext } from "../types/config";
 import { getEstimatedFees } from "./estimateFees";
 import { casperAccountHashFromPublicKey } from "./validateAddress";
 
@@ -83,6 +84,7 @@ function toApiOperations(tx: NativeTransfer, accountHash: string): Operation[] {
  * and `cursor` / `limit` would mean re-walking from page 1 on every page, so they are rejected.
  */
 export async function listOperations(
+  context: CasperContext,
   address: string,
   { minHeight, cursor, limit, order }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -92,11 +94,12 @@ export async function listOperations(
   if (cursor !== undefined) throw new Error("casper: listOperations cursor is not supported");
   if (limit !== undefined) throw new Error("casper: listOperations limit is not supported");
 
+  const config = await context.config();
   const accountHash = casperAccountHashFromPublicKey(address);
   const items: Operation[] = [];
 
   for (let page = 1; ; page++) {
-    const { data, page_count } = await fetchTxsPage(address, page);
+    const { data, page_count } = await fetchTxsPage(config, address, page);
     if (data.length === 0) return { items };
 
     for (const tx of data) {

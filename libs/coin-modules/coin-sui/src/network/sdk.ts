@@ -40,7 +40,7 @@ import { makeSuiClientFromGraphQL } from "./graphql/sui-client-adapter";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
-import coinConfig from "../config";
+import coinConfig, { type SuiCoinConfig } from "../config";
 import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
@@ -80,8 +80,8 @@ type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
  * broadcast) route through GraphQL via `node.graphqlUrl`. Callers bound
  * directly to `withApi` (none in the current hot path) always use `node.url`.
  */
-export function isGraphQLEnabled(currencyId?: string): boolean {
-  return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
+export function isGraphQLEnabled(currencyId?: string, config?: SuiCoinConfig): boolean {
+  return (config ?? coinConfig.getCoinConfig(currencyId)).features?.graphql === true;
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
@@ -109,8 +109,12 @@ const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
 };
 
 /** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
-export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
-  const url = coinConfig.getCoinConfig(currencyId).node.url;
+export async function withApi<T>(
+  execute: AsyncApiFunction<T>,
+  currencyId?: string,
+  config?: SuiCoinConfig,
+) {
+  const url = (config ?? coinConfig.getCoinConfig(currencyId)).node.url;
   const network = inferNetworkFromUrl(url);
   const transport = new JsonRpcHTTPTransport({
     url,
@@ -128,10 +132,11 @@ export function withTransport<T>(
     jsonRpc: AsyncApiFunction<T>;
     graphql: AsyncGraphQLApiFunction<T>;
   },
+  config?: SuiCoinConfig,
 ): Promise<T> {
-  return isGraphQLEnabled(currencyId)
-    ? withGraphQLApi(impls.graphql, currencyId)
-    : withApi(impls.jsonRpc, currencyId);
+  return isGraphQLEnabled(currencyId, config)
+    ? withGraphQLApi(impls.graphql, currencyId, config)
+    : withApi(impls.jsonRpc, currencyId, config);
 }
 
 /**
@@ -160,21 +165,29 @@ const toDispatchedCoinBalance = (b: CoinBalance): DispatchedCoinBalance => ({
  * and remaps each node into the shared {@link DispatchedCoinBalance} shape.
  */
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string, currencyId?: string): Promise<DispatchedCoinBalance[]> => {
+  async (
+    owner: string,
+    currencyId?: string,
+    config?: SuiCoinConfig,
+  ): Promise<DispatchedCoinBalance[]> => {
     // Pick<> is compile-time only — explicitly project both transports' results
     // so the cache never stores transport-specific fields (`coinObjectCount`,
     // `lockedBalance` from JSON-RPC; GraphQL's neutral fillers for the same).
-    const balances = await withTransport(currencyId, {
-      jsonRpc: api => api.getAllBalances({ owner }),
-      graphql: api => getAllBalancesCachedGraphQL(api, owner),
-    });
+    const balances = await withTransport(
+      currencyId,
+      {
+        jsonRpc: api => api.getAllBalances({ owner }),
+        graphql: api => getAllBalancesCachedGraphQL(api, owner),
+      },
+      config,
+    );
     return balances.map(toDispatchedCoinBalance);
   },
   // Key includes the transport so flipping the flag mid-rollout doesn't
   // cross-pollinate cached entries between JSON-RPC and GraphQL.
   // Inputs are colon-free (owner = `0x` + hex; currencyId is wallet-set).
-  (owner: string, currencyId?: string) =>
-    `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId) ? "g" : "j"}:${owner}`,
+  (owner: string, currencyId?: string, config?: SuiCoinConfig) =>
+    `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId, config) ? "g" : "j"}:${owner}`,
   minutes(1),
 );
 
@@ -311,8 +324,9 @@ export type AccountBalance = {
 export const getAccountBalances = async (
   addr: string,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<AccountBalance[]> => {
-  const balances = await getAllBalancesCached(addr, currencyId);
+  const balances = await getAllBalancesCached(addr, currencyId, config);
   return balances.map(({ coinType, totalBalance, fundsInAddressBalance }) => ({
     coinType,
     blockHeight: BLOCK_HEIGHT * 2,
@@ -522,11 +536,19 @@ export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string |
  * `StakedSui` objects + system-state (one extra dynamicField per Active
  * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
  */
-export const getDelegatedStakes = (owner: string, currencyId?: string): Promise<DelegatedStake[]> =>
-  withTransport(currencyId, {
-    jsonRpc: api => api.getStakes({ owner }),
-    graphql: api => getDelegatedStakesGraphQL(api, owner),
-  });
+export const getDelegatedStakes = (
+  owner: string,
+  currencyId?: string,
+  config?: SuiCoinConfig,
+): Promise<DelegatedStake[]> =>
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: api => api.getStakes({ owner }),
+      graphql: api => getDelegatedStakesGraphQL(api, owner),
+    },
+    config,
+  );
 
 /**
  * Extract operation coin type from transaction
@@ -847,15 +869,20 @@ export function toSuiAsset(coinType: string): AssetInfo {
 
 export const getLastBlock = (
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> =>
-  withTransport(currencyId, {
-    jsonRpc: async api => {
-      const checkpoint = await api.getLatestCheckpointSequenceNumber();
-      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
-      return { digest, sequenceNumber, timestampMs };
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const checkpoint = await api.getLatestCheckpointSequenceNumber();
+        const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+        return { digest, sequenceNumber, timestampMs };
+      },
+      graphql: getLastBlockGraphQL,
     },
-    graphql: getLastBlockGraphQL,
-  });
+    config,
+  );
 
 /**
  * Paginated transaction history. JSON-RPC: two parallel `queryTransactionBlocks`
@@ -1115,6 +1142,7 @@ export const getListOperations = async (
   withApiImpl: typeof withApi = withApi,
   cursor?: string,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<Page<Op>> => {
   const parsedCursor = parseListOperationsCursor(cursor);
 
@@ -1122,139 +1150,147 @@ export const getListOperations = async (
   // `before/afterCheckpoint` filter via a digest→checkpoint lookup. Per-tx
   // checkpoint digests come back in the same round-trip (no JSON-RPC-style
   // per-checkpoint fan-out).
-  if (isGraphQLEnabled(currencyId)) {
-    return withGraphQLApi(async api => {
-      let cursorCheckpoint: number | null = null;
-      if (parsedCursor) {
-        cursorCheckpoint = await resolveCheckpointSequenceForDigestGraphQL(
+  if (isGraphQLEnabled(currencyId, config)) {
+    return withGraphQLApi(
+      async api => {
+        let cursorCheckpoint: number | null = null;
+        if (parsedCursor) {
+          cursorCheckpoint = await resolveCheckpointSequenceForDigestGraphQL(
+            api,
+            parsedCursor.digest,
+          );
+        }
+        // `desc` order paginates backwards in time → server filter excludes
+        // anything at-or-after the cursor; `asc` does the opposite.
+        let filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined;
+        if (cursorCheckpoint !== null) {
+          filter =
+            order === "desc"
+              ? { beforeCheckpoint: cursorCheckpoint }
+              : { afterCheckpoint: cursorCheckpoint };
+        }
+        const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
           api,
-          parsedCursor.digest,
+          addr,
+          TRANSACTIONS_LIMIT_PER_QUERY,
+          filter,
         );
-      }
-      // `desc` order paginates backwards in time → server filter excludes
-      // anything at-or-after the cursor; `asc` does the opposite.
-      let filter: { beforeCheckpoint?: number; afterCheckpoint?: number } | undefined;
-      if (cursorCheckpoint !== null) {
-        filter =
-          order === "desc"
-            ? { beforeCheckpoint: cursorCheckpoint }
-            : { afterCheckpoint: cursorCheckpoint };
-      }
-      const pairs = await getTransactionsWithCheckpointDigestsGraphQL(
-        api,
-        addr,
-        TRANSACTIONS_LIMIT_PER_QUERY,
-        filter,
+        const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
+        const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
+        // Server filter already excluded items strictly past the cursor;
+        // the additional client-side drop guards against same-checkpoint ties.
+        const afterCursor = dropOperationsBeforeCursor({
+          operations: sorted.map(p => p.tx),
+          order,
+          cursor: parsedCursor,
+        });
+        const digestToHash = new Map(
+          sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
+        );
+        const items = afterCursor.map(t =>
+          transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
+        );
+        const last = afterCursor.at(-1);
+        const next =
+          afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
+            ? serializeListOperationsCursor({
+                digest: last.digest,
+                timestamp: Number(last.timestampMs),
+              })
+            : undefined;
+        return { items, next };
+      },
+      currencyId,
+      config,
+    );
+  }
+
+  return withApiImpl(
+    async api => {
+      const rpcOrder = convertApiOrderToSdkOrder(order);
+      const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
+
+      const [opsOut, opsIn] = await Promise.all([
+        queryTransactions({
+          api,
+          addr,
+          type: "OUT",
+          cursor: rpcCursor,
+          order: rpcOrder,
+          options: { showEvents: true },
+        }),
+        queryTransactions({
+          api,
+          addr,
+          type: "IN",
+          cursor: rpcCursor,
+          order: rpcOrder,
+          options: { showEvents: true },
+        }),
+      ]);
+
+      // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+      // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
+      // SIP-58 settlement transactions (bookkeeping for accumulator state) are excluded.
+      const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest).filter(
+        tx => !isSettlementTransaction(tx),
       );
-      const filtered = pairs.filter(({ tx }) => !isSettlementTransaction(tx));
-      const sorted = filtered.slice().sort((a, b) => compareOperations(order)(a.tx, b.tx));
-      // Server filter already excluded items strictly past the cursor;
-      // the additional client-side drop guards against same-checkpoint ties.
-      const afterCursor = dropOperationsBeforeCursor({
-        operations: sorted.map(p => p.tx),
+
+      // restore order
+      const sortedOps = [...mergedOps].sort(compareOperations(order));
+
+      // drop operations before the current page start cursor
+      const afterCursorOps = dropOperationsBeforeCursor({
+        operations: sortedOps,
         order,
         cursor: parsedCursor,
       });
-      const digestToHash = new Map(
-        sorted.map(({ tx, checkpointDigest }) => [tx.digest, checkpointDigest]),
+
+      // compute next cursor, and drop operations after it
+      const { operations: pageOps, nextCursor } = dropOperationsAfterNextCursor({
+        order,
+        cursor,
+        pageOps: afterCursorOps,
+        outOps: opsOut,
+        inOps: opsIn,
+      });
+
+      // fetch checkpoints for the operations
+      const uniqueCheckpoints = new Set(
+        pageOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
       );
-      const items = afterCursor.map(t =>
-        transactionToCoinFrameworkOperation(addr, t, digestToHash.get(t.digest)),
+      const checkpointHashMap = new Map<string, string>();
+      await Promise.all(
+        Array.from(uniqueCheckpoints).map(async checkpoint => {
+          try {
+            const checkpointData = await api.getCheckpoint({ id: checkpoint });
+            checkpointHashMap.set(checkpoint, checkpointData.digest);
+          } catch (error) {
+            console.warn(
+              `Failed to fetch checkpoint ${checkpoint}, will use synthetic hash for associated operations:`,
+              error,
+            );
+          }
+        }),
       );
-      const last = afterCursor.at(-1);
-      const next =
-        afterCursor.length >= TRANSACTIONS_LIMIT_PER_QUERY && last?.timestampMs
-          ? serializeListOperationsCursor({
-              digest: last.digest,
-              timestamp: Number(last.timestampMs),
-            })
-          : undefined;
-      return { items, next };
-    }, currencyId);
-  }
 
-  return withApiImpl(async api => {
-    const rpcOrder = convertApiOrderToSdkOrder(order);
-    const rpcCursor = toSdkCursor(parsedCursor?.digest ?? cursor);
+      // convert operations to coin-framework model
+      const operations = pageOps.map(t =>
+        transactionToCoinFrameworkOperation(
+          addr,
+          t,
+          t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
+        ),
+      );
 
-    const [opsOut, opsIn] = await Promise.all([
-      queryTransactions({
-        api,
-        addr,
-        type: "OUT",
-        cursor: rpcCursor,
-        order: rpcOrder,
-        options: { showEvents: true },
-      }),
-      queryTransactions({
-        api,
-        addr,
-        type: "IN",
-        cursor: rpcCursor,
-        order: rpcOrder,
-        options: { showEvents: true },
-      }),
-    ]);
-
-    // some IN operations are also OUT operations because the sender receive a new version of the coin objects,
-    // so IN operations and OUT operations are not disjoint => deduplication is needed before sorting and pagination.
-    // SIP-58 settlement transactions (bookkeeping for accumulator state) are excluded.
-    const mergedOps = uniqBy([...opsOut.data, ...opsIn.data], tx => tx.digest).filter(
-      tx => !isSettlementTransaction(tx),
-    );
-
-    // restore order
-    const sortedOps = [...mergedOps].sort(compareOperations(order));
-
-    // drop operations before the current page start cursor
-    const afterCursorOps = dropOperationsBeforeCursor({
-      operations: sortedOps,
-      order,
-      cursor: parsedCursor,
-    });
-
-    // compute next cursor, and drop operations after it
-    const { operations: pageOps, nextCursor } = dropOperationsAfterNextCursor({
-      order,
-      cursor,
-      pageOps: afterCursorOps,
-      outOps: opsOut,
-      inOps: opsIn,
-    });
-
-    // fetch checkpoints for the operations
-    const uniqueCheckpoints = new Set(
-      pageOps.map(t => t.checkpoint).filter((cp): cp is string => Boolean(cp)),
-    );
-    const checkpointHashMap = new Map<string, string>();
-    await Promise.all(
-      Array.from(uniqueCheckpoints).map(async checkpoint => {
-        try {
-          const checkpointData = await api.getCheckpoint({ id: checkpoint });
-          checkpointHashMap.set(checkpoint, checkpointData.digest);
-        } catch (error) {
-          console.warn(
-            `Failed to fetch checkpoint ${checkpoint}, will use synthetic hash for associated operations:`,
-            error,
-          );
-        }
-      }),
-    );
-
-    // convert operations to coin-framework model
-    const operations = pageOps.map(t =>
-      transactionToCoinFrameworkOperation(
-        addr,
-        t,
-        t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,
-      ),
-    );
-
-    return {
-      items: operations,
-      next: nextCursor,
-    };
-  }, currencyId);
+      return {
+        items: operations,
+        next: nextCursor,
+      };
+    },
+    currencyId,
+    config,
+  );
 };
 
 /**
@@ -1302,26 +1338,38 @@ export const getCheckpoint = async (
 };
 
 /** Checkpoint metadata only; see {@link getBlock} for the variant that includes the transactions. */
-export const getBlockInfo = async (id: string, currencyId?: string): Promise<BlockInfo> => {
+export const getBlockInfo = async (
+  id: string,
+  currencyId?: string,
+  config?: SuiCoinConfig,
+): Promise<BlockInfo> => {
   const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<BlockInfo> => {
     const checkpoint = await api.getCheckpoint({ id });
     return toBlockInfo(checkpoint);
   };
   // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
   // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
-  return withTransport(currencyId, {
-    jsonRpc: fromJsonRpc,
-    graphql: async api => {
-      const cp = await getBlockInfoFieldsGraphQL(api, Number(id));
-      if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
-      return toBlockInfo(cp);
+  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId, config);
+  return withTransport(
+    currencyId,
+    {
+      jsonRpc: fromJsonRpc,
+      graphql: async api => {
+        const cp = await getBlockInfoFieldsGraphQL(api, Number(id));
+        if (!cp) throw new Error(`GraphQL Checkpoint not found: ${id}`);
+        return toBlockInfo(cp);
+      },
     },
-  });
+    config,
+  );
 };
 
 /** Checkpoint metadata + all transactions in the block; see {@link getBlockInfo} for the metadata-only variant. */
-export const getBlock = async (id: string, currencyId?: string): Promise<Block> => {
+export const getBlock = async (
+  id: string,
+  currencyId?: string,
+  config?: SuiCoinConfig,
+): Promise<Block> => {
   const fromJsonRpc = async (api: SuiJsonRpcClient): Promise<Block> => {
     const checkpoint = await api.getCheckpoint({ id });
     const rawTxs = await queryTransactionsByDigest({ api, digests: checkpoint.transactions });
@@ -1332,20 +1380,24 @@ export const getBlock = async (id: string, currencyId?: string): Promise<Block> 
   };
   // GraphQL `checkpoint(...)` only accepts UInt53 sequence numbers; digest
   // lookups fall back to JSON-RPC even when the GraphQL flag is on.
-  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId);
-  return withTransport(currencyId, {
-    jsonRpc: fromJsonRpc,
-    graphql: async api => {
-      const block = await getBlockGraphQL(api, Number(id));
-      if (!block) throw new Error(`GraphQL Block not found: ${id}`);
-      return {
-        info: toBlockInfo(block.info),
-        transactions: block.transactions
-          .filter(tx => !isSettlementTransaction(tx))
-          .map(toBlockTransaction),
-      };
+  if (!isSequenceNumber(id)) return withApi(fromJsonRpc, currencyId, config);
+  return withTransport(
+    currencyId,
+    {
+      jsonRpc: fromJsonRpc,
+      graphql: async api => {
+        const block = await getBlockGraphQL(api, Number(id));
+        if (!block) throw new Error(`GraphQL Block not found: ${id}`);
+        return {
+          info: toBlockInfo(block.info),
+          transactions: block.transactions
+            .filter(tx => !isSettlementTransaction(tx))
+            .map(toBlockTransaction),
+        };
+      },
     },
-  });
+    config,
+  );
 };
 
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
@@ -1477,12 +1529,14 @@ export const createTransaction = async (
   withObjects: boolean = false,
   resolution?: Resolution,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<CoreTransaction> => {
   const { serialized, bcsObjects } = await createTransactionFromMode(
     address,
     transaction,
     withObjects,
     currencyId,
+    config,
   );
 
   return {
@@ -1497,15 +1551,16 @@ const createTransactionFromMode = (
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ) => {
   const { mode } = transaction;
   switch (mode) {
     case "delegate":
-      return createTransactionForDelegate(address, transaction, withObjects, currencyId);
+      return createTransactionForDelegate(address, transaction, withObjects, currencyId, config);
     case "undelegate":
-      return createTransactionForUndelegate(address, transaction, withObjects, currencyId);
+      return createTransactionForUndelegate(address, transaction, withObjects, currencyId, config);
     default:
-      return createTransactionForOthers(address, transaction, withObjects, currencyId);
+      return createTransactionForOthers(address, transaction, withObjects, currencyId, config);
   }
 };
 
@@ -1572,12 +1627,17 @@ const createTransactionForDelegate = (
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ) =>
-  withTransport(currencyId, {
-    jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
-    graphql: api =>
-      buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-  });
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: api => buildDelegateBody(address, transaction, withObjects, api),
+      graphql: api =>
+        buildDelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    },
+    config,
+  );
 
 const buildUndelegateBody = async (
   address: string,
@@ -1620,12 +1680,17 @@ const createTransactionForUndelegate = (
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ) =>
-  withTransport(currencyId, {
-    jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
-    graphql: api =>
-      buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-  });
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: api => buildUndelegateBody(address, transaction, withObjects, api),
+      graphql: api =>
+        buildUndelegateBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    },
+    config,
+  );
 
 /**
  * SIP-58 transfer builder:
@@ -1696,12 +1761,17 @@ const createTransactionForOthers = (
   transaction: CreateExtrinsicArg,
   withObjects: boolean,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ) =>
-  withTransport(currencyId, {
-    jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
-    graphql: api =>
-      buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
-  });
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: api => buildOthersBody(address, transaction, withObjects, api),
+      graphql: api =>
+        buildOthersBody(address, transaction, withObjects, makeSuiClientFromGraphQL(api)),
+    },
+    config,
+  );
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees.
@@ -1716,6 +1786,7 @@ export const paymentInfo = async (
   sender: string,
   fakeTransaction: TransactionType,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ) => {
   const { unsigned: txb } = await createTransaction(
     sender,
@@ -1723,32 +1794,37 @@ export const paymentInfo = async (
     false,
     undefined,
     currencyId,
+    config,
   );
-  return withTransport(currencyId, {
-    jsonRpc: async api => {
-      try {
-        const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
-        const fees = getTotalGasUsed(dryRunTxResponse.effects);
-        return {
-          gasBudget: dryRunTxResponse.input.gasData.budget,
-          totalGasUsed: fees,
-          fees,
-        };
-      } catch (error) {
-        throw mapDryRunError(error);
-      }
+  return withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        try {
+          const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+          const fees = getTotalGasUsed(dryRunTxResponse.effects);
+          return {
+            gasBudget: dryRunTxResponse.input.gasData.budget,
+            totalGasUsed: fees,
+            fees,
+          };
+        } catch (error) {
+          throw mapDryRunError(error);
+        }
+      },
+      graphql: async api => {
+        try {
+          const sim = await simulateTransactionGraphQL(api, txb);
+          const fees =
+            BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
+          return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
+        } catch (error) {
+          throw mapDryRunError(error);
+        }
+      },
     },
-    graphql: async api => {
-      try {
-        const sim = await simulateTransactionGraphQL(api, txb);
-        const fees =
-          BigInt(sim.computationCost) + BigInt(sim.storageCost) - BigInt(sim.storageRebate);
-        return { gasBudget: sim.gasBudget, totalGasUsed: fees, fees };
-      } catch (error) {
-        throw mapDryRunError(error);
-      }
-    },
-  });
+    config,
+  );
 };
 
 /**
@@ -1775,30 +1851,35 @@ const toExecuteResult = (
 export const executeTransactionBlock = async (
   params: ExecuteTransactionBlockParams,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<ExecuteTransactionBlockResult> =>
-  withTransport(currencyId, {
-    jsonRpc: async api => {
-      const r = await api.executeTransactionBlock(params);
-      // `effects` requires `options.showEffects: true` upstream — `broadcast.ts`
-      // always sets it. A null/missing payload here means the proxy stripped
-      // it; surface that as a distinct error rather than masquerading as a
-      // genuine on-chain failure.
-      if (!r.effects?.status) {
-        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
-      }
-      const s = r.effects.status;
-      return toExecuteResult(r.digest, s.status, s.error);
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const r = await api.executeTransactionBlock(params);
+        // `effects` requires `options.showEffects: true` upstream — `broadcast.ts`
+        // always sets it. A null/missing payload here means the proxy stripped
+        // it; surface that as a distinct error rather than masquerading as a
+        // genuine on-chain failure.
+        if (!r.effects?.status) {
+          return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+        }
+        const s = r.effects.status;
+        return toExecuteResult(r.digest, s.status, s.error);
+      },
+      graphql: async api => {
+        const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
+        const r = await executeTransactionGraphQL(api, params.transactionBlock, signatures);
+        if (r.status === null) {
+          return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
+        }
+        const status = r.status === "SUCCESS" ? "success" : "failure";
+        return toExecuteResult(r.digest, status, status === "failure" ? r.error : undefined);
+      },
     },
-    graphql: async api => {
-      const signatures = Array.isArray(params.signature) ? params.signature : [params.signature];
-      const r = await executeTransactionGraphQL(api, params.transactionBlock, signatures);
-      if (r.status === null) {
-        return toExecuteResult(r.digest, "failure", "missing effects in broadcast response");
-      }
-      const status = r.status === "SUCCESS" ? "success" : "failure";
-      return toExecuteResult(r.digest, status, status === "failure" ? r.error : undefined);
-    },
-  });
+    config,
+  );
 
 type LoadOperationResponse = {
   operations: SuiTransactionBlockResponse[];
@@ -1950,18 +2031,25 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
  * Active validator set with APY. JSON-RPC: two parallel calls merged by
  * `suiAddress`. GraphQL: see {@link getValidatorsGraphQL}.
  */
-export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
-  withTransport(currencyId, {
-    jsonRpc: async api => {
-      const [{ activeValidators }, { apys }] = await Promise.all([
-        api.getLatestSuiSystemState(),
-        api.getValidatorsApy(),
-      ]);
-      const hash = Object.fromEntries(apys.map(({ address, apy }) => [address, apy]));
-      // `getValidatorsApy` and `getLatestSuiSystemState` are independent calls;
-      // a missing APY entry (race, partial response) defaults to 0 to honour
-      // the `SuiValidator.apy: number` contract. Matches the GraphQL branch.
-      return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] ?? 0 }));
+export const getValidators = (
+  currencyId?: string,
+  config?: SuiCoinConfig,
+): Promise<SuiValidator[]> =>
+  withTransport(
+    currencyId,
+    {
+      jsonRpc: async api => {
+        const [{ activeValidators }, { apys }] = await Promise.all([
+          api.getLatestSuiSystemState(),
+          api.getValidatorsApy(),
+        ]);
+        const hash = Object.fromEntries(apys.map(({ address, apy }) => [address, apy]));
+        // `getValidatorsApy` and `getLatestSuiSystemState` are independent calls;
+        // a missing APY entry (race, partial response) defaults to 0 to honour
+        // the `SuiValidator.apy: number` contract. Matches the GraphQL branch.
+        return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] ?? 0 }));
+      },
+      graphql: getValidatorsGraphQL,
     },
-    graphql: getValidatorsGraphQL,
-  });
+    config,
+  );

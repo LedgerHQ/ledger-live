@@ -1,5 +1,6 @@
 import * as network from "../network";
 import { estimateFees } from "./estimateFees";
+import { mockAlgorandContext } from "../test/context";
 
 jest.mock("../network");
 
@@ -22,7 +23,7 @@ describe("estimateFees", () => {
       genesisID: "mainnet-v1.0",
     });
 
-    const result = await estimateFees();
+    const result = await estimateFees(mockAlgorandContext);
 
     expect(result.value).toBe(1000n);
   });
@@ -38,7 +39,7 @@ describe("estimateFees", () => {
     });
 
     // Default size is 250 + 71 = 321 bytes
-    const result = await estimateFees();
+    const result = await estimateFees(mockAlgorandContext);
 
     expect(result.value).toBe(1000n); // max(321, 1000) = 1000
   });
@@ -54,7 +55,7 @@ describe("estimateFees", () => {
     });
 
     // Custom size 500 + 71 = 571 bytes * 10 = 5710
-    const result = await estimateFees(500);
+    const result = await estimateFees(mockAlgorandContext, 500);
 
     expect(result.value).toBe(5710n);
   });
@@ -69,7 +70,7 @@ describe("estimateFees", () => {
       genesisID: "mainnet-v1.0",
     });
 
-    const result = await estimateFees();
+    const result = await estimateFees(mockAlgorandContext);
 
     expect(result.value).toBe(5000n);
   });
@@ -77,6 +78,6 @@ describe("estimateFees", () => {
   it("should propagate network errors", async () => {
     mockGetTransactionParams.mockRejectedValue(new Error("Network error"));
 
-    await expect(estimateFees()).rejects.toThrow("Network error");
+    await expect(estimateFees(mockAlgorandContext)).rejects.toThrow("Network error");
   });
 });

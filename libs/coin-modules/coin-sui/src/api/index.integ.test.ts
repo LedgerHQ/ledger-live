@@ -4,21 +4,30 @@ import type {
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { getEnv } from "@ledgerhq/live-env";
+import type { SuiCoinConfig, SuiContext } from "../config";
 import { createApi } from ".";
 
 describe("Sui Api", () => {
-  let module: CoinModuleApi;
+  let module: CoinModuleApi<SuiCoinConfig>;
   const SENDER = "0xc6dcb5b920f2fdb751b4a8bad800a4ee04257020d8d6e493c8103b760095016e";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 
+  const config: SuiCoinConfig = {
+    node: {
+      url: getEnv("API_SUI_NODE_PROXY"),
+      graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+    },
+    features: { graphql: false },
+    status: { type: "active" },
+  };
+
+  const context: SuiContext = {
+    config: async () => config,
+    logger: () => {},
+  };
+
   beforeAll(() => {
-    module = createApi({
-      node: {
-        url: getEnv("API_SUI_NODE_PROXY"),
-        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
-      },
-      features: { graphql: false },
-    });
+    module = createApi("sui");
   });
 
   describe("estimateFees", () => {
@@ -27,7 +36,7 @@ describe("Sui Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result: FeeEstimation = await module.estimateFees({
+      const result: FeeEstimation = await module.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
@@ -46,7 +55,7 @@ describe("Sui Api", () => {
     const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
 
     async function testListOperations(order: "asc" | "desc" | undefined) {
-      const { items: operations1, next: token1 } = await module.listOperations(binance, {
+      const { items: operations1, next: token1 } = await module.listOperations(context, binance, {
         minHeight: 0,
         ...(order ? { order } : {}),
       });
@@ -56,6 +65,7 @@ describe("Sui Api", () => {
       expect(token1!.length).toBeGreaterThan(0);
 
       const { items: operations2 } = await module.listOperations(
+        context,
         binance,
         token1
           ? {
@@ -109,6 +119,7 @@ describe("Sui Api", () => {
 
     it("shouldn't return cursor on last page", async () => {
       const { items: operations, next: cursor } = await module.listOperations(
+        context,
         "0xd8908c165dee785924e7421a0fd0418a19d5daeec395fd505a92a0fd3117e428",
         { minHeight: 0, order: "asc" },
       );
@@ -131,7 +142,7 @@ describe("Sui Api", () => {
         let pageCount = 0;
 
         for (let page = 0; page < maxPages; page++) {
-          const { items, next } = await module.listOperations(address, {
+          const { items, next } = await module.listOperations(context, address, {
             minHeight: 0,
             order,
             ...(cursor ? { cursor } : {}),
@@ -174,6 +185,7 @@ describe("Sui Api", () => {
 
     beforeAll(async () => {
       const result = await module.listOperations(
+        context,
         "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f",
         { minHeight: 0, order: "asc" },
       );
@@ -192,7 +204,7 @@ describe("Sui Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      const result = await module.listOperations(SENDER, { minHeight: 0, order: "asc" });
+      const result = await module.listOperations(context, SENDER, { minHeight: 0, order: "asc" });
       txs = result.items;
     });
 
@@ -224,7 +236,7 @@ describe("Sui Api", () => {
     });
 
     it("uses the minHeight to filter", async () => {
-      const { items: minHeightTxs } = await module.listOperations(SENDER, {
+      const { items: minHeightTxs } = await module.listOperations(context, SENDER, {
         minHeight: 154925948,
         order: "asc",
       });
@@ -240,7 +252,7 @@ describe("Sui Api", () => {
     it("should fail when address is invalid", async () => {
       // capture exception with jest
       await expect(
-        module.listOperations("0xABCDEF0000000000000000000000000000000001", {
+        module.listOperations(context, "0xABCDEF0000000000000000000000000000000001", {
           minHeight: 0,
           order: "asc",
         }),
@@ -251,7 +263,7 @@ describe("Sui Api", () => {
   describe("getBalance", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [acc] = await module.getBalance(SENDER);
+      const [acc] = await module.getBalance(context, SENDER);
 
       // Then
       expect(acc.value).toBeGreaterThan(0);
@@ -259,6 +271,7 @@ describe("Sui Api", () => {
 
     it("returns 0 when address is not found", async () => {
       const result = await module.getBalance(
+        context,
         "0xcafebabe00000000000000000000000000000000000000000000000000000000",
       );
 
@@ -269,7 +282,7 @@ describe("Sui Api", () => {
   describe("getLastBlock", () => {
     it("returns the last block", async () => {
       // When
-      const result = await module.lastBlock();
+      const result = await module.lastBlock(context);
       // Then
       expect(result.hash).toMatch(/^[1-9A-HJ-NP-Za-km-z]{43,44}$/); // base58
       expect(result.height).toBeGreaterThan(0);
@@ -279,7 +292,7 @@ describe("Sui Api", () => {
 
   describe("getBlockInfo", () => {
     test("getBlockInfo should get block info by id or sequence number", async () => {
-      const block = await module.getBlockInfo(164167623);
+      const block = await module.getBlockInfo(context, 164167623);
       expect(block.height).toEqual(164167623);
       expect(block.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
       expect(block.time).toEqual(new Date(1751696298663));
@@ -290,7 +303,7 @@ describe("Sui Api", () => {
 
   describe("getBlock", () => {
     test("getBlock should get block by id or sequence number", async () => {
-      const block = await module.getBlock(195177985);
+      const block = await module.getBlock(context, 195177985);
       expect(block.info.height).toEqual(195177985);
       expect(block.info.hash).toEqual("AzoHwjcCXkeiWoBVyWwZcE171zjxochFmcr9eQoNQyYn");
       expect(block.info.time).toEqual(new Date(1759138080141));
@@ -321,7 +334,7 @@ describe("Sui Api", () => {
 
   describe("getValidators", () => {
     it("returns at least a hundred validators with expected fields", async () => {
-      const page = await module.getValidators();
+      const page = await module.getValidators(context);
 
       expect(page.items).toEqual(expect.any(Array));
       expect(page.items.length).toBeGreaterThanOrEqual(100);
@@ -358,6 +371,7 @@ describe("Sui Api", () => {
   describe("getStakes", () => {
     test("Account 0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73", async () => {
       const stakes = await module.getStakes(
+        context,
         "0x4d701858924b5aebce9e82e9aeca92266acfd5610896bfc1b042e7f87ba23c73",
       );
       expect(stakes.items.length).toBeGreaterThan(0);

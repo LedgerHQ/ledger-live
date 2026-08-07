@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
@@ -16,6 +17,9 @@ export type CantonConfig = {
 };
 
 export type CantonCoinConfig = CurrencyConfig & CantonConfig;
+
+/** The {@link Context} threaded through the coin-canton low layers (ADR-019). */
+export type CantonContext = Context<CantonCoinConfig>;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<CantonCoinConfig>) => void;

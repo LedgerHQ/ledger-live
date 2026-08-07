@@ -1,4 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { NearConfig } from "../config";
 import { getStakingPositions } from "../network";
 
 /** Sum of the staking positions in a given state, per pool. */
@@ -19,10 +20,11 @@ function stakedAt(balances: Balance[], delegate: string, states: string[]): bigi
  * its own validation for the same reason.
  */
 export async function pooledAmount(
+  config: NearConfig,
   mode: string,
   sender: string,
   delegate: string,
-  balances?: Balance[],
+  balances: Balance[] | undefined,
 ): Promise<bigint> {
   const states = mode === "unstake" ? ["active", "activating"] : ["withdrawable"];
 
@@ -30,7 +32,7 @@ export async function pooledAmount(
     return stakedAt(balances, delegate, states);
   }
 
-  const { stakingPositions } = await getStakingPositions(sender);
+  const { stakingPositions } = await getStakingPositions(config, sender);
   const position = stakingPositions.find(p => p.validatorId === delegate);
 
   if (!position) {

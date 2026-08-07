@@ -1,26 +1,20 @@
-import type {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
 import { EvmConfig } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Api (Monad Testnet)", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config = {
+    node: { type: "external", uri: "https://testnet-rpc.monad.xyz" },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10143",
+    },
+    showNfts: false,
+  };
   beforeAll(() => {
-    module = createApi(
-      {
-        node: { type: "external", uri: "https://testnet-rpc.monad.xyz" },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10143",
-        },
-        showNfts: false,
-      } as EvmConfig,
-      "monad_testnet",
-    );
+    module = createApi("monad_testnet");
   });
 
   describe("listOperations", () => {
@@ -32,11 +26,15 @@ describe("EVM Api (Monad Testnet)", () => {
      * @see https://coin-service.api.ledger.com/v1/monad_testnet/account/0x152b9c98dfdfb79c3708f0179bc63fdcef455465/operations?minHeight=0&order=asc&limit=50
      */
     it("returns operations without crashing when explorer returns null for internal transactions", async () => {
-      const { items } = await module.listOperations("0x152b9c98dfdfb79c3708f0179bc63fdcef455465", {
-        minHeight: 0,
-        order: "asc",
-        limit: 50,
-      });
+      const { items } = await module.listOperations(
+        createMockEvmContext(config),
+        "0x152b9c98dfdfb79c3708f0179bc63fdcef455465",
+        {
+          minHeight: 0,
+          order: "asc",
+          limit: 50,
+        },
+      );
 
       expect(items).toBeInstanceOf(Array);
       items.forEach(op => {

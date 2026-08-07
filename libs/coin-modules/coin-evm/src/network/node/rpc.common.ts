@@ -9,8 +9,7 @@ import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import type { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
-import { getCoinConfig } from "../../config";
+import type { BlockFinalizationTag, EvmConfigInfo, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
@@ -353,6 +352,7 @@ function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEs
 
 async function getFeeData(
   api: JsonRpcProvider,
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
 ): Promise<FeeData> {
@@ -361,9 +361,7 @@ async function getFeeData(
     ? false
     : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 
-  const { minGasPrice, feeHistoryBlockCount, feeHistoryRewardPercentile } = getCoinConfig(
-    currency.id,
-  ).info;
+  const { minGasPrice, feeHistoryBlockCount, feeHistoryRewardPercentile } = config;
   const minGasPriceFloor = minGasPrice ? new BigNumber(minGasPrice) : null;
   const feeHistoryBlocks = feeHistoryBlockCount ?? 5;
   const feeHistoryPercentile = feeHistoryRewardPercentile ?? 50;
@@ -899,7 +897,12 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
     traceBlockErigon: make(traceBlockErigon, config),
     traceBlockGeth: make(traceBlockGeth, config),
     getGasEstimation: makeGetGasEstimation(config),
-    getFeeData: make(getFeeData, config),
+    // getFeeData takes `config` first (not `currency`), so it can't use the currency-first `make`
+    // wrapper; bind it explicitly and pull `currency` from the second argument for `withApi`.
+    getFeeData: ((...args: Parameters<NodeApi["getFeeData"]>) => {
+      const [, currency] = args;
+      return withApi(currency, api => getFeeData(api, ...args), config);
+    }) as NodeApi["getFeeData"],
     broadcastTransaction: make(broadcastTransaction, config, { retries: 0 }),
     getOptimismAdditionalFees: makeLRUCache(
       make(getOptimismAdditionalFees, config),

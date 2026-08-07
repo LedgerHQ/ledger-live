@@ -1,5 +1,13 @@
-import { TESTNET_COIN_CONFIG, VALID_ADDRESS, VALID_ADDRESS_2 } from "../test/fixtures";
+import {
+  createFixtureConfig,
+  createFixtureContext,
+  VALID_ADDRESS,
+  VALID_ADDRESS_2,
+} from "../test/fixtures";
 import { createApi } from ".";
+
+const context = createFixtureContext();
+const config = createFixtureConfig();
 
 jest.mock("../logic", () => ({
   craftTransaction: jest.fn(),
@@ -15,7 +23,7 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction with memo", async () => {
-    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    const api = createApi("concordium_testnet");
     getNextValidSequenceMock.mockResolvedValue(5);
     craftTransactionMock.mockResolvedValue({
       type: 22, // TransferWithMemo
@@ -41,11 +49,12 @@ describe("api/craftTransaction", () => {
       memo: { type: "string" as const, value: "test memo" },
     } as any;
 
-    const result = await api.craftTransaction(transactionIntent);
+    const result = await api.craftTransaction(context, transactionIntent);
 
     expect(getNextValidSequenceMock).toHaveBeenCalledWith(
       transactionIntent.sender,
       "concordium_testnet",
+      config,
     );
     expect(craftTransactionMock).toHaveBeenCalledWith(
       { address: transactionIntent.sender, nextSequenceNumber: 5 },
@@ -59,7 +68,7 @@ describe("api/craftTransaction", () => {
   });
 
   it("should craft transaction without memo", async () => {
-    const api = createApi(TESTNET_COIN_CONFIG, "concordium_testnet");
+    const api = createApi("concordium_testnet");
     getNextValidSequenceMock.mockResolvedValue(10);
     craftTransactionMock.mockResolvedValue({
       type: 3, // Transfer
@@ -83,7 +92,7 @@ describe("api/craftTransaction", () => {
       asset: { type: "native", ticker: "CCD", id: "ccd" },
     } as any;
 
-    const result = await api.craftTransaction(transactionIntent);
+    const result = await api.craftTransaction(context, transactionIntent);
 
     expect(craftTransactionMock).toHaveBeenCalledWith(
       expect.anything(),

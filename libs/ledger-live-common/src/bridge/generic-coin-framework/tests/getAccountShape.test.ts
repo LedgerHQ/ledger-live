@@ -290,11 +290,16 @@ describe("genericGetAccountShape", () => {
 
         expect(chainSpecificGetAccountShapeMock).toHaveBeenCalledWith(`${currency.id}_addr1`);
 
-        expect(listOperationsMock).toHaveBeenCalledWith(`${currency.id}_addr1`, {
-          minHeight: expectedPagination.minHeight,
-          order: expectedPagination.order,
-          ...("cursor" in expectedPagination ? { cursor: expectedPagination.cursor } : {}),
-        });
+        expect(listOperationsMock).toHaveBeenCalledWith(
+          // context threaded by the framework (v6)
+          expect.objectContaining({ config: expect.any(Function), logger: expect.any(Function) }),
+          `${currency.id}_addr1`,
+          {
+            minHeight: expectedPagination.minHeight,
+            order: expectedPagination.order,
+            ...("cursor" in expectedPagination ? { cursor: expectedPagination.cursor } : {}),
+          },
+        );
 
         const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
         expect(assetsBalancePassed).toEqual([
@@ -1024,8 +1029,8 @@ describe("genericGetAccountShape", () => {
       contractAddress: string,
       opMap?: (ops: any[], owner: string) => any[],
     ) {
-      buildSubAccountsMock.mockImplementation((_ctx: any) => {
-        const ops = _ctx.operations as any[];
+      buildSubAccountsMock.mockImplementation((_context: any) => {
+        const ops = _context.operations as any[];
         if (!ops?.length) return [];
         const owner = ops[0].extra?.assetOwner ?? "";
         const tokenAccId = `accId_${owner}_${contractAddress}`;
@@ -1483,7 +1488,7 @@ describe("genericGetAccountShape", () => {
         fee: 1,
         feesPayer: "address1",
       });
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         const items = addr === "address1" ? [operationsAddress1] : [operationsAddress2];
         return Promise.resolve({ items, next: undefined });
       });
@@ -1581,7 +1586,7 @@ describe("genericGetAccountShape", () => {
         feesPayer: "address1",
         asset: { type: "erc20", assetReference: usdtContract, assetOwner: "address2" },
       });
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         const items = addr === "address1" ? [operationsAddr1] : [operationsAddr2];
         return Promise.resolve({ items, next: undefined });
       });
@@ -1698,7 +1703,7 @@ describe("genericGetAccountShape", () => {
         feesPayer: "address1",
         internal: true,
       });
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         const items = addr === "address1" ? [operationsAddr1] : [operationsAddr2Internal];
         return Promise.resolve({ items, next: undefined });
       });
@@ -1745,7 +1750,7 @@ describe("genericGetAccountShape", () => {
     test("Case 6: ERC20 transfer from smart contract", async () => {
       setupSpecTest();
       const usdtContract = "0xUSDTContract";
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         let items: ReturnType<typeof toCoreOp>[];
         switch (addr) {
           case "address1":
@@ -1939,7 +1944,7 @@ describe("genericGetAccountShape", () => {
 
     test("Case 9: ETH transfer through smart contract", async () => {
       setupSpecTest();
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         let items: ReturnType<typeof toCoreOp>[];
         switch (addr) {
           case "address1":
@@ -2001,7 +2006,7 @@ describe("genericGetAccountShape", () => {
     test("Case 10: mixed assets smart contract interaction", async () => {
       setupSpecTest();
       const usdtContract = "0xUSDTContract";
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         let items: ReturnType<typeof toCoreOp>[];
         switch (addr) {
           case "address1":
@@ -2096,7 +2101,7 @@ describe("genericGetAccountShape", () => {
     test("Case 11: Spoofed ERC20 transfer through smart contract", async () => {
       setupSpecTest();
       const scamContract = "0xSCAMCOINContract";
-      listOperationsMock.mockImplementation((addr: string) => {
+      listOperationsMock.mockImplementation((_context: unknown, addr: string) => {
         let items: ReturnType<typeof toCoreOp>[];
         switch (addr) {
           case "address1":

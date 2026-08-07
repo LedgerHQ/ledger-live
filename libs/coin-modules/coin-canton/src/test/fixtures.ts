@@ -8,7 +8,7 @@ import prepareTransferMock from "@ledgerhq/hw-app-canton/tests/fixtures/prepare-
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import coinConfig, { type CantonCoinConfig } from "../config";
+import coinConfig, { type CantonCoinConfig, type CantonContext } from "../config";
 import type { CantonAccount, Transaction } from "../types";
 import type {
   InstrumentBalance,
@@ -282,6 +282,14 @@ export const createMockCoinConfig = (): CoinConfig<CantonCoinConfig> => {
   const configValue = createMockCoinConfigValue();
   return jest.fn(() => configValue);
 };
+
+/** A mock {@link CantonContext} resolving to {@link createMockCoinConfigValue}. */
+export const createMockContext = (
+  config: CantonCoinConfig = createMockCoinConfigValue(),
+): CantonContext => ({
+  config: async () => config,
+  logger: () => {},
+});
 
 export const createMockPendingTransferProposal = createFactory<TransferProposal>({
   contract_id: "test-contract-id",

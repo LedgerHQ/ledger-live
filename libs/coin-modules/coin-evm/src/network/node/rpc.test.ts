@@ -763,7 +763,13 @@ describe("EVM Family", () => {
         }
       });
 
-      expect(await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
+      expect(
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        ),
+      ).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
         maxPriorityFeePerGas: new BigNumber("5999999988"),
         gasPrice: null,
@@ -787,7 +793,13 @@ describe("EVM Family", () => {
         }
       });
 
-      expect(await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
+      expect(
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        ),
+      ).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
         gasPrice: null,
@@ -810,7 +822,11 @@ describe("EVM Family", () => {
       it("defaults to 5 blocks (0x5) when not configured", async () => {
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        );
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
       });
@@ -818,7 +834,11 @@ describe("EVM Family", () => {
       it("defaults to the 50th percentile when feeHistoryRewardPercentile is not configured", async () => {
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        );
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [50]]);
       });
@@ -840,7 +860,11 @@ describe("EVM Family", () => {
           }));
           const sendSpy = stubFeeHistory();
 
-          await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+          await nodeApi.getFeeData(
+            getCoinConfig(fakeCurrency.id as string).info,
+            fakeCurrency as CryptoCurrency,
+            eip1559Tx,
+          );
 
           expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x5", "latest", [expected]]);
         },
@@ -856,7 +880,11 @@ describe("EVM Family", () => {
         }));
         const sendSpy = stubFeeHistory();
 
-        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        );
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x14", "latest", [75]]);
       });
@@ -878,7 +906,11 @@ describe("EVM Family", () => {
           }));
           const sendSpy = stubFeeHistory();
 
-          await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+          await nodeApi.getFeeData(
+            getCoinConfig(fakeCurrency.id as string).info,
+            fakeCurrency as CryptoCurrency,
+            eip1559Tx,
+          );
 
           expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", [expectedHex, "latest", [50]]);
         },
@@ -907,7 +939,11 @@ describe("EVM Family", () => {
             }
           });
 
-        await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, legacyTx);
+        await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          legacyTx,
+        );
 
         expect(sendSpy).not.toHaveBeenCalledWith("eth_feeHistory", expect.anything());
       });
@@ -933,7 +969,11 @@ describe("EVM Family", () => {
             }
           });
 
-        const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+        const result = await nodeApi.getFeeData(
+          getCoinConfig(fakeCurrency.id as string).info,
+          fakeCurrency as CryptoCurrency,
+          eip1559Tx,
+        );
 
         expect(sendSpy).toHaveBeenCalledWith("eth_feeHistory", ["0x14", "latest", [50]]);
         expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("20000000000"));
@@ -959,7 +999,11 @@ describe("EVM Family", () => {
         }
       });
 
-      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+      const result = await nodeApi.getFeeData(
+        getCoinConfig(fakeCurrency.id as string).info,
+        fakeCurrency as CryptoCurrency,
+        eip1559Tx,
+      );
 
       expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("20000000000"));
       // maxFeePerGas = nextBaseFee * 2 + floored priority = 13*2 + 20e9
@@ -985,7 +1029,11 @@ describe("EVM Family", () => {
         }
       });
 
-      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx);
+      const result = await nodeApi.getFeeData(
+        getCoinConfig(fakeCurrency.id as string).info,
+        fakeCurrency as CryptoCurrency,
+        eip1559Tx,
+      );
 
       expect(result.maxPriorityFeePerGas).toEqual(new BigNumber("5000000000"));
     });
@@ -1019,7 +1067,11 @@ describe("EVM Family", () => {
         maxPriorityFeePerGas: 0n,
       } as ethers.FeeData);
 
-      const result = await nodeApi.getFeeData(fakeCurrency as CryptoCurrency, legacyTx);
+      const result = await nodeApi.getFeeData(
+        getCoinConfig(fakeCurrency.id as string).info,
+        fakeCurrency as CryptoCurrency,
+        legacyTx,
+      );
 
       expect(result.gasPrice).toEqual(new BigNumber("20000000000"));
     });
@@ -1042,6 +1094,7 @@ describe("EVM Family", () => {
 
       expect(
         await nodeApi.getFeeData(
+          getCoinConfig("zero_gravity").info,
           { ...fakeCurrency, id: "zero_gravity" } as CryptoCurrency,
           eip1559Tx,
         ),
@@ -1086,6 +1139,7 @@ describe("EVM Family", () => {
 
       expect(
         await nodeApi.getFeeData(
+          getCoinConfig("optimism").info,
           {
             ...fakeCurrency,
             id: "optimism",

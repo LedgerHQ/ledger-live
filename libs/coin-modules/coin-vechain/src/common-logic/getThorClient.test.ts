@@ -1,6 +1,6 @@
 import { getThorClient } from "./getThorClient";
 import { ThorClient } from "@vechain/sdk-network";
-import { setCoinConfig } from "../config";
+import type { VechainCurrencyConfig } from "../config";
 
 // Mock the ThorClient
 jest.mock("@vechain/sdk-network", () => ({
@@ -10,14 +10,14 @@ jest.mock("@vechain/sdk-network", () => ({
 }));
 
 const NODE_URL = "https://testnet.veblocks.net";
+// The endpoint comes from the coin config, threaded in explicitly.
+const config: VechainCurrencyConfig = { status: { type: "active" }, node: { url: NODE_URL } };
 
 const mockedThorClient = jest.mocked(ThorClient);
 
 describe("getThorClient", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // The endpoint comes from the coin config, not from the environment.
-    setCoinConfig(() => ({ status: { type: "active" }, node: { url: NODE_URL } }));
   });
 
   it("should create a ThorClient instance with the configured node url", () => {
@@ -26,7 +26,7 @@ describe("getThorClient", () => {
     };
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    const result = getThorClient();
+    const result = getThorClient(config);
 
     expect(mockedThorClient.at).toHaveBeenCalledWith(NODE_URL);
     expect(result).toBe(mockClient);
@@ -40,7 +40,7 @@ describe("getThorClient", () => {
     };
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    const result = getThorClient();
+    const result = getThorClient(config);
 
     expect(result).toEqual(mockClient);
   });
@@ -49,7 +49,7 @@ describe("getThorClient", () => {
     const mockClient = {};
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    getThorClient();
+    getThorClient(config);
 
     expect(mockedThorClient.at).toHaveBeenCalledTimes(1);
   });
@@ -58,7 +58,7 @@ describe("getThorClient", () => {
     const mockClient = {};
     mockedThorClient.at.mockReturnValue(mockClient as any);
 
-    getThorClient();
+    getThorClient(config);
 
     expect(mockedThorClient.at).toHaveBeenCalledWith("https://testnet.veblocks.net");
   });

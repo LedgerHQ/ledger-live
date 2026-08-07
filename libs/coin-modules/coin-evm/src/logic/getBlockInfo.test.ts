@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo, EvmContext } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { getBlockInfo } from "./getBlockInfo";
@@ -17,9 +18,8 @@ describe("getBlockInfo", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetNodeApi.mockImplementation((currency: CryptoCurrency) => {
-      const config = getCoinConfig(currency.id);
-      return config?.info?.node?.type === "ledger" ? ledgerMocks : externalMocks;
+    mockGetNodeApi.mockImplementation((config: EvmConfigInfo, _currency: CryptoCurrency) => {
+      return config?.node?.type === "ledger" ? ledgerMocks : externalMocks;
     });
   });
 
@@ -27,9 +27,7 @@ describe("getBlockInfo", () => {
     ["an external node", "external", externalMocks],
     ["a ledger node", "ledger", ledgerMocks],
   ])("using %s", (_, type, nodeApiMock) => {
-    beforeEach(() => {
-      setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    });
+    const context: EvmContext = createMockEvmContext({ node: { type } } as Partial<EvmConfigInfo>);
 
     it("returns block info", async () => {
       nodeApiMock.getBlockByHeight.mockResolvedValueOnce({
@@ -39,7 +37,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent123",
       });
 
-      expect(await getBlockInfo({} as CryptoCurrency, 99999)).toEqual({
+      expect(await getBlockInfo(context, {} as CryptoCurrency, 99999)).toEqual({
         hash: "0xdef456",
         height: 99999,
         time: new Date("2025-02-20T15:45:00Z"),
@@ -58,7 +56,7 @@ describe("getBlockInfo", () => {
         parentHash: "",
       });
 
-      expect(await getBlockInfo({} as CryptoCurrency, 0)).toEqual({
+      expect(await getBlockInfo(context, {} as CryptoCurrency, 0)).toEqual({
         hash: "0xgenesis",
         height: 0,
         time: new Date("2015-07-30T00:00:00Z"),
@@ -73,7 +71,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xgenesis",
       });
 
-      const result = await getBlockInfo({} as CryptoCurrency, 1);
+      const result = await getBlockInfo(context, {} as CryptoCurrency, 1);
 
       expect(result).toEqual({
         hash: "0xblock1",
@@ -96,7 +94,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent",
       });
 
-      const result = await getBlockInfo({} as CryptoCurrency, currentHeight);
+      const result = await getBlockInfo(context, {} as CryptoCurrency, currentHeight);
 
       expect(result.height).toBe(currentHeight);
       expect(result.parent?.height).toBe(currentHeight - 1);
@@ -111,7 +109,7 @@ describe("getBlockInfo", () => {
         parentHash: "0xparent",
       });
 
-      const result = await getBlockInfo({} as CryptoCurrency, 100);
+      const result = await getBlockInfo(context, {} as CryptoCurrency, 100);
 
       expect(result.time).toBeInstanceOf(Date);
       expect(result.parent).not.toBeUndefined();

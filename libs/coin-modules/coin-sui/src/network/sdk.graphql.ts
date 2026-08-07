@@ -8,7 +8,7 @@ import type {
 } from "@mysten/sui/jsonRpc";
 import { normalizeSuiAddress, toBase64 } from "@mysten/sui/utils";
 import { createSuiGraphQLClient, type SuiGraphQLClient } from "./graphql/client";
-import coinConfig from "../config";
+import coinConfig, { type SuiCoinConfig } from "../config";
 import type { SuiValidator } from "../types";
 import { fetcher } from "./fetcher";
 import {
@@ -171,8 +171,9 @@ export const graphqlFetcher = (url: Inputs[0], options: Inputs[1]): Promise<Resp
 export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
+  config?: SuiCoinConfig,
 ): Promise<T> {
-  const url = coinConfig.getCoinConfig(currencyId).node.graphqlUrl;
+  const url = (config ?? coinConfig.getCoinConfig(currencyId)).node.graphqlUrl;
   const api = createSuiGraphQLClient({ url, fetch: graphqlFetcher });
   return execute(api);
 }

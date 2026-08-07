@@ -1,4 +1,4 @@
-import { CurrencyConfig, CoinConfig } from "@ledgerhq/coin-module-framework/config";
+import { CurrencyConfig, CoinConfig, type Context } from "@ledgerhq/coin-module-framework/config";
 import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 import { MAINNET_CHAIN_TAG } from "./types";
 
@@ -15,6 +15,9 @@ export type VechainCurrencyConfig = CurrencyConfig & {
 
 export type VechainCoinConfig = () => VechainCurrencyConfig;
 
+/** The {@link Context} threaded through the coin-vechain API layer (ADR-019). */
+export type VechainContext = Context<VechainCurrencyConfig>;
+
 let coinConfig: CoinConfig<VechainCurrencyConfig> | undefined;
 
 export function setCoinConfig(config: CoinConfig<VechainCurrencyConfig>): void {
@@ -29,9 +32,13 @@ export function getCoinConfig(): VechainCurrencyConfig {
   return coinConfig();
 }
 
-/** Thor REST endpoint, resolved per call so a config change is picked up without a reload. */
-export function getNodeUrl(): string {
-  const { node } = getCoinConfig();
+/**
+ * Thor REST endpoint. Config is threaded in explicitly by every caller: the Alpaca (`createApi`)
+ * path resolves it from `context.config()`, and the classic bridge resolves it once from the
+ * {@link getCoinConfig} singleton at its entry points and passes it down.
+ */
+export function getNodeUrl(config: VechainCurrencyConfig): string {
+  const { node } = config;
 
   if (!node?.url) {
     throw new Error("vechain: node.url is missing from the coin config");
@@ -40,8 +47,8 @@ export function getNodeUrl(): string {
   return node.url;
 }
 
-export function getChainTag(): number {
-  const { chainTag } = getCoinConfig();
+export function getChainTag(config: VechainCurrencyConfig): number {
+  const { chainTag } = config;
   return typeof chainTag === "number" &&
     Number.isInteger(chainTag) &&
     chainTag >= 0 &&

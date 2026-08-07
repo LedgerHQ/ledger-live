@@ -207,10 +207,15 @@ describe("listOperations", () => {
 
     const result = await listOperations(VALID_ADDRESS, { minHeight: 0 }, "concordium_testnet");
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
-      limit: 100,
-      order: "d",
-    });
+    expect(getTransactionsMock).toHaveBeenCalledWith(
+      "concordium_testnet",
+      VALID_ADDRESS,
+      {
+        limit: 100,
+        order: "d",
+      },
+      undefined,
+    );
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
       hash: "cc".repeat(32),
@@ -234,11 +239,16 @@ describe("listOperations", () => {
 
     await listOperations(VALID_ADDRESS, { minHeight: 500 }, "concordium_testnet");
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
-      limit: 100,
-      order: "d",
-      blockHeightFrom: 500,
-    });
+    expect(getTransactionsMock).toHaveBeenCalledWith(
+      "concordium_testnet",
+      VALID_ADDRESS,
+      {
+        limit: 100,
+        order: "d",
+        blockHeightFrom: 500,
+      },
+      undefined,
+    );
   });
 
   it("should pass cursor as from param", async () => {
@@ -251,11 +261,16 @@ describe("listOperations", () => {
 
     await listOperations(VALID_ADDRESS, { minHeight: 0, cursor: "42" }, "concordium_testnet");
 
-    expect(getTransactionsMock).toHaveBeenCalledWith("concordium_testnet", VALID_ADDRESS, {
-      limit: 100,
-      order: "d",
-      from: "42",
-    });
+    expect(getTransactionsMock).toHaveBeenCalledWith(
+      "concordium_testnet",
+      VALID_ADDRESS,
+      {
+        limit: 100,
+        order: "d",
+        from: "42",
+      },
+      undefined,
+    );
   });
 
   it("should return next cursor when more pages exist", async () => {

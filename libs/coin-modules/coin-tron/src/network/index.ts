@@ -10,7 +10,7 @@ import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import { TronWeb, providers } from "tronweb";
-import coinConfig from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 import type {
   FreezeTransactionData,
   LegacyUnfreezeTransactionData,
@@ -51,7 +51,8 @@ import {
 } from "./types";
 import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 
-const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
+const getBaseApiUrl = (config?: TronCoinConfig): string =>
+  (config ?? coinConfig.getCoinConfig()).explorer.url;
 
 function isValidNativeTx(tx: TransactionTronAPI): boolean {
   // tx_id indicates a malformed/duplicated entry from TronGrid — these must be excluded.
@@ -63,10 +64,14 @@ function isSuccessfulTriggerSmartContract(tx: TrongridTxInfo): boolean {
   return tx.type === "TriggerSmartContract" && !tx.hasFailed;
 }
 
-export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
+export async function post<T, U extends object = any>(
+  endPoint: string,
+  body: T,
+  config?: TronCoinConfig,
+): Promise<U> {
   const { data } = await network<U, T>({
     method: "POST",
-    url: `${getBaseApiUrl()}${endPoint}`,
+    url: `${getBaseApiUrl(config)}${endPoint}`,
     data: body,
   });
 
@@ -82,8 +87,11 @@ export async function post<T, U extends object = any>(endPoint: string, body: T)
   return data;
 }
 
-async function fetch<T extends object = any>(endPoint: string): Promise<T> {
-  return fetchWithBaseUrl<T>(`${getBaseApiUrl()}${endPoint}`);
+async function fetch<T extends object = any>(
+  endPoint: string,
+  config?: TronCoinConfig,
+): Promise<T> {
+  return fetchWithBaseUrl<T>(`${getBaseApiUrl(config)}${endPoint}`);
 }
 
 async function fetchWithBaseUrl<T extends object = any>(url: string): Promise<T> {
@@ -214,18 +222,20 @@ export async function getDelegatedResource(
 
 export const DEFAULT_TRC20_FEES_LIMIT = 50000000;
 
-export async function triggerConstantContract({
-  ownerAddress,
-  contractAddress,
-  functionSelector,
-  parameter,
-}: TriggerConstantContractParams): Promise<TriggerConstantContractResponse> {
-  return await post<unknown, TriggerConstantContractResponse>(`/wallet/triggerconstantcontract`, {
-    owner_address: ownerAddress,
-    contract_address: contractAddress,
-    function_selector: functionSelector,
-    parameter,
-  });
+export async function triggerConstantContract(
+  { ownerAddress, contractAddress, functionSelector, parameter }: TriggerConstantContractParams,
+  config?: TronCoinConfig,
+): Promise<TriggerConstantContractResponse> {
+  return await post<unknown, TriggerConstantContractResponse>(
+    `/wallet/triggerconstantcontract`,
+    {
+      owner_address: ownerAddress,
+      contract_address: contractAddress,
+      function_selector: functionSelector,
+      parameter,
+    },
+    config,
+  );
 }
 
 const CHAIN_PARAMETER_KEYS = {
@@ -242,8 +252,8 @@ const FALLBACK_CHAIN_PARAMETERS: ChainParameters = {
   createNewAccountFeeInSystemContract: 1_000_000,
 };
 
-const fetchChainParameters = async (): Promise<ChainParameters> => {
-  const data = await fetch<ChainParametersAPI>(`/wallet/getchainparameters`);
+const fetchChainParameters = async (config?: TronCoinConfig): Promise<ChainParameters> => {
+  const data = await fetch<ChainParametersAPI>(`/wallet/getchainparameters`, config);
   const byKey = new Map(data.chainParameter.map(entry => [entry.key, entry.value]));
   const resolved = {} as ChainParameters;
   let key: keyof ChainParameters;
@@ -259,7 +269,11 @@ const fetchChainParameters = async (): Promise<ChainParameters> => {
   return resolved;
 };
 
-export const getChainParameters = makeLRUCache(fetchChainParameters, getBaseApiUrl, hours(1, 8));
+export const getChainParameters = makeLRUCache(
+  fetchChainParameters,
+  (config?: TronCoinConfig) => config?.explorer.url ?? getBaseApiUrl(),
+  hours(1, 8),
+);
 
 export async function craftTrc20Transaction(
   tokenAddress: string,
@@ -268,6 +282,7 @@ export async function craftTrc20Transaction(
   amount: BigNumber,
   customFees?: number,
   expiration?: number,
+  config?: TronCoinConfig,
 ): Promise<SendTransactionDataSuccess> {
   const txData: SmartContractTransactionData = {
     function_selector: "transfer(address,uint256)",
@@ -278,8 +293,8 @@ export async function craftTrc20Transaction(
     owner_address: senderAddress,
   };
   const url = `/wallet/triggersmartcontract`;
-  const { transaction: preparedTransaction } = await post(url, txData);
-  return await extendExpiration(preparedTransaction, expiration);
+  const { transaction: preparedTransaction } = await post(url, txData, config);
+  return await extendExpiration(preparedTransaction, expiration, config);
 }
 
 export async function craftStandardTransaction(
@@ -290,6 +305,7 @@ export async function craftStandardTransaction(
   isTransferAsset: boolean,
   memo?: string,
   expiration?: number,
+  config?: TronCoinConfig,
 ): Promise<SendTransactionDataSuccess> {
   const url = isTransferAsset ? `/wallet/transferasset` : `/wallet/createtransaction`;
   const txData: SendTransactionData = {
@@ -299,8 +315,8 @@ export async function craftStandardTransaction(
     asset_name: tokenAddress && Buffer.from(tokenAddress).toString("hex"),
     extra_data: memo && Buffer.from(memo).toString("hex"),
   };
-  const preparedTransaction = await post(url, txData);
-  return await extendExpiration(preparedTransaction, expiration);
+  const preparedTransaction = await post(url, txData, config);
+  return await extendExpiration(preparedTransaction, expiration, config);
 }
 
 const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
@@ -348,6 +364,7 @@ export const DEFAULT_EXPIRATION = 600;
 async function extendExpiration(
   preparedTransaction: any,
   expiration?: number,
+  config?: TronCoinConfig,
 ): Promise<SendTransactionDataSuccess> {
   const extension = expiration ?? DEFAULT_EXPIRATION;
   const nodeExpiration: number = preparedTransaction.raw_data.expiration;
@@ -368,9 +385,10 @@ async function extendExpiration(
   }
 
   const HttpProvider = providers.HttpProvider;
-  const fullNode = new HttpProvider(getBaseApiUrl());
-  const solidityNode = new HttpProvider(getBaseApiUrl());
-  const eventServer = new HttpProvider(getBaseApiUrl());
+  const baseUrl = getBaseApiUrl(config);
+  const fullNode = new HttpProvider(baseUrl);
+  const solidityNode = new HttpProvider(baseUrl);
+  const eventServer = new HttpProvider(baseUrl);
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
 
   return tronWeb.transactionBuilder.extendExpiration(preparedTransaction, extension);
@@ -391,10 +409,12 @@ type BroadcastResponseTronAPI = BroadcastSuccessResponseTronAPI | BroadcastError
  */
 export const broadcastTron = async (
   trxTransaction: SendTransactionDataSuccess & { signature: string[] },
+  config?: TronCoinConfig,
 ): Promise<string> => {
   const result: BroadcastResponseTronAPI = await post(
     "/wallet/broadcasttransaction",
     trxTransaction,
+    config,
   );
 
   if (result.result !== true) {
@@ -418,10 +438,14 @@ type TronGridBroadcastResponse = {
     signature: string[];
   };
 };
-export const broadcastHexTron = async (rawTransaction: string): Promise<string> => {
+export const broadcastHexTron = async (
+  rawTransaction: string,
+  config?: TronCoinConfig,
+): Promise<string> => {
   const result = await post<{ transaction: string }, TronGridBroadcastResponse>(
     `/wallet/broadcasthex`,
     { transaction: rawTransaction },
+    config,
   );
 
   if (!result.result) {
@@ -434,32 +458,40 @@ export const broadcastHexTron = async (rawTransaction: string): Promise<string> 
 /**
  * {@link https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/GetAccountServlet.java | Tron Framework}
  */
-export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> {
+export async function fetchTronAccount(
+  addr: string,
+  config?: TronCoinConfig,
+): Promise<AccountTronAPI[]> {
   try {
-    const data = await fetch(`/v1/accounts/${addr}`);
+    const data = await fetch(`/v1/accounts/${addr}`, config);
     return data.data;
   } catch {
     return [];
   }
 }
 
-export async function getLastBlock(): Promise<Block> {
-  const data = await fetch(`/wallet/getnowblock`);
+export async function getLastBlock(config?: TronCoinConfig): Promise<Block> {
+  const data = await fetch(`/wallet/getnowblock`, config);
   return toBlock(data);
 }
 
-export async function getBlock(blockNumber: number): Promise<Block> {
-  const data: BlockWithTransactionsAPI = await post(`/wallet/getblock`, {
-    id_or_num: String(blockNumber),
-    detail: false,
-  });
+export async function getBlock(blockNumber: number, config?: TronCoinConfig): Promise<Block> {
+  const data: BlockWithTransactionsAPI = await post(
+    `/wallet/getblock`,
+    {
+      id_or_num: String(blockNumber),
+      detail: false,
+    },
+    config,
+  );
   return toBlock(data);
 }
 
 export async function getBlockWithTransactions(
   blockNumber: number,
+  config?: TronCoinConfig,
 ): Promise<BlockWithTransactionsAPI> {
-  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true });
+  return post(`/wallet/getblock`, { id_or_num: String(blockNumber), detail: true }, config);
 }
 
 function toBlock(data: BlockWithTransactionsAPI): Block {
@@ -476,25 +508,31 @@ function toBlock(data: BlockWithTransactionsAPI): Block {
 
 export async function getTransactionInfoByBlockNum(
   blockNum: number,
+  config?: TronCoinConfig,
 ): Promise<TransactionInfoByBlockNumAPI[]> {
   return post<{ num: number }, TransactionInfoByBlockNumAPI[]>(
     `/wallet/gettransactioninfobyblocknum`,
     { num: blockNum },
+    config,
   );
 }
 
 async function getAllTransactions<T>(
   initialUrl: string,
   shouldFetchMoreTxs: (txs: T[]) => boolean,
-  getTxs: (url: string) => Promise<{
+  getTxs: (
+    url: string,
+    config?: TronCoinConfig,
+  ) => Promise<{
     results: Array<T>;
     nextUrl?: string;
   }>,
+  config?: TronCoinConfig,
 ) {
   let all: Array<T> = [];
   let url: string | undefined = initialUrl;
   while (url && shouldFetchMoreTxs(all)) {
-    const { nextUrl, results } = await getTxs(url);
+    const { nextUrl, results } = await getTxs(url, config);
     url = nextUrl;
     all = all.concat(results);
   }
@@ -504,6 +542,7 @@ async function getAllTransactions<T>(
 
 const getTransactions = async (
   url: string,
+  config?: TronCoinConfig,
 ): Promise<{
   results: Array<TransactionTronAPI | MalformedTransactionTronAPI>;
   nextUrl?: string;
@@ -514,7 +553,7 @@ const getTransactions = async (
     >(url);
   const nextUrl = transactions.meta.links?.next?.replace(
     /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-    getBaseApiUrl(),
+    getBaseApiUrl(config),
   );
   const results = transactions.data ?? [];
   return {
@@ -525,6 +564,7 @@ const getTransactions = async (
 
 const getTrc20 = async (
   url: string,
+  config?: TronCoinConfig,
 ): Promise<{
   results: Array<Trc20API>;
   nextUrl?: string;
@@ -535,7 +575,7 @@ const getTrc20 = async (
     results: transactions.data,
     nextUrl: transactions.meta.links?.next?.replace(
       /https:\/\/api(\.[a-z]*)?.trongrid.io/,
-      getBaseApiUrl(),
+      getBaseApiUrl(config),
     ),
   };
 };
@@ -578,15 +618,20 @@ export type FetchTxsPageResult = {
 
 async function fetchSinglePage<T>(
   url: string,
-  getTxs: (url: string) => Promise<{ results: Array<T>; nextUrl?: string }>,
+  getTxs: (
+    url: string,
+    config?: TronCoinConfig,
+  ) => Promise<{ results: Array<T>; nextUrl?: string }>,
+  config?: TronCoinConfig,
 ): Promise<{ results: Array<T>; hasNextPage: boolean }> {
-  const { results, nextUrl } = await getTxs(url);
+  const { results, nextUrl } = await getTxs(url, config);
   return { results, hasNextPage: !!nextUrl };
 }
 
 export async function fetchTronAccountTxsPage(
   addr: string,
   params: FetchTxsPageParams,
+  config?: TronCoinConfig,
 ): Promise<FetchTxsPageResult> {
   const maxTimestampParam =
     params.maxTimestamp !== undefined ? `&max_timestamp=${params.maxTimestamp}` : "";
@@ -594,12 +639,14 @@ export async function fetchTronAccountTxsPage(
 
   const [nativeResult, trc20Result] = await Promise.all([
     fetchSinglePage<TransactionTronAPI | MalformedTransactionTronAPI>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?${queryParams}`,
+      `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions?${queryParams}`,
       getTransactions,
+      config,
     ),
     fetchSinglePage<Trc20API>(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
+      `${getBaseApiUrl(config)}/v1/accounts/${addr}/transactions/trc20?${queryParams}&get_detail=true`,
       getTrc20,
+      config,
     ),
   ]);
 
@@ -750,9 +797,13 @@ export const fetchTronContract = async (addr: string): Promise<Record<string, an
   }
 };
 
-export const getTronAccountNetwork = async (address: string): Promise<NetworkInfo> => {
+export const getTronAccountNetwork = async (
+  address: string,
+  config?: TronCoinConfig,
+): Promise<NetworkInfo> => {
   const result = await fetch(
     `/wallet/getaccountresource?address=${encodeURIComponent(decode58Check(address))}`,
+    config,
   );
   const {
     freeNetUsed = 0,

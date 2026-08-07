@@ -1,4 +1,5 @@
 import { EvmConfig } from "../config";
+import { mockEvmContext } from "../fixtures/context.fixtures";
 import { createApi, parseCallParams } from "./index";
 import { getValidatorsPage } from "../staking/validators";
 
@@ -57,7 +58,7 @@ describe.each([
   ],
 ])("coin-framework methods %s", (_s, config, methods) => {
   it("ensures methods are presents", () => {
-    expect(createApi(config as EvmConfig, "ethereum")).toEqual(methods);
+    expect(createApi("ethereum")).toEqual(methods);
   });
 });
 
@@ -114,8 +115,8 @@ describe("parseCallParams", () => {
   });
 
   it("rejects invalid params as a rejected promise, not a synchronous throw", async () => {
-    const api = createApi({ explorer: { type: "none" } } as EvmConfig, "ethereum");
-    await expect(api.call({})).rejects.toThrow("Invalid EVM call params");
+    const api = createApi("ethereum");
+    await expect(api.call(mockEvmContext, {})).rejects.toThrow("Invalid EVM call params");
   });
 });
 
@@ -137,12 +138,14 @@ describe("staking support capability", () => {
     };
     mockGetValidatorsPage.mockResolvedValue(expectedPage);
 
-    const api = createApi({ explorer: { type: "ledger" } } as EvmConfig, "sei_evm");
+    const api = createApi("sei_evm");
 
-    await expect(api.getValidators()).resolves.toEqual(expectedPage);
-    expect(mockGetValidatorsPage).toHaveBeenCalledWith("sei_evm", undefined);
+    await expect(api.getValidators(mockEvmContext)).resolves.toEqual(expectedPage);
+    expect(mockGetValidatorsPage).toHaveBeenCalledWith(expect.anything(), "sei_evm", undefined);
 
-    await expect(api.getValidators("42")).resolves.toEqual(expectedPage);
-    expect(mockGetValidatorsPage).toHaveBeenCalledWith("sei_evm", "42");
+    await expect(api.getValidators(mockEvmContext, { cursor: "42" })).resolves.toEqual(
+      expectedPage,
+    );
+    expect(mockGetValidatorsPage).toHaveBeenCalledWith(expect.anything(), "sei_evm", "42");
   });
 });

@@ -1,3 +1,4 @@
+import { mockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node/index";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { broadcast } from "./broadcast";
@@ -20,7 +21,7 @@ describe("EVM broadcast with source", () => {
   });
 
   it("should broadcast with source headers from broadcastConfig", async () => {
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: "0xsignature",
       broadcastConfig: {
         mevProtected: true,
@@ -46,7 +47,7 @@ describe("EVM broadcast with source", () => {
   });
 
   it("should broadcast swap transaction with swap source", async () => {
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: "0xsignature",
       broadcastConfig: {
         mevProtected: false,
@@ -72,7 +73,7 @@ describe("EVM broadcast with source", () => {
   });
 
   it("should broadcast without source when not provided", async () => {
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: "0xsignature",
       broadcastConfig: {
         mevProtected: false,

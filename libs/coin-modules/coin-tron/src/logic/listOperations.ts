@@ -1,6 +1,7 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import uniqBy from "lodash/uniqBy";
+import type { TronCoinConfig } from "../config";
 import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
@@ -34,6 +35,7 @@ export type ListOperationsOptions = {
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,
+  config?: TronCoinConfig,
 ): Promise<Page<Operation>> {
   const { limit, order, cursor } = options;
   const parsedCursor = parseCursor(cursor);
@@ -54,12 +56,16 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(address, {
-    limit,
-    minTimestamp: fetchMinTimestamp,
-    maxTimestamp: fetchMaxTimestamp,
-    order,
-  });
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(
+    address,
+    {
+      limit,
+      minTimestamp: fetchMinTimestamp,
+      maxTimestamp: fetchMaxTimestamp,
+      order,
+    },
+    config,
+  );
 
   // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
   // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here
@@ -89,7 +95,7 @@ export async function listOperations(
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
-    const fetchedBlock = await getBlock(height);
+    const fetchedBlock = await getBlock(height, config);
     blocksByHeight.set(height, fetchedBlock);
   });
 

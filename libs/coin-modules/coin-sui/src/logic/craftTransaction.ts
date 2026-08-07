@@ -2,6 +2,7 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/inde
 import BigNumber from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 import type { SuiTransactionMode, CoreTransaction, Resolution } from "../types";
 
 export async function craftTransaction(
@@ -20,6 +21,7 @@ export async function craftTransaction(
   },
   withObjects: boolean = false,
   resolution?: Resolution,
+  config?: SuiCoinConfig,
 ): Promise<CoreTransaction> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
@@ -37,5 +39,6 @@ export async function craftTransaction(
     withObjects,
     resolution,
     currencyId,
+    config,
   );
 }

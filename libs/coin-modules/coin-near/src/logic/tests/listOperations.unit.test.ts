@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { fetchTransactionsPage } from "../../network";
 import type { NearTransaction } from "../../network/sdk.types";
 import { listOperations, toOperation } from "../listOperations";
@@ -95,17 +96,21 @@ describe("listOperations", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("rejects ascending order, since paging runs newest first", async () => {
-    await expect(listOperations(ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
-      "ascending order is not supported",
-    );
+    await expect(
+      listOperations(mockNearContext, ADDRESS, { minHeight: 0, order: "asc" }),
+    ).rejects.toThrow("ascending order is not supported");
   });
 
   it("forwards the cursor and limit to the indexer and returns its next cursor", async () => {
     mockPage([transaction()], "cursor-2");
 
-    const page = await listOperations(ADDRESS, { minHeight: 0, cursor: "cursor-1", limit: 10 });
+    const page = await listOperations(mockNearContext, ADDRESS, {
+      minHeight: 0,
+      cursor: "cursor-1",
+      limit: 10,
+    });
 
-    expect(fetchTransactionsPage).toHaveBeenCalledWith(ADDRESS, {
+    expect(fetchTransactionsPage).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
       cursor: "cursor-1",
       limit: 10,
     });
@@ -122,7 +127,7 @@ describe("listOperations", () => {
       "cursor-2",
     );
 
-    const page = await listOperations(ADDRESS, { minHeight: 150 });
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 150 });
 
     expect(page.items).toHaveLength(1);
     expect(page.items[0].tx.block.height).toBe(200);
@@ -137,9 +142,9 @@ describe("listOperations", () => {
   ])("clamps a limit %s", async (_label, limit, expected) => {
     mockPage([transaction()]);
 
-    await listOperations(ADDRESS, { minHeight: 0, limit });
+    await listOperations(mockNearContext, ADDRESS, { minHeight: 0, limit });
 
-    expect(fetchTransactionsPage).toHaveBeenCalledWith(ADDRESS, {
+    expect(fetchTransactionsPage).toHaveBeenCalledWith(expect.anything(), ADDRESS, {
       cursor: undefined,
       limit: expected,
     });
@@ -148,7 +153,7 @@ describe("listOperations", () => {
   it("returns an empty page when the indexer has no data", async () => {
     mockPage([]);
 
-    const page = await listOperations(ADDRESS, { minHeight: 0 });
+    const page = await listOperations(mockNearContext, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();

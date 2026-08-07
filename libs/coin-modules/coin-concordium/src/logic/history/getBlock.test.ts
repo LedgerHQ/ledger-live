@@ -48,8 +48,12 @@ describe("getBlock", () => {
     const result = await getBlock(1000, CURRENCY);
 
     // THEN
-    expect(getBlockInfoMock).toHaveBeenCalledWith(1000, CURRENCY);
-    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(CURRENCY, BLOCK_INFO.hash);
+    expect(getBlockInfoMock).toHaveBeenCalledWith(1000, CURRENCY, undefined);
+    expect(getBlockTransactionEventsMock).toHaveBeenCalledWith(
+      CURRENCY,
+      BLOCK_INFO.hash,
+      undefined,
+    );
     expect(result.info).toEqual(BLOCK_INFO);
     expect(result.transactions).toEqual([]);
   });

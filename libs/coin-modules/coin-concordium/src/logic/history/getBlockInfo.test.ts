@@ -35,9 +35,13 @@ describe("getBlockInfo", () => {
 
     // THEN
     expect(getBlocksAtHeightMock).toHaveBeenCalledTimes(1);
-    expect(getBlocksAtHeightMock).toHaveBeenCalledWith("concordium_testnet", 2000);
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith("concordium_testnet", "abc123");
-    expect(getBlockInfoByHashMock).toHaveBeenCalledWith("concordium_testnet", "parent123");
+    expect(getBlocksAtHeightMock).toHaveBeenCalledWith("concordium_testnet", 2000, undefined);
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith("concordium_testnet", "abc123", undefined);
+    expect(getBlockInfoByHashMock).toHaveBeenCalledWith(
+      "concordium_testnet",
+      "parent123",
+      undefined,
+    );
     expect(result).toEqual({
       height: 2000,
       hash: "abc123",

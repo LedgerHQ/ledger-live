@@ -5,6 +5,7 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
@@ -329,6 +330,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
     const coinModuleApi = await getCoinModuleApi(currency.id, kind);
+    const context = buildContext(currency.id);
     const bridgeApi = await getBridgeApi(currency, network);
 
     const chainSpecificValidation = bridgeApi.getChainSpecificRules;
@@ -345,7 +347,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const validatorsPromise = bridgeApi.stakingSupported
       ? coinModuleApi
-          .getValidators()
+          .getValidators(context)
           .then(page =>
             page.items.map(validator => ({
               validatorAddress: validator.address,
@@ -369,8 +371,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : Promise.resolve(undefined);
 
     const [blockInfo, balanceRes, validators, readiness] = await Promise.all([
-      coinModuleApi.lastBlock(),
-      coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
+      coinModuleApi.lastBlock(context),
+      coinModuleApi.getBalance(context, address, bridgeApi.balanceOptions),
       validatorsPromise,
       readinessPromise,
     ]);
@@ -472,7 +474,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const { items: newCoreOps } = await coinModuleApi.listOperations(address, {
+    const { items: newCoreOps } = await coinModuleApi.listOperations(context, address, {
       minHeight,
       cursor: paginationCursor,
       order: "desc",

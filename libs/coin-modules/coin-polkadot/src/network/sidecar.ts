@@ -6,7 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
-import coinConfig from "../config";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -37,8 +37,12 @@ import type {
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
-  const config = coinConfig.getCoinConfig(currency?.id);
+const getSidecarUrl = (
+  route: string,
+  currency?: CryptoCurrency,
+  coinCfg?: PolkadotCoinConfig,
+): string => {
+  const config = coinCfg ?? coinConfig.getCoinConfig(currency?.id);
   let sidecarUrl = config.sidecar.url;
 
   if (
@@ -125,13 +129,15 @@ async function callSidecar<T>(
   currency?: CryptoCurrency,
   method: "GET" | "POST" = "GET",
   data?: unknown,
+  coinCfg?: PolkadotCoinConfig,
 ) {
-  const credentials = coinConfig.getCoinConfig(currency?.id).sidecar.credentials;
+  const config = coinCfg ?? coinConfig.getCoinConfig(currency?.id);
+  const credentials = config.sidecar.credentials;
   const headers = credentials ? { Authorization: "Basic " + credentials } : {};
   return network<T>({
     headers,
     method,
-    url: getSidecarUrl(route, currency),
+    url: getSidecarUrl(route, currency, config),
     data,
   });
 }
@@ -147,10 +153,14 @@ async function callSidecar<T>(
 const fetchBalanceInfo = async (
   addr: string,
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<SidecarAccountBalanceInfo> => {
   const { data } = await callSidecar<SidecarAccountBalanceInfo>(
     `/accounts/${addr}/balance-info`,
     currency,
+    "GET",
+    undefined,
+    config,
   );
   return data;
 };
@@ -288,13 +298,14 @@ const fetchTransactionMaterial = async (
   // By default we don't want any metadata.
   currency?: CryptoCurrency,
   withMetadata = false,
+  config?: PolkadotCoinConfig,
 ): Promise<SidecarTransactionMaterial> => {
   const params = withMetadata ? "?metadata=scale" : "?noMeta=true";
   const {
     data,
   }: {
     data: SidecarTransactionMaterial;
-  } = await callSidecar(`/transaction/material${params}`, currency);
+  } = await callSidecar(`/transaction/material${params}`, currency, "GET", undefined, config);
   return data;
 };
 
@@ -305,12 +316,12 @@ const fetchTransactionMaterial = async (
  *
  * @returns {SidecarRuntimeSpec}
  */
-export const fetchChainSpec = async (currency?: CryptoCurrency) => {
+export const fetchChainSpec = async (currency?: CryptoCurrency, config?: PolkadotCoinConfig) => {
   const {
     data,
   }: {
     data: SidecarRuntimeSpec;
-  } = await callSidecar("/runtime/spec", currency);
+  } = await callSidecar("/runtime/spec", currency, "GET", undefined, config);
   return data;
 };
 
@@ -400,8 +411,12 @@ export const getAccount = async (addr: string, currency: CryptoCurrency) => {
  * @async
  * @param {*} addr - the account address
  */
-export const getBalances = async (addr: string, currency?: CryptoCurrency) => {
-  const balanceInfo = await fetchBalanceInfo(addr, currency);
+export const getBalances = async (
+  addr: string,
+  currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
+) => {
+  const balanceInfo = await fetchBalanceInfo(addr, currency, config);
 
   return {
     blockHeight: Number(balanceInfo.at.height),
@@ -509,8 +524,11 @@ const getNominations = async (addr: string): Promise<PolkadotNomination[]> => {
  *
  * @async
  */
-export const getTransactionParams = async (currency?: CryptoCurrency) => {
-  const material = await fetchTransactionMaterial(currency);
+export const getTransactionParams = async (
+  currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
+) => {
+  const material = await fetchTransactionMaterial(currency, false, config);
   return {
     blockHash: material.at.hash,
     blockNumber: material.at.height,
@@ -541,8 +559,9 @@ type SubmitExtrinsicDryRunResponse = {
 export const submitExtrinsicDryRun = async (
   extrinsic: string,
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<SubmitExtrinsicDryRunResponse> => {
-  const { registry } = await getRegistry(currency);
+  const { registry } = await getRegistry(currency, config);
   const decoded = registry.createType("Extrinsic", extrinsic);
   const callHex = decoded.method.toHex();
   const senderAddress = decoded.signer.toString();
@@ -555,6 +574,7 @@ export const submitExtrinsicDryRun = async (
       tx: callHex,
       senderAddress,
     },
+    config,
   );
 
   if (data.resultType === "DispatchError") {
@@ -578,14 +598,21 @@ export const submitExtrinsicDryRun = async (
 export const submitExtrinsic = async (
   extrinsic: string,
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<string> => {
   const {
     data,
   }: {
     data: SidecarTransactionBroadcast;
-  } = await callSidecar("/transaction", currency, "POST", {
-    tx: extrinsic,
-  });
+  } = await callSidecar(
+    "/transaction",
+    currency,
+    "POST",
+    {
+      tx: extrinsic,
+    },
+    config,
+  );
 
   return data.hash;
 };
@@ -602,14 +629,21 @@ export const submitExtrinsic = async (
 export const paymentInfo = async (
   extrinsic: string,
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<SidecarPaymentInfo> => {
   const {
     data,
   }: {
     data: SidecarPaymentInfo;
-  } = await callSidecar("/transaction/fee-estimate", currency, "POST", {
-    tx: extrinsic,
-  });
+  } = await callSidecar(
+    "/transaction/fee-estimate",
+    currency,
+    "POST",
+    {
+      tx: extrinsic,
+    },
+    config,
+  );
   return data;
 };
 
@@ -704,13 +738,14 @@ export const getStakingProgress = async (
  */
 export const getRegistry = async (
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<{
   registry: TypeRegistry;
   extrinsics: Extrinsics;
 }> => {
   const [material, spec] = await Promise.all([
-    getTransactionMaterialWithMetadata(currency),
-    fetchChainSpec(currency),
+    getTransactionMaterialWithMetadata(currency, config),
+    fetchChainSpec(currency, config),
   ]);
   return createRegistryAndExtrinsics(material, spec);
 };
@@ -739,8 +774,9 @@ export const getMetadata = async (
  */
 export const getLastBlock = async (
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): Promise<{ hash: string; height: number; time: Date }> => {
-  const { data } = await callSidecar<BlockInfo>("/blocks/head", currency);
+  const { data } = await callSidecar<BlockInfo>("/blocks/head", currency, "GET", undefined, config);
   return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
@@ -756,8 +792,13 @@ export const getLastBlock = async (
  * @returns {Promise<Object>} consts
  */
 export const getTransactionMaterialWithMetadata = makeLRUCache(
-  async (currency?: CryptoCurrency): Promise<SidecarTransactionMaterial> =>
-    fetchTransactionMaterial(currency, true),
-  currency => (currency ? currency.id : "polkadot"),
+  async (
+    currency?: CryptoCurrency,
+    config?: PolkadotCoinConfig,
+  ): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(currency, true, config),
+  // `config` is deterministic per currency, so it isn't part of the cache key — but it must be in
+  // the key extractor's parameter list so `makeLRUCache` infers the full `(currency?, config?)`
+  // argument tuple; otherwise the cached wrapper is typed to accept only `currency`.
+  (currency, _config) => (currency ? currency.id : "polkadot"),
   hours(1),
 );

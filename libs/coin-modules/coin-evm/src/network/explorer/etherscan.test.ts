@@ -56,6 +56,7 @@ const createFetchWithLimit =
     });
     return apiFn({
       currency,
+      config: getCoinConfig(currency.id).info,
       address: account.freshAddress,
       fromBlock: 0,
       sort,
@@ -185,6 +186,7 @@ describe("EVM Family", () => {
               chainId: 1,
             },
           },
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -207,6 +209,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -243,6 +246,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         sort: "desc",
@@ -279,6 +283,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getCoinOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         toBlock: 100,
@@ -414,6 +419,7 @@ describe("EVM Family", () => {
               chainId: 1,
             },
           },
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -436,6 +442,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -474,6 +481,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         sort: "desc",
@@ -512,6 +520,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getTokenOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         toBlock: 100,
@@ -638,6 +647,7 @@ describe("EVM Family", () => {
 
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -654,6 +664,7 @@ describe("EVM Family", () => {
 
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -670,6 +681,7 @@ describe("EVM Family", () => {
 
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -687,6 +699,7 @@ describe("EVM Family", () => {
 
         const response = await ETHERSCAN_API.getTokenOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -729,6 +742,7 @@ describe("EVM Family", () => {
               chainId: 1,
             },
           },
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -751,6 +765,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -788,6 +803,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         sort: "desc",
@@ -825,6 +841,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC721Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         toBlock: 100,
@@ -962,6 +979,7 @@ describe("EVM Family", () => {
               chainId: 1,
             },
           },
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -984,6 +1002,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -1021,6 +1040,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         sort: "desc",
@@ -1058,6 +1078,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getERC1155Operations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         toBlock: 100,
@@ -1175,6 +1196,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getNftOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -1207,6 +1229,7 @@ describe("EVM Family", () => {
         }));
         return ETHERSCAN_API.getNftOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort,
@@ -1277,6 +1300,7 @@ describe("EVM Family", () => {
         }));
         return ETHERSCAN_API.getNftOperations({
           currency,
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort,
@@ -1325,6 +1349,7 @@ describe("EVM Family", () => {
               chainId: 1,
             },
           },
+          config: getCoinConfig(currency.id).info,
           address: account.freshAddress,
           fromBlock: 0,
           sort: "desc",
@@ -1347,6 +1372,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -1397,6 +1423,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         sort: "desc",
@@ -1447,6 +1474,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 50,
         toBlock: 100,
@@ -1504,6 +1532,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -1539,6 +1568,7 @@ describe("EVM Family", () => {
 
       const response = await ETHERSCAN_API.getInternalOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "asc",
@@ -1654,7 +1684,11 @@ describe("EVM Family", () => {
         data: { status: "1", message: "OK", result: internalTxResult },
       });
 
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
+        getCoinConfig(currency.id).info,
+        currency,
+        blockHeight,
+      );
 
       expect(result).toHaveLength(1);
       expect(result[0].hash).toBe("0xabc");
@@ -1685,7 +1719,11 @@ describe("EVM Family", () => {
         data: { status: "1", message: "OK", result: internalTxResult },
       });
 
-      await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+      await ETHERSCAN_API.getInternalTransactionsByBlock(
+        getCoinConfig(currency.id).info,
+        currency,
+        blockHeight,
+      );
 
       expect(axiosSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1713,7 +1751,11 @@ describe("EVM Family", () => {
         },
       }));
 
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
+        getCoinConfig(currency.id).info,
+        currency,
+        blockHeight,
+      );
 
       expect(result).toEqual([]);
       expect(axios.request).not.toHaveBeenCalled();
@@ -1731,7 +1773,11 @@ describe("EVM Family", () => {
         data: { status: "1", message: "OK", result: "No transactions found" },
       });
 
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
+        getCoinConfig(currency.id).info,
+        currency,
+        blockHeight,
+      );
 
       expect(result).toEqual([]);
     });
@@ -1753,7 +1799,11 @@ describe("EVM Family", () => {
       });
 
       await expect(
-        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+        ETHERSCAN_API.getInternalTransactionsByBlock(
+          getCoinConfig(currency.id).info,
+          currency,
+          blockHeight,
+        ),
       ).rejects.toThrow(EtherscanAPIError);
     });
 
@@ -1786,7 +1836,11 @@ describe("EVM Family", () => {
           data: { status: "1", message: "OK", result: lastPage },
         });
 
-      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight);
+      const result = await ETHERSCAN_API.getInternalTransactionsByBlock(
+        getCoinConfig(currency.id).info,
+        currency,
+        blockHeight,
+      );
 
       expect(result).toHaveLength(PAGE_SIZE + lastPage.length);
       expect(axiosSpy).toHaveBeenCalledTimes(2);
@@ -1821,7 +1875,11 @@ describe("EVM Family", () => {
       jest.mocked(axios.request).mockRejectedValue(new Error("network error"));
 
       await expect(
-        ETHERSCAN_API.getInternalTransactionsByBlock(currency, blockHeight),
+        ETHERSCAN_API.getInternalTransactionsByBlock(
+          getCoinConfig(currency.id).info,
+          currency,
+          blockHeight,
+        ),
       ).rejects.toThrow("network error");
     });
   });
@@ -1848,6 +1906,7 @@ describe("EVM Family", () => {
     it("should not return NFT operation", async () => {
       const response = await ETHERSCAN_API.getNftOperations({
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         sort: "desc",
@@ -1985,6 +2044,7 @@ describe("EVM Family", () => {
           : undefined;
         jest.spyOn(axios, "request").mockImplementation(createBlockchainMock(allOps, limit, order));
         return ETHERSCAN_API.getOperations.force(
+          getCoinConfig(currency.id).info,
           currency,
           account.freshAddress,
           fromBlock,
@@ -2628,6 +2688,7 @@ describe("EVM Family", () => {
 
       await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         limit: 100,
@@ -2702,6 +2763,7 @@ describe("EVM Family", () => {
 
       const result = await ETHERSCAN_API.exhaustEndpoint(mockFetch, {
         currency,
+        config: getCoinConfig(currency.id).info,
         address: account.freshAddress,
         fromBlock: 0,
         limit: LIMIT,

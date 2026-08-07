@@ -5,10 +5,11 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { TypeRegistry, type GenericExtrinsic } from "@polkadot/types";
 import type { AnyTuple } from "@polkadot/types/types";
-import type { PolkadotConfig } from "../config";
-import * as logic from "../logic";
 import type { CoreTransaction } from "../types";
+import { createMockPolkadotContext } from "../test/config.fixture";
 import { createApi } from ".";
+
+const context = createMockPolkadotContext();
 
 // Module-level mocks for logic functions that need to be spied on
 const mockBroadcast = jest.fn();
@@ -27,8 +28,7 @@ jest.mock("../logic", () => ({
 }));
 
 function generateApi() {
-  const config = {} as PolkadotConfig;
-  return createApi(config);
+  return createApi();
 }
 
 describe("index", () => {
@@ -52,12 +52,12 @@ describe("index", () => {
         getRewards: expect.any(Function),
         getStakes: expect.any(Function),
         getValidators: expect.any(Function),
-        lastBlock: logic.lastBlock,
         listOperations: expect.any(Function),
         validateIntent: expect.any(Function),
         validateAddress: expect.any(Function),
         getNextSequence: expect.any(Function),
         craftTransactionData: expect.any(Function),
+        lastBlock: expect.any(Function),
       });
     });
   });
@@ -65,21 +65,23 @@ describe("index", () => {
   describe("call", () => {
     it("should reject as unsupported", async () => {
       const api = generateApi();
-      await expect(api.call({})).rejects.toThrow("call is not supported");
+      await expect(api.call(context, {})).rejects.toThrow("call is not supported");
     });
   });
 
   describe("combine", () => {
     it.each([undefined, ""])("should throw an error when pubkey is %s", pubkey => {
       const api = generateApi();
-      expect(() => api.combine("", "", pubkey)).toThrow("UnsupportedMethod");
+      expect(() =>
+        api.combine(context, "", "", pubkey === undefined ? undefined : { pubkey }),
+      ).toThrow("UnsupportedMethod");
     });
   });
 
   describe("craftRawTransaction", () => {
     it("should throw an error when pubkey is %s", () => {
       const api = generateApi();
-      expect(() => api.craftRawTransaction("", "", "", BigInt(0))).toThrow(
+      expect(() => api.craftRawTransaction(context, "", "", "", BigInt(0))).toThrow(
         "craftRawTransaction is not supported",
       );
     });
@@ -88,35 +90,41 @@ describe("index", () => {
   describe("getBlock", () => {
     it("should throw an error", () => {
       const api = generateApi();
-      expect(() => api.getBlock(0)).toThrow("getBlock is not supported");
+      expect(() => api.getBlock(context, 0)).toThrow("getBlock is not supported");
     });
   });
 
   describe("getBlockInfo", () => {
     it("should throw an error", () => {
       const api = generateApi();
-      expect(() => api.getBlockInfo(0)).toThrow("getBlockInfo is not supported");
+      expect(() => api.getBlockInfo(context, 0)).toThrow("getBlockInfo is not supported");
     });
   });
 
   describe("getRewards", () => {
     it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
       const api = generateApi();
-      expect(() => api.getRewards("", cursor)).toThrow("getRewards is not supported");
+      expect(() =>
+        api.getRewards(context, "", cursor === undefined ? undefined : { cursor }),
+      ).toThrow("getRewards is not supported");
     });
   });
 
   describe("getStakes", () => {
     it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
       const api = generateApi();
-      expect(() => api.getStakes("", cursor)).toThrow("getStakes is not supported");
+      expect(() =>
+        api.getStakes(context, "", cursor === undefined ? undefined : { cursor }),
+      ).toThrow("getStakes is not supported");
     });
   });
 
   describe("getValidators", () => {
     it.each([undefined, ""])("should throw an error when cursor is %s", cursor => {
       const api = generateApi();
-      expect(() => api.getValidators(cursor)).toThrow("getValidators is not supported");
+      expect(() =>
+        api.getValidators(context, cursor === undefined ? undefined : { cursor }),
+      ).toThrow("getValidators is not supported");
     });
   });
 
@@ -127,7 +135,7 @@ describe("index", () => {
       mockBroadcast.mockResolvedValueOnce("");
 
       const transaction = "some random string";
-      await api.broadcast(transaction);
+      await api.broadcast(context, transaction);
 
       expect(mockBroadcast).toHaveBeenCalledTimes(1);
       expect(mockBroadcast).toHaveBeenCalledWith(transaction, "polkadot");
@@ -156,7 +164,7 @@ describe("index", () => {
         registry,
       } as CoreTransaction);
 
-      const tx = await api.craftTransaction(intent);
+      const tx = await api.craftTransaction(context, intent);
       expect(tx).toEqual({ transaction: extrinsic.toHex() });
     });
   });
@@ -175,7 +183,7 @@ describe("index", () => {
 
       mockCraftEstimationTransaction.mockResolvedValue({} as CoreTransaction);
 
-      const feeEstimation = await api.estimateFees(intent);
+      const feeEstimation = await api.estimateFees(context, intent);
       expect(feeEstimation.value).toEqual(fees);
     });
   });
@@ -185,7 +193,7 @@ describe("index", () => {
       const api = generateApi();
 
       mockListOperations.mockResolvedValue([[], 2]);
-      const result = await api.listOperations("some random address", { minHeight: 0 });
+      const result = await api.listOperations(context, "some random address", { minHeight: 0 });
       expect(result).toEqual({ items: [], next: "2" });
     });
   });
@@ -204,7 +212,7 @@ describe("index", () => {
       },
     ])("should throw an exception when options is provided as $title", async ({ options }) => {
       const api = generateApi();
-      await expect(api.getBalance("random address", options)).rejects.toMatchObject({
+      await expect(api.getBalance(context, "random address", options)).rejects.toMatchObject({
         name: "InvalidParameterError",
       });
     });

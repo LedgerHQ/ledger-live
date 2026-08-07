@@ -1,26 +1,22 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
 import { EvmConfig } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Avalanche C-Chain Fuji", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config = {
+    node: {
+      type: "external",
+      uri: "https://api.avax-test.network/ext/bc/C/rpc",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/43113",
+    },
+  };
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://api.avax-test.network/ext/bc/C/rpc",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/43113",
-      },
-    };
-    module = createApi(config as EvmConfig, "avalanche_c_chain_fuji");
+    module = createApi("avalanche_c_chain_fuji");
   });
 
   describe("listOperations", () => {
@@ -33,10 +29,14 @@ describe("EVM Avalanche C-Chain Fuji", () => {
         "0x9a9a5d7698b267c7d42e0484da1f03b255d729d8fcd3fd27285a186782393f62".toLowerCase();
       const minHeight = 4_812_848;
 
-      const { items: operations } = await module.listOperations(address, {
-        minHeight,
-        order: "asc",
-      });
+      const { items: operations } = await module.listOperations(
+        createMockEvmContext(config),
+        address,
+        {
+          minHeight,
+          order: "asc",
+        },
+      );
 
       const feesOp = operations.find(
         op => op.tx.hash.toLowerCase() === txHash && op.id.endsWith("-FEES"),

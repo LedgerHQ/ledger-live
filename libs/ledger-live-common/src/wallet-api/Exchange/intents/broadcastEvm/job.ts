@@ -1,6 +1,7 @@
 import { Observable, of, concat } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
+import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import type { Job } from "@ledgerhq/device-intent";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";
@@ -31,7 +32,7 @@ function buildBroadcastObservable(
       // `concat(of(...), ...)` wrapper below; we go straight to the actual
       // broadcast call here to avoid a duplicate transition.
       const currency = getCryptoCurrencyById(input.currencyId);
-      const nodeApi = getNodeApi(currency);
+      const nodeApi = getNodeApi(getCoinConfig(currency.id).info, currency);
 
       const hash = await nodeApi.broadcastTransaction(currency, input.signedTxHex);
       if (cancelled) return;

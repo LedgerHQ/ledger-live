@@ -41,6 +41,7 @@ describe("craftTransaction", () => {
       false,
       undefined,
       undefined,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -71,6 +72,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
       undefined,
       undefined,
     );
@@ -105,6 +107,7 @@ describe("craftTransaction", () => {
       false,
       undefined,
       undefined,
+      undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
@@ -135,6 +138,7 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
+      undefined,
       undefined,
       undefined,
     );

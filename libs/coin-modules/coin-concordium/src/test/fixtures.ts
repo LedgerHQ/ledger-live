@@ -8,7 +8,12 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { ConcordiumCoinConfig, ConcordiumConfig, Transaction } from "../types";
+import type {
+  ConcordiumCoinConfig,
+  ConcordiumConfig,
+  ConcordiumContext,
+  Transaction,
+} from "../types";
 import coinConfig from "../config";
 
 // Valid Concordium addresses for testing
@@ -33,6 +38,21 @@ export function setupTestnetCoinConfig(overrides?: Partial<ConcordiumCoinConfig>
     ...TESTNET_COIN_CONFIG,
     ...overrides,
   }));
+}
+
+/** Builds the testnet {@link ConcordiumCoinConfig} passed to `createApi` in API tests. */
+export function createFixtureConfig(
+  overrides?: Partial<ConcordiumCoinConfig>,
+): ConcordiumCoinConfig {
+  return { status: { type: "active" }, ...TESTNET_COIN_CONFIG, ...overrides };
+}
+
+/** Builds a {@link ConcordiumContext} resolving to the testnet coin config for API tests. */
+export function createFixtureContext(): ConcordiumContext {
+  return {
+    config: async () => createFixtureConfig(),
+    logger: () => {},
+  };
 }
 
 export function createFixtureCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {

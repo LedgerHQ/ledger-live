@@ -46,6 +46,7 @@ describe("estimateFees", () => {
         mode: "send",
       }),
       undefined,
+      undefined,
     );
     expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });
   });
@@ -79,6 +80,7 @@ describe("estimateFees", () => {
         family: "sui",
         mode: "send",
       }),
+      undefined,
       undefined,
     );
     expect(result).toEqual({ fees: BigInt(mockFees), gasBudget: BigInt(mockGasBudget) });

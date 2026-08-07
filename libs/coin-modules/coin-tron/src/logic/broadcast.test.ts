@@ -22,7 +22,7 @@ describe("broadcast function", () => {
 
     // Assembled Transaction protobuf: field 1 (raw_data) = 0x0a 0x04 + abcd1234,
     // field 2 (signature) = 0x12 0x04 + aabbccdd.
-    expect(mockBroadcastHexTron).toHaveBeenCalledWith("0a04abcd12341204aabbccdd");
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith("0a04abcd12341204aabbccdd", undefined);
     expect(mockBroadcastTron).not.toHaveBeenCalled();
     expect(result).toBe("mockedTxID");
   });
@@ -37,7 +37,7 @@ describe("broadcast function", () => {
     await broadcast(`${lengthPrefix}${rawTx}${signature}`);
 
     // field 1 (raw_data): 0x0a + varint(130)=0x8201 ; field 2 (signature): 0x12 + varint(4)=0x04
-    expect(mockBroadcastHexTron).toHaveBeenCalledWith(`0a8201${rawTx}1204${signature}`);
+    expect(mockBroadcastHexTron).toHaveBeenCalledWith(`0a8201${rawTx}1204${signature}`, undefined);
   });
 
   it("should broadcast a TxObject successfully", async () => {
@@ -52,7 +52,7 @@ describe("broadcast function", () => {
     const result = await broadcast(txObject);
 
     expect(mockBroadcastHexTron).not.toHaveBeenCalled();
-    expect(mockBroadcastTron).toHaveBeenCalledWith(txObject);
+    expect(mockBroadcastTron).toHaveBeenCalledWith(txObject, undefined);
     expect(result).toBe("mockedTxID");
   });
 

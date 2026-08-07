@@ -2,6 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/types";
 import { getMainAccount } from "../../account";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { createTransaction } from "./createTransaction";
 import {
   computeUseAllAmount,
@@ -24,6 +25,7 @@ export function genericEstimateMaxSpendable(
     }
     const mainAccount = getMainAccount(account, parentAccount);
     const coinModuleApi = await getCoinModuleApi(mainAccount.currency.id, kind);
+    const context = buildContext(mainAccount.currency.id);
     const bridgeApi = await getBridgeApi(mainAccount.currency, network);
     const draftTransaction = {
       ...createTransaction(account),
@@ -33,11 +35,9 @@ export function genericEstimateMaxSpendable(
     };
 
     const estimated = await coinModuleApi.estimateFees(
-      transactionToIntent(
-        mainAccount,
-        draftTransaction,
-        bridgeApi.computeIntentType,
-        coinModuleApi.craftTransactionData,
+      context,
+      transactionToIntent(mainAccount, draftTransaction, bridgeApi.computeIntentType, intent =>
+        coinModuleApi.craftTransactionData(context, intent),
       ),
     );
     const estimation: FeeEstimation = {

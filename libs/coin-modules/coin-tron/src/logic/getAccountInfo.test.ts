@@ -30,7 +30,7 @@ describe("getAccountInfo", () => {
 
     await getAccountInfo("TXYZ");
 
-    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith("TXYZ");
+    expect(mockGetTronAccountNetwork).toHaveBeenCalledWith("TXYZ", undefined);
   });
 
   it("returns available energy/bandwidth and the raw energy limit", async () => {

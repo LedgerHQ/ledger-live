@@ -47,6 +47,7 @@ describe("craftTransaction", () => {
       false,
       undefined,
       undefined,
+      undefined,
     );
     expect(result).toBe("extendedRawDataHex");
   });
@@ -78,6 +79,7 @@ describe("craftTransaction", () => {
       "recipient",
       "sender",
       new BigNumber(1000),
+      undefined,
       undefined,
       undefined,
     );
@@ -131,6 +133,7 @@ describe("craftTransaction", () => {
       BigNumber(amount),
       0,
       undefined,
+      undefined,
     );
   });
 
@@ -159,6 +162,7 @@ describe("craftTransaction", () => {
       BigNumber(amount),
       Number(customFees),
       undefined,
+      undefined,
     );
   });
 
@@ -184,6 +188,7 @@ describe("craftTransaction", () => {
       undefined,
       undefined,
       BigNumber(amount),
+      undefined,
       undefined,
       undefined,
     );

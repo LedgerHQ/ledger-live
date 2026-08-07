@@ -13,6 +13,7 @@ import {
   NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import type { TronCoinConfig } from "../config";
 import { TronMemo } from "../types";
 import { estimateFees } from "./estimateFees";
 import { validateAddress } from "./validateAddress";
@@ -21,12 +22,13 @@ export async function validateIntent(
   intent: TransactionIntent<TronMemo>,
   balances: Balance[],
   customFees?: FeeEstimation,
+  config?: TronCoinConfig,
 ): Promise<TransactionValidation> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
   const estimatedFees =
-    typeof customFees?.value === "bigint" ? customFees.value : await estimateFees(intent);
+    typeof customFees?.value === "bigint" ? customFees.value : await estimateFees(intent, config);
 
   if (!intent.recipient) {
     errors.recipient = new RecipientRequired();

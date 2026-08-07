@@ -2,18 +2,27 @@ import { log } from "@ledgerhq/logs";
 import { memoEncodedSize } from "@ledgerhq/concordium-core";
 import { CONCORDIUM_ENERGY } from "../../constants";
 import { getTransactionCost } from "../../network/proxyClient";
+import type { ConcordiumCoinConfig } from "../../types";
 
 export interface FeeEstimation {
   cost: bigint;
   energy: bigint;
 }
 
-export async function estimateFees(currencyId: string, memo?: string): Promise<FeeEstimation> {
+export async function estimateFees(
+  currencyId: string,
+  memo?: string,
+  config?: ConcordiumCoinConfig,
+): Promise<FeeEstimation> {
   try {
-    const result = await getTransactionCost(currencyId, {
-      numSignatures: 1,
-      ...(memo ? { memoSize: memoEncodedSize(memo) } : {}),
-    });
+    const result = await getTransactionCost(
+      currencyId,
+      {
+        numSignatures: 1,
+        ...(memo ? { memoSize: memoEncodedSize(memo) } : {}),
+      },
+      config,
+    );
 
     return {
       cost: BigInt(result.cost),

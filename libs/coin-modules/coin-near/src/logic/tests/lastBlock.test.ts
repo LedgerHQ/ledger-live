@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -24,7 +25,7 @@ describe("lastBlock (MSW)", () => {
       }),
     );
 
-    const block = await lastBlock();
+    const block = await lastBlock(mockNearContext);
 
     expect(requestedParams).toEqual({ finality: "final" });
     expect(block).toEqual({

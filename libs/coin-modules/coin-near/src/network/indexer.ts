@@ -2,7 +2,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import liveNetwork from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getCoinConfig } from "../config";
+import { type NearConfig } from "../config";
 import { NearTransaction, NearV3Response } from "./sdk.types";
 
 /**
@@ -10,10 +10,11 @@ import { NearTransaction, NearV3Response } from "./sdk.types";
  * callers can resume without knowing its encoding.
  */
 export const fetchTransactionsPage = async (
+  config: NearConfig,
   address: string,
   options: { cursor?: string; limit?: number } = {},
 ): Promise<{ transactions: NearTransaction[]; next?: string }> => {
-  const currencyConfig = getCoinConfig();
+  const currencyConfig = config;
 
   const params = new URLSearchParams();
   if (options.limit !== undefined) {
@@ -38,8 +39,11 @@ export const fetchTransactionsPage = async (
   };
 };
 
-const fetchTransactions = async (address: string): Promise<NearTransaction[]> => {
-  const { transactions } = await fetchTransactionsPage(address);
+const fetchTransactions = async (
+  config: NearConfig,
+  address: string,
+): Promise<NearTransaction[]> => {
+  const { transactions } = await fetchTransactionsPage(config, address, {});
 
   return transactions;
 };
@@ -100,8 +104,12 @@ async function transactionToOperation(
   };
 }
 
-export const getOperations = async (accountId: string, address: string): Promise<Operation[]> => {
-  const rawTransactions = await fetchTransactions(address);
+export const getOperations = async (
+  config: NearConfig,
+  accountId: string,
+  address: string,
+): Promise<Operation[]> => {
+  const rawTransactions = await fetchTransactions(config, address);
 
   return await Promise.all(
     rawTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),

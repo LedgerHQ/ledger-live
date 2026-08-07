@@ -15,7 +15,6 @@ import type {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
-import { setCoinConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -23,37 +22,53 @@ import { lastBlock } from "../logic/lastBlock";
 import { getBalance as getAccountBalance } from "../logic/getBalance";
 import { listOperations } from "../logic/listOperations";
 import { estimateFees } from "../logic/estimateFees";
-import type { CasperCoinConfig, CasperMemo } from "../types";
+import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 
-export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
-  setCoinConfig(config);
-
+// The caller builds the {@link CasperContext} (config + logger) and passes it to each method (ADR-019).
+export function createApi(): CoinModuleApi<CasperConfig, CasperMemo> {
   return {
     lastBlock,
-    getBlockInfo(_height: number): Promise<BlockInfo> {
+    getBlockInfo(_context: CasperContext, _height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getBlock(_height: number): Promise<Block> {
+    getBlock(_context: CasperContext, _height: number): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
     async call() {
       throw new Error("call is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+    getValidators(
+      _context: CasperContext,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> {
       throw new Error("getValidators is not supported");
     },
-    getBalance(address: string, options?: BalanceOptions): Promise<Balance[]> {
-      return rejectBalanceOptions(() => getAccountBalance(address), options);
+    getBalance(
+      context: CasperContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> {
+      return rejectBalanceOptions(() => getAccountBalance(context, address), options);
     },
     listOperations,
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(
+      _context: CasperContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
-    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+    getRewards(
+      _context: CasperContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    craftTransaction,
+    craftTransaction: (_context, transactionIntent, options) =>
+      craftTransaction(transactionIntent, options?.customFees),
     craftRawTransaction(
+      _context: CasperContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -61,23 +76,28 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
     ): Promise<CraftedTransaction> {
       throw new Error("craftRawTransaction is not supported");
     },
-    combine,
-    broadcast,
+    combine: (_context, tx, signature, options) => combine(tx, signature, options?.pubkey),
+    broadcast: (context, tx) => broadcast(context, tx),
     estimateFees,
     validateIntent(
+      _context: CasperContext,
       _intent: TransactionIntent<CasperMemo>,
       _balances: Balance[],
-      _customFees?: FeeEstimation,
+      _options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> {
       throw new Error("validateIntent is not supported");
     },
-    getNextSequence(_address: string): Promise<bigint> {
+    getNextSequence(_context: CasperContext, _address: string): Promise<bigint> {
       throw new Error("getNextSequence is not supported");
     },
-    validateAddress(_address: string, _parameters: unknown): Promise<boolean> {
+    validateAddress(
+      _context: CasperContext,
+      _address: string,
+      _parameters: unknown,
+    ): Promise<boolean> {
       throw new Error("validateAddress is not supported");
     },
-    craftTransactionData(_intent: TransactionIntent<CasperMemo>) {
+    craftTransactionData(_context: CasperContext, _intent: TransactionIntent<CasperMemo>) {
       throw new Error("craftTransactionData is not supported");
     },
   };

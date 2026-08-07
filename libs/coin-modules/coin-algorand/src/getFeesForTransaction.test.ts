@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import * as buildTransactionModule from "./buildTransaction";
+import { setCoinConfig } from "./config";
+import { mockAlgorandConfig } from "./test/context";
 import { getEstimatedFees } from "./getFeesForTransaction";
 import * as network from "./network";
 import type { AlgorandAccount, Transaction } from "./types";
@@ -35,6 +37,7 @@ describe("getFeesForTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setCoinConfig(() => mockAlgorandConfig);
   });
 
   describe("getEstimatedFees", () => {

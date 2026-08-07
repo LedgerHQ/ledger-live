@@ -5,6 +5,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import * as nearAPI from "near-api-js";
+import type { NearContext } from "../config";
 import { getAccessKey } from "../network";
 import { buildActions } from "./actions";
 import { isValidAddress } from "../logic";
@@ -46,9 +47,11 @@ export function resolveTarget(intent: NearIntent): { mode: string; receiverId: s
 // senderPublicKey is required: the nonce is scoped to that access key, not the account, so it's
 // fetched here rather than via `getNextSequence` (which isn't implemented for that reason).
 export async function craftTransaction(
+  context: NearContext,
   intent: NearIntent,
   _customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
+  const config = await context.config();
   if (!intent.senderPublicKey) {
     throw new Error("Near: senderPublicKey is required to craft a transaction");
   }
@@ -72,7 +75,7 @@ export async function craftTransaction(
     throw new Error(`Near: invalid recipient address ${receiverId}`);
   }
 
-  const { nonce, block_hash } = await getAccessKey({
+  const { nonce, block_hash } = await getAccessKey(config, {
     address: intent.sender,
     publicKey: intent.senderPublicKey,
   });

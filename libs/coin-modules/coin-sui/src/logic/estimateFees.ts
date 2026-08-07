@@ -2,20 +2,24 @@ import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/inde
 import { BigNumber } from "bignumber.js";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import type { SuiCoinConfig } from "../config";
 
-export async function estimateFees({
-  recipient,
-  amount,
-  sender,
-  asset,
-  type,
-  currencyId,
-  ...extra
-}: TransactionIntent & {
-  useAllAmount?: boolean;
-  stakedSuiId?: string;
-  currencyId?: string;
-}): Promise<{ fees: bigint; gasBudget: bigint }> {
+export async function estimateFees(
+  {
+    recipient,
+    amount,
+    sender,
+    asset,
+    type,
+    currencyId,
+    ...extra
+  }: TransactionIntent & {
+    useAllAmount?: boolean;
+    stakedSuiId?: string;
+    currencyId?: string;
+  },
+  config?: SuiCoinConfig,
+): Promise<{ fees: bigint; gasBudget: bigint }> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;
@@ -49,6 +53,7 @@ export async function estimateFees({
       ...extra,
     },
     currencyId,
+    config,
   );
   return { fees: BigInt(fees), gasBudget: BigInt(gasBudget) };
 }

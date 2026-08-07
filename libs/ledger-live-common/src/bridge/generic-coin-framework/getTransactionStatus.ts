@@ -2,6 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { getBridgeApi } from "./bridge";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import type { GenericTransaction } from "./types";
@@ -13,6 +14,7 @@ export function genericGetTransactionStatus(
 ): AccountBridge<GenericTransaction>["getTransactionStatus"] {
   return async (account, transaction) => {
     const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
+    const context = buildContext(account.currency.id);
     const bridgeApi = await getBridgeApi(account.currency, network);
 
     const draftTransaction = {
@@ -47,7 +49,7 @@ export function genericGetTransactionStatus(
       account,
       draftTransaction,
       bridgeApi.computeIntentType,
-      coinModuleApi.craftTransactionData,
+      intent => coinModuleApi.craftTransactionData(context, intent),
     );
 
     const customFees = bigNumberToBigIntDeep({
@@ -66,9 +68,10 @@ export function genericGetTransactionStatus(
 
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
       await coinModuleApi.validateIntent(
+        context,
         intent,
         extractBalances(account, bridgeApi.getAssetFromToken),
-        customFees,
+        { customFees },
       );
 
     return {

@@ -1,6 +1,7 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
+import type { TronCoinConfig } from "../config";
 import {
   fetchTronAccount,
   getChainParameters,
@@ -38,19 +39,25 @@ export const estimatedTxSize = (intent: TransactionIntent<TronMemo>): number => 
   }
 };
 
-export const estimateEnergy = async (intent: TransactionIntent<TronMemo>): Promise<number> => {
+export const estimateEnergy = async (
+  intent: TransactionIntent<TronMemo>,
+  config?: TronCoinConfig,
+): Promise<number> => {
   if (intent.asset.type !== "trc20" || !intent.asset.assetReference) {
     return 0;
   }
-  const response = await triggerConstantContract({
-    ownerAddress: decode58Check(intent.sender),
-    contractAddress: decode58Check(intent.asset.assetReference),
-    functionSelector: "transfer(address,uint256)",
-    parameter: abiEncodeTrc20Transfer(
-      decode58Check(intent.recipient),
-      new BigNumber(intent.amount.toString()),
-    ),
-  });
+  const response = await triggerConstantContract(
+    {
+      ownerAddress: decode58Check(intent.sender),
+      contractAddress: decode58Check(intent.asset.assetReference),
+      functionSelector: "transfer(address,uint256)",
+      parameter: abiEncodeTrc20Transfer(
+        decode58Check(intent.recipient),
+        new BigNumber(intent.amount.toString()),
+      ),
+    },
+    config,
+  );
   // A reverted simulation reports an unreliable energy_used — surface it.
   if (response.result?.result === false) {
     throw new Error(
@@ -118,16 +125,17 @@ const fallbackFee = (intent: TransactionIntent<TronMemo>): bigint => {
 
 export async function estimateFees(
   transactionIntent: TransactionIntent<TronMemo>,
+  config?: TronCoinConfig,
 ): Promise<bigint> {
   try {
     const [networkInfo, recipientAccount, chainParams, energyNeeded] = await Promise.all([
-      getTronAccountNetwork(transactionIntent.sender),
+      getTronAccountNetwork(transactionIntent.sender, config),
       // Only native sends need the recipient account for the activation-fee branch.
       transactionIntent.type === "send" && transactionIntent.asset.type === "native"
-        ? fetchTronAccount(transactionIntent.recipient).then(accounts => accounts[0])
+        ? fetchTronAccount(transactionIntent.recipient, config).then(accounts => accounts[0])
         : Promise.resolve<AccountTronAPI | undefined>(undefined),
-      getChainParameters(),
-      estimateEnergy(transactionIntent),
+      getChainParameters(config),
+      estimateEnergy(transactionIntent, config),
     ]);
 
     const total = computeBandwidthFee(estimatedTxSize(transactionIntent), networkInfo, chainParams)

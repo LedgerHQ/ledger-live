@@ -33,12 +33,15 @@ describe("genericGetTransactionStatus", () => {
   };
 
   const validateIntent = jest.fn();
+  // The framework threads a context and calls `craftTransactionData(context, intent)`; mirror the
+  // default impl (`{ type: "none" }`).
+  const craftTransactionData = () => ({ type: "none" });
 
   beforeEach(() => {
     jest.clearAllMocks();
     validateIntent.mockResolvedValue(validateIntentResult);
     mockExtractBalances.mockReturnValue({});
-    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent, craftTransactionData });
   });
 
   it.each([
@@ -82,6 +85,7 @@ describe("genericGetTransactionStatus", () => {
     } as any);
 
     expect(validateIntent).toHaveBeenCalledWith(
+      expect.anything(), // context (framework v6)
       expect.objectContaining({
         memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
       }),

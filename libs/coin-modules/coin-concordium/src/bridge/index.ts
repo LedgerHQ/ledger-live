@@ -33,7 +33,7 @@ export function createBridges(
   signerContext: SignerContext<ConcordiumSigner>,
   coinConfig: CoinConfig<ConcordiumCoinConfig>,
 ) {
-  concordiumCoinConfig.setCoinConfig(coinConfig);
+  // concordiumCoinConfig.setCoinConfig(coinConfig);
 
   const getAddress = resolver(signerContext);
   const receive = buildReceive(signerContext);

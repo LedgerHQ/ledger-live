@@ -192,6 +192,7 @@ export type NodeApi = {
     transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
   ) => Promise<BigNumber>;
   getFeeData: (
+    config: EvmConfigInfo,
     currency: CryptoCurrency,
     transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
   ) => Promise<FeeData>;

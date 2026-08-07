@@ -1,8 +1,11 @@
 import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import { createMockVechainContext } from "../../test/context";
 import { craftTransaction } from "./craftTransaction";
 import { estimateFees } from "./estimateFees";
 
 jest.mock("./craftTransaction", () => ({ craftTransaction: jest.fn() }));
+
+const context = createMockVechainContext();
 
 const INTENT: TransactionIntent = {
   intentType: "transaction",
@@ -24,9 +27,9 @@ describe("estimateFees", () => {
       details: { fee: "21000000", gas: 21000, maxFeePerGas: 1000, maxPriorityFeePerGas: 100 },
     });
 
-    const fees = await estimateFees(INTENT);
+    const fees = await estimateFees(context, INTENT);
 
-    expect(craftTransaction).toHaveBeenCalledWith(INTENT, undefined);
+    expect(craftTransaction).toHaveBeenCalledWith(context, INTENT, undefined);
     expect(fees).toEqual({
       value: 21000000n,
       parameters: { gas: 21000, maxFeePerGas: 1000, maxPriorityFeePerGas: 100 },
@@ -39,9 +42,9 @@ describe("estimateFees", () => {
       details: { fee: "1", gas: 1, maxFeePerGas: 1, maxPriorityFeePerGas: 1 },
     });
 
-    await estimateFees(INTENT, { gas: 30000 });
+    await estimateFees(context, INTENT, { gas: 30000 });
 
-    expect(craftTransaction).toHaveBeenCalledWith(INTENT, {
+    expect(craftTransaction).toHaveBeenCalledWith(context, INTENT, {
       value: 0n,
       parameters: { gas: 30000 },
     });
@@ -50,7 +53,7 @@ describe("estimateFees", () => {
   it("defaults the fee to 0 when craftTransaction returns no details", async () => {
     jest.mocked(craftTransaction).mockResolvedValueOnce({ transaction: "{}" });
 
-    const fees = await estimateFees(INTENT);
+    const fees = await estimateFees(context, INTENT);
 
     expect(fees.value).toBe(0n);
   });
@@ -60,7 +63,7 @@ describe("estimateFees", () => {
       .mocked(craftTransaction)
       .mockRejectedValueOnce(new Error("vechain: recipient is required"));
 
-    await expect(estimateFees(INTENT)).rejects.toThrow("vechain: recipient is required");
+    await expect(estimateFees(context, INTENT)).rejects.toThrow("vechain: recipient is required");
   });
 
   it("substitutes a 1-wei placeholder amount for a zero-amount pre-estimation", async () => {
@@ -69,9 +72,9 @@ describe("estimateFees", () => {
       details: { fee: "21000000", gas: 21000, maxFeePerGas: 1000, maxPriorityFeePerGas: 100 },
     });
 
-    await estimateFees({ ...INTENT, amount: 0n });
+    await estimateFees(context, { ...INTENT, amount: 0n });
 
-    expect(craftTransaction).toHaveBeenCalledWith({ ...INTENT, amount: 1n }, undefined);
+    expect(craftTransaction).toHaveBeenCalledWith(context, { ...INTENT, amount: 1n }, undefined);
   });
 
   it("does not substitute a placeholder when useAllAmount is set (craftTransaction resolves the balance)", async () => {
@@ -81,20 +84,20 @@ describe("estimateFees", () => {
     });
 
     const maxIntent = { ...INTENT, amount: 0n, useAllAmount: true };
-    await estimateFees(maxIntent);
+    await estimateFees(context, maxIntent);
 
-    expect(craftTransaction).toHaveBeenCalledWith(maxIntent, undefined);
+    expect(craftTransaction).toHaveBeenCalledWith(context, maxIntent, undefined);
   });
 
   it("returns a zero estimate without crafting when the recipient is missing", async () => {
-    const fees = await estimateFees({ ...INTENT, recipient: "" });
+    const fees = await estimateFees(context, { ...INTENT, recipient: "" });
 
     expect(fees).toEqual({ value: 0n, parameters: {} });
     expect(craftTransaction).not.toHaveBeenCalled();
   });
 
   it("returns a zero estimate without crafting when the recipient is not a valid address", async () => {
-    const fees = await estimateFees({ ...INTENT, recipient: "0xnot-an-address" });
+    const fees = await estimateFees(context, { ...INTENT, recipient: "0xnot-an-address" });
 
     expect(fees).toEqual({ value: 0n, parameters: {} });
     expect(craftTransaction).not.toHaveBeenCalled();

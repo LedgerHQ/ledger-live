@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { retry } from "@ledgerhq/live-promise";
 import coinConfig from "../config";
+import type { ConcordiumCoinConfig } from "../types";
 import type {
   AccountBalanceResponse,
   BlockInfoResponse,
@@ -25,8 +26,8 @@ const PROXY_TIMEOUT = 30000;
 const DEFAULT_RETRIES = 2;
 const RETRY_DELAY = 1000;
 
-function createProxyClient(currencyId: string): ProxyClient {
-  const baseUrl = coinConfig.getCoinConfig(currencyId).proxyUrl;
+function createProxyClient(currencyId: string, config?: ConcordiumCoinConfig): ProxyClient {
+  const baseUrl = (config ?? coinConfig.getCoinConfig(currencyId)).proxyUrl;
 
   const request = async <TResponse, TRequest = unknown>(
     config: LiveNetworkRequest<TRequest>,
@@ -52,11 +53,11 @@ function createProxyClient(currencyId: string): ProxyClient {
 
 const CLIENTS_BY_CURRENCY = new Map<string, ProxyClient>();
 
-function getClient(currencyId: string): ProxyClient {
+function getClient(currencyId: string, config?: ConcordiumCoinConfig): ProxyClient {
   const existing = CLIENTS_BY_CURRENCY.get(currencyId);
   if (existing) return existing;
 
-  const client = createProxyClient(currencyId);
+  const client = createProxyClient(currencyId, config);
   CLIENTS_BY_CURRENCY.set(currencyId, client);
   return client;
 }
@@ -73,8 +74,9 @@ export async function withClient<T>(
   currencyId: string,
   execute: (client: ProxyClient) => Promise<T>,
   retries = DEFAULT_RETRIES,
+  config?: ConcordiumCoinConfig,
 ): Promise<T> {
-  const client = getClient(currencyId);
+  const client = getClient(currencyId, config);
 
   return retry(() => execute(client), {
     maxRetry: retries,
@@ -87,12 +89,19 @@ export async function withClient<T>(
  * Get consensus info from the Concordium network.
  * GET /v0/consensusInfo
  */
-export function getConsensusInfo(currencyId: string): Promise<ConsensusInfoResponse> {
-  return withClient(currencyId, async client =>
-    client.request<ConsensusInfoResponse>({
-      method: "GET",
-      url: "/v0/consensusInfo",
-    }),
+export function getConsensusInfo(
+  currencyId: string,
+  config?: ConcordiumCoinConfig,
+): Promise<ConsensusInfoResponse> {
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<ConsensusInfoResponse>({
+        method: "GET",
+        url: "/v0/consensusInfo",
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -103,12 +112,17 @@ export function getConsensusInfo(currencyId: string): Promise<ConsensusInfoRespo
 export function getBlockInfoByHash(
   currencyId: string,
   blockHash: string,
+  config?: ConcordiumCoinConfig,
 ): Promise<BlockInfoResponse> {
-  return withClient(currencyId, async client =>
-    client.request<BlockInfoResponse>({
-      method: "GET",
-      url: `/v0/blockInfo/${blockHash}`,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<BlockInfoResponse>({
+        method: "GET",
+        url: `/v0/blockInfo/${blockHash}`,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -119,12 +133,17 @@ export function getBlockInfoByHash(
 export function getBlocksAtHeight(
   currencyId: string,
   height: number,
+  config?: ConcordiumCoinConfig,
 ): Promise<BlocksAtHeightResponse> {
-  return withClient(currencyId, async client =>
-    client.request<BlocksAtHeightResponse>({
-      method: "GET",
-      url: `/v0/blocksAtHeight/${height}`,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<BlocksAtHeightResponse>({
+        method: "GET",
+        url: `/v0/blocksAtHeight/${height}`,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -136,12 +155,17 @@ export function getBlocksAtHeight(
 export function getBlockTransactionEvents(
   currencyId: string,
   blockHash: string,
+  config?: ConcordiumCoinConfig,
 ): Promise<BlockTransactionEventsResponse> {
-  return withClient(currencyId, async client =>
-    client.request<BlockTransactionEventsResponse>({
-      method: "GET",
-      url: `/v0/blockTransactionEvents/${blockHash}`,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<BlockTransactionEventsResponse>({
+        method: "GET",
+        url: `/v0/blockTransactionEvents/${blockHash}`,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -168,12 +192,17 @@ export function getAccountsByPublicKey(
 export async function getAccountBalance(
   currencyId: string,
   accountAddress: string,
+  config?: ConcordiumCoinConfig,
 ): Promise<AccountBalanceResponse> {
-  return withClient(currencyId, async client =>
-    client.request<AccountBalanceResponse>({
-      method: "GET",
-      url: `/v2/accBalance/${accountAddress}`,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<AccountBalanceResponse>({
+        method: "GET",
+        url: `/v2/accBalance/${accountAddress}`,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -184,12 +213,17 @@ export async function getAccountBalance(
 export async function getAccountNonce(
   currencyId: string,
   accountAddress: string,
+  config?: ConcordiumCoinConfig,
 ): Promise<{ nonce: number }> {
-  return withClient(currencyId, async client =>
-    client.request<{ nonce: number }>({
-      method: "GET",
-      url: `/v0/accNonce/${accountAddress}`,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<{ nonce: number }>({
+        method: "GET",
+        url: `/v0/accNonce/${accountAddress}`,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -201,13 +235,18 @@ export async function getTransactions(
   currencyId: string,
   accountAddress: string,
   params?: TransactionQueryParams,
+  config?: ConcordiumCoinConfig,
 ): Promise<TransactionsResponse> {
-  return withClient(currencyId, async client =>
-    client.request<TransactionsResponse>({
-      method: "GET",
-      url: `/v3/accTransactions/${accountAddress}`,
-      params,
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<TransactionsResponse>({
+        method: "GET",
+        url: `/v3/accTransactions/${accountAddress}`,
+        params,
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -221,17 +260,22 @@ export async function getTransactions(
 export async function getTransactionCost(
   currencyId: string,
   { numSignatures, memoSize }: GetTransactionCostParams,
+  config?: ConcordiumCoinConfig,
 ): Promise<{ cost: string; energy: number }> {
-  return withClient(currencyId, async client =>
-    client.request<{ cost: string; energy: number }>({
-      method: "GET",
-      url: "/v0/transactionCost",
-      params: {
-        type: "simpleTransfer",
-        numSignatures,
-        ...(memoSize ? { memoSize } : {}),
-      },
-    }),
+  return withClient(
+    currencyId,
+    async client =>
+      client.request<{ cost: string; energy: number }>({
+        method: "GET",
+        url: "/v0/transactionCost",
+        params: {
+          type: "simpleTransfer",
+          numSignatures,
+          ...(memoSize ? { memoSize } : {}),
+        },
+      }),
+    DEFAULT_RETRIES,
+    config,
   );
 }
 
@@ -246,15 +290,21 @@ export async function getTransactionCost(
 export async function submitTransfer(
   currencyId: string,
   data: SubmitTransferData,
+  config?: ConcordiumCoinConfig,
 ): Promise<{ submissionId: string }> {
-  return withClient(currencyId, async client => {
-    const request: LiveNetworkRequest<SubmitTransferData> = {
-      method: "PUT",
-      url: "/v0/submitTransfer/",
-      data,
-    };
-    return client.request<{ submissionId: string }, SubmitTransferData>(request);
-  });
+  return withClient(
+    currencyId,
+    async client => {
+      const request: LiveNetworkRequest<SubmitTransferData> = {
+        method: "PUT",
+        url: "/v0/submitTransfer/",
+        data,
+      };
+      return client.request<{ submissionId: string }, SubmitTransferData>(request);
+    },
+    DEFAULT_RETRIES,
+    config,
+  );
 }
 
 /**

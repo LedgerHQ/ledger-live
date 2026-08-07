@@ -1,4 +1,3 @@
-import { getBalancesForAddresses } from "../../network";
 import { getBalance } from "./getBalance";
 
 const mockGetBalancesForAddresses = jest.fn();

@@ -8,12 +8,14 @@ import {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { Transaction, TransactionLike } from "ethers";
+import type { EvmContext } from "../config";
 import { getNodeApi } from "../network/node";
 import { TransactionTypes } from "../types";
 import { prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
 export async function craftTransaction(
+  context: EvmContext,
   currency: CryptoCurrency,
   {
     transactionIntent,
@@ -23,7 +25,9 @@ export async function craftTransaction(
     customFees?: FeeEstimation | undefined;
   },
 ): Promise<CraftedTransaction> {
+  const config = await context.config(currency.id);
   const { type, to, data, value, gasLimit } = await prepareUnsignedTxParams(
+    config,
     currency,
     transactionIntent,
     customFees?.parameters,
@@ -35,7 +39,7 @@ export async function craftTransaction(
   const nonce =
     typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
       ? transactionIntent.sequence
-      : await getNextSequence(currency, transactionIntent.sender);
+      : await getNextSequence(context, currency, transactionIntent.sender);
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const unsignedTransaction: TransactionLike = {
@@ -66,8 +70,8 @@ export async function craftTransaction(
   }
 
   if (!hasFeeData) {
-    const node = getNodeApi(currency);
-    const feeData = await node.getFeeData(currency, {
+    const node = getNodeApi(config, currency);
+    const feeData = await node.getFeeData(config, currency, {
       type,
       feesStrategy: customFees?.parameters?.feesStrategy as FeesStrategy | undefined,
     });

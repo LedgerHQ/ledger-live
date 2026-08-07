@@ -3,6 +3,7 @@ import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operat
 
 import { Transaction, VechainSDKTransaction } from "../types";
 import { submit } from "../network";
+import { getCoinConfig } from "../config";
 
 /**
  * Broadcast the signed transaction
@@ -14,7 +15,7 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
     (rawData as unknown as VechainSDKTransaction).body,
     Buffer.from(signature, "hex"),
   );
-  const hash = await submit(transaction);
+  const hash = await submit(getCoinConfig(), transaction);
 
   return patchOperationWithHash(operation, hash);
 };

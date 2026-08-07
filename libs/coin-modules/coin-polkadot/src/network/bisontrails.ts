@@ -7,7 +7,7 @@ import type { OperationType } from "@ledgerhq/types-live";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "../common";
-import coinConfig from "../config";
+import coinConfig, { type PolkadotCoinConfig } from "../config";
 import type {
   ExplorerExtrinsic,
   PalletMethod,
@@ -23,8 +23,8 @@ const LIMIT = 200;
  *
  * @returns {string}
  */
-const getBaseApiUrl = (currency?: CryptoCurrency): string =>
-  coinConfig.getCoinConfig(currency?.id).indexer.url;
+const getBaseApiUrl = (currency?: CryptoCurrency, config?: PolkadotCoinConfig): string =>
+  (config ?? coinConfig.getCoinConfig(currency?.id)).indexer.url;
 
 /**
  * Fetch operation lists from indexer
@@ -42,8 +42,9 @@ const getAccountOperationUrl = (
   startAt: number,
   limit: number = LIMIT,
   currency?: CryptoCurrency,
+  config?: PolkadotCoinConfig,
 ): string =>
-  `${getBaseApiUrl(currency)}/accounts/${addr}/operations?${querystring.stringify({
+  `${getBaseApiUrl(currency, config)}/accounts/${addr}/operations?${querystring.stringify({
     limit,
     offset,
     startAt,
@@ -307,10 +308,11 @@ const fetchOperationList = async (
   limit = LIMIT,
   offset = 0,
   prevOperations: PolkadotOperation[] = [],
+  config?: PolkadotCoinConfig,
 ): Promise<PolkadotOperation[]> => {
   const { data } = await network({
     method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt, limit, currency),
+    url: getAccountOperationUrl(addr, offset, startAt, limit, currency, config),
   });
   const operations = data.extrinsics.map((extrinsic: any) =>
     extrinsicToOperation(addr, accountId, extrinsic),
@@ -331,6 +333,7 @@ const fetchOperationList = async (
     limit,
     offset + LIMIT,
     mergedOp,
+    config,
   );
 };
 
@@ -349,11 +352,12 @@ export const getOperations = async (
   currency?: CryptoCurrency,
   startAt = 0,
   limit = LIMIT,
+  config?: PolkadotCoinConfig,
 ) => {
   if (currency && ["westend", "assethub_westend"].includes(currency.id)) {
     const encodeAddr = encodeAddress(addr, 42);
-    return await fetchOperationList(accountId, encodeAddr, startAt, currency, limit);
+    return await fetchOperationList(accountId, encodeAddr, startAt, currency, limit, 0, [], config);
   } else {
-    return await fetchOperationList(accountId, addr, startAt, currency, limit);
+    return await fetchOperationList(accountId, addr, startAt, currency, limit, 0, [], config);
   }
 };

@@ -2,6 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
+import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import type {
   EditType,
   EvmTransactionEIP1559,
@@ -234,7 +235,8 @@ export const getEditTransactionPatch = async ({
   account: Account;
 }): Promise<Partial<Transaction>> => {
   const { currency } = account;
-  const gasTracker = getGasTracker(currency);
+  const config = getCoinConfig(currency.id).info;
+  const gasTracker = getGasTracker(config, currency);
 
   if (!gasTracker) {
     throw new Error(`No gas tracker found for currency ${currency.id}`);
@@ -244,6 +246,7 @@ export const getEditTransactionPatch = async ({
 
   const gasOptions = await gasTracker.getGasOptions({
     currency,
+    config,
     options: { useEIP1559: shouldUseEip1559 },
   });
 

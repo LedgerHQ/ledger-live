@@ -1,13 +1,16 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createApi } from "../../api";
+import { createMockAptosContext } from "../../test/context";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
 describe("createApi", () => {
   // NOTE: as our aptos nodes and indexer whitelist calls, we need to explicitely set the LEDGER_CLIENT_VERSION
   // in turn it will be used in the headers of those api calls.
   setEnvUnsafe("LEDGER_CLIENT_VERSION", "lld/2.124.0-dev");
-  const api = createApi({
+  const api = createApi();
+  const context = createMockAptosContext({
+    status: { type: "active" },
     aptosSettings: {
       network: Network.MAINNET,
       fullnode: getEnv("APTOS_API_ENDPOINT"),
@@ -33,7 +36,7 @@ describe("createApi", () => {
 
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
-      const lastBlock = await api.lastBlock();
+      const lastBlock = await api.lastBlock(context);
       expect(lastBlock).toHaveProperty("hash");
       expect(Hex.isValid(lastBlock.hash ?? "").valid).toBe(true);
 
@@ -54,7 +57,7 @@ describe("createApi", () => {
     it("returns fee for a native asset", async () => {
       const amount = BigInt(100);
 
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         asset: {
           type: "native",
@@ -72,7 +75,7 @@ describe("createApi", () => {
     it("returns fee for a token coin", async () => {
       const amount = BigInt(100);
 
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         asset: {
           type: "coin",
@@ -92,7 +95,7 @@ describe("createApi", () => {
     it("returns fee for a token FA", async () => {
       const amount = BigInt(100);
 
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         asset: {
           type: "fungible_asset",
@@ -112,6 +115,7 @@ describe("createApi", () => {
   describe("craftTransaction", () => {
     it("returns a native coin RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           amount: 1n,
@@ -121,7 +125,7 @@ describe("createApi", () => {
           type: "send",
           asset: { type: "native" },
         },
-        { value: 0n },
+        { customFees: { value: 0n } },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -135,6 +139,7 @@ describe("createApi", () => {
 
     it("returns a coin token RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           amount: 1n,
@@ -148,7 +153,7 @@ describe("createApi", () => {
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
-        { value: 0n },
+        { customFees: { value: 0n } },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -162,6 +167,7 @@ describe("createApi", () => {
 
     it("returns a use-all-amount coin token RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           amount: 0n,
@@ -175,7 +181,7 @@ describe("createApi", () => {
               "0x50788befc1107c0cc4473848a92e5c783c635866ce3c98de71d2eeb7d2a34f85::aptos_coin::AptosCoin",
           },
         },
-        { value: 0n },
+        { customFees: { value: 0n } },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -191,6 +197,7 @@ describe("createApi", () => {
       const r = sender;
       const s = recipient; // recipient contains fungible_assets balances
       const { transaction: hex } = await api.craftTransaction(
+        context,
         {
           intentType: "transaction",
           amount: 0n,
@@ -203,7 +210,7 @@ describe("createApi", () => {
             assetReference: "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
           },
         },
-        { value: 0n },
+        { customFees: { value: 0n } },
       );
 
       const rawTx = RawTransaction.deserialize(
@@ -218,14 +225,14 @@ describe("createApi", () => {
 
   describe("getBalances", () => {
     it("returned balances should have one native asset", async () => {
-      const balances = await api.getBalance(sender.freshAddress);
+      const balances = await api.getBalance(context, sender.freshAddress);
       const nativeBalance = balances.filter(b => b.asset.type === assetTypeNative);
       expect(nativeBalance.length).toBe(1);
       expect(nativeBalance[0].value).toBeGreaterThan(0);
     });
 
     it("returned balances should have a token asset", async () => {
-      const balances = await api.getBalance(tokenAccount.freshAddress);
+      const balances = await api.getBalance(context, tokenAccount.freshAddress);
       const tokenBalances = balances.filter(
         b =>
           b.asset.type === TOKEN_TYPE.FUNGIBLE_ASSET &&
@@ -239,6 +246,7 @@ describe("createApi", () => {
 
     it("should return 0 for an address with 0 balance", async () => {
       const result = await api.getBalance(
+        context,
         "0xbaeab99276f87a8751210a061952f8d0aad6923c8d9657f3b04f4db99d3a784f",
       );
       expect(result).toEqual([{ value: BigInt(0), asset: { type: "native" } }]);
@@ -247,9 +255,9 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns operations from account", async () => {
-      const block = await api.lastBlock();
+      const block = await api.lastBlock(context);
 
-      const { items: operations } = await api.listOperations(sender.freshAddress, {
+      const { items: operations } = await api.listOperations(context, sender.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });
@@ -293,9 +301,9 @@ describe("createApi", () => {
 
   describe("listOperationsTokens", () => {
     it("returns operations from account", async () => {
-      const block = await api.lastBlock();
+      const block = await api.lastBlock(context);
 
-      const { items: operations } = await api.listOperations(tokenAccount.freshAddress, {
+      const { items: operations } = await api.listOperations(context, tokenAccount.freshAddress, {
         minHeight: block.height,
         order: "asc",
       });

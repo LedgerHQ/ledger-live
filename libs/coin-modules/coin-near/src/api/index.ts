@@ -19,7 +19,7 @@ import type {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import { setCoinConfig, type NearCoinConfig } from "../config";
+import type { NearConfig, NearContext } from "../config";
 import { isValidAddress } from "../logic";
 import { getBalance } from "../logic/getBalance";
 import { getBlockInfo } from "../logic/getBlockInfo";
@@ -29,67 +29,95 @@ import { getStakes } from "../logic/getStakes";
 import { getValidators } from "../logic/getValidators";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
-import { craftTransaction, type NearIntent } from "../logic/craftTransaction";
+import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { validateIntent } from "../logic/validateIntent";
 
-// CoinModuleApi ("Alpaca") entry point for NEAR. Staking reads are implemented (real pool-contract
-// delegation); getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline throws below for why.
-export function createApi(config: NearCoinConfig, _currencyId: string): CoinModuleApi {
-  setCoinConfig(config);
-
+// CoinModuleApi ("Alpaca") entry point for NEAR. Every method takes a NearContext first (ADR-019)
+// and threads it to the logic/network layers, which resolve config from `context.config()` — the
+// api path never reads the getCoinConfig() singleton. createApi keeps its `config` param and seeds
+// it via setCoinConfig only for the classic account bridge, which still resolves config that way.
+// Staking reads are implemented (real pool-contract delegation);
+// getRewards/getBlock/getNextSequence/call/craftRawTransaction and tokens are not — see the inline
+// throws below for why.
+export function createApi(): CoinModuleApi<NearConfig> {
   return {
     // --- Blocks / chain state ---
-    lastBlock: (): Promise<BlockInfo> => lastBlock(),
-    getBlockInfo: (height: number): Promise<BlockInfo> => getBlockInfo(height),
+    lastBlock: (context: NearContext): Promise<BlockInfo> => lastBlock(context),
+    getBlockInfo: (context: NearContext, height: number): Promise<BlockInfo> =>
+      getBlockInfo(context, height),
 
     // --- Account state ---
-    getBalance: (address: string, options?: BalanceOptions): Promise<Balance[]> =>
-      rejectBalanceOptions(() => getBalance(address), options),
-    listOperations: (address: string, options: ListOperationsOptions): Promise<Page<Operation>> =>
-      listOperations(address, options),
+    getBalance: (
+      context: NearContext,
+      address: string,
+      options?: BalanceOptions,
+    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(context, address), options),
+    listOperations: (
+      context: NearContext,
+      address: string,
+      options: ListOperationsOptions,
+    ): Promise<Page<Operation>> => listOperations(context, address, options),
 
     // --- Transaction lifecycle ---
-    craftTransaction: (
-      transactionIntent: NearIntent,
-      customFees?: FeeEstimation,
-    ): Promise<CraftedTransaction> => craftTransaction(transactionIntent, customFees),
-    estimateFees: (
-      transactionIntent: NearIntent,
-      customFeesParameters?: FeeEstimation["parameters"],
-    ): Promise<FeeEstimation> => estimateFees(transactionIntent, customFeesParameters),
-    combine,
-    broadcast: (tx: string, broadcastConfig?: BroadcastConfig): Promise<string> =>
-      broadcast(tx, broadcastConfig),
+    craftTransaction: (context, transactionIntent, options): Promise<CraftedTransaction> =>
+      craftTransaction(context, transactionIntent, options?.customFees),
+    estimateFees: (context, transactionIntent, options): Promise<FeeEstimation> =>
+      estimateFees(context, transactionIntent, options?.customFeesParameters),
+    combine: (
+      _context: NearContext,
+      tx: string,
+      signature: string,
+      options?: { pubkey?: string },
+    ): string => combine(tx, signature, options?.pubkey),
+    broadcast: (
+      context: NearContext,
+      tx: string,
+      options?: { broadcastConfig?: BroadcastConfig },
+    ): Promise<string> => broadcast(context, tx, options?.broadcastConfig),
     validateIntent: (
-      transactionIntent: NearIntent,
-      balances: Balance[],
-      customFees?: FeeEstimation,
-    ): Promise<TransactionValidation> => validateIntent(transactionIntent, balances, customFees),
-    craftTransactionData,
+      context,
+      transactionIntent,
+      balances,
+      options,
+    ): Promise<TransactionValidation> =>
+      validateIntent(context, transactionIntent, balances, options?.customFees),
+    craftTransactionData: (_context, intent) => craftTransactionData(intent),
     validateAddress: async (
+      _context: NearContext,
       address: string,
       _parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => isValidAddress(address),
 
     // --- Staking ---
-    getStakes: (address: string, cursor?: Cursor): Promise<Page<Stake>> =>
-      getStakes(address, cursor),
-    getValidators: (cursor?: Cursor): Promise<Page<Validator>> => getValidators(cursor),
+    getStakes: (
+      context: NearContext,
+      address: string,
+      options?: { cursor?: Cursor },
+    ): Promise<Page<Stake>> => getStakes(context, address, options?.cursor),
+    getValidators: (
+      context: NearContext,
+      options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> => getValidators(context, options?.cursor),
 
     // --- Not supported ---
-    getBlock: (_height: number): Promise<Block> => {
+    getBlock: (_context: NearContext, _height: number): Promise<Block> => {
       throw new Error("getBlock is not supported");
     },
-    getNextSequence: (_address: string): Promise<bigint> => {
+    getNextSequence: (_context: NearContext, _address: string): Promise<bigint> => {
       throw new Error(
         "getNextSequence is not applicable for Near: the nonce belongs to an access key, not to an account",
       );
     },
-    getRewards: (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
+    getRewards: (
+      _context: NearContext,
+      _address: string,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Reward>> => {
       throw new Error("getRewards is not supported");
     },
     craftRawTransaction: (
+      _context: NearContext,
       _transaction: string,
       _sender: string,
       _publicKey: string,
@@ -97,7 +125,7 @@ export function createApi(config: NearCoinConfig, _currencyId: string): CoinModu
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },
-    call: async () => {
+    call: async (_context: NearContext) => {
       throw new Error("call is not supported");
     },
   };

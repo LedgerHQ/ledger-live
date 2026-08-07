@@ -11,6 +11,7 @@ import {
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import type { EvmConfigInfo } from "../config";
 import { getNodeApi } from "../network/node";
 import { buildStakingTransactionParams, prepareStakingIntent, STAKING_CONTRACTS } from "../staking";
 import {
@@ -152,19 +153,20 @@ async function estimateGas(
 }
 
 export async function prepareUnsignedTxParams(
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
   const transactionType = getTransactionType(type);
-  const node = getNodeApi(currency);
+  const node = getNodeApi(config, currency);
   const isSend = isSendTransactionIntent(transactionIntent);
 
   // Prepare staking intents once (can require async on-chain lookups). See: LIVE-32750
   const preparedStakingIntent = isSend
     ? undefined
-    : await prepareStakingIntent(currency, transactionIntent);
+    : await prepareStakingIntent(config, currency, transactionIntent);
 
   const { to, data, value } = isSend
     ? buildSendTxParams(transactionIntent)
