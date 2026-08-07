@@ -13,6 +13,8 @@ import { useContactEditSignerUiState } from "./useContactEditSignerUiState";
 
 const PLACEHOLDER_ADDRESS_ID = ContactAddressIdSchema.parse("address-unselected");
 
+type SignerPendingAction = "edit" | "delete";
+
 export type UseContactAddressDetailActionsFlowViewModelOptions = Readonly<{
   contactId: ContactId;
   addressId: ContactAddressId | undefined;
@@ -53,28 +55,36 @@ export function useContactAddressDetailActionsFlowViewModel({
   const {
     sendIntent,
     editIntent,
+    deleteIntent,
     deleteLifecycle,
     openDelete,
     cancelDelete,
     confirmDelete: confirmDeleteAction,
     isSignerRequiredForEdit,
+    isSignerRequiredForDelete,
   } = useContactAddressDetailActionsViewModel(contactId, resolvedAddressId, ports);
   const {
     editUiState,
     openSignerDialog,
     openSignerMismatchDialog,
     openEditDialog,
-    onSignerCancel,
+    closeSignerDialog,
+    onSignerCancel: closeSignerOnCancel,
     onSignerMismatchCancel,
     onConnectDifferentDevice,
     onEditClose: closeEditUiState,
     resetEditUiState,
   } = useContactEditSignerUiState();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [signerPendingAction, setSignerPendingAction] = useState<SignerPendingAction | null>(null);
   const isSelectionActive = addressId !== undefined;
   const canSend = isSelectionActive && sendIntent !== undefined;
   const canEdit = isSelectionActive && editIntent !== undefined;
   const canDelete = isSelectionActive;
+
+  const clearSignerPendingAction = useCallback(() => {
+    setSignerPendingAction(null);
+  }, []);
 
   const onSendPress = useCallback(() => {
     if (sendIntent === undefined) {
@@ -90,6 +100,7 @@ export function useContactAddressDetailActionsFlowViewModel({
     }
 
     if (isSignerRequiredForEdit) {
+      setSignerPendingAction("edit");
       openSignerDialog();
       return;
     }
@@ -98,14 +109,22 @@ export function useContactAddressDetailActionsFlowViewModel({
   }, [editIntent, isSignerRequiredForEdit, openEditDialog, openSignerDialog]);
 
   const onSignerConfirm = useCallback(async () => {
-    if (editIntent === undefined) {
+    const pendingAction = signerPendingAction;
+    const validationTarget =
+      pendingAction === "edit"
+        ? editIntent
+        : pendingAction === "delete"
+          ? deleteIntent
+          : undefined;
+
+    if (validationTarget === undefined) {
       return;
     }
 
     const [expectedSignerId, currentSignerId] = await Promise.all([
       ports.signerValidation.getExpectedSignerId({
-        contactId: editIntent.contactId,
-        addressId: editIntent.addressId,
+        contactId: validationTarget.contactId,
+        addressId: validationTarget.addressId,
       }),
       ports.signerValidation.getCurrentSignerId(),
     ]);
@@ -116,8 +135,31 @@ export function useContactAddressDetailActionsFlowViewModel({
       return;
     }
 
-    openEditDialog();
-  }, [editIntent, openEditDialog, openSignerMismatchDialog, ports.signerValidation]);
+    clearSignerPendingAction();
+
+    if (pendingAction === "edit") {
+      openEditDialog();
+      return;
+    }
+
+    closeSignerDialog();
+    openDelete();
+  }, [
+    clearSignerPendingAction,
+    closeSignerDialog,
+    deleteIntent,
+    editIntent,
+    openDelete,
+    openEditDialog,
+    openSignerMismatchDialog,
+    ports.signerValidation,
+    signerPendingAction,
+  ]);
+
+  const onSignerCancel = useCallback(() => {
+    clearSignerPendingAction();
+    closeSignerOnCancel();
+  }, [clearSignerPendingAction, closeSignerOnCancel]);
 
   const onEditClose = useCallback(() => {
     closeEditUiState();
@@ -128,8 +170,14 @@ export function useContactAddressDetailActionsFlowViewModel({
       return;
     }
 
+    if (isSignerRequiredForDelete) {
+      setSignerPendingAction("delete");
+      openSignerDialog();
+      return;
+    }
+
     openDelete();
-  }, [canDelete, openDelete]);
+  }, [canDelete, isSignerRequiredForDelete, openDelete, openSignerDialog]);
 
   const confirmDelete = useCallback(async () => {
     if (!canDelete) {
@@ -157,10 +205,11 @@ export function useContactAddressDetailActionsFlowViewModel({
 
   useEffect(() => {
     if (addressId === undefined) {
+      clearSignerPendingAction();
       resetEditUiState();
       cancelDelete();
     }
-  }, [addressId, cancelDelete, resetEditUiState]);
+  }, [addressId, cancelDelete, clearSignerPendingAction, resetEditUiState]);
 
   return {
     canSend,
