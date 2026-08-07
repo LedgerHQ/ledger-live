@@ -111,6 +111,20 @@ export const fetchLastBlock = async (): Promise<{ height: number; hash: string; 
   }
 };
 
+export const fetchChainspecToml = async (): Promise<string> => {
+  const client = getCasperNodeRpcClient();
+  try {
+    const { chainspecBytes } = await client.getChainspec();
+    const hex = chainspecBytes.chainspecBytes;
+    if (!hex) throw new Error("Chainspec bytes missing from response");
+
+    return Buffer.from(hex, "hex").toString("utf8");
+  } catch (error) {
+    log("error", "Failed to fetch chainspec", error);
+    throw error;
+  }
+};
+
 /**
  * Fetch one page of an account's deploy feed, newest first.
  *

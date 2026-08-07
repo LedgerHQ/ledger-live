@@ -22,6 +22,7 @@ import { craftTransaction } from "../logic/craftTransaction";
 import { lastBlock } from "../logic/lastBlock";
 import { getBalance as getAccountBalance } from "../logic/getBalance";
 import { listOperations } from "../logic/listOperations";
+import { estimateFees } from "../logic/estimateFees";
 import type { CasperCoinConfig, CasperMemo } from "../types";
 
 export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
@@ -60,11 +61,9 @@ export function createApi(config: CasperCoinConfig): CoinModuleApi<CasperMemo> {
     ): Promise<CraftedTransaction> {
       throw new Error("craftRawTransaction is not supported");
     },
-    estimateFees(_intent: TransactionIntent<CasperMemo>): Promise<FeeEstimation> {
-      throw new Error("estimateFees is not supported");
-    },
     combine,
     broadcast,
+    estimateFees,
     validateIntent(
       _intent: TransactionIntent<CasperMemo>,
       _balances: Balance[],

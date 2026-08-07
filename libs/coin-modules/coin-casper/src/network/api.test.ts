@@ -11,6 +11,7 @@ import {
   fetchAccountStateInfo,
   fetchBalance,
   fetchLastBlock,
+  fetchChainspecToml,
   fetchTxs,
   broadcastTx,
   getCasperNodeRpcClient,
@@ -90,6 +91,7 @@ const createMockRpcClient = (methodOverrides: Partial<Record<keyof RpcClient, je
     getBalanceByStateRootHash: jest.fn(),
     getLatestBlock: jest.fn(),
     putTransaction: jest.fn(),
+    getChainspec: jest.fn(),
   };
 
   // Create a combined mock with defaultMethods overridden by methodOverrides
@@ -308,6 +310,40 @@ describe("Casper API Unit Tests", () => {
 
       await expect(fetchLastBlock()).rejects.toThrow("Failed to fetch last block");
       expect(log).toHaveBeenCalledWith("error", "Failed to fetch last block", mockError);
+    });
+  });
+
+  describe("fetchChainspecToml", () => {
+    it("should decode the hex-encoded chainspec to TOML", async () => {
+      const toml = "[transactions]\nnative_mint_lane = [0, 2048, 1024, 100_000_000, 325]\n";
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({
+          chainspecBytes: { chainspecBytes: Buffer.from(toml, "utf8").toString("hex") },
+        }),
+      });
+
+      await expect(fetchChainspecToml()).resolves.toBe(toml);
+    });
+
+    it("should throw when the response carries no chainspec bytes", async () => {
+      createMockRpcClient({
+        getChainspec: jest.fn().mockResolvedValue({ chainspecBytes: {} }),
+      });
+
+      await expect(fetchChainspecToml()).rejects.toThrow("Chainspec bytes missing from response");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", expect.any(Error));
+    });
+
+    it("should throw error when the chainspec fetch fails", async () => {
+      const mockError = new Error("node unreachable");
+
+      createMockRpcClient({
+        getChainspec: jest.fn().mockRejectedValue(mockError),
+      });
+
+      await expect(fetchChainspecToml()).rejects.toThrow("node unreachable");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch chainspec", mockError);
     });
   });
 
