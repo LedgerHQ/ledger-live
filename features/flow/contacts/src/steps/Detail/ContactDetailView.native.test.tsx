@@ -139,7 +139,11 @@ describe("ContactDetailPage", () => {
   it("should request adding an address when the action is pressed", () => {
     const onAddAddress = jest.fn();
     render(
-      <ContactDetailView {...meDetailProps} contact={mockMeContact()} onAddAddress={onAddAddress} />,
+      <ContactDetailView
+        {...meDetailProps}
+        contact={mockMeContact()}
+        onAddAddress={onAddAddress}
+      />,
     );
 
     fireEvent.press(screen.getByTestId("contacts-detail-add-address"));

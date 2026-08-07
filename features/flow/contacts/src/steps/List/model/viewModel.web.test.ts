@@ -39,7 +39,9 @@ describe("createEmptyContactsListViewModel", () => {
   });
 
   it("keeps the default Me label when the stored name is Me", () => {
-    expect(createEmptyContactsListViewModel(mockMeContact(), formatMeDisplayName).me.name).toBe("Me");
+    expect(createEmptyContactsListViewModel(mockMeContact(), formatMeDisplayName).me.name).toBe(
+      "Me",
+    );
   });
 });
 
@@ -241,7 +243,9 @@ describe("createContactsSearchViewModel", () => {
   it("should match Me using its renamed value", () => {
     const renamedMe = mockMeContact({ name: "Toto" });
 
-    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "tOtO", formatMeDisplayName)).toMatchObject({
+    expect(
+      createContactsSearchViewModel(renamedMe, [renamedMe], "tOtO", formatMeDisplayName),
+    ).toMatchObject({
       status: "results",
       me: {
         contactId: "contact-me",
@@ -256,7 +260,9 @@ describe("createContactsSearchViewModel", () => {
   it("should match Me when searching for Me on a renamed contact", () => {
     const renamedMe = mockMeContact({ name: "Brian" });
 
-    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "me", formatMeDisplayName)).toMatchObject({
+    expect(
+      createContactsSearchViewModel(renamedMe, [renamedMe], "me", formatMeDisplayName),
+    ).toMatchObject({
       status: "results",
       me: {
         contactId: "contact-me",
