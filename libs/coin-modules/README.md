@@ -19,7 +19,7 @@ The following concepts are mandatory for a CoinModule to be *Coin framework comp
 * `config.ts`: exposes methods to update and fetch the coin config
 * `transaction.ts`: exposes serialization utils
 * `supportedFeatures.ts` (to be refined): exposes the set of features available within the Coin Module API
-* `bridge` (legacy): implementation of Bridges interface (cf. [Bridge](https://github.com/LedgerHQ/ledger-live/blob/25c9bc5fc4276e8a2268c81a334776ec927e495e/libs/ledgerjs/packages/types-live/src/bridge.ts#L96-L105))
+* `bridge` (legacy): implementation of Bridges interface (cf. [Bridge](https://github.com/LedgerHQ/ledger-live/blob/25c9bc5fc4276e8a2268c81a334776ec927e495e/libs/types-live/src/bridge.ts#L96-L105))
 * `signer` (legacy): defines the interface definition to the Embedded App and the logic to retrieve
 
 **==> With this organisation, it is more obvious and consistent where to find and create new functions/files.**

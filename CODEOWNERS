@@ -170,8 +170,8 @@ apps/ledger-live-mobile/src/screens/SignTransaction/                @ledgerhq/co
 
 ### ... cryptoassets ongoing rework => the lib now belongs to @ledgerhq/wallet-xp (with currencies owned by @ledgerhq/coin-integration) ... ###
 domain/entity/currency-crypto/src/currencies/            @ledgerhq/coin-integration
-libs/ledgerjs/packages/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
-libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
+libs/types-live/src/lnsUpsell.ts       @ledgerhq/engagement
+libs/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
@@ -187,7 +187,6 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 libs/psbtv2/                                             @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
-libs/ledgerjs/packages/keyring-eth/                      @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
@@ -271,7 +270,7 @@ libs/exchange-module/                                                					@ledge
 libs/wallet-api-acre-module/                                         					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
 libs/live-services/cal/src/partners/                                 					@ledgerhq/ptx
-libs/ledgerjs/packages/types-live/src/swap.ts                        					@ledgerhq/ptx
+libs/types-live/src/swap.ts                        					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/buy.handler.ts      @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler.ts     @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
@@ -584,7 +583,7 @@ apps/ledger-live-desktop/src/datadog/                 @ledgerhq/platform
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
-libs/ledgerjs/packages/types-live/src/feature.ts
+libs/types-live/src/feature.ts
 libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts
 libs/env/src/env.ts
 libs/ledger-live-common/src/__fixtures__/
