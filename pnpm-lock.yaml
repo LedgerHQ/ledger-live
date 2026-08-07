@@ -5136,10 +5136,19 @@ importers:
       '@shared/name':
         specifier: workspace:^
         version: link:../../../shared/name
+      class-variance-authority:
+        specifier: 'catalog:'
+        version: 0.7.1
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+      tailwind-merge:
+        specifier: 'catalog:'
+        version: 3.4.0
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.49(@ledgerhq/lumen-design-core@0.1.23)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+        version: 0.1.49(@ledgerhq/lumen-design-core@0.1.23)(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.52(@ledgerhq/lumen-design-core@0.1.23)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@react-native-community/cli@15.1.0(@typescript/typescript6@6.0.2))(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
