@@ -47,6 +47,7 @@ jobs:
             nx.workspace.json
             nx.json
             nx.s3.defaults.json
+            patches/
 
       - name: Install mise and tools
         uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
