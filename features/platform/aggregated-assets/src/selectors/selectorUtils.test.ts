@@ -1,4 +1,4 @@
-import { createCurrencyDataSelector, type ApiState } from "../selectorUtils";
+import { createCurrencyDataSelector, type ApiState } from "./selectorUtils";
 
 type Rate = { rate: number };
 

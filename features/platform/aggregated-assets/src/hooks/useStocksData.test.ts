@@ -3,11 +3,12 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import { useStocksData } from "../useStocksData";
-import { useGetAssetsDataInfiniteQuery } from "../../state-manager/api";
-import { AssetCategory } from "../../state-manager/types";
+import { useStocksData } from "./useStocksData";
+import { useGetAssetsDataInfiniteQuery } from "@domain/api-aggregated-assets";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-aggregated-assets", () => ({
+  ...jest.requireActual("@domain/api-aggregated-assets"),
   useGetAssetsDataInfiniteQuery: jest.fn(),
 }));
 

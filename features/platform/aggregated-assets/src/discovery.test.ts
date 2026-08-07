@@ -1,5 +1,5 @@
-import { selectTopStocks, selectTopAssetsByCategory } from "../assetDiscovery";
-import type { AssetsDataWithPagination } from "../../state-manager/types";
+import { selectTopStocks, selectTopAssetsByCategory } from "./discovery";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 
 function makeData(ids: string[]): AssetsDataWithPagination {
   return {

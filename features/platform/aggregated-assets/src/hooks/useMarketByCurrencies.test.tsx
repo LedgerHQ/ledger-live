@@ -7,8 +7,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { renderHook } from "@testing-library/react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { useMarketByCurrencies } from "../useMarketByCurrencies";
-import type { ApiState } from "../../entities/selectorUtils";
+import { useMarketByCurrencies } from "./useMarketByCurrencies";
+import type { ApiState } from "../selectors/selectorUtils";
 
 const currency = (id: string) => ({ id }) as CryptoOrTokenCurrency;
 

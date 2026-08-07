@@ -1,6 +1,6 @@
-import { selectInterestRateByCurrency } from "../interestRateSelectors";
-import type { ApiState } from "../selectorUtils";
-import type { InterestRate } from "..";
+import { selectInterestRateByCurrency } from "./interestRateSelectors";
+import type { ApiState } from "./selectorUtils";
+import type { InterestRate } from "@domain/entity-interest-rate";
 
 const bitcoinRate: InterestRate = {
   currencyId: "bitcoin",

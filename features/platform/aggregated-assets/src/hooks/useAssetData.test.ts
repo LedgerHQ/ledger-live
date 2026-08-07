@@ -3,10 +3,11 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import { useAssetData } from "../useAssetData";
-import { useGetAssetDataQuery } from "../../state-manager/api";
+import { useAssetData } from "./useAssetData";
+import { useGetAssetDataQuery } from "@domain/api-aggregated-assets";
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-aggregated-assets", () => ({
+  ...jest.requireActual("@domain/api-aggregated-assets"),
   useGetAssetDataQuery: jest.fn(),
 }));
 
