@@ -303,7 +303,7 @@
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/coin-stellar": "catalog:",
     "@ledgerhq/coin-sui": "workspace:^",
-    "@ledgerhq/coin-tezos": "workspace:^",
+    "@ledgerhq/coin-tezos": "catalog:",
     "@ledgerhq/coin-ton": "workspace:^",
     "@ledgerhq/coin-tron": "workspace:^",
     "@ledgerhq/coin-vechain": "workspace:^",
