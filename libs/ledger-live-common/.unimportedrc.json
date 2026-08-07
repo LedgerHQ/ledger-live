@@ -351,6 +351,7 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/useDrawerConfiguration.ts",
     "src/wallet-api/ModularDrawer/utils.ts",
+    "src/wallet-api/ModularDrawer/uiUseCase.ts",
     "src/modularDrawer/hooks/useDetailedAccountsCore.ts",
     "src/modularDrawer/types/detailedAccount.ts",
     "src/modularDrawer/utils/buildAssetsSorted.ts",
