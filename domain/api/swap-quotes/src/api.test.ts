@@ -97,10 +97,16 @@ describe("hashCustomHeaders", () => {
   });
 
   it("matches the SHA-256 of the canonical header string", () => {
-    // sha256("x-token:one"), computed independently.
+    // sha256('["x-token","one"]'), computed independently.
     expect(hashCustomHeaders({ "x-token": "one" })).toBe(
-      "c9d3f7a8814aa8f6ed28e5c713144bdcd3ff449d99dbbee2d4757a04c06d8c27",
+      "4d7450c65c9b9040537ff2093ef0aec6e518afb95ed244b7c7e06de714f0d8bd",
     );
+  });
+
+  // The live app chooses `customHeaders`, so a canonical form it could make ambiguous would
+  // hand it back the very cross-header dedupe the digest exists to prevent.
+  it("separates header sets a raw concatenation would collide", () => {
+    expect(hashCustomHeaders({ a: "1\nb:2" })).not.toBe(hashCustomHeaders({ a: "1", b: "2" }));
   });
 
   it("is stable, and independent of order and header-name casing", () => {

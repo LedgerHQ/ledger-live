@@ -104,10 +104,12 @@ export function hashCustomHeaders(customHeaders?: Record<string, string>): strin
   const entries = Object.entries(customHeaders ?? {});
   if (entries.length === 0) return "";
 
-  // Header names are case-insensitive and order carries no meaning, so canonicalise both.
+  // Header names are case-insensitive and order carries no meaning, so canonicalise both. Each
+  // pair is JSON-encoded rather than concatenated raw: a value containing the separator would
+  // otherwise let two different header sets share one canonical string, and so one digest.
   const canonical = entries
-    .map(([name, value]) => `${name.toLowerCase()}:${value}`)
-    .sort()
+    .map(([name, value]) => JSON.stringify([name.toLowerCase(), value]))
+    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
     .join("\n");
 
   return bytesToHex(sha256(utf8ToBytes(canonical)));
@@ -126,7 +128,7 @@ export const swapQuotesApi = swapApi.injectEndpoints({
       query: ({ providers, quotesInput, counterValueCurrency, customHeaders }) => ({
         url: "/quote",
         params: buildQuotesParams(providers, quotesInput, counterValueCurrency),
-        headers: { ...(customHeaders ?? {}) },
+        headers: { ...customHeaders },
       }),
       // Headers are represented by a digest rather than verbatim: the token stays out of the cache
       // key, while callers sending different headers still get separate entries instead of sharing
