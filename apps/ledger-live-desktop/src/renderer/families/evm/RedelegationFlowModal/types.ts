@@ -4,7 +4,7 @@ import { Step } from "~/renderer/components/Stepper";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { Operation } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatus } from "@ledgerhq/live-common/families/evm/types";
 import { OpenModal } from "~/renderer/actions/modals";
 
 export type StepId =

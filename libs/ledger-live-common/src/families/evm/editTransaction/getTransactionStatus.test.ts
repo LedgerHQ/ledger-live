@@ -6,7 +6,7 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   TransactionStatus,
-} from "@ledgerhq/coin-evm/types/index";
+} from "@ledgerhq/live-common/families/evm/types";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";
 import { validateEditTransaction, getEditTransactionStatus } from "./getTransactionStatus";
 

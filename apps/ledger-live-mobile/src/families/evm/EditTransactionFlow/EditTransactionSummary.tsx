@@ -4,7 +4,10 @@
  * with some changes to make it work with our custom flow
  */
 
-import { Transaction as EvmTransaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import {
+  Transaction as EvmTransaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/evm/types";
 import { isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";

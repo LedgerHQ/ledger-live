@@ -17,7 +17,7 @@ import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
 import { getTxType } from "./utils/txTrackingHelper";
 import { isLedgerButtonReferrer, reportLedgerButtonBroadcast } from "./utils/ledgerButtonTracking";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import type { Transaction as EvmTransaction } from "../families/evm/types";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { withLiveAppContext } from "./blindSigningContext";
 

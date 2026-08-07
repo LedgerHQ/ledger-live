@@ -12,7 +12,7 @@ import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
 import type { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
-import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
+import { FeeHistory, FeeData } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
 import { withRetries } from "../withRetries";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
@@ -308,7 +308,7 @@ async function getGasEstimation(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
   account: Pick<Account, "freshAddress">,
-  transaction: Pick<EvmTransaction, "amount" | "data" | "recipient">,
+  transaction: { amount: BigNumber; data?: Buffer | null | undefined; recipient: string },
 ): Promise<BigNumber> {
   const to = transaction.recipient ? normalizeAddress(transaction.recipient) : undefined;
   const value = BigInt(transaction.amount.toFixed(0));
@@ -343,7 +343,7 @@ function makeGetGasEstimation(nodeConfig: ExternalNodeConfig): NodeApi["getGasEs
 async function getFeeData(
   api: JsonRpcProvider,
   currency: CryptoCurrency,
-  transaction: Pick<EvmTransaction, "type" | "feesStrategy">,
+  transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
 ): Promise<FeeData> {
   const block = await api.getBlock("latest");
   const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
