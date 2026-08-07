@@ -27,6 +27,7 @@ export function DiscoveryErrorState({
 }: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
+  const trackingTransport = getTrackingTransport(state.error.transportId);
 
   useEffect(() => {
     setIsInTerminalConnectDeviceError(!state.retry);
@@ -41,9 +42,7 @@ export function DiscoveryErrorState({
     <>
       <TrackDIEScreen
         category={PAGE_CONNECT_DEVICE.DiscoveryError}
-        {...(getTrackingTransport(state.error.transportId)
-          ? { transport: getTrackingTransport(state.error.transportId) }
-          : {})}
+        {...(trackingTransport ? { transport: trackingTransport } : {})}
         subError={getTrackingSubError(state.error.type)}
         refreshSource
       />
