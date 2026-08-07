@@ -1,6 +1,6 @@
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
-import type { PartialMarketItemResponse } from "./internals/market";
+import type { PartialMarketItemResponse } from "./market";
 
 // Raw DADA API wire-format shapes for currency assets
 export interface ApiTokenCurrency {

@@ -21,11 +21,6 @@ describe("dadaIdToMarketId", () => {
     expect(dadaIdToMarketId("usd_tether")).toBe("usd_tether");
   });
 
-  /*
-   * Characterizing a sharp edge rather than endorsing it: the `?? id` fallback only catches
-   * null/undefined, and `"".split(":").pop()` is `""`, so a trailing separator yields an empty
-   * market id instead of the original.
-   */
   it("yields an empty id for a trailing separator", () => {
     expect(dadaIdToMarketId("ethereum:erc20:")).toBe("");
   });
