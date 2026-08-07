@@ -279,9 +279,8 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
   const trustchain = useSelector(trustchainSelector);
   const isLedgerSyncActive = Boolean(trustchain?.rootId);
-  const nanoOnboardingEnableSyncFeature = useFeature("lldOnboardingEnableSync")?.params?.nanos;
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
-  const hasSyncStep = nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
+  const hasSyncStep = !initialIsLedgerSyncActive.current;
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const recoverFF = useFeature("protectServicesDesktop");

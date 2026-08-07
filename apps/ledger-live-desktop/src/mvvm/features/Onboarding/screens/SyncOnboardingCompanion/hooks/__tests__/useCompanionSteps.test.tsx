@@ -26,7 +26,7 @@ describe("useCompanionSteps", () => {
       },
     );
 
-    expect(result.current.defaultSteps).toHaveLength(3);
+    expect(result.current.defaultSteps).toHaveLength(4);
   });
 
   it("should return callback to complete app step", () => {

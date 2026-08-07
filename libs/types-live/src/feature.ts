@@ -315,7 +315,6 @@ export type Features = CurrencyFeatures & {
   llmNanoOnboardingFundWallet: DefaultFeature;
   lifiSolana: DefaultFeature;
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
-  lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwdGenericAwarenessModal: DefaultFeature;
   lwdOnboardingCounterfeitWarning: DefaultFeature;
   lwmAnalyticsConsentOnboarding: DefaultFeature;
@@ -860,7 +859,7 @@ export type Feature_LlmTransferButtonCopyVariant = Feature<{
 /** @deprecated Moved to `@shared/feature-flags`. Use `Features["supportDeviceApex"]` from `@shared/feature-flags` instead. */
 export type Feature_SupportDeviceApex = DefaultFeature;
 
-/** @deprecated Moved to `@shared/feature-flags`. Use `Features["lldOnboardingEnableSync"]` from `@shared/feature-flags` instead. */
+/** @deprecated Moved to `@shared/feature-flags`. Use `Features["llmOnboardingEnableSync"]` from `@shared/feature-flags` instead. */
 export type Feature_OnboardingEnableSync = Feature<{
   nanos: boolean;
   touchscreens: boolean;

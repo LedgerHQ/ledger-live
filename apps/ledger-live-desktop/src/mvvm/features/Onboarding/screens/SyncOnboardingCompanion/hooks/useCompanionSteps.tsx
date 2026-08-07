@@ -6,7 +6,6 @@ import { useSelector } from "LLD/hooks/redux";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useFeature } from "@features/platform-feature-flags";
 
 import { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -89,9 +88,7 @@ const useCompanionSteps = ({
   const trustchain = useSelector(trustchainSelector);
   const isLedgerSyncActive = Boolean(trustchain?.rootId);
   const initialIsLedgerSyncActive = useRef(isLedgerSyncActive);
-  const nanoOnboardingEnableSyncFeature =
-    useFeature("lldOnboardingEnableSync")?.params?.touchscreens;
-  const hasSyncStep = !!nanoOnboardingEnableSyncFeature && !initialIsLedgerSyncActive.current;
+  const hasSyncStep = !initialIsLedgerSyncActive.current;
 
   const handleAppStepComplete = useCallback(() => setStepKey(StepKey.Exit), [setStepKey]);
   const handleSyncContinue = useCallback(() => setStepKey(StepKey.Success), [setStepKey]);

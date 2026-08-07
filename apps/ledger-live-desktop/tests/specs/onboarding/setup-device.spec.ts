@@ -9,11 +9,6 @@ test.use({
   },
   featureFlags: {
     noah: { enabled: false },
-    // Pin so the setup-device flow is deterministic (this flag gates an extra "Enable sync" screen).
-    lldOnboardingEnableSync: {
-      enabled: false,
-      params: { nanos: false, touchscreens: false },
-    },
   },
 });
 
@@ -189,8 +184,12 @@ test.describe.parallel("Onboarding", () => {
         await expect(page).toHaveScreenshot("v3-genuine-check-done.png");
       });
 
-      await test.step("Secure your crypto", async () => {
+      await test.step("Enable Sync (skip)", async () => {
         await onboardingPage.continue();
+        await onboardingPage.continueTutorialSecondary();
+      });
+
+      await test.step("Secure your crypto", async () => {
         await expect(page).toHaveScreenshot("v3-secure-your-crypto.png");
         await onboardingPage.continueTutorialSecondary();
       });
