@@ -55,7 +55,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true
@@ -172,7 +172,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 2
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true
@@ -231,7 +231,7 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true

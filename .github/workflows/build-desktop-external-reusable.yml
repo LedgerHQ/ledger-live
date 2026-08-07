@@ -63,7 +63,7 @@ jobs:
           ruby-version: 3.3.0
           bundler-cache: true
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true

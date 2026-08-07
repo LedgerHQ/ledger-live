@@ -72,7 +72,7 @@ jobs:
 
       - name: Setup the toolchain
         id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

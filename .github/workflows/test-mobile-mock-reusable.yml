@@ -190,7 +190,7 @@ jobs:
           echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true
@@ -424,7 +424,7 @@ jobs:
           packages: "tools platform-tools"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true
@@ -690,7 +690,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
@@ -880,7 +880,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"

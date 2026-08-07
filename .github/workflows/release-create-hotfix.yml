@@ -49,7 +49,7 @@ jobs:
           git checkout -b hotfix
           git push -u origin hotfix
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/pnpm-warmup-cache-martijn
         id: setup-caches
         with:
           use-mise: true
