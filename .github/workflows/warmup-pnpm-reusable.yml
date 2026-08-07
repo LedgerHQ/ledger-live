@@ -39,6 +39,7 @@ jobs:
           sparse-checkout: |
             pnpm-lock.yaml
             pnpm-workspace.yaml
+            .pnpmfile.cjs
             package.json
             .npmrc
             mise.toml
