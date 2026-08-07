@@ -25,7 +25,6 @@
 "@ledgerhq/coin-sui": patch
 "@ledgerhq/coin-tester-stellar": patch
 "@ledgerhq/coin-tester-xrp": patch
-"@ledgerhq/coin-tezos": patch
 "@ledgerhq/coin-ton": patch
 "@ledgerhq/coin-tron": patch
 "@ledgerhq/coin-vechain": patch
