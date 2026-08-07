@@ -121,7 +121,11 @@ export function createContactsSearchViewModel(
     };
   }
 
-  const savedContacts = createSavedContactsListItems(contacts, normalizedQuery, formatMeDisplayName);
+  const savedContacts = createSavedContactsListItems(
+    contacts,
+    normalizedQuery,
+    formatMeDisplayName,
+  );
   const matchingMe = isMeContactMatching(me, normalizedQuery, formatMeDisplayName)
     ? createContactsListItem(me, formatMeDisplayName)
     : undefined;
