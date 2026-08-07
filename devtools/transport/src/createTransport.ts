@@ -10,6 +10,7 @@ import type {
 } from "./types";
 
 import { createSocketFactory } from "./socketFactory";
+import { createTimer } from "./timer";
 
 const isEnvelope = <M extends MessageMap>(value: unknown): value is Envelope<M> =>
   typeof value === "object" && value !== null && "kind" in value && "payload" in value;
@@ -20,6 +21,19 @@ export function createTransport<M extends MessageMap>(
 ): Transport<M> {
   const factory = config.socketFactory ?? createSocketFactory();
   const historyLimit = config.historyLimit ?? 500;
+
+  const timerConfig = {
+    enabled: config.reconnection?.enabled ?? true,
+    delay: config.reconnection?.delay ?? 1000,
+    maxDelay: config.reconnection?.maxDelay ?? 30000,
+    factor: config.reconnection?.factor ?? 1.5,
+    maxAttempts: config.reconnection?.maxAttempts ?? 20,
+    ...config.reconnection,
+  };
+
+  const timer = createTimer(timerConfig, () => {
+    transport.connect();
+  });
 
   // --- private state: the transport owns all of this ---
   let socket: WebSocketLike | null = null;
@@ -63,11 +77,13 @@ export function createTransport<M extends MessageMap>(
       if (socket) return;
       lastError = undefined;
       setStatus("connecting");
+      timer.start();
       try {
         const s = factory(url, config.wsSubProtocols);
         socket = s;
         s.onopen = () => {
           if (socket !== s) return;
+          timer.stop();
           setStatus("open");
           protocol.onOpen?.(transport);
         };
@@ -99,18 +115,21 @@ export function createTransport<M extends MessageMap>(
           setStatus("error");
           protocol.onError?.(lastError);
           protocol.onClose?.();
+          timer.start();
         };
         s.onclose = () => {
           if (socket !== s) return;
           socket = null;
           setStatus("closed");
           protocol.onClose?.();
+          timer.stop();
         };
       } catch (err) {
         lastError = new Error("websocket connection error", { cause: err });
         setStatus("error");
         protocol.onError?.(lastError);
         protocol.onClose?.();
+        timer.start();
       }
     },
 
@@ -120,6 +139,7 @@ export function createTransport<M extends MessageMap>(
       local?.close();
       setStatus("closed");
       protocol.onClose?.();
+      timer.stop();
     },
 
     send<K extends keyof M>(kind: K, payload: M[K]): Envelope<M, K> {
