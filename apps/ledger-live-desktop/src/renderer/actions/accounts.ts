@@ -1,5 +1,5 @@
 import { Account, AccountUserData } from "@ledgerhq/types-live";
-import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
+import { AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";

@@ -93,12 +93,7 @@
       ]
     },
     "./libs/live-wallet": {
-      "entry": [
-        "src/walletSyncComposition.ts",
-        "src/accounts/index.ts",
-        "src/liveqr/cross.ts",
-        "src/liveqr/importAccounts.ts"
-      ]
+      "entry": ["src/walletSyncComposition.ts", "src/accounts/index.ts"]
     }
   }
 }

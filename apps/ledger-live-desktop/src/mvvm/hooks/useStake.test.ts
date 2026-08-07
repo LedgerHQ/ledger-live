@@ -2,7 +2,7 @@ import { useStake } from "LLD/hooks/useStake";
 import BigNumber from "bignumber.js";
 import { renderHookWithLiveAppProvider, withFlagOverrides } from "tests/testSetup";
 
-import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/accounts";
+import { accountRawToAccountUserData } from "@ledgerhq/live-common/account/index";
 import type { WalletState } from "~/renderer/reducers/wallet";
 
 import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";

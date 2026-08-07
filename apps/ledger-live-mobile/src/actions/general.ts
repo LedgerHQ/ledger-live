@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "~/context/hooks";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-wallet/ordering";
+} from "@ledgerhq/live-common/account/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {

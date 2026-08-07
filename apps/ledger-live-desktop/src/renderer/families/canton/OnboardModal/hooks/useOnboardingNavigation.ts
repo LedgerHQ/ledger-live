@@ -1,4 +1,4 @@
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import type { Account } from "@ledgerhq/types-live";
 import { useDispatch } from "LLD/hooks/redux";
 import { useCallback } from "react";

@@ -31,22 +31,15 @@ export type CloudSyncDataManagerResolutionContext = {
   bridgeCache: BridgeCacheSystem;
   blacklistedTokenIds?: string[];
 };
-import { accountDataToAccount } from "../liveqr/cross";
-import type { NonImportedAccountInfo } from "./schema";
+import { descriptorToAccount } from "./descriptorToAccount";
+import {
+  accountDescriptorSchema,
+  type AccountDescriptor,
+  type NonImportedAccountInfo,
+} from "./schema";
 export type { NonImportedAccountInfo } from "./schema";
 import { Observable, firstValueFrom, reduce } from "rxjs";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
-
-const accountDescriptorSchema = z.object({
-  id: z.string(),
-  currencyId: z.string(),
-  freshAddress: z.string(),
-  seedIdentifier: z.string(),
-  derivationMode: z.string(),
-  index: z.number(),
-});
-
-type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
 
 type LocalData = {
   list: Account[];
@@ -268,11 +261,7 @@ export async function integrateNewAccountDescriptor<T extends TransactionCommon>
   bridgeCache: BridgeCacheSystem,
   blacklistedTokenIds?: string[],
 ): Promise<Account> {
-  const [accountShaped] = accountDataToAccount({
-    ...accountDescriptor,
-    balance: "0",
-    name: "",
-  });
+  const accountShaped = descriptorToAccount(accountDescriptor);
   const bridge = await getAccountBridge(accountShaped);
   await bridgeCache.prepareCurrency(accountShaped.currency);
   const syncConfig = {

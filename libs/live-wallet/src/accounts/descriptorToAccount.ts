@@ -1,4 +1,3 @@
-// cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
 import {
   runDerivationScheme,
@@ -10,54 +9,22 @@ import {
   emptyHistoryCache,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import type { Account, AccountUserData } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
+import type { AccountDescriptor } from "./schema";
 
-export type AccountData = {
-  id: string;
-  currencyId: string;
-  freshAddress?: string;
-  seedIdentifier: string;
-  derivationMode: string;
-  // we are unsafe at this stage, validation is done later
-  name: string;
-  index: number;
-  balance: string;
-};
-
-export type Result = {
-  accounts: AccountData[];
-};
-
-export function accountToAccountData(
-  { id, seedIdentifier, derivationMode, freshAddress, currency, index, balance }: Account,
-  { name }: AccountUserData,
-): AccountData {
-  const res: AccountData = {
-    id,
-    name,
-    seedIdentifier,
-    derivationMode,
-    freshAddress,
-    currencyId: currency.id,
-    index,
-    balance: balance.toString(),
-  };
-
-  return res;
-}
-// reverse the account data to an account.
-// this restore the essential data of an account and the result of the fields
-// are assumed to be restored during first sync
-export const accountDataToAccount = ({
+/**
+ * Restores the essential fields of an Account from a wallet sync descriptor.
+ * Everything else (balance, operations) is a placeholder that the first sync is
+ * expected to fill in.
+ */
+export const descriptorToAccount = ({
   id,
   currencyId,
   freshAddress: inputFreshAddress,
-  name,
   index,
-  balance,
   derivationMode: derivationModeStr,
   seedIdentifier,
-}: AccountData): [Account, AccountUserData] => {
+}: AccountDescriptor): Account => {
   const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
   const derivationMode = asDerivationMode(derivationModeStr);
@@ -94,8 +61,7 @@ export const accountDataToAccount = ({
     );
   }
 
-  const balanceBN = new BigNumber(balance);
-  const account: Account = {
+  return {
     type: "Account",
     id,
     derivationMode,
@@ -108,8 +74,8 @@ export const accountDataToAccount = ({
     freshAddressPath,
     swapHistory: [],
     blockHeight: 0,
-    balance: balanceBN,
-    spendableBalance: balanceBN,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
@@ -117,12 +83,4 @@ export const accountDataToAccount = ({
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
-
-  const accountUserData: AccountUserData = {
-    id,
-    name,
-    starredIds: [],
-  };
-
-  return [account, accountUserData];
 };

@@ -5,7 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import {
   setWalletConnect,
   getWalletConnect,

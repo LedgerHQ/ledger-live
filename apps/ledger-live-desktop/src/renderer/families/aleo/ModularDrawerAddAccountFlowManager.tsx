@@ -7,7 +7,7 @@ import type { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { ViewKeysByAccountId } from "@ledgerhq/live-common/families/aleo/hw/getViewKey/index";
 import { buildAccountsWithViewKeys } from "@ledgerhq/live-common/families/aleo/react";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import { Flex } from "@ledgerhq/react-ui/index";
 import type { Account } from "@ledgerhq/types-live";
 import {

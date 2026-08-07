@@ -10432,9 +10432,6 @@ importers:
       '@ledgerhq/device-react':
         specifier: workspace:^
         version: link:../device-react
-      '@ledgerhq/live-wallet':
-        specifier: workspace:^
-        version: link:../live-wallet
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
@@ -13421,9 +13418,6 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
-      '@domain/entity-currency-token':
-        specifier: workspace:*
-        version: link:../../domain/entity/currency-token
       '@domain/entity-recent-addresses':
         specifier: workspace:*
         version: link:../../domain/entity/recent-addresses
@@ -13439,15 +13433,9 @@ importers:
       '@shared/cloud-sync-module':
         specifier: workspace:*
         version: link:../../shared/cloud-sync-module
-      '@shared/env':
-        specifier: workspace:*
-        version: link:../../shared/env
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
-      lodash:
-        specifier: '4'
-        version: 4.17.21
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -13470,9 +13458,6 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
-      '@types/lodash':
-        specifier: '4'
-        version: 4.17.7
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0

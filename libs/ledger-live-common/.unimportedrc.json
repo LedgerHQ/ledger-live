@@ -1,7 +1,9 @@
 {
   "entry": [
+    "src/account/addAccounts.ts",
     "src/account/helpers.ts",
     "src/account/index.ts",
+    "src/account/ordering.ts",
     "src/account/serialization.ts",
     "src/analytics/featureFlagHelpers/newSendFlow.ts",
     "src/analytics/featureFlagHelpers/onboardingCounterfeitWarning.ts",
