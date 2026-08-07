@@ -1,5 +1,6 @@
 import CommonPage from "../common.page";
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "../../utils/timeouts";
 
 export default class DeviceValidationPage extends CommonPage {
   validationScrollViewId = "device-validation-scroll-view";
@@ -11,7 +12,7 @@ export default class DeviceValidationPage extends CommonPage {
 
   @Step("Expect device validation screen to be displayed")
   async expectDeviceValidationScreen() {
-    await waitForElementById(this.validationScrollViewId);
+    await waitForElementById(this.validationScrollViewId, TIMEOUT.l);
   }
 
   @Step("Expect amount in device validation screen {{{0}}}")

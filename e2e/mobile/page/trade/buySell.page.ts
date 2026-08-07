@@ -209,7 +209,7 @@ export default class BuySellPage {
       const url = await getPtxHandoff();
       if (!url) throw new Error("No Buy/Sell handoff URL recorded by the app yet");
       return url;
-    }, TIMEOUT.m);
+    }, TIMEOUT.sm);
 
     const partnerUrl = new URL(extractGoToUrl(rawHandoffUrl));
 

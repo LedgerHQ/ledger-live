@@ -59,7 +59,11 @@ export async function performSwapUntilQuoteSelectionStep(
   await app.swapLiveApp.inputAmount(amount);
   if (continueToQuotes) {
     // The receive amount only fills in once the provider quote comes back.
-    await waitForWebElementToMatchRegex(app.swapLiveApp.toAmountInput, floatNumberRegex, TIMEOUT.m);
+    await waitForWebElementToMatchRegex(
+      app.swapLiveApp.toAmountInput,
+      floatNumberRegex,
+      TIMEOUT.sm,
+    );
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }

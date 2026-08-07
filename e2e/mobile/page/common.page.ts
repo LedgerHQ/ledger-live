@@ -5,6 +5,7 @@ import { isIos, openDeeplink } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
 import { isAggregatedAssetsEnabled } from "../utils/featureFlagUtils";
+import { TIMEOUT } from "../utils/timeouts";
 
 export default class CommonPage {
   assetScreenFlatlistId = "asset-screen-flatlist";
@@ -76,7 +77,7 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
-    await waitForElementById(this.validateSuccessScreenId);
+    await waitForElementById(this.validateSuccessScreenId, TIMEOUT.sm);
     await waitForElementById(this.successViewDetailsButtonId);
     await tapById(this.successViewDetailsButtonId);
   }

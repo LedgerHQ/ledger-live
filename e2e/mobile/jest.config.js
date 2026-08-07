@@ -1,6 +1,8 @@
 const path = require("node:path");
 const { parseExtraFeatureFlags } = require("@ledgerhq/live-e2e-shared/featureFlagsJsonUtils");
 const { compilerOptions } = require("./tsconfig.json");
+// Node strips the types at require time, so the whole suite shares one timeout scale.
+const { TEST_TIMEOUT } = require("./utils/timeouts.ts");
 
 function pathsToModuleNameMapper(paths, { prefix = "<rootDir>/" } = {}) {
   const jestPaths = {};

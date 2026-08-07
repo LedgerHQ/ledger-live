@@ -283,7 +283,7 @@ export async function takeSpeculosScreenshot() {
       try {
         await waitForSpeculosReady(deviceId, {
           interval: INTERVAL.slow,
-          timeout: TIMEOUT.m,
+          timeout: TIMEOUT.sm,
         });
       } catch {
         log.warn("E2E", `Skipping screenshot: Speculos with ${deviceId} unreachable.`);

@@ -1,5 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TIMEOUT } from "../../utils/timeouts";
 
 export default class NewSendFlowPage {
   @Step("Navigate to token send screen")
@@ -89,7 +90,8 @@ export default class NewSendFlowPage {
   @Step("Click review to proceed to signature {{{0}}}")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
-    await waitForElementById(this.amountContinueEnabledButtonId);
+    // The continue button only enables once fee estimation returns from the network.
+    await waitForElementById(this.amountContinueEnabledButtonId, TIMEOUT.xl);
     await tapById(this.amountContinueEnabledButtonId);
   }
 
@@ -100,7 +102,7 @@ export default class NewSendFlowPage {
 
   @Step("Wait for and tap success confirmation screen")
   async tapViewTransaction() {
-    await waitForElementById(this.successViewTransactionId);
+    await waitForElementById(this.successViewTransactionId, TIMEOUT.l);
     await tapById(this.successViewTransactionId);
   }
 }

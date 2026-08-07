@@ -592,7 +592,10 @@ export const WebElementHelpers = {
     return String(url);
   },
 
-  async waitForCurrentWebviewUrlToContain(substring: string, timeout = TIMEOUT.s): Promise<string> {
+  async waitForCurrentWebviewUrlToContain(
+    substring: string,
+    timeout = TIMEOUT.sm,
+  ): Promise<string> {
     let currentUrl = "";
     await retryUntilTimeout(
       async () => {

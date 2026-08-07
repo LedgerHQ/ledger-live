@@ -35,6 +35,11 @@ interface TimeoutScale {
    * a webview must ask for a bigger bucket explicitly at the call site.
    */
   readonly s: number;
+  /**
+   * 10s — one round-trip to something outside the app: the E2E bridge, a drawer that
+   * mounts late after a cold start. Bridges what was a 6x gap between `s` and `m`.
+   */
+  readonly sm: number;
   /** 30s — anything crossing the network or the E2E bridge: sync, quotes, fee estimation. */
   readonly m: number;
   /** 1min — a screen that mounts behind a sync or a webview. */
@@ -49,6 +54,7 @@ export const TIMEOUT: TimeoutScale = {
   xxs: 500,
   xs: 1_000,
   s: 5_000,
+  sm: 10_000,
   m: 30_000,
   l: 60_000,
   xl: 120_000,
@@ -85,9 +91,10 @@ export const INTERVAL: IntervalScale = {
 
 /**
  * Wallet 4.0 blocking drawers right after a cold start. They mount late on Android, and
- * this is paid in full whenever the drawer does *not* appear — hence not rounded up.
+ * this is paid in full whenever the drawer does *not* appear — so it stays at `sm` rather
+ * than being rounded up.
  */
-export const COLD_START_DRAWER_TIMEOUT = 10_000;
+export const COLD_START_DRAWER_TIMEOUT = TIMEOUT.sm;
 
 /** Full account discovery on a fresh currency, dominated by the derivation scan. */
 export const ACCOUNT_DISCOVERY_TIMEOUT = 240_000;
@@ -99,8 +106,8 @@ export const ACCOUNT_DISCOVERY_TIMEOUT = 240_000;
  * are deliberately kept separate from the test-facing scale above.
  */
 
-/** Round-trip to the app's E2E websocket bridge. `waitSwapReady`/`waitEarnReady` use 3x this. */
-export const BRIDGE_RESPONSE_TIMEOUT = 10_000;
+/** Round-trip to the app's E2E websocket bridge. `waitSwapReady`/`waitEarnReady` use `m`. */
+export const BRIDGE_RESPONSE_TIMEOUT = TIMEOUT.sm;
 
 /**
  * Outer bound on `getLogs`, which is itself capped by {@link BRIDGE_RESPONSE_TIMEOUT}

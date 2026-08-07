@@ -151,11 +151,11 @@ export async function swapSetup() {
 }
 
 export async function waitSwapReady() {
-  return fetchData({ type: "waitSwapReady", id: uniqueId() }, TIMEOUT.m);
+  return fetchData({ type: "waitSwapReady", id: uniqueId() }, TIMEOUT.sm);
 }
 
 export async function waitEarnReady() {
-  return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.m);
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, TIMEOUT.sm);
 }
 
 export async function getLogs() {

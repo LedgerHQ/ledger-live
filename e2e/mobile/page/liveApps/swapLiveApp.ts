@@ -230,7 +230,7 @@ export default class SwapLiveAppPage {
       }
 
       return providerList;
-    }, TIMEOUT.m);
+    }, TIMEOUT.sm);
   }
 
   @Step("Check error message: {{{0}}}")
@@ -300,7 +300,7 @@ export default class SwapLiveAppPage {
     }
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
-    await waitWebElement(button);
+    await waitWebElement(button, TIMEOUT.l);
     const actualButtonText =
       (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
 
@@ -516,7 +516,7 @@ export default class SwapLiveAppPage {
         this.incompatibilityBannerPartnerSelector(provider),
       );
       jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
-    }, TIMEOUT.m);
+    }, TIMEOUT.sm);
   }
 
   @Step("Select specific provider {{{0}}}")

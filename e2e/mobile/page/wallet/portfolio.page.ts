@@ -189,12 +189,12 @@ export default class PortfolioPage {
 
   @Step("Wait for Portfolio with accounts")
   async waitForPortfolioWithAccounts() {
-    await waitForElementById(this.accountsListView, TIMEOUT.m);
+    await waitForElementById(this.accountsListView, TIMEOUT.sm);
   }
 
   @Step("Go to {{{0}}} accounts from portfolio")
   async goToAccounts(currencyName: string, currencyId?: string) {
-    await waitForElementById(this.accountsListView, TIMEOUT.m);
+    await waitForElementById(this.accountsListView, TIMEOUT.sm);
     if (await isAggregatedAssetsEnabled()) {
       await scrollToId("crypto-addresses-button", this.accountsListView);
       await tapById("crypto-addresses-button");
@@ -211,9 +211,9 @@ export default class PortfolioPage {
 
   @Step("Check quick action buttons visibility")
   async checkQuickActionButtonsVisibility() {
-    await waitForElementById(this.quickActionTransferButtonV4);
-    await waitForElementById(this.quickActionSwapButtonV4);
-    await waitForElementById(this.quickActionBuyButtonV4);
+    await waitForElementById(this.quickActionTransferButtonV4, TIMEOUT.l);
+    await waitForElementById(this.quickActionSwapButtonV4, TIMEOUT.l);
+    await waitForElementById(this.quickActionBuyButtonV4, TIMEOUT.l);
   }
 
   @Step("Check asset allocation section")
@@ -378,7 +378,7 @@ export default class PortfolioPage {
 
   @Step("Check quick action transfer button visibility")
   async checkQuickActionTransferButtonVisibility() {
-    await waitForElementById(this.quickActionTransferButtonV4);
+    await waitForElementById(this.quickActionTransferButtonV4, TIMEOUT.l);
   }
 
   @Step("Check quick action swap button visibility")

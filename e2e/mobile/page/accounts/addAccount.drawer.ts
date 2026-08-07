@@ -40,7 +40,7 @@ export default class AddAccountDrawer extends CommonPage {
     await device.disableSynchronization();
     try {
       while (Date.now() - startTime < ACCOUNT_DISCOVERY_TIMEOUT) {
-        if (await IsIdVisible(this.continueButtonId, 10_000)) {
+        if (await IsIdVisible(this.continueButtonId, TIMEOUT.sm)) {
           return;
         }
         await checkForErrorModals(TIMEOUT.xs, "Account discovery failed");
