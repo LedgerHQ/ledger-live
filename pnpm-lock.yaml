@@ -4629,6 +4629,9 @@ importers:
       '@types/invariant':
         specifier: 2.2.37
         version: 2.2.37
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
       '@types/lodash':
         specifier: 4.17.16
         version: 4.17.16

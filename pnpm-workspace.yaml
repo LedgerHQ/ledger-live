@@ -1,162 +1,174 @@
 packages:
-  - "apps/*"
-  - "apps/wallet-cli/npm/*"
-  - "e2e/*"
-  - "features/flow/*"
-  - "features/platform/*"
-  - "libs/*"
-  - "tests/*"
-  - "libs/coin-modules/*"
-  - "libs/coin-tester-modules/*"
-  - "libs/ledgerjs/**"
-  - "libs/ledger-services/**"
-  - "libs/ui/packages/*"
-  - "libs/ledger-live-common/tools"
-  - "tools/**"
-  - "docs"
-  - "domain/entity/*"
-  - "domain/api/*"
-  - "shared/*"
-  - "devtools/*"
-  - "support/*"
+  - apps/*
+  - apps/wallet-cli/npm/*
+  - e2e/*
+  - features/flow/*
+  - features/platform/*
+  - libs/*
+  - tests/*
+  - libs/coin-modules/*
+  - libs/coin-tester-modules/*
+  - libs/ledgerjs/**
+  - libs/ledger-services/**
+  - libs/ui/packages/*
+  - libs/ledger-live-common/tools
+  - tools/**
+  - docs
+  - domain/entity/*
+  - domain/api/*
+  - shared/*
+  - devtools/*
+  - support/*
 
 catalog:
-  "@jest/globals": 30.2.0
-  "@ledgerhq/context-module": 2.3.1
-  "@ledgerhq/crypto-icons": "2.0.4"
-  "@ledgerhq/device-management-kit": 1.7.1
-  "@ledgerhq/device-signer-kit-aleo": 0.4.0
-  "@ledgerhq/device-signer-kit-concordium": 0.4.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.16.0
-  "@ledgerhq/device-signer-kit-hyperliquid": 1.1.0
-  "@ledgerhq/device-signer-kit-solana": 1.11.0
-  "@ledgerhq/device-signer-kit-cosmos": 1.0.1
-  "@ledgerhq/device-signer-kit-icp": 0.2.0
-  "@ledgerhq/device-transport-kit-react-native-ble": 1.3.2
-  "@ledgerhq/device-transport-kit-react-native-hid": 1.0.4
-  "@ledgerhq/device-transport-kit-speculos": 1.2.1
-  "@ledgerhq/signer-utils": 1.2.0
-  "@ledgerhq/device-transport-kit-web-hid": 1.2.4
-  "@ledgerhq/speculos-device-controller": 0.3.0
-  "@ledgerhq/logs": 6.17.0
-  "@ledgerhq/lumen-design-core": 0.1.23
-  "@ledgerhq/lumen-ui-react": 0.1.49
-  "@ledgerhq/lumen-ui-rnative": 0.1.52
-  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.29
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.28
-  "@ledgerhq/lumen-utils-shared": "0.1.7"
-  "@ledgerhq/zcash-utils": 1.1.1
-  # React Native
-  react-native: 0.81.6
-  "@react-native/assets-registry": 0.81.6
-  "@react-native/babel-plugin-codegen": 0.81.6
-  "@react-native/babel-preset": 0.81.6
-  "@react-native/codegen": 0.81.6
-  "@react-native/dev-middleware": 0.81.6
-  "@react-native/gradle-plugin": 0.81.6
-  "@react-native/metro-config": 0.81.6
-  # React Navigation
-  "@react-navigation/native": 7.1.17
-  "@react-navigation/native-stack": 7.3.26
-  react-native-screens: 4.15.4
-  # React Native Community
-  "@react-native-community/cli": 18.0.1
-  "@react-native-community/cli-platform-android": 18.0.1
-  "@react-native-community/cli-platform-ios": 18.0.1
-  # Expo
-  expo: 54.0.33
-  expo-constants: 18.0.13
-  expo-asset: 12.0.12
-  expo-font: 14.0.11
-  expo-crypto: 15.0.8
-  expo-document-picker: 13.1.6
-  expo-file-system: 19.0.21
-  expo-image-loader: 6.0.0
-  expo-image-manipulator: 14.0.8
-  expo-haptics: 15.0.8
-  expo-keep-awake: 15.0.8
-  expo-modules-autolinking: 3.0.24
-  expo-modules-core: 3.0.29
-  "@jest/reporters": 30.2.0
-  "@reduxjs/toolkit": 2.11.2
-  "@rsbuild/core": 2.0.9
-  "@rsbuild/plugin-node-polyfill": 1.4.5
-  "@rsbuild/plugin-react": 2.0.1
-  "@rsbuild/plugin-styled-components": 1.6.2
-  "@rsdoctor/rspack-plugin": "2.0.0-alpha.0"
-  "@rspack/cli": 2.0.5
-  "@rspack/core": 2.0.5
-  "@rspack/dev-server": 2.0.3
-  "@rspack/plugin-react-refresh": 2.0.1
-  "@rslib/core": 0.22.0
-  react-refresh: 0.18.0
-  storybook: 10.4.1
-  "@storybook/react": 10.4.1
-  "@storybook/react-native": 10.4.4
-  "@storybook/react-webpack5": 10.4.1
-  "@storybook/core": 8.6.14
-  "@storybook/addon-essentials": 8.6.14
-  "@storybook/addon-interactions": 8.6.14
-  "@storybook/addon-actions": 9.0.8
-  "@storybook/addon-docs": 10.4.1
-  "@storybook/addon-links": 10.4.1
-  "@storybook/addon-controls": 9.0.8
-  "@storybook/addon-ondevice-actions": 10.4.4
-  "@storybook/addon-ondevice-backgrounds": 10.4.4
-  "@storybook/addon-ondevice-controls": 10.4.4
-  "@storybook/addon-ondevice-notes": 10.4.4
-  "@storybook/addon-react-native-web": 0.0.29
-  "@storybook/blocks": 8.6.14
-  "@storybook/docs-tools": 8.6.14
-  "@storybook/global": 5.0.0
-  "@storybook/jest": 0.2.3
-  "@storybook/manager-api": 8.6.14
-  "@storybook/test": 8.6.15
-  "@storybook/testing-library": 0.2.2
-  "@storybook/theming": 8.6.14
-  storybook-dark-mode: 4.0.2
-  storybook-react-rsbuild: 3.3.4
-  "@swc/core": 1.15.11
-  "@swc/helpers": 0.5.23
-  "@swc/jest": 0.2.39
-  "@testing-library/dom": 10.4.1
-  "@testing-library/jest-dom": 6.9.1
-  "@testing-library/react": 16.3.1
-  "@testing-library/react-native": 13.3.3
-  "@testing-library/user-event": 14.6.1
-  "@types/bs58": ^4.0.1
-  "@types/bs58check": ^2.1.2
-  "@types/jest": 30.0.0
-  "@typescript-eslint/eslint-plugin": 8.48.1
-  "@typescript-eslint/parser": 8.48.1
-  typescript: "npm:@typescript/typescript6@^6.0.2"
-  "@typescript/native": "npm:typescript@^7.0.2"
-  "@types/node": 24.12.0
-  "@gorhom/bottom-sheet": 5.2.6
+  '@gorhom/bottom-sheet': 5.2.6
+  '@jest/globals': 30.2.0
+  '@jest/reporters': 30.2.0
+  '@ledgerhq/coin-hypercore': 0.4.5
+  '@ledgerhq/coin-module-framework': 5.0.0
+  '@ledgerhq/coin-stellar': 6.26.6
+  '@ledgerhq/coin-tezos': 7.12.0
+  '@ledgerhq/coin-xrp': 7.25.4
+  '@ledgerhq/context-module': 2.3.1
+  '@ledgerhq/crypto-icons': 2.0.4
+  '@ledgerhq/device-management-kit': 1.7.1
+  '@ledgerhq/device-signer-kit-aleo': 0.4.0
+  '@ledgerhq/device-signer-kit-concordium': 0.4.0
+  '@ledgerhq/device-signer-kit-cosmos': 1.0.1
+  '@ledgerhq/device-signer-kit-ethereum': 1.16.0
+  '@ledgerhq/device-signer-kit-hyperliquid': 1.1.0
+  '@ledgerhq/device-signer-kit-icp': 0.2.0
+  '@ledgerhq/device-signer-kit-solana': 1.11.0
+  '@ledgerhq/device-transport-kit-react-native-ble': 1.3.2
+  '@ledgerhq/device-transport-kit-react-native-hid': 1.0.4
+  '@ledgerhq/device-transport-kit-speculos': 1.2.1
+  '@ledgerhq/device-transport-kit-web-hid': 1.2.4
+  '@ledgerhq/logs': 6.17.0
+  '@ledgerhq/lumen-design-core': 0.1.23
+  '@ledgerhq/lumen-ui-react': 0.1.49
+  '@ledgerhq/lumen-ui-react-visualization': 0.1.28
+  '@ledgerhq/lumen-ui-rnative': 0.1.52
+  '@ledgerhq/lumen-ui-rnative-visualization': 0.1.29
+  '@ledgerhq/lumen-utils-shared': 0.1.7
+  '@ledgerhq/signer-utils': 1.2.0
+  '@ledgerhq/speculos-device-controller': 0.3.0
+  '@ledgerhq/zcash-utils': 1.1.1
+  '@playwright/test': 1.60.0
+  '@polkadot/api': 16.5.4
+  '@polkadot/api-augment': 16.5.4
+  '@polkadot/api-derive': 16.5.4
+  '@polkadot/rpc-provider': 16.5.4
+  '@polkadot/types': 16.5.4
+  '@polkadot/types-known': 16.5.4
+  '@polkadot/util': 14.0.1
+  '@polkadot/util-crypto': 14.0.1
+  '@radix-ui/react-checkbox': 1.3.2
+  '@radix-ui/react-dialog': 1.1.15
+  '@radix-ui/react-dropdown-menu': 2.1.16
+  '@radix-ui/react-select': 2.2.6
+  '@radix-ui/react-slot': 1.2.4
+  '@radix-ui/react-switch': 1.2.6
+  '@radix-ui/react-tooltip': 1.2.8
+  '@react-native-community/cli': 18.0.1
+  '@react-native-community/cli-platform-android': 18.0.1
+  '@react-native-community/cli-platform-ios': 18.0.1
+  '@react-native/assets-registry': 0.81.6
+  '@react-native/babel-plugin-codegen': 0.81.6
+  '@react-native/babel-preset': 0.81.6
+  '@react-native/codegen': 0.81.6
+  '@react-native/dev-middleware': 0.81.6
+  '@react-native/gradle-plugin': 0.81.6
+  '@react-native/metro-config': 0.81.6
+  '@react-navigation/native': 7.1.17
+  '@react-navigation/native-stack': 7.3.26
+  '@reduxjs/toolkit': 2.11.2
+  '@rsbuild/core': 2.0.9
+  '@rsbuild/plugin-node-polyfill': 1.4.5
+  '@rsbuild/plugin-react': 2.0.1
+  '@rsbuild/plugin-styled-components': 1.6.2
+  '@rsdoctor/rspack-plugin': 2.0.0-alpha.0
+  '@rslib/core': 0.22.0
+  '@rspack/cli': 2.0.5
+  '@rspack/core': 2.0.5
+  '@rspack/dev-server': 2.0.3
+  '@rspack/plugin-react-refresh': 2.0.1
+  '@solana/spl-token': ^0.4.14
+  '@solana/web3.js': ^1.98.4
+  '@storybook/addon-actions': 9.0.8
+  '@storybook/addon-controls': 9.0.8
+  '@storybook/addon-docs': 10.4.1
+  '@storybook/addon-essentials': 8.6.14
+  '@storybook/addon-interactions': 8.6.14
+  '@storybook/addon-links': 10.4.1
+  '@storybook/addon-ondevice-actions': 10.4.4
+  '@storybook/addon-ondevice-backgrounds': 10.4.4
+  '@storybook/addon-ondevice-controls': 10.4.4
+  '@storybook/addon-ondevice-notes': 10.4.4
+  '@storybook/addon-react-native-web': 0.0.29
+  '@storybook/blocks': 8.6.14
+  '@storybook/core': 8.6.14
+  '@storybook/docs-tools': 8.6.14
+  '@storybook/global': 5.0.0
+  '@storybook/jest': 0.2.3
+  '@storybook/manager-api': 8.6.14
+  '@storybook/react': 10.4.1
+  '@storybook/react-native': 10.4.4
+  '@storybook/react-webpack5': 10.4.1
+  '@storybook/test': 8.6.15
+  '@storybook/testing-library': 0.2.2
+  '@storybook/theming': 8.6.14
+  '@swc/core': 1.15.11
+  '@swc/helpers': 0.5.23
+  '@swc/jest': 0.2.39
+  '@tanstack/react-table': 8.5.11
+  '@tanstack/react-virtual': 3.13.16
+  '@testing-library/dom': 10.4.1
+  '@testing-library/jest-dom': 6.9.1
+  '@testing-library/react': 16.3.1
+  '@testing-library/react-native': 13.3.3
+  '@testing-library/user-event': 14.6.1
+  '@types/bs58': ^4.0.1
+  '@types/bs58check': ^2.1.2
+  '@types/jest': 30.0.0
+  '@types/node': 24.12.0
+  '@types/qrcode': 1.5.5
+  '@types/react': 19.0.14
+  '@types/react-dom': 19.0.0
+  '@types/semver': 7.7.1
+  '@types/ws': ^8.5.10
+  '@typescript-eslint/eslint-plugin': 8.48.1
+  '@typescript-eslint/parser': 8.48.1
+  '@typescript/native': npm:typescript@^7.0.2
+  '@xstate/react': 5.0.2
+  allure-js-commons: 3.9.0
+  allure-playwright: 3.9.0
   axios: 1.13.5
   babel-jest: 30.2.0
   bs58: ^4.0.1
   bs58check: ^2.1.2
   class-variance-authority: 0.7.1
   clsx: 2.1.1
+  detox: 20.51.3
   electron: 43.1.1
   eslint-plugin-better-tailwindcss: 4.0.0-beta.3
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
-  "@solana/spl-token": ^0.4.14
-  "@solana/web3.js": ^1.98.4
-  "@polkadot/api": 16.5.4
-  "@polkadot/api-augment": 16.5.4
-  "@polkadot/api-derive": 16.5.4
-  "@polkadot/types": 16.5.4
-  "@polkadot/types-known": 16.5.4
-  "@polkadot/rpc-provider": 16.5.4
-  "@polkadot/util": 14.0.1
-  "@polkadot/util-crypto": 14.0.1
   expect: 30.2.0
+  expo: 54.0.33
+  expo-asset: 12.0.12
+  expo-constants: 18.0.13
+  expo-crypto: 15.0.8
+  expo-document-picker: 13.1.6
+  expo-file-system: 19.0.21
+  expo-font: 14.0.11
+  expo-haptics: 15.0.8
+  expo-image-loader: 6.0.0
+  expo-image-manipulator: 14.0.8
+  expo-keep-awake: 15.0.8
+  expo-modules-autolinking: 3.0.24
+  expo-modules-core: 3.0.29
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
-  msw: ^2.7.3
   jest: 30.2.0
   jest-circus: 30.2.0
   jest-docblock: 30.2.0
@@ -164,63 +176,47 @@ catalog:
   jest-environment-node: 30.2.0
   jest-file-snapshot: 0.7.0
   jest-util: 30.2.0
+  msw: ^2.7.3
+  oxfmt: 0.36.0
+  oxlint: 1.51.0
+  playwright: 1.60.0
+  qrcode: 1.5.4
   react: 19.1.4
   react-dom: 19.1.4
   react-i18next: 16.5.0
+  react-native: 0.81.6
   react-native-config: 1.5.3
   react-native-reanimated: 4.3.0
-  react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
+  react-native-screens: 4.15.4
   react-native-svg: 15.15.1
+  react-native-worklets: 0.8.1
   react-redux: ^9.2.0
-  redux: ^5.0.1
+  react-refresh: 0.18.0
   react-test-renderer: 19.1.4
-  "@types/react": 19.0.14
-  "@types/react-dom": 19.0.0
+  redux: ^5.0.1
   reselect: 5.1.1
   rxjs: 7.8.2
-  xstate: 5.19.2
-  "@xstate/react": 5.0.2
-  tailwindcss: ^4.1.0
-  tailwind-merge: 3.4.0
-  tsx: 4.20.6
-  ws: 8.18.3
-  qrcode: 1.5.4
-  "@types/qrcode": 1.5.5
-  zod: 4.3.6
   semver: 7.7.3
-  "@types/semver": 7.7.1
-  "@types/ws": ^8.5.10
+  storybook: 10.4.1
+  storybook-dark-mode: 4.0.2
+  storybook-react-rsbuild: 3.3.4
+  styled-components: 6.1.19
+  styled-system: 5.1.5
+  stylis: 4.0.0
+  tailwind-merge: 3.4.0
+  tailwindcss: ^4.1.0
+  tsx: 4.20.6
+  typescript: npm:@typescript/typescript6@^6.0.2
   undici: 7.18.2
-  "styled-components": 6.1.19
-  "styled-system": 5.1.5
-  "stylis": 4.0.0
-  "@tanstack/react-virtual": 3.13.16
-  "@radix-ui/react-checkbox": 1.3.2
-  "@radix-ui/react-dialog": 1.1.15
-  "@radix-ui/react-dropdown-menu": 2.1.16
-  "@radix-ui/react-slot": 1.2.4
-  "@radix-ui/react-select": 2.2.6
-  "@radix-ui/react-switch": 1.2.6
-  "@radix-ui/react-tooltip": 1.2.8
-  "@tanstack/react-table": 8.5.11
-  "@playwright/test": 1.60.0
-  playwright: 1.60.0
-  allure-playwright: 3.9.0
-  allure-js-commons: 3.9.0
-  oxlint: 1.51.0
-  oxfmt: 0.36.0
-  # Modules published by coin-modules
-  "@ledgerhq/coin-hypercore": 0.4.5
-  "@ledgerhq/coin-module-framework": 5.0.0
-  "@ledgerhq/coin-stellar": 6.26.6
-  "@ledgerhq/coin-xrp": 7.25.4
-  "@ledgerhq/coin-tezos": 7.12.0
-  detox: 20.51.3
+  ws: 8.18.3
+  xstate: 5.19.2
+  zod: 4.3.6
+
+minimumReleaseAge: 3000
+
+minimumReleaseAgeExclude:
+  - '@ledgerhq/*'
 
 overrides:
   node-abi: ^4.9.0
-
-minimumReleaseAge: 3000
-minimumReleaseAgeExclude:
-  - "@ledgerhq/*"
