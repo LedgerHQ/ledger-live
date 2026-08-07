@@ -59,33 +59,45 @@ export function FeatureTourView({
 
   return (
     <Dialog open onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <DialogHeader onClose={handleDismiss} />
-        <DialogBody>
-          <div className="flex flex-col gap-24">
-            <img src={heroImage} alt="" className="h-[180] w-full rounded-lg object-cover" />
-            <div className="flex flex-col gap-8">
-              <span className="heading-3-semi-bold text-base">{title}</span>
-              <span className="body-3 text-muted">{description}</span>
+      <DialogContent className="min-h-[696px]">
+        <DialogHeader density="expanded" onClose={handleDismiss} />
+        <DialogBody className="flex flex-1 flex-col">
+          <div className="flex min-h-[608px] w-full flex-1 flex-col justify-between gap-16">
+            <div className="flex flex-col gap-16">
+              <img
+                src={heroImage}
+                alt=""
+                className="h-[192px] w-full rounded-xl object-cover"
+                draggable={false}
+              />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-8">
+                  <span className="heading-3-semi-bold text-base">{title}</span>
+                  <span className="body-2 text-muted">{description}</span>
+                </div>
+                <div className="flex flex-col">
+                  {rows.map((row, index) => {
+                    const RowIcon = Icons[row.icon];
+                    return (
+                      <ListItem
+                        key={`${row.icon}-${index}`}
+                        className="px-0"
+                        data-testid={`pay-feature-tour-row-${row.icon}-${index}`}
+                      >
+                        <ListItemLeading className="p-0">
+                          {RowIcon ? <RowIcon size={24} /> : null}
+                          <ListItemContent>
+                            <ListItemTitle>{row.title}</ListItemTitle>
+                            <ListItemDescription>{row.description}</ListItemDescription>
+                          </ListItemContent>
+                        </ListItemLeading>
+                      </ListItem>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col gap-8">
-              {rows.map((row, index) => {
-                const RowIcon = Icons[row.icon];
-                return (
-                  <ListItem
-                    key={`${row.icon}-${index}`}
-                    data-testid={`pay-feature-tour-row-${row.icon}-${index}`}
-                  >
-                    <ListItemLeading>{RowIcon ? <RowIcon size={24} /> : null}</ListItemLeading>
-                    <ListItemContent>
-                      <ListItemTitle>{row.title}</ListItemTitle>
-                      <ListItemDescription>{row.description}</ListItemDescription>
-                    </ListItemContent>
-                  </ListItem>
-                );
-              })}
-            </div>
-            <Button appearance="base" size="lg" onClick={handleDismiss}>
+            <Button appearance="base" size="lg" className="w-full" onClick={handleDismiss}>
               {ctaLabel}
             </Button>
           </div>
