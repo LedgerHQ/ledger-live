@@ -4,10 +4,7 @@ import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import type { LazyOnboardingTourSlideContent } from "./content";
 
-type LazyOnboardingTourSlideItemProps = LazyOnboardingTourSlideContent &
-  Readonly<{
-    isFirstSlide: boolean;
-  }>;
+type LazyOnboardingTourSlideItemProps = LazyOnboardingTourSlideContent;
 
 export function LazyOnboardingTourSlideItem({
   image,

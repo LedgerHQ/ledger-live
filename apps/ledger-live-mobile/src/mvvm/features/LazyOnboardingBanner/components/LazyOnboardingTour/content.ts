@@ -1,4 +1,4 @@
-import type { ImageSourcePropType } from "react-native";
+import type { ImageRequireSource } from "react-native";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const step1Image = require("../../assets/tour/step_1.webp");
@@ -10,7 +10,7 @@ const step3Image = require("../../assets/tour/step_3.webp");
 const step4Image = require("../../assets/tour/step_4.webp");
 
 export type LazyOnboardingTourSlideContent = Readonly<{
-  image: ImageSourcePropType;
+  image: ImageRequireSource;
   titleKey: string;
   subtitleKey: string;
 }>;

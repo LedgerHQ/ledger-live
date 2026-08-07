@@ -14,9 +14,12 @@ function mockSlidesContext(currentIndex: number) {
   mockUseSlidesContext.mockReturnValue({
     currentIndex,
     goToNext: mockGoToNext,
+    goToPrevious: jest.fn(),
+    goToSlide: jest.fn(),
+    flatListRef: { current: null },
     totalSlides: 4,
     scrollProgressSharedValue: { value: currentIndex },
-  } as ReturnType<typeof useSlidesContext>);
+  } as unknown as ReturnType<typeof useSlidesContext>);
 }
 
 describe("LazyOnboardingTourFooter", () => {

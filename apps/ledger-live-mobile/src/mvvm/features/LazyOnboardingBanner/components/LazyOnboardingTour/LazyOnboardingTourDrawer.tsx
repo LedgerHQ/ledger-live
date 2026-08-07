@@ -68,9 +68,9 @@ export function LazyOnboardingTourDrawer({
                   style={styles.slides}
                 >
                   <Slides.Content style={styles.slides}>
-                    {LAZY_ONBOARDING_TOUR_SLIDES.map((slide, index) => (
+                    {LAZY_ONBOARDING_TOUR_SLIDES.map(slide => (
                       <Slides.Content.Item key={slide.titleKey}>
-                        <LazyOnboardingTourSlideItem {...slide} isFirstSlide={index === 0} />
+                        <LazyOnboardingTourSlideItem {...slide} />
                       </Slides.Content.Item>
                     ))}
                   </Slides.Content>

@@ -101,7 +101,7 @@ export const trackLazyOnboardingTourShopReached = (
 ) => {
   screen(LAZY_ONBOARDING_TOUR_SHOP_PAGE, undefined, {
     name: "shop",
-    source: "lazy onboarding tour",
     ...sharedProps,
+    source: "lazy onboarding tour",
   });
 };
