@@ -67,6 +67,7 @@ export default class PortfolioPage {
   stocksDiscoveryId = "portfolio-stocks-discovery";
   stocksDiscoveryHeaderId = "portfolio-stocks-discovery-header";
   sectionAssetItemRegExp = (sectionId: string) => new RegExp(String.raw`^${sectionId}-item-\d+$`);
+  sectionAssetItemId = (sectionId: string, index: number) => `${sectionId}-item-${index}`;
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -458,20 +459,25 @@ export default class PortfolioPage {
     await tapById(this.transferBottomSheetBankTransferButton);
   }
 
-  private async checkSectionVisible(sectionId: string, isEmptyPortfolio: boolean) {
+  private async checkSectionVisible(
+    sectionId: string,
+    itemCount: number,
+    isEmptyPortfolio: boolean,
+  ) {
     const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
-    await scrollToId(sectionId, scrollViewId);
-    await detoxExpect(getElementById(sectionId)).toBeVisible();
+    const lastItemId = this.sectionAssetItemId(sectionId, itemCount - 1);
+    await scrollToId(lastItemId, scrollViewId);
+    await detoxExpect(getElementById(lastItemId)).toBeVisible();
   }
 
   @Step("Check cryptos list section is visible")
-  async checkCryptosListSectionVisible(isEmptyPortfolio = false) {
-    await this.checkSectionVisible(this.portfolioCryptosListId, isEmptyPortfolio);
+  async checkCryptosListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
+    await this.checkSectionVisible(this.portfolioCryptosListId, itemCount, isEmptyPortfolio);
   }
 
   @Step("Check stablecoins list section is visible")
-  async checkStablecoinsListSectionVisible(isEmptyPortfolio = false) {
-    await this.checkSectionVisible(this.portfolioStablecoinsListId, isEmptyPortfolio);
+  async checkStablecoinsListSectionVisible(itemCount: number, isEmptyPortfolio = false) {
+    await this.checkSectionVisible(this.portfolioStablecoinsListId, itemCount, isEmptyPortfolio);
   }
 
   @Step("Check add account CTA is visible")
@@ -487,7 +493,7 @@ export default class PortfolioPage {
   }
 
   private async checkSectionAssetItemCount(sectionId: string, expected: number) {
-    const count = await countElementsById(this.sectionAssetItemRegExp(sectionId));
+    const count = await countElements(getElementsById(this.sectionAssetItemRegExp(sectionId)));
     jestExpect(count).toBe(expected);
   }
 
@@ -496,11 +502,18 @@ export default class PortfolioPage {
     await this.checkSectionAssetItemCount(this.portfolioCryptosListId, expected);
   }
 
+  @Step("Check stablecoins section asset item count")
+  async checkStablecoinsSectionAssetItemCount(expected: number) {
+    await this.checkSectionAssetItemCount(this.portfolioStablecoinsListId, expected);
+  }
+
   @Step("Tap first asset item (wallet 4.0) and return its currency name")
   async tapFirstAssetItemW40(): Promise<string> {
     const testId = await getIdByRegexp(this.assetItemRegExp, 0);
     const currencyName = testId.replace("assetItem-", "");
-    await scrollToId(testId, this.emptyPortfolioListId);
+    // The transparent nav header floats over the list, and Android reports the row underneath it as
+    // visible, so without this the tap is swallowed by the header.
+    await scrollByPixels(this.emptyPortfolioListId, 200, "up");
     await tapById(testId);
     return currencyName;
   }
@@ -581,11 +594,6 @@ export default class PortfolioPage {
   @Step("Check full stablecoin list page is visible")
   async checkStablecoinListPageVisible() {
     await this.checkListPageVisible(this.stablecoinListId);
-  }
-
-  @Step("Scroll to the top of the portfolio page")
-  async scrollToTopOfPortfolioPage() {
-    await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
   }
 
   private async scrollToStocksHeader(headerId: string) {
