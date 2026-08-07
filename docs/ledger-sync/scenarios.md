@@ -56,7 +56,7 @@ so they stay **linked** (📹) to their Confluence page — the behaviour and it
 | Wallet Sync works even when Ledger Wallet doesn't support a received account (unsupported currency, sync issues): the account is queued, not lost. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896161894) | `accounts.test.ts` (nonImportedAccountInfos) |
 | Wallet Sync preserves non-imported accounts and restores them when available (backoff retry). | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896620635) | `accounts.test.ts`; see [accounts module](./05-wallet-sync-data-manager.md#the-accounts-module) |
 | Wallet Sync supports account-**id migration**. | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896129100) | `accounts.test.ts` |
-| Wallet Sync preserves **unknown fields** in Cloud Sync's DistantState (forward compat). | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896849983) | `__tests__/compatibility.test.ts` |
+| Wallet Sync preserves **unknown fields** in Cloud Sync's DistantState (forward compat). | [📹](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4896849983) | `walletSyncComposition.test.ts` (`parseDistantState`), `createAggregator.test.ts` |
 
 > [!TIP]
 > Most data scenarios are easiest to reproduce in the
