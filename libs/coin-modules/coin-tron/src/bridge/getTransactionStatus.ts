@@ -43,6 +43,7 @@ import {
 } from "../types/errors";
 import getEstimatedFees, {
   computeSponsoredEnergyEstimate,
+  computeSponsoredUsdtFee,
   getFeeResourceBreakdown,
 } from "./getEstimateFees";
 
@@ -207,6 +208,8 @@ const getTransactionStatus = async (
   let estimatedFees = new BigNumber(0);
   // Informational savings estimate for a sponsored (Tronify) send (LIVE-32776); null otherwise.
   let sponsoredEnergy: SponsoredEnergyEstimate | null = null;
+  // USDT rental fee to reserve from the token balance for a sponsored send (LIVE-32777); 0 otherwise.
+  let rentalFee = new BigNumber(0);
 
   if (!hasErrors) {
     const resourceBreakdown = await getFeeResourceBreakdown(acc, transaction, tokenAccount);
@@ -216,12 +219,17 @@ const getTransactionStatus = async (
     bandwidthAvailable = resourceBreakdown.bandwidthAvailable;
     estimatedFees = await getEstimatedFees(acc, transaction, tokenAccount, resourceBreakdown);
     sponsoredEnergy = await computeSponsoredEnergyEstimate(transaction, resourceBreakdown);
+    rentalFee = await computeSponsoredUsdtFee(acc, transaction, tokenAccount, resourceBreakdown);
   }
 
+  // Reserve the USDT rental fee out of the token balance so a sponsored send can't be confirmed
+  // when the balance can't cover fee + amount (LIVE-32777). rentalFee is 0 for non-sponsored sends,
+  // so this is a no-op there. For useAllAmount the max amount below becomes balance − fee (the fee
+  // stays reserved); for an explicit amount, amount > balance below means amount + fee > tokenBalance.
   const balance =
     account.type === "Account"
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
-      : account.balance;
+      : BigNumber.max(0, account.balance.minus(rentalFee));
   const amount = useAllAmount ? balance : transaction.amount;
   const amountSpent = ["send", "freeze", "undelegateResource"].includes(mode)
     ? amount
@@ -231,8 +239,10 @@ const getTransactionStatus = async (
     errors.amount = new TronInvalidFreezeAmount();
   }
 
-  // fees are applied in the parent only (TRX)
-  const totalSpent = account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
+  // TRX network fees are applied in the parent only; a sponsored token send also spends the USDT
+  // rental fee out of the token account (LIVE-32777), so include it in the token-account total.
+  const totalSpent =
+    account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent.plus(rentalFee);
 
   if (["send", "freeze"].includes(mode)) {
     if (amount.eq(0)) {

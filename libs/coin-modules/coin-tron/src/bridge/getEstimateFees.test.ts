@@ -2,12 +2,14 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateFees, getAccount } from "../logic";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
+import { getEnergyRentQuote } from "../logic/energyRent";
 import { computeBandwidthFee, computeEnergyFee, estimateEnergy } from "../logic/estimateFees";
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import type { ChainParameters } from "../network/types";
 import type { Transaction } from "../types";
 import getEstimatedFees, {
   computeSponsoredEnergyEstimate,
+  computeSponsoredUsdtFee,
   getFeeResourceBreakdown,
   type FeeResourceBreakdown,
 } from "./getEstimateFees";
@@ -30,7 +32,10 @@ jest.mock("./utils", () => ({
 
 jest.mock("../logic/estimateFees");
 jest.mock("../logic/getAccount");
+jest.mock("../logic/energyRent");
 jest.mock("../network");
+
+const mockGetEnergyRentQuote = jest.mocked(getEnergyRentQuote);
 
 const chainParams: ChainParameters = {
   energyFee: 210,
@@ -514,6 +519,114 @@ describe("getEstimatedFees", () => {
         energyRequired: new BigNumber(0),
       };
       expect(await computeSponsoredEnergyEstimate(sponsoredTx, breakdown)).toBeNull();
+    });
+  });
+
+  // LIVE-32777: USDT rental fee (token base units) a sponsored TRC20 send must reserve; 0 otherwise.
+  describe("computeSponsoredUsdtFee", () => {
+    const breakdown: FeeResourceBreakdown = {
+      energyRequired: new BigNumber(65_000),
+      energyAvailable: new BigNumber(100_000),
+      bandwidthRequired: new BigNumber(345),
+      bandwidthAvailable: new BigNumber(5000),
+      energyEstimated: true,
+      networkInfo: mockTransaction.networkInfo!,
+    };
+    const usdtTokenAccount = {
+      ...mockTokenAccount,
+      token: {
+        ...mockTokenAccount.token,
+        tokenType: "trc20",
+        ticker: "USDT",
+        units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+      },
+    } as TokenAccount;
+    const sponsoredTx: Transaction = {
+      ...mockTransaction,
+      energyProviderInfo: { providerId: "tronify", orderId: "order-1" },
+    };
+    const quote = (payCoinCode: string, payCoinAmt: string) => ({
+      energy: 65_000n,
+      durationSeconds: 600,
+      payCoinCode,
+      payCoinAmt,
+      fees: { energy: "0", trx: "0", bandwidth: "0", activateAccount: "0" },
+    });
+
+    it("returns the quoted USDT fee in token base units for a sponsored TRC20 send", async () => {
+      mockGetEnergyRentQuote.mockResolvedValue(quote("USDT", "0.5"));
+      const fee = await computeSponsoredUsdtFee(
+        mockAccount,
+        sponsoredTx,
+        usdtTokenAccount,
+        breakdown,
+      );
+      expect(fee).toEqual(new BigNumber(500_000)); // 0.5 USDT × 10^6
+    });
+
+    it("returns 0 (and skips the quote) for an unknown provider id", async () => {
+      const tx: Transaction = {
+        ...mockTransaction,
+        energyProviderInfo: { providerId: "not-a-provider", orderId: "order-1" },
+      };
+      const fee = await computeSponsoredUsdtFee(mockAccount, tx, usdtTokenAccount, breakdown);
+      expect(fee).toEqual(new BigNumber(0));
+      expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+    });
+
+    it("returns 0 (and skips the quote) for a non-sponsored send", async () => {
+      const fee = await computeSponsoredUsdtFee(
+        mockAccount,
+        mockTransaction,
+        usdtTokenAccount,
+        breakdown,
+      );
+      expect(fee).toEqual(new BigNumber(0));
+      expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+    });
+
+    it("returns 0 when there is no TRC20 token account", async () => {
+      expect(await computeSponsoredUsdtFee(mockAccount, sponsoredTx, null, breakdown)).toEqual(
+        new BigNumber(0),
+      );
+    });
+
+    it("returns 0 when energy could not be estimated", async () => {
+      const fee = await computeSponsoredUsdtFee(mockAccount, sponsoredTx, usdtTokenAccount, {
+        ...breakdown,
+        energyEstimated: false,
+      });
+      expect(fee).toEqual(new BigNumber(0));
+    });
+
+    it("returns 0 for a 0-energy transfer", async () => {
+      const fee = await computeSponsoredUsdtFee(mockAccount, sponsoredTx, usdtTokenAccount, {
+        ...breakdown,
+        energyRequired: new BigNumber(0),
+      });
+      expect(fee).toEqual(new BigNumber(0));
+    });
+
+    it("returns 0 when the rent is priced in a different asset than the token being sent", async () => {
+      mockGetEnergyRentQuote.mockResolvedValue(quote("TRX", "3.4"));
+      const fee = await computeSponsoredUsdtFee(
+        mockAccount,
+        sponsoredTx,
+        usdtTokenAccount,
+        breakdown,
+      );
+      expect(fee).toEqual(new BigNumber(0));
+    });
+
+    it("returns 0 when the quote is unavailable", async () => {
+      mockGetEnergyRentQuote.mockRejectedValue(new Error("tronify down"));
+      const fee = await computeSponsoredUsdtFee(
+        mockAccount,
+        sponsoredTx,
+        usdtTokenAccount,
+        breakdown,
+      );
+      expect(fee).toEqual(new BigNumber(0));
     });
   });
 });
