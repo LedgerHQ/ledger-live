@@ -10,7 +10,7 @@ const mockDevice: Device = {
 };
 
 describe("useCompanionSteps", () => {
-  it("should return correct amount of steps", () => {
+  it("should return correct amount of steps when Ledger Sync is not active", () => {
     const { result } = renderHook(
       () =>
         useCompanionSteps({
@@ -27,6 +27,32 @@ describe("useCompanionSteps", () => {
     );
 
     expect(result.current.defaultSteps).toHaveLength(4);
+    expect(result.current.hasSyncStep).toBe(true);
+  });
+
+  it("should omit Sync step when Ledger Sync is already active", () => {
+    const { result } = renderHook(
+      () =>
+        useCompanionSteps({
+          device: mockDevice,
+          setStepKey: jest.fn(),
+          shouldRestoreApps: false,
+          deviceName: "stax",
+          seedPathStatus: "new_seed",
+          productName: "stax",
+        }),
+      {
+        minimal: false,
+        initialState: {
+          trustchain: {
+            trustchain: { rootId: "existing-root-id", walletSyncEncryptionKey: "" },
+          },
+        },
+      },
+    );
+
+    expect(result.current.defaultSteps).toHaveLength(3);
+    expect(result.current.hasSyncStep).toBe(false);
   });
 
   it("should return callback to complete app step", () => {
