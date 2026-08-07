@@ -56,7 +56,7 @@ import {
 } from "./rendering";
 import { useStuckDeviceActionHint } from "../StuckDeviceActionHint/useStuckDeviceActionHint";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import type { WalletState } from "~/reducers/wallet";
 import { DeviceId, identitiesSlice } from "@domain/entity-client-identity";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";

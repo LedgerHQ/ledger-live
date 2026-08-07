@@ -55,6 +55,7 @@ The repo is moving toward a DDD layout (`domain/`, `features/`, `shared/`); it i
 | `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
 | `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
+| `support/` | `@support/<name>` | `@support/jest-devtools` |
 | `libs/` | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
 
 Keep names short and self-describing. No cross-package relative imports — always use the npm package name.

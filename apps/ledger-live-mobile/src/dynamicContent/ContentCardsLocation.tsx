@@ -7,14 +7,11 @@ import { AllLocations, BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
 import { filterCategoriesByLocation, formatCategories } from "./utils";
 
-const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (
-  <ContentCardsCategory category={item.category} categoryContentCards={item.cards} />
-);
-
 type Props = FlexBoxProps & {
   locationId: AllLocations;
   hasStickyCta?: boolean;
   bottomSpacing?: number;
+  leadingSlide?: React.ReactNode;
 };
 
 type CategoriesWithCards = {
@@ -26,6 +23,7 @@ const ContentCardsLocation = ({
   locationId,
   hasStickyCta,
   bottomSpacing,
+  leadingSlide,
   ...containerProps
 }: Props) => {
   const { categoriesCards, mobileCards } = useDynamicContent();
@@ -34,12 +32,20 @@ const ContentCardsLocation = ({
 
   if (categoriesFormatted.length === 0) return null;
 
+  const renderCategory: ListRenderItem<CategoriesWithCards> = ({ item, index }) => (
+    <ContentCardsCategory
+      category={item.category}
+      categoryContentCards={item.cards}
+      leadingSlide={index === 0 ? leadingSlide : undefined}
+    />
+  );
+
   return (
     <Flex {...containerProps}>
       <FlatList
         testID="flat-list-container"
         data={categoriesFormatted}
-        renderItem={Category}
+        renderItem={renderCategory}
         keyExtractor={(item: CategoriesWithCards) => item.category.id}
         ItemSeparatorComponent={() => <Flex height={32} />}
         ListFooterComponent={

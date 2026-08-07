@@ -51,11 +51,12 @@ export type ContactAddressEditPort = Readonly<{
   renameAddressLabel(input: ContactAddressRenameInput): Promise<ContactAddress>;
 }>;
 
-export type ContactAddressDetailActionsPorts = Readonly<{
+export type ContactAddressDetailActionsDataPorts = Readonly<{
+  edit: ContactAddressEditPort;
   deletion: ContactAddressDeletionPort;
 }>;
 
-export type ContactAddressDetailEditFlowPorts = ContactAddressDetailActionsPorts &
+export type ContactAddressDetailActionsPorts = ContactAddressDetailActionsDataPorts &
   Readonly<{
     signerValidation: ContactSignerValidationPort;
   }>;

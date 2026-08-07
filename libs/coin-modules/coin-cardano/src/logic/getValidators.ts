@@ -21,6 +21,7 @@ function toValidator(pool: StakePool, epoch: EpochInfo | undefined): Validator |
   // params (ADR-038) and only set when non-zero — so it stays omitted until the params endpoint
   // serves reserves + active stake (LIVE-18622), at which point healthy pools get a real value.
   const validator: Validator = {
+    id: pool.poolId,
     address: pool.poolId,
     name: pool.name ?? pool.ticker ?? pool.poolId,
     balance,

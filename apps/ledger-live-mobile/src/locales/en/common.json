@@ -4468,6 +4468,8 @@
     "sign": {
       "title": "Continue on your {{productName}}",
       "description": "Follow the instructions displayed on your Secure Screen",
+      "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0>.",
+      "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use</0> and <1>Privacy Policy</1>.",
       "cancelled": {
         "title": "Operation rejected on device",
         "close": "Close",
@@ -9511,12 +9513,12 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "See more. Sign safer",
-      "description": "Upgrade to any touchscreen signer and get 20% off.",
+      "description": "Upgrade and get 20% off.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
       "title": "More security. More control",
-      "description": "Learn more about advanced security features.",
+      "description": "Learn more about security features.",
       "cta": "Learn more"
     }
   },

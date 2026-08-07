@@ -3,7 +3,7 @@ import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation"
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { log } from "@ledgerhq/logs";
 import { KeyAlgorithm } from "casper-js-sdk";
-import { casperAddressFromPubKey } from "../bridge/bridgeHelpers/addresses";
+import { casperAddressFromPubKey } from "../logic/validateAddress";
 import { CasperSigner } from "../types";
 
 function resolver(signerContext: SignerContext<CasperSigner>): GetAddressFn {

@@ -4,6 +4,7 @@ import { act, renderHook } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { ContactAddressIdSchema, contactsSlice } from "@domain/entity-contact";
 import { mockContactWithAddress, mockMeContact } from "@domain/entity-contact/schema.mock";
+import { createMockContactSignerValidationPort } from "../../platform/contactSignerValidationPort";
 import type { ContactAddressDetailActionsPorts } from "./model/ports";
 import { useContactAddressDetailActionsViewModel } from "./useContactAddressDetailActionsViewModel";
 
@@ -11,9 +12,13 @@ function createPorts(
   overrides: Partial<ContactAddressDetailActionsPorts> = {},
 ): ContactAddressDetailActionsPorts {
   return {
+    edit: {
+      renameAddressLabel: jest.fn(),
+    },
     deletion: {
       deleteAddress: jest.fn().mockResolvedValue(undefined),
     },
+    signerValidation: createMockContactSignerValidationPort(),
     ...overrides,
   };
 }

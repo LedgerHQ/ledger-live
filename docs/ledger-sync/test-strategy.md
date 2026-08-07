@@ -9,7 +9,7 @@ flowchart TB
         lkrp["LKRP scenarios<br/>(device APDU + Trustchain API)"]
     end
     subgraph unit["unit"]
-        wsdm["WalletSyncDataManager<br/>(generic + specific + compatibility)"]
+        wsdm["CloudSyncDataManager<br/>(generic + specific + compatibility)"]
     end
     lkrp -.-> wsdm
 ```
@@ -58,17 +58,10 @@ several members in one scenario — see `_template.ts`.)
 The recorder/replayer glue (< 200 LoC) is in `tests/test-helpers/`. See
 [behaviour scenarios](./scenarios.md) for the catalogue of what these cover.
 
-## WalletSyncDataManager unit tests
+## CloudSyncDataManager unit tests
 
-The [WalletSyncDataManager](./05-wallet-sync-data-manager.md) is tested in three complementary
-ways under [`src/walletsync/__tests__`](../../libs/live-wallet/src/walletsync/__tests__):
+The [CloudSyncDataManager](./05-wallet-sync-data-manager.md) is tested per module:
 
-- **Generic** (`generic.test.ts`) — verifies the invariant properties *every* module must hold,
-  run against all modules with a large bank of randomly generated states. Catches a broken module
-  implementation early and locks in non-regressions. Requires each module to provide state
-  generators in [`__mocks__/`](../../libs/live-wallet/src/walletsync/__mocks__) (see its README).
-- **Specific** (`specific.test.ts` + `__tests__/modules/*.test.ts`) — hand-written expectations
-  for known, specific scenarios per module (e.g. `accounts.test.ts`).
-- **Compatibility** (`compatibility.test.ts`) — proves the module set can evolve (modules added
-  or removed) and that Wallet Sync still behaves correctly — the basis for the
-  [forward-compatibility guarantee](./05-wallet-sync-data-manager.md#a-modular-architecture).
+- **Accounts** — [`libs/live-wallet/src/accounts/__tests__/cloudSyncModule.test.ts`](../../libs/live-wallet/src/accounts/__tests__/cloudSyncModule.test.ts)
+- **Account names** — [`domain/entity/account-name/src/__tests__/`](../../domain/entity/account-name/src/__tests__/)
+- **Recent addresses** — [`domain/entity/recent-addresses/src/cloudSyncModule.test.ts`](../../domain/entity/recent-addresses/src/cloudSyncModule.test.ts)

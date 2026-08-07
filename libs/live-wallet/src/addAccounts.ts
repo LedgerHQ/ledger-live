@@ -9,7 +9,7 @@
 
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
-import { validateNameEdition } from "./accountName";
+import { validateNameEdition } from "@domain/entity-account-name";
 
 // Reference all possible support link
 // For now we have only one, but we can union type in future

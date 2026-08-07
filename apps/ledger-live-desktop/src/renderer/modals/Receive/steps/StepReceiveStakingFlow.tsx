@@ -13,7 +13,7 @@ import CheckBox from "~/renderer/components/CheckBox";
 import { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 

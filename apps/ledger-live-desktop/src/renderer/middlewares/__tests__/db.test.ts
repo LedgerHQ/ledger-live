@@ -21,7 +21,7 @@ jest.mock("../../reducers/settings", () => ({
   areSettingsLoaded: (state: FakeState) => state.settings.loaded === true,
 }));
 
-jest.mock("@ledgerhq/live-wallet/store", () => ({
+jest.mock("~/renderer/reducers/wallet", () => ({
   accountUserDataExportSelector: jest.fn(() => null),
   walletStateExportShouldDiffer: jest.fn(() => false),
   exportWalletState: jest.fn(s => s),

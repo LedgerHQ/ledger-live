@@ -1,5 +1,6 @@
 import type { ChangeEvent, ClipboardEvent } from "react";
 import type { ContactsAddAddressNameLabels } from "./AddressName/types";
+import type { SanctionedAddressBannerProps } from "./ContactsAddAddressEntry.types";
 import type {
   AddAddressEntryLabels,
   AddAddressEntryState,
@@ -36,6 +37,7 @@ type WithoutAddressLabelViewConfiguration = Readonly<{
 type ContactsAddAddressEntryWebBaseProps = Readonly<{
   addressEntry: AddAddressEntryState;
   labels: AddAddressEntryLabels;
+  sanctionedAddressBanner?: SanctionedAddressBannerProps;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onConfirm?: () => void;
 }>;
@@ -49,6 +51,7 @@ type ContactsAddAddressEntryWebViewBaseProps = Readonly<{
   labels: AddAddressEntryLabels;
   inputStatus?: "error" | "success";
   helperText?: string;
+  sanctionedAddressBanner?: SanctionedAddressBannerProps;
   showEnsDisclaimer: boolean;
   isConfirmEnabled: boolean;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;

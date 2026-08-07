@@ -1,4 +1,5 @@
 amends "package://github.com/jdx/hk/releases/download/v1.40.0/hk@1.40.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.40.0/hk@1.40.0#/Builtins.pkl"
 
 hooks {
     ["pre-commit"] {
@@ -11,6 +12,11 @@ hooks {
             }
             ["gitleaks"] {
                 check = "gitleaks git --pre-commit --staged --redact --no-banner --verbose --config .gitleaks.toml"
+            }
+            ["actionlint"] = Builtins.actionlint
+            ["zizmor"] = (Builtins.zizmor) {
+                glob = List(".github/workflows/*.yml", "tools/actions/**/*.yml")
+                check = "zizmor --no-progress {{ files }} --min-severity=high"
             }
         }
     }

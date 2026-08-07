@@ -113,11 +113,19 @@ export const PortfolioBannersSection = ({
     shouldDisplayRecover: showRecover,
     contentCardsPaddingTop,
     hasAssets,
+    canCoexistWithBraze,
     onScroll,
     carouselIndex,
-  } = usePortfolioBannersSectionViewModel({ showAssets });
+  } = usePortfolioBannersSectionViewModel({
+    showAssets,
+    isLNUpsellBannerShown,
+  });
 
-  if (isLNUpsellBannerShown) {
+  const upsellLeadingSlide = isLNUpsellBannerShown ? (
+    <LNUpsellBanner location="wallet" />
+  ) : undefined;
+
+  if (isLNUpsellBannerShown && !canCoexistWithBraze) {
     return (
       <BannersSectionShell isFirst={isFirst}>
         <LNUpsellBanner location="wallet" pt={4} />
@@ -141,6 +149,7 @@ export const PortfolioBannersSection = ({
               key="contentCardsLocationPortfolio"
               locationId={ContentCardLocation.TopWallet}
               mx={-6}
+              leadingSlide={upsellLeadingSlide}
             />
           </Box>
         </Box>

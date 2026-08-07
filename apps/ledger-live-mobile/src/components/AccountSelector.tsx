@@ -8,8 +8,7 @@ import AccountList from "./AccountList";
 import FilteredSearchBar from "./FilteredSearchBar";
 import { formatSearchResults } from "~/helpers/formatAccountSearchResults";
 import { accountsSelector } from "~/reducers/accounts";
-import { walletSelector } from "~/reducers/wallet";
-import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { walletSelector, accountNameWithDefaultSelector } from "~/reducers/wallet";
 
 const SEARCH_KEYS = [
   "name",

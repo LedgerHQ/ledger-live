@@ -13,7 +13,7 @@ import { WebviewProps } from "../Web3AppWebview/types";
 import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { addOneAccount } from "~/actions/accounts";
-import { setAccountName } from "@ledgerhq/live-wallet/store";
+import { setAccountName } from "~/reducers/wallet";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { isUrlSafe } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/isUrlSafe";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";

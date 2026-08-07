@@ -5,12 +5,12 @@ import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
 import { getCoinConfig } from "../config";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../constants";
-import { TEST_ADDRESSES } from "../test/fixtures";
+import { TEST_ADDRESSES } from "../__tests__/fixtures";
 import { ITxnHistoryData, RpcError, IndexerResponseRoot } from "../types/network";
 import {
   fetchAccountStateInfo,
   fetchBalance,
-  fetchBlockHeight,
+  fetchLastBlock,
   fetchTxs,
   broadcastTx,
   getCasperNodeRpcClient,
@@ -60,7 +60,11 @@ type MockedBalance = {
 };
 
 type MockedBlock = {
-  block: { height: number };
+  block: {
+    height: number;
+    hash: { toHex: () => string };
+    timestamp: { date: Date };
+  };
 };
 
 type MockedTransactionHash = {
@@ -274,30 +278,38 @@ describe("Casper API Unit Tests", () => {
     });
   });
 
-  describe("fetchBlockHeight", () => {
-    it("should fetch block height successfully", async () => {
-      const mockHeight = 12345;
+  describe("fetchLastBlock", () => {
+    it("should fetch last block info successfully", async () => {
+      const mockTime = new Date("2024-06-01T12:00:00Z");
 
       createMockRpcClient({
         getLatestBlock: jest.fn().mockResolvedValue({
-          block: { height: mockHeight },
+          block: {
+            height: 12345,
+            hash: { toHex: () => "0xabcdef1234567890" },
+            timestamp: { date: mockTime },
+          },
         } as MockedBlock),
       });
 
-      const result = await fetchBlockHeight();
+      const result = await fetchLastBlock();
 
-      expect(result).toBe(mockHeight);
+      expect(result).toEqual({
+        height: 12345,
+        hash: "0xabcdef1234567890",
+        time: mockTime,
+      });
     });
 
-    it("should throw error when block height fetch fails", async () => {
-      const mockError = new Error("Failed to fetch block height");
+    it("should throw error when last block fetch fails", async () => {
+      const mockError = new Error("Failed to fetch last block");
 
       createMockRpcClient({
         getLatestBlock: jest.fn().mockRejectedValue(mockError),
       });
 
-      await expect(fetchBlockHeight()).rejects.toThrow("Failed to fetch block height");
-      expect(log).toHaveBeenCalledWith("error", "Failed to fetch block height", mockError);
+      await expect(fetchLastBlock()).rejects.toThrow("Failed to fetch last block");
+      expect(log).toHaveBeenCalledWith("error", "Failed to fetch last block", mockError);
     });
   });
 

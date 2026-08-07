@@ -19,7 +19,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { WalletState } from "~/reducers/wallet";
 import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
 import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";

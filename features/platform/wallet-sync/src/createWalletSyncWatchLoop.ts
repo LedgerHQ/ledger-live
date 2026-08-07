@@ -34,7 +34,6 @@ export type CreateWalletSyncWatchLoopParams<
   localStateSelector: (state: UserState) => LocalState;
   latestDistantStateSelector: (state: UserState) => DistantState | null;
   localIncrementUpdate: () => Promise<void>;
-  isTrustchainRefreshError: (e: unknown) => boolean;
 };
 
 export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema extends ZodType>({
@@ -52,7 +51,6 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
   localStateSelector,
   latestDistantStateSelector,
   localIncrementUpdate,
-  isTrustchainRefreshError,
 }: CreateWalletSyncWatchLoopParams<UserState, LocalState, Update, Schema>): {
   onUserRefreshIntent: () => void;
   unsubscribe: () => void;
@@ -81,7 +79,8 @@ export function createWalletSyncWatchLoop<UserState, LocalState, Update, Schema 
         await walletSyncSdk.push(trustchain, memberCredentials, diff.nextState);
       }
     } catch (e) {
-      if (isTrustchainRefreshError(e)) {
+      const eName = (e as { name?: string })?.name;
+      if (eName === "TrustchainEjected" || eName === "TrustchainOutdated") {
         await onTrustchainRefreshNeeded(trustchain);
         return;
       }

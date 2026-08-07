@@ -2,9 +2,11 @@ import React from "react";
 import {
   ContactAddressDetailDialog,
   ContactsAddContactDialog,
+  ContactsDeleteAddressDialog,
   ContactsDeleteContactDialog,
   ContactsEditSignerDialog,
   ContactsListView,
+  ContactsRenameAddressDialog,
   ContactsRenameContactDialog,
   type ContactAddressDetailDialogProps,
   type ContactsAddContactDialogProps,
@@ -14,6 +16,7 @@ import {
   ContactsAddAddressFlowDialog,
   type ContactsAddAddressFlowDialogProps,
 } from "./components/ContactsAddAddressFlowDialog";
+import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import type { ContactDetailEditDeleteDialogProps } from "./useContactDetailEditDeleteAdapter";
 
 export type ContactsViewProps = ContactsListViewProps &
@@ -22,6 +25,7 @@ export type ContactsViewProps = ContactsListViewProps &
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
     editDeleteDialogs: ContactDetailEditDeleteDialogProps;
+    addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
   }>;
 
 export function ContactsView({
@@ -29,6 +33,7 @@ export function ContactsView({
   addAddressFlowDialog,
   addressDetailDialog,
   editDeleteDialogs,
+  addressDetailActionsDialogs,
   ...pageProps
 }: Readonly<ContactsViewProps>) {
   return (
@@ -40,6 +45,9 @@ export function ContactsView({
       <ContactsRenameContactDialog {...editDeleteDialogs.renameDialog} />
       <ContactsDeleteContactDialog {...editDeleteDialogs.deleteDialog} />
       <ContactsEditSignerDialog {...editDeleteDialogs.signerDialog} />
+      <ContactsDeleteAddressDialog {...addressDetailActionsDialogs.deleteDialog} />
+      <ContactsRenameAddressDialog {...addressDetailActionsDialogs.renameDialog} />
+      <ContactsEditSignerDialog {...addressDetailActionsDialogs.signerDialog} />
     </>
   );
 }

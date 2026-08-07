@@ -1,6 +1,5 @@
 // Detoxconfig
 declare let detoxConfig: {
-  extends: string;
   testRunner: Record<string, unknown>;
   logger: Record<string, unknown>;
   session: Record<string, unknown>;

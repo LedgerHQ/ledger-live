@@ -180,7 +180,9 @@ describe("Content Cards QA console helpers", () => {
     expect(result.category).toMatchObject({
       categoryId: "alwayson",
       location: ContentCardLocation.TopWallet,
-      title: "Touchscreen offers",
+      title: "",
+      description: "",
+      cta: "",
       cardsType: ContentCardsType.smallSquare,
       cardsLayout: ContentCardsLayout.carousel,
       isDismissable: true,
@@ -189,6 +191,58 @@ describe("Content Cards QA console helpers", () => {
       categoryId: "alwayson",
       title: "Ledger Stax",
       tag: "30% off",
+    });
+  });
+
+  it("should allow empty titles and keep carousel category header empty when section title is blank", () => {
+    const result = buildDebugContentCard({
+      ...buildPresetCardBuilderValues("topWalletHardwareCarousel", 1000),
+      categoryTitle: "",
+      categoryDescription: "",
+      categoryCta: "",
+      title: "Ledger Stax",
+      description: "child-only description",
+      cta: "Buy",
+      link: "https://shop.ledger.com",
+    });
+
+    expect(result.warnings).toEqual([]);
+    expect(result.category).toMatchObject({
+      title: "",
+      description: "",
+      cta: "",
+      link: "",
+    });
+    expect(result.cards[0].extras).toMatchObject({
+      title: "Ledger Stax",
+      description: "child-only description",
+      cta: "Buy",
+      link: "https://shop.ledger.com",
+    });
+  });
+
+  it("should put container fields only on the category shell for carousels", () => {
+    const result = buildDebugContentCard({
+      ...buildPresetCardBuilderValues("topWalletHardwareCarousel", 1000),
+      categoryTitle: "Touchscreen offers",
+      categoryDescription: "Section blurb",
+      categoryCta: "See all",
+      title: "Ledger Stax",
+      description: "Card body",
+      cta: "Buy",
+      link: "https://shop.ledger.com",
+    });
+
+    expect(result.category).toMatchObject({
+      title: "Touchscreen offers",
+      description: "Section blurb",
+      cta: "See all",
+      link: "https://shop.ledger.com",
+    });
+    expect(result.cards[0].extras).toMatchObject({
+      title: "Ledger Stax",
+      description: "Card body",
+      cta: "Buy",
     });
   });
 

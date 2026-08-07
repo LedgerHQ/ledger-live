@@ -157,6 +157,7 @@ export const getValidatorsPage = async (
   const page = await getValidators(currencyId, cursor);
   return {
     items: page.items.map(v => ({
+      id: v.validatorId ?? v.validatorAddress,
       address: v.validatorAddress,
       name: v.name,
       balance: toValidatorBalance(v.tokens),

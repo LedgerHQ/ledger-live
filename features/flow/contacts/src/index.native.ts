@@ -1,7 +1,6 @@
 export * from "./steps/List";
 export * from "./steps/List/native";
-export * from "./steps/AddContact";
-export * from "./steps/AddContact/native";
+export * from "@features/flow-contacts-add-contact";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/native";
 export * from "./steps/AddAddress";
@@ -12,4 +11,5 @@ export * from "./steps/Detail";
 export * from "./steps/Detail/native";
 export * from "./components/index.native";
 export * from "./hooks";
+export * from "./ledgerSync";
 export * from "./featureFlags";

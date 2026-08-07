@@ -27,7 +27,11 @@ const TRANSLATION_KEYS: Record<ModularDialogStep, string> = {
   [MODULAR_DIALOG_STEP.ACCOUNT_SELECTION]: "modularAssetDrawer.selectAccount",
 };
 
-export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps) {
+export function ModularDialogFlow({
+  children,
+  fillAvailableHeight,
+  onClose,
+}: ModularDialogFlowProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep, setCurrentStep } =
@@ -89,6 +93,7 @@ export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps)
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
             assetsConfiguration={assetsConfiguration}
+            fillAvailableHeight={fillAvailableHeight}
             onAssetSelected={handleAssetSelected}
             loadNext={loadNext}
             errorInfo={errorInfo}
@@ -124,6 +129,7 @@ export function ModularDialogFlow({ children, onClose }: ModularDialogFlowProps)
   const content = (
     <AnimatedScreenWrapper
       key={`${currentStep}-${navigationDirection}`}
+      fillAvailableHeight={fillAvailableHeight}
       screenKey={currentStep}
       direction={navigationDirection}
     >

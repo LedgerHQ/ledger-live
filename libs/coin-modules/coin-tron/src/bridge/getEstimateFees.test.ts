@@ -6,7 +6,11 @@ import { computeBandwidthFee, computeEnergyFee, estimateEnergy } from "../logic/
 import { getChainParameters, getTronAccountNetwork } from "../network";
 import type { ChainParameters } from "../network/types";
 import type { Transaction } from "../types";
-import getEstimatedFees, { getFeeResourceBreakdown } from "./getEstimateFees";
+import getEstimatedFees, {
+  computeSponsoredEnergyEstimate,
+  getFeeResourceBreakdown,
+  type FeeResourceBreakdown,
+} from "./getEstimateFees";
 import { extractBandwidthInfo } from "./utils";
 
 // Mock typed functions
@@ -451,6 +455,65 @@ describe("getEstimatedFees", () => {
 
       expect(breakdown.energyRequired).toEqual(new BigNumber(0));
       expect(breakdown.energyEstimated).toBe(true);
+    });
+  });
+
+  // LIVE-32776: informational savings estimate exposed for sponsored (Tronify) sends.
+  describe("computeSponsoredEnergyEstimate", () => {
+    const baseBreakdown: FeeResourceBreakdown = {
+      energyRequired: new BigNumber(1000),
+      energyAvailable: new BigNumber(100_000),
+      bandwidthRequired: new BigNumber(200),
+      bandwidthAvailable: new BigNumber(5000),
+      energyEstimated: true,
+      networkInfo: mockTransaction.networkInfo!,
+    };
+    const sponsoredTx: Transaction = {
+      ...mockTransaction,
+      energyProviderInfo: { providerId: "tronify", orderId: "order-1" },
+    };
+
+    beforeEach(() => {
+      mockGetChainParameters.mockResolvedValue(chainParams);
+    });
+
+    it("returns provider + full energy cost (energyRequired × energyFee) for a sponsored send", async () => {
+      const estimate = await computeSponsoredEnergyEstimate(sponsoredTx, baseBreakdown);
+
+      expect(estimate).toEqual({
+        provider: { id: "tronify", name: "Tronify" },
+        avoidedEnergyFees: new BigNumber(210_000),
+      });
+    });
+
+    it("returns null (and skips the chain-params fetch) for a non-sponsored send", async () => {
+      expect(await computeSponsoredEnergyEstimate(mockTransaction, baseBreakdown)).toBeNull();
+      expect(mockGetChainParameters).not.toHaveBeenCalled();
+    });
+
+    it("returns null for an unknown provider id", async () => {
+      const tx: Transaction = {
+        ...mockTransaction,
+        energyProviderInfo: { providerId: "not-a-provider", orderId: "order-1" },
+      };
+      expect(await computeSponsoredEnergyEstimate(tx, baseBreakdown)).toBeNull();
+    });
+
+    it("returns null when energy could not be estimated (never derives from the failure sentinel)", async () => {
+      const breakdown: FeeResourceBreakdown = {
+        ...baseBreakdown,
+        energyEstimated: false,
+        energyRequired: new BigNumber(100_001),
+      };
+      expect(await computeSponsoredEnergyEstimate(sponsoredTx, breakdown)).toBeNull();
+    });
+
+    it("returns null for a 0-energy transfer (native/TRC10 — nothing to disclose)", async () => {
+      const breakdown: FeeResourceBreakdown = {
+        ...baseBreakdown,
+        energyRequired: new BigNumber(0),
+      };
+      expect(await computeSponsoredEnergyEstimate(sponsoredTx, breakdown)).toBeNull();
     });
   });
 });

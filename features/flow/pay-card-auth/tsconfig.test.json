@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.web.json",
   "compilerOptions": {
     "noEmit": true,
     "composite": false,
@@ -7,5 +7,5 @@
     "declarationMap": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "src/**/*.native.*"]
 }

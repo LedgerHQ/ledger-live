@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "LLD/hooks/redux";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { useStake } from "LLD/hooks/useStake";
 import { useNavigateToStakeForAccount } from "LLD/hooks/useNavigateToStakeForAccount";
 import { Account, AccountLike } from "@ledgerhq/types-live";

@@ -536,6 +536,7 @@ describe("DmkSignerZcash", () => {
   describe("signPcztTransaction", () => {
     const orchardSig = new Uint8Array(64).fill(0xab);
     const transparentSig = new Uint8Array(72).fill(0xcd);
+    const ironwoodSig = new Uint8Array(64).fill(0xef);
 
     // Minimal valid-shaped PCZT — the mock doesn't inspect fields
     const minimalPczt: PcztTransaction = {
@@ -553,8 +554,50 @@ describe("DmkSignerZcash", () => {
       orchardBundle: null,
     };
 
+    const minimalV6Pczt: PcztTransaction = {
+      global: {
+        txVersion: 6,
+        versionGroupId: 0xd884b698, // V6_VERSION_GROUP_ID (ZIP-229 / NU6.3)
+        consensusBranchId: 0x37a5165b, // BranchId::Nu6_3 (Ironwood)
+        fallbackLockTime: null,
+        expiryHeight: 0,
+        coinType: 133,
+        txModifiable: 0,
+      },
+      transparentInputs: [],
+      transparentOutputs: [],
+      orchardBundle: null,
+      ironwoodBundle: {
+        actions: [
+          {
+            cvNet: new Uint8Array(32).fill(0x10),
+            nullifier: new Uint8Array(32).fill(0x11),
+            rk: new Uint8Array(32).fill(0x12),
+            spendRecipient: new Uint8Array(43).fill(0x13),
+            spendValue: 1000n,
+            spendRho: new Uint8Array(32).fill(0x14),
+            spendRseed: new Uint8Array(32).fill(0x15),
+            alpha: new Uint8Array(32).fill(0x16),
+            signingPath: "32'/133'/0'",
+            cmx: new Uint8Array(32).fill(0x17),
+            ephemeralKey: new Uint8Array(32).fill(0x18),
+            encCiphertext: new Uint8Array(580).fill(0x19),
+            outCiphertext: new Uint8Array(80).fill(0x1a),
+            recipient: new Uint8Array(43).fill(0x1b),
+            value: 900n,
+            rseed: new Uint8Array(32).fill(0x1c),
+            rcv: new Uint8Array(32).fill(0x1d),
+            notePlaintextVersion: 3,
+          },
+        ],
+        flags: 2,
+        valueBalance: 0n,
+        anchor: new Uint8Array(32).fill(0x1e),
+      },
+    };
+
     it("returns orchard spendAuthSigs and empty transparentInputSigs for a pure-Orchard transaction", async () => {
-      const result = { orchard: [{ spendAuthSig: orchardSig }], transparentInputSigs: [] };
+      const result = { orchard: [{ spendAuthSig: orchardSig }], transparentInputSigs: [], ironwood: [] };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
       });
@@ -570,6 +613,7 @@ describe("DmkSignerZcash", () => {
       const result = {
         orchard: sigs.map(spendAuthSig => ({ spendAuthSig })),
         transparentInputSigs: [],
+        ironwood: [],
       };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
@@ -587,6 +631,7 @@ describe("DmkSignerZcash", () => {
       const result = {
         orchard: [{ spendAuthSig: orchardSig }],
         transparentInputSigs: [transparentSig],
+        ironwood: [],
       };
       mockSignerZcash.signPcztTransaction.mockReturnValue({
         observable: createCompletedObservable(result),
@@ -638,6 +683,51 @@ describe("DmkSignerZcash", () => {
       await expect(signer.signPcztTransaction(minimalPczt)).rejects.toThrow(
         "Unexpected device action status: stopped",
       );
+    });
+
+    it("returns ironwood spendAuthSigs for a V6 transaction with an Ironwood bundle", async () => {
+      const result = { orchard: [], transparentInputSigs: [], ironwood: [{ spendAuthSig: ironwoodSig }] };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toHaveLength(1);
+      expect(out.ironwood[0].spendAuthSig).toBe(ironwoodSig);
+      expect(mockSignerZcash.signPcztTransaction).toHaveBeenCalledWith(minimalV6Pczt, {
+        skipOpenApp: true,
+      });
+    });
+
+    it("preserves ironwood sig order for multiple Ironwood actions", async () => {
+      const ironwoodSigs = [0x01, 0x02, 0x03].map(b => new Uint8Array(64).fill(b));
+      const result = {
+        orchard: [],
+        transparentInputSigs: [],
+        ironwood: ironwoodSigs.map(spendAuthSig => ({ spendAuthSig })),
+      };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toHaveLength(3);
+      out.ironwood.forEach((sig, i) => {
+        expect(sig.spendAuthSig[0]).toBe(i + 1);
+      });
+    });
+
+    it("returns an empty ironwood array when the V6 transaction has no Ironwood actions signed", async () => {
+      const result = { orchard: [], transparentInputSigs: [], ironwood: [] };
+      mockSignerZcash.signPcztTransaction.mockReturnValue({
+        observable: createCompletedObservable(result),
+      });
+
+      const out = await signer.signPcztTransaction(minimalV6Pczt);
+
+      expect(out.ironwood).toEqual([]);
     });
   });
 

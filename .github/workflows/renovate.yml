@@ -29,6 +29,9 @@ jobs:
         with:
           app-id: ${{ secrets.PUBLIC_RENOVATE_APP_ID }}
           private-key: ${{ secrets.PUBLIC_RENOVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
 
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6

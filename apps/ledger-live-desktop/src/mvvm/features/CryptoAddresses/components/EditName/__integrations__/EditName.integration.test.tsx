@@ -1,11 +1,8 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { EditName } from "LLD/features/CryptoAddresses/components/EditName";
-
-/** How long the ghost-click guard blocks outside-click closes (must match the component). */
-const GHOST_CLICK_GUARD_MS = 300;
 
 const ASSET_NAME = "Ethereum";
 
@@ -19,40 +16,6 @@ const renderEditName = () => {
 };
 
 describe("EditName", () => {
-  it("stays open when outside is clicked within the ghost-click guard window", async () => {
-    const { user } = renderEditName();
-
-    await user.click(screen.getByTestId("edit-name-trigger"));
-    await waitFor(() => {
-      expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
-    });
-
-    // Immediately fire an outside pointerdown (within the 300ms guard window)
-    fireEvent.pointerDown(document);
-
-    // Dialog must still be open
-    expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
-  });
-
-  it("closes when outside is clicked after the ghost-click guard window", async () => {
-    const { user } = renderEditName();
-
-    await user.click(screen.getByTestId("edit-name-trigger"));
-    await waitFor(() => {
-      expect(screen.getByTestId("edit-crypto-address-name-dialog-content")).toBeVisible();
-    });
-
-    // Wait past the guard window then simulate an outside click
-    await new Promise(r => setTimeout(r, GHOST_CLICK_GUARD_MS + 50));
-    fireEvent.pointerDown(document);
-
-    await waitFor(() => {
-      expect(
-        screen.queryByTestId("edit-crypto-address-name-dialog-content"),
-      ).not.toBeInTheDocument();
-    });
-  });
-
   it("should open dialog, interact with chips and input, confirm, then reopen and close via X", async () => {
     const { user, store } = renderEditName();
 

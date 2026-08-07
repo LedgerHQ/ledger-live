@@ -292,6 +292,16 @@ const getProductTourAttributes = () => {
   };
 };
 
+const getPayTabAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const payTab = analyticsFeatureFlagMethod("lwmPayTab");
+
+  return {
+    isEnabled: payTab?.enabled ?? false,
+    card: payTab?.params?.card ?? false,
+  };
+};
+
 const getLdmkAndSyncFlags = () => ({
   ldmkTransport: analyticsFeatureFlagMethod?.("ldmkTransport") ?? { enabled: false },
   ldmkConnectApp: analyticsFeatureFlagMethod?.("ldmkConnectApp") ?? { enabled: false },
@@ -430,6 +440,7 @@ const extraProperties = async (store: AppStore) => {
 
   const backupHubAttributes = getBackupHubAttributes();
   const productTourAttributes = getProductTourAttributes();
+  const payTabAttributes = getPayTabAttributes();
 
   return {
     ...mandatoryProperties,
@@ -479,6 +490,7 @@ const extraProperties = async (store: AppStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    payTabAttributes,
     quickActionsCtasVariant: quickActionsCtasVariantFlag?.enabled,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,

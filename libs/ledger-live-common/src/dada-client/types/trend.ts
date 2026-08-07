@@ -1,1 +1,1 @@
-export type ApyType = "NRR" | "APY" | "APR";
+export type { ApyType } from "@domain/entity-interest-rate";

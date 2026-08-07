@@ -9,9 +9,10 @@ import Layout from "./Layout";
 type Props = {
   category: CategoryContentCard;
   categoryContentCards: BrazeContentCard[];
+  leadingSlide?: React.ReactNode;
 };
 
-const ContentCardsCategory = ({ category, categoryContentCards }: Props) => {
+const ContentCardsCategory = ({ category, categoryContentCards, leadingSlide }: Props) => {
   const closeAllCardIds = useMemo(() => {
     if (!shouldShowHardwareCarouselCloseAll(category)) {
       return undefined;
@@ -31,7 +32,7 @@ const ContentCardsCategory = ({ category, categoryContentCards }: Props) => {
           centered={category.centeredText}
           closeAllCardIds={closeAllCardIds}
         />
-        <Layout category={category} cards={categoryContentCards} />
+        <Layout category={category} cards={categoryContentCards} leadingSlide={leadingSlide} />
       </Box>
     </LogContentCardWrapper>
   );

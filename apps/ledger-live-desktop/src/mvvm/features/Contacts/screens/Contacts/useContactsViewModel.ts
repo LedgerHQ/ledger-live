@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { openURL } from "~/renderer/linking";
 import { v4 as uuid } from "uuid";
 import {
   CONTACT_ADDRESS_LABEL_TOO_LONG_ERROR_NAME,
@@ -34,6 +37,7 @@ import { useContactsFeatureIntroductionPreference } from "../../hooks/useContact
 import { useContactsCurrencySelectionAdapter } from "../../hooks/useContactsCurrencySelectionAdapter";
 import { useContactsAddressValidationAdapter } from "../../hooks/useContactsAddressValidationAdapter";
 import { useContactDetailPaneAdapter } from "./useContactDetailPaneAdapter";
+import type { ContactAddressDetailActionsDialogProps } from "./useContactAddressDetailActionsAdapter";
 import { useContactDetailEditDeleteAdapter } from "./useContactDetailEditDeleteAdapter";
 import { useDispatch } from "LLD/hooks/redux";
 import type {
@@ -47,6 +51,7 @@ export type ContactsPageViewModel = Omit<ContactsListViewProps, "onAddContact"> 
     addAddressFlowDialog: ContactsAddAddressFlowDialogProps;
     addressDetailDialog: ContactAddressDetailDialogProps;
     editDeleteDialogs: ReturnType<typeof useContactDetailEditDeleteAdapter>;
+    addressDetailActionsDialogs: ContactAddressDetailActionsDialogProps;
     onClearSearch: () => void;
   }>;
 
@@ -54,6 +59,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
+  const handleSanctionedAddressLearnMore = useCallback(() => {
+    openURL(helpCenterUrl);
+  }, [helpCenterUrl]);
   const [searchQuery, setSearchQuery] = useState("");
   const meContact = useContactsMeContact();
   const contacts = useContacts();
@@ -153,6 +162,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
   const addAddressNameLabels = useMemo<ContactsAddAddressNameLabels>(
     () => ({
       inputLabel: t("contacts.addAddressName.inputLabel"),
+      namingDisclaimer: t("contacts.addAddressName.namingDisclaimer"),
+      namingDisclaimerAccessibilityLabel: t(
+        "contacts.addAddressName.namingDisclaimerAccessibilityLabel",
+      ),
       continueToReview: t("contacts.addAddressName.continueToReview"),
       validAddress: t("contacts.addAddressEntry.validAddress"),
       validationErrors: {
@@ -176,6 +189,11 @@ export function useContactsViewModel(): ContactsPageViewModel {
     () => ({
       state: addAddressFlowState,
       entryLabels: addAddressEntryLabels,
+      sanctionedAddressBanner: {
+        description: t("contacts.addAddressEntry.sanctioned.description"),
+        actionLabel: t("contacts.addAddressEntry.sanctioned.learnMore"),
+        onAction: handleSanctionedAddressLearnMore,
+      },
       nameLabels: addAddressNameLabels,
       reviewLabels: addAddressReviewLabels,
       onAddressChange: (address, inputMethod) => {
@@ -191,6 +209,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     }),
     [
       addAddressEntryLabels,
+      handleSanctionedAddressLearnMore,
       addAddressNameLabels,
       addAddressReviewLabels,
       addAddressFlowState,
@@ -202,10 +221,17 @@ export function useContactsViewModel(): ContactsPageViewModel {
       continueFromName,
       saveAddressFromReview,
       completeMockConfirmation,
+      t,
     ],
   );
-  const { detail, addressDetailDialog, editDeleteDialogs, onOpenMe, onOpenContact } =
-    useContactDetailPaneAdapter(onAddAddress);
+  const {
+    detail,
+    addressDetailDialog,
+    editDeleteDialogs,
+    addressDetailActionsDialogs,
+    onOpenMe,
+    onOpenContact,
+  } = useContactDetailPaneAdapter(onAddAddress);
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const preference = useContactsFeatureIntroductionPreference();
@@ -271,6 +297,7 @@ export function useContactsViewModel(): ContactsPageViewModel {
     addAddressFlowDialog,
     addressDetailDialog,
     editDeleteDialogs,
+    addressDetailActionsDialogs,
     viewModel,
     labels,
     searchQuery,

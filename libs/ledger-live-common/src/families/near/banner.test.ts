@@ -3,8 +3,11 @@ import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
 
 import { BigNumber } from "bignumber.js";
-import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
-import type { NearStakingPosition } from "@ledgerhq/coin-near/api/sdk.types";
+import type {
+  NearAccount,
+  NearStakingPosition,
+  NearValidatorItem,
+} from "@ledgerhq/coin-near/types";
 
 const ledgerValidator: NearValidatorItem = {
   validatorAddress: "ledgerbyfigment.poolv1.near",
@@ -91,6 +94,8 @@ const validatorsMap = {
   addKeyCostExecution: new BigNumber("101765125000"),
   receiptCreationSend: new BigNumber("108059500000"),
   receiptCreationExecution: new BigNumber("108059500000"),
+  minGasPurchasePrice: new BigNumber(0),
+  accountCreationCharge: new BigNumber(0),
   validators,
 };
 

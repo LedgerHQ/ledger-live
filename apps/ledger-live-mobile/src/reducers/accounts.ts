@@ -8,6 +8,7 @@ import {
   AccountLike,
   AccountLikeArray,
   AccountRaw,
+  AccountUserData,
   TokenAccount,
 } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -41,11 +42,9 @@ import { blacklistedTokenIdsSelector } from "./settings";
 import {
   accountNameWithDefaultSelector,
   accountUserDataExportSelector,
-  HandlersPayloads,
-  WalletHandlerType,
-} from "@ledgerhq/live-wallet/store";
+  walletSelector,
+} from "./wallet";
 import { importAccountsReduce } from "@ledgerhq/live-wallet/liveqr/importAccounts";
-import { walletSelector } from "./wallet";
 import { nestedSortAccounts } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
@@ -53,8 +52,9 @@ export const INITIAL_STATE: AccountsState = {
   active: [],
 };
 const handlers: ReducerMap<AccountsState, Payload> = {
-  [WalletHandlerType.INIT_ACCOUNTS]: (_, action) => ({
-    active: (action.payload as HandlersPayloads["INIT_ACCOUNTS"]).accounts,
+  INIT_ACCOUNTS: (_, action) => ({
+    active: (action.payload as { accounts: Account[]; accountsUserData: AccountUserData[] })
+      .accounts,
   }),
 
   [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (s, action) => ({
@@ -76,7 +76,7 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     active: nestedSortAccounts(state.active, (action as Action<AccountsReorderPayload>).payload),
   }),
 
-  [WalletHandlerType.ADD_ACCOUNTS]: (s, action) => {
+  ADD_ACCOUNTS: (s, action) => {
     const { payload } = action as AddAccountsAction;
     return {
       active: payload.allAccounts,

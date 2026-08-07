@@ -1,7 +1,12 @@
+const os = require("os");
 const path = require("path");
 const iosArch = "arm64";
-// NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
-const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
+// Host-keyed so an inherited CI variable cannot select the wrong ABI. Override: E2E_ANDROID_ABI.
+// process.arch is "x64" under Rosetta; os.cpus() still reports the host's "Apple ..." brand string.
+const isAppleSiliconHost =
+  process.platform === "darwin" &&
+  (process.arch === "arm64" || (os.cpus()[0]?.model ?? "").startsWith("Apple"));
+const androidArch = process.env.E2E_ANDROID_ABI || (isAppleSiliconHost ? "arm64-v8a" : "x86_64");
 const gpuMode = process.env.CI ? "swiftshader_indirect" : "host";
 const SCHEME = "ledgerlivemobile";
 
@@ -24,9 +29,16 @@ const getAndroidBinary = type =>
 const getAndroidTestBinary = type =>
   path.join(androidDir, `app/build/outputs/apk/androidTest/${type}/app-${type}-androidTest.apk`);
 
+const DEFAULT_RETRIES = 0;
+// Detox requires a finite number, so anything unparseable falls back to the default. 0 is valid.
+const parseRetries = value => {
+  const raw = (value ?? "").trim();
+  const parsed = Number(raw);
+  return raw && Number.isInteger(parsed) && parsed >= 0 ? parsed : DEFAULT_RETRIES;
+};
+
 /** @type {Detox.DetoxConfig} */
 module.exports = {
-  extends: "detox-allure2-adapter/preset-detox",
   testRunner: {
     $0: "jest",
     args: {
@@ -37,15 +49,22 @@ module.exports = {
       teardownTimeout: 120000,
     },
     noRetryArgs: ["json", "outputFile"],
-    retries: 0,
+    // Local default. CI passes --retries on the CLI, which takes precedence.
+    retries: parseRetries(process.env.E2E_RETRIES),
     forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
   session: {
+    // Only governs how long Detox waits before printing "The app is busy with: <resources>", which
+    // is the most useful clue when a wait never resolves. 10s is what was in force while this key
+    // sat under `behavior`, where Detox does not read it.
     debugSynchronization: 10000,
   },
+  // Specified in full rather than inherited from detox-allure2-adapter/preset-detox: `pnpm mobile
+  // e2e:build` installs only the app's dependencies, and that preset belongs to this package, so
+  // extending it fails the Detox build. It only ever contributed these same five plugins.
   artifacts: {
     rootDir: "artifacts",
     plugins: {
@@ -53,6 +72,7 @@ module.exports = {
       screenshot: "failing",
       video: "none",
       instruments: "none",
+      // jest.environment.ts already captures a hierarchy on failure; the preset captured one per test.
       uiHierarchy: "disabled",
     },
   },

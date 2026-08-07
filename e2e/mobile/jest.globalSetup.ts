@@ -43,6 +43,11 @@ export default async function setup(): Promise<void> {
   const maxRetries = detoxConfig.testRunner?.retries ?? 0;
   const isLastRetry = maxRetries > 0 && testSessionIndex >= maxRetries;
 
+  if (testSessionIndex > 0) {
+    // warn, not info: CI runs detox with `--loglevel warn`, which hides info lines.
+    log.warn(`[globalSetup] Detox retry: attempt ${testSessionIndex + 1}/${maxRetries + 1}`);
+  }
+
   const videoOptions: DetoxAllure2AdapterOptions["deviceVideos"] = {
     android: {
       recording: { bitRate: 1_000_000, maxSize: 720, codec: "h264" },

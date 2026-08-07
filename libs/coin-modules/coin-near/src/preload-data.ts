@@ -14,6 +14,8 @@ let currentPreloadedData: NearPreloadedData = {
   addKeyCostExecution: new BigNumber(0),
   receiptCreationSend: new BigNumber(0),
   receiptCreationExecution: new BigNumber(0),
+  minGasPurchasePrice: new BigNumber(0),
+  accountCreationCharge: new BigNumber(0),
   validators: [],
 };
 

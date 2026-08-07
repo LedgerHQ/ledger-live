@@ -4,8 +4,12 @@ run-name: >
 
 on:
   schedule:
-    - cron: "0 1 * * 1,3,5"
-    - cron: "0 1 * * 2,4"
+    # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
+    # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
+    # broadcast from the shared QAA accounts on the same day.
+    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    - cron: "0 1 * * 1"
+    - cron: "0 1 * * 2-5"
   workflow_dispatch:
     inputs:
       ref:
@@ -141,6 +145,8 @@ permissions:
 env:
   E2E_DESKTOP_FEATURE_FLAGS: ${{ inputs.feature_flags || 'defaults' }}
   E2E_FEATURE_FLAGS_JSON: ${{ inputs.feature_flags_json || '' }}
+  # Broadcast on explicit request, or on the Monday nightly (see the schedule above).
+  E2E_BROADCAST_ENABLED: ${{ inputs.enable_broadcast || github.event.schedule == '0 1 * * 1' }}
 
 jobs:
   prepare-devices:
@@ -226,6 +232,7 @@ jobs:
           repositories: |
             ledger-live
             coin-apps
+          permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -285,7 +292,7 @@ jobs:
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
+          enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
       - name: Build Playwright grep filter from inputs
@@ -307,7 +314,7 @@ jobs:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
           BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
           TEST_EXECUTION: ${{ inputs.test_execution || '(not provided)' }}
-          BROADCAST_ENABLED: ${{ inputs.enable_broadcast }}
+          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
           REPEAT_EACH: ${{ inputs.repeat_each }}
           WORKFLOW_REF: ${{ github.workflow_ref }}
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
@@ -505,6 +512,8 @@ jobs:
     if: ${{ !cancelled() }}
     continue-on-error: true
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
@@ -515,6 +524,7 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -530,6 +540,8 @@ jobs:
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     continue-on-error: true
     timeout-minutes: 15
+    outputs:
+      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
@@ -540,6 +552,7 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
+        id: qaa-allure-upload
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
@@ -593,7 +606,7 @@ jobs:
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-live-medium]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, qaa-allure-upload, qaa-allure-upload-device2]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -618,19 +631,16 @@ jobs:
           row1_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
           row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
-          row1_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_1) || 'Allure Report' }}
-          row1_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_1) || 'allure-results-linux' }}
           row1_status: ${{ needs.report-to-allure.outputs.status }}
+          row1_qaa_url: ${{ needs.qaa-allure-upload.outputs.report_url }}
           # Row 2 only renders on dual-device runs (empty label = dropped).
           row2_emoji: "🐧"
           row2_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_2) || '' }}
           row2_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
           row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
-          row2_report_title: ${{ env.IS_DUAL == 'true' && format('Allure Report ({0})', env.DEVICE_2) || '' }}
-          row2_report_link_text: ${{ env.IS_DUAL == 'true' && format('allure-results-{0}', env.DEVICE_2) || '' }}
           row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
+          row2_qaa_url: ${{ needs.qaa-allure-upload-device2.outputs.report_url }}
           # Xray link: single-device runs with export_to_xray only (matches previous behavior).
-          extra_field_title: ${{ (env.IS_DUAL != 'true' && inputs.export_to_xray) && 'Xray Link' || '' }}
+          extra_field_title: ${{ (env.IS_DUAL != 'true' && inputs.export_to_xray) && '🎫 Xray Link' || '' }}
           extra_field_url: "https://ledgerhq.atlassian.net/browse/${{ github.event.inputs.test_execution }}"
-          extra_field_link_text: "Test Execution"

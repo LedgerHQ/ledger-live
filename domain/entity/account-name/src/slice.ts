@@ -1,15 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { enableMapSet } from "immer";
 import { getDefaultAccountName, type AccountForName } from "./accountName";
+import { initialAccountNamesState, type AccountNamesState } from "./schema";
 
 // RTK freezes state through Immer; this slice keeps its names in a Map.
 enableMapSet();
 
-export type AccountNamesState = Map<string, string>;
-
 export const accountNamesSlice = createSlice({
   name: "accountNames",
-  initialState: new Map<string, string>() as AccountNamesState,
+  initialState: initialAccountNamesState,
   reducers: {
     setAccountName: (
       state,
