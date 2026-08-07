@@ -3,7 +3,7 @@ import { YAML } from "bun";
 import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
-import { generateLabel, getSessionPath, Session } from "./session-store";
+import { generateLabel, getSessionPath, InvalidSessionYamlError, Session } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
@@ -282,6 +282,21 @@ describe("ring-field resilience", () => {
     expect(session.accounts).toHaveLength(1);
     expect(session.trustchain).toBeUndefined();
     expect(session.domains).toHaveLength(0);
+  });
+
+  it("should wrap invalid YAML failures for readForReset", async () => {
+    useTmpState();
+    writeFileSync(getSessionPath(), ": : :\n\t- [");
+    let error: unknown;
+
+    try {
+      await Session.readForReset();
+    } catch (cause) {
+      error = cause;
+    }
+
+    expect(error).toBeInstanceOf(InvalidSessionYamlError);
+    expect((error as InvalidSessionYamlError).cause).toBeDefined();
   });
 
   it("readForReset preserves the trustchain even when the file is otherwise corrupt", async () => {

@@ -105,6 +105,15 @@ pnpm start -- <command> [args]
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
 
+Swap quote requests authenticate against the production Ledger API. The CLI lazily loads its
+LKRP member credential from the profile-specific OS keychain and creates one on the first
+authenticated request when none exists. `ring init` reuses that credential, so authentication
+and Ledger Key Ring operations represent the same member. A password-protected credential is
+unlocked only when an authenticated request needs it.
+
+When no credential exists, run authenticated commands and `ring init` one at a time. Concurrent
+first-time credential creation across wallet-cli processes is unsupported.
+
 ## Relation to `ledger-live` CLI
 
 This package is DMK-focused and is separate from `@ledgerhq/live-cli` ([`apps/cli`](../cli)), which is now an internal, Speculos-only tool used by the monorepo's e2e suites and CI. For human/manual hardware-wallet flows, use this `wallet-cli` (or the Ledger Live desktop/mobile app).

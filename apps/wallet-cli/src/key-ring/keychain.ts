@@ -1,9 +1,9 @@
-import { Entry } from "@napi-rs/keyring";
+import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { pubkeyFromPrivatekey, encryptData, decryptData, hexToBytes } from "./crypto";
-import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
+import { getMemberCredentialEntry } from "./member-credential-repository";
 
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
@@ -13,6 +13,15 @@ const ENC_PREFIX = "ENC:";
  * `ring destroy` can tell "cannot unlock" from "no credentials" and abort rather than local-wipe.
  */
 export class PasswordRequiredError extends Error {}
+
+export class WrongPasswordError extends Error {}
+
+export class KeychainReadError extends Error {
+  override name = "KeychainReadError";
+  constructor(cause: unknown) {
+    super(cause instanceof Error ? cause.message : String(cause), { cause });
+  }
+}
 
 /**
  * Thrown when the stored entry is structurally broken (non-hex payload, or a key that yields no
@@ -32,7 +41,15 @@ function keychainAccount(): string {
 }
 
 function getEntry() {
-  return new Entry(SERVICE, keychainAccount());
+  return getMemberCredentialEntry(SERVICE, keychainAccount());
+}
+
+function readStoredCredential(): string | null {
+  try {
+    return getEntry().getPassword();
+  } catch (error) {
+    throw new KeychainReadError(error);
+  }
 }
 
 /**
@@ -59,12 +76,7 @@ export async function savePrivateKey(
 export async function loadMemberCredentials(
   wrappingKey?: CryptoKey,
 ): Promise<MemberCredentials | null> {
-  let stored: string | null;
-  try {
-    stored = getEntry().getPassword();
-  } catch {
-    return null;
-  }
+  const stored = readStoredCredential();
   if (!stored) return null;
 
   // Split CRLF-tolerantly: a keychain entry written on Windows uses \r\n, and trim() only strips the
@@ -92,7 +104,7 @@ export async function loadMemberCredentials(
     try {
       privatekey = new TextDecoder().decode(await decryptData(wrappingKey, ct));
     } catch {
-      throw new Error("Wrong password: failed to decrypt private key.");
+      throw new WrongPasswordError("Wrong password: failed to decrypt private key.");
     }
   } else {
     privatekey = firstLine;
@@ -128,9 +140,9 @@ export function deletePrivateKey(): boolean {
 
 /** Whether a member private key is present in the OS keychain for this state dir. */
 export function hasStoredKey(): boolean {
-  try {
-    return getEntry().getPassword() != null;
-  } catch {
-    return false;
-  }
+  return readStoredCredential() != null;
+}
+
+export function isStoredKeyPasswordProtected(): boolean {
+  return readStoredCredential()?.trimStart().startsWith(ENC_PREFIX) ?? false;
 }

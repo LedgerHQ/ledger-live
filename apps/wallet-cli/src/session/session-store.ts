@@ -63,6 +63,13 @@ export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
 }
 
+export class InvalidSessionYamlError extends Error {
+  override name = "InvalidSessionYamlError";
+  constructor(cause: unknown) {
+    super(`Invalid YAML in session file at ${getSessionPath()}.`, { cause });
+  }
+}
+
 /**
  * Construct a Trustchain from persisted metadata. walletSyncEncryptionKey is empty (never persisted);
  * callers needing the real key must restoreTrustchain first — the empty key is only safe as its input.
@@ -167,7 +174,12 @@ export class Session {
   static async readForReset(): Promise<Session> {
     const content = await readSessionContent();
     if (content === null) return Session.from([]);
-    const raw = YAML.parse(content) ?? {}; // invalid YAML propagates to the caller
+    let raw: unknown;
+    try {
+      raw = YAML.parse(content) ?? {};
+    } catch (error) {
+      throw new InvalidSessionYamlError(error);
+    }
     const strict = SessionDataSchema.safeParse(raw);
     if (strict.success) return Session.fromData(strict.data);
     // Corrupt-but-parseable file: keep the individually-valid ring fields, drop accounts. A
@@ -191,6 +203,10 @@ export class Session {
 
   setPasswordSalt(salt: string): void {
     this._passwordSalt = salt;
+  }
+
+  clearPasswordSalt(): void {
+    this._passwordSalt = undefined;
   }
 
   setTrustchain(t: TrustchainMeta): void {
