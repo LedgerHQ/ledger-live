@@ -22,7 +22,9 @@ describe("useCardLoginViewModel", () => {
 
   it("should forward the hosted login URL", async () => {
     const openHostedLogin = jest.fn().mockResolvedValue(undefined);
-    unwrap.mockResolvedValue({ token: "jwt", url: "https://card.example.com/login" });
+    const loginUrl =
+      "https://card.example.com/login?request=opaque%2Bvalue&redirect_uri=ledgerlive%3A%2F%2Fpaytab";
+    unwrap.mockResolvedValue({ token: "jwt", url: loginUrl });
     const { result } = renderHook(() => useCardLoginViewModel({ openHostedLogin }));
 
     act(() => result.current.onLoginPress());
@@ -36,7 +38,7 @@ describe("useCardLoginViewModel", () => {
           codeChallenge: expect.any(String),
         }),
       );
-      expect(openHostedLogin).toHaveBeenCalledWith("https://card.example.com/login");
+      expect(openHostedLogin).toHaveBeenCalledWith(loginUrl);
     });
   });
 

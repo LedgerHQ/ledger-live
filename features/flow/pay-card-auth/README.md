@@ -13,8 +13,12 @@ import { CardLogin } from "@features/flow-pay-card-auth";
 <CardLogin openHostedLogin={openHostedLogin} />;
 ```
 
-The host app provides `openHostedLogin` so platform-specific navigation remains at the app
-composition root.
+Desktop uses the host-provided `openHostedLogin`. Mobile keeps the prop for compatibility but
+replaces it with `expo-web-browser` so the API-provided login URL opens through
+`ASWebAuthenticationSession` on iOS and Chrome Custom Tabs on Android.
+
+The native opener forwards the opaque login URL unchanged. Callback exchange, OAuth state handling,
+and session persistence are outside this package's current scope.
 
 Auth-only runtime state (`hasCard`) lives in this flow's `payCardAuth` slice, exposed through
 `@features/flow-pay-card-auth/state`. Other Pay Card UI state is owned by the flow it belongs to:

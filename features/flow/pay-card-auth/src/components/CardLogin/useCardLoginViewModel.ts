@@ -15,7 +15,7 @@ function getSecureHostedLoginUrl(loginUrl: string): string {
   if (url.protocol !== "https:") {
     throw new Error("Unable to start login");
   }
-  return url.toString();
+  return loginUrl;
 }
 
 // An RTK rejection is a `FetchBaseQueryError` carrying the raw response, which must not be rendered.
