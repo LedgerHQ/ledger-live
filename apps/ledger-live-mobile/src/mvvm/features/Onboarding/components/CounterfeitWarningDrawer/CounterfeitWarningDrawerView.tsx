@@ -8,7 +8,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Trans } from "~/context/Locale";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { CounterfeitWarningDrawerViewProps } from "./useCounterfeitWarningDrawerViewModel";
 
 type BodyLinkProps = Readonly<{

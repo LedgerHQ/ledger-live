@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { InfoState } from "LLM/components/InfoState";
 import { useSelector } from "~/context/hooks";
 import { borrowErrorBottomSheetSelector } from "~/reducers/borrow";

@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Check } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { MARKET_SCREEN_TEST_IDS } from "../testIds";
 import type { MarketFilterOption, MarketFilters } from "../useMarketFilters";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { ModularDrawerFlow, type ModularDrawerFlowProps } from "./ModularDrawerFlow";
 
 const SNAP_POINTS = ["70%", "92%"];

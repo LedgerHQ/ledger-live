@@ -1,6 +1,6 @@
 import React from "react";
 import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import { useBottomSheetBackgroundTone } from "LLM/hooks/useBottomSheetBackgroundTone";
+import { useBottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
 import type { InfoStateProps } from "./types";
 import { InfoStateButton } from "./components/InfoStateButton";
 import { PresetVisual } from "./components/PresetVisual";

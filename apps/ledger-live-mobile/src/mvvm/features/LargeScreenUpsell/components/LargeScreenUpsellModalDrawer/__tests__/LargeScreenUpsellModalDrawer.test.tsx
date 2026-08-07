@@ -20,16 +20,19 @@ type MockQueuedBottomSheetProps = Readonly<{
 let capturedDrawerProps: MockQueuedBottomSheetProps | null = null;
 const originalPlatformOS = Platform.OS;
 
-jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => ({
-  __esModule: true,
-  default: (props: MockQueuedBottomSheetProps) => {
-    const React = require("react");
-    const { BottomSheet } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
+  return {
+    ...actual,
+    QueuedBottomSheet: (props: MockQueuedBottomSheetProps) => {
+      const React = require("react");
+      const { BottomSheet } = jest.requireActual("@ledgerhq/lumen-ui-rnative");
 
-    capturedDrawerProps = props;
-    return React.createElement(BottomSheet, { snapPoints: ["70%", "90%"] }, props.children);
-  },
-}));
+      capturedDrawerProps = props;
+      return React.createElement(BottomSheet, { snapPoints: ["70%", "90%"] }, props.children);
+    },
+  };
+});
 
 const content: GenericAwarenessModalFeatureIntro = {
   id: "large-screen-upsell-modal",

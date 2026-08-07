@@ -237,7 +237,7 @@ jest.mock("react-redux", () => {
 jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
 // Upstream mock's dismiss() is a no-op that never fires onDismiss, breaking any
-// queued-drawer cleanup that relies on it. Patched locally until the fix is merged:
+// queued-bottom-sheet cleanup that relies on it. Patched locally until the fix is merged:
 // https://github.com/gorhom/react-native-bottom-sheet/pull/2714
 // TODO: remove this override once @gorhom/bottom-sheet ships the fix.
 jest.mock("@gorhom/bottom-sheet", () => {

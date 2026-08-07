@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
+import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 /**
  * Automatically closes all open drawers when the app receives a deeplink
@@ -9,7 +9,7 @@ import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawer
  * @returns A callback to invoke when a deeplink is received
  */
 export function useDeeplinkDrawerCleanup() {
-  const { closeAllDrawers } = useQueuedDrawerContext();
+  const { closeAllBottomSheets } = useQueuedBottomSheetContext();
   const cameFromBackgroundRef = useRef(false);
   const previousAppStateRef = useRef(AppState.currentState);
 
@@ -41,9 +41,9 @@ export function useDeeplinkDrawerCleanup() {
 
   const onDeeplinkReceived = useCallback(() => {
     if (cameFromBackgroundRef.current) {
-      closeAllDrawers();
+      closeAllBottomSheets();
     }
-  }, [closeAllDrawers]);
+  }, [closeAllBottomSheets]);
 
   return onDeeplinkReceived;
 }

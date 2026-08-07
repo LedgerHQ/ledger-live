@@ -10,7 +10,7 @@ import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDevic
 import { getProductName } from "LLM/utils/getProductName";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceAction from "~/components/DeviceAction";
-import QueuedBottomSheet from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { PartialNullable } from "~/types/helpers";
 import type { PerpsSignViewModel } from "./usePerpsSignViewModel";
 

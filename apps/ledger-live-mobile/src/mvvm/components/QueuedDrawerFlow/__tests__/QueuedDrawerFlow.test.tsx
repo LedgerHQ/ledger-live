@@ -1,14 +1,15 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@tests/test-renderer";
-import type { QueuedBottomSheetProps } from "LLM/components/QueuedDrawer/QueuedBottomSheet";
+import type { QueuedBottomSheetProps } from "@shared/ui-queued-bottom-sheet";
 import { QueuedDrawerFlow } from "..";
 
 let mockDrawerProps: QueuedBottomSheetProps | undefined;
 let mockDrawerMountCount = 0;
 let mockDrawerUnmountCount = 0;
 
-jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => {
+jest.mock("@shared/ui-queued-bottom-sheet", () => {
+  const actual = jest.requireActual("@shared/ui-queued-bottom-sheet");
   function MockQueuedBottomSheet(props: QueuedBottomSheetProps) {
     const React = jest.requireActual<typeof import("react")>("react");
 
@@ -24,8 +25,8 @@ jest.mock("LLM/components/QueuedDrawer/QueuedBottomSheet", () => {
   }
 
   return {
-    __esModule: true,
-    default: MockQueuedBottomSheet,
+    ...actual,
+    QueuedBottomSheet: MockQueuedBottomSheet,
   };
 });
 

@@ -14,7 +14,7 @@ import {
   renderHook as rntlRenderHook,
   userEvent,
 } from "@testing-library/react-native";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedBottomSheetsProvider from "LLM/components/QueuedDrawer/QueuedBottomSheetsProvider";
 import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
@@ -294,9 +294,9 @@ function Providers({
       // For default rendering, add new providers here
       <I18nextProvider i18n={i18n}>
         <BottomSheetModalProvider>
-          <QueuedDrawersContextProvider>
+          <QueuedBottomSheetsProvider>
             <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          </QueuedBottomSheetsProvider>
         </BottomSheetModalProvider>
       </I18nextProvider>
     );

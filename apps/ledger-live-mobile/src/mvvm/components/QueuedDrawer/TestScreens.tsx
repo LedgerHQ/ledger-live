@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { useQueuedDrawerContext } from "./QueuedDrawersContext";
+import { useQueuedBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 export enum TestIdPrefix {
   Main = "main",
@@ -22,7 +22,7 @@ export enum TestIdPrefix {
 
 export function testIds(testIdPrefix: TestIdPrefix) {
   return {
-    closeAllDrawersButton: `${testIdPrefix}_close-all-drawers-button`,
+    closeAllBottomSheetsButton: `${testIdPrefix}_close-all-drawers-button`,
     drawer1Button: `${testIdPrefix}_drawer1-button`,
     drawer2Button: `${testIdPrefix}_drawer2-button`,
     drawer3Button: `${testIdPrefix}_drawer3-button`,
@@ -41,16 +41,16 @@ type ButtonsProps = {
   drawer2RequestingToBeOpened: boolean;
   drawer3RequestingToBeOpened: boolean;
   drawer4ForcingToBeOpened: boolean;
-  areDrawersLocked: boolean;
+  areBottomSheetsLocked: boolean;
   setDrawer1RequestingToBeOpened: Dispatch<SetStateAction<boolean>>;
   setDrawer2RequestingToBeOpened: Dispatch<SetStateAction<boolean>>;
   setDrawer3RequestingToBeOpened: Dispatch<SetStateAction<boolean>>;
   setDrawer4ForcingToBeOpened: Dispatch<SetStateAction<boolean>>;
-  setAreDrawersLocked: Dispatch<SetStateAction<boolean>>;
+  setAreBottomSheetsLocked: Dispatch<SetStateAction<boolean>>;
 };
 
 const Buttons: React.FC<ButtonsProps> = React.memo(props => {
-  const { _clearQueueDIRTYDONOTUSE, closeAllDrawers } = useQueuedDrawerContext();
+  const { _clearQueueDIRTYDONOTUSE, closeAllBottomSheets } = useQueuedBottomSheetContext();
 
   // navigation
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -83,10 +83,10 @@ const Buttons: React.FC<ButtonsProps> = React.memo(props => {
       />
       <Button
         size="small"
-        testID={testIds(props.testIdPrefix).closeAllDrawersButton}
+        testID={testIds(props.testIdPrefix).closeAllBottomSheetsButton}
         type="main"
-        title={"closeAllDrawers"}
-        onPress={closeAllDrawers}
+        title={"closeAllBottomSheets"}
+        onPress={closeAllBottomSheets}
       />
       <Button
         size="small"
@@ -134,8 +134,8 @@ const Buttons: React.FC<ButtonsProps> = React.memo(props => {
         size="small"
         testID={testIds(props.testIdPrefix).lockDrawersButton}
         type="main"
-        title={props.areDrawersLocked ? "Unlock Drawers" : "Lock Drawers"}
-        onPress={() => props.setAreDrawersLocked(!props.areDrawersLocked)}
+        title={props.areBottomSheetsLocked ? "Unlock Drawers" : "Lock Drawers"}
+        onPress={() => props.setAreBottomSheetsLocked(!props.areBottomSheetsLocked)}
       />
       <Button
         size="small"
@@ -186,19 +186,19 @@ export const MainTestScreen = () => {
   const handleDrawer3Close = useCallback(() => setDrawer3RequestingToBeOpened(false), []);
   const handleDrawer4Close = useCallback(() => setDrawer4ForcingToBeOpened(false), []);
 
-  const [areDrawersLocked, setAreDrawersLocked] = useState(false);
+  const [areBottomSheetsLocked, setAreBottomSheetsLocked] = useState(false);
 
   const mainButtonsProps: Omit<ButtonsProps, "testIdPrefix"> = {
     drawer1RequestingToBeOpened,
     drawer2RequestingToBeOpened,
     drawer3RequestingToBeOpened,
     drawer4ForcingToBeOpened,
-    areDrawersLocked,
+    areBottomSheetsLocked,
     setDrawer1RequestingToBeOpened,
     setDrawer2RequestingToBeOpened,
     setDrawer3RequestingToBeOpened,
     setDrawer4ForcingToBeOpened,
-    setAreDrawersLocked,
+    setAreBottomSheetsLocked,
   };
 
   return (
@@ -249,7 +249,7 @@ export const MainTestScreen = () => {
       >
         <Buttons {...mainButtonsProps} testIdPrefix={TestIdPrefix.InDrawer4} />
       </QueuedDrawer>
-      {areDrawersLocked && <ModalLock />}
+      {areBottomSheetsLocked && <ModalLock />}
     </Flex>
   );
 };
