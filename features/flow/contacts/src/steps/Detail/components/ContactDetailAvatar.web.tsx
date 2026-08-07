@@ -1,8 +1,7 @@
 import React from "react";
 import { Avatar } from "@ledgerhq/lumen-ui-react";
 import type { Contact } from "@domain/entity-contact";
-import { getContactInitial } from "@features/platform-contacts";
-import { getContactAvatarColorClass } from "../../List/utils/getContactAvatarColorClass";
+import { getContactAvatarColorClass, getContactInitial } from "@features/platform-contacts";
 
 type ContactDetailAvatarProps = Readonly<{
   contact: Contact;

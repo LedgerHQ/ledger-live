@@ -1,7 +1,4 @@
 import React from "react";
-import { ContactDetailView } from "../Detail/ContactDetailView.web";
-import { ContactsLedgerSyncIntroductionDialog } from "../Introduction/LedgerSync/ContactsLedgerSyncIntroductionDialog.web";
-import { ContactsFeatureIntroductionDialog } from "../Introduction/Feature/ContactsFeatureIntroductionDialog.web";
 import type { ContactsListViewProps } from "./types";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
 import { ContactsList } from "./components/ContactsList/ContactsList.web";
@@ -19,13 +16,11 @@ function renderContactsDetailPane(
     return undefined;
   }
 
-  return <ContactDetailView {...detail} />;
+  return detail;
 }
 
 export function ContactsListView(props: ContactsListViewProps): React.ReactNode {
-  const isLedgerSyncChecking = props.ledgerSyncStatus === "checking";
-  const isLedgerSyncIntroductionOpen =
-    props.ledgerSyncStatus === "inactive" && props.ledgerSyncIntroduction.isOpen;
+  const { isLedgerSyncChecking } = props;
   const contactsList = <ContactsList {...props} />;
 
   return (
@@ -51,13 +46,8 @@ export function ContactsListView(props: ContactsListViewProps): React.ReactNode 
           detail={renderContactsDetailPane(isLedgerSyncChecking, props.detail)}
         />
       </div>
-      <ContactsFeatureIntroductionDialog {...props.featureIntroduction} />
-      <ContactsLedgerSyncIntroductionDialog
-        open={isLedgerSyncIntroductionOpen}
-        description={props.ledgerSyncIntroduction.description}
-        dismissLabel={props.ledgerSyncIntroduction.dismissLabel}
-        onDismiss={props.ledgerSyncIntroduction.onDismiss}
-      />
+      {props.featureIntroduction}
+      {props.ledgerSyncIntroduction}
     </div>
   );
 }

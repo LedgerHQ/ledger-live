@@ -6,7 +6,7 @@ import {
   ListItemLeading,
   ListItemTitle,
 } from "@ledgerhq/lumen-ui-react";
-import { getContactAvatarColorClass } from "../../../utils/getContactAvatarColorClass";
+import { getContactAvatarColorClass } from "@features/platform-contacts";
 import type { ContactsListItem } from "../../../types";
 
 type ContactsSavedListItemProps = Readonly<{
