@@ -1,7 +1,6 @@
 {
   "extends": "@support/ts-config-web",
   "compilerOptions": {
-    "paths": { "*": ["./*"] },
-    "types": ["jest", "@testing-library/jest-dom"]
+    "paths": { "*": ["./*"] }
   }
 }
