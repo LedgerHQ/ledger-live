@@ -175,6 +175,7 @@ libs/ledgerjs/packages/types-live/src/postOnboarding.ts  @ledgerhq/engagement
 features/flow/large-screen-upsell/                       @ledgerhq/engagement
 domain/entity/analytics-consent/                         @ledgerhq/engagement
 features/flow/analytics-consent/                         @ledgerhq/engagement
+features/flow/lazy-onboarding-banner/                    @ledgerhq/engagement
 
 ### ... market/altcoins sentiment => @ledgerhq/wallet-xp ... ###
 domain/entity/market-sentiment/                          @ledgerhq/wallet-xp
@@ -402,6 +403,8 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/recover.hand
 
 # Engagement team
 
+shared/feature-flags/src/lazyOnboardingBanner.ts                                              @ledgerhq/engagement
+
 ## Desktop
 apps/ledger-live-desktop/src/renderer/analytics/                                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/SyncOnboarding/                               @ledgerhq/engagement
@@ -491,6 +494,7 @@ apps/ledger-live-mobile/src/mvvm/features/Q2WalletV4Tour/                       
 apps/ledger-live-mobile/src/mvvm/features/BackupHub/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LNUpsell/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LargeScreenUpsell/                                   @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/LazyOnboardingBanner/                                @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/components/FeatureIntroLayout/                                @ledgerhq/engagement
