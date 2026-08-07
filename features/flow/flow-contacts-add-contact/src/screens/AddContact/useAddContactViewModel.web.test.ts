@@ -9,7 +9,10 @@ import { useContacts } from "@features/platform-contacts";
 import type { ContactCreationPort } from "./model/ports";
 import { useAddContactViewModel } from "./useAddContactViewModel";
 
-jest.mock("@features/platform-contacts", () => ({ useContacts: jest.fn() }));
+jest.mock("@features/platform-contacts", () => ({
+  ...jest.requireActual("@features/platform-contacts"),
+  useContacts: jest.fn(),
+}));
 
 const mockedUseContacts = jest.mocked(useContacts);
 
