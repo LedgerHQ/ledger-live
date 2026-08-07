@@ -1,5 +1,7 @@
 import {
   getLazyOnboardingBannerDecision,
+  parseLazyOnboardingBannerMode,
+  type LazyOnboardingBannerMode,
   useLazyOnboardingBannerSession,
 } from "@features/flow-lazy-onboarding-banner";
 import { useFeature } from "@features/platform-feature-flags";
@@ -15,6 +17,7 @@ import {
 export type LazyOnboardingBannerState = Readonly<{
   isShown: boolean;
   link: string;
+  mode: LazyOnboardingBannerMode;
   dismiss: () => void;
 }>;
 
@@ -43,6 +46,7 @@ export function useLazyOnboardingBannerState(): LazyOnboardingBannerState {
   return {
     isShown: decision.shouldShow,
     link: typeof feature?.params?.link === "string" ? feature.params.link : "",
+    mode: parseLazyOnboardingBannerMode(feature?.params?.mode),
     dismiss,
   };
 }

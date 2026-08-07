@@ -65,6 +65,6 @@ describe("ReadOnly Portfolio Screen", () => {
       ),
     });
 
-    expect(await screen.findByText("Discover Ledger devices")).toBeVisible();
+    expect(await screen.findByText("Why millions choose Ledger?")).toBeVisible();
   });
 });
