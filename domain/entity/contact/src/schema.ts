@@ -1,8 +1,6 @@
-import {
-  CryptoCurrencyIdSchema,
-  NonEmptyStringSchema,
-  TokenCurrencyIdSchema,
-} from "@shared/schema-primitives";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { NonEmptyStringSchema } from "@shared/schema-primitives";
 import { z } from "zod";
 import {
   ContactAddressLabelTooLongError,

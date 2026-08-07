@@ -19,8 +19,8 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/entity/currency-token"
   },
   "dependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-unit": "workspace:*",
-    "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

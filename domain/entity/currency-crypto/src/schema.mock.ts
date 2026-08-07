@@ -1,5 +1,4 @@
-import { CryptoCurrencyIdSchema } from "@shared/schema-primitives";
-import type { CryptoCurrency } from "./schema";
+import { CryptoCurrencyIdSchema, type CryptoCurrency } from "./schema";
 
 export function mockCryptoCurrency(overrides?: Partial<CryptoCurrency>): CryptoCurrency {
   return {
