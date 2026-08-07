@@ -25,6 +25,7 @@ accessible test shape.
 As a result:
 
 - Adding a new Lumen component or symbol to a screen needs **no** test-config change.
+- Hook exports (`use*`) return a mutable `{ current: null }` ref stub.
 - Consumers don't need to install Lumen's peer dependencies (radix, class-variance-authority, …).
 
 Tests therefore assert on your own layout/view-model wiring, not on real Lumen internals.

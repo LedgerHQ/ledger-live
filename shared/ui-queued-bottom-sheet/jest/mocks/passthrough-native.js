@@ -21,10 +21,8 @@ function Button({ children, ...props }) {
   );
 }
 
-// Generic Lumen (native) stub: every named export becomes a host element named after the
-// component (e.g. Text -> "Text"), so React Native Testing Library text queries still work.
-// Hooks (`use*`) return a mutable ref stub. Redirected here via moduleNameMapper — no
-// per-component mocks, no peer installs.
+// Local copy of the flow jest Lumen passthrough (see @support/jest-features-flow). Kept in-package
+// so `require("react")` resolves from this workspace (contacts-style: no per-test lumen mocks).
 module.exports = new Proxy(
   { __esModule: true, Banner, Button },
   {

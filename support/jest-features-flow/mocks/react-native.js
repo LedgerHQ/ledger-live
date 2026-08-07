@@ -10,4 +10,8 @@ module.exports = {
   View: "View",
   Text: "Text",
   ScrollView: "ScrollView",
+  Keyboard: {
+    isVisible: () => false,
+    dismiss: () => {},
+  },
 };
