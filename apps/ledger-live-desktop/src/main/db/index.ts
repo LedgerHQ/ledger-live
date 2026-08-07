@@ -63,6 +63,7 @@ const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "market",
   "marketBanner",
   LARGE_SCREEN_UPSELL_MODAL,
+  "payCard",
   "knownDevices",
   "cryptoAssets",
   "identities",
