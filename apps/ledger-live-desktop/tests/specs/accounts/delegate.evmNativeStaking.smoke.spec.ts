@@ -190,44 +190,25 @@ function stringifySeiEvmRpcResponse(rawPostData: string): string {
 }
 
 async function mockSeiEvmRpc(page: Page) {
-  await page.exposeFunction("mockSeiEvmRpcResponse", stringifySeiEvmRpcResponse);
-  await page.evaluate(
-    ({ rpcOrigin, headers }) => {
-      const originalFetch = window.fetch.bind(window);
+  await page.route(
+    url => url.origin === SEI_EVM_RPC_ORIGIN,
+    async route => {
+      const request = route.request();
 
-      window.fetch = async (input, init) => {
-        const url =
-          typeof input === "string"
-            ? input
-            : input instanceof Request
-              ? input.url
-              : input.toString();
+      // Cross-origin JSON-RPC POSTs trigger a CORS preflight; answer it so the
+      // actual RPC request can proceed to the mock below.
+      if (request.method() === "OPTIONS") {
+        await route.fulfill({ status: 204, headers: CORS_HEADERS });
+        return;
+      }
 
-        if (url === rpcOrigin || url.startsWith(`${rpcOrigin}/`)) {
-          let body = init?.body;
-          if (!body && input instanceof Request) {
-            body = await input.clone().text();
-          }
-
-          const requestBody =
-            typeof body === "string" ? body : body ? await new Response(body).text() : "{}";
-          const responseBody = await (
-            window as typeof window & {
-              mockSeiEvmRpcResponse: (body: string) => Promise<string>;
-            }
-          ).mockSeiEvmRpcResponse(requestBody);
-
-          return new Response(responseBody, {
-            status: 200,
-            statusText: "OK",
-            headers: { ...headers, "content-type": "application/json", teststatus: "mocked" },
-          });
-        }
-
-        return originalFetch(input, init);
-      };
+      const responseBody = stringifySeiEvmRpcResponse(request.postData() ?? "{}");
+      await route.fulfill({
+        status: 200,
+        headers: { ...CORS_HEADERS, "content-type": "application/json", teststatus: "mocked" },
+        body: responseBody,
+      });
     },
-    { rpcOrigin: SEI_EVM_RPC_ORIGIN, headers: CORS_HEADERS },
   );
 }
 
