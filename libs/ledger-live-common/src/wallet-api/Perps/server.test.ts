@@ -252,6 +252,17 @@ describe("Perps handlers", () => {
       expect(mockUiDepositExecute).not.toHaveBeenCalled();
     });
 
+    it("should throw a ServerError when the client does not implement the deposit hook", async () => {
+      const handlersWithoutDeposit = handlers({
+        accounts: [mockAccount],
+        uiHooks: { "signing.execute": mockUiSigningExecute },
+      }) as unknown as MockedHandlers;
+
+      await expect(handlersWithoutDeposit["custom.perps.deposit"](depositParams)).rejects.toThrow(
+        "ServerError",
+      );
+    });
+
     it("should throw a ServerError when the receiver account is not found", async () => {
       jest
         .mocked(getAccountIdFromWalletAccountId)

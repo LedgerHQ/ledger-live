@@ -37,7 +37,7 @@ export type PerpsUiHooks = {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
-  "deposit.execute": (params: PerpsDepositUiParams) => void;
+  "deposit.execute"?: (params: PerpsDepositUiParams) => void;
 };
 
 export type PerpsSignParams = {
@@ -136,6 +136,12 @@ export const handlers = ({
     "custom.perps.deposit": customWrapper<PerpsDepositParams, PerpsDepositResult>(async params => {
       if (!params) {
         throw new ServerError(createUnknownError({ message: "params is undefined" }));
+      }
+
+      if (!uiDepositExecute) {
+        throw new ServerError(
+          createUnknownError({ message: "deposit is not supported by this client" }),
+        );
       }
 
       const receiverAccount = findAccountOrThrow(params.receiverAccountId);
