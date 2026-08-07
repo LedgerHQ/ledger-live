@@ -102,5 +102,27 @@ describe("renderer logger", () => {
 
       expect(redactQueryArg({ date, error })).toEqual({ date, error });
     });
+
+    // ...but that exemption must not become a way to smuggle a secret past the walk.
+    it("still redacts a secret carried on a class instance", () => {
+      class Wallet {
+        xpub = "secret-xpub";
+        label = "main";
+      }
+
+      expect(redactQueryArg({ wallet: new Wallet() })).toEqual({
+        wallet: { xpub: "[redacted]", label: "main" },
+      });
+    });
+
+    it("redacts a secret nested under a class instance", () => {
+      class Session {
+        creds = { accessToken: "secret-token" };
+      }
+
+      expect(redactQueryArg({ session: new Session() })).toEqual({
+        session: { creds: { accessToken: "[redacted]" } },
+      });
+    });
   });
 });

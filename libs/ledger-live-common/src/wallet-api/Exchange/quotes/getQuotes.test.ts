@@ -4,16 +4,11 @@ import { getQuotes, type GetQuotesContext } from "./getQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
 import type { SwapQuotesDispatch } from "./state-manager/store";
 
-// `dispatch` only has to reach `fetchQuotes`, which never inspects it here. One assertion in this
-// helper keeps the suite from repeating it at every call site.
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const mockDispatch = () => jest.fn() as unknown as SwapQuotesDispatch;
-
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import { makeRawQuote } from "@domain/api-swap-quotes/fixtures";
-import type { RawQuote, RawQuoteError } from "./service/types";
+import type { RawQuoteError } from "./service/types";
 import {
   ProviderErrorCodes,
   QuoteErrorCodes,
@@ -21,6 +16,11 @@ import {
   QuotesWarningCodes,
   type GetQuotesArgs,
 } from "./types";
+
+// `dispatch` only has to reach `fetchQuotes`, which never inspects it here. One assertion in this
+// helper keeps the suite from repeating it at every call site.
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockDispatch = () => jest.fn() as unknown as SwapQuotesDispatch;
 
 jest.mock("./service/fetchQuotes", () => ({
   fetchQuotes: jest.fn(),

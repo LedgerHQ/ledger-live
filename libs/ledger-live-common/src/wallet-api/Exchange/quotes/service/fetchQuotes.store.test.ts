@@ -5,7 +5,6 @@ import { createTestStore } from "@tests/test-helpers/testUtils";
 import { makeQuotesInput, makeRawQuote } from "@domain/api-swap-quotes/fixtures";
 import { swapApi } from "@shared/api-services";
 
-import { swapQuotesApi } from "../state-manager/api";
 import { fetchQuotes } from "./fetchQuotes";
 
 const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };

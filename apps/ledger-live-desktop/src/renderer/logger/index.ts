@@ -123,9 +123,7 @@ const REDACTED_QUERY_ARG_KEYS = new Set([
   "xpub",
 ]);
 
-/** Only plain objects are walked; anything else is left for the transport to serialize. */
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (typeof value !== "object" || value === null) return false;
+function isPlainObject(value: object): boolean {
   const proto: unknown = Object.getPrototypeOf(value);
   return proto === Object.prototype || proto === null;
 }
@@ -135,18 +133,47 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
  *
  * Past the depth limit the subtree is dropped rather than passed through: a value this function
  * has not inspected must not reach a user-exportable file just because it sits deep in the args.
+ *
+ * A non-plain object (a `Date`, a `BigNumber`) is handed back as it came in so the transport
+ * serializes it normally instead of seeing the `{}` or the internals that rebuilding it produces.
+ * That only applies once it is known to carry nothing redacted, so a secret cannot survive by
+ * sitting on a class instance rather than on a plain object.
  */
-export function redactQueryArg(value: unknown, depth = 0): unknown {
-  if (depth > 5) return "[truncated]";
-  if (Array.isArray(value)) return value.map(item => redactQueryArg(item, depth + 1));
-  if (!isPlainObject(value)) return value;
+function walk(value: unknown, depth: number): { value: unknown; redacted: boolean } {
+  if (depth > 5) return { value: "[truncated]", redacted: true };
 
-  return Object.fromEntries(
-    Object.entries(value).map(([key, entry]) => [
-      key,
-      REDACTED_QUERY_ARG_KEYS.has(key) ? "[redacted]" : redactQueryArg(entry, depth + 1),
-    ]),
-  );
+  if (Array.isArray(value)) {
+    let redacted = false;
+    const items = value.map(item => {
+      const walked = walk(item, depth + 1);
+      redacted ||= walked.redacted;
+      return walked.value;
+    });
+    return { value: redacted ? items : value, redacted };
+  }
+
+  if (typeof value !== "object" || value === null) return { value, redacted: false };
+
+  let redacted = false;
+  const entries = Object.entries(value).map(([key, entry]) => {
+    if (REDACTED_QUERY_ARG_KEYS.has(key)) {
+      redacted = true;
+      return [key, "[redacted]"];
+    }
+    const walked = walk(entry, depth + 1);
+    redacted ||= walked.redacted;
+    return [key, walked.value];
+  });
+
+  // Rebuilding a non-plain object loses it, so only do so once it is known to hold something that
+  // must not be logged. Tracking that explicitly rather than comparing identity matters: an array
+  // is always rebuilt, and a `BigNumber` holds one.
+  if (!redacted && !isPlainObject(value)) return { value, redacted };
+  return { value: Object.fromEntries(entries), redacted };
+}
+
+export function redactQueryArg(value: unknown, depth = 0): unknown {
+  return walk(value, depth).value;
 }
 
 export default {
