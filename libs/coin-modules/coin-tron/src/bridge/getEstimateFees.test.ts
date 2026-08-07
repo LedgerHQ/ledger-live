@@ -564,6 +564,16 @@ describe("getEstimatedFees", () => {
       expect(fee).toEqual(new BigNumber(500_000)); // 0.5 USDT × 10^6
     });
 
+    it("returns 0 (and skips the quote) for an unknown provider id", async () => {
+      const tx: Transaction = {
+        ...mockTransaction,
+        energyProviderInfo: { providerId: "not-a-provider", orderId: "order-1" },
+      };
+      const fee = await computeSponsoredUsdtFee(mockAccount, tx, usdtTokenAccount, breakdown);
+      expect(fee).toEqual(new BigNumber(0));
+      expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+    });
+
     it("returns 0 (and skips the quote) for a non-sponsored send", async () => {
       const fee = await computeSponsoredUsdtFee(
         mockAccount,

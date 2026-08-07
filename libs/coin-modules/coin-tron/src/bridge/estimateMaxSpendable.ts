@@ -17,7 +17,9 @@ const estimateMaxSpendable: AccountBridge<
     ...createTransaction(),
     subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
-    recipient: transaction?.recipient || "0x0000000000000000000000000000000000000000",
+    // Placeholder when no recipient is set yet; a valid Tron address (self) keeps the TRC20 energy
+    // simulation in the sponsored-fee path from failing to decode an Ethereum-style address.
+    recipient: transaction?.recipient || mainAccount.freshAddress,
     amount: new BigNumber(0),
   };
   // The parent (TRX) account's max is its spendable balance minus the network fees; the token

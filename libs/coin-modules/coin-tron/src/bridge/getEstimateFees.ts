@@ -209,7 +209,11 @@ export const computeSponsoredUsdtFee = async (
   tokenAccount: TokenAccount | null | undefined,
   breakdown: FeeResourceBreakdown,
 ): Promise<BigNumber> => {
-  if (!transaction.energyProviderInfo) return new BigNumber(0);
+  const info = transaction.energyProviderInfo;
+  if (!info) return new BigNumber(0);
+  // Consistent with computeSponsoredEnergyEstimate: an unknown provider id reserves nothing (and
+  // must not block the send), rather than silently pricing via the config-selected provider.
+  if (!getEnergyProvider(info.providerId)) return new BigNumber(0);
   if (tokenAccount?.token.tokenType !== "trc20") return new BigNumber(0);
   if (!breakdown.energyEstimated || breakdown.energyRequired.lte(0)) return new BigNumber(0);
 
