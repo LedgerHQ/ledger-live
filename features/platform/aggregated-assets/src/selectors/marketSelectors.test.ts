@@ -1,5 +1,5 @@
-import { selectMarketByCurrency } from "../marketSelectors";
-import type { ApiState } from "../selectorUtils";
+import { selectMarketByCurrency } from "./marketSelectors";
+import type { ApiState } from "./selectorUtils";
 
 const bitcoinMarket = {
   price: 65000.42,

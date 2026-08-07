@@ -31,7 +31,8 @@ export function createCurrencyDataSelector<T>(
         if (!pages) continue;
 
         for (const page of pages) {
-          const data = page[dataKey]?.[currencyId];
+          const bucket = page[dataKey] as Record<string, T> | undefined;
+          const data = bucket?.[currencyId];
           if (data) return data;
         }
       }

@@ -5448,7 +5448,32 @@ importers:
         version: 1.51.0
 
   features/platform/aggregated-assets:
+    dependencies:
+      '@domain/api-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../../domain/api/aggregated-assets
+      '@domain/entity-aggregated-asset':
+        specifier: workspace:*
+        version: link:../../../domain/entity/aggregated-asset
+      '@domain/entity-currency':
+        specifier: workspace:^
+        version: link:../../../domain/entity/currency
+      '@domain/entity-interest-rate':
+        specifier: workspace:*
+        version: link:../../../domain/entity/interest-rate
+      '@features/platform-env':
+        specifier: workspace:*
+        version: link:../env
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4))(react@19.1.4)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
+      '@shared/env':
+        specifier: workspace:*
+        version: link:../../../shared/env
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -5467,6 +5492,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.17.21
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.14
@@ -10077,6 +10105,9 @@ importers:
       '@domain/entity-recent-addresses':
         specifier: workspace:^
         version: link:../../domain/entity/recent-addresses
+      '@features/platform-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../features/platform/aggregated-assets
       '@features/platform-env':
         specifier: workspace:^
         version: link:../../features/platform/env

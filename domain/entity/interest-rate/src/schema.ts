@@ -8,6 +8,13 @@ import { z } from "zod";
  */
 export const ApyTypeSchema = z.enum(["NRR", "APY", "APR"]);
 
+/** A rate as the apps display it, once an unrecognised {@link InterestRateSchema} type is dropped. */
+export const ApySchema = z.object({
+  /** Ratio, not a percentage: 0.0425 renders as 4.25%. */
+  value: z.number(),
+  type: ApyTypeSchema,
+});
+
 /** An interest rate attached to one currency. */
 export const InterestRateSchema = z.object({
   /** Currency identifier */

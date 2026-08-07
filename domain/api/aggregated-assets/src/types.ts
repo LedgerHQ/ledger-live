@@ -2,7 +2,7 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
 import type { InterestRate } from "@domain/entity-interest-rate";
 import type { CurrenciesOrder, NetworkInfo } from "./schema";
-import type { PartialMarketItemResponse } from "./internals/market";
+import type { PartialMarketItemResponse } from "./market";
 
 // Types for transformed API response (after transformation)
 export interface AssetsData {
@@ -34,13 +34,20 @@ export enum AssetCategory {
   Stocks = "stocks",
 }
 
+/*
+ * Which wallet app is asking. DADA varies availability and ordering per app, so it is a request
+ * parameter rather than something the apps configure once — see LIVE-35301, which moves the
+ * base url to extraArgument and could carry this the same way.
+ */
+export type WalletApp = "llm" | "lld";
+
 export interface GetAssetsDataParams {
   search?: string;
   currencyIds?: string[];
   networkIds?: readonly string[];
   categories?: AssetCategory[];
   useCase?: string;
-  product: "llm" | "lld";
+  product: WalletApp;
   version: string;
   isStaging?: boolean;
   additionalData?: AssetsAdditionalData[];
@@ -59,7 +66,7 @@ export interface AssetsDataWithPagination extends AssetsData {
 
 export interface GetAssetsByCategoryParams {
   category: AssetCategory;
-  product: "llm" | "lld";
+  product: WalletApp;
   version: string;
   isStaging?: boolean;
 }

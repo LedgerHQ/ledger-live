@@ -1,11 +1,11 @@
-import { selectCurrency, selectCurrencyForMetaId } from "../currencySelection";
+import { selectCurrency, selectCurrencyForMetaId } from "./currencySelection";
 import {
   mockAssetsDataWithPagination,
   mockArbitrumTokenAssetsData,
   mockBitcoinAssetsData,
   mockUsdcAssetsData,
-} from "../../__mocks__/assets.mock";
-import type { AssetsDataWithPagination } from "../../state-manager/types";
+} from "@domain/api-aggregated-assets/mock";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 
 describe("currencySelection", () => {
   describe("selectCurrency", () => {

@@ -1,12 +1,8 @@
 /*
- * Copied from libs/ledger-live-common/src/market/utils rather than imported: a domain/* package
- * must not import legacy libs/*.
- *
- * TODO: replace with a real market entity when one exists. Until then note the drift risk —
- * every field of PartialMarketItemResponse is optional, so divergence from the original will
- * never produce a type error.
+ * Copied from libs/ledger-live-common/src/market/utils: a domain/* package cannot import libs/*.
+ * TODO: a real market entity would delete this duplicate. Until then nothing detects drift —
+ * PartialMarketItemResponse makes every field optional, so divergence never fails to compile.
  */
-
 export type MarketItemResponse = {
   allTimeHigh: number;
   allTimeHighDate: string;
@@ -40,12 +36,3 @@ export type MarketItemResponse = {
   totalVolume: number;
   updatedAt: string;
 };
-
-export type PartialMarketItemResponse = Partial<MarketItemResponse>;
-
-/** Maps an aggregated-asset id such as "ethereum:erc20:usd_tether" to its market id. */
-export function dadaIdToMarketId(id: string): string {
-  if (!id.includes(":")) return id;
-  const lastSegment = id.split(":").pop();
-  return lastSegment?.replaceAll("_", "-") ?? id;
-}

@@ -6,4 +6,5 @@ export * from "./requests";
 export * from "./accessors";
 export * from "./api";
 export * from "./errors";
+export * from "./market";
 export * from "./pagination";

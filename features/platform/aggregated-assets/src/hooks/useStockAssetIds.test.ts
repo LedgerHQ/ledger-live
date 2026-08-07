@@ -3,11 +3,12 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import { useStockAssetIds } from "../useStockAssetIds";
-import { useGetAssetCurrencyIdsByCategoryQuery } from "../../state-manager/api";
-import { AssetCategory } from "../../state-manager/types";
+import { useStockAssetIds } from "./useStockAssetIds";
+import { useGetAssetCurrencyIdsByCategoryQuery } from "@domain/api-aggregated-assets";
+import { AssetCategory } from "@domain/api-aggregated-assets";
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-aggregated-assets", () => ({
+  ...jest.requireActual("@domain/api-aggregated-assets"),
   useGetAssetCurrencyIdsByCategoryQuery: jest.fn(),
 }));
 

@@ -3,18 +3,19 @@
  */
 
 import { renderHook } from "@testing-library/react";
-import { useLazyLedgerCurrency } from "../useLazyLedgerCurrency";
-import { assetsDataApi } from "../../state-manager/api";
+import { useLazyLedgerCurrency } from "./useLazyLedgerCurrency";
+import { assetsDataApi } from "@domain/api-aggregated-assets";
 import useEnv from "@features/platform-env";
 import {
   mockAssetsData,
   mockBitcoinAssetsData,
   mockUsdcAssetsData,
-} from "../../__mocks__/assets.mock";
+} from "@domain/api-aggregated-assets/mock";
 
 jest.mock("@features/platform-env");
 
-jest.mock("../../state-manager/api", () => ({
+jest.mock("@domain/api-aggregated-assets", () => ({
+  ...jest.requireActual("@domain/api-aggregated-assets"),
   assetsDataApi: {
     useLazyGetAssetDataQuery: jest.fn(),
   },
