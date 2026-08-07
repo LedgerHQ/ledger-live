@@ -1,0 +1,98 @@
+name: "Warmup pnpm Store Cache"
+description: |
+  Ensure the full pnpm content-addressable store is in S3 under the key
+  '<OS>-pnpm-store-full-<lockfile-hash>'.
+
+  Uses a lightweight S3 HEAD check (cache/exists) first. If the key already
+  exists the action exits immediately — no download, no install, no upload.
+  On a miss it restores any partial store via tespkg/actions-cache, runs
+  pnpm install --ignore-scripts to fill in the remaining packages, then the
+  tespkg post-step saves the complete store back to S3.
+
+  Consuming jobs should call setup-caches with skip-pnpm-cache: "false"; they
+  restore the full store and their filtered pnpm install becomes a near no-op.
+
+inputs:
+  cache-develop-role-arn:
+    description: "Full IAM OIDC role ARN for refs/heads/develop"
+    required: false
+    default: ""
+  cache-branch-role-arn:
+    description: "Full IAM OIDC role ARN for non-develop refs"
+    required: false
+    default: ""
+  accountId:
+    description: "AWS account ID (legacy fallback when OIDC ARNs are absent)"
+    required: false
+    default: ""
+  roleName:
+    description: "AWS IAM role name (legacy fallback when OIDC ARNs are absent)"
+    required: false
+    default: ""
+  region:
+    description: "AWS cache region"
+    required: false
+    default: "eu-west-1"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get pnpm store directory
+      id: get-store-path
+      shell: bash
+      run: echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - name: Resolve AWS role via Nx remote cache profile
+      id: nx-remote-cache
+      if: ${{ inputs.cache-develop-role-arn != '' && inputs.cache-branch-role-arn != '' }}
+      uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+      with:
+        develop-role-arn: ${{ inputs.cache-develop-role-arn }}
+        branch-role-arn: ${{ inputs.cache-branch-role-arn }}
+        legacy-account-id: ${{ inputs.accountId }}
+        legacy-role-name: ${{ inputs.roleName }}
+
+    - name: Configure AWS credentials
+      id: aws
+      if: steps.nx-remote-cache.conclusion == 'success'
+      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+      with:
+        role-to-assume: ${{ steps.nx-remote-cache.outputs.role-arn }}
+        aws-region: ${{ inputs.region }}
+
+    # HEAD-only S3 check — zero bytes transferred.
+    # If the full store is already present we skip everything below.
+    - name: Check if full pnpm store already in S3
+      id: pnpm-cache-exists
+      if: steps.aws.conclusion == 'success'
+      uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+      with:
+        key: ${{ runner.os }}-pnpm-store-full-${{ hashFiles('pnpm-lock.yaml') }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ll-gha-s3-cache
+        region: ${{ inputs.region }}
+
+    # Restore any existing partial store (speeds up the install on partial hits) and
+    # registers the post-step save under the full key. Skipped when already a hit.
+    - name: Restore pnpm store and register post-step save
+      if: steps.pnpm-cache-exists.outputs.cache-hit != 'true'
+      uses: tespkg/actions-cache@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+      with:
+        path: ${{ steps.get-store-path.outputs.store-path }}
+        key: ${{ runner.os }}-pnpm-store-full-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-full-
+          ${{ runner.os }}-pnpm-store-
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+        bucket: ll-gha-s3-cache
+        region: ${{ inputs.region }}
+        use-fallback: false
+
+    - name: Populate pnpm store (all packages, no scripts)
+      if: steps.pnpm-cache-exists.outputs.cache-hit != 'true'
+      shell: bash
+      run: pnpm install --frozen-lockfile --ignore-scripts

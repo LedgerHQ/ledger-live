@@ -1,0 +1,104 @@
+name: "[CI] - Warmup pnpm Store - Called"
+
+# Populates the full pnpm content-addressable store in S3 so that all subsequent
+# jobs in a PR can restore it and run their filtered pnpm install as a near no-op.
+# Intentionally limited to pull_request / merge_group — push and scheduled workflows
+# manage their own install lifecycle.
+
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCOUNT_ID_PROD:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH:
+        required: false
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP:
+        required: false
+      AWS_CACHE_REGION:
+        required: false
+      AWS_CACHE_ROLE_NAME:
+        required: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  warmup-pnpm:
+    name: "Warmup pnpm Store"
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            package.json
+            .npmrc
+            mise.toml
+            **/package.json
+
+      - name: Install mise and tools
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+        with:
+          version: "2026.6.14"
+          install: true
+          cache: true
+          reshim: true
+          experimental: true
+
+      - name: Get pnpm store directory
+        id: get-store-path
+        run: echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Resolve AWS role
+        id: nx-remote-cache
+        uses: LedgerHQ/ledger-live/tools/actions/composites/configure-nx-remote-cache-profile@develop
+        with:
+          develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          legacy-account-id: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          legacy-role-name: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+
+      - name: Configure AWS credentials
+        id: aws
+        if: steps.nx-remote-cache.conclusion == 'success'
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+        with:
+          role-to-assume: ${{ steps.nx-remote-cache.outputs.role-arn }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Check if full pnpm store already in S3
+        id: pnpm-cache-exists
+        if: steps.aws.conclusion == 'success'
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ runner.os }}-pnpm-store-full-${{ hashFiles('pnpm-lock.yaml') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Populate pnpm store (all packages, no scripts)
+        if: steps.pnpm-cache-exists.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Save full pnpm store to S3
+        if: steps.pnpm-cache-exists.outputs.cache-hit != 'true'
+        uses: tespkg/actions-cache/save@570a8ae32f67c95bcaca3f8cc88702cd318291e9 # v1.10.0
+        with:
+          path: ${{ steps.get-store-path.outputs.store-path }}
+          key: ${{ runner.os }}-pnpm-store-full-${{ hashFiles('pnpm-lock.yaml') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false

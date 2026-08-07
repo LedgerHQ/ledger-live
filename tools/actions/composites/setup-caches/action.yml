@@ -122,8 +122,11 @@ runs:
       if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ steps.get-store-path.outputs.store-path }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+        # Prefer the full store written by warmup-pnpm-reusable; fall back to any
+        # previous partial store so cold starts are no worse than before.
+        key: ${{ runner.os }}-pnpm-store-full-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
+          ${{ runner.os }}-pnpm-store-full-
           ${{ runner.os }}-pnpm-store-
         accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
         secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
