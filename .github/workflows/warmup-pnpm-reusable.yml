@@ -44,6 +44,7 @@ jobs:
             .npmrc
             mise.toml
             tools/nx/
+            tools/pnpm-utils/
             **/package.json
             nx.workspace.json
             nx.json
