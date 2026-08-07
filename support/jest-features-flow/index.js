@@ -22,6 +22,7 @@ const nativeMocks = {
   "^react-native$": path.join(__dirname, "mocks/react-native.js"),
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
+  "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
 };
 
 /**
