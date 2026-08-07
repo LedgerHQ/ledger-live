@@ -7,6 +7,7 @@ import {
   estimateMaxSpendableTransparent,
 } from "../logic/coin-selection";
 import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
+import { getReservedNullifiers } from "./note-reservation";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,
@@ -28,6 +29,8 @@ export const estimateMaxSpendable: AccountBridge<
   }
 
   const transactions = mainAccount.privateInfo?.transactions ?? [];
-  const notes = collectIronwoodSpendableNotes(transactions);
+  const allNotes = collectIronwoodSpendableNotes(transactions);
+  const reserved = getReservedNullifiers(mainAccount);
+  const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
   return estimateMaxSpendableAmount(notes, transferType);
 };

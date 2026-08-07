@@ -70,7 +70,14 @@ export type BtcOperationExtra = {
   inputRefs?: BtcInputRef[];
 };
 
-export type ZcashOperationExtra = BtcOperationExtra & { zcashShielded?: boolean };
+export type ZcashOperationExtra = BtcOperationExtra & {
+  zcashShielded?: boolean;
+  /**
+   * Hex nullifiers of the Ironwood notes spent by this operation.
+   * Mirrors the transparent inputs/inputRefs fields for shielded sends.
+   */
+  shieldedNullifiers?: string[];
+};
 
 export type BtcOperation = Operation<BtcOperationExtra>;
 

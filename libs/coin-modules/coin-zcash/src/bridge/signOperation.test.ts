@@ -13,6 +13,11 @@ import { craftIronwoodTransaction, craftTransaction } from "../logic/transaction
 import { combine } from "../logic/transaction/combine";
 import { assertCanSend } from "../logic/engineClient";
 import { getWalletAccount } from "./getWalletAccount";
+import {
+  getSessionReservedNullifiers,
+  releaseRetiredReservations,
+  _resetReservationsForTest,
+} from "./note-reservation";
 import type { SpendableNote } from "../network/types";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, ZcashAccount } from "../types/bridge";
@@ -320,5 +325,93 @@ describe("bridge/signOperation", () => {
     await expect(
       lastValueFrom(signOp({ account, deviceId: "device-1", transaction: tx } as never)),
     ).rejects.toThrow(/signPcztTransaction/);
+  });
+
+  describe("shieldedNullifiers on operation.extra", () => {
+    beforeEach(() => {
+      _resetReservationsForTest();
+    });
+
+    it("emits shieldedNullifiers on operation.extra matching tx.selectedNotes nullifiers", async () => {
+      const nullifier1 = "11".repeat(32);
+      const nullifier2 = "22".repeat(32);
+      const notes = [
+        makeSpendableNote({ nullifier: nullifier1, outputIndex: 0 }),
+        makeSpendableNote({ nullifier: nullifier2, outputIndex: 1 }),
+      ];
+      const account = makeAccount();
+      const tx = makeTx("shielded", {
+        selectedNotes: notes,
+        zcashFee: new BigNumber(10_000),
+        amount: new BigNumber(290_000),
+      });
+      const signOp = buildSignOperation(makeSignerContext());
+
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
+      const signedEvent = events.find(e => e.type === "signed");
+      expect(signedEvent?.type).toBe("signed");
+      if (signedEvent?.type === "signed") {
+        const extra = signedEvent.signedOperation.operation.extra as Record<string, unknown>;
+        expect(extra).toHaveProperty("shieldedNullifiers");
+        expect(extra.shieldedNullifiers).toEqual([nullifier1, nullifier2]);
+      }
+    });
+
+    it("omits shieldedNullifiers from operation.extra when selectedNotes is empty", async () => {
+      // transparent-to-shielded: shields into Ironwood with no note spends
+      const account = makeAccount();
+      const tx = makeTx("transparent-to-shielded", {
+        selectedNotes: [],
+        zcashFee: new BigNumber(10_000),
+      });
+      const signOp = buildSignOperation(
+        makeSignerContext({ orchard: [], transparentInputSigs: [] }),
+      );
+
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
+      const signedEvent = events.find(e => e.type === "signed");
+      expect(signedEvent?.type).toBe("signed");
+      if (signedEvent?.type === "signed") {
+        const extra = signedEvent.signedOperation.operation.extra as Record<string, unknown>;
+        expect(extra).not.toHaveProperty("shieldedNullifiers");
+      }
+    });
+
+    // The reservation is released on the lifecycle of the operation that holds
+    // it, which can only find it if signing filed it under that operation's own
+    // hash.
+    it("reserves the spent notes under the hash of the operation spending them", async () => {
+      const nullifier = "33".repeat(32);
+      const account = makeAccount();
+      const tx = makeTx("shielded", {
+        selectedNotes: [makeSpendableNote({ nullifier })],
+        zcashFee: new BigNumber(10_000),
+      });
+      const signOp = buildSignOperation(makeSignerContext());
+
+      const events = await collectEvents(signOp, {
+        account,
+        deviceId: "device-1",
+        transaction: tx,
+      } as never);
+      const signedEvent = events.find(e => e.type === "signed");
+
+      expect(getSessionReservedNullifiers(account.id).has(nullifier)).toBe(true);
+      if (signedEvent?.type === "signed") {
+        releaseRetiredReservations(
+          account.id,
+          new Set([signedEvent.signedOperation.operation.hash]),
+        );
+      }
+      expect(getSessionReservedNullifiers(account.id).size).toBe(0);
+    });
   });
 });

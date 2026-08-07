@@ -10,6 +10,7 @@ import {
   selectTransparentInputs,
 } from "../logic/coin-selection";
 import { isTransparentInputTransfer, resolveTransparentUtxos } from "./statusHelpers";
+import { getReservedNullifiers } from "./note-reservation";
 
 // Strip any stale fee/change from a prior prepare and reset the amount so the UI
 // never shows a spendable amount without a matching fee.
@@ -79,5 +80,8 @@ export const prepareTransaction: AccountBridge<
   }
 
   const transactions = account.privateInfo?.transactions ?? [];
-  return prepareNoteTransaction(collectIronwoodSpendableNotes(transactions), tx);
+  const allNotes = collectIronwoodSpendableNotes(transactions);
+  const reserved = getReservedNullifiers(account);
+  const notes = reserved.size > 0 ? allNotes.filter(n => !reserved.has(n.nullifier)) : allNotes;
+  return prepareNoteTransaction(notes, tx);
 };
