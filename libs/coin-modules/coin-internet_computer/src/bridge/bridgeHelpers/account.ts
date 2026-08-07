@@ -19,7 +19,7 @@ import {
 } from "../../types";
 import { NeuronsData } from "../../types/neuron";
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<ICPAccount> = async info => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
   const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
   invariant(publicKey, "publicKey is required");
@@ -60,7 +60,7 @@ export const getAccountShape: GetAccountShape = async info => {
   }, undefined);
   const neurons = latestSnapshot
     ? new NeuronsData(latestSnapshot.neurons, latestSnapshot.date.getTime())
-    : ((initialAccount as ICPAccount | undefined)?.neurons ?? NeuronsData.empty());
+    : (initialAccount?.neurons ?? NeuronsData.empty());
 
   const neuronAddresses = neurons.fullNeurons.map(n => n.accountIdentifier);
 
