@@ -440,6 +440,28 @@ describe("coin-framework utils", () => {
           : {}),
       });
     });
+
+    it("converts a fee at or above 1e21, where BigNumber switches to exponential notation", () => {
+      const fees = new BigNumber("1500000000000000000000");
+      const amount = new BigNumber("10000000000000000000000000");
+
+      expect(fees.toString()).toBe("1.5e+21");
+      expect(() => BigInt(fees.toString())).toThrow(SyntaxError);
+
+      const operation = buildOptimisticOperation(
+        { id: "parent-account-id", freshAddress: "account-address" } as Account,
+        {
+          mode: "send",
+          amount,
+          fees,
+          recipient: "recipient-address",
+        } as GenericTransaction,
+        3n,
+      );
+
+      expect(operation.fee).toEqual(fees);
+      expect(operation.value).toEqual(amount);
+    });
   });
 
   describe("cleanedOperation", () => {

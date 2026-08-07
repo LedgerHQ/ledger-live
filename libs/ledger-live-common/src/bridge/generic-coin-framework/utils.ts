@@ -711,7 +711,8 @@ export const buildOptimisticOperation = (
       type = "OUT";
       break;
   }
-  const fees = BigInt(transaction.fees?.toString() || "0");
+  // toFixed, not toString: BigNumber goes exponential above 1e21, which BigInt can't parse.
+  const fees = transaction.fees ? BigInt(transaction.fees.toFixed()) : 0n;
   const { subAccountId } = transaction;
   const { subAccounts } = account;
   const parentType = subAccountId ? "FEES" : type;
