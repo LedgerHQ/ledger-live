@@ -1,7 +1,6 @@
 # Pay Card Feature Tour
 
-> [!CAUTION]
-> **Status: UNSTABLE** — In active development; API may change.
+> [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
 
 First-time Pay tab feature tour for Ledger Wallet, presented as a queued bottom sheet on
 mobile and a dialog on desktop, shown once until the user dismisses it.
@@ -13,7 +12,10 @@ imports an i18n library. The app owns the translation keys and resolves them wit
 `useTranslation()`/`t()` before mounting the tour (same pattern as `@features/flow-contacts`).
 
 ```tsx
-import { FeatureTour, type FeatureTourContent } from "@features/flow-pay-card-feature-tour";
+import {
+  FeatureTour,
+  type FeatureTourContent,
+} from "@features/flow-pay-card-feature-tour";
 import { useTranslation } from "~/context/Locale";
 
 const { t } = useTranslation();
@@ -41,7 +43,11 @@ const content: FeatureTourContent = {
   ],
 };
 
-<FeatureTour {...content} onTrackScreen={trackScreen} onTrackEvent={trackEvent} />;
+<FeatureTour
+  {...content}
+  onTrackScreen={trackScreen}
+  onTrackEvent={trackEvent}
+/>;
 ```
 
 The `icon` field is a Lumen symbol name resolved per platform, so the app picks the glyph
@@ -55,16 +61,21 @@ Visibility is derived from the shared `@domain/entity-pay-card` slice
 
 ## Platform resolution
 
-Platform files live side by side (`.web` / `.native`). Imports omit the suffix; TypeScript
-`moduleSuffixes` and the bundlers resolve the right file.
+Only the view carries a platform suffix. Everything above it — barrels, container, view model,
+types — is platform-agnostic and imports `./FeatureTourView` without a suffix; TypeScript
+`moduleSuffixes`, the bundlers and the jest preset resolve the right side.
 
-| Platform         | File resolved                          |
-| ---------------- | -------------------------------------- |
-| Mobile (Metro)   | `FeatureTour/index.native.tsx`         |
-| Desktop (Rspack) | `FeatureTour/index.web.tsx`            |
+| Platform | `./FeatureTourView` resolves to | Resolved by              |
+| -------- | ------------------------------- | ------------------------ |
+| Mobile   | `FeatureTourView.native.tsx`    | Metro, `tsconfig.native` |
+| Desktop  | `FeatureTourView.web.tsx`       | Rspack, `tsconfig.web`   |
 
-The native view consumes `QueuedBottomSheet` from `@shared/queued-bottom-sheet` so queueing
+The native view consumes `QueuedBottomSheet` from `@shared/ui-queued-bottom-sheet` so queueing
 behaviour stays consistent with the rest of the app.
+
+Each view also has a test importing it through its full `.web` / `.native` filename. Dead-code
+analysis (knip) reads only the solution `tsconfig.json`, which declares no `moduleSuffixes`, so a
+suffixed file it can reach through no other path would be reported as dead.
 
 ## Structure
 
@@ -72,20 +83,22 @@ behaviour stays consistent with the rest of the app.
 pay-card-feature-tour/
 ├── package.json
 └── src/
-    ├── index.ts                              # Default/web public API
-    ├── index.native.ts                       # Native public API
+    ├── index.ts                              # Public API (default)
+    ├── index.native.ts                       # Public API (react-native condition)
     └── components/
         └── FeatureTour/
             ├── __tests__/
             │   ├── FeatureTour.native.test.tsx
-            │   └── FeatureTour.web.test.tsx
+            │   ├── FeatureTour.web.test.tsx
+            │   ├── FeatureTourView.native.test.tsx
+            │   └── FeatureTourView.web.test.tsx
+            ├── FeatureTour.tsx                # Container, both platforms
             ├── FeatureTourView.native.tsx     # Native presentational UI (QueuedBottomSheet)
             ├── FeatureTourView.web.tsx        # Web presentational UI (Dialog)
-            ├── index.native.tsx              # Native container
-            ├── index.web.tsx                 # Web container
-            ├── index.ts                      # Default/web container barrel
-            ├── payTabTour.webp               # Hero image
-            └── useFeatureTourViewModel.ts    # Shared state and orchestration
+            ├── index.ts                       # Barrel
+            ├── payTabTour.webp                # Hero image
+            ├── types.ts                       # Public props and content types
+            └── useFeatureTourViewModel.ts     # Shared state and orchestration
 ```
 
 The view shows a hero image, title, subtitle, and three Lumen `ListItem` feature rows

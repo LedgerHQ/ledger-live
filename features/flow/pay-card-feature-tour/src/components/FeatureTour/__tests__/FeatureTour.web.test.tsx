@@ -3,8 +3,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { markPayCardFeatureTourSeen, payCardSlice } from "@domain/entity-pay-card";
 import { Provider } from "react-redux";
-import { FeatureTour } from "../index.web";
-import type { FeatureTourContent, FeatureTourProps } from "../useFeatureTourViewModel";
+import { FeatureTour } from "../FeatureTour";
+import type { FeatureTourContent, FeatureTourProps } from "../types";
 
 const CONTENT: FeatureTourContent = {
   title: "Pay and get paid",

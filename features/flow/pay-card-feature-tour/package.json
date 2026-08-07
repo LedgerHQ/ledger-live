@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@domain/entity-pay-card": "workspace:^",
-    "@shared/queued-bottom-sheet": "workspace:*"
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
     "@support/jest-features-flow": "workspace:*",

@@ -11,7 +11,7 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
-import { QueuedBottomSheet } from "@shared/queued-bottom-sheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import heroImage from "./payTabTour.webp";
 import type { FeatureTourViewModel } from "./useFeatureTourViewModel";
 

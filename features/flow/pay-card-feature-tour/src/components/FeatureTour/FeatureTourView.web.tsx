@@ -63,7 +63,7 @@ export function FeatureTourView({
         <DialogHeader onClose={handleDismiss} />
         <DialogBody>
           <div className="flex flex-col gap-24">
-            <img src={heroImage} alt="" className="h-180 w-full rounded-lg object-cover" />
+            <img src={heroImage} alt="" className="h-[180] w-full rounded-lg object-cover" />
             <div className="flex flex-col gap-8">
               <span className="heading-3-semi-bold text-base">{title}</span>
               <span className="body-3 text-muted">{description}</span>

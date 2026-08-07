@@ -3,10 +3,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { cleanup, render, screen, userEvent } from "@testing-library/react-native";
 import { markPayCardFeatureTourSeen, payCardSlice } from "@domain/entity-pay-card";
 import { Provider } from "react-redux";
-import { FeatureTour } from "../index.native";
-import type { FeatureTourContent, FeatureTourProps } from "../useFeatureTourViewModel";
+import { FeatureTour } from "../FeatureTour";
+import type { FeatureTourContent, FeatureTourProps } from "../types";
 
-jest.mock("@shared/queued-bottom-sheet", () => ({
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
   QueuedBottomSheet: ({ children }: { children: React.ReactNode }) => children,
 }));
 
