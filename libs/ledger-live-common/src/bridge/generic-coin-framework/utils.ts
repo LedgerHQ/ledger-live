@@ -159,7 +159,7 @@ export function nextSequenceWithPending(
     const rawSequence = op.transactionSequenceNumber;
     // Skip missing or non-integer sequences; `.toFixed()` (not `.toString()`) avoids the
     // exponential notation that BigInt() cannot parse.
-    if (rawSequence === undefined || rawSequence === null || !rawSequence.isInteger()) {
+    if (!rawSequence?.isInteger()) {
       continue;
     }
     const seq = BigInt(rawSequence.toFixed());

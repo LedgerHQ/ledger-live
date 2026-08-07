@@ -59,15 +59,8 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
       };
     }
     case "solana":
-      return {
-        family: currency.family,
-        amount: new BigNumber(0),
-        recipient: "",
-        fees: null,
-        mode: "send",
-      };
+    // hypercore has no send flow; this is a neutral tx used only for (de)serialization.
     case "hypercore":
-      // No send flow; return a neutral tx only for (de)serialization.
       return {
         family: currency.family,
         amount: new BigNumber(0),
