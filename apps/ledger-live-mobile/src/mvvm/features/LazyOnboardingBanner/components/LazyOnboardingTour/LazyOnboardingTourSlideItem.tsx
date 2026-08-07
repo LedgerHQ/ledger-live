@@ -11,7 +11,6 @@ type LazyOnboardingTourSlideItemProps = LazyOnboardingTourSlideContent &
 
 export function LazyOnboardingTourSlideItem({
   image,
-  imageAspectRatio,
   titleKey,
   subtitleKey,
 }: LazyOnboardingTourSlideItemProps) {
@@ -19,18 +18,12 @@ export function LazyOnboardingTourSlideItem({
 
   return (
     <Box lx={{ flex: 1, alignItems: "center" }}>
-      <Box
-        lx={{
-          flex: 1,
-          width: "full",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          marginBottom: "s20",
-        }}
-      >
+      {/* Fills exactly the space left over by the title/subtitle below, so the image is
+      as large as possible on every screen size without ever pushing the text out of view. */}
+      <Box lx={{ flex: 1, width: "full", marginBottom: "s20" }}>
         <FastImage
           source={image}
-          style={{ width: "80%", aspectRatio: imageAspectRatio }}
+          style={{ width: "100%", height: "100%" }}
           resizeMode={FastImage.resizeMode.cover}
         />
       </Box>
