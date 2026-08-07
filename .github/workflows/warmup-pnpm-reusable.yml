@@ -42,6 +42,7 @@ jobs:
             package.json
             .npmrc
             mise.toml
+            tools/nx/
             **/package.json
 
       - name: Install mise and tools
