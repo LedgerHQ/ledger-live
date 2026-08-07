@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 import type { ContactId } from "@domain/entity-contact";
-import type { ContactsLedgerSyncStatus } from "@features/flow-contacts-introduction";
+import {
+  isContactsLedgerSyncActivationRequired,
+  type ContactsLedgerSyncStatus,
+} from "@features/flow-contacts-introduction";
 
 export type ContactsLedgerSyncMutationIntent =
   | Readonly<{ kind: "addContact" }>
@@ -9,8 +12,7 @@ export type ContactsLedgerSyncMutationIntent =
 export type ContactsLedgerSyncMutationRequest =
   | Readonly<{ status: "allowed"; intent: ContactsLedgerSyncMutationIntent }>
   | Readonly<{ status: "blocked"; intent: ContactsLedgerSyncMutationIntent }>
-  | Readonly<{ status: "checking" }>
-  | Readonly<{ status: "unavailable" }>;
+  | Readonly<{ status: "checking" }>;
 
 export function useContactsLedgerSyncMutationGuard() {
   const [pendingIntent, setPendingIntent] = useState<ContactsLedgerSyncMutationIntent>();
@@ -24,18 +26,13 @@ export function useContactsLedgerSyncMutationGuard() {
         return { status: "allowed", intent };
       }
 
-      if (ledgerSyncStatus === "checking") {
-        setPendingIntent(undefined);
-        return { status: "checking" };
+      if (isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
+        setPendingIntent(intent);
+        return { status: "blocked", intent };
       }
 
-      if (ledgerSyncStatus === "unavailable") {
-        setPendingIntent(undefined);
-        return { status: "unavailable" };
-      }
-
-      setPendingIntent(intent);
-      return { status: "blocked", intent };
+      setPendingIntent(undefined);
+      return { status: "checking" };
     },
     [],
   );

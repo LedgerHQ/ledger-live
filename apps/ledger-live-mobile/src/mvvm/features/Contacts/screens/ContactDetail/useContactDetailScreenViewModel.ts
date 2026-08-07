@@ -22,6 +22,7 @@ import {
   CONTACTS_TRACKING_BUTTON,
   trackContactsAddAddressClick,
 } from "@features/flow-contacts";
+import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
 import type {
   ContactsLedgerSyncIntroduction,
   ContactsLedgerSyncIntroductionContentProps,
@@ -248,7 +249,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     setIsLedgerSyncIntroductionOpen(false);
   }, [dismissPendingIntent]);
   useEffect(() => {
-    if (ledgerSyncStatus !== "inactive") {
+    if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();
       setIsLedgerSyncIntroductionOpen(false);
     }
@@ -463,7 +464,8 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     addressDetailActions,
     editDeleteFlow,
     ledgerSyncIntroduction: {
-      isOpen: ledgerSyncStatus === "inactive" && isLedgerSyncIntroductionOpen,
+      isOpen:
+        isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && isLedgerSyncIntroductionOpen,
       description: t("contacts.ledgerSyncIntroduction.description"),
       dismissLabel: t("contacts.ledgerSyncIntroduction.dismiss"),
       onDismiss: onDismissLedgerSyncIntroduction,

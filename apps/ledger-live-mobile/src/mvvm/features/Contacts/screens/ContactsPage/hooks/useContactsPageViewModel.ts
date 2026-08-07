@@ -11,6 +11,7 @@ import {
 } from "@features/flow-contacts";
 import {
   CONTACTS_FEATURE_INTRODUCTION_HIGHLIGHTS,
+  isContactsLedgerSyncActivationRequired,
   resolveContactsLedgerSyncIntroductionOpen,
   useContactsFeatureIntroductionState,
 } from "@features/flow-contacts-introduction";
@@ -108,7 +109,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   }, [navigation]);
 
   useEffect(() => {
-    if (ledgerSyncStatus !== "inactive") {
+    if (!isContactsLedgerSyncActivationRequired(ledgerSyncStatus)) {
       dismissPendingIntent();
       setIsLedgerSyncIntroductionDismissed(false);
     }

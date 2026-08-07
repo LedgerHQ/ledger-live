@@ -613,7 +613,55 @@ describe("Contacts integration", () => {
     });
   });
 
-  it.each(["checking", "unavailable"] as const)(
+  it("should open Wallet Sync activation instead of Add Contact when sync is unavailable", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("unavailable");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactsNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    await user.press(screen.getByRole("button", { name: "Got it" }));
+    await user.press(await screen.findByTestId("contacts-add-contact-row"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-contact-drawer")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+    });
+  });
+
+  it("should open Wallet Sync activation instead of Add Address when sync is unavailable", async () => {
+    mockedContactsLedgerSyncStatus.mockReturnValue("unavailable");
+    const { user } = render(<ContactsGatingTestApp />, {
+      navigationInitialState: contactDetailNavigationState,
+      overrideInitialState: withContactsPageReadyState({
+        lwmContacts: { enabled: true, params: { newBadge: false } },
+      }),
+    });
+
+    await user.press(await screen.findByTestId("contacts-detail-add-address"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Turn on Ledger Sync to save contacts")).toBeVisible();
+    });
+    expect(screen.queryByTestId("contacts-add-address-flow-drawer")).toBeNull();
+
+    await user.press(screen.getByRole("button", { name: "Turn on Ledger Sync" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("wallet-sync-activation")).toBeVisible();
+    });
+  });
+
+  it.each(["checking"] as const)(
     "should keep Contacts read-only while sync is %s",
     async ledgerSyncStatus => {
       mockedContactsLedgerSyncStatus.mockReturnValue(ledgerSyncStatus);

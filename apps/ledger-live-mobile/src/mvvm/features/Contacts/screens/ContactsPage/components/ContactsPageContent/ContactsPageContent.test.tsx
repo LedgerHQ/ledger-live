@@ -40,6 +40,7 @@ function createViewModel({
     onSearchQueryChange: jest.fn(),
     onOpenContact: jest.fn(),
     onAddContact: jest.fn(),
+    onRequestAddContact: jest.fn(),
     ledgerSyncStatus,
     featureIntroduction: isFeatureIntroductionOpen
       ? {

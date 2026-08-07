@@ -25,20 +25,17 @@ describe("useContactsLedgerSyncMutationGuard", () => {
     expect(result.current.pendingIntent).toBeUndefined();
   });
 
-  it("blocks while Ledger Sync is unavailable without preserving an intent", () => {
+  it("preserves an intent while Ledger Sync is unavailable", () => {
     const { result } = renderHook(() => useContactsLedgerSyncMutationGuard());
 
     act(() => {
-      result.current.requestMutation({ kind: "addContact" }, "inactive");
-    });
-
-    act(() => {
       expect(result.current.requestMutation({ kind: "addContact" }, "unavailable")).toEqual({
-        status: "unavailable",
+        status: "blocked",
+        intent: { kind: "addContact" },
       });
     });
 
-    expect(result.current.pendingIntent).toBeUndefined();
+    expect(result.current.pendingIntent).toEqual({ kind: "addContact" });
   });
 
   it("preserves an address intent until activation succeeds", () => {
