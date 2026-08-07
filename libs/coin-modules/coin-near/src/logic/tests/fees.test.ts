@@ -29,7 +29,6 @@ describe("computeFees", () => {
       costs,
     });
 
-    // (100 + 10 + 200 + 20) * gasPrice
     expect(fees.toFixed()).toBe(new BigNumber(330).multipliedBy(GAS_PRICE).toFixed());
   });
 
@@ -41,7 +40,6 @@ describe("computeFees", () => {
       costs,
     });
 
-    // 330 + createAccount (1000 + 2000) + addKey (500 + 700)
     expect(fees.toFixed()).toBe(new BigNumber(4530).multipliedBy(GAS_PRICE).toFixed());
   });
 
@@ -53,8 +51,6 @@ describe("computeFees", () => {
       costs,
     });
 
-    // (5 * base + base buffer) * gasPrice — the full prepaid gas, not a fraction of it: the
-    // runtime locks the whole amount at conversion time and refunds the unburnt part on-chain.
     const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(6).multipliedBy(GAS_PRICE);
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
@@ -68,12 +64,28 @@ describe("computeFees", () => {
       costs,
     });
 
-    // (7 * base + base buffer) * gasPrice
     const expected = new BigNumber(STAKING_GAS_BASE).multipliedBy(8).multipliedBy(GAS_PRICE);
     expect(fees.toFixed()).toBe(expected.toFixed());
   });
 
-  it("floors the execution-half gas price at minGasPurchasePrice", () => {
+  it("floors the execution-half gas price at minGasPurchasePrice for a new implicit account", () => {
+    const floorPrice = GAS_PRICE.multipliedBy(5);
+    const highFloor: NearFeeCosts = { ...costs, minGasPurchasePrice: floorPrice };
+
+    const fees = computeFees({
+      mode: "send",
+      recipient: IMPLICIT_RECIPIENT,
+      gasPrice: GAS_PRICE,
+      costs: highFloor,
+    });
+
+    const expected = new BigNumber(1610)
+      .multipliedBy(GAS_PRICE)
+      .plus(new BigNumber(2920).multipliedBy(floorPrice));
+    expect(fees.toFixed()).toBe(expected.toFixed());
+  });
+
+  it("does not floor a transfer to an already-existing named account", () => {
     const floorPrice = GAS_PRICE.multipliedBy(5);
     const highFloor: NearFeeCosts = { ...costs, minGasPurchasePrice: floorPrice };
 
@@ -84,11 +96,7 @@ describe("computeFees", () => {
       costs: highFloor,
     });
 
-    // send half (110) at the raw gasPrice, execution half (220) at the floored price
-    const expected = new BigNumber(110)
-      .multipliedBy(GAS_PRICE)
-      .plus(new BigNumber(220).multipliedBy(floorPrice));
-    expect(fees.toFixed()).toBe(expected.toFixed());
+    expect(fees.toFixed()).toBe(new BigNumber(330).multipliedBy(GAS_PRICE).toFixed());
   });
 
   it("does not treat a staking recipient as an implicit account", () => {
