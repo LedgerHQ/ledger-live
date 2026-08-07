@@ -4653,6 +4653,9 @@ importers:
       tsx:
         specifier: ^4.19.3
         version: 4.20.6
+      uuid:
+        specifier: 14.0.1
+        version: 14.0.1
     optionalDependencies:
       '@oxlint/binding-darwin-arm64':
         specifier: 1.51.0
@@ -39044,6 +39047,10 @@ packages:
 
   uuid@13.0.0:
     resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
+
+  uuid@14.0.1:
+    resolution: {integrity: sha512-6ZxzVpzDXDa3bJWaHilVayA+BH/1zmxCJoVgvmqJnid/gPoKHxUrS/aC/T6LGQtNHT+XHG9fXPJB4d+IrU30Ew==}
     hasBin: true
 
   uuid@3.4.0:
@@ -75090,6 +75097,8 @@ snapshots:
   uuid@11.1.0: {}
 
   uuid@13.0.0: {}
+
+  uuid@14.0.1: {}
 
   uuid@3.4.0: {}
 

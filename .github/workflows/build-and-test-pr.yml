@@ -65,8 +65,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: [determine-affected]
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -75,8 +75,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -85,8 +85,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -95,8 +95,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -105,8 +105,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
     with:
@@ -119,8 +119,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -129,8 +129,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -139,8 +139,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -149,8 +149,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -159,8 +159,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -169,8 +169,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && (contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -179,8 +179,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -190,8 +190,8 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
-    needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
     with:
@@ -204,8 +204,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -214,14 +214,15 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
   test-additional:
     name: "Test Additional"
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    needs: [warmup-pnpm]
+    if: ${{!github.event.pull_request.head.repo.fork && needs.warmup-pnpm.result != 'failure'}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-additional.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -230,8 +231,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && !github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 
@@ -240,8 +241,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
+    needs: [determine-affected, warmup-pnpm]
+    if: ${{needs.warmup-pnpm.result != 'failure' && !github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@ci/pnpm-warmup-cache-martijn
     secrets: inherit
 

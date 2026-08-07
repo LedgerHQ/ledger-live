@@ -50,7 +50,8 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "playwright": "catalog:",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "uuid": "14.0.1"
   },
   "optionalDependencies": {
     "@oxlint/binding-darwin-arm64": "1.51.0",
