@@ -56,7 +56,7 @@ jobs:
       contents: read
     needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
-    uses: LedgerHQ/ledger-live/.github/workflows/warmup-pnpm-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/warmup-pnpm-reusable.yml@ci/pnpm-warmup-cache
     secrets: inherit
 
   # LLD
