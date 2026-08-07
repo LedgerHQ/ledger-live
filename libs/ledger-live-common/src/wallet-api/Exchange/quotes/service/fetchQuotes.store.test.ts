@@ -10,6 +10,11 @@ import { fetchQuotes } from "./fetchQuotes";
 
 const API_EXTRA = { swapApiBaseUrl: "https://swap.test", ledgerClientVersion: "test-1.0.0" };
 
+// The test store is assembled from the repo helper, whose dispatch type does not carry the
+// endpoint's thunk signature. One assertion here keeps it off every call site.
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const asDispatch = (dispatch: unknown) => dispatch as Parameters<typeof fetchQuotes>[2];
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const unauthenticatedProvider = {
   withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
@@ -56,9 +61,9 @@ describe("fetchQuotes against a live store", () => {
   it("returns quotes for repeated identical requests", async () => {
     serveOneQuote();
 
-    const first = await fetchQuotes(args(), "usd", store.dispatch as never);
-    const second = await fetchQuotes(args(), "usd", store.dispatch as never);
-    const third = await fetchQuotes(args(), "usd", store.dispatch as never);
+    const first = await fetchQuotes(args(), "usd", asDispatch(store.dispatch));
+    const second = await fetchQuotes(args(), "usd", asDispatch(store.dispatch));
+    const third = await fetchQuotes(args(), "usd", asDispatch(store.dispatch));
 
     expect(first.rawQuotes).toHaveLength(1);
     expect(second.rawQuotes).toHaveLength(1);
@@ -70,8 +75,8 @@ describe("fetchQuotes against a live store", () => {
     serveOneQuote();
 
     const [first, second] = await Promise.all([
-      fetchQuotes(args(), "usd", store.dispatch as never),
-      fetchQuotes(args(), "usd", store.dispatch as never),
+      fetchQuotes(args(), "usd", asDispatch(store.dispatch)),
+      fetchQuotes(args(), "usd", asDispatch(store.dispatch)),
     ]);
 
     expect(first.rawQuotes).toHaveLength(1);
@@ -82,7 +87,7 @@ describe("fetchQuotes against a live store", () => {
   it("does not retain quote cache entries after the request settles", async () => {
     serveOneQuote();
 
-    await fetchQuotes(args(), "usd", store.dispatch as never);
+    await fetchQuotes(args(), "usd", asDispatch(store.dispatch));
     // `keepUnusedDataFor: 0` schedules the eviction on the next macrotask.
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -97,7 +102,7 @@ describe("fetchQuotes against a live store", () => {
       ),
     );
 
-    await expect(fetchQuotes(args(), "usd", store.dispatch as never)).resolves.toEqual({
+    await expect(fetchQuotes(args(), "usd", asDispatch(store.dispatch))).resolves.toEqual({
       rawQuotes: [],
       providerErrors: [],
     });
@@ -106,7 +111,7 @@ describe("fetchQuotes against a live store", () => {
   it("rejects with a named Error when the request never reaches the aggregator", async () => {
     server.use(http.get("https://swap.test/quote", () => HttpResponse.error()));
 
-    await expect(fetchQuotes(args(), "usd", store.dispatch as never)).rejects.toMatchObject({
+    await expect(fetchQuotes(args(), "usd", asDispatch(store.dispatch))).rejects.toMatchObject({
       name: "SwapQuotesRequestFailed",
       cause: { status: "FETCH_ERROR" },
     });

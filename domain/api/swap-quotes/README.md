@@ -22,9 +22,12 @@ quotes stay with the caller.
 - `buildQuotesParams`, `splitQuotes`, `transformFetchQuotesResponse` — the pure
   pieces of the request/response mapping, exported for testing and reuse.
 - The zod schemas, and the `Raw*` payload types inferred from them.
-- `./store` — `setSwapQuotesStore` / `getSwapQuotesDispatch`, the dispatch holder
-  the endpoint runs against. `./store.standalone` builds a minimal store for
-  headless consumers.
+- `./store` — `SwapQuotesDispatch`, the dispatch type the endpoint runs against.
+  The host app threads its own `store.dispatch` down to the call site; there is
+  no global to register. `./store.standalone` builds and returns a minimal store
+  for headless consumers, whose `dispatch` the caller passes on.
+- `./fixtures` — `makeQuotesInput`, `makeRawQuote`, `makeRawQuoteError`, parsed
+  through the schemas so consumers cannot drift from the contract.
 
 ## Schema first
 

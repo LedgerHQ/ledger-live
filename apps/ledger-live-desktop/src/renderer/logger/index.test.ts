@@ -83,5 +83,24 @@ describe("renderer logger", () => {
     it("redacts inside arrays", () => {
       expect(redactQueryArg([{ addressFrom: "0xabc" }])).toEqual([{ addressFrom: "[redacted]" }]);
     });
+
+    // Anything the walk has not inspected must not reach the exportable log just because it sits
+    // deeper than the recursion limit.
+    it("drops the subtree past the depth limit rather than passing it through", () => {
+      const deep = { a: { b: { c: { d: { e: { f: { xpub: "leak" } } } } } } };
+
+      expect(redactQueryArg(deep)).toEqual({
+        a: { b: { c: { d: { e: { f: "[truncated]" } } } } },
+      });
+    });
+
+    // `Object.entries`/`fromEntries` would flatten these to `{}` or to their internals for every
+    // endpoint's args, not just swap's.
+    it("leaves non-plain objects intact for the transport to serialize", () => {
+      const date = new Date("2020-01-01T00:00:00.000Z");
+      const error = new Error("boom");
+
+      expect(redactQueryArg({ date, error })).toEqual({ date, error });
+    });
   });
 });

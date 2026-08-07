@@ -14,6 +14,12 @@ import { genAccount } from "../../mock/account";
 import { AppBranch, AppPlatform, Visibility } from "../types";
 import { CompleteExchangeError } from "../../exchange/error";
 import { handlers } from "./server";
+import type { SwapQuotesDispatch } from "./quotes/state-manager/store";
+
+// `dispatch` only has to reach `fetchQuotes`, which never inspects it here. One assertion in this
+// helper keeps the suite from repeating it at every call site.
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockDispatch = () => jest.fn() as unknown as SwapQuotesDispatch;
 
 const mockTracking = {
   startExchangeRequested: jest.fn(),
@@ -175,7 +181,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -217,7 +223,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -253,7 +259,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1"), genAccount("accountId2")];
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -320,7 +326,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         locale: "en",
         counterValueCurrency: "USD",
         tracking: mockTracking,
@@ -397,7 +403,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         locale: "en",
         counterValueCurrency: "USD",
         tracking: mockTracking,
@@ -453,7 +459,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1")];
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -494,7 +500,7 @@ describe("handlers", () => {
       const accounts = [genAccount("accountId1")];
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",
@@ -555,7 +561,7 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         tracking: mockTracking,
         manifest: testAppManifest,
         locale: "en-US",

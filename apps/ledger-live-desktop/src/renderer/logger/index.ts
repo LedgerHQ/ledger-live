@@ -111,16 +111,35 @@ function isRTKQueryMeta(meta: unknown): meta is RTKQueryMeta {
 const REDACTED_QUERY_ARG_KEYS = new Set([
   "customHeaders",
   "headers",
+  "authorization",
+  "accessToken",
+  "token",
   "sendAddress",
   "receiveAddress",
   "addressFrom",
   "addressTo",
+  "address",
+  "freshAddress",
+  "xpub",
 ]);
 
-/** Recursively replaces sensitive values, preserving the shape so the log stays useful. */
+/** Only plain objects are walked; anything else is left for the transport to serialize. */
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (typeof value !== "object" || value === null) return false;
+  const proto: unknown = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+/**
+ * Recursively replaces sensitive values, preserving the shape so the log stays useful.
+ *
+ * Past the depth limit the subtree is dropped rather than passed through: a value this function
+ * has not inspected must not reach a user-exportable file just because it sits deep in the args.
+ */
 export function redactQueryArg(value: unknown, depth = 0): unknown {
-  if (depth > 5 || value === null || typeof value !== "object") return value;
+  if (depth > 5) return "[truncated]";
   if (Array.isArray(value)) return value.map(item => redactQueryArg(item, depth + 1));
+  if (!isPlainObject(value)) return value;
 
   return Object.fromEntries(
     Object.entries(value).map(([key, entry]) => [

@@ -109,7 +109,7 @@ export function hashCustomHeaders(customHeaders?: Record<string, string>): strin
   // otherwise let two different header sets share one canonical string, and so one digest.
   const canonical = entries
     .map(([name, value]) => JSON.stringify([name.toLowerCase(), value]))
-    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+    .sort((a, b) => (a < b ? -1 : Number(a > b)))
     .join("\n");
 
   return bytesToHex(sha256(utf8ToBytes(canonical)));

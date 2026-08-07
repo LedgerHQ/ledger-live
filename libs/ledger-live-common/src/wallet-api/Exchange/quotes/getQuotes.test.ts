@@ -2,6 +2,13 @@ import BigNumber from "bignumber.js";
 
 import { getQuotes, type GetQuotesContext } from "./getQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
+import type { SwapQuotesDispatch } from "./state-manager/store";
+
+// `dispatch` only has to reach `fetchQuotes`, which never inspects it here. One assertion in this
+// helper keeps the suite from repeating it at every call site.
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockDispatch = () => jest.fn() as unknown as SwapQuotesDispatch;
+
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
@@ -81,7 +88,7 @@ const aggregatorError: RawQuoteError = {
 
 const emptyContext: GetQuotesContext = {
   accounts: [],
-  dispatch: jest.fn() as never,
+  dispatch: mockDispatch(),
   spotPrices: {},
   locale: "en",
   counterValueCurrency: "usd",
@@ -458,7 +465,7 @@ describe("getQuotes", () => {
 
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
         accounts: [],
-        dispatch: jest.fn() as never,
+        dispatch: mockDispatch(),
         spotPrices: {},
         locale: "en",
         counterValueCurrency: "usd",

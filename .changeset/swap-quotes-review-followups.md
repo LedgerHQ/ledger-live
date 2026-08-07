@@ -1,4 +1,5 @@
 ---
+"@domain/api-swap-quotes": minor
 "@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
