@@ -16,6 +16,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router";
+import { track } from "~/renderer/analytics/segment";
 import type { State } from "~/renderer/reducers";
 import createStore, { type ReduxStore } from "~/state-manager/configureStore";
 
@@ -29,6 +30,10 @@ jest.mock("LLD/hooks/useLazyOnboardingActions", () => ({
     handleConnect: mockHandleConnect,
     handleBuyDevice: mockHandleBuyDevice,
   }),
+}));
+
+jest.mock("~/renderer/analytics/segment", () => ({
+  track: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-dmk-desktop", () => {
@@ -47,6 +52,7 @@ type ConnectDeviceObserver = {
 
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
 const mockedConnectDevice = jest.mocked(connectDevice);
+const mockedTrack = jest.mocked(track);
 const mockDmk = { id: "dmk" } as unknown as NonNullable<ReturnType<typeof useDeviceManagementKit>>;
 
 let connectDeviceObserver: ConnectDeviceObserver | undefined;
@@ -54,6 +60,11 @@ let mockUnsubscribe: jest.Mock;
 
 const defaultDeviceConnectionParams: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
+};
+
+const layerABaseProperties = {
+  deviceUxV2: true,
+  sourceFlow: "swap",
 };
 
 function mockConnectDeviceSubscription() {
@@ -200,6 +211,71 @@ describe("useDeviceConnectionComponentLWDViewModel", () => {
 
     // THEN
     expect(result.current.state).toBe(discoveringState);
+  });
+
+  describe("GIVEN the Connect Device flow emits tracking states", () => {
+    it("WHEN Discovering and WaitingForSelectedDevice are observed THEN device_prompted fires once", () => {
+      // GIVEN
+      renderViewModel();
+
+      // WHEN
+      act(() =>
+        connectDeviceObserver?.next({
+          type: ConnectDeviceUIStateTypes.Discovering,
+          devices: [],
+        }),
+      );
+      act(() =>
+        connectDeviceObserver?.next({
+          type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
+          device: makeKnownDevice(),
+        }),
+      );
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_prompted", layerABaseProperties);
+    });
+
+    it("WHEN Connecting is observed repeatedly THEN device_connecting fires once with USB properties", () => {
+      // GIVEN
+      renderViewModel();
+      const connectingState: ConnectDeviceUIState = {
+        type: ConnectDeviceUIStateTypes.Connecting,
+        device: makeKnownDevice({ deviceModelId: DeviceModelId.stax }),
+      };
+
+      // WHEN
+      act(() => connectDeviceObserver?.next(connectingState));
+      act(() => connectDeviceObserver?.next(connectingState));
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_connecting", {
+        ...layerABaseProperties,
+        modelId: DeviceModelId.stax,
+        transport: "usb",
+        matchedDevice: DeviceModelId.stax,
+      });
+    });
+
+    it("WHEN a device connection succeeds THEN device_connected carries the model and USB transport", () => {
+      // GIVEN
+      renderViewModel();
+      const connectionResult = makeConnectionResult();
+      const wrappedOnConnected = mockedConnectDevice.mock.calls[0][0].onConnected;
+
+      // WHEN
+      act(() => wrappedOnConnected(connectionResult));
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledWith("device_connected", {
+        ...layerABaseProperties,
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        matchedDevice: DeviceModelId.nanoX,
+      });
+    });
   });
 
   it("GIVEN the view model is subscribed WHEN unmounting THEN it unsubscribes from connect device", () => {

@@ -175,8 +175,9 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
     });
   });
 
-  describe("Connect Device tracking helpers", () => {
-    it("GIVEN a Connect Device page WHEN inspecting constants THEN it exposes stable page names", () => {
+  describe("PAGE_CONNECT_DEVICE", () => {
+    it("GIVEN Connect Device pages WHEN inspecting constants THEN it exposes stable page names", () => {
+      // THEN
       expect(PAGE_CONNECT_DEVICE).toEqual({
         NoKnownDevice: "Connect Device - No Known Device",
         Discovering: "Connect Device - Discovering",
@@ -186,8 +187,11 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         ConnectionError: "Connect Device - Connection Error",
       });
     });
+  });
 
-    it("GIVEN a selected USB device WHEN tracking THEN it sends the selected model and USB transport", () => {
+  describe("trackDeviceSelected", () => {
+    it("GIVEN a selected USB device WHEN called THEN it tracks device_selected with the selected model and USB transport", () => {
+      // GIVEN
       const device: KnownDevice = {
         id: "device-id",
         name: "Ledger Stax",
@@ -195,8 +199,11 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         transport: webHidTransportIdentifier,
       };
 
+      // WHEN
       trackDeviceSelected({ sourceFlow: "swap", device, extraProperties: {} });
 
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
       expect(mockedTrack).toHaveBeenCalledWith("device_selected", {
         ...layerABaseProperties,
         sourceFlow: "swap",
@@ -204,54 +211,95 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         transport: "usb",
       });
     });
+  });
 
-    it("GIVEN Connect Device funnel data WHEN tracking THEN it sends the expected events and properties", () => {
+  describe("trackDevicePrompted", () => {
+    it("GIVEN a sourceFlow WHEN called THEN it tracks device_prompted with the Layer A base properties", () => {
+      // WHEN
       trackDevicePrompted({ sourceFlow: "swap", extraProperties: {} });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_prompted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+  });
+
+  describe("trackDeviceConnecting", () => {
+    it("GIVEN a sourceFlow modelId and transport WHEN called THEN it tracks device_connecting with matchedDevice", () => {
+      // WHEN
       trackDeviceConnecting({
         sourceFlow: "swap",
         modelId: DeviceModelId.nanoX,
         transport: "usb",
         extraProperties: {},
       });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_connecting", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        matchedDevice: DeviceModelId.nanoX,
+      });
+    });
+  });
+
+  describe("trackDeviceConnected", () => {
+    it("GIVEN a sourceFlow modelId and transport WHEN called THEN it tracks device_connected with matchedDevice", () => {
+      // WHEN
       trackDeviceConnected({
         sourceFlow: "swap",
         modelId: DeviceModelId.nanoX,
         transport: "usb",
         extraProperties: {},
       });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_connected", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        matchedDevice: DeviceModelId.nanoX,
+      });
+    });
+  });
+
+  describe("trackConnectDeviceButtonClicked", () => {
+    it("GIVEN a sourceFlow and button WHEN called THEN it tracks button_clicked", () => {
+      // WHEN
       trackConnectDeviceButtonClicked({
         sourceFlow: "swap",
         button: CONNECT_DEVICE_BUTTON.Retry,
         extraProperties: {},
       });
 
-      expect(mockedTrack).toHaveBeenNthCalledWith(1, "device_prompted", {
-        ...layerABaseProperties,
-        sourceFlow: "swap",
-      });
-      expect(mockedTrack).toHaveBeenNthCalledWith(2, "device_connecting", {
-        ...layerABaseProperties,
-        sourceFlow: "swap",
-        modelId: DeviceModelId.nanoX,
-        transport: "usb",
-        matchedDevice: DeviceModelId.nanoX,
-      });
-      expect(mockedTrack).toHaveBeenNthCalledWith(3, "device_connected", {
-        ...layerABaseProperties,
-        sourceFlow: "swap",
-        modelId: DeviceModelId.nanoX,
-        transport: "usb",
-        matchedDevice: DeviceModelId.nanoX,
-      });
-      expect(mockedTrack).toHaveBeenNthCalledWith(4, "button_clicked", {
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
         ...layerABaseProperties,
         sourceFlow: "swap",
         button: CONNECT_DEVICE_BUTTON.Retry,
       });
     });
+  });
 
-    it("GIVEN an unknown error and no transport WHEN mapping them THEN it preserves the expected values", () => {
+  describe("getTrackingTransport", () => {
+    it("GIVEN no transport WHEN mapping THEN it returns undefined", () => {
+      // THEN
       expect(getTrackingTransport(undefined)).toBeUndefined();
+    });
+  });
+
+  describe("getTrackingSubError", () => {
+    it("GIVEN an unknown error WHEN mapping THEN it returns Unknown", () => {
+      // THEN
       expect(getTrackingSubError("unknown" as never)).toBe("Unknown");
     });
   });
