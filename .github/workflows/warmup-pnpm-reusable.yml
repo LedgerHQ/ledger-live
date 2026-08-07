@@ -60,24 +60,9 @@ jobs:
           reshim: true
           experimental: true
 
-      - name: Set pnpm store dir
-        shell: bash
-        run: |
-          store_dir="${{ github.workspace }}/.pnpm-store"
-          # Runner images may set npm_config_store_dir globally; env beats project .npmrc.
-          pnpm config set store-dir "$store_dir" --location project
-          echo "PNPM_STORE_DIR=$store_dir" >> "$GITHUB_ENV"
-          echo "npm_config_store_dir=$store_dir" >> "$GITHUB_ENV"
-
       - name: Get pnpm store directory
         id: get-store-path
-        run: |
-          echo "store-path=$store_path" >> "$GITHUB_OUTPUT"
-          echo "Resolved pnpm store: $store_path"
-          expected="${{ github.workspace }}/.pnpm-store"
-          if [[ "$store_path" != "$expected"* ]]; then
-            echo "::warning::pnpm store path ($store_path) does not match expected ($expected)"
-          fi
+        run: echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
 
       - name: Resolve AWS role
         id: nx-remote-cache
