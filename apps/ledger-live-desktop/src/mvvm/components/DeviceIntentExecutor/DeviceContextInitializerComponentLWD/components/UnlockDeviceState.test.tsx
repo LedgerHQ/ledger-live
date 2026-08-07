@@ -1,5 +1,8 @@
 import React from "react";
-import { DeviceInteractionRequiredType } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceIntentTrackingProvider,
+  DeviceInteractionRequiredType,
+} from "@ledgerhq/live-dmk-shared";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import { initializerDevice } from "../testUtils";
@@ -9,11 +12,13 @@ describe("UnlockDeviceState", () => {
   it("GIVEN the unlock device state WHEN rendering THEN it renders the unlock title", () => {
     // WHEN
     render(
-      <UnlockDeviceState
-        state={{ type: DeviceInteractionRequiredType.UnlockDevice }}
-        device={initializerDevice}
-        onCancel={jest.fn()}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+        <UnlockDeviceState
+          state={{ type: DeviceInteractionRequiredType.UnlockDevice }}
+          device={initializerDevice}
+          onCancel={jest.fn()}
+        />
+      </DeviceIntentTrackingProvider>,
     );
 
     // THEN

@@ -1,5 +1,8 @@
 import React from "react";
-import { DeviceInteractionRequiredType } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceIntentTrackingProvider,
+  DeviceInteractionRequiredType,
+} from "@ledgerhq/live-dmk-shared";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 import { initializerDevice } from "../testUtils";
@@ -9,11 +12,13 @@ describe("AllowSecureConnectionState", () => {
   it("GIVEN the allow secure connection state WHEN rendering THEN it renders the pending action copy", () => {
     // WHEN
     render(
-      <AllowSecureConnectionState
-        state={{ type: DeviceInteractionRequiredType.AllowSecureConnection }}
-        device={initializerDevice}
-        onCancel={jest.fn()}
-      />,
+      <DeviceIntentTrackingProvider value={{ sourceFlow: "my_ledger" }}>
+        <AllowSecureConnectionState
+          state={{ type: DeviceInteractionRequiredType.AllowSecureConnection }}
+          device={initializerDevice}
+          onCancel={jest.fn()}
+        />
+      </DeviceIntentTrackingProvider>,
     );
 
     // THEN

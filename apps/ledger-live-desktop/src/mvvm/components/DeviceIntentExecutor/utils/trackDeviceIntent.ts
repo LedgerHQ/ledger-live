@@ -26,6 +26,27 @@ export const PAGE_CONNECT_DEVICE = {
   ConnectionError: "Connect Device - Connection Error",
 } as const;
 
+export const PAGE_CONNECT_APP = {
+  Loading: "Connect App - Loading",
+  InstallingApp: "Connect App - Installing App",
+  UnlockDevice: "Connect App - Unlock Device",
+  AllowSecureConnection: "Connect App - Allow Secure Connection",
+  ConfirmOpenApp: "Connect App - Confirm Open App",
+  DeviceDeprecatedWarning: "Connect App - Device Deprecated Warning",
+  OutdatedAppWarning: "Connect App - Outdated App Warning",
+  DeviceLocked: "Connect App - Device Locked",
+  UserRefused: "Connect App - User Refused",
+  DeviceBusy: "Connect App - Device Busy",
+  DeviceNotOnboarded: "Connect App - Device Not Onboarded",
+  UnsupportedFirmware: "Connect App - Unsupported Firmware",
+  UnsupportedApplication: "Connect App - Unsupported Application",
+  UnsupportedFeature: "Connect App - Unsupported Feature",
+  DeviceDeprecatedBlocking: "Connect App - Device Deprecated Blocking",
+  WrongDeviceForAccount: "Connect App - Wrong Device For Account",
+  OutOfStorage: "Connect App - Out Of Storage",
+  Error: "Connect App - Error",
+} as const;
+
 export const PAGE_DEVICE_ACTION = {
   Disconnected: "Device Action - Disconnected",
   UnknownIntentError: "Device Action - Unknown Intent Error",
@@ -48,9 +69,30 @@ export const CONNECT_DEVICE_BUTTON = {
   Retry: "Retry",
 } as const;
 
+export const CONNECT_APP_BUTTON = {
+  Continue: "Continue",
+  Cancel: "Cancel",
+  Retry: "Retry",
+  Close: "Close",
+  SetUpDevice: "Set Up Device",
+  UpdateFirmware: "Update Firmware",
+  ContactLedgerSupport: "Contact Ledger Support",
+  LearnMore: "Learn More",
+  DiscoverUpgradeProgram: "Discover Upgrade Program",
+  ManageApps: "Manage Apps",
+} as const;
+
 let isInTerminalConnectDeviceError = false;
 
 const DEVICEFLOW_FAILED_CLOSE_PAGES = new Set<string>([
+  PAGE_CONNECT_APP.DeviceNotOnboarded,
+  PAGE_CONNECT_APP.UnsupportedFirmware,
+  PAGE_CONNECT_APP.UnsupportedApplication,
+  PAGE_CONNECT_APP.UnsupportedFeature,
+  PAGE_CONNECT_APP.DeviceDeprecatedBlocking,
+  PAGE_CONNECT_APP.WrongDeviceForAccount,
+  PAGE_CONNECT_APP.OutOfStorage,
+  PAGE_CONNECT_APP.Error,
   PAGE_DEVICE_ACTION.Disconnected,
   PAGE_DEVICE_ACTION.UnknownIntentError,
   PAGE_DEVICE_ACTION.InvalidState,
@@ -233,6 +275,19 @@ export const trackConnectDeviceButtonClicked = (params: {
 }): void => {
   track("button_clicked", {
     ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+    button: params.button,
+  });
+};
+
+export const trackConnectAppButtonClicked = (params: {
+  sourceFlow: SourceFlow;
+  modelId: DeviceModelId;
+  button: string;
+  extraProperties: DeviceIntentTrackingProperties;
+}): void => {
+  track("button_clicked", {
+    ...getDeviceUxV2BaseProperties(params.sourceFlow, params.extraProperties),
+    modelId: params.modelId,
     button: params.button,
   });
 };
