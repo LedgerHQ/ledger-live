@@ -13,8 +13,8 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",
-    "invariant",
-    "got"
+    "got",
+    "invariant"
   ],
   "ignoreUnimported": [
     "src/bridge/bridge.fixture.ts",
@@ -22,10 +22,11 @@
     "src/bridge/transaction.ts",
     "src/config.ts",
     "src/errors.ts",
+    "src/supportedFeatures.ts",
     "src/test/bridgeDatasetTest.ts",
+    "src/test/context.ts",
     "src/test/index.ts",
     "src/types/assets.ts",
-    "src/supportedFeatures.ts",
     "src/utils/IconGenerator.ts",
     "src/utils/index.ts"
   ]

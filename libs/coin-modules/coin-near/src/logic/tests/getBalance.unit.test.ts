@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { BigNumber } from "bignumber.js";
 import { getAccount } from "../../network";
 import { getYoctoThreshold } from "../../logic";
@@ -62,7 +63,7 @@ describe("getBalance", () => {
   it("puts the native total first, so the framework reads it as the account balance", async () => {
     (getAccount as jest.Mock).mockResolvedValue(accountShape({ amount: ONE_NEAR }));
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockNearContext, ADDRESS);
 
     expect(balances[0].asset).toEqual({ type: "native" });
     expect(balances[0].stake).toBeUndefined();
@@ -73,7 +74,7 @@ describe("getBalance", () => {
     const shape = accountShape({ amount: ONE_NEAR });
     (getAccount as jest.Mock).mockResolvedValue(shape);
 
-    const [native] = await getBalance(ADDRESS);
+    const [native] = await getBalance(mockNearContext, ADDRESS);
 
     expect(native.locked).toBe(BigInt(RESERVE.toFixed(0)));
     expect(native.value - native.locked!).toBe(BigInt(shape.spendableBalance.toFixed(0)));
@@ -84,7 +85,7 @@ describe("getBalance", () => {
       accountShape({ amount: new BigNumber(0), reserve: RESERVE }),
     );
 
-    const [native] = await getBalance(ADDRESS);
+    const [native] = await getBalance(mockNearContext, ADDRESS);
 
     expect(native.value).toBe(0n);
     expect(native.locked).toBe(0n);
@@ -95,7 +96,7 @@ describe("getBalance", () => {
     const shape = accountShape({ amount });
     (getAccount as jest.Mock).mockResolvedValue(shape);
 
-    const [native] = await getBalance(ADDRESS);
+    const [native] = await getBalance(mockNearContext, ADDRESS);
 
     expect(native.value).toBe(BigInt(amount.toFixed(0)));
     expect(native.locked).toBe(BigInt(amount.toFixed(0)));
@@ -110,7 +111,7 @@ describe("getBalance", () => {
     });
     (getAccount as jest.Mock).mockResolvedValue(shape);
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockNearContext, ADDRESS);
 
     expect(balances).toHaveLength(2);
     expect(balances[0].value).toBe(BigInt(shape.balance.toFixed(0)));
@@ -129,7 +130,7 @@ describe("getBalance", () => {
     });
     (getAccount as jest.Mock).mockResolvedValue(shape);
 
-    const balances = await getBalance(ADDRESS);
+    const balances = await getBalance(mockNearContext, ADDRESS);
 
     expect(balances[0].value).toBe(BigInt(shape.balance.toFixed(0)));
     expect(balances[0].value - balances[0].locked!).toBe(BigInt(shape.spendableBalance.toFixed(0)));

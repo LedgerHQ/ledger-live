@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
@@ -15,6 +16,13 @@ export type SolanaConfig = {
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;
+
+/**
+ * The {@link Context} threaded through the coin-solana low layers (ADR-019).
+ *
+ * The free-form `Record` part carries a `currencyId` used to resolve the RPC endpoint.
+ */
+export type SolanaContext = Context<SolanaCoinConfig>;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<SolanaCoinConfig>) => void;

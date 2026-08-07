@@ -1,20 +1,15 @@
-import coinConfig from "../config";
+import type { TronCoinConfig } from "../config";
 import { lastBlock } from "./lastBlock";
 
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://tron.coin.ledger.com" },
+} as TronCoinConfig;
+
 describe("lastBlock", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(() => ({
-      status: {
-        type: "active",
-      },
-      explorer: {
-        url: "https://tron.coin.ledger.com",
-      },
-    }));
-  });
   it("returns last block info", async () => {
     // When
-    const result = await lastBlock();
+    const result = await lastBlock(mockConfig);
 
     // Then
     expect(result.hash?.length).toBeGreaterThan(0);

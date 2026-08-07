@@ -192,6 +192,7 @@ export type NodeApi = {
     transaction: { amount: BigNumber; data?: Buffer | null | undefined; recipient: string },
   ) => Promise<BigNumber>;
   getFeeData: (
+    config: EvmConfigInfo,
     currency: CryptoCurrency,
     transaction: { type?: number | undefined; feesStrategy?: string | null | undefined },
   ) => Promise<FeeData>;

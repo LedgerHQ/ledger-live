@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { getBlockHeaderAtHeight, getLastBlockHeader } from "../../network";
 import { getBlockInfo, toBlockInfo } from "../getBlockInfo";
 import { lastBlock } from "../lastBlock";
@@ -25,8 +26,8 @@ describe("getBlockInfo", () => {
   it("reads the header at the requested height", async () => {
     (getBlockHeaderAtHeight as jest.Mock).mockResolvedValue(HEADER);
 
-    await expect(getBlockInfo(140_000_000)).resolves.toEqual(toBlockInfo(HEADER));
-    expect(getBlockHeaderAtHeight).toHaveBeenCalledWith(140_000_000);
+    await expect(getBlockInfo(mockNearContext, 140_000_000)).resolves.toEqual(toBlockInfo(HEADER));
+    expect(getBlockHeaderAtHeight).toHaveBeenCalledWith(expect.anything(), 140_000_000);
   });
 });
 
@@ -36,7 +37,7 @@ describe("lastBlock", () => {
   it("reads the latest final header", async () => {
     (getLastBlockHeader as jest.Mock).mockResolvedValue(HEADER);
 
-    await expect(lastBlock()).resolves.toEqual(toBlockInfo(HEADER));
+    await expect(lastBlock(mockNearContext)).resolves.toEqual(toBlockInfo(HEADER));
     expect(getLastBlockHeader).toHaveBeenCalled();
   });
 });

@@ -1,23 +1,20 @@
-import { setupTestnetCoinConfig } from "../../test/fixtures";
+import { createFixtureConfig } from "../../test/fixtures";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
 import { lastBlock } from "./lastBlock";
 
 const CURRENCY = "concordium_testnet";
+const config = createFixtureConfig();
 
 describe("getBlock", () => {
-  beforeAll(() => {
-    setupTestnetCoinConfig();
-  });
-
   it("returns block info matching getBlockInfo and a well-formed transactions array", async () => {
     // A recent finalized block, backed off from the tip to avoid the not-yet-finalized head.
-    const tip = await lastBlock(CURRENCY);
+    const tip = await lastBlock(config, CURRENCY);
     const height = tip.height - 10;
 
     const [block, info] = await Promise.all([
-      getBlock(height, CURRENCY),
-      getBlockInfo(height, CURRENCY),
+      getBlock(config, height, CURRENCY),
+      getBlockInfo(config, height, CURRENCY),
     ]);
 
     expect(block.info).toEqual(info);

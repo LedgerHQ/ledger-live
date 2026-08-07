@@ -49,7 +49,7 @@ describe("getChainTag", () => {
       chainTag: 39,
     }));
 
-    expect(getChainTag()).toBe(39);
+    expect(getChainTag(getCoinConfig())).toBe(39);
   });
 
   it("falls back to mainnet when the currency config omits a chainTag", () => {
@@ -58,7 +58,7 @@ describe("getChainTag", () => {
       node: { url: "https://vechain.coin.ledger.com" },
     }));
 
-    expect(getChainTag()).toBe(MAINNET_CHAIN_TAG);
+    expect(getChainTag(getCoinConfig())).toBe(MAINNET_CHAIN_TAG);
   });
 
   it.each([-1, 256, 74.5, NaN])(
@@ -70,7 +70,7 @@ describe("getChainTag", () => {
         chainTag: invalid,
       }));
 
-      expect(getChainTag()).toBe(MAINNET_CHAIN_TAG);
+      expect(getChainTag(getCoinConfig())).toBe(MAINNET_CHAIN_TAG);
     },
   );
 });

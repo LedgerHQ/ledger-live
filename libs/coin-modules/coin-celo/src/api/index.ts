@@ -1,14 +1,18 @@
 import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
-import type { EvmCoinConfig, EvmConfig } from "@ledgerhq/coin-evm/config";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   Balance,
   BroadcastConfig,
   BufferTxData,
   CoinModuleApi,
+  Cursor,
   FeeEstimation,
   MemoNotSupported,
+  Page,
   TransactionIntent,
+  Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCeloClient } from "../network/client";
 import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
@@ -25,6 +29,8 @@ import { validateStakingIntent } from "./validateStakingIntent";
 // against the same source of truth instead of bare string literals.
 export type { CeloStakingType } from "./stakingIntent";
 
+type CeloContext = Context<EvmConfigInfo>;
+
 const prefixHex = (hex: string): `0x${string}` =>
   (hex.startsWith("0x") ? hex : `0x${hex}`) as `0x${string}`;
 
@@ -38,32 +44,62 @@ const prefixHex = (hex: string): `0x${string}` =>
  * `validateIntent` handles staking then delegates the rest to coin-evm.
  */
 export function createApi(
-  config: EvmConfig | (() => EvmCoinConfig),
   currencyId = "celo",
-): CoinModuleApi<MemoNotSupported, BufferTxData> {
-  const evmApi = createEvmApi(config, currencyId);
+): CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> {
+  const evmApi = createEvmApi(currencyId);
 
-  const api = {
-    ...evmApi,
-    craftTransaction,
-    estimateFees,
-    combine,
-    broadcast: (tx: string, _broadcastConfig?: BroadcastConfig): Promise<string> =>
+  // Bridge the gap between the built lib's MemoNotSupported-typed evmApi and the
+  // real v6 EvmConfigInfo-typed interface; the cast is safe because coin-evm
+  // already implements the v6 CoinModuleApi at the source level.
+  const typedEvmApi = evmApi as unknown as CoinModuleApi<
+    EvmConfigInfo,
+    MemoNotSupported,
+    BufferTxData
+  >;
+
+  const api: CoinModuleApi<EvmConfigInfo, MemoNotSupported, BufferTxData> & {
+    stakingSupported?: boolean;
+  } = {
+    ...typedEvmApi,
+    craftTransaction: (
+      _context: CeloContext,
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      options?: { customFees?: FeeEstimation },
+    ) => craftTransaction(intent, options?.customFees),
+    estimateFees: (
+      _context: CeloContext,
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+      _options?: { feeOption?: unknown },
+    ) => estimateFees(intent),
+    combine: (_context: CeloContext, tx: string, signature: string) => combine(tx, signature),
+    broadcast: (
+      _context: CeloContext,
+      tx: string,
+      _options?: { broadcastConfig?: BroadcastConfig },
+    ): Promise<string> =>
       getCeloClient().sendRawTransaction({ serializedTransaction: prefixHex(tx) }),
     // Surface staking positions via `getBalance().stake`; native/token balance still comes from coin-evm.
-    getBalance: makeGetBalance((address: string, options) => evmApi.getBalance(address, options)),
-    getStakes,
-    getRewards,
-    getValidators,
+    getBalance: makeGetBalance((_context: CeloContext, address: string, options) =>
+      typedEvmApi.getBalance(_context, address, options),
+    ),
+    getStakes: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
+      getStakes(address),
+    getRewards: (_context: CeloContext, address: string, _options?: { cursor?: Cursor }) =>
+      getRewards(address),
+    getValidators: (
+      _context: CeloContext,
+      _options?: { cursor?: Cursor },
+    ): Promise<Page<Validator>> => getValidators(),
     stakingSupported: true,
     validateIntent: (
+      context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
       balances: Balance[],
-      customFees?: FeeEstimation,
+      options?: { customFees?: FeeEstimation },
     ) =>
       isCeloStakingIntent(intent)
-        ? validateStakingIntent(intent, balances, customFees)
-        : evmApi.validateIntent(intent, balances, customFees),
+        ? validateStakingIntent(intent, balances, options?.customFees)
+        : typedEvmApi.validateIntent(context, intent, balances, options),
   };
 
   return api;

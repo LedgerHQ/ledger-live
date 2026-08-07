@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "../../network/node.mock";
@@ -46,7 +47,7 @@ describe("getStakes (MSW)", () => {
       is_account_unstaked_balance_available: false,
     });
 
-    const page = await getStakes(ADDRESS);
+    const page = await getStakes(mockNearContext, ADDRESS);
 
     expect(page.next).toBeUndefined();
     expect(page.items).toEqual([
@@ -69,7 +70,7 @@ describe("getStakes (MSW)", () => {
       ),
     );
 
-    const page = await getStakes(ADDRESS);
+    const page = await getStakes(mockNearContext, ADDRESS);
 
     expect(page.items).toEqual([]);
   });

@@ -30,7 +30,7 @@ describe("getEstimatedFees", () => {
   beforeAll(() => {
     LiveConfig.setConfig(cosmosConfig);
     cosmosCoinConfig.setCoinConfig(
-      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
     );
   });
 
@@ -71,7 +71,7 @@ describe("calculateFees", () => {
   beforeAll(() => {
     LiveConfig.setConfig(cosmosConfig);
     cosmosCoinConfig.setCoinConfig(
-      currency => LiveConfig.getValueByKey(`config_currency_${currency?.id}`) ?? {},
+      currencyId => LiveConfig.getValueByKey(`config_currency_${currencyId}`) ?? {},
     );
   });
   // Create fresh copies for each test to avoid cross-test pollution

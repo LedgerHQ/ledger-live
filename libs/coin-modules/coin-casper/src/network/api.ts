@@ -2,36 +2,36 @@ import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
-import { getCoinConfig } from "../config";
 import {
   CASPER_INDEXER_MAX_PAGE_SIZE,
   NodeErrorCodeAccountNotFound,
   NodeErrorCodeQueryFailed,
 } from "../constants";
+import type { CasperConfig } from "../types/config";
 import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "../types/network";
 
-const getCasperIndexerURL = (path: string): string => {
-  const baseUrl = getCoinConfig().infra.API_CASPER_INDEXER;
+const getCasperIndexerURL = (config: CasperConfig, path: string): string => {
+  const baseUrl = config.infra.API_CASPER_INDEXER;
   if (!baseUrl) throw new Error("API base URL not available");
 
   return new URL(path, baseUrl).toString();
 };
 
-const getCasperNodeURL = (): string => {
-  const baseUrl = getCoinConfig().infra.API_CASPER_NODE_ENDPOINT;
+const getCasperNodeURL = (config: CasperConfig): string => {
+  const baseUrl = config.infra.API_CASPER_NODE_ENDPOINT;
   if (!baseUrl) throw new Error("API base URL not available");
 
   return baseUrl;
 };
 
-export const getCasperNodeRpcClient = (): RpcClient => {
-  const url = getCasperNodeURL();
+export const getCasperNodeRpcClient = (config: CasperConfig): RpcClient => {
+  const url = getCasperNodeURL(config);
   const handler = new HttpHandler(url);
   return new RpcClient(handler);
 };
 
-const casperIndexerWrapper = async <T>(path: string) => {
-  const url = getCasperIndexerURL(path);
+const casperIndexerWrapper = async <T>(config: CasperConfig, path: string) => {
+  const url = getCasperIndexerURL(config, path);
 
   try {
     const rawResponse = await network<IndexerResponseRoot<T>>({
@@ -52,12 +52,13 @@ const casperIndexerWrapper = async <T>(path: string) => {
 };
 
 export const fetchAccountStateInfo = async (
+  config: CasperConfig,
   publicKey: string,
 ): Promise<{
   purseUref: string | undefined;
   accountHash: string | undefined;
 }> => {
-  const client = getCasperNodeRpcClient();
+  const client = getCasperNodeRpcClient(config);
   try {
     const { account } = await client.getAccountInfo(
       null,
@@ -84,8 +85,8 @@ export const fetchAccountStateInfo = async (
   }
 };
 
-export const fetchBalance = async (purseUref: string): Promise<BigNumber> => {
-  const client = getCasperNodeRpcClient();
+export const fetchBalance = async (config: CasperConfig, purseUref: string): Promise<BigNumber> => {
+  const client = getCasperNodeRpcClient(config);
   try {
     const { stateRootHash } = await client.getStateRootHashLatest();
     const balance = await client.getBalanceByStateRootHash(purseUref, stateRootHash.toHex());
@@ -96,8 +97,10 @@ export const fetchBalance = async (purseUref: string): Promise<BigNumber> => {
   }
 };
 
-export const fetchLastBlock = async (): Promise<{ height: number; hash: string; time: Date }> => {
-  const client = getCasperNodeRpcClient();
+export const fetchLastBlock = async (
+  config: CasperConfig,
+): Promise<{ height: number; hash: string; time: Date }> => {
+  const client = getCasperNodeRpcClient(config);
   try {
     const { block } = await client.getLatestBlock();
     return {
@@ -111,8 +114,8 @@ export const fetchLastBlock = async (): Promise<{ height: number; hash: string; 
   }
 };
 
-export const fetchChainspecToml = async (): Promise<string> => {
-  const client = getCasperNodeRpcClient();
+export const fetchChainspecToml = async (config: CasperConfig): Promise<string> => {
+  const client = getCasperNodeRpcClient(config);
   try {
     const { chainspecBytes } = await client.getChainspec();
     const hex = chainspecBytes.chainspecBytes;
@@ -132,25 +135,30 @@ export const fetchChainspecToml = async (): Promise<string> => {
  * Accounts with a very large feed are refused outright with a 403 `access_denied`.
  */
 export const fetchTxsPage = async (
+  config: CasperConfig,
   addr: string,
   page: number,
 ): Promise<IndexerResponseRoot<ITxnHistoryData>> =>
   casperIndexerWrapper<ITxnHistoryData>(
+    config,
     `accounts/${addr}/ledgerlive-deploys?page=${page}&page_size=${CASPER_INDEXER_MAX_PAGE_SIZE}`,
   );
 
-export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
-  const first = await fetchTxsPage(addr, 1);
+export const fetchTxs = async (config: CasperConfig, addr: string): Promise<ITxnHistoryData[]> => {
+  const first = await fetchTxsPage(config, addr, 1);
   const txs = [...first.data];
 
   for (let page = 2; page <= first.page_count; page++) {
-    txs.push(...(await fetchTxsPage(addr, page)).data);
+    txs.push(...(await fetchTxsPage(config, addr, page)).data);
   }
   return txs;
 };
 
-export const broadcastTx = async (transaction: Transaction): Promise<string> => {
-  const client = getCasperNodeRpcClient();
+export const broadcastTx = async (
+  config: CasperConfig,
+  transaction: Transaction,
+): Promise<string> => {
+  const client = getCasperNodeRpcClient(config);
   try {
     const response = await client.putTransaction(transaction);
     return response.transactionHash.toHex();

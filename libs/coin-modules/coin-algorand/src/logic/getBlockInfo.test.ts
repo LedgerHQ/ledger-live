@@ -1,5 +1,6 @@
 import * as network from "../network";
 import { getBlockInfo } from "./getBlockInfo";
+import { mockAlgorandContext, mockAlgorandConfig } from "../test/context";
 
 jest.mock("../network");
 
@@ -23,10 +24,10 @@ describe("getBlockInfo", () => {
     mockGetBlock.mockResolvedValue(mockBlockData);
 
     // When
-    const result = await getBlockInfo(height);
+    const result = await getBlockInfo(mockAlgorandContext, height);
 
     // Then
-    expect(mockGetBlock).toHaveBeenCalledWith(height);
+    expect(mockGetBlock).toHaveBeenCalledWith(mockAlgorandConfig, height);
     expect(result).toEqual({
       height,
       hash: "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=",
@@ -48,7 +49,7 @@ describe("getBlockInfo", () => {
     mockGetBlock.mockResolvedValue(mockBlockData);
 
     // When
-    const result = await getBlockInfo(height);
+    const result = await getBlockInfo(mockAlgorandContext, height);
 
     // Then
     expect(result.time).toEqual(new Date(unixTimestamp * 1000));
@@ -61,7 +62,7 @@ describe("getBlockInfo", () => {
     mockGetBlock.mockRejectedValue(error);
 
     // When/Then
-    await expect(getBlockInfo(height)).rejects.toThrow("Block not found");
-    expect(mockGetBlock).toHaveBeenCalledWith(height);
+    await expect(getBlockInfo(mockAlgorandContext, height)).rejects.toThrow("Block not found");
+    expect(mockGetBlock).toHaveBeenCalledWith(mockAlgorandConfig, height);
   });
 });

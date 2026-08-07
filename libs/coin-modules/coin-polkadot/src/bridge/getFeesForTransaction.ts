@@ -1,6 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
 import { POLKADOT_NULL_ADDRESS } from "../constants";
 import { estimateFees } from "../logic";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
@@ -33,8 +34,9 @@ export default async function getEstimatedFees({
     }), // Remove fees if present since we are fetching fees
   };
   const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
+  const config = coinConfig.getCoinConfig(account.currency.id);
 
   const tx = await buildTransaction(account, t);
-  const fees = await estimateFees(tx, currency);
+  const fees = await estimateFees(config, tx, currency);
   return new BigNumber(fees.toString());
 }

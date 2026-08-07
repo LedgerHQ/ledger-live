@@ -5,7 +5,7 @@ import {
   getCryptoAssetsStore,
   setCryptoAssetsStore,
 } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import { setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import evmBridge, { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./api";
 
@@ -16,9 +16,6 @@ describe("evm bridge", () => {
   const seiEvm = getCryptoCurrencyById("sei_evm");
 
   beforeAll(() => {
-    setCoinConfig(() => ({
-      info: { explorer: { type: "ledger" } } as never,
-    }));
     const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
@@ -283,10 +280,16 @@ describe("evm bridge", () => {
     });
 
     it("exposes refreshOperations only for explorer-less chains", () => {
-      setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } as never }));
+      // The bridge gates refreshOperations on `getCurrencyConfiguration` (the live-common
+      // LiveConfig source), read at bridge-assembly time — not on coin-evm's setCoinConfig.
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { explorer: { type: "ledger" } } },
+      } as never);
       expect(evmBridge(ethereum)).not.toHaveProperty("refreshOperations");
 
-      setCoinConfig(() => ({ info: { explorer: { type: "none" } } as never }));
+      LiveConfig.setConfig({
+        config_currency_ethereum: { type: "object", default: { explorer: { type: "none" } } },
+      } as never);
       expect(evmBridge(ethereum).refreshOperations).toEqual(expect.any(Function));
     });
   });

@@ -1,5 +1,6 @@
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import suiConfig from "../config";
 import { craftTransaction } from "../logic";
 import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
 import getResolution from "../signer/getResolution";
@@ -30,6 +31,7 @@ export const buildTransaction = async (
   const resolution = getResolution(transaction, deviceModelId, certificateSignatureKind);
 
   return craftTransaction(
+    suiConfig.getCoinConfig(account.currency.id),
     {
       intentType: "transaction",
       amount: BigInt(amount.toString()),

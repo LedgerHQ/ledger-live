@@ -1,3 +1,5 @@
+import { mockNearContext } from "../../test/context";
+import { setMockCoinConfig } from "../../test/coinConfig";
 import type {
   StakingTransactionIntent,
   TransactionIntent,
@@ -67,11 +69,13 @@ const bridgeBytes = async (tx: Transaction): Promise<string> =>
   Buffer.from((await buildTransaction(account, tx, PUBLIC_KEY)).encode()).toString("base64");
 
 const apiBytes = async (intent: TransactionIntent | StakingTransactionIntent): Promise<string> =>
-  (await craftTransaction(intent)).transaction;
+  (await craftTransaction(mockNearContext, intent)).transaction;
 
 describe("craftTransaction vs buildTransaction (byte parity)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // buildTransaction (classic bridge path) resolves config from the getCoinConfig() singleton.
+    setMockCoinConfig();
     (getAccessKey as jest.Mock).mockResolvedValue({ nonce: NONCE, block_hash: BLOCK_HASH });
   });
 

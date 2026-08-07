@@ -1,10 +1,8 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import coinConfig from "../config";
+import type { BoilerplateCoinConfig } from "../config";
 import { SimulationError } from "../types/errors";
 import { AccountInfoResponse, SubmitReponse } from "./types";
-
-const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
 
 // txPayload needs to be unsigned
 export const simulate = async (serializedTx: string): Promise<number> => {
@@ -68,12 +66,15 @@ export const submit = async (signedTx: string): Promise<SubmitReponse> => {
   return data;
 };
 
-export const getAccountInfo = async (address: string): Promise<AccountInfoResponse> => {
+export const getAccountInfo = async (
+  config: BoilerplateCoinConfig,
+  address: string,
+): Promise<AccountInfoResponse> => {
   const {
     data: { result },
   } = await network<{ result: AccountInfoResponse }>({
     method: "POST",
-    url: getNodeUrl(),
+    url: config.nodeUrl,
     data: {
       method: "account_info",
       params: [

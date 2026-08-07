@@ -7,7 +7,8 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@ledgerhq/ledger-wallet-framework/types";
 import BigNumber from "bignumber.js";
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import type { EvmConfigInfo, EvmContext } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { GasEstimationError } from "../errors";
 import { getGasTracker } from "../network/gasTracker";
 import { getNodeApi } from "../network/node";
@@ -52,25 +53,20 @@ describe("estimateFees", () => {
   };
 
   const nodeApiMock = mockNodeApi();
+  const context: EvmContext = createMockEvmContext({
+    gasTracker: { type: "ledger", explorerId: "eth" },
+  } as Partial<EvmConfigInfo>);
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
     mockGetNodeApi.mockReturnValue(nodeApiMock);
-
-    setCoinConfig(
-      () =>
-        ({
-          info: {
-            gasTracker: { type: "ledger", explorerId: "eth" },
-          },
-        }) as unknown as EvmCoinConfig,
-    );
   });
 
   it("does not try to estimate with an invalid address and returns 0 as fallback", async () => {
     expect(
       await estimateFees(
+        context,
         {} as CryptoCurrency,
         {
           type: "send-legacy",
@@ -86,6 +82,7 @@ describe("estimateFees", () => {
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -182,6 +179,7 @@ describe("estimateFees", () => {
     });
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -244,6 +242,7 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -274,6 +273,7 @@ describe("estimateFees", () => {
     nodeApiMock.getGasEstimation.mockResolvedValue(new BigNumber("21000"));
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -315,6 +315,7 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -353,6 +354,7 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -392,6 +394,7 @@ describe("estimateFees", () => {
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("optimism"),
@@ -434,6 +437,7 @@ describe("estimateFees", () => {
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("optimism"),
@@ -467,6 +471,7 @@ describe("estimateFees", () => {
     nodeApiMock.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("optimism"),
@@ -518,6 +523,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("sei_evm"),
@@ -559,6 +565,7 @@ describe("estimateFees", () => {
       useAllAmount: true,
     };
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("sei_evm"),
@@ -584,6 +591,7 @@ describe("estimateFees", () => {
     };
 
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("sei_evm"),
@@ -618,6 +626,7 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
+      context,
       {
         ...mockCurrency,
         id: CryptoCurrencyIdSchema.parse("sei_evm"),
@@ -646,6 +655,7 @@ describe("estimateFees", () => {
     nodeApiMock.getTransactionCount.mockResolvedValue(42);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",
@@ -686,6 +696,7 @@ describe("estimateFees", () => {
     mockGetGasTracker.mockReturnValue(null);
 
     const result = await estimateFees(
+      context,
       mockCurrency,
       {
         intentType: "transaction",

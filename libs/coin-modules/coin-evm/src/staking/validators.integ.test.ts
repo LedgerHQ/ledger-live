@@ -1,4 +1,4 @@
-import { EvmCoinConfig, setCoinConfig } from "../config";
+import type { EvmCoinConfig } from "../config";
 import { getValidators } from "./validators";
 
 describe("getValidators", () => {
@@ -37,9 +37,7 @@ describe("getValidators", () => {
       } as EvmCoinConfig,
     ],
   ])("fetches validators on '%s'", async (currencyId, config) => {
-    setCoinConfig(() => config);
-
-    const firstPage = await getValidators(currencyId);
+    const firstPage = await getValidators(config.info, currencyId);
     expect(firstPage.items.length).toBeGreaterThan(0);
 
     const validator = firstPage.items[0];

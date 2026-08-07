@@ -6,7 +6,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import type { Page } from "@ledgerhq/coin-module-framework/api/index";
 import type { AssetInfo, Stake, Validator } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -63,14 +63,17 @@ type ResolvedContext = {
   contractAddress: string;
 };
 
-const resolveContext = (currencyId: string): ResolvedContext | undefined => {
+const resolveContext = (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): ResolvedContext | undefined => {
   const config = STAKING_CONTRACTS[currencyId];
   if (!config) return undefined;
 
   const abi = getStakingABI(currencyId);
   if (!abi) return undefined;
 
-  const node = getCoinConfig(currencyId).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return undefined;
 
   try {
@@ -181,8 +184,11 @@ const fetchValidatorDetails = async (
   return items;
 };
 
-const fetchValidators = async (currencyId: string): Promise<Page<Validator>> => {
-  const ctx = resolveContext(currencyId);
+const fetchValidators = async (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): Promise<Page<Validator>> => {
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return { items: [], next: undefined };
 
   try {
@@ -278,11 +284,12 @@ const toStake = (
 };
 
 export const fetchSomniaStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
   currency: CryptoCurrency,
 ): Promise<Stake[]> => {
-  const ctx = resolveContext(currency.id);
+  const ctx = resolveContext(evmConfig, currency.id);
   if (!ctx) return [];
 
   try {

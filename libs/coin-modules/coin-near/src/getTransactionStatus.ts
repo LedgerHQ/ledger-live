@@ -11,6 +11,7 @@ import {
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountDetails } from "./network";
+import { getCoinConfig } from "./config";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 import {
   NearNewAccountWarning,
@@ -132,7 +133,7 @@ const getSendTransactionStatus = async (
       currencyName: account.currency.name,
     });
   } else {
-    const accountDetails = await fetchAccountDetails(transaction.recipient);
+    const accountDetails = await fetchAccountDetails(getCoinConfig(), transaction.recipient);
 
     if (!accountDetails) {
       recipientIsNewAccount = true;

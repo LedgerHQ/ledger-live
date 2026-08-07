@@ -14,6 +14,7 @@ import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import { getCurrentSuiPreloadData } from "@ledgerhq/coin-sui/preload";
 import { getStakingExtraByDigest } from "@ledgerhq/coin-sui/getStakingExtraByDigest";
+import suiCoinConfig from "@ledgerhq/coin-sui/config";
 import { OperationType } from "@ledgerhq/types-live";
 
 export function useSuiMappedStakingPositions(account: SuiAccount) {
@@ -59,7 +60,7 @@ export function useGetExtraDetails(
   useEffect(() => {
     if (!isStakingOp || synced || fetched?.digest === digest) return;
     let cancelled = false;
-    getStakingExtraByDigest(digest, type, currencyId).then(result => {
+    getStakingExtraByDigest(suiCoinConfig.getCoinConfig(currencyId), digest, type).then(result => {
       if (cancelled || !result) return;
       setFetched({ digest, extra: result });
     });

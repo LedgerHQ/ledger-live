@@ -71,7 +71,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr", currency);
+    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -123,7 +123,7 @@ describe("getAccount", () => {
     const lockedBalance = new BigNumber(balanceResponseStub.reserved!);
     const computedBalance = new BigNumber(balanceResponseStub.free!).plus(lockedBalance);
 
-    const account = await getAccount("addr", currency);
+    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -217,7 +217,7 @@ describe("getAccount", () => {
       .plus(lockedBalance.minus(unlockingBalance))
       .plus(unlockingBalance.minus(unlockedBalance));
 
-    const account = await getAccount("addr", currency);
+    const account = await getAccount(coinConfig.getCoinConfig(currency.id), "addr", currency);
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: computedBalance,
@@ -268,7 +268,7 @@ describe("getBalances", () => {
       }),
     );
 
-    const account = await getBalances("addr");
+    const account = await getBalances(coinConfig.getCoinConfig(currency.id), "addr");
     expect(account).toMatchObject({
       blockHeight: Number(balanceResponseStub.at!.height),
       balance: new BigNumber(balanceResponseStub.free!),
@@ -300,7 +300,10 @@ describe("getRegistry", () => {
   });
 
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry(currency);
+    const { registry, extrinsics } = await getRegistry(
+      coinConfig.getCoinConfig(currency.id),
+      currency,
+    );
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });
@@ -329,7 +332,13 @@ describe("getMetadata", () => {
     const includedInExtrinsic = "0xf50020000001";
     const includedInSignedData = "0x" + "aa".repeat(105);
 
-    const result = await getMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+    const result = await getMetadata(
+      coinConfig.getCoinConfig(currency.id),
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+      currency,
+    );
 
     expect(result).toEqual({ metadataBlob: "0xdeadbeef", metadataHash: "0x1234" });
   });
@@ -356,7 +365,13 @@ describe("getMetadata", () => {
     const includedInExtrinsic = "0xf50004000001";
     const includedInSignedData = "0x" + "bb".repeat(105);
 
-    await getMetadata(callData, includedInExtrinsic, includedInSignedData, currency);
+    await getMetadata(
+      coinConfig.getCoinConfig(currency.id),
+      callData,
+      includedInExtrinsic,
+      includedInSignedData,
+      currency,
+    );
 
     expect(capturedBody).toEqual({
       callData,

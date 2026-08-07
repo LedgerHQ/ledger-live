@@ -12,7 +12,7 @@ import {
 } from "../../common-logic";
 import { estimateGas } from "../../common-logic/estimateGas";
 import { getThorClient } from "../../common-logic/getThorClient";
-import { getChainTag } from "../../config";
+import { getChainTag, type VechainContext, type VechainCurrencyConfig } from "../../config";
 import { getAccount, getBlockRef } from "../../network";
 import type { VechainSDKTransactionBody, VechainSDKTransactionClause } from "../../types";
 
@@ -28,16 +28,21 @@ function isTokenAsset(intent: TransactionIntent): boolean {
   return intent.asset.type !== "native";
 }
 
-async function resolveAmount(intent: TransactionIntent, isToken: boolean): Promise<BigNumber> {
+async function resolveAmount(
+  config: VechainCurrencyConfig,
+  intent: TransactionIntent,
+  isToken: boolean,
+): Promise<BigNumber> {
   if (!intent.useAllAmount) {
     return new BigNumber(intent.amount.toString());
   }
 
-  const { balance, energy } = await getAccount(intent.sender);
+  const { balance, energy } = await getAccount(config, intent.sender);
   return new BigNumber((isToken ? energy : balance) || "0");
 }
 
 async function resolveGasFees(
+  config: VechainCurrencyConfig,
   clauses: VechainSDKTransactionClause[],
   sender: string,
   customFees?: FeeEstimation,
@@ -57,8 +62,8 @@ async function resolveGasFees(
     };
   }
 
-  const gasResult = await estimateGas(clauses, sender);
-  const thorClient = getThorClient();
+  const gasResult = await estimateGas(config, clauses, sender);
+  const thorClient = getThorClient(config);
   const body = await thorClient.transactions.buildTransactionBody(clauses, gasResult.totalGas, {});
 
   // Partial override: apply each provided field individually over the estimate, so e.g. a
@@ -75,6 +80,7 @@ async function resolveGasFees(
 // Craft an unsigned single-clause Thor tx (VET transfer, or VIP-180 transfer for VTHO). The returned
 // transaction is the JSON VechainSDKTransactionBody that combine() parses back — keep them in sync.
 export async function craftTransaction(
+  context: VechainContext,
   intent: TransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -87,8 +93,9 @@ export async function craftTransaction(
     throw new Error("vechain: invalid sender address");
   }
 
+  const config = await context.config();
   const isToken = isTokenAsset(intent);
-  let amount = await resolveAmount(intent, isToken);
+  let amount = await resolveAmount(config, intent, isToken);
   if (amount.lte(0)) {
     throw new Error("vechain: transaction amount must be positive");
   }
@@ -98,8 +105,8 @@ export async function craftTransaction(
     : await calculateClausesVet(intent.recipient, amount);
 
   const [{ gas, maxFeePerGas, maxPriorityFeePerGas }, blockRef] = await Promise.all([
-    resolveGasFees(clauses, intent.sender, customFees),
-    getBlockRef(),
+    resolveGasFees(config, clauses, intent.sender, customFees),
+    getBlockRef(config),
   ]);
 
   const fee = new BigNumber(maxFeePerGas).times(gas);
@@ -113,7 +120,7 @@ export async function craftTransaction(
   }
 
   const body: VechainSDKTransactionBody = {
-    chainTag: getChainTag(),
+    chainTag: getChainTag(config),
     blockRef,
     expiration: EXPIRATION,
     clauses,

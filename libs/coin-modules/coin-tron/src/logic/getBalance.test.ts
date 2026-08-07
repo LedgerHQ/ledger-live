@@ -1,3 +1,4 @@
+import type { TronCoinConfig } from "../config";
 import BigNumber from "bignumber.js";
 import { fetchTronAccount } from "../network";
 import type { AccountTronAPI } from "../network/types";
@@ -26,6 +27,11 @@ const baseAccount: AccountTronAPI = {
   balance: 1781772,
   trc20: [],
 };
+
+const mockConfig = {
+  status: { type: "active" },
+  explorer: { url: "https://api.trongrid.io" },
+} as TronCoinConfig;
 
 describe("computeBalance", () => {
   it("returns only the balance when no resources are frozen", () => {
@@ -183,10 +189,10 @@ describe("getBalance", () => {
   it("returns a zeroed native balance when the account is inactive", async () => {
     mockedFetchTronAccount.mockResolvedValueOnce([]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 0n }]);
-    expect(mockedFetchTronAccount).toHaveBeenCalledWith(address);
+    expect(mockedFetchTronAccount).toHaveBeenCalledWith(mockConfig, address);
   });
 
   it("returns native + trc10 + trc20 balances", async () => {
@@ -205,7 +211,7 @@ describe("getBalance", () => {
       },
     ]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27_781_772n },
@@ -239,7 +245,7 @@ describe("getBalance", () => {
   it("returns only the native balance when there is no assetV2 nor trc20", async () => {
     mockedFetchTronAccount.mockResolvedValueOnce([baseAccount]);
 
-    const balance = await getBalance(address);
+    const balance = await getBalance(mockConfig, address);
 
     expect(balance).toEqual([{ asset: { type: "native" }, value: 1_781_772n }]);
   });

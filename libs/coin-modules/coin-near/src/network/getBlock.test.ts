@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../test/coinConfig";
 import { getBlockHeaderAtHeight, getLastBlockHeader } from "./getBlock";
+import { mockNearConfig } from "../test/context";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 
 const HEADER = { height: 140_000_000, hash: "BlockHash1", timestamp: 1_750_000_000_000_000_000 };
@@ -30,7 +31,7 @@ describe("getBlock", () => {
     let params: Record<string, unknown> | undefined;
     mockBlock(p => (params = p));
 
-    await expect(getLastBlockHeader()).resolves.toEqual(HEADER);
+    await expect(getLastBlockHeader(mockNearConfig)).resolves.toEqual(HEADER);
     expect(params).toEqual({ finality: "final" });
   });
 
@@ -38,7 +39,7 @@ describe("getBlock", () => {
     let params: Record<string, unknown> | undefined;
     mockBlock(p => (params = p));
 
-    await expect(getBlockHeaderAtHeight(140_000_000)).resolves.toEqual(HEADER);
+    await expect(getBlockHeaderAtHeight(mockNearConfig, 140_000_000)).resolves.toEqual(HEADER);
     expect(params).toEqual({ block_id: 140_000_000 });
   });
 
@@ -46,7 +47,7 @@ describe("getBlock", () => {
     "rejects the invalid height %p without a request",
     async height => {
       // No handler is registered, so a request would fail the suite on an unhandled call.
-      await expect(getBlockHeaderAtHeight(height)).rejects.toThrow(
+      await expect(getBlockHeaderAtHeight(mockNearConfig, height)).rejects.toThrow(
         `invalid block height ${height}`,
       );
     },
@@ -59,6 +60,6 @@ describe("getBlock", () => {
       ),
     );
 
-    await expect(getLastBlockHeader()).rejects.toThrow("DB Not Found Error");
+    await expect(getLastBlockHeader(mockNearConfig)).rejects.toThrow("DB Not Found Error");
   });
 });

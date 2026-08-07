@@ -1,10 +1,15 @@
 import type { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/index";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { createApi } from ".";
-import { type CardanoConfig } from "../config";
+import { type CardanoCoinConfig, type CardanoConfig } from "../config";
 
-type TokenAsset = Extract<AssetInfo, { type: "token" }>;
+type TokenAsset = Extract<AssetInfo, { assetReference?: string }>;
 
 const config: CardanoConfig = { maxFeesWarning: 0, maxFeesError: 0 };
+const mockCtx: Context<CardanoCoinConfig> = {
+  config: async () => ({ ...config, status: { type: "active" } }),
+  logger: () => {},
+};
 
 // A real mainnet address that holds native tokens, exercises both the native-ADA and token
 // branches of getBalance through the public CoinModule API surface.
@@ -14,11 +19,11 @@ const TOKEN_HOLDING_ADDRESS =
 describe("getBalance (integration)", () => {
   // Exercise the API surface (createApi), not the logic function directly — this also covers
   // the rejectBalanceOptions wrapper that guards the public contract.
-  const api = createApi(config, "cardano");
+  const api = createApi("cardano");
   let balances: Balance[];
 
   beforeAll(async () => {
-    balances = await api.getBalance(TOKEN_HOLDING_ADDRESS);
+    balances = await api.getBalance(mockCtx, TOKEN_HOLDING_ADDRESS);
   }, 30000);
 
   it("returns the native ADA balance as the first entry", () => {
@@ -48,7 +53,7 @@ describe("getBalance (integration)", () => {
   });
 
   it("rejects unsupported balance options instead of silently dropping them", async () => {
-    await expect(api.getBalance(TOKEN_HOLDING_ADDRESS, {} as never)).rejects.toThrow(
+    await expect(api.getBalance(mockCtx, TOKEN_HOLDING_ADDRESS, {} as never)).rejects.toThrow(
       "getBalance does not support the options parameter",
     );
   });

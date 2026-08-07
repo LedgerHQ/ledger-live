@@ -13,6 +13,7 @@ import {
   getMockedERC20TokenCurrency,
   getMockedHTSTokenCurrency,
 } from "../test/fixtures/currency.fixture";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { getMockedERC20TokenTransfer } from "../test/fixtures/hgraph.fixture";
 import {
   getMockedMirrorAccount,
@@ -52,6 +53,7 @@ jest.mock("./utils", () => ({
 
 describe("listOperationsV2", () => {
   const mockCurrency = getMockedCurrency();
+  const mockConfig = getMockedConfig();
   const mockMirrorAccount = getMockedMirrorAccount();
   const mockSyntheticBlock: SyntheticBlock = {
     blockHeight: 1000000,
@@ -94,7 +96,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -110,7 +112,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: null,
@@ -119,7 +121,7 @@ describe("listOperationsV2", () => {
     });
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledTimes(1);
     expect(hgraphClient.getERC20Transfers).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       order: mockOrder,
@@ -152,7 +154,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -216,7 +218,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -309,7 +311,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -402,7 +404,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -468,7 +470,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -503,7 +505,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -557,7 +559,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -604,7 +606,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -652,7 +654,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -682,7 +684,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    await listOperations({
+    await listOperations(mockConfig, {
       limit: customLimit,
       order: customOrder,
       cursor: lastPagingToken,
@@ -699,7 +701,7 @@ describe("listOperationsV2", () => {
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
-      configOrCurrencyId: mockCurrency.id,
+      configOrCurrencyId: mockConfig,
       address: mockMirrorAccount.account,
       fetchAllPages: true,
       pagingToken: lastPagingToken,
@@ -729,7 +731,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -770,7 +772,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -812,7 +814,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       address: mockMirrorAccount.account,
@@ -898,7 +900,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -961,7 +963,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1016,7 +1018,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(mockStakingAnalysis);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1076,7 +1078,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1121,7 +1123,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1187,7 +1189,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1258,7 +1260,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1310,7 +1312,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1350,7 +1352,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1388,7 +1390,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1461,7 +1463,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1533,7 +1535,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1590,7 +1592,7 @@ describe("listOperationsV2", () => {
       nextCursor: null,
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1667,7 +1669,7 @@ describe("listOperationsV2", () => {
       getTokensSyncHash: async () => "",
     });
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1703,7 +1705,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,
@@ -1735,7 +1737,7 @@ describe("listOperationsV2", () => {
     });
     (networkUtils.analyzeStakingOperation as jest.Mock).mockResolvedValue(null);
 
-    const result = await listOperations({
+    const result = await listOperations(mockConfig, {
       limit: mockLimit,
       order: mockOrder,
       currencyId: mockCurrency.id,

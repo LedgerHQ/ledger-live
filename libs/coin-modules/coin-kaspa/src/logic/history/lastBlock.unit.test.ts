@@ -1,4 +1,3 @@
-import { getBlockDagInfo, getVirtualChainBlueScore } from "../../network";
 import { lastBlock } from "./lastBlock";
 
 const mockGetBlockDagInfo = jest.fn();

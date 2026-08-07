@@ -10,6 +10,7 @@ import BigNumber from "bignumber.js";
 import semver from "semver";
 import cryptoFactory from "../chain/chain";
 import cosmosBase from "../chain/cosmosBase";
+import { type CosmosCoinConfig } from "../config";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -66,8 +67,12 @@ export class CosmosAPI {
     return this._cosmosSDKVersion;
   }
 
-  constructor(currencyId: string, options?: { endpoint: string | undefined; version: string }) {
-    const crypto = cryptoFactory(currencyId);
+  constructor(
+    currencyId: string,
+    options?: { endpoint: string | undefined; version: string },
+    config?: CosmosCoinConfig,
+  ) {
+    const crypto = cryptoFactory(currencyId, config);
     this.currencyId = currencyId;
     this.chainInstance = crypto;
     this.defaultEndpoint = options?.endpoint?.toString() ?? crypto.lcd;

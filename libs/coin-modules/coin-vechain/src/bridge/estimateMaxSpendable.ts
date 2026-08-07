@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { calculateGasFees } from "../common-logic";
 import type { Transaction } from "../types";
+import { getCoinConfig } from "../config";
 
 const PATTERN_ADDRESS_IN_TOKEN_ACCOUNT_ID = /:(0x\w+):/;
 
@@ -22,6 +23,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     if (originAddress) {
       const { estimatedGasFees: maxTokenFees } = await calculateGasFees(
+        getCoinConfig(),
         transaction,
         true,
         originAddress,

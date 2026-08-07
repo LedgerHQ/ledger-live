@@ -5,7 +5,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from "./index";
-import { casperMainnetConfig } from "../__tests__/fixtures/config.fixture";
+import { createMockContext } from "../__tests__/fixtures/config.fixture";
 import {
   BUSY_MAINNET_PUBLIC_KEY,
   FUNDED_MAINNET_PUBLIC_KEY,
@@ -19,9 +19,12 @@ import {
   CASPER_DUMMY_ADDRESS,
 } from "../constants";
 import { getCasperNodeRpcClient } from "../network/api";
-import type { CasperMemo } from "../types";
+import type { CasperConfig, CasperContext, CasperMemo } from "../types";
 import { LANE_KEYS, LANE_LIMIT_TUPLE_INDEX } from "../constants";
 import { fetchChainspecToml } from "../network/api";
+
+const context: CasperContext = createMockContext();
+const getConfig = async (): Promise<CasperConfig> => context.config();
 
 const nativeTransferIntent: TransactionIntent<MemoNotSupported> = {
   intentType: "transaction",
@@ -33,10 +36,10 @@ const nativeTransferIntent: TransactionIntent<MemoNotSupported> = {
 };
 
 describe("Casper Api (mainnet)", () => {
-  let api: CoinModuleApi<CasperMemo>;
+  let api: CoinModuleApi<CasperConfig, CasperMemo>;
 
   beforeAll(() => {
-    api = createApi(casperMainnetConfig);
+    api = createApi();
   });
 
   describe("broadcast", () => {
@@ -44,7 +47,7 @@ describe("Casper Api (mainnet)", () => {
       const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
       const senderHex = sender.publicKey.toHex();
 
-      const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
+      const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient(await getConfig()));
       const deploy = casperNetwork.createTransferTransaction(
         sender.publicKey,
         sender.publicKey,
@@ -61,12 +64,15 @@ describe("Casper Api (mainnet)", () => {
       ).toString("hex");
 
       const combined = await api.combine(
+        context,
         JSON.stringify(deploy.toJSON()),
         taggedSignature,
-        senderHex,
+        {
+          pubkey: senderHex,
+        },
       );
 
-      await expect(api.broadcast(combined)).rejects.toThrow(
+      await expect(api.broadcast(context, combined)).rejects.toThrow(
         /Code: -32016, err: Invalid transaction/,
       );
     });
@@ -74,7 +80,7 @@ describe("Casper Api (mainnet)", () => {
 
   describe("combine", () => {
     const craftUnsignedTransfer = async (sender: PrivateKey, recipient: PrivateKey) => {
-      const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient());
+      const casperNetwork = await CasperNetwork.create(getCasperNodeRpcClient(await getConfig()));
       return casperNetwork.createTransferTransaction(
         sender.publicKey,
         recipient.publicKey,
@@ -99,7 +105,9 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      const combined = await api.combine(unsignedTxJson, taggedSignature, sender.publicKey.toHex());
+      const combined = await api.combine(context, unsignedTxJson, taggedSignature, {
+        pubkey: sender.publicKey.toHex(),
+      });
 
       expect(() => Transaction.fromJSON(combined)).not.toThrow();
     });
@@ -115,7 +123,7 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      expect(() => api.combine(unsignedTxJson, taggedSignature, undefined)).toThrow(
+      expect(() => api.combine(context, unsignedTxJson, taggedSignature)).toThrow(
         "casper: combine requires the signer public key",
       );
     });
@@ -126,7 +134,7 @@ describe("Casper Api (mainnet)", () => {
       const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
       const recipient = PrivateKey.generate(KeyAlgorithm.SECP256K1);
 
-      const { transaction } = await api.craftTransaction({
+      const { transaction } = await api.craftTransaction(context, {
         intentType: "transaction",
         type: "send",
         sender: sender.publicKey.toHex(),
@@ -143,7 +151,7 @@ describe("Casper Api (mainnet)", () => {
       const sender = PrivateKey.generate(KeyAlgorithm.SECP256K1);
       const recipient = PrivateKey.generate(KeyAlgorithm.SECP256K1);
 
-      const { transaction } = await api.craftTransaction({
+      const { transaction } = await api.craftTransaction(context, {
         intentType: "transaction",
         type: "send",
         sender: sender.publicKey.toHex(),
@@ -157,7 +165,9 @@ describe("Casper Api (mainnet)", () => {
         sender.signAndAddAlgorithmBytes(new Uint8Array(unsignedTx.hash.toBytes())),
       ).toString("hex");
 
-      const combined = await api.combine(transaction, taggedSignature, sender.publicKey.toHex());
+      const combined = await api.combine(context, transaction, taggedSignature, {
+        pubkey: sender.publicKey.toHex(),
+      });
 
       expect(() => Transaction.fromJSON(combined)).not.toThrow();
     });
@@ -165,7 +175,7 @@ describe("Casper Api (mainnet)", () => {
 
   describe("lastBlock", () => {
     it("returns the latest block with valid height, hash and time", async () => {
-      const block = await api.lastBlock();
+      const block = await api.lastBlock(context);
 
       expect(block.height).toBeGreaterThan(0);
       expect(typeof block.hash).toBe("string");
@@ -180,7 +190,9 @@ describe("Casper Api (mainnet)", () => {
 
   describe("listOperations", () => {
     it("returns plausible native operations for a funded account", async () => {
-      const { items } = await api.listOperations(FUNDED_MAINNET_PUBLIC_KEY, { minHeight: 0 });
+      const { items } = await api.listOperations(context, FUNDED_MAINNET_PUBLIC_KEY, {
+        minHeight: 0,
+      });
 
       expect(items.length).toBeGreaterThan(0);
 
@@ -195,7 +207,7 @@ describe("Casper Api (mainnet)", () => {
     });
 
     it("returns operations newest first with unique ids", async () => {
-      const { items } = await api.listOperations(FUNDED_MAINNET_PUBLIC_KEY, {
+      const { items } = await api.listOperations(context, FUNDED_MAINNET_PUBLIC_KEY, {
         minHeight: 0,
         order: "desc",
       });
@@ -209,10 +221,14 @@ describe("Casper Api (mainnet)", () => {
     });
 
     it("honours minHeight", async () => {
-      const { items: all } = await api.listOperations(FUNDED_MAINNET_PUBLIC_KEY, { minHeight: 0 });
+      const { items: all } = await api.listOperations(context, FUNDED_MAINNET_PUBLIC_KEY, {
+        minHeight: 0,
+      });
       const cutoff = all[all.length - 1].tx.block.height + 1;
 
-      const { items } = await api.listOperations(FUNDED_MAINNET_PUBLIC_KEY, { minHeight: cutoff });
+      const { items } = await api.listOperations(context, FUNDED_MAINNET_PUBLIC_KEY, {
+        minHeight: cutoff,
+      });
 
       expect(items.length).toBeLessThan(all.length);
       for (const op of items) {
@@ -221,14 +237,18 @@ describe("Casper Api (mainnet)", () => {
     });
 
     it("returns an empty page for a never-funded account", async () => {
-      const result = await api.listOperations(UNFUNDED_MAINNET_PUBLIC_KEY, { minHeight: 0 });
+      const result = await api.listOperations(context, UNFUNDED_MAINNET_PUBLIC_KEY, {
+        minHeight: 0,
+      });
 
       expect(result.items).toEqual([]);
       expect(result.next).toBeUndefined();
     });
 
     it("walks every indexer page of a multi-page history", async () => {
-      const { items, next } = await api.listOperations(BUSY_MAINNET_PUBLIC_KEY, { minHeight: 0 });
+      const { items, next } = await api.listOperations(context, BUSY_MAINNET_PUBLIC_KEY, {
+        minHeight: 0,
+      });
 
       expect(items.length).toBeGreaterThan(10);
       expect(next).toBeUndefined();
@@ -241,21 +261,21 @@ describe("Casper Api (mainnet)", () => {
       ["limit", { limit: 10 }],
     ])("rejects an unsupported %s", async (_option, override) => {
       await expect(
-        api.listOperations(FUNDED_MAINNET_PUBLIC_KEY, { minHeight: 0, ...override }),
+        api.listOperations(context, FUNDED_MAINNET_PUBLIC_KEY, { minHeight: 0, ...override }),
       ).rejects.toThrow(/not supported/);
     });
   });
 
   describe("getBalance", () => {
     it("returns the native CSPR balance of a funded account", async () => {
-      const balances = await api.getBalance(FUNDED_MAINNET_PUBLIC_KEY);
+      const balances = await api.getBalance(context, FUNDED_MAINNET_PUBLIC_KEY);
 
       expect(balances).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
       expect(balances[0].value).toBeGreaterThan(0n);
     });
 
     it("returns a zero native balance for an account that was never funded", async () => {
-      const balances = await api.getBalance(UNFUNDED_MAINNET_PUBLIC_KEY);
+      const balances = await api.getBalance(context, UNFUNDED_MAINNET_PUBLIC_KEY);
 
       expect(balances).toEqual([{ value: 0n, asset: { type: "native" } }]);
     });
@@ -265,7 +285,7 @@ describe("Casper Api (mainnet)", () => {
     it("estimates a native transfer at the live native mint lane limit", async () => {
       // Parsed independently: a hardcoded limit goes stale on the next protocol upgrade, and
       // reusing the implementation's regex would hide a bug in it.
-      const toml = await fetchChainspecToml();
+      const toml = await fetchChainspecToml(await getConfig());
       const laneLine = toml
         .split("\n")
         .map(line => line.trim())
@@ -276,7 +296,7 @@ describe("Casper Api (mainnet)", () => {
       const expected = BigInt(tuple[LANE_LIMIT_TUPLE_INDEX].replace(/_/g, "").trim());
       expect(expected).toBeGreaterThan(0n);
 
-      await expect(api.estimateFees(nativeTransferIntent)).resolves.toEqual({
+      await expect(api.estimateFees(context, nativeTransferIntent)).resolves.toEqual({
         value: expected,
         parameters: { source: "chainspec", lane: "native_mint" },
       });

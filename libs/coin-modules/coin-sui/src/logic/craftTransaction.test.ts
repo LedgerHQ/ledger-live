@@ -1,6 +1,9 @@
 import { BigNumber } from "bignumber.js";
+import type { SuiCoinConfig } from "../config";
 import { craftTransaction } from "../logic/craftTransaction";
 import suiAPI from "../network";
+
+const config = {} as SuiCoinConfig;
 
 jest.mock("../network");
 
@@ -20,7 +23,7 @@ describe("craftTransaction", () => {
     const type = "send";
     const intentType = "transaction";
 
-    const result = await craftTransaction({
+    const result = await craftTransaction(config, {
       intentType,
       sender,
       amount,
@@ -30,6 +33,7 @@ describe("craftTransaction", () => {
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(
+      config,
       sender,
       {
         intentType,
@@ -39,7 +43,6 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
-      undefined,
       undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
@@ -52,7 +55,7 @@ describe("craftTransaction", () => {
     const type = "send";
     const intentType = "transaction";
 
-    const result = await craftTransaction({
+    const result = await craftTransaction(config, {
       intentType,
       sender,
       amount,
@@ -62,6 +65,7 @@ describe("craftTransaction", () => {
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(
+      config,
       sender,
       {
         intentType,
@@ -71,7 +75,6 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
-      undefined,
       undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
@@ -84,7 +87,7 @@ describe("craftTransaction", () => {
     const type = "send";
     const intentType = "transaction";
 
-    const result = await craftTransaction({
+    const result = await craftTransaction(config, {
       intentType,
       sender,
       amount,
@@ -94,6 +97,7 @@ describe("craftTransaction", () => {
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(
+      config,
       sender,
       {
         intentType,
@@ -103,7 +107,6 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
-      undefined,
       undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
@@ -116,7 +119,7 @@ describe("craftTransaction", () => {
     const type = "send";
     const intentType = "transaction";
 
-    const result = await craftTransaction({
+    const result = await craftTransaction(config, {
       intentType,
       sender,
       amount,
@@ -126,6 +129,7 @@ describe("craftTransaction", () => {
     });
 
     expect(mockCreateTransaction).toHaveBeenCalledWith(
+      config,
       sender,
       {
         intentType,
@@ -135,7 +139,6 @@ describe("craftTransaction", () => {
         coinType: "0x2::sui::SUI",
       },
       false,
-      undefined,
       undefined,
     );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
@@ -152,7 +155,7 @@ describe("craftTransaction", () => {
     const intentType = "transaction";
 
     await expect(
-      craftTransaction({
+      craftTransaction(config, {
         intentType,
         sender,
         amount,

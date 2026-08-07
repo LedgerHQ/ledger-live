@@ -1,26 +1,22 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-} from "@ledgerhq/coin-module-framework/api/types";
-import { EvmConfig } from "../config";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Arbitrum Network", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config: Partial<EvmConfigInfo> = {
+    node: {
+      type: "external",
+      uri: "https://arbitrum.coin.ledger.com",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
+    },
+  };
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://arbitrum.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/42161",
-      },
-    };
-    module = createApi(config as EvmConfig, "arbitrum");
+    module = createApi("arbitrum");
   });
 
   describe("listOperations", () => {
@@ -35,10 +31,14 @@ describe("EVM Arbitrum Network", () => {
       const txHash =
         "0xdd046a625b9b4b1ec9c9eaabfa61869f74d9d744433dae3c7686432301713bb3".toLowerCase();
 
-      const { items: operations } = await module.listOperations(address, {
-        minHeight: 99668800,
-        order: "asc",
-      });
+      const { items: operations } = await module.listOperations(
+        createMockEvmContext(config),
+        address,
+        {
+          minHeight: 99668800,
+          order: "asc",
+        },
+      );
 
       const opsForTx = operations.filter(op => op.tx.hash.toLowerCase() === txHash);
 
@@ -50,6 +50,7 @@ describe("EVM Arbitrum Network", () => {
 
     it("returns operations with valid tx hash for address with internal transactions", async () => {
       const { items: operations } = await module.listOperations(
+        createMockEvmContext(config),
         "0x63f5c1b5a54a2423a0284b55ad6e48485e048e6a",
         {
           minHeight: 0,

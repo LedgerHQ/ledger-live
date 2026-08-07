@@ -30,6 +30,7 @@ const getMetadataMock = jest.fn();
 jest.mock("../network", () => ({
   ...jest.requireActual("../network").default,
   getMetadata: (
+    _config: unknown,
     callData: string,
     includedInExtrinsic: string,
     includedInSignedData: string,

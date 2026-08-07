@@ -216,7 +216,7 @@ describe("Aptos prepareTransaction", () => {
           spendableBalance: new BigNumber(50_000_000),
           balance: new BigNumber(50_000_000),
         },
-      ] as unknown as AptosAccount["subAccounts"];
+      ] as unknown as NonNullable<AptosAccount["subAccounts"]>;
       transaction.recipient = "test-recipient";
       transaction.subAccountId = "usdt-account-id";
       transaction.amount = new BigNumber(10_000_000);
@@ -242,7 +242,7 @@ describe("Aptos prepareTransaction", () => {
           spendableBalance: new BigNumber(50_000_000),
           balance: new BigNumber(50_000_000),
         },
-      ] as unknown as AptosAccount["subAccounts"];
+      ] as unknown as NonNullable<AptosAccount["subAccounts"]>;
       transaction.recipient = "test-recipient";
       transaction.subAccountId = "usdt-account-id";
       transaction.amount = new BigNumber(60_000_000);

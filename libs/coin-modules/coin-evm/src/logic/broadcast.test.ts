@@ -1,3 +1,4 @@
+import { mockEvmContext } from "../fixtures/context.fixtures";
 import { getNodeApi } from "../network/node/index";
 import { mockNodeApi } from "../network/node/node.fixtures";
 import { broadcast } from "./broadcast";
@@ -22,11 +23,11 @@ describe("broadcastLogic", () => {
 
   it("should call getNodeApi and broadcastTransaction with correct arguments", async () => {
     nodeApiMock.broadcastTransaction.mockResolvedValue("txid123");
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: mockSignature,
       broadcastConfig: mockBroadcastConfig,
     });
-    expect(mockGetNodeApi).toHaveBeenCalledWith(mockCurrency);
+    expect(mockGetNodeApi).toHaveBeenCalledWith(expect.anything(), mockCurrency);
     expect(nodeApiMock.broadcastTransaction).toHaveBeenCalledWith(
       mockCurrency,
       mockSignature,
@@ -38,7 +39,7 @@ describe("broadcastLogic", () => {
   it("should propagate errors from broadcastTransaction", async () => {
     nodeApiMock.broadcastTransaction.mockRejectedValue(new Error("Broadcast failed"));
     await expect(
-      broadcast(mockCurrency, {
+      broadcast(mockEvmContext, mockCurrency, {
         signature: mockSignature,
         broadcastConfig: mockBroadcastConfig,
       }),
@@ -47,7 +48,7 @@ describe("broadcastLogic", () => {
 
   it("should handle undefined broadcastConfig", async () => {
     nodeApiMock.broadcastTransaction.mockResolvedValue("txid456");
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: mockSignature,
       broadcastConfig: undefined,
     });
@@ -62,7 +63,7 @@ describe("broadcastLogic", () => {
   it("should handle different signature values", async () => {
     nodeApiMock.broadcastTransaction.mockResolvedValue("txid789");
     const anotherSignature = "0x123456";
-    const result = await broadcast(mockCurrency, {
+    const result = await broadcast(mockEvmContext, mockCurrency, {
       signature: anotherSignature,
       broadcastConfig: mockBroadcastConfig,
     });

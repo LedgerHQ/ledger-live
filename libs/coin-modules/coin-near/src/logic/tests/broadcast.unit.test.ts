@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { broadcastTransaction } from "../../network";
 import { broadcast } from "../broadcast";
 
@@ -12,8 +13,8 @@ describe("broadcast", () => {
   it("submits the signed transaction and returns its hash", async () => {
     (broadcastTransaction as jest.Mock).mockResolvedValue(HASH);
 
-    await expect(broadcast(SIGNED_TX)).resolves.toBe(HASH);
-    expect(broadcastTransaction).toHaveBeenCalledWith(SIGNED_TX);
+    await expect(broadcast(mockNearContext, SIGNED_TX)).resolves.toBe(HASH);
+    expect(broadcastTransaction).toHaveBeenCalledWith(expect.anything(), SIGNED_TX);
   });
 
   it("propagates a node error", async () => {
@@ -21,6 +22,6 @@ describe("broadcast", () => {
       new Error("INVALID_TRANSACTION: nonce too small"),
     );
 
-    await expect(broadcast(SIGNED_TX)).rejects.toThrow("nonce too small");
+    await expect(broadcast(mockNearContext, SIGNED_TX)).rejects.toThrow("nonce too small");
   });
 });

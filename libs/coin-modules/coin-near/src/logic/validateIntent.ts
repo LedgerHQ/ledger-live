@@ -13,6 +13,7 @@ import {
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
 import { BigNumber } from "bignumber.js";
+import type { NearConfig, NearContext } from "../config";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "../constants";
 import {
   NearActivationFeeNotCovered,
@@ -52,12 +53,16 @@ function spendable(balances: Balance[]): bigint {
  * `Account` model (`extractBalances`) never sets `stake`, so the pool is queried directly as a
  * fallback, mirroring {@link pooledAmount}.
  */
-async function hasOpenDelegation(balances: Balance[], sender: string): Promise<boolean> {
+async function hasOpenDelegation(
+  config: NearConfig,
+  balances: Balance[],
+  sender: string,
+): Promise<boolean> {
   if (balances.some(b => b.stake !== undefined)) {
     return true;
   }
 
-  const { stakingPositions } = await getStakingPositions(sender);
+  const { stakingPositions } = await getStakingPositions(config, sender);
   return stakingPositions.length > 0;
 }
 
@@ -71,7 +76,7 @@ type RecipientCheck = {
 };
 
 /** Whether the recipient is usable, and what creating it would cost if it does not exist yet. */
-async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
+async function checkRecipient(config: NearConfig, intent: NearIntent): Promise<RecipientCheck> {
   const unusable = { isNewAccount: false, storageCost: new BigNumber(0), formattedStorageCost: "" };
 
   if (!intent.recipient) {
@@ -82,7 +87,7 @@ async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
     return { ...unusable, error: new InvalidAddress("", { currencyName: NEAR_NAME }) };
   }
 
-  const { storageCost: costPerByte, accountCreationCharge } = await getActionCosts();
+  const { storageCost: costPerByte, accountCreationCharge } = await getActionCosts(config);
   // The activation minimum is the higher of the storage deposit and nearcore's explicit
   // account-creation charge (protocol 85+) — the latter can exceed the former.
   const storageCost = BigNumber.max(
@@ -91,7 +96,7 @@ async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
   );
   const formattedStorageCost = formatNear(storageCost);
 
-  if (await fetchAccountDetails(intent.recipient)) {
+  if (await fetchAccountDetails(config, intent.recipient)) {
     return { isNewAccount: false, storageCost, formattedStorageCost };
   }
 
@@ -110,6 +115,7 @@ async function checkRecipient(intent: NearIntent): Promise<RecipientCheck> {
 }
 
 async function validateSend(
+  config: NearConfig,
   intent: NearIntent,
   balances: Balance[],
   estimatedFees: bigint,
@@ -118,7 +124,7 @@ async function validateSend(
   const warnings: Record<string, Error> = {};
 
   const available = spendable(balances);
-  const recipient = await checkRecipient(intent);
+  const recipient = await checkRecipient(config, intent);
 
   if (recipient.error) {
     errors.recipient = recipient.error;
@@ -144,7 +150,7 @@ async function validateSend(
     });
   }
 
-  if (intent.useAllAmount && (await hasOpenDelegation(balances, intent.sender))) {
+  if (intent.useAllAmount && (await hasOpenDelegation(config, balances, intent.sender))) {
     warnings.amount = new NearRecommendUnstake();
   }
 
@@ -154,6 +160,7 @@ async function validateSend(
 // The ceiling a staking op can move: unstake/withdraw move already-delegated funds (only the fee
 // comes out of the liquid balance), staking spends the liquid balance itself.
 async function maxStakingAmount(
+  config: NearConfig,
   mode: string,
   balances: Balance[],
   sender: string,
@@ -162,7 +169,7 @@ async function maxStakingAmount(
   estimatedFees: bigint,
 ): Promise<bigint> {
   if (mode === "unstake" || mode === "withdraw") {
-    return pooledAmount(mode, sender, delegate, balances);
+    return pooledAmount(config, mode, sender, delegate, balances);
   }
 
   const afterFees = available - estimatedFees;
@@ -170,6 +177,7 @@ async function maxStakingAmount(
 }
 
 async function validateStaking(
+  config: NearConfig,
   intent: NearIntent,
   balances: Balance[],
   estimatedFees: bigint,
@@ -184,6 +192,7 @@ async function validateStaking(
   const threshold = BigInt(yoctoThreshold.toFixed(0));
 
   const maxAmount = await maxStakingAmount(
+    config,
     mode,
     balances,
     intent.sender,
@@ -218,16 +227,18 @@ async function validateStaking(
 // Validates an intent against the account's balances, mirroring the account bridge's rules for
 // both transfers and staking.
 export async function validateIntent(
+  context: NearContext,
   intent: NearIntent,
   balances: Balance[],
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
+  const config = await context.config();
   const estimatedFees = customFees?.value ?? 0n;
   const { mode, receiverId } = resolveTarget(intent);
 
   if (STAKING_MODES.has(mode)) {
-    return validateStaking(intent, balances, estimatedFees, mode, receiverId);
+    return validateStaking(config, intent, balances, estimatedFees, mode, receiverId);
   }
 
-  return validateSend(intent, balances, estimatedFees);
+  return validateSend(config, intent, balances, estimatedFees);
 }

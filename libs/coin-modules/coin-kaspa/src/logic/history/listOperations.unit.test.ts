@@ -1,4 +1,3 @@
-import { getTransactions } from "../../network";
 import { listOperations } from "./listOperations";
 
 const mockGetTransactions = jest.fn();

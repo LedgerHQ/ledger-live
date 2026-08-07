@@ -27,7 +27,7 @@ type CosmosValidatorsResponse = { validators: CosmosValidator[] };
 // Sei's REST endpoint returns the whole validator set in one response, so it
 // ignores the cursor and always reports `next: undefined` (single page).
 const seiValidatorApi: ValidatorApi = {
-  fetchValidators: async (currencyId): Promise<Page<Validator>> => {
+  fetchValidators: async (_config, currencyId): Promise<Page<Validator>> => {
     const apiConfig = STAKING_CONTRACTS[currencyId]?.apiConfig;
     if (!apiConfig?.baseUrl) return { items: [], next: undefined };
 

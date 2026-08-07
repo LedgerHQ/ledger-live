@@ -1,15 +1,17 @@
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
+import type { AlgorandCoinConfig } from "../config";
 import { getAccount, getTransactionParams, broadcastTransaction } from "./algod";
 
 jest.mock("@ledgerhq/live-network");
-jest.mock("../config", () => ({
-  getCoinConfig: jest.fn().mockReturnValue({
-    node: "https://algorand-node.example.com",
-  }),
-}));
 
 const mockNetwork = network as jest.MockedFunction<typeof network>;
+
+const config = {
+  status: { type: "active" },
+  node: "https://algorand-node.example.com",
+  indexer: "",
+} as AlgorandCoinConfig;
 
 describe("algod", () => {
   beforeEach(() => {
@@ -31,7 +33,7 @@ describe("algod", () => {
         },
       });
 
-      const result = await getAccount("ALGO_ADDRESS");
+      const result = await getAccount(config, "ALGO_ADDRESS");
 
       expect(result.round).toBe(50000000);
       expect(result.address).toBe("ALGO_ADDRESS");
@@ -57,7 +59,7 @@ describe("algod", () => {
         },
       } as never);
 
-      const result = await getAccount("ALGO_ADDRESS");
+      const result = await getAccount(config, "ALGO_ADDRESS");
 
       expect(result.assets).toEqual([]);
     });
@@ -73,7 +75,7 @@ describe("algod", () => {
         },
       } as never);
 
-      const result = await getAccount("ALGO_ADDRESS");
+      const result = await getAccount(config, "ALGO_ADDRESS");
 
       expect(result.assets).toEqual([]);
     });
@@ -89,7 +91,7 @@ describe("algod", () => {
         },
       } as never);
 
-      await getAccount("TEST_ADDRESS");
+      await getAccount(config, "TEST_ADDRESS");
 
       expect(mockNetwork).toHaveBeenCalledWith({
         url: "https://algorand-node.example.com/accounts/TEST_ADDRESS",
@@ -110,7 +112,7 @@ describe("algod", () => {
         },
       } as never);
 
-      const result = await getTransactionParams();
+      const result = await getTransactionParams(config);
 
       expect(result.fee).toBe(0);
       expect(result.minFee).toBe(1000);
@@ -132,7 +134,7 @@ describe("algod", () => {
         },
       } as never);
 
-      const result = await getTransactionParams();
+      const result = await getTransactionParams(config);
 
       expect(result.firstRound).toBe(0);
     });
@@ -148,7 +150,7 @@ describe("algod", () => {
         },
       } as never);
 
-      await getTransactionParams();
+      await getTransactionParams(config);
 
       expect(mockNetwork).toHaveBeenCalledWith({
         url: "https://algorand-node.example.com/transactions/params",
@@ -163,7 +165,7 @@ describe("algod", () => {
       } as never);
 
       const payload = Buffer.from("signed_transaction");
-      const result = await broadcastTransaction(payload);
+      const result = await broadcastTransaction(config, payload);
 
       expect(result).toBe("TX_HASH_12345");
     });
@@ -174,7 +176,7 @@ describe("algod", () => {
       } as never);
 
       const payload = Buffer.from("tx_data");
-      await broadcastTransaction(payload);
+      await broadcastTransaction(config, payload);
 
       expect(mockNetwork).toHaveBeenCalledWith({
         method: "POST",
@@ -189,7 +191,7 @@ describe("algod", () => {
 
       const payload = Buffer.from("bad_tx");
 
-      await expect(broadcastTransaction(payload)).rejects.toThrow("Broadcast failed");
+      await expect(broadcastTransaction(config, payload)).rejects.toThrow("Broadcast failed");
     });
   });
 });

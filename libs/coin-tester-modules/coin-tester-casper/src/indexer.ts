@@ -8,6 +8,7 @@ import type {
   RpcError,
   TransferArgs,
 } from "@ledgerhq/coin-casper/types";
+import { scenarioCoinConfig } from "./fixtures";
 
 // `args` is `Partial` because the real feed also serves staking and contract
 // deploys; `isNativeTransfer` rejects entries missing `amount` or `target`.
@@ -22,7 +23,7 @@ const POLL_ATTEMPTS = 40;
 const POLL_INTERVAL_MS = 3 * 1000;
 
 async function readTransaction(hash: string): Promise<InfoGetTransactionResult> {
-  const client = getCasperNodeRpcClient();
+  const client = getCasperNodeRpcClient(scenarioCoinConfig);
 
   for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt++) {
     try {

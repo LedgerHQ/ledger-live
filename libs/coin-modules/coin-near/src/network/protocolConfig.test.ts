@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import { setMockCoinConfig } from "../test/coinConfig";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 import { getActionCosts } from "./protocolConfig";
+import { mockNearConfig } from "../test/context";
 
 const runtimeConfig = {
   storage_amount_per_byte: "10000000000000000000",
@@ -40,7 +41,7 @@ describe("getActionCosts", () => {
   it("derives the storage price and per-action gas costs from the protocol config", async () => {
     mockProtocolConfig({ runtime_config: runtimeConfig });
 
-    const costs = await getActionCosts();
+    const costs = await getActionCosts(mockNearConfig);
 
     expect(costs.storageCost.toFixed()).toBe("10000000000000000000");
     expect(costs.transferCostSend.toFixed()).toBe("115123062500");
@@ -56,7 +57,7 @@ describe("getActionCosts", () => {
   it("defaults minGasPurchasePrice and accountCreationCharge to 0 on a pre-protocol-85 config", async () => {
     mockProtocolConfig({ runtime_config: runtimeConfig });
 
-    const costs = await getActionCosts();
+    const costs = await getActionCosts(mockNearConfig);
 
     expect(costs.minGasPurchasePrice.toFixed()).toBe("0");
     expect(costs.accountCreationCharge.toFixed()).toBe("0");
@@ -71,7 +72,7 @@ describe("getActionCosts", () => {
       },
     });
 
-    const costs = await getActionCosts();
+    const costs = await getActionCosts(mockNearConfig);
 
     expect(costs.minGasPurchasePrice.toFixed()).toBe("1000000000");
     expect(costs.accountCreationCharge.toFixed()).toBe("7000000000000000000000");
@@ -81,8 +82,8 @@ describe("getActionCosts", () => {
     let calls = 0;
     mockProtocolConfig({ runtime_config: runtimeConfig }, () => calls++);
 
-    await getActionCosts();
-    await getActionCosts();
+    await getActionCosts(mockNearConfig);
+    await getActionCosts(mockNearConfig);
 
     expect(calls).toBe(1);
   });
@@ -90,6 +91,6 @@ describe("getActionCosts", () => {
   it("throws when the node returns no protocol config", async () => {
     mockProtocolConfig(undefined);
 
-    await expect(getActionCosts()).rejects.toThrow("NearProtocolConfigNotLoaded");
+    await expect(getActionCosts(mockNearConfig)).rejects.toThrow("NearProtocolConfigNotLoaded");
   });
 });

@@ -25,6 +25,7 @@ import {
   mapTokenTransfersToOperations,
 } from "./mapTransfersToOperations";
 import { getFees } from "../network/getFees";
+import { mockVechainConfig } from "../test/context";
 
 const { ABIEvent, Hex, VIP180_ABI } = jest.requireMock("@vechain/sdk-core");
 
@@ -76,6 +77,7 @@ describe("mapVetTransfersToOperations", () => {
 
   it("should map incoming VET transfers to operations", async () => {
     const result = await mapVetTransfersToOperations(
+      mockVechainConfig,
       [mockTransferLogs[0]],
       mockAccountId,
       mockAddr,
@@ -100,6 +102,7 @@ describe("mapVetTransfersToOperations", () => {
 
   it("should map outgoing VET transfers to operations", async () => {
     const result = await mapVetTransfersToOperations(
+      mockVechainConfig,
       [mockTransferLogs[1]],
       mockAccountId,
       mockAddr,
@@ -123,7 +126,12 @@ describe("mapVetTransfersToOperations", () => {
   });
 
   it("should handle multiple transfers", async () => {
-    const result = await mapVetTransfersToOperations(mockTransferLogs, mockAccountId, mockAddr);
+    const result = await mapVetTransfersToOperations(
+      mockVechainConfig,
+      mockTransferLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result).toHaveLength(2);
     expect(result[0].type).toBe("IN");
@@ -131,11 +139,11 @@ describe("mapVetTransfersToOperations", () => {
   });
 
   it("should call getFees for each transfer", async () => {
-    await mapVetTransfersToOperations(mockTransferLogs, mockAccountId, mockAddr);
+    await mapVetTransfersToOperations(mockVechainConfig, mockTransferLogs, mockAccountId, mockAddr);
 
     expect(mockedGetFees).toHaveBeenCalledTimes(2);
-    expect(mockedGetFees).toHaveBeenCalledWith("0xtx123");
-    expect(mockedGetFees).toHaveBeenCalledWith("0xtx456");
+    expect(mockedGetFees).toHaveBeenCalledWith(mockVechainConfig, "0xtx123");
+    expect(mockedGetFees).toHaveBeenCalledWith(mockVechainConfig, "0xtx456");
   });
 
   it("should handle case-insensitive address comparison", async () => {
@@ -146,6 +154,7 @@ describe("mapVetTransfersToOperations", () => {
     };
 
     const result = await mapVetTransfersToOperations(
+      mockVechainConfig,
       [transferWithUpperCase],
       mockAccountId,
       mockAddr,
@@ -162,6 +171,7 @@ describe("mapVetTransfersToOperations", () => {
     };
 
     const result = await mapVetTransfersToOperations(
+      mockVechainConfig,
       [transferWithMixedCase],
       mockAccountId,
       mockAddr,
@@ -216,7 +226,12 @@ describe("mapTokenTransfersToOperations", () => {
   });
 
   it("should map incoming token transfers to operations", async () => {
-    const result = await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    const result = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      mockEventLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
@@ -246,14 +261,19 @@ describe("mapTokenTransfersToOperations", () => {
     };
     mockedABIEvent.parseLog.mockReturnValue(outgoingEvent);
 
-    const result = await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    const result = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      mockEventLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result[0].type).toBe("OUT");
     expect(result[0].value).toEqual(new BigNumber("2000000000000000000"));
   });
 
   it("should decode event logs correctly", async () => {
-    await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    await mapTokenTransfersToOperations(mockVechainConfig, mockEventLogs, mockAccountId, mockAddr);
 
     expect(mockedHex.of).toHaveBeenCalledWith(mockEventLogs[0].data);
     expect(mockedHex.of).toHaveBeenCalledWith(mockEventLogs[0].topics[0]);
@@ -280,16 +300,21 @@ describe("mapTokenTransfersToOperations", () => {
     };
     mockedABIEvent.parseLog.mockReturnValue(largeValueEvent);
 
-    const result = await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    const result = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      mockEventLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result[0].value).toEqual(new BigNumber("123456789012345678901234567890"));
   });
 
   it("should call getFees for each event", async () => {
-    await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    await mapTokenTransfersToOperations(mockVechainConfig, mockEventLogs, mockAccountId, mockAddr);
 
     expect(mockedGetFees).toHaveBeenCalledTimes(1);
-    expect(mockedGetFees).toHaveBeenCalledWith("0xtx789");
+    expect(mockedGetFees).toHaveBeenCalledWith(mockVechainConfig, "0xtx789");
   });
 
   it("should handle multiple events", async () => {
@@ -301,7 +326,7 @@ describe("mapTokenTransfersToOperations", () => {
       },
     ];
 
-    await mapTokenTransfersToOperations(multipleEvents, mockAccountId, mockAddr);
+    await mapTokenTransfersToOperations(mockVechainConfig, multipleEvents, mockAccountId, mockAddr);
 
     expect(mockedGetFees).toHaveBeenCalledTimes(2);
     expect(mockedABIEvent.parseLog).toHaveBeenCalledTimes(2);
@@ -318,7 +343,12 @@ describe("mapTokenTransfersToOperations", () => {
     };
     mockedABIEvent.parseLog.mockReturnValue(upperCaseEvent);
 
-    const result = await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    const result = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      mockEventLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result[0].type).toBe("IN");
   });
@@ -334,7 +364,12 @@ describe("mapTokenTransfersToOperations", () => {
     };
     mockedABIEvent.parseLog.mockReturnValue(mixedCaseEvent);
 
-    const result = await mapTokenTransfersToOperations(mockEventLogs, mockAccountId, mockAddr);
+    const result = await mapTokenTransfersToOperations(
+      mockVechainConfig,
+      mockEventLogs,
+      mockAccountId,
+      mockAddr,
+    );
 
     expect(result[0].senders[0]).toBe("0x5034aa590125b64023a0262112b98d72e3c8e40e");
     expect(result[0].recipients[0]).toBe("0x742d35cc6634c0532925a3b8d0b251d8c1743ec4");

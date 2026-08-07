@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
-import coinConfig from "../config";
+import type { AlgorandCoinConfig } from "../config";
 import type {
   AlgoAccount,
   AlgoAsset,
@@ -12,13 +12,14 @@ import type {
   ExplorerBlock,
 } from "./types";
 
-const getNodeUrl = (): string => coinConfig.getCoinConfig().node;
+const fullUrl = (config: AlgorandCoinConfig, route: string): string => `${config.node}${route}`;
 
-const fullUrl = (route: string): string => `${getNodeUrl()}${route}`;
-
-export const getAccount = async (address: string): Promise<AlgoAccount> => {
+export const getAccount = async (
+  config: AlgorandCoinConfig,
+  address: string,
+): Promise<AlgoAccount> => {
   const { data } = await network<ExplorerAccount>({
-    url: fullUrl(`/accounts/${address}`),
+    url: fullUrl(config, `/accounts/${address}`),
   });
 
   const assets: AlgoAsset[] = data.assets
@@ -39,9 +40,11 @@ export const getAccount = async (address: string): Promise<AlgoAccount> => {
   };
 };
 
-export const getTransactionParams = async (): Promise<AlgoTransactionParams> => {
+export const getTransactionParams = async (
+  config: AlgorandCoinConfig,
+): Promise<AlgoTransactionParams> => {
   const { data } = await network<ExplorerTransactionParams>({
-    url: fullUrl(`/transactions/params`),
+    url: fullUrl(config, `/transactions/params`),
   });
 
   return {
@@ -54,13 +57,16 @@ export const getTransactionParams = async (): Promise<AlgoTransactionParams> => 
   };
 };
 
-export const broadcastTransaction = async (payload: Buffer): Promise<string> => {
+export const broadcastTransaction = async (
+  config: AlgorandCoinConfig,
+  payload: Buffer,
+): Promise<string> => {
   const { data }: { data: AlgoTransactionBroadcastResponse } = await network<
     ExplorerBroadcastReturn,
     Buffer
   >({
     method: "POST",
-    url: fullUrl(`/transactions`),
+    url: fullUrl(config, `/transactions`),
     data: payload,
     headers: { "Content-Type": "application/x-binary" },
   });
@@ -68,9 +74,12 @@ export const broadcastTransaction = async (payload: Buffer): Promise<string> => 
   return data.txId;
 };
 
-export const getBlock = async (round: number): Promise<ExplorerBlock> => {
+export const getBlock = async (
+  config: AlgorandCoinConfig,
+  round: number,
+): Promise<ExplorerBlock> => {
   const { data } = await network<ExplorerBlock>({
-    url: fullUrl(`/blocks/${round}`),
+    url: fullUrl(config, `/blocks/${round}`),
   });
 
   return data;

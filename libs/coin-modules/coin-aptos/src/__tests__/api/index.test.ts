@@ -1,38 +1,15 @@
 import { Aptos } from "@aptos-labs/ts-sdk";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createApi } from "../../api";
-import type { AptosConfig } from "../../config";
-import coinConfig from "../../config";
+import type { AptosCoinConfig } from "../../config";
+import { createMockAptosContext } from "../../test/context";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedAptos: jest.Mocked<any>;
 
-jest.mock("../../config", () => ({
-  setCoinConfig: jest.fn(),
-}));
-
-const mockAptosConfig: AptosConfig = {} as AptosConfig;
-
 describe("createApi", () => {
-  it("should set the coin config value", () => {
-    const setCoinConfigSpy = jest.spyOn(coinConfig, "setCoinConfig");
-
-    createApi(mockAptosConfig);
-
-    const config = setCoinConfigSpy.mock.calls[0][0]();
-
-    expect(setCoinConfigSpy).toHaveBeenCalled();
-
-    expect(config).toEqual(
-      expect.objectContaining({
-        ...mockAptosConfig,
-        status: { type: "active" },
-      }),
-    );
-  });
-
   it("should return an API object with coin module api methods", () => {
-    const api: CoinModuleApi = createApi(mockAptosConfig);
+    const api: CoinModuleApi<AptosCoinConfig> = createApi();
 
     // Check that methods are set with what we expect
     expect(api).toEqual({
@@ -81,9 +58,10 @@ describe("lastBlock", () => {
       }),
     }));
 
-    const api: CoinModuleApi = createApi(mockAptosConfig);
+    const api: CoinModuleApi<AptosCoinConfig> = createApi();
+    const context = createMockAptosContext();
 
-    expect(await api.lastBlock()).toStrictEqual({
+    expect(await api.lastBlock(context)).toStrictEqual({
       height: 123,
       hash: "123hash",
       time: new Date(1746021098623892 / 1_000),

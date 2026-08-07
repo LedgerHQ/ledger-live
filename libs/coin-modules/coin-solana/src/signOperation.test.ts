@@ -7,6 +7,16 @@ import { ChainAPI } from "./network";
 import { buildSignOperation } from "./signOperation";
 import { SolanaAddress, SolanaSigner } from "./signer";
 import { Transaction } from "./types";
+import coinConfig, { type SolanaCoinConfig } from "./config";
+
+coinConfig.setCoinConfig(
+  () =>
+    ({
+      token2022Enabled: false,
+      legacyOCMSMaxVersion: "1.0.0",
+      status: { type: "active" },
+    }) as SolanaCoinConfig,
+);
 
 const TRANSFER_KINDS = [
   "transfer",

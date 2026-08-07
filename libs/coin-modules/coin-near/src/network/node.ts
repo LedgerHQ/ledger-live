@@ -4,7 +4,7 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
-import { getCoinConfig } from "../config";
+import { type NearConfig } from "../config";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { NearAccount } from "../types";
@@ -18,8 +18,11 @@ import {
   NearV3Response,
 } from "./sdk.types";
 
-export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
-  const currencyConfig = getCoinConfig();
+export const fetchAccountDetails = async (
+  config: NearConfig,
+  address: string,
+): Promise<NearAccountDetails> => {
+  const currencyConfig = config;
   const { data } = await network<{ result: NearAccountDetails }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
@@ -39,11 +42,12 @@ export const fetchAccountDetails = async (address: string): Promise<NearAccountD
 };
 
 export const getAccount = async (
+  config: NearConfig,
   address: string,
 ): Promise<Pick<NearAccount, "blockHeight" | "balance" | "spendableBalance" | "nearResources">> => {
   let accountDetails: NearAccountDetails;
 
-  accountDetails = await fetchAccountDetails(address);
+  accountDetails = await fetchAccountDetails(config, address);
 
   if (!accountDetails) {
     accountDetails = {
@@ -53,12 +57,14 @@ export const getAccount = async (
     };
   }
 
-  const { stakingPositions, totalStaked, totalAvailable, totalPending } =
-    await getStakingPositions(address);
+  const { stakingPositions, totalStaked, totalAvailable, totalPending } = await getStakingPositions(
+    config,
+    address,
+  );
 
   // Read directly from the protocol config rather than the preload cache: a CoinModuleApi caller
   // never runs the account bridge's preload step, so the cache would still hold its zeroed default.
-  const { storageCost } = await getActionCosts();
+  const { storageCost } = await getActionCosts(config);
 
   const balance = new BigNumber(accountDetails.amount);
   const storageUsage = storageCost.multipliedBy(accountDetails.storage_usage);
@@ -88,8 +94,8 @@ type NearStats = {
   gas_price: string | null;
 };
 
-const getGasPriceFromRpc = async (): Promise<string> => {
-  const currencyConfig = getCoinConfig();
+const getGasPriceFromRpc = async (config: NearConfig): Promise<string> => {
+  const currencyConfig = config;
   const { data } = await network<{
     result?: { gas_price: string };
     error?: { message: string };
@@ -112,8 +118,8 @@ const getGasPriceFromRpc = async (): Promise<string> => {
   return data.result.gas_price;
 };
 
-export const getGasPrice = async (): Promise<string> => {
-  const currencyConfig = getCoinConfig();
+export const getGasPrice = async (config: NearConfig): Promise<string> => {
+  const currencyConfig = config;
 
   try {
     const response = await liveNetwork<NearV3Response<NearStats>>({
@@ -129,17 +135,20 @@ export const getGasPrice = async (): Promise<string> => {
     log("Near", "getGasPrice indexer request failed, falling back to node RPC", error);
   }
 
-  return getGasPriceFromRpc();
+  return getGasPriceFromRpc(config);
 };
 
-export const getAccessKey = async ({
-  address,
-  publicKey,
-}: {
-  address: string;
-  publicKey: string;
-}): Promise<NearAccessKey> => {
-  const currencyConfig = getCoinConfig();
+export const getAccessKey = async (
+  config: NearConfig,
+  {
+    address,
+    publicKey,
+  }: {
+    address: string;
+    publicKey: string;
+  },
+): Promise<NearAccessKey> => {
+  const currencyConfig = config;
   const { data } = await network<{ result: NearAccessKey }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
@@ -165,8 +174,12 @@ export const getAccessKey = async ({
  * `TIMEOUT_ERROR` can be thrown when the transaction is not yet executed in less than 10 seconds.
  * Documentation advises to "re-submit the request with the identical transaction" in this case.
  */
-export const broadcastTransaction = async (transaction: string, retries = 6): Promise<string> => {
-  const currencyConfig = getCoinConfig();
+export const broadcastTransaction = async (
+  config: NearConfig,
+  transaction: string,
+  retries = 6,
+): Promise<string> => {
+  const currencyConfig = config;
   const { data } = await network<{
     result: { transaction: { hash: string } };
     error: { cause: { name: string }; message: string };
@@ -199,7 +212,7 @@ export const broadcastTransaction = async (transaction: string, retries = 6): Pr
         },
         retries,
       });
-      return broadcastTransaction(transaction, retries - 1);
+      return broadcastTransaction(config, transaction, retries - 1);
     }
 
     log("Near", "broadcastTransaction error", data.error);
@@ -216,6 +229,7 @@ export const broadcastTransaction = async (transaction: string, retries = 6): Pr
 };
 
 export const getStakingPositions = async (
+  config: NearConfig,
   address: string,
 ): Promise<{
   stakingPositions: NearStakingPosition[];
@@ -223,17 +237,17 @@ export const getStakingPositions = async (
   totalAvailable: BigNumber;
   totalPending: BigNumber;
 }> => {
-  const currencyConfig = getCoinConfig();
+  const currencyConfig = config;
   const { connect, keyStores } = nearAPI;
 
-  const config = {
+  const nearConnectConfig = {
     networkId: "mainnet",
     keyStore: new keyStores.InMemoryKeyStore(),
     nodeUrl: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     headers: {},
   };
 
-  const near = await connect(config);
+  const near = await connect(nearConnectConfig);
   const account = await near.account(address);
 
   let totalStaked = new BigNumber(0);
@@ -324,12 +338,13 @@ type NearValidator = NearRawValidator & {
 
 type FetchValidatorsParams = {
   total: number;
+  config: NearConfig;
 };
 
 const VALIDATORS_PAGE_SIZE = 100;
 
-async function fetchValidators({ total }: FetchValidatorsParams): Promise<NearValidator[]> {
-  const currencyConfig = getCoinConfig();
+async function fetchValidators({ total, config }: FetchValidatorsParams): Promise<NearValidator[]> {
+  const currencyConfig = config;
   const collected: NearIndexerValidator[] = [];
   const maxPages = Math.ceil(total / VALIDATORS_PAGE_SIZE);
   let next: string | undefined;

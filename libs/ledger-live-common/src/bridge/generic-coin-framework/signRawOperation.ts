@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
+import { buildContext } from "./api/context";
 import { buildOptimisticOperation } from "./utils";
 import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -26,6 +27,7 @@ export const genericSignRawOperation =
     new Observable(o => {
       async function main() {
         const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
+        const context = buildContext(account.currency.id);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as GetAddressResult;
@@ -33,10 +35,11 @@ export const genericSignRawOperation =
           const sender = account.freshAddress;
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await coinModuleApi.getNextSequence(sender);
+          const sequenceNumber = await coinModuleApi.getNextSequence(context, sender);
 
           /* Craft unsigned blob via coin-framework */
           const { transaction: unsigned } = await coinModuleApi.craftRawTransaction(
+            context,
             transaction,
             sender,
             publicKey,
@@ -56,9 +59,12 @@ export const genericSignRawOperation =
 
         /* Combine payload + signature for broadcast */
         const combined = await coinModuleApi.combine(
+          context,
           signedInfo.unsigned,
           signedInfo.txnSig,
-          signedInfo.publicKey,
+          {
+            pubkey: signedInfo.publicKey,
+          },
         );
         const operation = buildOptimisticOperation(
           account,

@@ -9,6 +9,7 @@ import type { Account, CurrenciesData, DatasetTest, TokenAccount } from "@ledger
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { fromTransactionRaw } from "../bridge/transaction";
+import coinConfig from "../config";
 import { ACTIVATION_FEES, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getChainParameters } from "../network";
 import type { Transaction, TransactionStatus, TronAccountRaw } from "../types";
@@ -67,7 +68,7 @@ const assertEnergyAwareTrc20Fee = async (
   // No shortfall means no fee, so skip the chain-parameters fetch entirely.
   let shortfallFee = new BigNumber(0);
   if (!(bandwidthShortfall.isZero() && energyShortfall.isZero())) {
-    const params = await getChainParameters();
+    const params = await getChainParameters(coinConfig.getCoinConfig());
     shortfallFee = bandwidthShortfall
       .multipliedBy(params.transactionFee)
       .plus(energyShortfall.multipliedBy(params.energyFee));

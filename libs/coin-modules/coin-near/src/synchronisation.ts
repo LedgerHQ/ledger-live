@@ -2,6 +2,7 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accou
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./network";
+import { getCoinConfig } from "./config";
 import { NearAccount } from "./types";
 
 export const getAccountShape: GetAccountShape<NearAccount> = async info => {
@@ -16,9 +17,13 @@ export const getAccountShape: GetAccountShape<NearAccount> = async info => {
     derivationMode,
   });
 
-  const { blockHeight, balance, spendableBalance, nearResources } = await getAccount(address);
+  const config = getCoinConfig();
+  const { blockHeight, balance, spendableBalance, nearResources } = await getAccount(
+    config,
+    address,
+  );
 
-  const newOperations = await getOperations(accountId, address);
+  const newOperations = await getOperations(config, accountId, address);
   const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {

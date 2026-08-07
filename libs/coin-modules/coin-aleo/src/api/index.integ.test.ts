@@ -9,9 +9,14 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { setupCalStore } from "../__tests__/helpers/cal";
 import { getPristineAccount } from "../__tests__/helpers/account";
+import type { AleoContext } from "../types";
 
 describe("createApi", () => {
-  const api = createApi(getTestnetIntegConfig(), "aleo_testnet");
+  const api = createApi("aleo_testnet");
+  const context: AleoContext = {
+    config: async () => getTestnetIntegConfig(),
+    logger: () => {},
+  };
   let emptyAddress: string;
 
   beforeAll(async () => {
@@ -22,7 +27,7 @@ describe("createApi", () => {
 
   describe("estimateFees", () => {
     it("returns fee for coin transfer transaction", async () => {
-      const fees = await api.estimateFees({
+      const fees = await api.estimateFees(context, {
         intentType: "transaction",
         asset: { type: "native" },
         type: TRANSACTION_TYPE.TRANSFER_PUBLIC,
@@ -37,7 +42,7 @@ describe("createApi", () => {
 
   describe("listOperations", () => {
     it("returns empty array for pristine account", async () => {
-      const { items: operations } = await api.listOperations(emptyAddress, {
+      const { items: operations } = await api.listOperations(context, emptyAddress, {
         minHeight: 0,
         order: "desc",
       });
@@ -46,7 +51,7 @@ describe("createApi", () => {
     });
 
     it("returns operations with correct metadata", async () => {
-      const { items: page } = await api.listOperations(testnetAddress, {
+      const { items: page } = await api.listOperations(context, testnetAddress, {
         minHeight: 0,
         limit: 10,
         order: "asc",
@@ -73,7 +78,7 @@ describe("createApi", () => {
     });
 
     it("returns a failed operation for a known rejected transaction", async () => {
-      const { items: page } = await api.listOperations(testnetAddress, {
+      const { items: page } = await api.listOperations(context, testnetAddress, {
         minHeight: referenceFailedTransferPublicTx.blockHeight,
         limit: 10,
         order: "asc",
@@ -104,13 +109,14 @@ describe("createApi", () => {
       "returns 2 non-overlapping, correctly ordered pages (%s)",
       async order => {
         const limit = 3;
-        const { items: page1, next: cursor1 } = await api.listOperations(testnetAddress, {
+        const { items: page1, next: cursor1 } = await api.listOperations(context, testnetAddress, {
           minHeight: 0,
           limit,
           order,
         });
 
         const { items: page2, next: cursor2 } = await api.listOperations(
+          context,
           testnetAddress,
           cursor1
             ? {
@@ -157,7 +163,7 @@ describe("createApi", () => {
       "returns operations with min height filter (%s)",
       async order => {
         const minHeight = referenceFailedTransferPublicTx.blockHeight;
-        const { items: page } = await api.listOperations(testnetAddress, {
+        const { items: page } = await api.listOperations(context, testnetAddress, {
           minHeight,
           limit: 10,
           order,
@@ -172,7 +178,7 @@ describe("createApi", () => {
 
   describe("lastBlock", () => {
     it("returns the last block information", async () => {
-      const lastBlock = await api.lastBlock();
+      const lastBlock = await api.lastBlock(context);
 
       expect(lastBlock.height).toBeGreaterThan(0);
       expect(lastBlock.hash?.length).toBeGreaterThan(0);
@@ -184,14 +190,14 @@ describe("createApi", () => {
     it("returns the balance for a valid address", async () => {
       // not an exact value: testnetAddress's public balance shifts as the team runs more
       // transactions against it, so only shape + non-negativity are checked here.
-      const balance = await api.getBalance(testnetAddress);
+      const balance = await api.getBalance(context, testnetAddress);
 
       expect(balance).toEqual([expect.objectContaining({ asset: { type: "native" } })]);
       expect(balance[0].value).toBeGreaterThanOrEqual(0n);
     });
 
     it("returns an empty array for a non-existing valid address", async () => {
-      const balance = await api.getBalance(emptyAddress);
+      const balance = await api.getBalance(context, emptyAddress);
 
       expect(balance).toEqual([]);
     });
@@ -199,7 +205,7 @@ describe("createApi", () => {
     it("throws an error for an invalid address", async () => {
       const invalidAddress = "invalid_address";
 
-      await expect(api.getBalance(invalidAddress)).rejects.toMatchObject({
+      await expect(api.getBalance(context, invalidAddress)).rejects.toMatchObject({
         name: "LedgerAPI4xx",
         status: 404,
       });

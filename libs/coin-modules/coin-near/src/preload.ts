@@ -4,6 +4,7 @@ import { VALIDATORS_COUNT } from "./constants";
 import { getGasPrice, getValidators } from "./network/node";
 import { getActionCosts } from "./network/protocolConfig";
 import { getCurrentNearPreloadData, setNearPreloadData } from "./preload-data";
+import { getCoinConfig } from "./config";
 import type { NearPreloadedData } from "./types";
 
 export { getCurrentNearPreloadData };
@@ -67,10 +68,11 @@ export const preload = async (): Promise<NearPreloadedData> => {
 
   // `force` so a preload always refreshes the protocol config, as it did before the derivation
   // moved behind a cache; it also refills that cache for callers outside a bridge sync.
+  const config = getCoinConfig();
   const [actionCosts, rawValidators, gasPrice] = await Promise.all([
-    getActionCosts.force(),
-    getValidators({ total: VALIDATORS_COUNT }),
-    getGasPrice(),
+    getActionCosts.force(config),
+    getValidators({ total: VALIDATORS_COUNT, config }),
+    getGasPrice(config),
   ]);
 
   const validators = rawValidators.map(({ account_id: validatorAddress, stake, commission }) => ({

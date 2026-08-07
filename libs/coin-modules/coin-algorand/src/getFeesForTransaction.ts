@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
+import { getCoinConfig } from "./config";
 import { getTransactionParams } from "./network";
 import type { AlgorandAccount, Transaction } from "./types";
 
@@ -11,7 +12,7 @@ export const getEstimatedFees = async (
   account: AlgorandAccount,
   transaction: Transaction,
 ): Promise<BigNumber> => {
-  const params = await getTransactionParams();
+  const params = await getTransactionParams(getCoinConfig());
 
   let suggestedFees = 0;
   if (params.fee) {

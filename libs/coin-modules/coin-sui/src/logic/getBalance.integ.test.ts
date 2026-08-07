@@ -23,7 +23,7 @@ describe.skip("getBalance", () => {
   });
 
   it("should fetch native SUI balance", async () => {
-    const balances = await getBalance(SENDER);
+    const balances = await getBalance(coinConfig.getCoinConfig(), SENDER);
 
     expect(balances.length).toBeGreaterThanOrEqual(1);
     expect(balances[0]).toMatchObject({
@@ -35,7 +35,7 @@ describe.skip("getBalance", () => {
   }, 10000);
 
   it("should fetch token balances", async () => {
-    const balances = await getBalance(SENDER);
+    const balances = await getBalance(coinConfig.getCoinConfig(), SENDER);
 
     expect(balances.length).toBeGreaterThanOrEqual(1);
 
@@ -53,7 +53,7 @@ describe.skip("getBalance", () => {
   }, 15000);
 
   it("should properly parse token asset reference", async () => {
-    const balances = await getBalance(SENDER);
+    const balances = await getBalance(coinConfig.getCoinConfig(), SENDER);
 
     const usdTokens = balances.filter(
       balance =>

@@ -1,5 +1,6 @@
 import buildCoinConfig, {
   type CoinConfig,
+  type Context,
   type CurrencyConfig,
 } from "@ledgerhq/coin-module-framework/config";
 
@@ -36,6 +37,9 @@ export type TronConfig = {
 };
 
 export type TronCoinConfig = CurrencyConfig & TronConfig;
+
+/** The {@link Context} threaded through the coin-tron API layer (ADR-019). */
+export type TronContext = Context<TronCoinConfig>;
 
 const coinConfig: {
   setCoinConfig: (config: CoinConfig<TronCoinConfig>) => void;

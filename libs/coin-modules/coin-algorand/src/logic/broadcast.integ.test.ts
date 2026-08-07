@@ -1,23 +1,18 @@
 import algosdk, { base64ToBytes, makePaymentTxnWithSuggestedParamsFromObject } from "algosdk";
 import { broadcast } from "./broadcast";
-import coinConfig from "../config";
 import { getTransactionParams } from "../network/algod";
+import { createMockAlgorandContext } from "../test/context";
 
 describe("Broadcast", () => {
-  beforeAll(() => {
-    coinConfig.setCoinConfig(
-      () =>
-        ({
-          status: { type: "active" },
-          node: "https://algorand.coin.ledger.com/ps2/v2",
-        }) as any,
-    );
-  });
+  const mockAlgorandConfig = {
+    status: { type: "active" },
+    node: "https://algorand.coin.ledger.com/ps2/v2",
+  };
 
   it("throws on insufficient funds", async () => {
     const sender = algosdk.generateAccount();
     const receiver = algosdk.generateAccount();
-    const params = await getTransactionParams();
+    const params = await getTransactionParams(mockAlgorandConfig);
     const tx = makePaymentTxnWithSuggestedParamsFromObject({
       sender: sender.addr,
       receiver: receiver.addr,
@@ -32,6 +27,8 @@ describe("Broadcast", () => {
     const signed = tx.signTxn(sender.sk);
     const hex = Buffer.from(signed).toString("hex");
 
-    await expect(broadcast(hex)).rejects.toThrow(/overspend/);
+    await expect(broadcast(createMockAlgorandContext(mockAlgorandConfig), hex)).rejects.toThrow(
+      /overspend/,
+    );
   });
 });

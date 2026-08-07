@@ -1,5 +1,6 @@
 import type { FeeEstimation } from "@ledgerhq/coin-module-framework/api/index";
 import { BigNumber } from "bignumber.js";
+import type { NearContext } from "../config";
 import { getActionCosts, getGasPrice } from "../network";
 import { computeFees } from "./fees";
 import { pooledAmount } from "./pooledAmount";
@@ -22,9 +23,11 @@ function overriddenGasPrice(parameters: FeeEstimation["parameters"]): string | u
 // path (preload defaults are zeros, which would silently yield a zero fee). A missing recipient
 // prices as zero rather than erroring, so a form can price while still being filled in.
 export async function estimateFees(
+  context: NearContext,
   intent: NearIntent,
   customFeesParameters?: FeeEstimation["parameters"],
 ): Promise<FeeEstimation> {
+  const config = await context.config();
   const { mode, receiverId } = resolveTarget(intent);
 
   if (!receiverId) {
@@ -33,8 +36,8 @@ export async function estimateFees(
 
   const override = overriddenGasPrice(customFeesParameters);
   const [liveGasPrice, costs] = await Promise.all([
-    override === undefined ? getGasPrice() : Promise.resolve(override),
-    getActionCosts(),
+    override === undefined ? getGasPrice(config) : Promise.resolve(override),
+    getActionCosts(config),
   ]);
 
   const fees = computeFees({
@@ -51,7 +54,7 @@ export async function estimateFees(
   // cannot be derived from the native balance. `computeUseAllAmount` prefers `parameters.amount`
   // when the module supplies it, which is the only way to tell the framework the real ceiling.
   if (mode === "unstake" || mode === "withdraw") {
-    const pooled = await pooledAmount(mode, intent.sender, receiverId);
+    const pooled = await pooledAmount(config, mode, intent.sender, receiverId, undefined);
     return { value, parameters: { gasPrice: liveGasPrice, amount: pooled } };
   }
 

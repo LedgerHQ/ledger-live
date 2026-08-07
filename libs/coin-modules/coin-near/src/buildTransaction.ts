@@ -4,6 +4,7 @@ import * as nearAPI from "near-api-js";
 import { Transaction as NearApiTransaction } from "near-api-js/lib/transaction";
 import { buildActions } from "./logic/actions";
 import { getAccessKey } from "./network";
+import { getCoinConfig } from "./config";
 import type { Transaction } from "./types";
 
 export const buildTransaction = async (
@@ -11,7 +12,7 @@ export const buildTransaction = async (
   t: Transaction,
   publicKey: string,
 ): Promise<NearApiTransaction> => {
-  const { nonce, block_hash } = await getAccessKey({
+  const { nonce, block_hash } = await getAccessKey(getCoinConfig(), {
     address: a.freshAddress,
     publicKey,
   });

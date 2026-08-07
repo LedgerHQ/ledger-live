@@ -37,13 +37,15 @@ jest.mock("../network/client", () => {
 });
 
 import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api/index";
+import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import type { Context } from "@ledgerhq/coin-module-framework/config";
 import { getCeloClient } from "../network/client";
-import { getRewards } from "./getRewards";
-import { getStakes } from "./getStakes";
-import { getValidators } from "./getValidators";
 import { createApi } from "./index";
 
-const config = {} as Parameters<typeof createApi>[0];
+const mockCtx: Context<EvmConfigInfo> = {
+  config: async () => ({}) as EvmConfigInfo,
+  logger: () => {},
+};
 
 const COIN_MODULE_API_METHODS = [
   "broadcast",
@@ -71,14 +73,14 @@ describe("createApi", () => {
   });
 
   it("exposes every CoinModuleApi method as a function", () => {
-    const api = createApi(config) as unknown as Record<string, unknown>;
+    const api = createApi("celo") as unknown as Record<string, unknown>;
     for (const method of COIN_MODULE_API_METHODS) {
       expect(typeof api[method]).toBe("function");
     }
   });
 
   it("delegates the generic EVM methods to the coin-evm api", () => {
-    const api = createApi(config);
+    const api = createApi("celo");
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
     expect(api.listOperations).toBe(evmApi.listOperations);
@@ -88,7 +90,7 @@ describe("createApi", () => {
   });
 
   it("overrides the Celo-specific (CIP-64) methods instead of delegating", () => {
-    const api = createApi(config);
+    const api = createApi("celo");
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
     expect(api.craftTransaction).not.toBe(evmApi.craftTransaction);
@@ -98,24 +100,24 @@ describe("createApi", () => {
   });
 
   it("advertises staking support and wires the staking read methods", () => {
-    const api = createApi(config);
+    const api = createApi("celo");
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
 
     expect((api as { stakingSupported?: boolean }).stakingSupported).toBe(true);
-    expect(api.getStakes).toBe(getStakes);
-    expect(api.getValidators).toBe(getValidators);
-    expect(api.getRewards).toBe(getRewards);
+    expect(typeof api.getStakes).toBe("function");
+    expect(typeof api.getValidators).toBe("function");
+    expect(typeof api.getRewards).toBe("function");
     // getBalance is wrapped (not delegated) to surface Celo staking positions via Balance.stake
     expect(api.getBalance).not.toBe(evmApi.getBalance);
   });
 
   it("getRewards rejects with not supported (Celo has no discrete on-chain reward events)", async () => {
-    const api = createApi(config);
-    await expect(api.getRewards("0xabc")).rejects.toThrow(/not supported/);
+    const api = createApi("celo");
+    await expect(api.getRewards(mockCtx, "0xabc")).rejects.toThrow(/not supported/);
   });
 
   it("validates a staking (lock) intent against the native balance", async () => {
-    const api = createApi(config);
+    const api = createApi("celo");
     const intent = {
       intentType: "staking",
       type: "celo.lock",
@@ -132,9 +134,10 @@ describe("createApi", () => {
     };
 
     const res = await api.validateIntent(
-      intent as unknown as Parameters<typeof api.validateIntent>[0],
-      balances as unknown as Parameters<typeof api.validateIntent>[1],
-      customFees as unknown as Parameters<typeof api.validateIntent>[2],
+      mockCtx as unknown as Parameters<typeof api.validateIntent>[0],
+      intent as unknown as Parameters<typeof api.validateIntent>[1],
+      balances as unknown as Parameters<typeof api.validateIntent>[2],
+      { customFees } as unknown as Parameters<typeof api.validateIntent>[3],
     );
 
     expect(res.amount).toBe(100n);
@@ -143,7 +146,7 @@ describe("createApi", () => {
   });
 
   it("delegates non-staking validateIntent to the coin-evm api", async () => {
-    const api = createApi(config);
+    const api = createApi("celo");
     const evmApi = (createEvmApi as jest.Mock).mock.results[0].value;
     const intent = {
       intentType: "transaction",
@@ -157,16 +160,17 @@ describe("createApi", () => {
     const balances: unknown[] = [];
 
     await api.validateIntent(
-      intent as unknown as Parameters<typeof api.validateIntent>[0],
-      balances as unknown as Parameters<typeof api.validateIntent>[1],
+      mockCtx as unknown as Parameters<typeof api.validateIntent>[0],
+      intent as unknown as Parameters<typeof api.validateIntent>[1],
+      balances as unknown as Parameters<typeof api.validateIntent>[2],
     );
 
-    expect(evmApi.validateIntent).toHaveBeenCalledWith(intent, balances, undefined);
+    expect(evmApi.validateIntent).toHaveBeenCalledWith(mockCtx, intent, balances, undefined);
   });
 
   it("broadcasts by forwarding the raw transaction to the node", async () => {
-    const api = createApi(config);
-    const hash = await api.broadcast("0xdeadbeef");
+    const api = createApi("celo");
+    const hash = await api.broadcast(mockCtx, "0xdeadbeef");
 
     const { sendRawTransaction } = (getCeloClient as jest.Mock)();
     expect(sendRawTransaction).toHaveBeenCalledWith({ serializedTransaction: "0xdeadbeef" });

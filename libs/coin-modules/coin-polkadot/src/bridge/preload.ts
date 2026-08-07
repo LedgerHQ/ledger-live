@@ -2,6 +2,7 @@
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import polkadotAPI from "../network";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
@@ -80,11 +81,12 @@ const shouldRefreshValidators = (
 
 export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
+  const config = coinConfig.getCoinConfig(currency.id);
   let minimumBondBalance;
   let currentStakingProgress;
   try {
     // Should we just check for asset-hub ?
-    currentStakingProgress = await polkadotAPI.getStakingProgress(currency);
+    currentStakingProgress = await polkadotAPI.getStakingProgress(config, currency);
   } catch {
     currentStakingProgress = {
       electionClosed: true,
@@ -95,7 +97,7 @@ export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreload
   }
 
   try {
-    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(currency);
+    minimumBondBalance = await polkadotAPI.getMinimumBondBalance(config, currency);
   } catch {
     minimumBondBalance = BigNumber(0);
   }

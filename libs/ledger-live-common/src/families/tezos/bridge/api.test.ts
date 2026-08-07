@@ -233,7 +233,7 @@ describe("getAccountReadiness", () => {
   it("is ready when the account is revealed", async () => {
     getAccountInfoMock.mockResolvedValueOnce({ type: "tezos", revealed: true });
     await expect(getAccountReadiness(currency, "tz1revealed")).resolves.toEqual({ ready: true });
-    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1revealed");
+    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1revealed");
   });
 
   it("is not ready with reason 'unrevealed' when the account is not revealed", async () => {
@@ -242,6 +242,6 @@ describe("getAccountReadiness", () => {
       ready: false,
       reason: "unrevealed",
     });
-    expect(getAccountInfoMock).toHaveBeenCalledWith("tz1unrevealed");
+    expect(getAccountInfoMock).toHaveBeenCalledWith(expect.anything(), "tz1unrevealed");
   });
 });

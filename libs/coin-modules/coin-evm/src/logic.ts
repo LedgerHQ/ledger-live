@@ -3,6 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Unit } from "@ledgerhq/ledger-wallet-framework/types";
 import { AnyMessage, MessageProperties } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import type { EvmConfigInfo } from "./config";
 import { getNodeApi } from "./network/node/index";
 
 /**
@@ -16,6 +17,7 @@ export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
  * to settle the transaction on layer 1.
  */
 export const getAdditionalLayer2Fees = async (
+  config: EvmConfigInfo,
   currency: CryptoCurrency,
   transaction: string,
 ): Promise<BigNumber | undefined> => {
@@ -26,12 +28,12 @@ export const getAdditionalLayer2Fees = async (
     case "blast_sepolia":
     case "base":
     case "base_sepolia": {
-      const nodeApi = getNodeApi(currency);
+      const nodeApi = getNodeApi(config, currency);
       const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
     case "scroll": {
-      const nodeApi = getNodeApi(currency);
+      const nodeApi = getNodeApi(config, currency);
       const additionalFees = await nodeApi.getScrollAdditionalFees(currency, transaction);
       return additionalFees;
     }

@@ -1,3 +1,4 @@
+import { mockNearContext } from "../../test/context";
 import { getValidators as fetchValidators } from "../../network";
 import { getValidators } from "../getValidators";
 
@@ -15,7 +16,7 @@ describe("getValidators", () => {
       },
     ]);
 
-    const page = await getValidators();
+    const page = await getValidators(mockNearContext);
 
     expect(page.items).toEqual([
       {
@@ -32,9 +33,9 @@ describe("getValidators", () => {
   it("requests the top 200 validators", async () => {
     (fetchValidators as unknown as jest.Mock).mockResolvedValue([]);
 
-    await getValidators();
+    await getValidators(mockNearContext);
 
-    expect(fetchValidators).toHaveBeenCalledWith({ total: 200 });
+    expect(fetchValidators).toHaveBeenCalledWith({ total: 200, config: expect.anything() });
   });
 
   it("defaults a missing stake to zero", async () => {
@@ -42,7 +43,7 @@ describe("getValidators", () => {
       { account_id: "pool.poolv1.near", stake: "", commission: 0 },
     ]);
 
-    const page = await getValidators();
+    const page = await getValidators(mockNearContext);
 
     expect(page.items[0].balance).toBe(0n);
   });

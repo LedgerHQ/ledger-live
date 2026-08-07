@@ -1,33 +1,29 @@
-import {
-  CoinModuleApi,
-  BufferTxData,
-  MemoNotSupported,
-  Operation,
-} from "@ledgerhq/coin-module-framework/api/types";
-import { EvmConfig } from "../config";
+import { Operation } from "@ledgerhq/coin-module-framework/api/types";
+import type { EvmConfigInfo } from "../config";
+import { createMockEvmContext } from "../fixtures/context.fixtures";
 import { createApi } from "./index";
 
 describe("EVM Optimism Network", () => {
-  let module: CoinModuleApi<MemoNotSupported, BufferTxData>;
+  let module: ReturnType<typeof createApi>;
 
+  const config: Partial<EvmConfigInfo> = {
+    node: {
+      type: "external",
+      uri: "https://mainnet.optimism.io",
+    },
+    explorer: {
+      type: "etherscan",
+      uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10",
+    },
+  };
   beforeAll(() => {
-    const config = {
-      node: {
-        type: "external",
-        uri: "https://mainnet.optimism.io",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/10",
-      },
-    };
-    module = createApi(config as EvmConfig, "optimism");
+    module = createApi("optimism");
   });
 
   // this test is skipped until a RPC provider supporting trace_block is setup for optimism
   describe.skip("getBlock", () => {
     it("returns block with more than 10 transactions for height 144931340", async () => {
-      const result = await module.getBlock(144931340);
+      const result = await module.getBlock(createMockEvmContext(config), 144931340);
 
       // all the transactions are returned
       expect(result.transactions.length).toBe(61);
@@ -64,6 +60,7 @@ describe("EVM Optimism Network", () => {
      */
     it("returns internal transactions for address receiving ETH via smart contracts", async () => {
       const { items: operations } = await module.listOperations(
+        createMockEvmContext(config),
         "0xe0b719786c5511115ca9cdb38f6f7b3a8c97b105",
         {
           minHeight: 0,

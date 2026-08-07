@@ -107,7 +107,7 @@ describe("broadcast", () => {
       mockTransactionBody,
       Buffer.from("1234567890abcdef", "hex"),
     );
-    expect(mockedSubmit).toHaveBeenCalledWith(mockTransaction);
+    expect(mockedSubmit).toHaveBeenCalledWith(expect.anything(), mockTransaction);
     expect(mockedPatchOperationWithHash).toHaveBeenCalledWith(mockOperation, mockTxHash);
     expect(result).toEqual(mockPatchedOperation);
   });

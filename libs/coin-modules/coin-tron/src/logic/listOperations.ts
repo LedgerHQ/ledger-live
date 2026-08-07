@@ -1,6 +1,7 @@
 import { Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import uniqBy from "lodash/uniqBy";
+import type { TronCoinConfig } from "../config";
 import { fetchTronAccountTxsPage, getBlock } from "../network";
 import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 import { Block } from "../network/types";
@@ -32,6 +33,7 @@ export type ListOperationsOptions = {
 };
 
 export async function listOperations(
+  config: TronCoinConfig,
   address: string,
   options: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -54,7 +56,7 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(address, {
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(config, address, {
     limit,
     minTimestamp: fetchMinTimestamp,
     maxTimestamp: fetchMaxTimestamp,
@@ -89,7 +91,7 @@ export async function listOperations(
   );
 
   await promiseAllBatched(5, uniqueHeights, async height => {
-    const fetchedBlock = await getBlock(height);
+    const fetchedBlock = await getBlock(config, height);
     blocksByHeight.set(height, fetchedBlock);
   });
 

@@ -31,6 +31,7 @@ import {
   ZERO_FILLED_DUMMY_SIGNATURE,
   endpointByCurrencyId,
 } from "./utils";
+import coinConfig from "./config";
 import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
 
 function transactionHasNonPlaceholderSignatures(
@@ -149,7 +150,10 @@ export const buildSignOperation =
         const { signature } = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize()), {
             ...getResolution(transaction, deviceModelId, certificateSignatureKind),
-            solanaRPCURL: endpointByCurrencyId(account.currency.id),
+            solanaRPCURL: endpointByCurrencyId(
+              coinConfig.getCoinConfig(account.currency.id),
+              account.currency.id,
+            ),
             ...(!hasRealSignatures
               ? {
                   delayed: true,

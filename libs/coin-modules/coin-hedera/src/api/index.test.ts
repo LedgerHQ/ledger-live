@@ -1,13 +1,12 @@
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import BigNumber from "bignumber.js";
-import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
 import * as logic from "../logic";
 import * as logicUtils from "../logic/utils";
 import { mapIntentToSDKOperation } from "../logic/utils";
 import { apiClient } from "../network/api";
 import * as networkUtils from "../network/utils";
-import { getMockedConfig } from "../test/fixtures/config.fixture";
+import { getMockedContext } from "../test/fixtures/config.fixture";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaMemo } from "../types";
@@ -39,24 +38,12 @@ const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 
 describe("createApi", () => {
   let api: ReturnType<typeof createApi>;
-  const mockConfig = getMockedConfig();
+  const mockContext = getMockedContext();
   const mockCurrency = getMockedCurrency();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    api = createApi(mockConfig, mockCurrency.id);
-  });
-
-  it("should set the coin config value", () => {
-    const mockSetCoinConfig = jest.spyOn(coinConfig, "setCoinConfig");
-
-    createApi(mockConfig, mockCurrency.id);
-    const config = coinConfig.getCoinConfig(mockCurrency.id);
-
-    expect(mockSetCoinConfig).toHaveBeenCalled();
-    expect(config).toMatchObject({
-      status: { type: "active" },
-    });
+    api = createApi(mockCurrency.id);
   });
 
   it("should return an API object with coin module api methods", () => {
@@ -81,7 +68,7 @@ describe("createApi", () => {
       // @ts-expect-error - partial mock
       mockBroadcast.mockResolvedValue({ transactionHash: fakeHash });
 
-      const result = await api.broadcast("tx");
+      const result = await api.broadcast(mockContext, "tx");
 
       expect(mockBroadcast).toHaveBeenCalledTimes(1);
       expect(result).toBe(Buffer.from(fakeHash).toString("base64"));
@@ -92,7 +79,7 @@ describe("createApi", () => {
     it("should call combine from logic", () => {
       mockCombine.mockReturnValue("combined-tx");
 
-      const result = api.combine("tx", "sig", "pubkey");
+      const result = api.combine(mockContext, "tx", "sig", { pubkey: "pubkey" });
 
       expect(mockCombine).toHaveBeenCalledTimes(1);
       expect(result).toBe("combined-tx");
@@ -110,7 +97,7 @@ describe("createApi", () => {
         amount: 100n,
       };
 
-      const result = await api.craftTransaction(txIntent);
+      const result = await api.craftTransaction(mockContext, txIntent);
 
       expect(mockCraftTransaction).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ transaction: "serialized" });
@@ -120,19 +107,21 @@ describe("createApi", () => {
       // @ts-expect-error - testing unsupported useAllAmount
       const txIntent: TransactionIntent<HederaMemo> = { useAllAmount: true };
 
-      await expect(api.craftTransaction(txIntent)).rejects.toThrow("useAllAmount is not supported");
+      await expect(api.craftTransaction(mockContext, txIntent)).rejects.toThrow(
+        "useAllAmount is not supported",
+      );
     });
   });
 
   describe("call", () => {
     it("should throw 'call is not supported'", async () => {
-      await expect(api.call({})).rejects.toThrow("call is not supported");
+      await expect(api.call(mockContext, {})).rejects.toThrow("call is not supported");
     });
   });
 
   describe("craftRawTransaction", () => {
     it("should throw when called", () => {
-      expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 1n)).toThrow(
+      expect(() => api.craftRawTransaction(mockContext, "tx", "sender", "pubkey", 1n)).toThrow(
         "craftRawTransaction is not supported",
       );
     });
@@ -147,7 +136,7 @@ describe("createApi", () => {
       // @ts-expect-error - testing with minimal required fields for TransactionIntent
       const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
 
-      const result = await api.estimateFees(txIntent);
+      const result = await api.estimateFees(mockContext, txIntent);
 
       expect(result).toEqual({ value: BigInt("5000") });
       expect(mockEstimateFees).toHaveBeenCalledTimes(1);
@@ -163,7 +152,7 @@ describe("createApi", () => {
       // @ts-expect-error - testing with minimal required fields for TransactionIntent
       const txIntent: TransactionIntent<HederaMemo> = { recipient: "0.0.1234", amount: 100n };
 
-      const result = await api.estimateFees(txIntent);
+      const result = await api.estimateFees(mockContext, txIntent);
 
       expect(result).toEqual({ value: BigInt("9000") });
       expect(mockEstimateFees).toHaveBeenCalledTimes(1);
@@ -180,7 +169,7 @@ describe("createApi", () => {
     it("should call getBalance from logic", async () => {
       mockGetBalance.mockResolvedValue([{ value: 42n, asset: { type: "native" } }]);
 
-      const result = await api.getBalance("0.0.1234");
+      const result = await api.getBalance(mockContext, "0.0.1234");
 
       expect(mockGetBalance).toHaveBeenCalledTimes(1);
       expect(result).toEqual([{ value: 42n, asset: { type: "native" } }]);
@@ -188,7 +177,7 @@ describe("createApi", () => {
 
     it("should throw an exception when options is provided", async () => {
       await expect(
-        api.getBalance("random address", {} as unknown as BalanceOptions),
+        api.getBalance(mockContext, "random address", {} as unknown as BalanceOptions),
       ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
@@ -198,7 +187,7 @@ describe("createApi", () => {
       const mockBlock = { hash: "h", height: 1, time: new Date() };
       mockLastBlockV2.mockResolvedValue(mockBlock);
 
-      const result = await api.lastBlock();
+      const result = await api.lastBlock(mockContext);
 
       expect(mockLastBlockV2).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockBlock);
@@ -210,7 +199,7 @@ describe("createApi", () => {
       const mockBlock = { info: { hash: "h", height: 1, time: new Date() }, transactions: [] };
       mockGetBlockV2.mockResolvedValue(mockBlock);
 
-      const result = await api.getBlock(1);
+      const result = await api.getBlock(mockContext, 1);
 
       expect(mockGetBlockV2).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockBlock);
@@ -222,7 +211,7 @@ describe("createApi", () => {
       const mockBlockInfo = { hash: "h", height: 5, time: new Date() };
       mockGetBlockInfo.mockResolvedValue(mockBlockInfo);
 
-      const result = await api.getBlockInfo(5);
+      const result = await api.getBlockInfo(mockContext, 5);
 
       expect(mockGetBlockInfo).toHaveBeenCalledTimes(1);
       expect(mockGetBlockInfo).toHaveBeenCalledWith(5);
@@ -235,7 +224,7 @@ describe("createApi", () => {
       const mockValidators = { items: [], next: undefined };
       mockGetValidators.mockResolvedValue(mockValidators);
 
-      const result = await api.getValidators("cursor");
+      const result = await api.getValidators(mockContext, { cursor: "cursor" });
 
       expect(mockGetValidators).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockValidators);
@@ -258,7 +247,7 @@ describe("createApi", () => {
       };
       mockGetStakes.mockResolvedValue(mockStakes);
 
-      const result = await api.getStakes("0.0.1234");
+      const result = await api.getStakes(mockContext, "0.0.1234");
 
       expect(mockGetStakes).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockStakes);
@@ -274,7 +263,7 @@ describe("createApi", () => {
       };
       mockGetRewards.mockResolvedValue(mockRewards);
 
-      const result = await api.getRewards("0.0.1234", "cursor");
+      const result = await api.getRewards(mockContext, "0.0.1234", { cursor: "cursor" });
 
       expect(mockGetRewards).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockRewards);
@@ -326,7 +315,7 @@ describe("createApi", () => {
 
     it("should throw when minHeight is not 0", async () => {
       await expect(
-        api.listOperations(mockAddress, { ...mockOptions, minHeight: 5 }),
+        api.listOperations(mockContext, mockAddress, { ...mockOptions, minHeight: 5 }),
       ).rejects.toThrow("minHeight is not supported");
     });
 
@@ -337,7 +326,7 @@ describe("createApi", () => {
         nextCursor: "next123",
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(mockListOperationsV2).toHaveBeenCalledTimes(1);
       expect(result.next).toBe("next123");
@@ -364,7 +353,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(result.items[0].details).toMatchObject({
         assetAmount: mockTokenOperation.value.toFixed(0),
@@ -387,7 +376,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(result.items[0].details).toMatchObject({ stakedAmount: 200n });
     });
@@ -403,7 +392,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(mockExtractInitiator).not.toHaveBeenCalled();
       expect(result.items[0].tx).not.toHaveProperty("feesPayer");
@@ -424,7 +413,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(mockExtractInitiator).not.toHaveBeenCalled();
       expect(result.items[0].tx.feesPayer).toBe(explicitFeesPayer);
@@ -440,7 +429,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, { ...mockOptions, order });
+      const result = await api.listOperations(mockContext, mockAddress, { ...mockOptions, order });
 
       const newId = mockOperationNewer.id;
       const oldId = mockOperationOlder.id;
@@ -462,10 +451,11 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      await api.listOperations(mockAddress, mockOptions);
+      await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(mockListOperationsV2).toHaveBeenCalledTimes(1);
       expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           tokenEvmAddresses: expect.arrayContaining(["0xdeadbeef000000000000000000000000000abcde"]),
         }),
@@ -479,7 +469,10 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, { ...mockOptions, order: "desc" });
+      const result = await api.listOperations(mockContext, mockAddress, {
+        ...mockOptions,
+        order: "desc",
+      });
 
       expect(result.items[0].id).toBe(mockOperationNewer.id);
       expect(result.items[1].id).toBe(mockOperationOlder.id);
@@ -492,7 +485,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(result.next).toBeUndefined();
     });
@@ -504,7 +497,7 @@ describe("createApi", () => {
         nextCursor: null,
       });
 
-      const result = await api.listOperations(mockAddress, mockOptions);
+      const result = await api.listOperations(mockContext, mockAddress, mockOptions);
 
       expect(mockListOperationsV2).toHaveBeenCalledTimes(1);
       expect(logicUtils.getBlockHash).toHaveBeenCalledTimes(1);
@@ -514,7 +507,7 @@ describe("createApi", () => {
     it("should throw when evm address is missing", async () => {
       mockToEVMAddress.mockResolvedValue(null);
 
-      await expect(api.listOperations(mockAddress, mockOptions)).rejects.toThrow(
+      await expect(api.listOperations(mockContext, mockAddress, mockOptions)).rejects.toThrow(
         "hedera: evm address is missing",
       );
     });
@@ -523,7 +516,7 @@ describe("createApi", () => {
   describe("validateIntent", () => {
     it("should throw when called", async () => {
       // @ts-expect-error - testing unsupported method
-      await expect(api.validateIntent({}, [], undefined)).rejects.toThrow(
+      await expect(api.validateIntent(mockContext, {}, [], undefined)).rejects.toThrow(
         "validateIntent is not supported",
       );
     });
@@ -531,7 +524,7 @@ describe("createApi", () => {
 
   describe("getNextSequence", () => {
     it("should throw when called", async () => {
-      await expect(api.getNextSequence("0.0.1234")).rejects.toThrow(
+      await expect(api.getNextSequence(mockContext, "0.0.1234")).rejects.toThrow(
         "getNextSequence is not supported",
       );
     });

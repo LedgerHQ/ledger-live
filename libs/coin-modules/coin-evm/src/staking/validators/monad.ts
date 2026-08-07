@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
-import { getCoinConfig } from "../../config";
+import type { EvmConfigInfo } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
 import type { StakingContractConfig } from "../../types/staking";
@@ -118,14 +118,17 @@ type ResolvedContext = {
   contractAddress: string;
 };
 
-const resolveContext = (currencyId: string): ResolvedContext | undefined => {
+const resolveContext = (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+): ResolvedContext | undefined => {
   const config = STAKING_CONTRACTS[currencyId];
   if (!config) return undefined;
 
   const abi = getStakingABI(currencyId);
   if (!abi) return undefined;
 
-  const node = getCoinConfig(currencyId).info.node;
+  const node = evmConfig.node;
   if (!isExternalNodeConfig(node)) return undefined;
 
   try {
@@ -215,8 +218,12 @@ const fetchPage = async (
   return { items, next: exhausted ? undefined : nextIndex.toString() };
 };
 
-const fetchValidators = async (currencyId: string, cursor?: Cursor): Promise<Page<Validator>> => {
-  const ctx = resolveContext(currencyId);
+const fetchValidators = async (
+  evmConfig: EvmConfigInfo,
+  currencyId: string,
+  cursor?: Cursor,
+): Promise<Page<Validator>> => {
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return { items: [], next: undefined };
 
   try {
@@ -364,11 +371,12 @@ const fetchStakeForValId = async (
 };
 
 export const fetchMonadStakes = async (
+  evmConfig: EvmConfigInfo,
   address: string,
   _config: StakingContractConfig,
   currency: CryptoCurrency,
 ): Promise<Stake[]> => {
-  const ctx = resolveContext(currency.id);
+  const ctx = resolveContext(evmConfig, currency.id);
   if (!ctx) return [];
 
   try {
@@ -501,11 +509,12 @@ const fetchWithdrawalRequests = async (
 };
 
 export const findFirstFreeWithdrawId = async (
+  evmConfig: EvmConfigInfo,
   currencyId: string,
   valId: bigint,
   delegator: string,
 ): Promise<number | null> => {
-  const ctx = resolveContext(currencyId);
+  const ctx = resolveContext(evmConfig, currencyId);
   if (!ctx) return null;
 
   try {

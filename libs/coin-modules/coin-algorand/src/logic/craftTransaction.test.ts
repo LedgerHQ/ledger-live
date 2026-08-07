@@ -5,6 +5,7 @@ import type { AlgorandMemo } from "../types";
 import { craftTransaction, craftOptInTransaction, craftApiTransaction } from "./craftTransaction";
 
 jest.mock("../network");
+import { mockAlgorandConfig, mockAlgorandContext } from "../test/context";
 
 jest.mock("algosdk", () => ({
   base64ToBytes: jest.fn((s: string) => Buffer.from(s, "base64")),
@@ -90,7 +91,7 @@ describe("craftTransaction", () => {
       amount: 1000000n,
     };
 
-    const result = await craftTransaction(input);
+    const result = await craftTransaction(mockAlgorandConfig, input);
 
     expect(result.serializedTransaction).toMatch(/^[a-f0-9]+$/i);
 
@@ -110,7 +111,7 @@ describe("craftTransaction", () => {
       assetId: "12345",
     };
 
-    const result = await craftTransaction(input);
+    const result = await craftTransaction(mockAlgorandConfig, input);
 
     const decoded = decodeTxPayload(result.serializedTransaction);
     expect(decoded.type).toBe("axfer");
@@ -128,7 +129,7 @@ describe("craftTransaction", () => {
       memo: "Test payment",
     };
 
-    const result = await craftTransaction(input);
+    const result = await craftTransaction(mockAlgorandConfig, input);
 
     const decoded = decodeTxPayload(result.serializedTransaction);
     expect(Buffer.from(decoded.note as Uint8Array).toString()).toBe("Test payment");
@@ -141,7 +142,7 @@ describe("craftTransaction", () => {
       amount: 1000000n,
     };
 
-    const result = await craftTransaction(input);
+    const result = await craftTransaction(mockAlgorandConfig, input);
 
     const decoded = decodeTxPayload(result.serializedTransaction);
     expect(decoded.note).toBeUndefined();
@@ -154,7 +155,7 @@ describe("craftTransaction", () => {
       amount: 500000n,
     };
 
-    const result = await craftTransaction(input);
+    const result = await craftTransaction(mockAlgorandConfig, input);
 
     expect(result.txPayload.amt).toBe(500000);
     expect(result.txPayload.type).toBe("pay");
@@ -162,7 +163,7 @@ describe("craftTransaction", () => {
   });
 
   it("should fetch transaction params from network", async () => {
-    await craftTransaction({
+    await craftTransaction(mockAlgorandConfig, {
       sender: "SENDER_ADDR",
       recipient: "RECIPIENT_ADDR",
       amount: 1000000n,
@@ -191,7 +192,7 @@ describe("craftOptInTransaction", () => {
     const sender = "SENDER_ADDR";
     const assetId = "12345";
 
-    const result = await craftOptInTransaction(sender, assetId);
+    const result = await craftOptInTransaction(mockAlgorandConfig, sender, assetId);
 
     const decoded = decodeTxPayload(result.serializedTransaction);
     expect(decoded.type).toBe("axfer");
@@ -227,7 +228,7 @@ describe("craftApiTransaction", () => {
       asset: { type: "native" },
     };
 
-    const result = await craftApiTransaction(intent);
+    const result = await craftApiTransaction(mockAlgorandContext, intent);
 
     expect(result.transaction).toMatch(/^[a-f0-9]+$/i);
 
@@ -248,7 +249,7 @@ describe("craftApiTransaction", () => {
       asset: { type: "asa", assetReference: "12345" },
     };
 
-    const result = await craftApiTransaction(intent);
+    const result = await craftApiTransaction(mockAlgorandContext, intent);
 
     const decoded = decodeTxPayload(result.transaction);
     expect(decoded.type).toBe("axfer");
@@ -269,7 +270,7 @@ describe("craftApiTransaction", () => {
       memo: { type: "string", kind: "note", value: "hello" },
     };
 
-    const result = await craftApiTransaction(intent);
+    const result = await craftApiTransaction(mockAlgorandContext, intent);
 
     const decoded = decodeTxPayload(result.transaction);
     expect(Buffer.from(decoded.note as Uint8Array).toString()).toBe("hello");
@@ -285,7 +286,7 @@ describe("craftApiTransaction", () => {
       asset: { type: "native" },
     };
 
-    const result = await craftApiTransaction(intent);
+    const result = await craftApiTransaction(mockAlgorandContext, intent);
 
     expect(result.details).toHaveProperty("txPayload");
     expect((result.details as { txPayload: { type: string } }).txPayload.type).toBe("pay");
@@ -299,7 +300,7 @@ describe("craftApiTransaction", () => {
       amount: 1000000n,
     } as unknown as TransactionIntent<AlgorandMemo>;
 
-    await expect(craftApiTransaction(intent)).rejects.toThrow(
+    await expect(craftApiTransaction(mockAlgorandContext, intent)).rejects.toThrow(
       "Only send transaction intent is supported",
     );
   });

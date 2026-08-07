@@ -1,3 +1,4 @@
+import type { TronCoinConfig } from "../config";
 import { broadcastHexTron, broadcastTron } from "../network";
 
 type TxObject = {
@@ -6,14 +7,17 @@ type TxObject = {
   signature: string[];
 };
 
-export async function broadcast(transaction: string | TxObject): Promise<string> {
+export async function broadcast(
+  config: TronCoinConfig,
+  transaction: string | TxObject,
+): Promise<string> {
   if (typeof transaction === "string") {
     const { rawTx, signature } = extractTxAndSignature(transaction);
     // Broadcast the signed bytes verbatim: a protobuf round-trip of `raw_data` is lossy
     // for TRC10/TRC20 contracts and would invalidate the signature.
-    return broadcastHexTron(buildSignedTransactionHex(rawTx, signature));
+    return broadcastHexTron(config, buildSignedTransactionHex(rawTx, signature));
   } else {
-    return broadcastTron(transaction);
+    return broadcastTron(config, transaction);
   }
 }
 

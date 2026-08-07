@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { setCoinConfig } from "../config";
 import { getOperations } from "./indexer";
+import { mockNearConfig } from "../test/context";
 import { mockServer, NEAR_BASE_URL_MOCKED } from "./node.mock";
 import { NearTransaction } from "./sdk.types";
 
@@ -63,7 +64,7 @@ describe("getOperations", () => {
     it("targets the v3 account txns endpoint", async () => {
       respondWith([]);
 
-      await getOperations(ACCOUNT_ID, ADDRESS);
+      await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(lastRequestUrl?.pathname).toBe(`/v3/accounts/${ADDRESS}/txns`);
     });
@@ -71,7 +72,7 @@ describe("getOperations", () => {
     it("sends no paging params, preserving the v1 default page size", async () => {
       respondWith([]);
 
-      await getOperations(ACCOUNT_ID, ADDRESS);
+      await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(lastRequestUrl?.searchParams.get("limit")).toBeNull();
       expect(lastRequestUrl?.search).toBe("");
@@ -82,7 +83,7 @@ describe("getOperations", () => {
     it("unwraps data", async () => {
       respondWith([txn(), txn({ transaction_hash: "second" })]);
 
-      const operations = await getOperations(ACCOUNT_ID, ADDRESS);
+      const operations = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operations).toHaveLength(2);
     });
@@ -90,7 +91,7 @@ describe("getOperations", () => {
     it("returns no operations when data is null", async () => {
       respondWith(null);
 
-      const operations = await getOperations(ACCOUNT_ID, ADDRESS);
+      const operations = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operations).toEqual([]);
     });
@@ -106,7 +107,7 @@ describe("getOperations", () => {
     ])("maps method %s to %s", async (method, expected) => {
       respondWith([txn({ actions: [{ action: "FUNCTION_CALL", method }] })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.type).toBe(expected);
     });
@@ -114,7 +115,7 @@ describe("getOperations", () => {
     it("falls back to OUT when the account is the signer", async () => {
       respondWith([txn({ actions: [{ action: "TRANSFER", method: null }] })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.type).toBe("OUT");
     });
@@ -127,7 +128,7 @@ describe("getOperations", () => {
         }),
       ]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.type).toBe("IN");
     });
@@ -135,7 +136,7 @@ describe("getOperations", () => {
     it("falls back to OUT/IN for an unknown method", async () => {
       respondWith([txn({ actions: [{ action: "FUNCTION_CALL", method: "mint_sbt" }] })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.type).toBe("OUT");
     });
@@ -150,7 +151,7 @@ describe("getOperations", () => {
         }),
       ]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.value.toFixed()).toBe("5000000000000000000000");
     });
@@ -163,7 +164,7 @@ describe("getOperations", () => {
         }),
       ]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.type).toBe("OUT");
       expect(operation.value.toFixed()).toBe("11114233164157900000000");
@@ -178,7 +179,7 @@ describe("getOperations", () => {
         }),
       ]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.value.toFixed()).toBe("123456789012345678901234");
     });
@@ -188,7 +189,7 @@ describe("getOperations", () => {
     it("reads the block hash from the block object", async () => {
       respondWith([txn()]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.blockHash).toBe("DsWyc6swGSDezgvweB561FLbL1nsBsU3QJtZFLHq79Ru");
     });
@@ -196,7 +197,7 @@ describe("getOperations", () => {
     it("converts the block height from string to number", async () => {
       respondWith([txn({ block: { block_height: "159618979" } })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.blockHeight).toBe(159618979);
     });
@@ -204,7 +205,7 @@ describe("getOperations", () => {
     it("leaves block fields undefined when the block object is empty", async () => {
       respondWith([txn({ block: {} })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.blockHash).toBeUndefined();
       expect(operation.blockHeight).toBeUndefined();
@@ -213,7 +214,7 @@ describe("getOperations", () => {
     it("derives the date from the nanosecond timestamp", async () => {
       respondWith([txn({ block_timestamp: "1755192310610741506" })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.date).toEqual(new Date(1755192310610));
     });
@@ -223,7 +224,7 @@ describe("getOperations", () => {
     it("is false for a successful outcome", async () => {
       respondWith([txn({ outcomes: { status: true } })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.hasFailed).toBe(false);
     });
@@ -231,7 +232,7 @@ describe("getOperations", () => {
     it("is true for a failed outcome", async () => {
       respondWith([txn({ outcomes: { status: false } })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.hasFailed).toBe(true);
     });
@@ -239,7 +240,7 @@ describe("getOperations", () => {
     it("is false when the status is absent, since the outcome is not indexed yet", async () => {
       respondWith([txn({ outcomes: {} })]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.hasFailed).toBe(false);
     });
@@ -249,7 +250,7 @@ describe("getOperations", () => {
       delete malformed.outcomes;
       respondWith([malformed]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.hasFailed).toBe(false);
     });
@@ -259,7 +260,7 @@ describe("getOperations", () => {
     it("maps senders and recipients", async () => {
       respondWith([txn()]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.senders).toEqual([ADDRESS]);
       expect(operation.recipients).toEqual(["receiver.near"]);
@@ -307,7 +308,7 @@ describe("getOperations", () => {
     it("maps a real FUNCTION_CALL transaction", async () => {
       respondWith([functionCall]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, "nearkat.near");
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, "nearkat.near");
 
       expect(operation.type).toBe("OUT");
       expect(operation.value.toFixed()).toBe("11114233164157900000000");
@@ -323,6 +324,7 @@ describe("getOperations", () => {
       respondWith([notYetExecuted]);
 
       const [operation] = await getOperations(
+        mockNearConfig,
         ACCOUNT_ID,
         "burrow-liquidation-bot-04.ref-labs.near",
       );
@@ -336,7 +338,7 @@ describe("getOperations", () => {
     it("maps a full page of both shapes without dropping any operation", async () => {
       respondWith([functionCall, notYetExecuted]);
 
-      const operations = await getOperations(ACCOUNT_ID, "nearkat.near");
+      const operations = await getOperations(mockNearConfig, ACCOUNT_ID, "nearkat.near");
 
       expect(operations).toHaveLength(2);
       expect(operations.map(operation => operation.hash)).toEqual([
@@ -354,7 +356,7 @@ describe("getOperations", () => {
         delete malformed[field];
         respondWith([malformed, txn({ transaction_hash: "healthy" })]);
 
-        const operations = await getOperations(ACCOUNT_ID, ADDRESS);
+        const operations = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
         expect(operations).toHaveLength(2);
         expect(operations[1].value.toFixed()).toBe("11114233164157900000000");
@@ -371,7 +373,7 @@ describe("getOperations", () => {
         },
       ]);
 
-      const [operation] = await getOperations(ACCOUNT_ID, ADDRESS);
+      const [operation] = await getOperations(mockNearConfig, ACCOUNT_ID, ADDRESS);
 
       expect(operation.hash).toBe("bare");
       expect(operation.value.toFixed()).toBe("0");
