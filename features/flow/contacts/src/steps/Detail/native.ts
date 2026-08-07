@@ -3,6 +3,8 @@ export { ContactAddressDetailDialog } from "./components/ContactAddressDetailDia
 export { ContactDetailActionsMenu } from "./components/ContactDetailActionsMenu/ContactDetailActionsMenu.native";
 export type { ContactDetailActionsMenuProps } from "./components/ContactDetailActionsMenu/ContactDetailActionsMenu.native";
 export { ContactsDeleteContactDialog } from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog.native";
+export { ContactsDeleteAddressDialog } from "./components/ContactsDeleteAddressDialog/ContactsDeleteAddressDialog.native";
 export { ContactsEditSignerDialog } from "./components/ContactsEditSignerDialog/ContactsEditSignerDialog.native";
 export type { ContactsDeleteContactDrawerProps } from "./components/ContactsDeleteContactDialog/types";
+export type { ContactsDeleteAddressDrawerProps } from "./components/ContactsDeleteAddressDialog/types";
 export type { ContactsEditSignerDrawerProps } from "./components/ContactsEditSignerDialog/types";

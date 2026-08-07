@@ -10213,12 +10213,12 @@
       "invalidAddress": "Invalid address",
       "domainNotFound": "No address found for this domain",
       "sanctionedAddress": "This address is sanctioned and cannot be used.",
-      "sanctioned": {
-        "description": "This wallet address is sanctioned by international laws and regulations.",
-        "learnMore": "Learn more"
-      },
       "validationUnavailable": "Address validation is temporarily unavailable",
-      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing."
+      "ensDisclaimer": "ENS names resolve to wallet addresses. Always verify the resolved address before continuing.",
+      "sanctioned": {
+        "description": "This address has been flagged and Ledger doesn't allow sending to it",
+        "learnMore": "Learn more"
+      }
     },
     "addAddressName": {
       "title": "Name address",
@@ -10277,6 +10277,18 @@
       "mobileDescription": "Removing this contact will erase all associated addresses.",
       "confirm": "Delete",
       "cancel": "Cancel"
+    },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
     },
     "editSigner": {
       "title": "Confirm on your device",
