@@ -6,6 +6,8 @@ import {
   createPopulatedContactsListViewModel,
 } from "./viewModel";
 
+const formatMeDisplayName = (name: string) => `${name} (Me)`;
+
 describe("createEmptyContactsListViewModel", () => {
   it("returns the Me row with no addresses", () => {
     expect(createEmptyContactsListViewModel(mockMeContact())).toEqual({
@@ -25,15 +27,19 @@ describe("createEmptyContactsListViewModel", () => {
       addresses: [mockContactAddress()],
     });
 
-    expect(createEmptyContactsListViewModel(me)).toEqual({
+    expect(createEmptyContactsListViewModel(me, formatMeDisplayName)).toEqual({
       displayMode: "empty",
       me: {
         contactId: "contact-me",
-        name: "Élodie",
+        name: "Élodie (Me)",
         initial: "É",
         addressCount: 1,
       },
     });
+  });
+
+  it("keeps the default Me label when the stored name is Me", () => {
+    expect(createEmptyContactsListViewModel(mockMeContact(), formatMeDisplayName).me.name).toBe("Me");
   });
 });
 
@@ -41,15 +47,17 @@ describe("createContactsListViewModel", () => {
   it("returns an empty list when only Me is present", () => {
     const me = mockMeContact();
 
-    expect(createContactsListViewModel(me, [me])).toEqual(createEmptyContactsListViewModel(me));
+    expect(createContactsListViewModel(me, [me], formatMeDisplayName)).toEqual(
+      createEmptyContactsListViewModel(me, formatMeDisplayName),
+    );
   });
 
   it("returns a populated list when saved contacts exist", () => {
     const me = mockMeContact();
     const contacts = [me, mockContact({ id: "contact-ada", name: "Ada" })];
 
-    expect(createContactsListViewModel(me, contacts)).toEqual(
-      createPopulatedContactsListViewModel(me, contacts),
+    expect(createContactsListViewModel(me, contacts, formatMeDisplayName)).toEqual(
+      createPopulatedContactsListViewModel(me, contacts, formatMeDisplayName),
     );
   });
 });
@@ -70,7 +78,7 @@ describe("createPopulatedContactsListViewModel", () => {
       mockContact({ id: "contact-ada", name: "Ada" }),
     ];
 
-    expect(createPopulatedContactsListViewModel(me, contacts)).toEqual({
+    expect(createPopulatedContactsListViewModel(me, contacts, formatMeDisplayName)).toEqual({
       displayMode: "populated",
       me: {
         contactId: "contact-me",
@@ -233,12 +241,27 @@ describe("createContactsSearchViewModel", () => {
   it("should match Me using its renamed value", () => {
     const renamedMe = mockMeContact({ name: "Toto" });
 
-    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "tOtO")).toMatchObject({
+    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "tOtO", formatMeDisplayName)).toMatchObject({
       status: "results",
       me: {
         contactId: "contact-me",
-        name: "Toto",
+        name: "Toto (Me)",
         initial: "T",
+        addressCount: 0,
+      },
+      savedContacts: [],
+    });
+  });
+
+  it("should match Me when searching for Me on a renamed contact", () => {
+    const renamedMe = mockMeContact({ name: "Brian" });
+
+    expect(createContactsSearchViewModel(renamedMe, [renamedMe], "me", formatMeDisplayName)).toMatchObject({
+      status: "results",
+      me: {
+        contactId: "contact-me",
+        name: "Brian (Me)",
+        initial: "B",
         addressCount: 0,
       },
       savedContacts: [],

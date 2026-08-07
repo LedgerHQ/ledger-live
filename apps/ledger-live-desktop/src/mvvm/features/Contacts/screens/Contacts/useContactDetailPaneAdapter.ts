@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import type { ContactId } from "@domain/entity-contact";
 import {
   type AddAddressContact,
   useContactsMeContact,
+  useContactDetailSharedState,
   useEmptyContactDetail,
   usePopulatedContactDetail,
   useContactAddressDetailDialog,
@@ -29,6 +31,7 @@ export function useContactDetailPaneAdapter(
   onOpenContact: ContactsListViewProps["onOpenContact"];
 }> {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const meContact = useContactsMeContact();
   const currencyPort = useContactsAddressCurrencyAdapter();
   const [detailContactId, setDetailContactId] = useState<ContactId | undefined>(meContact.id);
@@ -58,10 +61,15 @@ export function useContactDetailPaneAdapter(
       emptyContactTitle: name => t("contacts.detail.emptyState.contactTitle", { name }),
       emptyMeDescription: t("contacts.detail.emptyState.meDescription"),
       emptyContactDescription: () => t("contacts.detail.emptyState.contactDescription"),
+      ledgerWalletAddresses: t("contacts.detail.ledgerWalletAddresses"),
       formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
       formatAddressCount: count => t("contacts.addressCount", { count }),
     }),
     [t],
+  );
+  const detailSharedState = useContactDetailSharedState(
+    detailContactId,
+    labels.formatMeDisplayName,
   );
   const addressDetailDialogLabels = useMemo<ContactAddressDetailDialogLabels>(
     () => ({
@@ -75,6 +83,9 @@ export function useContactDetailPaneAdapter(
     }),
     [t],
   );
+  const onLedgerWalletAccountsPress = useCallback(() => {
+    navigate("/cryptos");
+  }, [navigate]);
   const openContact = useCallback(
     (contactId: ContactId) => {
       setDetailContactId(contactId);
@@ -83,38 +94,35 @@ export function useContactDetailPaneAdapter(
     [clearSelection],
   );
   const detail = useMemo<ContactDetailViewProps | undefined>(() => {
-    const baseDetail = {
-      labels,
-      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
-    };
+    const contact = populatedContactDetail?.contact ?? emptyContact;
 
-    if (populatedContactDetail) {
-      return {
-        ...baseDetail,
-        contact: populatedContactDetail.contact,
-        onAddAddress: () => onAddAddress(populatedContactDetail.contact),
-        addressGroups: populatedContactDetail.addressGroups,
-        onAddressRowPress,
-        detailActions: editDeleteDialogs.detailActions,
-      };
-    }
-
-    if (!emptyContact) {
+    if (!contact) {
       return undefined;
     }
 
     return {
-      ...baseDetail,
-      contact: emptyContact,
-      onAddAddress: () => onAddAddress(emptyContact),
+      labels,
+      meAvatarSrc: MY_WALLET_AVATAR_USER_URL,
+      contact,
+      onAddAddress: () => onAddAddress(contact),
+      ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
+      onLedgerWalletAccountsPress,
+      ...(populatedContactDetail
+        ? {
+            addressGroups: populatedContactDetail.addressGroups,
+            onAddressRowPress,
+          }
+        : {}),
       detailActions: editDeleteDialogs.detailActions,
     };
   }, [
+    detailSharedState?.ledgerWalletAccountsIntent,
     emptyContact,
     editDeleteDialogs.detailActions,
     labels,
     onAddAddress,
     onAddressRowPress,
+    onLedgerWalletAccountsPress,
     populatedContactDetail,
   ]);
   const addressDetailDialog = useMemo<ContactAddressDetailDialogProps>(() => {

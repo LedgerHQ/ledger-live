@@ -1,3 +1,4 @@
+import { DEFAULT_ME_CONTACT_ID, DEFAULT_ME_CONTACT_NAME } from "./constants";
 import { contact, contactAddress } from "./define";
 import type { Contact, ContactAddress, ContactAddressInput, ContactInput } from "./types";
 
@@ -13,9 +14,9 @@ export function mockContactAddress(overrides?: Partial<ContactAddressInput>): Co
 
 export function mockMeContact(overrides?: Partial<ContactInput>): Contact {
   return contact({
-    id: "contact-me",
+    id: DEFAULT_ME_CONTACT_ID,
     isMe: true,
-    name: "Me",
+    name: DEFAULT_ME_CONTACT_NAME,
     addresses: [],
     ...overrides,
   });
