@@ -15,8 +15,8 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
 import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { resolveBip32Path } from "./bip32Path";
 import { encodeAddress } from "./utils";
 const CHUNK_SIZE = 250;
 // const P1_FIRST = 0x00;
@@ -62,7 +62,7 @@ export default class Algorand {
     publicKey: string;
     address: string;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const buf = Buffer.alloc(4);
     buf.writeUInt32BE(bipPath[2], 0);
     return this.transport
@@ -100,7 +100,7 @@ export default class Algorand {
   ): Promise<{
     signature: null | Buffer;
   }> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const buf = Buffer.alloc(4);
     buf.writeUInt32BE(bipPath[2], 0);
     const chunks: Buffer[] = [];
