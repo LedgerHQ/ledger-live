@@ -1,6 +1,6 @@
 import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/hw-transport/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
+import { resolveBip32Path } from "./bip32Path";
 
 const CLA = 0xe0;
 
@@ -34,7 +34,7 @@ export default class Hedera {
    * @return the public key
    */
   async getPublicKey(path: string): Promise<string> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    const bipPath = resolveBip32Path(path);
     const serializedPath = this._serializePath(bipPath);
 
     const p1 = 0x01;
