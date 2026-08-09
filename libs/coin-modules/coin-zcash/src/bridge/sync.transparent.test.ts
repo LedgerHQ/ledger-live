@@ -109,6 +109,7 @@ const privateInfo = (overrides: Record<string, unknown> = {}) =>
     estimatedTimeRemaining: { hours: 0, minutes: 0 },
     ufvk: "uview1key",
     birthday: null,
+    shieldedAddress: null,
     lastSyncTimestamp: null,
     lastProcessedBlock: null,
     transactions: [],

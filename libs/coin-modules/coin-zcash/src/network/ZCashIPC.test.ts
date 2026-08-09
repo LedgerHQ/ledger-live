@@ -550,6 +550,26 @@ describe("createZCashIPCClient", () => {
     });
   });
 
+  // -- deriveShieldedAddress -----------------------------------------------
+
+  describe("deriveShieldedAddress", () => {
+    it("invokes ipc with the deriveShieldedAddress channel, ufvk and a requestId", async () => {
+      const ipc = makeIpcRenderer();
+      ipc.invoke.mockResolvedValueOnce("u1orchardaddress");
+      const client = createZCashIPCClient(makeDeps(ipc), { grpcUrl: GRPC_URL });
+
+      const address = await client.deriveShieldedAddress!("uview1testkey");
+
+      expect(address).toBe("u1orchardaddress");
+      expect(ipc.invoke).toHaveBeenCalledTimes(1);
+      const [channel, payload] = ipc.invoke.mock.calls[0];
+      expect(channel).toBe(ZCASH_IPC.deriveShieldedAddress);
+      const typed = payload as { ufvk: string; requestId: string };
+      expect(typed.ufvk).toBe("uview1testkey");
+      expect(typed.requestId).toMatch(ZCASH_REQUEST_ID_PATTERN);
+    });
+  });
+
   // -- Production factory -------------------------------------------------
 
   describe("createZCashClient (production factory)", () => {
