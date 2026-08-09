@@ -24,6 +24,15 @@ export function bip32asBuffer(path: string): Buffer {
   return pathElementsToBuffer(pathElements);
 }
 
+/**
+ * Parse a BIP32 path with bip32-path, failing closed on truncated/garbage segments
+ * that bip32-path would silently shorten (e.g. "12abc'" → 12).
+ */
 export function pathStringToArray(path: string): number[] {
+  for (const segment of path.split("/")) {
+    if (!/^\d+[hH']?$/.test(segment)) {
+      throw new Error(`Invalid BIP32 path segment: ${segment}`);
+    }
+  }
   return bippath.fromString(path).toPathArray();
 }

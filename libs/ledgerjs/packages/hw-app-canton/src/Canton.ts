@@ -1,6 +1,6 @@
 import { TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
+import { resolveBip32Path } from "./bip32Path";
 
 export type * from "./types";
 
@@ -467,8 +467,7 @@ export default class Canton {
    * @private
    */
   private serializeBipPath(pathString: string): Buffer {
-    const bipPath = BIPPath.fromString(pathString).toPathArray();
-    return this.serializePath(bipPath);
+    return this.serializePath(resolveBip32Path(pathString));
   }
 
   /**
