@@ -139,7 +139,7 @@ export function isRetryableError(message: string): boolean {
   return retryablePatterns.some(pattern => pattern.test(message));
 }
 
-export function runCliCommand(command: string): Promise<string> {
+export function runCliCommand(command: string, signal?: AbortSignal): Promise<string> {
   console.warn(`[CLI] Executing: ledger-live ${command.replace(/\+/g, " ")}`);
 
   return new Promise((resolve, reject) => {
@@ -153,6 +153,18 @@ export function runCliCommand(command: string): Promise<string> {
     let output = "";
     let errorOutput = "";
 
+    // The CLI child has no timeout of its own, so a wedged device-signing flow
+    // would otherwise hang forever. Callers that drive the device (token
+    // approve/revoke) pass an AbortSignal so they can SIGKILL a wedged child and
+    // retry — safe only because they abort *before* the device is approved, so
+    // no signature was produced and nothing was broadcast (see
+    // runTokenApprovalWithRetry).
+    const onAbort = () => child.kill("SIGKILL");
+    if (signal) {
+      if (signal.aborted) child.kill("SIGKILL");
+      else signal.addEventListener("abort", onAbort, { once: true });
+    }
+
     child.stdout.on("data", data => {
       output += data.toString();
     });
@@ -162,27 +174,44 @@ export function runCliCommand(command: string): Promise<string> {
     });
 
     child.on("exit", code => {
+      signal?.removeEventListener("abort", onAbort);
       if (code === 0) {
         resolve(output);
-      } else {
-        const currency = parseCliFlag(command, "currency");
-        const index = parseCliFlag(command, "index");
-        const indexText = index && index !== "undefined" ? index : "N/A";
-
-        const errorDetails = [
-          `❌ Failed to execute CLI command`,
-          `🔍 Command: ${command}`,
-          `💱 Currency: ${currency}`,
-          `🔢 Index: ${indexText}`,
-          `🔢 Exit Code: ${code}`,
-          errorOutput ? `🧾 CLI Error : ${errorOutput.trim()}` : "",
-        ].join("\n");
-
-        reject(sanitizeError(errorDetails));
+        return;
       }
+
+      // Killed on purpose because the child was wedged: surface a retryable
+      // "timeout" error rather than a spurious non-zero-exit failure.
+      if (signal?.aborted) {
+        reject(
+          sanitizeError(
+            `⏱️ CLI command aborted (timeout) — killed wedged child: ledger-live ${command.replace(
+              /\+/g,
+              " ",
+            )}`,
+          ),
+        );
+        return;
+      }
+
+      const currency = parseCliFlag(command, "currency");
+      const index = parseCliFlag(command, "index");
+      const indexText = index && index !== "undefined" ? index : "N/A";
+
+      const errorDetails = [
+        `❌ Failed to execute CLI command`,
+        `🔍 Command: ${command}`,
+        `💱 Currency: ${currency}`,
+        `🔢 Index: ${indexText}`,
+        `🔢 Exit Code: ${code}`,
+        errorOutput ? `🧾 CLI Error : ${errorOutput.trim()}` : "",
+      ].join("\n");
+
+      reject(sanitizeError(errorDetails));
     });
 
     child.on("error", error => {
+      signal?.removeEventListener("abort", onAbort);
       reject(new Error(`Error executing CLI command: ${sanitizeError(error)}`));
     });
   });
@@ -192,13 +221,14 @@ export async function runCliCommandWithRetry(
   command: string,
   retries: number = 3,
   delayMs: number = 3000,
+  signal?: AbortSignal,
 ): Promise<string> {
   let lastError: Error | null = null;
   const currency = parseCliFlag(command, "currency");
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await runCliCommand(command);
+      return await runCliCommand(command, signal);
     } catch (err: unknown) {
       lastError = err instanceof Error ? err : new Error(String(err));
       const willRetry = attempt < retries && isRetryableError(lastError.message);
@@ -245,7 +275,11 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
  * drive the device prompt themselves pass `retries: 1` and retry one level up
  * (see {@link approveTokenCommand}), so each re-broadcast re-drives the device.
  */
-export function runCliTokenApproval(opts: TokenApprovalOpts, retries: number = 3): Promise<string> {
+export function runCliTokenApproval(
+  opts: TokenApprovalOpts,
+  retries: number = 3,
+  signal?: AbortSignal,
+): Promise<string> {
   const cliOpts = ["tokenApproval"];
   cliOpts.push(`--currency+${opts.currency}`);
   cliOpts.push(`--mode+${opts.mode}`);
@@ -254,7 +288,7 @@ export function runCliTokenApproval(opts: TokenApprovalOpts, retries: number = 3
   cliOpts.push(`--index+${opts.index}`);
   if (opts.approveAmount) cliOpts.push(`--approveAmount+${opts.approveAmount}`);
   if (opts.waitConfirmation) cliOpts.push("--wait-confirmation");
-  return runCliCommandWithRetry(cliOpts.join("+"), retries);
+  return runCliCommandWithRetry(cliOpts.join("+"), retries, 3000, signal);
 }
 
 export function runCliGetTokenAllowance(opts: GetTokenAllowanceOpts): Promise<string> {

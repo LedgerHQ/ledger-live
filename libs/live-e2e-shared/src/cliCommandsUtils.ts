@@ -392,7 +392,8 @@ const BROADCAST_RETRY_DELAY_MS = 5_000;
 async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<string> {
   for (let attempt = 1; attempt <= MAX_BROADCAST_ATTEMPTS; attempt++) {
     const original = setDisableTransactionBroadcastEnv("0");
-    const result = runCliTokenApproval(opts, 1);
+    const controller = new AbortController();
+    const result = runCliTokenApproval(opts, 1, controller.signal);
     // The CLI child has already spawned and inherited the env, so restore it now:
     // holding the flag set across the awaits below could leak it into unrelated
     // work in the same worker process. The finally is kept as a safety net.
@@ -403,27 +404,44 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
       await approveToken();
       return await result;
     } catch (err) {
-      // Retry only once the previous CLI has actually exited. Its child has no
-      // timeout/kill (see runCliCommand), so cap the wait; if it's still running
-      // we must NOT spawn a second CLI on the same device — bail instead of looping.
+      const message = err instanceof Error ? err.message : String(err);
+
+      // Reaching here means approveToken() threw. It presses the device buttons
+      // only AFTER the review screen appears, so a throw guarantees the device
+      // was never approved: the CLI got no signature and broadcast nothing (no
+      // nonce spent). The CLI child has no timeout/kill of its own (see
+      // runCliCommand); if it is wedged we can therefore SIGKILL it — which is
+      // nonce-safe here — and re-drive on a fresh attempt, instead of leaving it
+      // holding the device and bailing. The cross-worker lock (QAA-1323) still
+      // serialises the whole flow, so no other worker races this nonce.
       const cliDidSettle = await Promise.race([
         cliSettled.then(() => true),
         sleep(BROADCAST_RETRY_DELAY_MS).then(() => false),
       ]);
-      const message = err instanceof Error ? err.message : String(err);
+
+      let killedWedgedCli = false;
       if (!cliDidSettle) {
+        controller.abort();
+        // Bounded wait for the SIGKILL'd child to actually exit before retrying.
+        await Promise.race([cliSettled, sleep(BROADCAST_RETRY_DELAY_MS)]);
+        killedWedgedCli = true;
         console.warn(
-          `⚠️ Token ${opts.mode}: previous CLI still running after ${BROADCAST_RETRY_DELAY_MS}ms – aborting retry`,
+          `⚠️ Token ${opts.mode}: device stuck pre-review, CLI wedged – killed it (nonce-safe) and retrying`,
           message,
         );
-        throw err;
       }
-      if (attempt === MAX_BROADCAST_ATTEMPTS || !isRetryableError(message)) throw err;
 
-      console.warn(
-        `⚠️ Token ${opts.mode} attempt ${attempt}/${MAX_BROADCAST_ATTEMPTS} failed with retryable error – retrying in ${BROADCAST_RETRY_DELAY_MS}ms…`,
-        message,
-      );
+      // A wedged-then-killed CLI is a transient device/infra stall, so retry it
+      // even though its device-review-timeout message isn't a known CLI error.
+      const retryable = killedWedgedCli || isRetryableError(message);
+      if (attempt === MAX_BROADCAST_ATTEMPTS || !retryable) throw err;
+
+      if (!killedWedgedCli) {
+        console.warn(
+          `⚠️ Token ${opts.mode} attempt ${attempt}/${MAX_BROADCAST_ATTEMPTS} failed with retryable error – retrying in ${BROADCAST_RETRY_DELAY_MS}ms…`,
+          message,
+        );
+      }
       await sleep(BROADCAST_RETRY_DELAY_MS);
     } finally {
       setDisableTransactionBroadcastEnv(original);
