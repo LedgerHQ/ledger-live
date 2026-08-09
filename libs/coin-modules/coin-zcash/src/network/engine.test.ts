@@ -16,6 +16,7 @@ const mockBuildTransaction = jest.fn();
 const mockBuildIronwoodTransaction = jest.fn();
 const mockFinalizeTransaction = jest.fn();
 const mockBroadcastTransaction = jest.fn();
+const mockOrchardAddressFromUfvk = jest.fn<Promise<string>, [string]>();
 
 // Mutable module object so individual tests can delete a PCZT method to
 // exercise the `getPcztModule` capability guard. `__esModule: true` makes the
@@ -30,6 +31,7 @@ const mockNativeModule: Record<string, unknown> = {
   buildIronwoodTransaction: (...args: unknown[]) => mockBuildIronwoodTransaction(...args),
   finalizeTransaction: (...args: unknown[]) => mockFinalizeTransaction(...args),
   broadcastTransaction: (...args: unknown[]) => mockBroadcastTransaction(...args),
+  orchardAddressFromUfvk: (...args: unknown[]) => mockOrchardAddressFromUfvk(...(args as [string])),
 };
 
 jest.mock("@ledgerhq/zcash-utils", () => mockNativeModule);
@@ -87,6 +89,7 @@ import {
   buildIronwoodTransactionJob,
   finalizeTransactionJob,
   broadcastTransactionJob,
+  deriveShieldedAddress,
   type StartSyncJobArgs,
 } from "./engine";
 import type {
@@ -1029,5 +1032,24 @@ describe("buildIronwoodTransactionJob", () => {
     await expect(buildIronwoodTransactionJob(iwBuildArgs)).rejects.toThrow(
       "proving failed (ironwood)",
     );
+  });
+});
+
+// ── deriveShieldedAddress ──────────────────────────────────────────────────
+
+describe("deriveShieldedAddress", () => {
+  it("calls native.orchardAddressFromUfvk and returns the address", async () => {
+    mockOrchardAddressFromUfvk.mockResolvedValue("u1derivedaddress");
+
+    const result = await deriveShieldedAddress("uview1testufvk");
+
+    expect(mockOrchardAddressFromUfvk).toHaveBeenCalledWith("uview1testufvk");
+    expect(result).toBe("u1derivedaddress");
+  });
+
+  it("propagates errors from native.orchardAddressFromUfvk", async () => {
+    mockOrchardAddressFromUfvk.mockRejectedValue(new Error("derivation failed"));
+
+    await expect(deriveShieldedAddress("uview1badufvk")).rejects.toThrow("derivation failed");
   });
 });

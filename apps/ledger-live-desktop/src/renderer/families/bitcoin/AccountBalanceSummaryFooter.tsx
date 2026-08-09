@@ -19,15 +19,17 @@ import { openModal } from "~/renderer/actions/modals";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
+import type { ZcashPrivateInfo, ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
+  getZainoEndpoint,
 } from "@ledgerhq/coin-zcash/constants";
 import {
   getPrivateBalance,
   getTransparentBalance,
 } from "@ledgerhq/coin-zcash/logic/account/balance";
+import { getZCashClient } from "@ledgerhq/coin-zcash/logic/engineClient";
 import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
@@ -292,6 +294,19 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       stopShieldedSync();
     }
   }, [account.id, previousSyncState, shieldedSubscriptions, syncState, stopShieldedSync]);
+
+  // Self-heal: UFVK is persisted but shieldedAddress is not. Derive host-side
+  // on account open so every downstream flow (Receive, Send) always finds it set.
+  useEffect(() => {
+    if (account.type !== "Account" || (account.currency.id as Currency) !== "zcash") return;
+    const info = privateInfo as ZcashPrivateInfo | null | undefined;
+    if (!info?.ufvk || info?.shieldedAddress) return;
+    getZCashClient(getZainoEndpoint())
+      .then(client => client.deriveShieldedAddress(info.ufvk!))
+      .then(shieldedAddress => saveSyncState({ shieldedAddress }))
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account.id]);
 
   if (
     account.type !== "Account" ||
