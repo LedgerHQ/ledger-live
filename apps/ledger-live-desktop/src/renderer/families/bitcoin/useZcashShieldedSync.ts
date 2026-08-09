@@ -1,7 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { from, switchMap } from "rxjs";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import {
@@ -84,6 +85,31 @@ export function useZcashShieldedSync(account: ZcashAccount) {
     clearExistingSubscription();
     saveSyncState({ syncState: "stopped", progress: 0 });
   }, [account, saveSyncState, clearExistingSubscription]);
+
+  // Back-fill shieldedAddress for accounts that were activated before the field
+  // was introduced: if a UFVK is stored but shieldedAddress is absent, derive it
+  // host-side and persist it so the UI can use it without a device round-trip.
+  useEffect(() => {
+    // privateInfo is typed from coin-bitcoin which predates shieldedAddress;
+    // cast to the coin-zcash type that owns the field.
+    const privateInfo = account.privateInfo as ZcashPrivateInfo | undefined;
+    const ufvk = privateInfo?.ufvk;
+    if (account.currency.id !== "zcash" || !ufvk || privateInfo?.shieldedAddress) return;
+
+    let cancelled = false;
+    const bridge = getAccountBridge(account) as unknown as ZcashAccountBridge;
+    if (typeof bridge.deriveShieldedAddress !== "function") return;
+
+    bridge.deriveShieldedAddress(ufvk).then(
+      shieldedAddress => {
+        if (!cancelled) saveSyncState({ shieldedAddress });
+      },
+      err => console.warn("Failed to self-heal shielded address:", err),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [account, saveSyncState]);
 
   return { saveSyncState, startShieldedSync, stopShieldedSync };
 }

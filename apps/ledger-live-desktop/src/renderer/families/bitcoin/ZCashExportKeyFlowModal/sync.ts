@@ -10,10 +10,10 @@ export const syncStateUpdater = (
   updateAccountWithUpdater(account?.id || "", currentAccount => {
     const zcashAccount = currentAccount as ZcashAccount;
     const existingPrivateInfo = zcashAccount.privateInfo || DEFAULT_ZCASH_PRIVATE_INFO;
-    const nextPrivateInfo: ZcashPrivateInfo = {
+    const nextPrivateInfo = {
       ...existingPrivateInfo,
       ...info,
-    };
+    } as ZcashPrivateInfo;
     return {
       ...zcashAccount,
       privateInfo: nextPrivateInfo,
