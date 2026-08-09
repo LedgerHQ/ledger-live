@@ -15,7 +15,7 @@
  *  limitations under the License.
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
-import BIPPath from "bip32-path";
+import { resolveHardenedBip32Path } from "./bip32Path";
 import {
   StellarHashSigningNotEnabledError,
   StellarDataParsingFailedError,
@@ -251,12 +251,7 @@ const remapErrors = e => {
 };
 
 const pathToBuffer = (originalPath: string) => {
-  const path = originalPath
-    .split("/")
-    .map(value => (value.endsWith("'") || value.endsWith("h") ? value : `${value}'`))
-    .join("/");
-  const pathNums: number[] = BIPPath.fromString(path).toPathArray();
-  return serializePath(pathNums);
+  return serializePath(resolveHardenedBip32Path(originalPath));
 };
 
 const serializePath = (path: number[]) => {
