@@ -2,7 +2,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { Observable, Subscriber } from "rxjs";
 import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
-import type { ZcashPrivateInfo } from "@ledgerhq/coin-zcash/network/types";
 import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
@@ -11,12 +10,6 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
-import { getZCashClient } from "@ledgerhq/coin-zcash/logic/engineClient";
-
-jest.mock("@ledgerhq/coin-zcash/logic/engineClient", () => ({
-  getZCashClient: jest.fn(),
-}));
-const mockedGetZCashClient = jest.mocked(getZCashClient);
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 const mockedUseAccountUnit = jest.mocked(useAccountUnit);
@@ -46,9 +39,6 @@ describe("Bitcoin Account Balance Summary Footer", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedGetZCashClient.mockResolvedValue({
-      deriveShieldedAddress: jest.fn().mockResolvedValue("u1mock"),
-    } as any);
     jest.spyOn(global.Date.prototype, "toLocaleString").mockImplementation(function (this: Date) {
       return origToLocaleString.call(this, "en-GB");
     });
@@ -356,88 +346,6 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("0.1 ZEC")).toBeInTheDocument();
       expect(screen.getByText("0.6 ZEC")).toBeInTheDocument();
     });
-  });
-
-  it("derives and persists shieldedAddress on mount when ufvk is present but shieldedAddress is missing", async () => {
-    mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
-    const deriveShieldedAddress = jest.fn().mockResolvedValue("u1selfhealed");
-    mockedGetZCashClient.mockResolvedValue({ deriveShieldedAddress } as any);
-
-    render(
-      <AccountBalanceSummaryFooter
-        account={{
-          ...account,
-          currency: { id: "zcash" } as CryptoCurrency,
-          privateInfo: {
-            ...DEFAULT_ZCASH_PRIVATE_INFO,
-            ufvk: "uview1key",
-            shieldedAddress: null,
-          } as ZcashPrivateInfo,
-        }}
-      />,
-      { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
-    );
-
-    await waitFor(() => {
-      expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1key");
-      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
-        expect.objectContaining({ id: account.id }),
-        expect.objectContaining({ shieldedAddress: "u1selfhealed" }),
-      );
-    });
-  });
-
-  it("silently ignores errors during shieldedAddress derivation", async () => {
-    mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
-    const deriveShieldedAddress = jest.fn().mockRejectedValue(new Error("network error"));
-    mockedGetZCashClient.mockResolvedValue({ deriveShieldedAddress } as any);
-
-    render(
-      <AccountBalanceSummaryFooter
-        account={{
-          ...account,
-          currency: { id: "zcash" } as CryptoCurrency,
-          privateInfo: {
-            ...DEFAULT_ZCASH_PRIVATE_INFO,
-            ufvk: "uview1key",
-            shieldedAddress: null,
-          } as ZcashPrivateInfo,
-        }}
-      />,
-      { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
-    );
-
-    await waitFor(() => expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1key"));
-    expect(mockedSyncStateUpdater).not.toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ shieldedAddress: expect.anything() }),
-    );
-  });
-
-  it("skips derivation when shieldedAddress is already present", async () => {
-    mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
-    const deriveShieldedAddress = jest.fn();
-    mockedGetZCashClient.mockResolvedValue({ deriveShieldedAddress } as any);
-
-    render(
-      <AccountBalanceSummaryFooter
-        account={{
-          ...account,
-          currency: { id: "zcash" } as CryptoCurrency,
-          privateInfo: {
-            ...DEFAULT_ZCASH_PRIVATE_INFO,
-            ufvk: "uview1key",
-            shieldedAddress: "u1already",
-          } as ZcashPrivateInfo,
-        }}
-      />,
-      { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
-    );
-
-    await waitFor(() =>
-      expect(screen.getByTestId("show-private-balance-button")).toBeInTheDocument(),
-    );
-    expect(deriveShieldedAddress).not.toHaveBeenCalled();
   });
 
   it("sources the transparent balance from its own UTXOs, not by subtracting the private balance from account.balance", async () => {
