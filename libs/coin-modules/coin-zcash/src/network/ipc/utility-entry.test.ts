@@ -13,6 +13,7 @@ const mockStartSyncJob = jest.fn();
 const mockBuildTransactionJob = jest.fn();
 const mockFinalizeTransactionJob = jest.fn();
 const mockBroadcastTransactionJob = jest.fn();
+const mockDeriveShieldedAddress = jest.fn();
 
 jest.mock("../engine", () => ({
   getChainTipJob: (...args: unknown[]) => mockGetChainTipJob(...args),
@@ -21,6 +22,7 @@ jest.mock("../engine", () => ({
   buildTransactionJob: (...args: unknown[]) => mockBuildTransactionJob(...args),
   finalizeTransactionJob: (...args: unknown[]) => mockFinalizeTransactionJob(...args),
   broadcastTransactionJob: (...args: unknown[]) => mockBroadcastTransactionJob(...args),
+  deriveShieldedAddress: (...args: unknown[]) => mockDeriveShieldedAddress(...args),
 }));
 
 import { bootstrapUtility } from "./utility-entry";
@@ -336,5 +338,58 @@ describe("bootstrapUtility — existing sync/chain handlers", () => {
     const { posted, dispatch } = makePort();
     dispatch({ type: "totally-unknown" } as unknown as UtilityInboundMessage);
     expect(posted).toEqual([]);
+  });
+});
+
+describe("bootstrapUtility — derive-shielded-address", () => {
+  const args = { requestId: "req-derive", ufvk: "uview1testkey" };
+
+  it("calls deriveShieldedAddress with the ufvk and posts the result", async () => {
+    mockDeriveShieldedAddress.mockResolvedValue("u1orchardaddress");
+
+    const { posted, dispatch } = makePort();
+    dispatch({ type: "derive-shielded-address", args });
+    await flush();
+
+    expect(mockDeriveShieldedAddress).toHaveBeenCalledWith("uview1testkey");
+    expect(posted).toEqual([
+      {
+        type: "derive-shielded-address-result",
+        requestId: "req-derive",
+        address: "u1orchardaddress",
+      },
+    ]);
+  });
+
+  it("posts a derive-shielded-address-error with the message on failure", async () => {
+    mockDeriveShieldedAddress.mockRejectedValue(new Error("error deriving shielded address"));
+
+    const { posted, dispatch } = makePort();
+    dispatch({ type: "derive-shielded-address", args });
+    await flush();
+
+    expect(posted).toEqual([
+      {
+        type: "derive-shielded-address-error",
+        requestId: "req-derive",
+        message: "error deriving shielded address",
+      },
+    ]);
+  });
+
+  it("stringifies non-Error rejections", async () => {
+    mockDeriveShieldedAddress.mockRejectedValue("unexpected failure");
+
+    const { posted, dispatch } = makePort();
+    dispatch({ type: "derive-shielded-address", args });
+    await flush();
+
+    expect(posted).toEqual([
+      {
+        type: "derive-shielded-address-error",
+        requestId: "req-derive",
+        message: "unexpected failure",
+      },
+    ]);
   });
 });

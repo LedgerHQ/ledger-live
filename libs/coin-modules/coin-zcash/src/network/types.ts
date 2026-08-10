@@ -46,6 +46,7 @@ export interface ZCashClient {
     requests: TransactionDetailsRequest[],
     ufvk?: string,
   ): Promise<TransactionDetailsResult[]>;
+  deriveShieldedAddress(ufvk: string): Promise<string>;
 }
 
 /** Common constructor args shared by both ZCash client factories. */
@@ -123,6 +124,7 @@ export type ZcashPrivateInfo = {
   estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
+  shieldedAddress: string | null;
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransaction[];
@@ -137,6 +139,7 @@ export type ZcashPrivateInfoRaw = {
   estimatedTimeRemaining: SyncEstimatedTime;
   ufvk: string | null;
   birthday: string | null;
+  shieldedAddress: string | null;
   lastSyncTimestamp: number | null;
   lastProcessedBlock: number | null;
   transactions: ShieldedTransactionRaw[];

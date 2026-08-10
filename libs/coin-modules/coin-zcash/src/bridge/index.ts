@@ -9,7 +9,7 @@ import type { CoinConfig } from "../config";
 import { setCoinConfig } from "../config";
 import type { SignerContext } from "../types/signer";
 import type { Transaction, TransactionStatus, ZcashAccount } from "../types/bridge";
-import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
+import { getZainoEndpoint, ZCASH_ESTIMATION_RECIPIENT } from "../constants";
 import getAddress from "../signer/getAddress";
 import getFullViewingKeyResolver, {
   type GetFullViewingKeyResult,
@@ -26,6 +26,7 @@ import { makeGetAccountShape, postSync } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import formatters from "./transaction";
+import { getZCashClient } from "../logic/engineClient";
 
 /**
  * `getFullViewingKey` is not part of `AccountBridge`: the UFVK export flow is
@@ -37,6 +38,7 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
     account: ZcashAccount,
     options: { deviceId: string; path?: string },
   ) => Promise<GetFullViewingKeyResult>;
+  deriveShieldedAddress: (ufvk: string) => Promise<string>;
 };
 
 /**
@@ -99,6 +101,10 @@ export function createBridges(signerContext: SignerContext, coinConfig: CoinConf
         currency: account.currency,
         path: path ?? account.freshAddressPath,
       }),
+    deriveShieldedAddress: async (ufvk: string) => {
+      const client = await getZCashClient(getZainoEndpoint());
+      return client.deriveShieldedAddress(ufvk);
+    },
   };
 
   return {

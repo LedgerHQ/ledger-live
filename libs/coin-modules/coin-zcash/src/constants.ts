@@ -66,6 +66,7 @@ export const DEFAULT_ZCASH_PRIVATE_INFO: ZcashPrivateInfo = {
   saplingBalance: new BigNumber(0),
   ironwoodBalance: new BigNumber(0),
   ufvk: null,
+  shieldedAddress: null,
   syncState: "disabled",
   progress: 0,
   estimatedTimeRemaining: { hours: 0, minutes: 0 },

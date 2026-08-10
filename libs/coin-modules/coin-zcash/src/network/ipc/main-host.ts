@@ -27,6 +27,7 @@
 import path from "path";
 import { log } from "@ledgerhq/logs";
 import {
+  DeriveShieldedAddressArgs,
   ZCASH_IPC,
   type CancelSyncArgs,
   type FindBlockHeightArgs,
@@ -156,6 +157,7 @@ type HostState = {
     finalizeTx: OneShotResolver<FinalizeTransactionResult>;
     broadcastTx: OneShotResolver<string>;
     transactionDetails: OneShotResolver<TransactionDetailsResult[]>;
+    deriveShieldedAddress: OneShotResolver<string>;
   };
 };
 
@@ -173,6 +175,7 @@ const state: HostState = {
     finalizeTx: new OneShotResolver<FinalizeTransactionResult>("finalize-transaction"),
     broadcastTx: new OneShotResolver<string>("broadcast-transaction"),
     transactionDetails: new OneShotResolver<TransactionDetailsResult[]>("transaction-details"),
+    deriveShieldedAddress: new OneShotResolver<string>("derive-shielded-address"),
   },
 };
 
@@ -297,6 +300,7 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
     finalizeTx,
     broadcastTx,
     transactionDetails,
+    deriveShieldedAddress,
   } = state.resolvers;
   switch (msg.type) {
     case "chain-tip":
@@ -348,6 +352,21 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
         msg.requestId,
         msg.message,
         "transaction-details-error",
+      );
+
+    case "derive-shielded-address-result":
+      return resolveOneShot(
+        deriveShieldedAddress,
+        msg.requestId,
+        msg.address,
+        "derive-shielded-address-result",
+      );
+    case "derive-shielded-address-error":
+      return rejectOneShot(
+        deriveShieldedAddress,
+        msg.requestId,
+        msg.message,
+        "derive-shielded-address-error",
       );
     default: {
       const exhaustive: never = msg;
@@ -459,6 +478,14 @@ function registerHandlers(): void {
     (_event, args): Promise<TransactionDetailsResult[]> =>
       state.resolvers.transactionDetails.register(args.requestId, () =>
         postToUtility({ type: "transaction-details", args }),
+      ),
+  );
+
+  ipcMain.handle<DeriveShieldedAddressArgs, string>(
+    ZCASH_IPC.deriveShieldedAddress,
+    (_event, args): Promise<string> =>
+      state.resolvers.deriveShieldedAddress.register(args.requestId, () =>
+        postToUtility({ type: "derive-shielded-address", args }),
       ),
   );
 }

@@ -353,6 +353,44 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
       expect(screen.getByRole("button", { name: /start sync/i })).toBeVisible();
     });
   });
+
+  it("reports the UFVK export error to onUfvkChanged when the device rejects", async () => {
+    const exportError = new Error("device rejected");
+    mockedUseAccountBridge.mockReturnValue({
+      getFullViewingKey: jest.fn().mockRejectedValue(exportError),
+    } as unknown as ReturnType<typeof useAccountBridge>);
+
+    const onUfvkChanged = jest.fn();
+
+    render(
+      <RealBody
+        stepId="device"
+        ufvk=""
+        ufvkExportError={null}
+        onStepIdChanged={jest.fn()}
+        onUfvkChanged={onUfvkChanged}
+        onRetry={jest.fn()}
+        onClose={jest.fn()}
+        birthday={new Date().toISOString().split("T")[0]}
+        invalidBirthday={false}
+        syncFromZero={false}
+        handleBirthdayChange={jest.fn()}
+        handleSyncFromZero={jest.fn()}
+        handleEnableShieldedBalance={jest.fn()}
+        params={{ account }}
+      />,
+      {
+        initialState: {
+          settings: AFTER_ONBOARDING_STATE,
+          devices: { currentDevice: mockDevice, devices: [mockDevice] },
+        },
+      },
+    );
+
+    await waitFor(() => {
+      expect(onUfvkChanged).toHaveBeenCalledWith("", null, exportError);
+    });
+  });
 });
 
 describe("ZCash Export UFVK Flow - Persistence integration", () => {
