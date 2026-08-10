@@ -50,7 +50,11 @@ describe("computeGasLimit", () => {
 
       it("should charge 64 gas per byte regardless of the byte values", () => {
         const allZeros = computeEIP7623GasLimit(defaultGasLimit, Buffer.alloc(32, 0x00), EIP_7976);
-        const allNonZeros = computeEIP7623GasLimit(defaultGasLimit, Buffer.alloc(32, 0xff), EIP_7976);
+        const allNonZeros = computeEIP7623GasLimit(
+          defaultGasLimit,
+          Buffer.alloc(32, 0xff),
+          EIP_7976,
+        );
 
         // 21000 + 64 * 32
         expect(allZeros).toEqual(23048n);
@@ -72,18 +76,15 @@ describe("computeGasLimit", () => {
         { label: "zero", params: { gasPerToken: 0, zeroByteTokens: 0 } },
         { label: "NaN", params: { gasPerToken: NaN, zeroByteTokens: NaN } },
         { label: "undefined", params: { gasPerToken: undefined, zeroByteTokens: undefined } },
-      ])(
-        "should fall back to the EIP-7623 defaults when the config holds $label",
-        ({ params }) => {
-          const gasLimit = computeEIP7623GasLimit(
-            defaultGasLimit,
-            Buffer.from(CALLDATA_68_BYTES, "hex"),
-            params,
-          );
+      ])("should fall back to the EIP-7623 defaults when the config holds $label", ({ params }) => {
+        const gasLimit = computeEIP7623GasLimit(
+          defaultGasLimit,
+          Buffer.from(CALLDATA_68_BYTES, "hex"),
+          params,
+        );
 
-          expect(gasLimit).toEqual(22400n);
-        },
-      );
+        expect(gasLimit).toEqual(22400n);
+      });
 
       it.each([1, 2, 3])(
         "should never go below intrinsic gas when gasPerToken is misconfigured to %i",
