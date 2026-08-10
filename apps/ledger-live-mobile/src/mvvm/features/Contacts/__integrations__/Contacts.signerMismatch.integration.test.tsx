@@ -20,7 +20,8 @@ jest.mock("LLM/features/Contacts/hooks/useContactsAddressValidationAdapter", () 
 }));
 
 jest.mock("@features/flow-contacts", () => {
-  const actual = jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
+  const actual =
+    jest.requireActual<typeof import("@features/flow-contacts")>("@features/flow-contacts");
 
   return {
     ...actual,
@@ -84,7 +85,9 @@ describe("Contacts signer mismatch integration", () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-edit-signer-confirm")).toBeNull();
-      expect(screen.getByText("Use the same Ledger device you used to add this contact")).toBeVisible();
+      expect(
+        screen.getByText("Use the same Ledger device you used to add this contact"),
+      ).toBeVisible();
       expect(screen.getByText("The connected device isn't a match.")).toBeVisible();
       expect(screen.getByTestId("contacts-edit-signer-mismatch-connect")).toBeVisible();
     });

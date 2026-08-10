@@ -1,9 +1,11 @@
 import type { ContactsDeleteAddressDialogProps } from "../components/ContactsDeleteAddressDialog/types";
 import type { ContactsEditSignerDialogProps } from "../components/ContactsEditSignerDialog/types";
 import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/types";
-import type { ContactsRenameAddressDialogProps } from "../../EditAddress/types";
+import type {
+  ContactsRenameAddressDialogProps,
+  RenameAddressDialogViewModel,
+} from "../../EditAddress/types";
 import type { UseContactAddressDetailActionsFlowViewModelResult } from "../useContactAddressDetailActionsFlowViewModel";
-import type { RenameAddressDialogViewModel } from "../../EditAddress/types";
 import type { ContactAddressDetailActionsLabels } from "./resolveContactAddressDetailActionsLabels";
 
 export type ContactAddressDetailActionsUiState = Readonly<{
