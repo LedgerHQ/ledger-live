@@ -14,7 +14,7 @@ export const mockEnrichedDelegation: HederaEnrichedDelegation = {
   pendingReward: new BigNumber(10_000),
   status: HEDERA_DELEGATION_STATUS.Active,
   validator: {
-    nodeId: 3,
+    id: "3",
     name: "Hedera Node 3",
     address: "0.0.3",
     addressChecksum: null,

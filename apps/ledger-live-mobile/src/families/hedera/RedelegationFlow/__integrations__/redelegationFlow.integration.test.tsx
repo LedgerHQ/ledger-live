@@ -57,7 +57,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
 });
 
 const mockSelectedValidator = {
-  nodeId: 5,
+  id: "5",
   name: "Hedera Node 5",
   address: "0.0.5",
   addressChecksum: null,

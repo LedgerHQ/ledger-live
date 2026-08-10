@@ -17,7 +17,7 @@ jest.mock("LLM/features/NotificationsPrompt", () => ({
 jest.mock("@ledgerhq/live-common/families/hedera/react", () => ({
   useHederaValidators: jest.fn(() => [
     {
-      nodeId: 0,
+      id: "0",
       name: "Hedera Node 0",
       address: "0.0.3",
       addressChecksum: null,
