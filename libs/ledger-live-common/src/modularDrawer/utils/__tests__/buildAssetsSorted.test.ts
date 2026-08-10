@@ -2,7 +2,7 @@ import {
   mockAssetsData,
   mockBitcoinAssetsData,
   mockUsdcAssetsData,
-} from "../../../dada-client/__mocks__/assets.mock";
+} from "@domain/api-aggregated-assets/mock";
 import { buildAssetsSorted } from "../buildAssetsSorted";
 
 describe("buildAssetsSorted", () => {
