@@ -47,6 +47,8 @@ export const DeviceDeprecationScreen = ({
   coinName,
   date,
   onContinue,
+  onLearnMore,
+  onUpgrade,
   productName,
   screenName,
   displayClearSigningWarning = false,
@@ -54,6 +56,8 @@ export const DeviceDeprecationScreen = ({
   coinName: string;
   date?: Date;
   onContinue?: () => void;
+  onLearnMore?: () => void;
+  onUpgrade?: () => void;
   productName: string;
   screenName: DeviceDeprecationScreens;
   displayClearSigningWarning?: boolean;
@@ -68,9 +72,11 @@ export const DeviceDeprecationScreen = ({
   const learnMoreUrl = useLocalizedUrl(urls.deviceDeprecation.learnMore);
   const [currentScreenName, setCurrentScreenName] = useState(screenName);
   const handleUpgradeClick = () => {
+    onUpgrade?.();
     openURL(shopUrl);
   };
   const handleLearnMoreClick = () => {
+    onLearnMore?.();
     openURL(learnMoreUrl);
   };
   const handleContinue = () => {
