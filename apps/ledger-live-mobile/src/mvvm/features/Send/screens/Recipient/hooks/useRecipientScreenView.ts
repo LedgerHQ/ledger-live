@@ -1,9 +1,11 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { useContactsFeature } from "@features/flow-contacts";
 import { useCallback } from "react";
 import { useSendFlowData } from "../../../context/SendFlowContext";
 import { useAddressValidation } from "./useAddressValidation";
@@ -27,6 +29,7 @@ export function useRecipientScreenView({
   recipientSupportsDomain,
 }: UseRecipientScreenViewProps) {
   const { recipientSearch } = useSendFlowData();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("mobile");
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -80,6 +83,9 @@ export function useRecipientScreenView({
     mainAccount,
     showInitialState,
     clipboardAddress,
+    isContactsFeatureEnabled,
+    hasAddressBook: sendFeatures.hasAddressBook(currency),
+    addressBookFamilyName: mainAccount.currency.name,
     handlePasteFromClipboard,
     handleAddressSelect,
     ...searchState,

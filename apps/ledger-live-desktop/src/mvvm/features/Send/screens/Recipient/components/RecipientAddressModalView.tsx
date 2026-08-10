@@ -35,6 +35,9 @@ type RecipientAddressModalViewProps = Readonly<{
   hasMemo: boolean;
   hasMemoValidationError: boolean;
   hasFilledMemo: boolean;
+  isContactsFeatureEnabled: boolean;
+  hasAddressBook: boolean;
+  addressBookFamilyName: string;
 }>;
 
 export function RecipientAddressModalView({
@@ -59,6 +62,9 @@ export function RecipientAddressModalView({
   hasMemo,
   hasMemoValidationError,
   hasFilledMemo,
+  isContactsFeatureEnabled,
+  hasAddressBook,
+  addressBookFamilyName,
 }: RecipientAddressModalViewProps) {
   const shouldShowErrorBanner =
     !isLoading &&
@@ -93,6 +99,9 @@ export function RecipientAddressModalView({
           isSanctioned={isSanctioned}
           isAddressComplete={isAddressComplete}
           hasBridgeError={showBridgeRecipientError}
+          isContactsFeatureEnabled={isContactsFeatureEnabled}
+          hasAddressBook={hasAddressBook}
+          addressBookFamilyName={addressBookFamilyName}
         />
       )}
 

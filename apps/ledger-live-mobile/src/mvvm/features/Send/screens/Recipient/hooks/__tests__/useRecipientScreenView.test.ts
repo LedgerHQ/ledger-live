@@ -4,6 +4,7 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useContactsFeature } from "@features/flow-contacts";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -15,11 +16,15 @@ jest.mock("../useAddressValidation");
 jest.mock("../useClipboardRecipient");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
+jest.mock("@features/flow-contacts", () => ({
+  useContactsFeature: jest.fn(),
+}));
 
 const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseClipboardRecipient = jest.mocked(useClipboardRecipient);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
+const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 
 const mockAccount = createMockAccount({ id: "account_1" });
 
@@ -44,6 +49,7 @@ const idleResult = {
   accountBalanceFormatted: undefined,
   isFirstInteraction: false,
   matchedRecentAddress: undefined,
+  matchedContact: undefined,
 };
 
 describe("useRecipientScreenView", () => {
@@ -55,6 +61,11 @@ describe("useRecipientScreenView", () => {
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
     mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: null });
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: false,
+      showNewBadge: false,
+      eligibleAddressFamilies: [],
+    });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: {} as never,
@@ -199,7 +210,11 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status: "valid", hasBridgeValidationResult: true },
+      result: {
+        ...idleResult,
+        status: "valid",
+        hasBridgeValidationResult: true,
+      },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -226,7 +241,11 @@ describe("useRecipientScreenView", () => {
 
     const selfTransferError = new InvalidAddressBecauseDestinationIsAlsoSource();
     mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status: "valid", bridgeErrors: { recipient: selfTransferError } },
+      result: {
+        ...idleResult,
+        status: "valid",
+        bridgeErrors: { recipient: selfTransferError },
+      },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -254,7 +273,11 @@ describe("useRecipientScreenView", () => {
 
     const invalidAddressError = new InvalidAddress();
     mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status: "valid", bridgeErrors: { recipient: invalidAddressError } },
+      result: {
+        ...idleResult,
+        status: "valid",
+        bridgeErrors: { recipient: invalidAddressError },
+      },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -297,7 +320,9 @@ describe("useRecipientScreenView", () => {
   });
 
   it("exposes the clipboard address and pastes it into the recipient search on demand", () => {
-    mockedUseClipboardRecipient.mockReturnValue({ clipboardAddress: "0xClipboardAddress" });
+    mockedUseClipboardRecipient.mockReturnValue({
+      clipboardAddress: "0xClipboardAddress",
+    });
 
     const { result } = renderHook(() =>
       useRecipientScreenView({

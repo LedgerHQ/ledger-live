@@ -4506,6 +4506,7 @@
       "addressNotFound": "Address not found",
       "account": "Account",
       "alreadyUsed": "Already used · {{date}}",
+      "addressBookUnsupported": "{{family}} isn't supported yet",
       "notInRecentHistory": "Not in your recent history",
       "relativeDate": {
         "justNow": "Just now",

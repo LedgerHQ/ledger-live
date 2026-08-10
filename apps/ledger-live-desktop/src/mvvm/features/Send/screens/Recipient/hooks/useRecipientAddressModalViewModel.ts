@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useContactsFeature } from "@features/flow-contacts";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useRecipientSearchState } from "@ledgerhq/live-common/flows/send/recipient/hooks/useRecipientSearchState";
@@ -26,6 +27,7 @@ export function useRecipientAddressModalViewModel({
   recipientSupportsDomain,
 }: UseRecipientAddressModalViewModelProps) {
   const { recipientSearch, state } = useSendFlowData();
+  const { isEnabled: isContactsFeatureEnabled } = useContactsFeature("desktop");
 
   const mainAccount = getMainAccount(account, parentAccount);
   const sendFlowTrackingProperties = useMemo(
@@ -93,6 +95,9 @@ export function useRecipientAddressModalViewModel({
     hasMemo,
     hasMemoValidationError,
     hasFilledMemo,
+    isContactsFeatureEnabled,
+    hasAddressBook: sendFeatures.hasAddressBook(currency),
+    addressBookFamilyName: mainAccount.currency.name,
     memoType,
     memoTypeOptions,
     memoDefaultOption,

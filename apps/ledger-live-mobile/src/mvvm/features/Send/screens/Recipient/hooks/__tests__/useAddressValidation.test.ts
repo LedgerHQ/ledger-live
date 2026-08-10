@@ -10,9 +10,11 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
+import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
 import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
+import { accountsSelector } from "~/reducers/accounts";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createMockAccount, createMockCurrency, createMockTokenCurrency } from "./accounts";
@@ -23,6 +25,7 @@ jest.mock("@ledgerhq/domain-service/hooks/index");
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
+jest.mock("@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact");
 jest.mock("LLM/hooks/useFormattedAccountBalance");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
@@ -33,6 +36,7 @@ const mockedGetRecentAddressesStore = jest.mocked(getRecentAddressesStore);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedUseBridgeRecipientValidation = jest.mocked(useBridgeRecipientValidation);
+const mockedFindMatchedContact = jest.mocked(findMatchedContact);
 const mockedUseFormattedAccountBalance = jest.mocked(useFormattedAccountBalance);
 const mockedUseMaybeAccountName = jest.mocked(useMaybeAccountName);
 const mockedUseBatchMaybeAccountName = jest.mocked(useBatchMaybeAccountName);
@@ -41,7 +45,11 @@ const mockedSendFeatures = jest.mocked(sendFeatures);
 const mockAccount = createMockAccount({ id: "account_1" });
 const mockEthereumAccount = createMockAccount({
   id: "eth_account_1",
-  currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
+  currency: createMockCurrency({
+    id: "ethereum",
+    name: "Ethereum",
+    ticker: "ETH",
+  }),
   freshAddress: "0x123",
 });
 
@@ -56,7 +64,11 @@ describe("useAddressValidation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseSelector.mockReturnValue([]);
-    mockedUseDomain.mockReturnValue({ status: "loaded", resolutions: [], updatedAt: Date.now() });
+    mockedUseDomain.mockReturnValue({
+      status: "loaded",
+      resolutions: [],
+      updatedAt: Date.now(),
+    });
     mockedIsAddressSanctioned.mockResolvedValue(false);
     mockedGetRecentAddressesStore.mockReturnValue(mockRecentAddressesStore);
     mockedGetMainAccount.mockImplementation((account, parentAccount) => {
@@ -76,6 +88,7 @@ describe("useAddressValidation", () => {
       status: null,
       cleanup: jest.fn(),
     });
+    mockedFindMatchedContact.mockReturnValue(undefined);
     mockedUseFormattedAccountBalance.mockReturnValue({
       formattedBalance: "1 BTC",
       formattedCounterValue: "$50,000",
@@ -169,7 +182,11 @@ describe("useAddressValidation", () => {
     const { result } = renderHook(() =>
       useAddressValidation({
         searchValue: "vitalik.eth",
-        currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
+        currency: createMockCurrency({
+          id: "ethereum",
+          name: "Ethereum",
+          ticker: "ETH",
+        }),
         account: mockEthereumAccount,
         recipientSupportsDomain: true,
       }),
@@ -204,7 +221,9 @@ describe("useAddressValidation", () => {
 
     const { result, rerender } = renderHook(
       (props: typeof validationProps) => useAddressValidation(props),
-      { initialProps: validationProps },
+      {
+        initialProps: validationProps,
+      },
     );
 
     await waitFor(() => {
@@ -238,7 +257,11 @@ describe("useAddressValidation", () => {
     const { result } = renderHook(() =>
       useAddressValidation({
         searchValue: "test.eth",
-        currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
+        currency: createMockCurrency({
+          id: "ethereum",
+          name: "Ethereum",
+          ticker: "ETH",
+        }),
         account: mockEthereumAccount,
         recipientSupportsDomain: true,
       }),
@@ -455,7 +478,9 @@ describe("useAddressValidation", () => {
 
     const { result, rerender } = renderHook(
       (props: typeof validationProps) => useAddressValidation(props),
-      { initialProps: validationProps },
+      {
+        initialProps: validationProps,
+      },
     );
 
     expect(result.current.isLoading).toBe(true);
@@ -563,7 +588,11 @@ describe("useAddressValidation", () => {
     renderHook(() =>
       useAddressValidation({
         searchValue: "test.eth",
-        currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
+        currency: createMockCurrency({
+          id: "ethereum",
+          name: "Ethereum",
+          ticker: "ETH",
+        }),
         account: mockEthereumAccount,
         recipientSupportsDomain: true,
       }),
@@ -573,6 +602,64 @@ describe("useAddressValidation", () => {
       expect.objectContaining({
         recipient: "0xResolved",
       }),
+    );
+  });
+
+  it("matches a saved contact from an ENS resolved address", () => {
+    const contactAddress = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+    const contact = {
+      id: "contact-remi",
+      isMe: false,
+      name: "Remi",
+      addresses: [
+        {
+          id: "address-remi-ethereum",
+          currencyId: "ethereum",
+          label: "Ethereum Network",
+          address: contactAddress,
+        },
+      ],
+    };
+    const matchedContact = {
+      contactId: "contact-remi",
+      contactName: "Remi",
+      addressId: "address-remi-ethereum",
+      addressLabel: "Ethereum Network",
+      address: contactAddress,
+    };
+    mockedUseSelector.mockImplementation(selector =>
+      selector === accountsSelector ? [] : [contact],
+    );
+    mockedFindMatchedContact.mockReturnValue(matchedContact);
+    mockedUseDomain.mockReturnValue({
+      status: "loaded",
+      resolutions: [
+        {
+          domain: "vitalik.eth",
+          address: contactAddress.toLowerCase(),
+          type: "forward",
+          registry: "ens",
+        },
+      ],
+      updatedAt: Date.now(),
+    });
+
+    const { result } = renderHook(() =>
+      useAddressValidation({
+        searchValue: "vitalik.eth",
+        currency: mockEthereumAccount.currency,
+        account: mockEthereumAccount,
+        recipientSupportsDomain: true,
+      }),
+    );
+
+    expect(result.current.result.matchedContact).toEqual(matchedContact);
+    expect(result.current.result.ensName).toBe("vitalik.eth");
+    expect(mockedFindMatchedContact).toHaveBeenCalledWith(
+      [contact],
+      "vitalik.eth",
+      "ethereum",
+      contactAddress.toLowerCase(),
     );
   });
 
@@ -599,7 +686,11 @@ describe("useAddressValidation", () => {
     const btcAccount = createMockAccount({ id: "btc_1" });
     const ethAccount = createMockAccount({
       id: "eth_1",
-      currency: createMockCurrency({ id: "ethereum", name: "Ethereum", ticker: "ETH" }),
+      currency: createMockCurrency({
+        id: "ethereum",
+        name: "Ethereum",
+        ticker: "ETH",
+      }),
       freshAddress: "0xEth",
     });
 

@@ -39,6 +39,7 @@ const recipientViewModel = {
     bridgeWarnings: {},
     hasBridgeValidationResult: true,
     matchedAccounts: [],
+    matchedContact: undefined,
     isLedgerAccount: false,
     isFirstInteraction: false,
   },

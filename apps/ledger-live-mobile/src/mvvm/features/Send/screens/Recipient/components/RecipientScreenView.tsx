@@ -40,6 +40,9 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
     isAddressComplete,
     addressValidationErrorType,
     clipboardAddress,
+    isContactsFeatureEnabled,
+    hasAddressBook,
+    addressBookFamilyName,
     handlePasteFromClipboard,
   } = recipient;
 
@@ -69,6 +72,9 @@ export const RecipientScreenView = ({ viewModel }: RecipientScreenViewProps) => 
               isSanctioned={showSanctionedBanner}
               isAddressComplete={isAddressComplete}
               hasBridgeError={showBridgeRecipientError}
+              isContactsFeatureEnabled={isContactsFeatureEnabled}
+              hasAddressBook={hasAddressBook}
+              addressBookFamilyName={addressBookFamilyName}
             />
           )}
 

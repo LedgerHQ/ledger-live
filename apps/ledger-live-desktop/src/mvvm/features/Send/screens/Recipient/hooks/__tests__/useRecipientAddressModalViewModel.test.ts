@@ -13,11 +13,15 @@ import {
 import { createMockAccount } from "../../__integrations__/__fixtures__/accounts";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { useContactsFeature } from "@features/flow-contacts";
 
 jest.mock("../useAddressValidation");
 jest.mock("../../../../context/SendFlowContext");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
+jest.mock("@features/flow-contacts", () => ({
+  useContactsFeature: jest.fn(),
+}));
 jest.mock("~/renderer/reducers/wallet", () => ({
   useMaybeAccountName: jest.fn(),
   useBatchMaybeAccountName: jest.fn(() => []),
@@ -28,6 +32,7 @@ const mockedUseAddressValidation = jest.mocked(useAddressValidation);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedGetMainAccount = jest.mocked(getMainAccount);
 const mockedSendFeatures = jest.mocked(sendFeatures);
+const mockedUseContactsFeature = jest.mocked(useContactsFeature);
 
 const mockAccount = createMockAccount({ id: "account_1" });
 
@@ -53,6 +58,12 @@ describe("useRecipientAddressModalViewModel", () => {
       return account.type === "Account" ? account : parentAccount || mockAccount;
     });
     mockedSendFeatures.hasMemo.mockReturnValue(false);
+    mockedSendFeatures.hasAddressBook.mockReturnValue(false);
+    mockedUseContactsFeature.mockReturnValue({
+      isEnabled: false,
+      showNewBadge: false,
+      eligibleAddressFamilies: [],
+    });
     mockedUseSendFlowData.mockReturnValue({
       recipientSearch: mockRecipientSearch,
       state: DEFAULT_STATE,
@@ -67,6 +78,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -178,6 +190,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -220,6 +233,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -262,6 +276,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -306,6 +321,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -350,6 +366,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: true,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -391,6 +408,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
@@ -425,6 +443,7 @@ describe("useRecipientAddressModalViewModel", () => {
         bridgeWarnings: {},
         hasBridgeValidationResult: false,
         matchedAccounts: [],
+        matchedContact: undefined,
         resolvedAddress: undefined,
         ensName: undefined,
         isLedgerAccount: false,
