@@ -1,12 +1,17 @@
 import { renderHook } from "@tests/test-renderer";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
-import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
+import {
+  useAssetsData,
+  useStocksData,
+  useStablecoinTickers,
+} from "@features/platform-aggregated-assets";
 import { useGlobalSearchDefaults } from "../useGlobalSearchDefaults";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStocksData");
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useAssetsData: jest.fn(),
+  useStocksData: jest.fn(),
+  useStablecoinTickers: jest.fn(),
+}));
 jest.mock("@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate", () => ({
   useUsdToFiatRate: () => ({ rate: 1, status: "ready" }),
 }));

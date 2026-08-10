@@ -1608,6 +1608,9 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
+      '@domain/api-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../domain/api/aggregated-assets
       '@domain/api-altcoins-sentiment':
         specifier: workspace:^
         version: link:../../domain/api/altcoins-sentiment
@@ -1656,6 +1659,9 @@ importers:
       '@domain/entity-currency-unit':
         specifier: workspace:^
         version: link:../../domain/entity/currency-unit
+      '@domain/entity-interest-rate':
+        specifier: workspace:*
+        version: link:../../domain/entity/interest-rate
       '@domain/entity-market-sentiment':
         specifier: workspace:^
         version: link:../../domain/entity/market-sentiment
@@ -1689,6 +1695,9 @@ importers:
       '@features/flow-pay-card-auth':
         specifier: workspace:^
         version: link:../../features/flow/pay-card-auth
+      '@features/platform-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../features/platform/aggregated-assets
       '@features/platform-currencies':
         specifier: workspace:^
         version: link:../../features/platform/currencies

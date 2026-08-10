@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { mockData } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
-import { mockStablecoinsResponse } from "@ledgerhq/live-common/dada-client/mocks/stablecoins.mock";
-import { mockStocksResponse } from "@ledgerhq/live-common/dada-client/mocks/stocks.mock";
+import { mockStablecoinsResponse } from "@domain/api-aggregated-assets/mock/stablecoins";
+import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 
 const handler = ({ request }: { request: Request }) => {
   const searchParams = new URL(request.url).searchParams;

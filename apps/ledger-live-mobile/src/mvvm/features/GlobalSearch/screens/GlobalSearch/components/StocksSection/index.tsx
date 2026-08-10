@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import {
   Box,
   Subheader,

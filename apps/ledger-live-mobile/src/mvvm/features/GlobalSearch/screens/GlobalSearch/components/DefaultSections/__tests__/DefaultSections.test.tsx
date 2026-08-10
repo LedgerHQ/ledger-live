@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import type { StockSuggestion } from "@ledgerhq/live-common/dada-client/utils/assetDiscovery";
+import type { StockSuggestion } from "@features/platform-aggregated-assets";
 import type { MarketAssetDisplayData } from "LLM/components/AssetListItem";
 import { DefaultSections } from "..";
 import { GLOBAL_SEARCH_TEST_IDS } from "../../../testIds";
