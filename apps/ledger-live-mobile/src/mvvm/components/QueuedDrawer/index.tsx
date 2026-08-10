@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Modal, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -88,7 +88,21 @@ const QueuedDrawerNative = ({
   const backdropOpacity = useSharedValue(0);
   const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // `useAnimatedStyle` only ever writes its INITIAL value into the Fabric shadow
+  // tree — Reanimated's later updates go straight to the native view and never
+  // back into it. So while the drawer is open the shadow tree still says
+  // translateY: 1000, and any commit that isn't covered by Reanimated's commit
+  // hook re-applies it, snapping the sheet off-screen for good: the open
+  // animation finished long ago, so nothing writes the transform again.
+  //
+  // Mirroring the target position in plain React state, declared AFTER the
+  // animated style, keeps the shadow tree correct. A commit that loses the
+  // animated value then settles on "open" instead of off-screen, and the worst
+  // case degrades to a clipped animation rather than an unreachable drawer.
+  const [isOpenDeclared, setIsOpenDeclared] = useState(false);
+
   const openAnim = useCallback(() => {
+    setIsOpenDeclared(true);
     translateY.value = withTiming(0, {
       duration: ANIMATION_DURATION,
       easing: Easing.out(Easing.cubic),
@@ -98,6 +112,8 @@ const QueuedDrawerNative = ({
 
   const closeAnim = useCallback(
     (after?: () => void) => {
+      setIsOpenDeclared(false);
+
       // Cancel any pending callback from a previous closeAnim call
       if (closeAnimTimeoutRef.current) {
         clearTimeout(closeAnimTimeoutRef.current);
@@ -240,12 +256,17 @@ const QueuedDrawerNative = ({
               backgroundColor: colors.constant.overlay,
             }}
           >
-            <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
+            <Animated.View
+              style={[{ flex: 1 }, backdropAnimatedStyle, { opacity: isOpenDeclared ? 1 : 0 }]}
+            />
           </Pressable>
 
           <Animated.View
             style={[
               containerAnimatedStyle,
+              // Declared after the animated style so this is what the shadow tree
+              // carries, and therefore what any commit re-applies.
+              { transform: [{ translateY: isOpenDeclared ? 0 : 1000 }] },
               {
                 width: "100%",
                 maxHeight: "95%",
