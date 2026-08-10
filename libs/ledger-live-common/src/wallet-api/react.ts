@@ -7,8 +7,8 @@ import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-
 import { Transport, Permission } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@shared/env";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { type AccountNamesState } from "@domain/entity-account-name";
 import { cryptoAssetsApi } from "@domain/api-currency-token";
 import { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { InfiniteData } from "@reduxjs/toolkit/query/react";
@@ -24,6 +24,7 @@ import {
   setWalletApiIdForAccountId,
   resolveWalletApiSpendableBalance,
 } from "./converters";
+import { AccountPublicKeyUnavailable } from "../errors";
 import { isWalletAPISupportedCurrency } from "./helpers";
 import {
   WalletAPICurrency,
@@ -273,7 +274,7 @@ function useDeviceTransport({ manifest, tracking }) {
 }
 
 export type useWalletAPIServerOptions = {
-  walletState: WalletState;
+  accountNames: AccountNamesState;
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: TrackingAPI;
@@ -287,7 +288,7 @@ export type useWalletAPIServerOptions = {
 };
 
 export function useWalletAPIServer({
-  walletState,
+  accountNames,
   manifest,
   accounts,
   tracking,
@@ -504,7 +505,7 @@ export function useWalletAPIServer({
 
       return result;
     });
-  }, [walletState, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
+  }, [accountNames, manifest, server, tracking, dispatch, deactivatedCurrencyIds]);
 
   useEffect(() => {
     server.setHandler("account.list", async ({ currencyIds }) => {
@@ -574,7 +575,7 @@ export function useWalletAPIServer({
           const spendableBalance = await resolveWalletApiSpendableBalance(account, parentAccount);
 
           return {
-            ...accountToWalletAPIAccount(walletState, account, parentAccount),
+            ...accountToWalletAPIAccount(accountNames, account, parentAccount),
             spendableBalance,
           };
         }),
@@ -582,7 +583,7 @@ export function useWalletAPIServer({
 
       return wapiAccounts;
     });
-  }, [walletState, manifest, server, accounts]);
+  }, [accountNames, manifest, server, accounts]);
 
   useEffect(() => {
     if (!uiAccountRequest) return;
@@ -611,7 +612,7 @@ export function useWalletAPIServer({
 
                   tracking.requestAccountSuccess(manifest);
                   resolve({
-                    ...accountToWalletAPIAccount(walletState, account, parentAccount),
+                    ...accountToWalletAPIAccount(accountNames, account, parentAccount),
                     spendableBalance,
                   });
                 } catch (error) {
@@ -633,14 +634,14 @@ export function useWalletAPIServer({
         });
       },
     );
-  }, [walletState, manifest, server, tracking, uiAccountRequest]);
+  }, [accountNames, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;
 
     server.setHandler("account.receive", ({ accountId, tokenCurrency }) =>
       receiveOnAccountLogic(
-        walletState,
+        accountNames,
         { manifest, accounts, tracking },
         accountId,
         (account, parentAccount, accountAddress) =>
@@ -673,7 +674,7 @@ export function useWalletAPIServer({
         tokenCurrency,
       ),
     );
-  }, [walletState, accounts, manifest, server, tracking, uiAccountReceive]);
+  }, [accountNames, accounts, manifest, server, tracking, uiAccountReceive]);
 
   useEffect(() => {
     if (!uiMessageSign) return;
@@ -1256,10 +1257,14 @@ export function useWalletAPIServer({
       try {
         return await accountGetPublicKeyLogic({ manifest, accounts, tracking }, accountId);
       } catch (error) {
-        // Surface a native message, then let the RPC reject as before. Match by name so it holds
-        // even if the error loses its prototype (e.g. serialized across a transport).
+        // Surface a native message, then let the RPC reject as before. Match by name (not just
+        // instanceof, per createCustomErrorClass) so it holds even if the error loses its
+        // prototype (e.g. serialized to a plain object across a transport).
         const isPublicKeyUnavailable =
-          (error as { name?: string } | null | undefined)?.name === "AccountPublicKeyUnavailable";
+          error instanceof AccountPublicKeyUnavailable ||
+          (typeof error === "object" &&
+            error !== null &&
+            (error as { name?: unknown }).name === "AccountPublicKeyUnavailable");
         if (isPublicKeyUnavailable && uiAccountPublicKeyUnavailable) {
           try {
             const localAccountId = getAccountIdFromWalletAccountId(accountId);

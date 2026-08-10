@@ -4,7 +4,6 @@ import {
   type ContactsListViewLabels,
   type ContactsListViewNativeProps,
   resolveContactsLedgerSyncIntroductionOpen,
-  useContacts,
   useContactsFeatureIntroductionState,
   useContactsSearchViewModel,
 } from "@features/flow-contacts";
@@ -31,6 +30,7 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
         "contacts.ledgerSyncIntroduction.checkingAccessibilityLabel",
       ),
       formatAddressCount: count => t("contacts.addressCount", { count }),
+      formatMeDisplayName: name => t("contacts.detail.meDisplayName", { name }),
     }),
     [t],
   );
@@ -51,18 +51,13 @@ export function useContactsPageViewModel(): ContactsPageViewModel {
   const [ledgerSyncStatus] = useState<ContactsLedgerSyncStatus>("ready");
   const [isLedgerSyncIntroductionDismissed, setIsLedgerSyncIntroductionDismissed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const contacts = useContacts();
-  const viewModel = useContactsSearchViewModel(searchQuery);
+  const viewModel = useContactsSearchViewModel(searchQuery, labels.formatMeDisplayName);
   const onSearchQueryChange = useCallback((query: string) => setSearchQuery(query), []);
   const onOpenContact = useCallback<ContactsListViewNativeProps["onOpenContact"]>(
     contactId => {
-      if (!contacts.some(contact => contact.id === contactId && contact.addresses.length === 0)) {
-        return;
-      }
-
       navigation.navigate(ScreenName.MyWalletContactDetail, { contactId });
     },
-    [contacts, navigation],
+    [navigation],
   );
   const onDismissLedgerSyncIntroduction = useCallback(
     () => setIsLedgerSyncIntroductionDismissed(true),

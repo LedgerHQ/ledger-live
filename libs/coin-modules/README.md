@@ -6,7 +6,7 @@ Coin framework compatibility
 
 The coin framework ships as the published `@ledgerhq/coin-module-framework` package (pinned in the `pnpm-workspace.yaml` catalog), not as an in-repo lib. Coin modules depend on it for their API/logic types (e.g. `CoinModuleApi` from `@ledgerhq/coin-module-framework/api/index`).
 
-In `api`, `logic`, and `network`, the only permitted `@ledgerhq/*` imports are `@ledgerhq/errors`, `@ledgerhq/logs`, `@ledgerhq/live-network`, and `@ledgerhq/coin-module-framework` (enforced by `eslint/no-restricted-imports` in [`.oxlintrc.json`](./.oxlintrc.json)).
+In `api`, `logic`, and `network`, the only permitted `@ledgerhq/*` imports are `@ledgerhq/logs`, `@ledgerhq/live-network`, `@ledgerhq/coin-module-framework`, and `@ledgerhq/ledger-wallet-framework` (enforced by `eslint/no-restricted-imports` in [`.oxlintrc.json`](./.oxlintrc.json)).
 
 ### Architectural Decision
 The following concepts are mandatory for a CoinModule to be *Coin framework compliant*.
@@ -19,7 +19,7 @@ The following concepts are mandatory for a CoinModule to be *Coin framework comp
 * `config.ts`: exposes methods to update and fetch the coin config
 * `transaction.ts`: exposes serialization utils
 * `supportedFeatures.ts` (to be refined): exposes the set of features available within the Coin Module API
-* `bridge` (legacy): implementation of Bridges interface (cf. [Bridge](https://github.com/LedgerHQ/ledger-live/blob/25c9bc5fc4276e8a2268c81a334776ec927e495e/libs/ledgerjs/packages/types-live/src/bridge.ts#L96-L105))
+* `bridge` (legacy): implementation of Bridges interface (cf. [Bridge](https://github.com/LedgerHQ/ledger-live/blob/25c9bc5fc4276e8a2268c81a334776ec927e495e/libs/types-live/src/bridge.ts#L96-L105))
 * `signer` (legacy): defines the interface definition to the Embedded App and the logic to retrieve
 
 **==> With this organisation, it is more obvious and consistent where to find and create new functions/files.**

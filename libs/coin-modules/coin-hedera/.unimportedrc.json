@@ -17,8 +17,7 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util",
-    "@ledgerhq/types-cryptoassets"
+    "jest-util"
   ],
   "ignoreUnimported": [
     "src/index.ts",

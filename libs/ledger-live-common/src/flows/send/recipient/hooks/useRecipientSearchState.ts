@@ -28,6 +28,7 @@ export function useRecipientSearchState({
 
   const hasValidatedAddress =
     result.status === "valid" || result.status === "ens_resolved" || result.status === "sanctioned";
+  const hasValidAddress = result.status === "valid" || result.status === "ens_resolved";
 
   const showSearchResults = hasSearchValue && (!isLoading || hasValidatedAddress);
 
@@ -37,6 +38,10 @@ export function useRecipientSearchState({
   const isAddressComplete = useMemo(() => {
     return hasValidatedAddress && !isBridgeInvalidAddress && !result.isBridgeLoading;
   }, [hasValidatedAddress, isBridgeInvalidAddress, result.isBridgeLoading]);
+
+  const isAddressValid = useMemo(() => {
+    return hasValidAddress && result.hasBridgeValidationResult && !bridgeRecipientError;
+  }, [hasValidAddress, result.hasBridgeValidationResult, bridgeRecipientError]);
 
   const hasAnyMatches =
     (result.matchedAccounts && result.matchedAccounts.length > 0) ||
@@ -51,6 +56,8 @@ export function useRecipientSearchState({
     !!bridgeRecipientError && !isBridgeInvalidAddress && !showSanctionedBanner;
   const hasBridgeRecipientWarning = !!bridgeRecipientWarning;
 
+  // Keep a complete match visible while search revalidates
+  // first bridge wait is via isAddressComplete.
   const showMatchedAddress =
     showSearchResults &&
     (hasAnyMatches ||
@@ -65,6 +72,7 @@ export function useRecipientSearchState({
 
   const showAddressValidationError =
     showSearchResults &&
+    !isLoading &&
     !showSanctionedBanner &&
     !hasAnyMatches &&
     (!!result.error || isBridgeInvalidAddress);
@@ -93,6 +101,7 @@ export function useRecipientSearchState({
 
   const showEmptyState =
     showSearchResults &&
+    !isLoading &&
     (!isAddressComplete || !hasAnyMatches) &&
     !showMatchedAddress &&
     !showSanctionedBanner &&
@@ -110,6 +119,7 @@ export function useRecipientSearchState({
     showBridgeRecipientWarning,
     isSanctioned,
     isAddressComplete,
+    isAddressValid,
     addressValidationErrorType,
     bridgeRecipientError,
     bridgeRecipientWarning,

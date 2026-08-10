@@ -35,7 +35,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
-    transferId: tr.transferId,
+    ...(tr.transferId !== undefined && { transferId: tr.transferId }),
   };
 };
 
@@ -47,7 +47,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
-    transferId: t.transferId,
+    ...(t.transferId !== undefined && { transferId: t.transferId }),
   };
 };
 

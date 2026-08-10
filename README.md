@@ -87,7 +87,7 @@ What to run next depends on the workspace you're targeting. See [repo commands](
 ## Nightly releases
 
 - **Desktop binaries** and **Android APKs** are attached to build workflows – see [GitHub Actions](https://github.com/LedgerHQ/ledger-live/actions).
-- Authorised users can also access [Testflight](https://developer.apple.com/testflight/), [Google Play Console](https://play.google.com/console) and [ledger-live-build](https://github.com/LedgerHQ/ledger-live-build) repository.
+- Authorised users can also access [Testflight](https://developer.apple.com/testflight/), [Firebase App Distribution](https://console.firebase.google.com/) and [ledger-live-build](https://github.com/LedgerHQ/ledger-live-build) repository.
 - Nightly **packages** are published with `@nightly` dist-tag, e.g. `npm i @ledgerhq/hw-app-eth@nightly`
 - More details on the Wiki: https://github.com/LedgerHQ/ledger-live/wiki/Release-Process#nightlies
 

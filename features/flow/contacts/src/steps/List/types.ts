@@ -4,8 +4,8 @@ import type { ContactDetailViewProps } from "../Detail/types";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
-  ContactsLedgerSyncStatus,
 } from "../Introduction/types";
+import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 
 export type ContactsListItem = Readonly<{
   contactId: ContactId;
@@ -59,6 +59,7 @@ export type ContactsListViewLabels = Readonly<{
   addContact: string;
   ledgerSyncCheckingAccessibilityLabel?: string;
   formatAddressCount: (count: number) => string;
+  formatMeDisplayName?: (name: string) => string;
 }>;
 
 export type ContactsPageSharedProps = Readonly<{

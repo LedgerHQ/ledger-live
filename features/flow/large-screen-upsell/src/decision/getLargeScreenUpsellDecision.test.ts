@@ -85,7 +85,7 @@ describe("getLargeScreenUpsellDecision", () => {
     {
       description: "the onboarding date is null",
       userState: { onboardingDate: null },
-      expected: { shouldShow: false, reason: "cooldown", deviceModelId: "nanoX" },
+      expected: { shouldShow: true, deviceModelId: "nanoX" },
     },
     {
       description: "eligible and never displayed before",

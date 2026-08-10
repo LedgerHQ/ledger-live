@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent, act } from "tests/testSetup";
-import { useStocksData } from "@ledgerhq/live-common/dada-client/hooks/useStocksData";
+import { useStocksData } from "@features/platform-aggregated-assets";
 import Stocks from "..";
 
 function simulateScrollLayout(
@@ -19,7 +19,10 @@ function simulateScrollLayout(
   container.dispatchEvent(new Event("scroll"));
 }
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useStocksData");
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useStocksData: jest.fn(),
+}));
 
 const mockedUseStocksData = jest.mocked(useStocksData);
 

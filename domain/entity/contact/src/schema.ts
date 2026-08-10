@@ -1,9 +1,12 @@
-import {
-  CryptoCurrencyIdSchema,
-  NonEmptyStringSchema,
-  TokenCurrencyIdSchema,
-} from "@shared/schema-primitives";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
+import { NonEmptyStringSchema } from "@shared/schema-primitives";
 import { z } from "zod";
+import {
+  ContactAddressLabelTooLongError,
+  InvalidContactAddressLabelError,
+  InvalidContactNameError,
+} from "./errors";
 
 export const ContactIdSchema = NonEmptyStringSchema;
 export const ContactAddressIdSchema = NonEmptyStringSchema;
@@ -11,17 +14,40 @@ export const ContactCurrencyIdSchema = z.union([CryptoCurrencyIdSchema, TokenCur
 
 const ContactNamePattern =
   /^\p{L}[\p{L}\p{Mn}\p{Mc}]*(?:[\p{Zs}'\u2019-]\p{L}[\p{L}\p{Mn}\p{Mc}]*)*$/u;
-const ContactAddressLabelPattern = /^(?=.*[\p{L}\p{N}])[\p{L}\p{Mn}\p{Mc}\p{N}\p{P}\p{Zs}]+$/u;
+const ContactAddressLabelPattern = /^(?=.*[A-Za-z0-9])[\x20-\x7E]+$/;
 
-export const ContactNameSchema = NonEmptyStringSchema.regex(
-  ContactNamePattern,
-  "Expected letters, spaces, apostrophes, or hyphens",
-);
+export const CONTACT_ADDRESS_LABEL_MAX_LENGTH = 32;
 
-export const ContactAddressLabelSchema = NonEmptyStringSchema.regex(
-  ContactAddressLabelPattern,
-  "Expected letters, numbers, punctuation, or spaces",
-);
+export const ContactNameSchema = z
+  .string()
+  .min(1, { error: () => new InvalidContactNameError().name })
+  .regex(ContactNamePattern, {
+    error: () => new InvalidContactNameError().name,
+  })
+  .brand<"ContactName">();
+
+export const ContactNameInputSchema = z
+  .string()
+  .trim()
+  .transform(name => name.normalize("NFC"))
+  .pipe(z.union([z.literal(""), ContactNameSchema]));
+
+export const ContactAddressLabelSchema = z
+  .string()
+  .min(1, { error: () => new InvalidContactAddressLabelError().name })
+  .max(CONTACT_ADDRESS_LABEL_MAX_LENGTH, {
+    error: () => new ContactAddressLabelTooLongError().name,
+  })
+  .regex(ContactAddressLabelPattern, {
+    error: () => new InvalidContactAddressLabelError().name,
+  })
+  .brand<"ContactAddressLabel">();
+
+export const ContactAddressLabelInputSchema = z
+  .string()
+  .trim()
+  .transform(label => label.normalize("NFC"))
+  .pipe(z.union([z.literal(""), ContactAddressLabelSchema]));
 
 export const ContactAddressValueSchema = NonEmptyStringSchema;
 

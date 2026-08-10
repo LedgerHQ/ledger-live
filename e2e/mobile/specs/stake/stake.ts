@@ -44,12 +44,12 @@ export function runEarningChoiceTezos(
 ) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   tagSuite(tmsLinks, tags);
-  describe("Earning choice on TEZOS", () => {
+  describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
     });
 
-    it("Earning choice delegates and awaits the delegation", async () => {
+    it(`[${delegation.account.currency.testLabel}] - Earning choice routes to delegate and stake`, async () => {
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
@@ -71,12 +71,12 @@ export function runStakeTezos(
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
   tagSuite(tmsLinks, tags);
-  describe("Stake flow on TEZOS", () => {
+  describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
     });
 
-    it("Stake on a delegated account", async () => {
+    it(`[${delegation.account.currency.testLabel}] - Stake on a delegated account`, async () => {
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
@@ -97,12 +97,12 @@ export function runUnstakeTezos(
   tags: string[] = TEZOS_STAKING_TAGS,
 ) {
   tagSuite(tmsLinks, tags);
-  describe("Unstake flow on TEZOS", () => {
+  describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
     });
 
-    it("Unstake from a staked account", async () => {
+    it(`[${delegation.account.currency.testLabel}] - Unstake from a staked account`, async () => {
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
       await goToTezosAccount(delegation);
@@ -127,9 +127,9 @@ export function runUnstakeRequiredTezos(
   tagSuite(tmsLinks, tags);
   const title =
     action === "changeValidator"
-      ? "Change validator is blocked while staked"
-      : "Stopping delegation is blocked while staked";
-  describe(`Unstake required guard on TEZOS - ${action}`, () => {
+      ? `[${delegation.account.currency.testLabel}] - Change validator is blocked while staked`
+      : `[${delegation.account.currency.testLabel}] - Stop delegation is blocked while staked`;
+  describe("Staking - Tezos", () => {
     beforeAll(async () => {
       await initStakingAccount(delegation);
     });

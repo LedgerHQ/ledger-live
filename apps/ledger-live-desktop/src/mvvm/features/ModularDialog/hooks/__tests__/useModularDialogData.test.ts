@@ -1,13 +1,13 @@
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { renderHook, waitFor } from "tests/testSetup";
 import { useModularDialogData } from "../useModularDialogData";
 
-jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => {
-  const actual = jest.requireActual<
-    typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
-  >("@ledgerhq/live-common/dada-client/hooks/useAssetsData");
+jest.mock("@features/platform-aggregated-assets", () => {
+  const actual = jest.requireActual<typeof import("@features/platform-aggregated-assets")>(
+    "@features/platform-aggregated-assets",
+  );
 
   return {
     ...actual,
@@ -17,8 +17,8 @@ jest.mock("@ledgerhq/live-common/dada-client/hooks/useAssetsData", () => {
 
 const mockedUseAssetsData = jest.mocked(useAssetsData);
 const actualUseAssetsData = jest.requireActual<
-  typeof import("@ledgerhq/live-common/dada-client/hooks/useAssetsData")
->("@ledgerhq/live-common/dada-client/hooks/useAssetsData").useAssetsData;
+  typeof import("@features/platform-aggregated-assets")
+>("@features/platform-aggregated-assets").useAssetsData;
 
 describe("useModularDialogData", () => {
   it("should return the correct data structure", async () => {
@@ -91,7 +91,7 @@ describe("useModularDialogData filters", () => {
     mockedUseAssetsData.mockImplementation(actualUseAssetsData);
   });
 
-  it("should not forward network ids as exact DADA currency ids", () => {
+  it("should forward network ids without treating them as exact currency ids", () => {
     renderHook(() => useModularDialogData(), {
       initialState: {
         modularDialog: {
@@ -112,6 +112,7 @@ describe("useModularDialogData filters", () => {
     expect(mockedUseAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({
         currencyIds: undefined,
+        networkIds: ["ethereum"],
         areCurrenciesFiltered: false,
       }),
     );
@@ -137,6 +138,33 @@ describe("useModularDialogData filters", () => {
     expect(mockedUseAssetsData).toHaveBeenCalledWith(
       expect.objectContaining({
         currencyIds: ["bitcoin"],
+        areCurrenciesFiltered: true,
+      }),
+    );
+  });
+
+  it("should preserve the exact currency filter when network ids are empty", () => {
+    renderHook(() => useModularDialogData(), {
+      initialState: {
+        modularDialog: {
+          searchedValue: undefined,
+          isDebuggingDuplicates: false,
+          flow: "",
+          source: "",
+          isOpen: true,
+          dialogParams: {
+            networkIds: [],
+            currencies: ["bitcoin"],
+            areCurrenciesFiltered: true,
+          },
+        },
+      },
+    });
+
+    expect(mockedUseAssetsData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currencyIds: ["bitcoin"],
+        networkIds: undefined,
         areCurrenciesFiltered: true,
       }),
     );

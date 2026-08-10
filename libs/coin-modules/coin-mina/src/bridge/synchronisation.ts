@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { log } from "@ledgerhq/logs";
+import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { getAccount } from "../logic/account/getAccount";
@@ -141,6 +142,45 @@ export const mapRosettaTxnToOperation = async (
   }
 };
 
+// Staking data is not on the critical path: an upstream failure must degrade it, not fail the
+// whole account synchronisation (balance and operations).
+const getStakingResources = async (
+  address: string,
+  operations: Operation[],
+  previousResources: MinaAccount["resources"],
+): Promise<MinaAccount["resources"]> => {
+  try {
+    const [delegateKey, epochInfo, validators] = await Promise.all([
+      getDelegateAddress(address),
+      getEpochInfo(),
+      fetchValidators(),
+    ]);
+
+    // GraphQL may lag behind Rosetta. Fall back to the most recent delegation-related op
+    // to determine the current delegate state without waiting for the GraphQL to catch up.
+    const graphqlDelegateAddress = delegateKey || address;
+    const lastDelegationOp = operations.find(
+      op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
+    );
+    const getDelegateAddressFn = () => {
+      if (graphqlDelegateAddress !== address) return graphqlDelegateAddress;
+      if (lastDelegationOp?.type === "UNDELEGATE") return address;
+      return lastDelegationOp?.recipients[0] ?? address;
+    };
+    const delegateAddress = getDelegateAddressFn();
+
+    return {
+      blockProducers: validators,
+      delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
+      stakingActive: address !== delegateAddress,
+      epochInfo: epochInfo.data.daemonStatus.consensusTimeNow,
+    };
+  } catch (error) {
+    log("warn", "mina: failed to fetch staking resources, keeping the previous ones", { error });
+    return previousResources;
+  }
+};
+
 export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
@@ -162,24 +202,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
 
   const operations = mergeOps(oldOperations, newOperations.flat());
 
-  const [delegateKey, epochInfo, validators] = await Promise.all([
-    getDelegateAddress(address),
-    getEpochInfo(),
-    fetchValidators(),
-  ]);
-
-  // GraphQL may lag behind Rosetta. Fall back to the most recent delegation-related op
-  // to determine the current delegate state without waiting for the GraphQL to catch up.
-  const graphqlDelegateAddress = delegateKey || address;
-  const lastDelegationOp = operations.find(
-    op => op.type === "REDELEGATE" || op.type === "DELEGATE" || op.type === "UNDELEGATE",
-  );
-  const getDelegateAddressFn = () => {
-    if (graphqlDelegateAddress !== address) return graphqlDelegateAddress;
-    if (lastDelegationOp?.type === "UNDELEGATE") return address;
-    return lastDelegationOp?.recipients[0] ?? address;
-  };
-  const delegateAddress = getDelegateAddressFn();
+  const resources = await getStakingResources(address, operations, initialAccount?.resources);
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
@@ -187,12 +210,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
-    resources: {
-      blockProducers: validators,
-      delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
-      stakingActive: address !== delegateAddress,
-      epochInfo: epochInfo.data.daemonStatus.consensusTimeNow,
-    },
+    ...(resources ? { resources } : {}),
   };
 
   return { ...shape, operations };

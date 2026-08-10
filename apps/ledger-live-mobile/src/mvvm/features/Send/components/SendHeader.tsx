@@ -15,6 +15,7 @@ import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 import { useTranslation } from "~/context/Locale";
 
+import { AddressDisclaimer } from "./AddressDisclaimer";
 import { useSendHeaderViewModel } from "../hooks/useSendHeaderViewModel";
 import { useSendFlowData } from "../context/SendFlowContext";
 import { useAnalytics } from "~/analytics";
@@ -23,6 +24,9 @@ import { getSendFlowTrackingProperties } from "@ledgerhq/ledger-wallet-framework
 type SendHeaderProps = Readonly<{
   headerRight?: React.ReactNode;
 }>;
+
+/** Width reserved on the right of the address row for the info icon. */
+const DISCLAIMER_HIT_AREA = 56;
 
 export function SendHeader({ headerRight }: SendHeaderProps) {
   const { t } = useTranslation();
@@ -37,11 +41,12 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
       addressValue: {
         color: theme.colors.text.base,
       },
-      absoluteOverlay: {
+      editOverlay: {
         position: "absolute",
         top: 0,
         left: 0,
-        right: 0,
+        // Stops short of the trailing info icon so the disclaimer stays pressable.
+        right: DISCLAIMER_HIT_AREA,
         bottom: 0,
       },
     }),
@@ -121,9 +126,10 @@ export function SendHeader({ headerRight }: SendHeaderProps) {
                 hideClearButton
                 placeholder={viewModel.recipientPlaceholder}
                 inputStyle={styles.addressValue}
+                suffix={<AddressDisclaimer />}
               />
               <Pressable
-                style={styles.absoluteOverlay}
+                style={styles.editOverlay}
                 accessibilityRole="button"
                 accessibilityLabel={t("send.newSendFlow.editRecipientAccessibilityLabel")}
                 onPress={viewModel.handleRecipientInputPress}

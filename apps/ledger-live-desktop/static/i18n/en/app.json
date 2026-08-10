@@ -100,7 +100,6 @@
     "selectNoResults": "No results found matching \"{{query}}\"",
     "sortBy": "Sort by",
     "save": "Save",
-    "lock": "Lock",
     "showMore": "Show more",
     "backToMatchingURL": "Back to {{appName}}",
     "back": "Back",
@@ -139,11 +138,8 @@
       "syncing": "Synchronizing...",
       "upToDate": "Synchronized",
       "outdated": "Paused",
-      "error": "Synchronization error",
       "refresh": "Refresh",
-      "devTools": "Dev tools",
-      "failingSync_one": "Account failing to sync:",
-      "failingSync_other": "Accounts failing to sync:"
+      "devTools": "Dev tools"
     },
     "exchange": "Exchange",
     "info": "Info",
@@ -209,6 +205,8 @@
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
       "FINALIZE_UNSTAKE": "Withdrawn",
+      "STAKE_NEURON": "Staked",
+      "TOP_UP_NEURON": "Stake increased",
       "SENDING": "Sending",
       "BURN": "Burned",
       "ASSOCIATE_TOKEN": "Associate token",
@@ -306,24 +304,14 @@
   "sidebar": {
     "card": "Card",
     "paytab": "Pay",
-    "menu": "Menu",
-    "stars": "Starred accounts",
     "accounts": "Accounts",
-    "manager": "My Ledger",
-    "earn": "Earn",
-    "exchange": "Buy / Sell",
     "swap": "Swap",
-    "perps": "Perpetuals",
-    "borrow": "Borrow",
     "home": "Home",
     "refer": "Refer a friend",
-    "lend": "Lend",
     "catalog": "Discover",
-    "market": "Market",
     "recover": "[L] Recover"
   },
   "stars": {
-    "placeholder": "Star an account to display it here.",
     "tooltip": "Star account"
   },
   "bridge": {
@@ -1153,18 +1141,9 @@
     }
   },
   "help": {
-    "title": "Help & Support",
-    "gettingStarted": {
-      "title": "Getting started",
-      "desc": "Start here"
-    },
     "status": {
       "title": "Ledger Status",
       "desc": "Check our system status"
-    },
-    "helpCenter": {
-      "title": "Ledger Support",
-      "desc": "Get help"
     },
     "ledgerAcademy": {
       "title": "Ledger Academy",
@@ -1531,7 +1510,6 @@
     "titleAccount": "WalletConnect"
   },
   "dashboard": {
-    "title": "Portfolio",
     "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
@@ -1540,21 +1518,6 @@
     "recentActivity": "Latest operations",
     "totalBalance": "Total balance",
     "transactionsPendingConfirmation": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed.",
-    "featuredButtons": {
-      "buySell": {
-        "title": "Buy / Sell",
-        "description": "Buy and sell with our trusted providers"
-      },
-      "swap": {
-        "title": "Swap",
-        "description": "Convert crypto to crypto",
-        "label": "Popular"
-      },
-      "earn": {
-        "title": "Stake",
-        "description": "Get rewards on your crypto"
-      }
-    },
     "recoverBanner": {
       "subscribeDone": {
         "title": "Reminder: Finish subscribing to Ledger Recover",
@@ -1604,25 +1567,6 @@
     "taprootWarning": "Make sure the sender supports taproot",
     "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
     "utxoWarning": "For privacy reasons, a new address is generated for every transaction. The previous ones do remain valid."
-  },
-  "emptyState": {
-    "dashboard": {
-      "title": "Install apps on your device",
-      "desc": "Go to My Ledger to install apps on your device. You can add accounts once you have apps on your device.",
-      "buttons": {
-        "installApp": "Go to My Ledger",
-        "help": "Help"
-      }
-    },
-    "accounts": {
-      "title": "Add an account to get started",
-      "desc": "Add an account to start managing your crypto assets. You must have the app for your crypto asset installed on your device.",
-      "buttons": {
-        "addAccount": "Add account",
-        "installApp": "Go to My Ledger to install apps",
-        "help": "Help"
-      }
-    }
   },
   "genuinecheck": {
     "deviceInBootloader": "Device in Bootloader mode. Click on <1>Continue</1> to update it."
@@ -2335,16 +2279,6 @@
     "successTitle": "Address shared securely",
     "connectToNoah": "Connecting you to Noah",
     "steps": {
-      "options": {
-        "fromBank": {
-          "title": "Via bank transfer",
-          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
-        },
-        "fromCrypto": {
-          "title": "Via crypto address",
-          "description": "Receive crypto from another wallet."
-        }
-      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
@@ -2530,6 +2464,10 @@
     "title": "Send {{currency}}",
     "available": "Available {{amount}}",
     "to": "To:",
+    "addressDisclaimer": {
+      "accessibilityLabel": "About the recipient address",
+      "description": "Your Ledger device will securely display the full address. Make sure it matches the address from the original source."
+    },
     "placeholder": "Enter address or ENS",
     "placeholderNoENS": "Enter address",
     "recent": "Recent",
@@ -5021,7 +4959,6 @@
   "settings": {
     "title": "Settings",
     "discreet": "Toggle discreet mode",
-    "helpButton": "Help",
     "tabs": {
       "display": "General",
       "currencies": "Crypto assets",
@@ -5100,10 +5037,6 @@
       "themeConsole": {
         "title": "Theme Toggle",
         "desc": "Display a floating overlay to quickly switch themes."
-      },
-      "analyticsConsentOptInQa": {
-        "rowTitle": "Analytics opt-in consent (QA)",
-        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
       },
       "devTools": {
         "rowTitle": "DevTools",
@@ -5576,7 +5509,7 @@
       },
       "tokenBlacklist": {
         "title": "Hidden tokens",
-        "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
+        "desc": "You can hide an asset from its detail page using the options menu, or hide a token by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count": "1 token",
         "count_other": "{{count}} tokens"
       },
@@ -5690,9 +5623,6 @@
     }
   },
   "informationCenter": {
-    "tooltip": "Information center",
-    "ongoingIncidentsTooltip": "There is {{count}} ongoing incident",
-    "ongoingIncidentsTooltip_other": "There are {{count}} ongoing incidents",
     "tabs": {
       "announcements": "News",
       "announcementsUnseen": "News ({{unseenCount}})",
@@ -8669,12 +8599,12 @@
   },
   "lnsUpsellMediaBanner": {
     "opted_in": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "Get an exclusive 20% off on the latest Ledger signers."
+      "title": "See more. Sign safer",
+      "description": "Upgrade and get 20% off."
     },
     "opted_out": {
-      "title": "Upgrade your Ledger Nano S™",
-      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements."
+      "title": "More security. More control",
+      "description": "Learn more about security features."
     }
   },
   "largeScreenUpsellModal": {
@@ -9073,11 +9003,10 @@
         "title": "Set up Aleo private balance",
         "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
         "bullets": [
-          "Read-only access to decrypt your private balance",
-          "Ledger cannot send or spend your funds",
-          "Only you can sign and spend your funds",
-          "Proof generation is handled by third-party prover services to ensure fast processing",
-          "Provers cannot access or spend your funds"
+          "View key enables read-only access to decrypt your private balance inside Ledger Wallet",
+          "Only you can sign and spend your funds via Ledger Device Signer",
+          "Aleo transactions require zero-knowledge proofs, which take significant computing power",
+          "Proof generation is handled by external Aleo Network service to expedite transactions"
         ],
         "cta": {
           "allow": "Allow",
@@ -9362,10 +9291,43 @@
     "title": "Contacts",
     "addContact": "Add contact",
     "addAddress": "Add address",
+    "addExternalAddress": "Add external address",
+    "addAddressEntry": {
+      "title": "Enter address",
+      "addressPlaceholder": "Address or ENS",
+      "confirmAddress": "Continue to review",
+      "validatingAddress": "Validating address",
+      "validAddress": "Valid address",
+      "invalidAddress": "Incorrect address format.",
+      "domainNotFound": "Domain not found",
+      "sanctionedAddress": "Sanctioned address.",
+      "sanctioned": {
+        "description": "This wallet address is sanctioned by international laws and regulations.",
+        "learnMore": "Learn more"
+      },
+      "validationUnavailable": "Address validation is temporarily unavailable.",
+      "ensDisclaimer": "This ENS name resolves to the address shown above."
+    },
+    "addAddressName": {
+      "inputLabel": "Address name",
+      "namingDisclaimer": "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
+      "namingDisclaimerAccessibilityLabel": "Address name information",
+      "continueToReview": "Continue to review",
+      "invalidLabel": "Special characters are not allowed.",
+      "duplicateLabel": "This address name is already used for this contact.",
+      "tooLongLabel": "Address names must be 32 characters or fewer."
+    },
+    "addAddressReview": {
+      "title": "Review address",
+      "continue": "Confirm address",
+      "successTitle": "Address saved",
+      "close": "Close"
+    },
     "addContactDrawer": {
       "namePlaceholder": "Contact name",
       "namingDisclaimer": "For privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S'.",
-      "invalidNameError": "Special characters are not allowed."
+      "invalidNameError": "Special characters are not allowed.",
+      "duplicateNameError": "This contact name is already in use."
     },
     "searchPlaceholder": "Search contact",
     "searchNoResults": "No contact found",
@@ -9376,12 +9338,64 @@
       "name": "Me"
     },
     "detail": {
+      "meDisplayName": "{{name}} (Me)",
+      "ledgerWalletAddresses": "Ledger Wallet addresses",
       "emptyState": {
         "meTitle": "No saved addresses for you",
         "contactTitle": "No saved addresses for {{name}}",
         "meDescription": "Save your wallet addresses to receive crypto by name next time.",
         "contactDescription": "Save their wallet addresses to send to them by name next time."
       }
+    },
+    "addressDetail": {
+      "send": "Send",
+      "copy": "Copy",
+      "copied": "Copied",
+      "edit": "Edit",
+      "delete": "Delete",
+      "networkTag": "{{name}} Network"
+    },
+    "detailActions": {
+      "editContact": "Edit contact",
+      "deleteContact": "Delete contact"
+    },
+    "editContact": {
+      "title": "Edit contact",
+      "namePlaceholder": "Contact name",
+      "namingDisclaimer": "For your privacy, avoid full names and surnames. Use a nickname or just a first name + initial, e.g. 'John S.'",
+      "applyChanges": "Apply changes",
+      "confirmName": "Confirm name",
+      "invalidNameError": "Special characters are not allowed."
+    },
+    "deleteContact": {
+      "title": "Delete contact?",
+      "description": "Deleting this contact will erase all associated addresses.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "deleteAddress": {
+      "title": "Delete address?",
+      "description": "This address will be removed from the contact.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "editAddress": {
+      "title": "Edit address",
+      "inputLabel": "Address name",
+      "applyChanges": "Apply changes",
+      "invalidLabelError": "Special characters are not allowed."
+    },
+    "editSigner": {
+      "title": "Confirm on your device",
+      "description": "Connect and unlock your Ledger device to confirm this change.",
+      "confirm": "Continue",
+      "cancel": "Cancel"
+    },
+    "editSignerMismatch": {
+      "title": "Use the same Ledger device you used to add this contact",
+      "description": "The connected device isn't a match.",
+      "connectDifferentDevice": "Connect a different device",
+      "cancel": "Cancel"
     },
     "ledgerSyncIntroduction": {
       "description": "Your contacts are end-to-end encrypted with your Ledger and synced across your devices, only you can unlock them.",
@@ -9498,6 +9512,61 @@
       "invalidOperation": {
         "title": "Invalid state",
         "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      }
+    },
+    "initialization": {
+      "loading": {
+        "title": "Loading"
+      },
+      "installingApp": {
+        "title": "Installing app"
+      },
+      "outdatedAppWarning": {
+        "title": "App version outdated",
+        "description": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it."
+      },
+      "retryable": {
+        "userRefused": {
+          "title": "Operation rejected on device"
+        },
+        "deviceBusy": {
+          "title": "Action pending on your Ledger device",
+          "description": "Complete it and then select Retry."
+        }
+      },
+      "blocking": {
+        "deviceNotOnboarded": {
+          "title": "Your Ledger is not ready to use yet",
+          "description": "You need to set up your {{productName}} first. We will guide you through the device setup process."
+        },
+        "unsupportedFirmwareVersion": {
+          "title": "Ledger OS update required"
+        },
+        "unsupportedApplication": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "unsupportedFeature": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "wrongDeviceForAccount": {
+          "title": "Wrong Secret Recovery Phrase",
+          "description": "This Ledger isn't set up with the recovery phrase linked to the selected account. Check that you're using the correct device."
+        },
+        "deviceOutOfStorageSpace": {
+          "title": "Not enough device memory",
+          "description": "Your device doesn't have enough memory. Please uninstall apps and try again.",
+          "apps": "Apps to manage: {{appNames}}"
+        }
+      },
+      "cta": {
+        "openMyLedger": "Open My Ledger",
+        "goToMyLedger": "Go to My Ledger",
+        "setupDevice": "Set up device",
+        "updateLedgerOs": "Update Ledger OS",
+        "cancelOperation": "Cancel operation",
+        "contactLedgerSupport": "Contact Ledger support"
       }
     },
     "connectDevice": {

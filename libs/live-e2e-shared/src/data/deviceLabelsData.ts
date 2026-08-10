@@ -193,6 +193,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.BITCOIN_CASH.name]: DeviceLabels.ACCEPT,
       [AppInfos.CONCORDIUM.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.CONCORDIUM_TESTNET.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.ALEO.name]: DeviceLabels.SIGN_TRANSACTION,
       default: DeviceLabels.CAPS_APPROVE,
     },
   },

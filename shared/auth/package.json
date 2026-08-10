@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
+    "@shared/feature-flags": "workspace:*",
     "zod": "catalog:"
   },
   "devDependencies": {

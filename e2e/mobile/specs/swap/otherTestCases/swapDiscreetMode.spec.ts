@@ -10,6 +10,7 @@ const fundedAssetsAccounts: AccountType[] = [
 
 const swapDiscreetModeTestConfig = {
   fundedAssetsAccounts,
+  balanceCheckAccount: Account.ETH_1,
   tmsLinks: ["B2CQA-2457"],
   tags: [
     "@NanoSP",
@@ -27,6 +28,7 @@ const swapDiscreetModeTestConfig = {
 
 runSwapDiscreetModeTest(
   swapDiscreetModeTestConfig.fundedAssetsAccounts,
+  swapDiscreetModeTestConfig.balanceCheckAccount,
   swapDiscreetModeTestConfig.tmsLinks,
   swapDiscreetModeTestConfig.tags,
 );

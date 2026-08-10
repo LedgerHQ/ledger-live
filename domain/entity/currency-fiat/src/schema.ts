@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { UnitSchema } from "@domain/entity-currency-unit";
 
+/** Opaque identifier for a fiat currency (e.g. `"usd"`, `"eur"`). Non-empty string. */
+export const FiatCurrencyIdSchema = z.string().min(1).brand<"FiatCurrencyId">();
+
 /**
  * Canonical Zod-first schema for a fiat currency entity.
  *
- * Written from scratch — does **not** import from `@ledgerhq/types-cryptoassets`.
+ * Written from scratch — does **not** derive from the legacy currency types.
  * TS types are derived via `z.infer<>`.
  *
  * @see {@link FiatCurrency} for the inferred TypeScript type.
@@ -29,5 +32,7 @@ export const FiatCurrencySchema = z.object({
   keywords: z.array(z.string()).optional(),
 });
 
+/** A fiat currency id, inferred from {@link FiatCurrencyIdSchema}. */
+export type FiatCurrencyId = z.infer<typeof FiatCurrencyIdSchema>;
 /** A fiat currency entity, inferred from {@link FiatCurrencySchema}. */
 export type FiatCurrency = z.infer<typeof FiatCurrencySchema>;

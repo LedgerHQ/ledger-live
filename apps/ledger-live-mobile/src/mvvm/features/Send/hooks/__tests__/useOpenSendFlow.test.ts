@@ -1,6 +1,6 @@
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenSendFlow } from "../useOpenSendFlow";
@@ -73,6 +73,41 @@ describe("useOpenSendFlow", () => {
     });
   });
 
+  it("forwards a recipient override to the new send flow", () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    const account = genAccount("send-account-selection-with-recipient", { currency });
+    const recipient = "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034";
+    const { result } = renderHook(
+      () =>
+        useOpenSendFlow({
+          currency,
+          recipient,
+          sourceScreenName: "Contact Detail",
+        }),
+      {
+        overrideInitialState: withFlagOverrides({
+          newSendFlow: {
+            enabled: true,
+            params: { families: ["evm"], excludedCurrencyIds: [] },
+          },
+        }),
+      },
+    );
+
+    act(() => result.current.handleOpenSendFlow());
+    const onAccountSelected = mockOpenDrawer.mock.calls[0][0].onAccountSelected;
+    act(() => onAccountSelected(account));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFlow, {
+      params: {
+        account,
+        parentAccount: undefined,
+        fromMAD: true,
+        recipient,
+      },
+    });
+  });
+
   it("falls back to the legacy recipient screen when the selected account is not eligible", () => {
     const currency = getCryptoCurrencyById("ethereum");
     const account = genAccount("legacy-send-account-selection", { currency });
@@ -93,6 +128,36 @@ describe("useOpenSendFlow", () => {
         accountId: account.id,
         parentId: undefined,
       },
+    });
+  });
+
+  it("prefills the legacy recipient when a recipient override is provided", async () => {
+    const currency = getCryptoCurrencyById("ethereum");
+    const account = genAccount("legacy-send-with-recipient", { currency });
+    const recipient = "0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034";
+    const { result } = renderHook(() =>
+      useOpenSendFlow({
+        currency,
+        recipient,
+        sourceScreenName: "Contact Detail",
+      }),
+    );
+
+    act(() => result.current.handleOpenSendFlow());
+    const onAccountSelected = mockOpenDrawer.mock.calls[0][0].onAccountSelected;
+    await act(async () => {
+      onAccountSelected(account);
+    });
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+        screen: ScreenName.SendSelectRecipient,
+        params: expect.objectContaining({
+          accountId: account.id,
+          parentId: undefined,
+          transaction: expect.objectContaining({ recipient }),
+        }),
+      });
     });
   });
 

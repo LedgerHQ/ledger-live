@@ -4,23 +4,23 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { BigNumber } from "bignumber.js";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   InvalidMinimumAmountError,
   MayBlockAccountError,
-} from "../consts";
+} from "../constants";
 import { CasperInvalidTransferId } from "../errors";
 import * as logicValidateMemo from "../logic/validateMemo";
-import { createMockAccount, createMockTransaction, TEST_ADDRESSES } from "../test/fixtures";
+import { createMockAccount, createMockTransaction, TEST_ADDRESSES } from "../__tests__/fixtures";
 import { CasperAccount, Transaction } from "../types";
-import * as bridgeHelpersAddresses from "./bridgeHelpers/addresses";
+import * as addressLogic from "../logic/validateAddress";
 import { getTransactionStatus } from "./getTransactionStatus";
 
 jest.mock("../logic/validateMemo");
-jest.mock("./bridgeHelpers/addresses", () => {
-  const actual = jest.requireActual("./bridgeHelpers/addresses");
+jest.mock("../logic/validateAddress", () => {
+  const actual = jest.requireActual("../logic/validateAddress");
   return {
     ...actual,
     isAddressValid: jest.fn(actual.isAddressValid),
@@ -32,7 +32,7 @@ describe("getTransactionStatus", () => {
   const mockAccount = createMockAccount();
   const validTransaction = createMockTransaction();
   const spiedValidateMemo = jest.spyOn(logicValidateMemo, "validateMemo");
-  const spiedIsAddressValid = jest.spyOn(bridgeHelpersAddresses, "isAddressValid");
+  const spiedIsAddressValid = jest.spyOn(addressLogic, "isAddressValid");
 
   beforeEach(() => {
     jest.clearAllMocks();

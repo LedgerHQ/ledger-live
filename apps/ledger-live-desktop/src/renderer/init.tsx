@@ -1,7 +1,7 @@
-import { getEnv } from "@shared/env";
 import { createRoot } from "react-dom/client";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
+import { getEnv } from "@shared/env";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
@@ -10,7 +10,8 @@ import { backfillOnboardingDate } from "~/renderer/components/PostOnboardingHub/
 import {
   LARGE_SCREEN_UPSELL_MODAL,
   restoreLargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
+import { restorePayCardPersistedState } from "@domain/entity-pay-card";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
 import each from "lodash/each";
@@ -21,9 +22,9 @@ import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/i18n/init";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore } from "~/config/bridge-setup";
+import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { restoreTokensToCache, parsePersistedCAL } from "@domain/api-currency-token";
-import { currencyFiatApi } from "@domain/api-currency-fiat";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -55,7 +56,8 @@ import { importMarketBannerState } from "./reducers/marketBanner";
 import { importKnownDevices, mapPersistedKnownDeviceToKnownDevice } from "./reducers/knownDevices";
 import { fetchWallet } from "./actions/wallet";
 import { fetchTrustchain } from "./actions/trustchain";
-import { setupRecentAddressesStore } from "./recentAddresses";
+import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
+import { recentAddressesSelector } from "~/renderer/reducers/wallet";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import {
@@ -132,9 +134,9 @@ async function init() {
   const dispatch: AppDispatch = store.dispatch;
 
   setupListeners(store.dispatch);
-  setupRecentAddressesStore(store);
+  connectRecentAddressesStore(store, recentAddressesSelector);
   setupCryptoAssetsStore(store);
-  dispatch(currencyFiatApi.endpoints.getSupportedFiats.initiate(undefined, { subscribe: false }));
+  setSwapQuotesStore(store.dispatch);
 
   // Feature flags: install the LiveConfig provider (serves non-feature `config_*` keys) and
   // point analytics at the Redux slice. The middleware (wired at store creation) drives the
@@ -235,8 +237,7 @@ async function init() {
   );
   const accountData = await getKey("app", "accounts", []);
   if (accountData) {
-    const e = initAccounts(accountData);
-    store.dispatch(e);
+    dispatch(initAccounts(accountData));
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());
@@ -332,6 +333,11 @@ async function init() {
   const largeScreenUpsellModalState = await getKey("app", LARGE_SCREEN_UPSELL_MODAL);
   if (largeScreenUpsellModalState !== undefined) {
     store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));
+  }
+
+  const payCardState = await getKey("app", "payCard");
+  if (payCardState !== undefined) {
+    store.dispatch(restorePayCardPersistedState(payCardState));
   }
 
   r(<ReactRoot store={store} language={language} initialCountervalues={initialCountervalues} />);

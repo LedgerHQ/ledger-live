@@ -7,7 +7,7 @@ import {
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
-import { makeKnownDevice } from "../testUtils";
+import { DeviceIntentTrackingTestWrapper, makeKnownDevice } from "../testUtils";
 import { ConnectionErrorState } from "./ConnectionErrorState";
 
 type ConnectionErrorUIState = Extract<
@@ -29,6 +29,7 @@ function renderState(state: Partial<ConnectionErrorUIState> = {}) {
         } as ConnectionErrorUIState
       }
     />,
+    { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 

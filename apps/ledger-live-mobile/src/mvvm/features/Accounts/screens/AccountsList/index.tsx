@@ -1,6 +1,6 @@
 import React from "react";
 import AccountsListView from "LLM/features/Accounts/components/AccountsListView";
-import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
+import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import { ScreenName } from "~/const";
 
 import SafeAreaView from "~/components/SafeAreaView";
@@ -74,14 +74,14 @@ function View({
         {hasNoAccount ? (
           <>
             <AccountsEmptyList sourceScreenName={sourceScreenName} />
-            <LNSUpsellBanner location="accounts" mt={2} mb={3} />
+            <LNUpsellBanner location="accounts" mt={2} mb={3} />
           </>
         ) : (
           <AccountsListView
             sourceScreenName={sourceScreenName}
             isSyncEnabled={isSyncEnabled}
             specificAccounts={specificAccounts}
-            ListFooterComponent={<LNSUpsellBanner location="accounts" mt={4} mb={7} />}
+            ListFooterComponent={<LNUpsellBanner location="accounts" mt={4} mb={7} />}
           />
         )}
       </SafeAreaView>

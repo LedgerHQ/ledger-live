@@ -57,6 +57,17 @@ const buildTransaction = (overrides: Partial<Transaction> = {}): Transaction =>
     ...overrides,
   }) as Transaction;
 
+// A zcash account served by coin-zcash carries a slimmer transaction: no
+// utxoStrategy, networkInfo or feePerByte, since ZIP-317 prices the fee per action.
+const buildCoinZcashTransaction = (): Transaction =>
+  ({
+    family: "zcash",
+    amount: new BigNumber(0),
+    recipient: "",
+    transferType: "shielded",
+    feesStrategy: "medium",
+  }) as unknown as Transaction;
+
 const renderFields = ({
   account = buildBitcoinAccount(),
   transaction = buildTransaction(),
@@ -114,27 +125,39 @@ describe("bitcoin SendAmountFields", () => {
     });
   });
 
-  describe("zcash shielded handling", () => {
-    it("should hide the fee mode selector and advanced fields for a zcash account when shielded is enabled", () => {
+  describe("zcash fee handling", () => {
+    // Zcash uses ZIP-317 fees (no sat/vByte market), so the entire fee selector —
+    // the strategy list, the standard/advanced toggle and the custom input — is
+    // removed, independent of the zcashShielded feature flag.
+    it.each([true, false])(
+      "renders no fee selector for a zcash account (shielded flag = %s)",
+      flagEnabled => {
+        renderFields({
+          account: buildZcashAccount(),
+          transaction: buildTransaction({ feesStrategy: "custom" }),
+          flagEnabled,
+        });
+
+        expect(screen.queryByTestId("send-fee-mode")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument();
+        // The standard fast/medium/slow strategy list must be gone too.
+        expect(screen.queryByText("Medium")).not.toBeInTheDocument();
+        expect(screen.queryByText("Slow")).not.toBeInTheDocument();
+      },
+    );
+
+    // The hooks above the fee-selector return run for zcash too, so a transaction
+    // without a utxo strategy must not make them throw.
+    it("renders nothing for a coin-zcash transaction, which has no utxo strategy", () => {
+      jest.mocked(useFeesStrategy).mockReturnValue([]);
+
       renderFields({
         account: buildZcashAccount(),
-        transaction: buildTransaction({ feesStrategy: "custom" }),
+        transaction: buildCoinZcashTransaction(),
         flagEnabled: true,
       });
 
       expect(screen.queryByTestId("send-fee-mode")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("currency-textbox")).not.toBeInTheDocument();
-    });
-
-    it("should keep the advanced fee controls for a zcash account when shielded is disabled", () => {
-      renderFields({
-        account: buildZcashAccount(),
-        transaction: buildTransaction({ feesStrategy: "custom" }),
-        flagEnabled: false,
-      });
-
-      expect(screen.getByTestId("send-fee-mode")).toBeVisible();
-      expect(screen.getByTestId("currency-textbox")).toBeVisible();
     });
   });
 

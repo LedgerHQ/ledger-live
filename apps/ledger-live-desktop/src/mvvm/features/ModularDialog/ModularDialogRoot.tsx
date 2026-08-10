@@ -4,12 +4,14 @@ import {
   modularDialogOnCloseSelector,
   closeDialog,
   modularDialogIsOpenSelector,
+  modularDialogPresentationSelector,
 } from "~/renderer/reducers/modularDialog";
 import ModularDialogFlowManager from "./ModularDialogFlowManager";
 
 const ModularDialogRoot: React.FC = () => {
   const onClose = useSelector(modularDialogOnCloseSelector);
   const isOpen = useSelector(modularDialogIsOpenSelector);
+  const presentation = useSelector(modularDialogPresentationSelector);
   const dispatch = useDispatch();
 
   const handleClose = useCallback(() => {
@@ -19,7 +21,7 @@ const ModularDialogRoot: React.FC = () => {
     dispatch(closeDialog());
   }, [dispatch, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || presentation === "embedded") return null;
 
   return <ModularDialogFlowManager onClose={handleClose} />;
 };

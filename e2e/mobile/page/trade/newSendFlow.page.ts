@@ -6,11 +6,12 @@ export default class NewSendFlowPage {
   skipMemoConfirmId = "new-send-flow-skip-memo-confirm";
   addressConfirmId = "new-send-flow-address-confirm";
   memoInputId = "send-memo-input";
+  memoTypeSelectId = "send-memo-type-select";
   amountContinueEnabledButtonId = "enabled-amount-continue-button";
   signaturePromptId = "send-signature-prompt";
   successViewTransactionId = "send-confirmation-success-view-transaction";
 
-  @Step("Type address in search input: $0")
+  @Step("Fill recipient address and continue: $0")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
     if (!address) throw new Error("Recipient address is not set");
     await typeTextById(this.recipientInputId, address);
@@ -29,6 +30,39 @@ export default class NewSendFlowPage {
     } else {
       await tapById(this.addressConfirmId);
     }
+  }
+
+  @Step("Type recipient address (stay on recipient step): $0")
+  async typeRecipientNewFlow(address: string | undefined) {
+    if (!address) throw new Error("Recipient address is not set");
+    await typeTextById(this.recipientInputId, address);
+  }
+
+  @Step("Open memo type dropdown and expect options: $0")
+  async expectMemoTypeOptions(optionValues: string[]) {
+    await waitForElementById(this.memoTypeSelectId);
+    await tapById(this.memoTypeSelectId);
+    for (const optionValue of optionValues) {
+      await waitForElementById(`send-memo-type-option-${optionValue}`);
+    }
+  }
+
+  @Step("Expect memo field to reject non-numeric input: $0")
+  async expectMemoRejectsNonNumericInput(rawInput: string, expectedSanitizedValue = "") {
+    await waitForElementById(this.memoInputId);
+    await typeTextById(this.memoInputId, rawInput);
+    // XRP tags are numeric-only: non-digits are stripped by sanitizeMemoValue, so the
+    // field never holds the rejected characters.
+    const actualValue = await getTextOfElement(this.memoInputId);
+    jestExpect(actualValue).toEqual(expectedSanitizedValue);
+  }
+
+  @Step("Expect memo field to retain numeric input: $0")
+  async expectMemoRetainsNumericInput(numericInput: string) {
+    await waitForElementById(this.memoInputId);
+    await typeTextById(this.memoInputId, numericInput);
+    const actualValue = await getTextOfElement(this.memoInputId);
+    jestExpect(actualValue).toEqual(numericInput);
   }
 
   @Step("Fill crypto amount: $0")

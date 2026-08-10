@@ -145,9 +145,6 @@ const swaps = [
     toAccount: Account.XRP_1,
     xrayTicket: "B2CQA-3753",
     tag: [...deviceTagsWithoutLNS(), "@hedera", "@ripple", "@family-xrp", "@family-hedera"],
-    // TODO(LIVE-33611): remove hardcoded amount once the swap "min amount for quotes" bug is fixed
-    // https://ledgerhq.atlassian.net/browse/LIVE-33611
-    amount: "500",
   },
   {
     fromAccount: TokenAccount.SUI_USDC_1,
@@ -174,8 +171,8 @@ const swaps = [
   // },
 ];
 
-for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
-  test.describe("Swap - Accepted (without tx broadcast)", () => {
+for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
+  test.describe("Swap - accepted", () => {
     setupEnv(true);
 
     const accPair: string[] = [fromAccount, toAccount].map(acc =>
@@ -211,7 +208,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
     });
 
     test(
-      `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
+      `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap`,
       {
         tag: tag,
         annotation: {
@@ -222,13 +219,15 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
       async ({ app, speculos }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        const minAmount = amount ?? (await app.swap.getMinimumAmount(fromAccount, toAccount));
+        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
         await ensureTokenApproval(fromAccount, provider, minAmount);
+        // Approval was ensured above (a no-op for native assets), so the CTA reads "Review".
+        await app.swap.checkQuoteCardCta(provider.uiName);
 
         if (provider.app) {
           if (provider.app !== exchangeApp) {
@@ -245,6 +244,9 @@ for (const { fromAccount, toAccount, xrayTicket, tag, amount } of swaps) {
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,
           );
+          await app.swapDrawer.closeDrawer();
+          await app.swapDrawer.waitForDrawerToBeHidden();
+          await app.swap.expectSelectedAssetDisplayed(fromAccount.currency.ticker);
         }
       },
     );

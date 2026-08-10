@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import BigNumber from "bignumber.js";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
 import { mockDomMeasurements } from "LLD/features/__tests__/shared";
 import { importLLDCoinFamily } from "~/renderer/families";

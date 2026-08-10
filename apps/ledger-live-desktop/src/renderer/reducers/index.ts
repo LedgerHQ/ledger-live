@@ -13,7 +13,8 @@ import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
 import marketBanner, { MarketBannerState } from "./marketBanner";
 import wallet from "./wallet";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import type { WalletState } from "./wallet";
+import { authEnvironmentReducer, type AuthEnvironmentState } from "@shared/auth";
 import walletSync, { WalletSyncState } from "./walletSync";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -29,7 +30,7 @@ import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import {
   largeScreenUpsellModalSlice,
   type LargeScreenUpsellModalState,
-} from "@domain/entity-large-screen-upsell-modal";
+} from "@features/flow-large-screen-upsell";
 import { payCardSlice, type PayCardState } from "@domain/entity-pay-card";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
@@ -60,6 +61,7 @@ export type State = LLDRTKApiState & {
   featureFlags: FeatureFlagsState;
   history: HistoryState;
   identities: IdentitiesState;
+  authEnvironment: AuthEnvironmentState;
   market: MarketState;
   marketBanner: MarketBannerState;
   modals: ModalsState;
@@ -99,6 +101,7 @@ const appReducer = combineReducers({
   featureFlags,
   history,
   identities: identitiesSlice.reducer,
+  authEnvironment: authEnvironmentReducer,
   modals,
   modularDialog,
   sendFlow,

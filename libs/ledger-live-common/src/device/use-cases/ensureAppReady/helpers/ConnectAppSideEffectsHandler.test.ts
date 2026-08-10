@@ -36,6 +36,28 @@ const firmwareMetadata = {
   langId: 1,
 };
 
+const applications = [
+  {
+    versionName: "Bitcoin",
+    version: "2.2.0",
+  },
+  {
+    versionName: "Ethereum",
+    version: "1.12.0",
+  },
+];
+
+const mappedApplications = [
+  {
+    name: "Bitcoin",
+    version: "2.2.0",
+  },
+  {
+    name: "Ethereum",
+    version: "1.12.0",
+  },
+];
+
 type PendingIntermediateValue = Extract<
   ConnectAppDAState,
   { status: DeviceActionStatus.Pending }
@@ -53,6 +75,7 @@ function makeDeviceMetadata(
       metadata,
     },
     firmwareUpdateContext,
+    applications,
   } as unknown as GetDeviceMetadataDAOutput;
 }
 
@@ -174,6 +197,7 @@ describe("ConnectAppSideEffectsHandler", () => {
             version: "2.1.0",
             seVersion: "2.1.0",
           }),
+          apps: mappedApplications,
         }),
       );
     });

@@ -8,7 +8,6 @@
     "jest-util"
   ],
   "ignoreUnused": [
-    "@ledgerhq/errors",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport",
     "bip32-path",

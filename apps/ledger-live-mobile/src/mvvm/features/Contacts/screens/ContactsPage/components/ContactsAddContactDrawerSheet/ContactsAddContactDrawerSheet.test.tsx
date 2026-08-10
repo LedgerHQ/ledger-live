@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Platform } from "react-native";
 import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsAddContactDrawerProps } from "@features/flow-contacts";
+import type { ContactsAddContactDrawerProps } from "@features/flow-contacts-add-contact";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { ContactsAddContactDrawerSheet } from ".";
 
@@ -32,6 +32,7 @@ function createViewModel(
       confirmName: "Confirm name",
       nameValidationErrors: {
         InvalidContactNameError: "Special characters are not allowed.",
+        DuplicateContactNameError: "This contact name is already in use.",
       },
     },
     onOpen: jest.fn(),

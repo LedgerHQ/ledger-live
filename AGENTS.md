@@ -20,6 +20,8 @@ For general test, build and check recipes see [/docs/repo-commands.md](/docs/rep
 
 When a task includes Jira or Confluence links, use Atlassian MCP to fetch and read the referenced ticket or page by default before summarizing, planning, or implementing.
 
+When a task involves GitHub — pull requests, issues, CI checks, or releases — use the `gh` CLI by default.
+
 ## Validate Before Finishing
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
@@ -36,3 +38,4 @@ See examples:
 - **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
 - **API packages** (`domain/api/`): read `domain/api/README.md`
 - **Shared packages** (`shared/**`): read `shared/README.md`
+- **Support packages** (`support/**`): read `support/README.md`

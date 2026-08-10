@@ -14,6 +14,10 @@ export type ContactDetailEditIntent = Readonly<{
   editRequirement: ContactEditRequirement;
 }>;
 
+export type ContactDetailLedgerWalletAccountsIntent = Readonly<{
+  type: "open-ledger-wallet-accounts";
+}>;
+
 export type ContactDetailDeleteIntent = Readonly<{
   type: "delete-contact";
   contactId: ContactId;
@@ -40,15 +44,23 @@ export type ContactDetailAddressRow = Readonly<{
   intent: ContactDetailAddressRowIntent;
 }>;
 
+export type ContactDetailAddressNetworkGroup = Readonly<{
+  networkId: CryptoCurrency["id"];
+  networkName: string;
+  networkTicker: string;
+  rows: readonly ContactDetailAddressRow[];
+}>;
+
 export type PopulatedContactDetailViewModel = Readonly<{
   displayMode: "populated";
   contact: Contact;
   addressCount: number;
-  addressRows: readonly ContactDetailAddressRow[];
+  addressGroups: readonly ContactDetailAddressNetworkGroup[];
 }>;
 
 export type ContactDetailLabels = Readonly<{
   addAddress: string;
+  addExternalAddress?: string;
   addYourAddress?: string;
   emptyMeTitle: string;
   emptyContactTitle: (name: string) => string;
@@ -56,7 +68,13 @@ export type ContactDetailLabels = Readonly<{
   emptyContactDescription: (name: string) => string;
   ledgerWalletAddresses?: string;
   myAddresses?: string;
+  formatMeDisplayName?: (name: string) => string;
   formatAddressCount: (count: number) => string;
+}>;
+
+export type ContactDetailActionsLabels = Readonly<{
+  editContact: string;
+  deleteContact: string;
 }>;
 
 export type ContactDetailViewProps = Readonly<{
@@ -64,7 +82,16 @@ export type ContactDetailViewProps = Readonly<{
   labels: ContactDetailLabels;
   meAvatarSrc: string;
   onAddAddress: () => void;
-  onOpenLedgerWalletAddresses?: () => void;
+  ledgerWalletAccountsIntent?: ContactDetailLedgerWalletAccountsIntent;
+  onLedgerWalletAccountsPress?: (intent: ContactDetailLedgerWalletAccountsIntent) => void;
+  addressGroups?: readonly ContactDetailAddressNetworkGroup[];
+  onAddressRowPress?: (intent: ContactDetailAddressRowIntent) => void;
+  detailActions?: Readonly<{
+    canDelete: boolean;
+    labels: ContactDetailActionsLabels;
+    onEdit: () => void;
+    onDelete: () => void;
+  }>;
 }>;
 
 export type ContactAddressDetailAsset = Readonly<{
@@ -88,3 +115,38 @@ export type ContactAddressDetailViewModel =
       asset: ContactAddressDetailAsset;
       qrPayload: string;
     }>;
+
+export type ContactAddressDetailSendIntent = Readonly<{
+  type: "send-address";
+  contactId: ContactId;
+  addressId: ContactAddressId;
+  currencyId: ContactAddress["currencyId"];
+  address: ContactAddress["address"];
+}>;
+
+export type ContactAddressDetailEditIntent = Readonly<{
+  type: "edit-address";
+  contactId: ContactId;
+  addressId: ContactAddressId;
+  editRequirement: ContactEditRequirement;
+}>;
+
+export type ContactAddressDetailDeleteIntent = Readonly<{
+  type: "delete-address";
+  contactId: ContactId;
+  addressId: ContactAddressId;
+}>;
+
+export type ContactAddressDeleteLifecycle =
+  | Readonly<{ status: "idle" }>
+  | Readonly<{ status: "open"; contactId: ContactId; addressId: ContactAddressId }>
+  | Readonly<{ status: "success"; contactId: ContactId; addressId: ContactAddressId }>
+  | Readonly<{ status: "error"; contactId: ContactId; addressId: ContactAddressId }>;
+
+export type ContactAddressDetailActionsViewModel = Readonly<{
+  sendIntent: ContactAddressDetailSendIntent | undefined;
+  editIntent: ContactAddressDetailEditIntent | undefined;
+  deleteIntent: ContactAddressDetailDeleteIntent;
+  deleteLifecycle: ContactAddressDeleteLifecycle;
+  isSignerRequiredForEdit: boolean;
+}>;

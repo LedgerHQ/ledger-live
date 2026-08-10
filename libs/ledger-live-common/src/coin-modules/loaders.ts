@@ -137,6 +137,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/cosmos/bridge/mock").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-cosmos/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/cosmos/bridgeExtensions").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/cosmos/coinModuleApi").then(m => m.createLocalCosmosApi),
+    loadBridgeApi: () => import("../families/cosmos/bridge/api").then(m => m.default),
   },
   {
     family: "evm",
@@ -194,7 +197,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "blast",
       "blast_sepolia",
       "scroll",
-      "scroll_sepolia",
       "shape",
       "story",
       "etherlink",
@@ -301,6 +303,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     family: "near",
     supportedCoins: ["near"],
     loadSetup: () => import("../families/near/setup"),
+    loadLocalApi: () => import("../families/near/coinModuleApi").then(m => m.createLocalNearApi),
+    loadBridgeApi: () => import("../families/near/bridge/api").then(m => m.default),
     loadTransaction: () => import("@ledgerhq/coin-near/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-near/deviceTransactionConfig").then(m => m.default),
@@ -404,6 +408,9 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadAccount: () => import("@ledgerhq/coin-vechain/account").then(m => m.default),
     loadMockAccount: () => import("@ledgerhq/coin-vechain/mock").then(m => m.default),
     loadBridgeExtensions: () => import("../families/vechain/bridgeExtensions").then(m => m.default),
+    loadLocalApi: () =>
+      import("../families/vechain/coinModuleApi").then(m => m.createLocalVechainApi),
+    loadBridgeApi: () => import("../families/vechain/bridge/api").then(m => m.default),
   },
   {
     family: "xrp",
@@ -418,5 +425,19 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => import("../families/xrp/bridge/mock").then(m => m.default),
     loadSigner: () => import("../families/xrp/signer").then(m => m.default),
     loadBridgeExtensions: () => import("../families/xrp/bridgeExtensions").then(m => m.default),
+  },
+  {
+    // Bespoke loader for the standalone @ledgerhq/coin-zcash coin-module (not
+    // added to genericCoinFrameworkFamilies.json). Routing between this family
+    // and the "bitcoin" family's Zcash chain-adapter is decided in
+    // bridge/impl.ts's resolveFamily, gated on the `zcashShielded` feature
+    // flag -- the "bitcoin" loader's supportedCoins still lists "zcash" so the
+    // flag-OFF path keeps resolving to coin-bitcoin unchanged.
+    family: "zcash",
+    supportedCoins: ["zcash"],
+    loadSetup: () => import("../families/zcash/setup"),
+    loadTransaction: () => import("@ledgerhq/coin-zcash/transaction").then(m => m.default),
+    loadDeviceTxConfig: () =>
+      import("@ledgerhq/coin-zcash/deviceTransactionConfig").then(m => m.default),
   },
 ];

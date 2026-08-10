@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { renderHook } from "@testing-library/react";
 import type { AddressSearchResult } from "../../types";
 import { useRecipientSearchState } from "../useRecipientSearchState";
@@ -21,6 +24,7 @@ const createDefaultResult = (overrides?: Partial<AddressSearchResult>): AddressS
     matchedAccounts: [],
     bridgeErrors: undefined,
     bridgeWarnings: undefined,
+    hasBridgeValidationResult: false,
     ...overrides,
   }) as AddressSearchResult;
 
@@ -80,6 +84,52 @@ describe("useRecipientSearchState", () => {
     );
 
     expect(result.current.isAddressComplete).toBe(true);
+  });
+
+  it("should set isAddressValid only after bridge validation succeeds", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "0xvalid",
+        result: createDefaultResult({
+          status: "valid",
+          hasBridgeValidationResult: true,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(true);
+  });
+
+  it("should not set isAddressValid before bridge validation returns", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "invalid",
+        result: createDefaultResult({
+          status: "valid",
+          hasBridgeValidationResult: false,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(false);
+  });
+
+  it("should not set isAddressValid when bridge validation returns a recipient error", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "invalid",
+        result: createDefaultResult({
+          status: "valid",
+          bridgeErrors: { recipient: new InvalidAddress() },
+          hasBridgeValidationResult: true,
+        }),
+      }),
+    );
+
+    expect(result.current.isAddressValid).toBe(false);
   });
 
   it("should set isAddressComplete for ens_resolved status", () => {
@@ -277,6 +327,45 @@ describe("useRecipientSearchState", () => {
     );
 
     expect(result.current.showMatchedAddress).toBe(true);
+  });
+
+  it("should keep matched address while recipient validation reloads a complete result", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "0xvalid",
+        isLoading: true,
+        result: createDefaultResult({
+          status: "valid",
+          error: null,
+          isBridgeLoading: false,
+        }),
+      }),
+    );
+
+    expect(result.current.showMatchedAddress).toBe(true);
+  });
+
+  it("should hide empty state and validation error while recipient validation is loading", () => {
+    const { result } = renderHook(() =>
+      useRecipientSearchState({
+        ...defaultProps,
+        searchValue: "dsjkfhkjsdfhds",
+        isLoading: true,
+        result: createDefaultResult({
+          status: "loading",
+          error: null,
+          matchedAccounts: [],
+          matchedRecentAddress: undefined,
+          ensName: undefined,
+          isLedgerAccount: false,
+        }),
+      }),
+    );
+
+    expect(result.current.showEmptyState).toBe(false);
+    expect(result.current.showMatchedAddress).toBe(false);
+    expect(result.current.showAddressValidationError).toBe(false);
   });
 
   it("should show matched address when has matchedRecentAddress", () => {

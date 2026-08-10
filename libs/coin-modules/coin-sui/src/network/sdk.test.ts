@@ -1,5 +1,5 @@
 import assert, { fail } from "assert";
-import { NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalanceFees } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import type {
   BalanceChange,

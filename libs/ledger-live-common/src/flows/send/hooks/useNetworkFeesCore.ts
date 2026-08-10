@@ -14,16 +14,16 @@ import type { SendFlowTransactionActions, SendFlowUiConfig } from "../types";
 import { buildFeePresetLegendMap } from "../utils/feePresetLegends";
 import { asFeesStrategy } from "../utils/feesStrategy";
 import {
-  formatCombinedFeesValue,
-  formatDisplayFeesValue,
+  formatFeesValue,
   getFeePresetEstimationConfig,
-  getSelectedPresetFiatValue,
   resolveFeeDisplayContext,
 } from "../utils/networkFeesDisplay";
-import { useFeePresetFiatValuesCore } from "./useFeePresetFiatValuesCore";
+import type { FeesValueMode } from "../utils/networkFeesDisplay";
+import { useFeePresetValuesCore } from "./useFeePresetValuesCore";
+import type { SendAmountDisplayMode } from "../amount/SendAmountDisplayModeContext";
 import type { FeeStrategyOption } from "../utils/feeSelectorOptions";
 
-export type { FeeFiatMap } from "./useFeePresetFiatValuesCore";
+export type { FeePresetValueMap, FeePresetValues } from "./useFeePresetValuesCore";
 export type { FeePresetLegendMap } from "../utils/feePresetLegends";
 export type { FeeStrategyOption } from "../utils/feeSelectorOptions";
 
@@ -37,6 +37,8 @@ export type UseNetworkFeesCoreParams = Readonly<{
   fiatUnit: Unit;
   accountUnit: Unit;
   locale?: string;
+  /** The amount input's fiat⇄crypto toggle, which the fee row follows when fees are editable. */
+  displayMode: SendAmountDisplayMode;
   calculateCountervalue: (from: Currency, value: BigNumber) => BigNumber | null | undefined;
 }>;
 
@@ -44,15 +46,15 @@ export type UseNetworkFeesCoreResult = Readonly<{
   mainAccount: Account;
   accountCurrency: ReturnType<typeof getAccountCurrency>;
   selectedFeeStrategy: string | null;
-  selectedPresetFiatValue: string | null;
-  displayFeesValue: string;
-  formattedEstimatedFeesFiat: string | null;
+  /** Ready-to-render fee row value. `"-"` when unknown; apps localise that placeholder themselves. */
+  feesRowValue: string;
+  /** Native amount shown after `feesRowValue` in the dimmer colour; `null` unless fees are read-only. */
+  feesRowSecondaryValue: string | null;
   selectedFeeStrategyId: string;
   feeStrategyOptions: readonly FeeStrategyOption[];
   onSelectFeeStrategyId: (id: string) => void;
   hasCustomFees: boolean;
   hasCoinControl: boolean;
-  showFeeCurrencyAmount: boolean;
 }>;
 
 export function useNetworkFeesCore({
@@ -65,6 +67,7 @@ export function useNetworkFeesCore({
   fiatUnit,
   accountUnit,
   locale,
+  displayMode,
   calculateCountervalue,
 }: UseNetworkFeesCoreParams): UseNetworkFeesCoreResult {
   const mainAccount = useMemo(
@@ -79,26 +82,6 @@ export function useNetworkFeesCore({
     [accountCurrency, transaction],
   );
 
-  const fiatByPreset = useFeePresetFiatValuesCore({
-    account,
-    parentAccount,
-    mainAccount,
-    transaction,
-    feePresetOptions: presetEstimation.feePresetOptions,
-    fallbackPresetIds: presetEstimation.fallbackPresetIds,
-    fiatUnit,
-    locale,
-    enabled: uiConfig.hasFeePresets && presetEstimation.hasFeePresets,
-    shouldEstimateWithBridge: presetEstimation.shouldEstimateFeePresets,
-    allowZeroAmountEstimation: presetEstimation.allowZeroAmountEstimation,
-    calculateCountervalue,
-  });
-
-  const legendByPreset = useMemo(
-    () => buildFeePresetLegendMap(accountCurrency, presetEstimation.feePresetOptions),
-    [accountCurrency, presetEstimation.feePresetOptions],
-  );
-
   const feeCurrencyAccountId = sendFeatures.getFeeCurrencyAccountId(accountCurrency, transaction);
   const { displayUnit, displayCurrency } = useMemo(
     () =>
@@ -111,6 +94,27 @@ export function useNetworkFeesCore({
     [accountCurrency, accountUnit, feeCurrencyAccountId, mainAccount],
   );
 
+  const valuesByPreset = useFeePresetValuesCore({
+    account,
+    parentAccount,
+    mainAccount,
+    transaction,
+    feePresetOptions: presetEstimation.feePresetOptions,
+    fallbackPresetIds: presetEstimation.fallbackPresetIds,
+    fiatUnit,
+    displayUnit,
+    locale,
+    enabled: uiConfig.hasFeePresets && presetEstimation.hasFeePresets,
+    shouldEstimateWithBridge: presetEstimation.shouldEstimateFeePresets,
+    allowZeroAmountEstimation: presetEstimation.allowZeroAmountEstimation,
+    calculateCountervalue,
+  });
+
+  const legendByPreset = useMemo(
+    () => buildFeePresetLegendMap(accountCurrency, presetEstimation.feePresetOptions),
+    [accountCurrency, presetEstimation.feePresetOptions],
+  );
+
   const estimatedFees = useMemo(
     () => status.estimatedFees ?? new BigNumber(0),
     [status.estimatedFees],
@@ -118,25 +122,6 @@ export function useNetworkFeesCore({
   const estimatedFeesCountervalue = useMemo(
     () => calculateCountervalue(displayCurrency, estimatedFees),
     [calculateCountervalue, displayCurrency, estimatedFees],
-  );
-  // Coin-declared opt-in: append the fee amount in its own currency next to fiat.
-  const showFeeCurrencyAmount = sendFeatures.showFeeCurrencyAmount(accountCurrency);
-  // A zero fee only means "covered" once fees are actually estimated. Estimation can be skipped
-  // while the transaction has errors, leaving a defaulted 0 — fall back to the default display so
-  // an unknown fee is not shown as a confirmed zero. A non-finite estimate is likewise unknown.
-  const hasErrors = Object.keys(status.errors ?? {}).length > 0;
-  const useCombinedFeesValue =
-    showFeeCurrencyAmount && estimatedFees.isFinite() && !(hasErrors && estimatedFees.lte(0));
-  const { displayFeesValue, formattedEstimatedFeesFiat } = useMemo(
-    () =>
-      (useCombinedFeesValue ? formatCombinedFeesValue : formatDisplayFeesValue)({
-        estimatedFees,
-        estimatedFeesCountervalue,
-        fiatUnit,
-        displayUnit,
-        locale,
-      }),
-    [displayUnit, estimatedFees, estimatedFeesCountervalue, fiatUnit, locale, useCombinedFeesValue],
   );
 
   const updateTransactionWithPatch = useCallback(
@@ -147,12 +132,19 @@ export function useNetworkFeesCore({
   );
 
   const selectedFeeStrategy = transaction.feesStrategy ?? null;
-  const selectedPresetFiatValue = getSelectedPresetFiatValue(selectedFeeStrategy, fiatByPreset);
 
   const feeStrategyOptions = useMemo<readonly FeeStrategyOption[]>(() => {
     if (!uiConfig.hasFeePresets) {
       return uiConfig.hasDefaultStrategy
-        ? [{ id: "default", kind: "default", sublabelFiat: null, sublabelLegend: null }]
+        ? [
+            {
+              id: "default",
+              kind: "default",
+              sublabelFiat: null,
+              sublabelCrypto: null,
+              sublabelLegend: null,
+            },
+          ]
         : [];
     }
 
@@ -164,17 +156,56 @@ export function useNetworkFeesCore({
     return presetIds.map(id => ({
       id,
       kind: "preset" as const,
-      sublabelFiat: fiatByPreset[id] ?? null,
+      sublabelFiat: valuesByPreset[id]?.fiat ?? null,
+      sublabelCrypto: valuesByPreset[id]?.crypto ?? null,
       sublabelLegend: legendByPreset[id] ?? null,
     }));
   }, [
-    fiatByPreset,
     legendByPreset,
     presetEstimation.fallbackPresetIds,
     presetEstimation.feePresetOptions,
     uiConfig.hasDefaultStrategy,
     uiConfig.hasFeePresets,
+    valuesByPreset,
   ]);
+
+  const areFeesEditable =
+    feeStrategyOptions.length > 0 || uiConfig.hasCustomFees || uiConfig.hasCoinControl;
+
+  // A zero fee only means "covered" once fees are actually estimated. Estimation can be skipped
+  // while the transaction has errors, leaving a defaulted 0 — fall back to the single-value display
+  // so an unknown fee is not shown as a confirmed zero. A non-finite estimate is likewise unknown.
+  const hasErrors = Object.keys(status.errors ?? {}).length > 0;
+  const canTrustZeroFee = estimatedFees.isFinite() && !(hasErrors && estimatedFees.lte(0));
+  const requestedMode: FeesValueMode = areFeesEditable ? displayMode : "both";
+  const feesValueMode: FeesValueMode =
+    requestedMode === "both" && !canTrustZeroFee ? "fiat" : requestedMode;
+
+  const { displayFeesValue, secondaryFeesValue } = useMemo(
+    () =>
+      formatFeesValue({
+        estimatedFees,
+        estimatedFeesCountervalue,
+        fiatUnit,
+        displayUnit,
+        locale,
+        mode: feesValueMode,
+      }),
+    [displayUnit, estimatedFees, estimatedFeesCountervalue, feesValueMode, fiatUnit, locale],
+  );
+
+  // The selected preset's own estimate takes precedence: for bridge-estimated presets (EVM) the
+  // transaction status can still hold the previous strategy's fee right after a switch. Non-editable
+  // coins have no presets, so this can never shadow the two-value display.
+  const selectedPresetValues =
+    selectedFeeStrategy && selectedFeeStrategy !== "custom"
+      ? (valuesByPreset[selectedFeeStrategy] ?? null)
+      : null;
+  const selectedPresetDisplayValue = !areFeesEditable
+    ? null
+    : displayMode === "crypto"
+      ? (selectedPresetValues?.crypto ?? null)
+      : (selectedPresetValues?.fiat ?? null);
 
   const selectedFeeStrategyId = useMemo(() => {
     const presetIds = feeStrategyOptions.filter(o => o.kind === "preset").map(o => o.id);
@@ -203,14 +234,12 @@ export function useNetworkFeesCore({
     mainAccount,
     accountCurrency,
     selectedFeeStrategy,
-    selectedPresetFiatValue,
-    displayFeesValue,
-    formattedEstimatedFeesFiat,
+    feesRowValue: selectedPresetDisplayValue ?? displayFeesValue,
+    feesRowSecondaryValue: secondaryFeesValue,
     selectedFeeStrategyId,
     feeStrategyOptions,
     onSelectFeeStrategyId,
     hasCustomFees: uiConfig.hasCustomFees,
     hasCoinControl: uiConfig.hasCoinControl,
-    showFeeCurrencyAmount,
   };
 }

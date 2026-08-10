@@ -4,5 +4,12 @@
   "trailingComma": "all",
   "arrowParens": "avoid",
   "sortPackageJson": false,
-  "ignorePatterns": ["**/*.md", "package.json", "**/*.json", "dist/**", ".bunli/commands.gen.ts"]
+  "ignorePatterns": [
+    "**/*.md",
+    "package.json",
+    "**/*.json",
+    "dist/**",
+    ".bunli/commands.gen.ts",
+    "src/skills/manifest.gen.ts"
+  ]
 }

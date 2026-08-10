@@ -12,8 +12,10 @@ Shared Contacts flow package for Desktop and Mobile.
 - Populated contact detail view model (address rows, count, and open-detail intents)
 - Contact detail edit/delete scenario state (edit intent, delete intent, and delete lifecycle)
 - Contact address detail view model (selected address payload, QR payload string, and not-found state)
-- `useAddContactViewModel` and `useContactsFeatureIntroductionState` (app wiring injects ports)
-- Add Address session and address-entry validation state
+- Contact address detail quick-action scenario state (send, edit, and delete intents with delete lifecycle)
+- Contacts orchestration, compatibility exports for `@features/flow-contacts-add-contact`, and
+  `useContactsFeatureIntroductionState` (app wiring injects ports)
+- Add Address session, address-entry validation state, and address-label state
 - Add Address network eligibility and final currency selection state (MAD integration uses an
   injected selection port)
 - Shared UI components (`.web.tsx` / `.native.tsx`)
@@ -23,16 +25,26 @@ App layers own routing, screen composition, i18n, and analytics.
 
 For Add Address, the Flow resolves ordered production network IDs from
 `eligibleAddressFamilies` and sends only those IDs to MAD. The consuming adapter filters MAD content
-by native network ID or token parent network ID. The Flow stores only the final crypto-or-token
-`currencyId` returned after asset and optional network selection. MAD is not opened when no
-production network matches the feature-flag families.
+by native network ID or token parent network ID. The Flow stores the final crypto-or-token
+`currencyId` and uses its display name as the default address label after asset and optional network
+selection. MAD is not opened when no production network matches the feature-flag families.
 
 After a successful selection, the session retains the selected contact and final currency
-identifiers and moves to `enteringAddress`. The `AddAddress` step owns its injected validation
-port, currency and token resolution, domain orchestration, input methods, asynchronous validation
-state, resolved-address storage, and stale-result protection. Consuming apps adapt coin bridges,
-domain services, token stores, clipboard access, and other app-owned or platform-specific
+identifiers and moves to `enteringAddress`. It also retains the selected contact's existing address
+labels so the naming step can reject a duplicate for that contact. Labels are compared after
+trimming, Unicode normalization, and case folding, while the user's casing is preserved for the
+saved value. Native address-label input is limited to 32 characters. An empty label has no validation error but cannot continue. The `AddAddress` step owns
+its injected validation port, currency and token resolution, domain orchestration, input methods,
+asynchronous validation state, resolved-address storage, and stale-result protection. Consuming
+apps adapt coin bridges, domain services, token stores, and other app-owned or platform-specific
 integrations.
+
+The native Add Address views render the shared address-entry and address-name states plus temporary
+Validation and Success steps as composable Lumen bottom-sheet content. The Flow owns their order,
+back transitions, resolved-address session and valid-only confirmation. Mobile owns the single
+queued bottom-sheet container, currency-selection adapter, translations, keyboard behavior, scanner
+routing and safe-area inset. Native paste events are classified without reading the clipboard
+proactively, while manual validation can be debounced without delaying paste or QR validation.
 
 ## Public API
 
@@ -40,7 +52,7 @@ Consume the package from `@features/flow-contacts`. The root entry point resolve
 appropriate Web or React Native API. Folders under `src/` are internal implementation details
 and are not exported as package subpaths.
 
-Each user-facing screen lives under `src/steps/` and follows the MVVM split used by the app
+Each user-facing screen owned by this package lives under `src/steps/` and follows the MVVM split used by the app
 features (View + ViewModel + types + colocated components). Web and React Native export their
 respective `ContactsListView` and `ContactDetailView` implementations through the root entry point. The native entry also
 exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
@@ -56,7 +68,7 @@ exports `ContactsAddContactHeaderButton` via the step `native.ts` barrels.
 Each `steps/<Step>/` is an MVVM screen: `index.ts` (neutral barrel) + `web.ts` / `native.ts`
 (platform Views) + `XxxView.web/.native.tsx` (dumb View) + `types.ts` + colocated `components/`,
 mirroring the app `mvvm/features/*` folders. View-model logic lives at the step root for small
-steps (e.g. `AddContact`) or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
+steps or is grouped into `model/` (pure builders) and `hooks/` (React hooks)
 for larger steps (e.g. `List`). Every folder under `components/` is a PascalCase UI concept; a
 "block" owns its sub-parts as nested folders.
 
@@ -74,32 +86,29 @@ src/
 │   │   │   └── PageLayout/              # web page layout (Header, ListPane, DetailPane)
 │   │   ├── utils/                       # createContactsListSections, getContactAvatarColorClass
 │   │   └── index.ts / web.ts / native.ts
-│   ├── AddContact/                      # Web dialog + native drawer
-│   │   ├── ContactsAddContactDialog.web.tsx / ContactsAddContactDrawer.native.tsx
-│   │   ├── useAddContactViewModel.ts / useAddContactDrawerViewModel.ts / types.ts
-│   │   ├── components/ContactNameInput/ (web + native)
-│   │   ├── model/                       # Contact-name validation and creation contract
-│   │   └── index.ts / web.ts / native.ts
-│   ├── AddAddress/                      # Shared currency selection and address-entry session
+│   ├── AddAddress/                      # Shared address-entry flow and native step content
 │   │   ├── model/                       # Network resolver, MAD port and address validation
-│   │   └── useAddAddressCurrencySelectionViewModel.ts / useAddAddressFlowViewModel.ts / types.ts / index.ts
+│   │   └── ContactsAddAddressEntry.native.tsx / ContactsAddAddressPlaceholderView.native.tsx / useAddAddressFlowViewModel.ts / types.ts / index.ts
 │   ├── Introduction/                    # Feature intro + Ledger Sync intro (ex featureIntroduction)
 │   │   ├── Feature/ (web dialog + native content) / LedgerSync/ (web dialog + native content)
 │   │   ├── useContactsFeatureIntroductionState.ts / resolver.ts / ports.ts / constants.ts / types.ts
 │   │   ├── internals/useSingleFireDismiss.ts
 │   │   └── index.ts / web.ts / native.ts
 │   └── Detail/                          # Contact detail (web + native)
-│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / types.ts
-│       ├── model/                       # empty + populated + address detail view-model builders
+│       ├── ContactDetailView.web/.native.tsx / useEmptyContactDetail.ts / usePopulatedContactDetail.ts / useContactAddressDetail.ts / useContactAddressDetailActionsViewModel.ts / types.ts
+│       ├── model/                       # empty + populated + address detail + quick-action builders
 │       ├── components/                  # Header, EmptyState, Avatar (web + native)
 │       └── index.ts / web.ts / native.ts
 ├── components/                          # Cross-step shared UI
 │   ├── ContactsButton/                  # My Wallet entry (web + native)
 │   └── ContactAvatar/                   # Shared native list and detail avatar
-├── hooks/                               # useContacts, useContactsMeContact
-├── utils/                               # getContactInitial (shared List + AddContact)
+├── hooks/                               # Contacts flow-only hooks
+├── utils/                               # Contacts flow-only utilities
 ├── jest.native.ts                       # Mobile Jest entry (re-exports ./index.native)
 ├── featureFlags.ts
 ├── index.ts                             # Web public API
 └── index.native.ts                      # React Native public API
 ```
+
+`@features/flow-contacts-add-contact` owns the Add contact step. This package re-exports its
+public API as a compatibility façade while the remaining Contacts journeys are extracted.

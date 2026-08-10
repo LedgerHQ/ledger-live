@@ -9,16 +9,14 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  id-token: write
   contents: read
-  pull-requests: write
-  actions: write
 
 jobs:
   pre_job:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     name: "Skip Check"
     if: ${{!github.event.pull_request.head.repo.fork}}
     runs-on: ubuntu-latest
@@ -54,6 +52,9 @@ jobs:
   # LLD
   build-desktop:
     name: "Build Desktop"
+    permissions:
+      id-token: write
+      contents: read
     needs: [determine-affected]
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
@@ -61,6 +62,9 @@ jobs:
 
   test-desktop:
     name: "Desktop E2E & Mock Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
@@ -68,6 +72,9 @@ jobs:
 
   codecheck-desktop:
     name: "Desktop Lint & Unit Tests"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-codechecks-reusable.yml@develop
@@ -75,6 +82,9 @@ jobs:
 
   test-mobile:
     name: "Codecheck Mobile"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
@@ -82,6 +92,9 @@ jobs:
 
   build-test-mobile:
     name: "Build & Test Mobile"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
@@ -93,6 +106,9 @@ jobs:
   # Tests
   test-libraries:
     name: "Test Libraries"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
@@ -100,6 +116,9 @@ jobs:
 
   test-features:
     name: "Test Features"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'features') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-features-reusable.yml@develop
@@ -107,6 +126,9 @@ jobs:
 
   test-shared:
     name: "Test Shared"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'shared') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-shared-reusable.yml@develop
@@ -114,6 +136,9 @@ jobs:
 
   test-domain:
     name: "Test Domain"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'domain') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
@@ -121,6 +146,9 @@ jobs:
 
   test-devtools:
     name: "Test DevTools"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
@@ -128,6 +156,9 @@ jobs:
 
   enforce-boundaries:
     name: "Enforce Module Boundaries"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features')) && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
@@ -135,6 +166,9 @@ jobs:
 
   test-design-system:
     name: "Test UI Libs"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
@@ -142,6 +176,10 @@ jobs:
 
   build-web-tools:
     name: "Build Web Tools"
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
@@ -153,6 +191,9 @@ jobs:
 
   test-cli:
     name: "Test CLI"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
@@ -160,6 +201,9 @@ jobs:
 
   build-wallet-cli:
     name: "Build Wallet CLI"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'wallet-cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-wallet-cli-reusable.yml@develop
@@ -173,6 +217,9 @@ jobs:
 
   test-mobile-e2e-lint:
     name: "Mobile E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && (contains(needs.determine-affected.outputs.paths, 'e2e/mobile') || contains(needs.determine-affected.outputs.paths, 'apps/ledger-live-mobile'))}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-lint-reusable.yml@develop
@@ -180,6 +227,9 @@ jobs:
 
   test-desktop-e2e-lint:
     name: "Desktop E2E Lint & Typecheck"
+    permissions:
+      id-token: write
+      contents: read
     needs: determine-affected
     if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'e2e/desktop')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-e2e-lint-reusable.yml@develop
@@ -187,6 +237,9 @@ jobs:
 
   notify-e2e-required:
     name: "Notify E2E Required"
+    permissions:
+      contents: read
+      pull-requests: write
     needs: determine-affected
     if: ${{ always() && needs.determine-affected.result == 'success' && github.event_name == 'pull_request' && github.event.pull_request.draft == false && !github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/notify-e2e-required-reusable.yml@develop
@@ -196,6 +249,9 @@ jobs:
 
   scan-sonar:
     name: "Sonar Cloud"
+    permissions:
+      id-token: write
+      contents: read
     needs:
       - codecheck-desktop
       - test-mobile

@@ -8,10 +8,13 @@ import { Linking, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { useTranslation } from "~/context/Locale";
 import { useThemedAwarenessModalImage } from "../hooks/useThemedAwarenessModalImage";
-import type { PromptViewModel } from "../screens/useGenericAwarenessModalDrawerViewModel";
+import type {
+  GenericAwarenessModalCloseHandler,
+  PromptViewModel,
+} from "../screens/useGenericAwarenessModalDrawerViewModel";
 
 type PromptLayoutProps = Readonly<{
-  onClose: () => void;
+  onClose: GenericAwarenessModalCloseHandler;
   viewModel: PromptViewModel;
 }>;
 
@@ -33,7 +36,7 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
     viewModel.onPrimaryPress();
 
     if (!actionLink) {
-      onClose();
+      onClose({ logDismiss: false });
       return;
     }
 
@@ -42,7 +45,7 @@ export function PromptLayout({ onClose, viewModel }: PromptLayoutProps) {
     try {
       await Linking.openURL(actionLink);
       if (!isExternalLink) {
-        requestAnimationFrame(onClose);
+        requestAnimationFrame(() => onClose({ logDismiss: false }));
       }
     } catch {
       viewModel.onMalformedUrl();

@@ -1,5 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
-import { LARGE_SCREEN_UPSELL_MODAL } from "@domain/entity-large-screen-upsell-modal";
+import { LARGE_SCREEN_UPSELL_MODAL } from "@features/flow-large-screen-upsell";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
@@ -21,7 +21,7 @@ jest.mock("../../reducers/settings", () => ({
   areSettingsLoaded: (state: FakeState) => state.settings.loaded === true,
 }));
 
-jest.mock("@ledgerhq/live-wallet/store", () => ({
+jest.mock("~/renderer/reducers/wallet", () => ({
   accountUserDataExportSelector: jest.fn(() => null),
   walletStateExportShouldDiffer: jest.fn(() => false),
   exportWalletState: jest.fn(s => s),
@@ -45,6 +45,12 @@ jest.mock("@domain/entity-client-identity", () => ({
   exportIdentitiesForPersistence: jest.fn(s => s),
 }));
 
+jest.mock("@domain/entity-pay-card", () => ({
+  payCardPersistedSelector: (state: FakeState) => ({
+    hasSeenFeatureTour: state.payCard.hasSeenFeatureTour,
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   accountsPersistedStateChanged: jest.fn(() => false),
 }));
@@ -62,6 +68,7 @@ type FakeState = {
   featureFlags: { overrides: unknown; bannerVisible: unknown; remoteFlagsReady?: unknown };
   coinConfigOverrides: { overrides: Record<string, unknown> };
   largeScreenUpsellModal: { retries: number; lastSeenAt: number | null };
+  payCard: { isOpen: boolean; params: unknown; hasSeenFeatureTour: boolean };
   trustchain?: unknown;
 };
 
@@ -76,6 +83,7 @@ const baseState = (): FakeState => ({
   featureFlags: { overrides: {}, bannerVisible: false },
   coinConfigOverrides: { overrides: {} },
   largeScreenUpsellModal: { retries: 0, lastSeenAt: null },
+  payCard: { isOpen: false, params: null, hasSeenFeatureTour: false },
 });
 
 function runMiddleware(states: FakeState[], action: { type: string; payload?: unknown }) {
@@ -211,6 +219,28 @@ describe("DBMiddleware - largeScreenUpsellModal branch", () => {
       retries: 2,
       lastSeenAt: 1_720_000_000_000,
     });
+  });
+});
+
+describe("DBMiddleware - payCard branch", () => {
+  beforeEach(() => {
+    mockedSetKey.mockReset();
+  });
+
+  it("persists only { hasSeenFeatureTour } under app/payCard on payCard/* actions", () => {
+    const state: FakeState = {
+      ...baseState(),
+      payCard: { isOpen: true, params: { platform: "cl-card" }, hasSeenFeatureTour: true },
+    };
+
+    runMiddleware([state, state], { type: "payCard/markPayCardFeatureTourSeen" });
+
+    expect(mockedSetKey).toHaveBeenCalledTimes(1);
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "payCard", { hasSeenFeatureTour: true });
+
+    const persisted = mockedSetKey.mock.calls[0][2] as Record<string, unknown>;
+    expect(persisted).not.toHaveProperty("isOpen");
+    expect(persisted).not.toHaveProperty("params");
   });
 });
 

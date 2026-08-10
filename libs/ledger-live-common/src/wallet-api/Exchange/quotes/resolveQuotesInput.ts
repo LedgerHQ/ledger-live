@@ -1,14 +1,11 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
+import type { ResolvedQuotesInput } from "@domain/api-swap-quotes";
+
 import { getAccountIdFromWalletAccountId } from "../../converters";
 import type { QuotesInput } from "./types";
 
-export type ResolvedQuotesInput = QuotesInput & {
-  sendAddress: string;
-  receiveAddress: string;
-  sendCurrencyId: string;
-  receiveCurrencyId: string;
-};
+export type { ResolvedQuotesInput };
 
 function findAccountByWalletAccountId(
   accounts: AccountLike[],

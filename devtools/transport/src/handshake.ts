@@ -16,12 +16,31 @@ export type Identity = {
   id: string;
   /** A `tool` names the host it wants to talk to. A `host` omits it. */
   target?: string;
+  /** Host-declared platform, e.g. "ios", "android", "desktop". */
+  platform?: string;
+  /** Host-declared app version. */
+  version?: string;
+};
+
+/**
+ * Relay-minted descriptor for a connected host.
+ *
+ * The relay assigns a unique `uid` (monotonic counter) on connect; `platform` and
+ * `version` come from the host's connect URL. Tools receive these via directory
+ * messages and use `uid` as the `target` when connecting.
+ */
+export type DeviceDescriptor = {
+  uid: string;
+  platform?: string;
+  version?: string;
 };
 
 /** Encode an identity as a query string. */
 export function identityToQuery(identity: Identity): string {
   const params = new URLSearchParams({ role: identity.role, id: identity.id });
   if (identity.target) params.set("target", identity.target);
+  if (identity.platform) params.set("platform", identity.platform);
+  if (identity.version) params.set("version", identity.version);
   return params.toString();
 }
 
@@ -42,7 +61,13 @@ export function parseIdentity(reqUrl: string | undefined): Identity | undefined 
   const role = params.get("role");
   const id = params.get("id");
   if ((role === "host" || role === "tool") && id) {
-    return { role, id, target: params.get("target") ?? undefined };
+    return {
+      role,
+      id,
+      ...(params.get("target") != null ? { target: params.get("target")! } : {}),
+      ...(params.get("platform") != null ? { platform: params.get("platform")! } : {}),
+      ...(params.get("version") != null ? { version: params.get("version")! } : {}),
+    };
   }
   return undefined;
 }

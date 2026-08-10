@@ -21,7 +21,6 @@ import {
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
-  SettingsSetLocalePayload,
   SettingsSetNotificationsPayload,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
@@ -48,7 +47,6 @@ import {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedWithdrawBannerPayload,
-  SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
   SettingsSetDismissedContentCardsPayload,
@@ -172,10 +170,6 @@ export const setDiscreetMode = createAction<SettingsSetDiscreetModePayload>(
 export const setLanguage = createAction<SettingsSetLanguagePayload>(
   SettingsActionTypes.SETTINGS_SET_LANGUAGE,
 );
-export const setLocale = createAction<SettingsSetLocalePayload>(
-  SettingsActionTypes.SETTINGS_SET_LOCALE,
-);
-
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );
@@ -244,10 +238,6 @@ export const setHasBeenRedirectedToPostOnboarding =
 
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
-);
-
-export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
-  SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
 );
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(

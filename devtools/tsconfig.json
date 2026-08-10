@@ -3,8 +3,10 @@
   "references": [
     { "path": "./shell" },
     { "path": "./feature-flags/" },
+    { "path": "./pay-card" },
     { "path": "./registry" },
     { "path": "./transport" },
+    { "path": "./transport-panel" },
     { "path": "./protocols" }
   ]
 }

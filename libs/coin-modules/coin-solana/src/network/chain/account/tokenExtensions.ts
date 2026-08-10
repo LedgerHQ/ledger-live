@@ -263,9 +263,9 @@ export const TokenMetadataExt = type({
 export type ConfidentialTransferMintExt = Infer<typeof ConfidentialTransferMintExt>;
 export type ConfidentialTransferMintState = Infer<typeof ConfidentialTransferMintState>;
 export const ConfidentialTransferMintState = type({
-  authority: nullable(PublicKeyFromString),
-  autoApproveNewAccounts: boolean(),
-  auditorElgamalPubkey: nullable(string()),
+  authority: optional(nullable(PublicKeyFromString)),
+  autoApproveNewAccounts: optional(boolean()),
+  auditorElgamalPubkey: optional(nullable(string())),
 });
 export const ConfidentialTransferMintExt = type({
   extension: literal("confidentialTransferMint"),
@@ -275,10 +275,10 @@ export const ConfidentialTransferMintExt = type({
 export type ConfidentialTransferFeeConfigExt = Infer<typeof ConfidentialTransferFeeConfigExt>;
 export type ConfidentialTransferFeeConfigState = Infer<typeof ConfidentialTransferFeeConfigState>;
 export const ConfidentialTransferFeeConfigState = type({
-  authority: nullable(PublicKeyFromString),
-  harvestToMintEnabled: boolean(),
-  withdrawWithheldAuthorityElgamalPubkey: nullable(string()),
-  withheldAmount: string(),
+  authority: optional(nullable(PublicKeyFromString)),
+  harvestToMintEnabled: optional(boolean()),
+  withdrawWithheldAuthorityElgamalPubkey: optional(nullable(string())),
+  withheldAmount: optional(string()),
 });
 export const ConfidentialTransferFeeConfigExt = type({
   extension: literal("confidentialTransferFeeConfig"),

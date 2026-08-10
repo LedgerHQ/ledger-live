@@ -1,7 +1,7 @@
 import React from "react";
 import { accountsCount } from "./AccountCount";
 import { ApyIndicator } from "./ApyIndicator";
-import { ApyType } from "@ledgerhq/live-common/dada-client/types/trend";
+import { ApyType } from "@domain/entity-interest-rate";
 
 export const accountsCountAndApy = ({
   label,

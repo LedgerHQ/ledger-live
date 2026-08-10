@@ -143,6 +143,15 @@ export interface ChainAdapter {
   prepareTransaction?(account: Account, transaction: Transaction): Promise<Transaction> | undefined;
 
   /**
+   * Adjust the fee rate of an otherwise-prepared transaction. A chain whose
+   * consensus fee is not a rate per vByte uses this to pick the rate that makes
+   * the shared per-vByte machinery charge what its rules require for *this*
+   * transaction's layout — an account-wide rate cannot express it.
+   * Return `undefined` to keep the prepared rate.
+   */
+  resolveFeePerByte?(account: Account, transaction: Transaction): Promise<BigNumber> | undefined;
+
+  /**
    * Override hardware address resolution for chain-specific signer APIs.
    * Return `undefined` to fall through to the standard Bitcoin getWalletPublicKey path.
    */

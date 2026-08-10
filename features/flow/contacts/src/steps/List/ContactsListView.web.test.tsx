@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ContactId } from "@domain/entity-contact";
 import { mockMeContact, mockPopulatedContacts } from "@domain/entity-contact/schema.mock";
 import type { ContactsPageViewModel } from "./types";
-import type { ContactsLedgerSyncStatus } from "../Introduction";
+import type { ContactsLedgerSyncStatus } from "../../ledgerSync";
 import {
   createContactsSearchViewModel,
   createEmptyContactsListViewModel,
@@ -133,14 +133,37 @@ describe("ContactsPage", () => {
 
     expect(screen.getByTestId("contacts-section-A")).toBeVisible();
     expect(screen.getByTestId("contacts-section-B")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-C")).toBeVisible();
+    expect(screen.getByTestId("contacts-section-D")).toBeVisible();
     expect(screen.getByTestId("contacts-section-O")).toBeVisible();
     expect(contactsList).toHaveTextContent("Ada");
     expect(contactsList).toHaveTextContent("0 address");
     expect(contactsList).toHaveTextContent("Ben");
     expect(contactsList).toHaveTextContent("2 address");
+    expect(contactsList).toHaveTextContent("Charlie");
+    expect(contactsList).toHaveTextContent("1 address");
+    expect(contactsList).toHaveTextContent("Diana");
     expect(contactsList).toHaveTextContent("Olive");
     expect(screen.getByTestId("contacts-saved-avatar-contact-ada")).toHaveTextContent("A");
     expect(contactsList).toHaveTextContent("Add contact");
+  });
+
+  it("renders the add contact row as the last item in the scrollable contacts list", () => {
+    const contacts = mockPopulatedContacts();
+    const me = contacts.find(contact => contact.isMe) ?? mockMeContact();
+
+    renderContactsPage({
+      viewModel: createPopulatedContactsListViewModel(me, contacts),
+    });
+
+    const scrollContainer = screen.getByTestId("contacts-list-scroll");
+    const addContactRow = screen.getByTestId("contacts-add-contact");
+
+    expect(scrollContainer).toContainElement(screen.getByTestId("contacts-section-A"));
+    expect(scrollContainer).toContainElement(addContactRow);
+    expect(addContactRow.compareDocumentPosition(screen.getByTestId("contacts-section-O"))).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
   });
 
   it("keeps the Contacts page visible while Ledger Sync is checking", () => {

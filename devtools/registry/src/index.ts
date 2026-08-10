@@ -1,9 +1,11 @@
 import { featureFlags, type FeatureFlagsToolProps } from "./metadata/team-platform/feature-flags";
+import { payCard, type PayCardToolProps } from "./metadata/wallet-xp";
 
 export * from "./types";
 
 export const tools = {
   "feature-flags": featureFlags,
+  "pay-card": payCard,
 } as const;
 
 /**
@@ -21,4 +23,6 @@ export type DevToolsConfig = Array<DevToolConfig>;
  *
  * For propless tools, `config` must be `undefined` — e.g. `{ id: "dummy", config: undefined }`.
  */
-export type DevToolConfig = { id: "feature-flags"; config: FeatureFlagsToolProps };
+export type DevToolConfig =
+  | { id: "feature-flags"; config: FeatureFlagsToolProps }
+  | { id: "pay-card"; config: PayCardToolProps };

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.48.0",
+  "version": "0.49.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -36,14 +36,6 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./chain-adapters/zcash/ZCash": {
-      "react-native": "./src/chain-adapters/zcash/stubs/ZCash.native.ts",
-      "@ledgerhq/source": "./src/chain-adapters/zcash/ZCash.ts",
-      "types": "./lib/chain-adapters/zcash/ZCash.d.ts",
-      "import": "./lib-es/chain-adapters/zcash/ZCash.js",
-      "require": "./lib/chain-adapters/zcash/ZCash.js",
-      "default": "./lib-es/chain-adapters/zcash/ZCash.js"
-    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
       "require": "./lib/*.js",
@@ -54,19 +46,17 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
-    "@ledgerhq/psbtv2": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-signer-zcash": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
+    "@ledgerhq/psbtv2": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-btc": "workspace:^",
-    "@ledgerhq/zcash-utils": "catalog:",
+    "@noble/hashes": "1.8.0",
     "bignumber.js": "^9.1.2",
     "bitcoinjs-lib": "^6.1.7",
-    "@noble/hashes": "1.8.0",
     "bs58": "catalog:",
     "cashaddrjs": "^0.4.4",
     "invariant": "^2.2.2",

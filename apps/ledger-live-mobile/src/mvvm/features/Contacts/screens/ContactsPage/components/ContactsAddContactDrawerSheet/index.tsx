@@ -3,10 +3,10 @@ import { Platform } from "react-native";
 import {
   ContactsAddContactDrawer,
   type ContactsAddContactDrawerProps,
-} from "@features/flow-contacts";
+} from "@features/flow-contacts-add-contact";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 
 export function ContactsAddContactDrawerSheet({
   isOpen,
@@ -22,7 +22,7 @@ export function ContactsAddContactDrawerSheet({
     : 0;
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       testID="contacts-add-contact-drawer"
@@ -35,6 +35,6 @@ export function ContactsAddContactDrawerSheet({
         keyboardInset={keyboardInset}
         {...drawerProps}
       />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

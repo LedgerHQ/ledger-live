@@ -13,6 +13,7 @@ import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { PerpsSignResult } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
+import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
 import type { AssetDetailNavigatorParamsList } from "LLM/features/AssetDetail/types";
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
@@ -194,9 +195,9 @@ export type BaseNavigatorStackParamList = {
     transaction?: Transaction;
     justScanned?: boolean;
     onScanned?: (address: string) => void;
+    onScannedURI?: (result: DecodedURISchemePayment) => void;
   };
   [ScreenName.BleDevicePairingFlow]: undefined;
-  [ScreenName.AnalyticsAllocation]: undefined;
   [ScreenName.AnalyticsOperations]: {
     accountsIds: string[];
   };

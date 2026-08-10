@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { resolveAssetMarketInputs } from "../resolveAssetMarketInputs";
 

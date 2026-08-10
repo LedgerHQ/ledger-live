@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-icon",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "description": "Ledger Hardware Wallet ICON Application API",
   "keywords": [
     "Ledger",
@@ -27,7 +27,6 @@
   "types": "lib/Icon.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2"
   },

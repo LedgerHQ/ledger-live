@@ -10,7 +10,7 @@ import { setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { QueryKey } from "./type.hooks";
 import { useCloudSyncSDK } from "./useWatchWalletSync";
-import { walletSyncUpdate } from "@ledgerhq/live-wallet/store";
+import { walletSyncUpdate } from "@domain/entity-wallet-sync";
 import { track } from "~/renderer/analytics/segment";
 
 export function useDestroyTrustchain() {
@@ -33,7 +33,7 @@ export function useDestroyTrustchain() {
       dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeleted }));
       dispatch(resetTrustchainStore());
       track("ledgersync_deactivated");
-      dispatch(walletSyncUpdate(null, 0));
+      dispatch(walletSyncUpdate({ data: null, version: 0 }));
     },
     onError: () => dispatch(setFlow({ flow: Flow.ManageBackup, step: Step.BackupDeletionError })),
   });

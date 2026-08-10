@@ -1,6 +1,6 @@
 import type { CantonOnboardResult } from "@ledgerhq/coin-canton/types";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { addAccountsAction } from "@ledgerhq/live-common/account/addAccounts";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { Account } from "@ledgerhq/types-live";
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";

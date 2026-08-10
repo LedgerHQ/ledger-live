@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network";
 import { fetchCurrencyTo } from "../fetchCurrencyTo";
 import { fetchCurrencyToMock } from "../__mocks__/fetchCurrencyTo.mocks";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../const/timeout";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx } from "../../../../../errors";
 import { flattenV5CurrenciesToAndFrom } from "../../../utils/flattenV5CurrenciesToAndFrom";
 
 jest.mock("@ledgerhq/live-network/network");

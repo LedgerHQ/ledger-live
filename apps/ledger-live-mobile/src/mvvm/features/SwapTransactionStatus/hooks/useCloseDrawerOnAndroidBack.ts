@@ -8,7 +8,7 @@ import { BackHandler } from "react-native";
  * QueuedDrawer, whose onRequestClose intercepts it), so we wire it up explicitly.
  *
  * Kept local to this feature for now. If we decide every bottom-sheet drawer should behave
- * this way, this belongs in the shared QueuedDrawerBottomSheet (pending team alignment).
+ * this way, this belongs in the shared QueuedBottomSheet (pending team alignment).
  */
 export function useCloseDrawerOnAndroidBack(isOpen: boolean, onClose: () => void) {
   useEffect(() => {

@@ -4,25 +4,23 @@ import type {
   DistributionItem,
   NetworkDistributionDetail,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetMeta } from "@domain/entity-aggregated-asset";
+import type { AssetsData } from "@domain/api-aggregated-assets";
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
-/** Minimal shape of DADA's CryptoAssetMeta needed by buildAssetDistribution. */
-export interface CryptoAssetMetaLike {
-  id: string;
-  ticker?: string;
-  assetsIds: Record<string, string>;
-}
+/* Only what buildAssetDistribution reads. Derived from the domain types so they cannot drift. */
 
-/** Minimal shape of the DADA market entry needed for marketId resolution. */
-export interface MarketEntryLike {
-  id?: string;
-}
+/** `ticker` stays optional: the mismatch guard is skipped when it is absent. */
+export type CryptoAssetMetaLike = Pick<CryptoAssetMeta, "id" | "assetsIds"> &
+  Partial<Pick<CryptoAssetMeta, "ticker">>;
 
-/** Minimal shape of the DADA AssetsData needed by buildAssetDistribution. */
-export interface AssetsDataLike {
+export type MarketEntryLike = Pick<AssetsData["markets"][string], "id">;
+
+export type AssetsDataLike = {
   cryptoAssets: Record<string, CryptoAssetMetaLike>;
   markets: Record<string, MarketEntryLike>;
-}
+};
 
 export interface BuildAssetDistributionOpts {
   showEmptyAccounts?: boolean;

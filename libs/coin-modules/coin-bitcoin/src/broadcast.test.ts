@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { InvalidTransactionError } from "@ledgerhq/errors";
+import { InvalidTransactionError } from "@ledgerhq/ledger-wallet-framework/errors";
 import { broadcast } from "./broadcast";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { getWalletAccount } from "./getWalletAccount";

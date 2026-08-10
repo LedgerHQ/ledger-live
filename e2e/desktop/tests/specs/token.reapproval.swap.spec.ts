@@ -27,7 +27,7 @@ const eligibleProviders = [
   SwapProvider.VELORA,
 ];
 
-test.describe("Token reapproval - flow", () => {
+test.describe("Swap - token reapproval", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token re-approval (bigger amount) flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -56,7 +56,7 @@ test.describe("Token reapproval - flow", () => {
   });
 
   test(
-    "Swap - token reapproval flow",
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token reapproval flow`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
       annotation: [
@@ -79,6 +79,8 @@ test.describe("Token reapproval - flow", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.swap.selectSpecificProvider(provider);
+      // Allowance only covers smallAmount, not the full swap, so the CTA reads "Continue".
+      await app.swap.checkQuoteCardCta(provider.uiName, true);
       await app.swap.clickExchangeButton(provider.name);
       await app.swap.expectResetApprovalScreen();
       await app.swap.clickRevokeApprovalButton();

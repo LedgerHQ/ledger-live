@@ -29,8 +29,8 @@ describe("getValidators", () => {
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
+      id: "1",
       address: "0.0.3",
-      nodeId: "1",
       name: "Ledger",
       description: "Hosted by Ledger | Paris, France",
       balance: BigInt(1000000),

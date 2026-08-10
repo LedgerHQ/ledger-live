@@ -16,6 +16,9 @@ ledgerjs:
 tools:
   - tools/**/*
 
+devtools:
+  - devtools/**/*
+
 automation:
   - .github/**/*
 

@@ -17,7 +17,7 @@
 
 import { splitPath, foreach, hexToBase64 } from "./utils";
 import type Transport from "@ledgerhq/hw-transport";
-import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
+import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/hw-transport/errors";
 
 const CLA = 0xe0;
 const INS = {

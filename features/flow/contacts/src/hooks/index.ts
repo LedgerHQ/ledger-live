@@ -1,2 +1,4 @@
-export { useContacts } from "./useContacts";
-export { useContactsMeContact } from "./useContactsMeContact";
+export * from "./useContactsEditDeletePorts";
+export * from "./useContactsAddressDetailActionsPorts";
+export * from "../platform/contactSignerValidationPort";
+export * from "./useContactsMeContact";

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.8.11",
+  "version": "1.8.12",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -73,8 +73,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "catalog:",
     "eip55": "^2.1.1",
@@ -82,19 +81,18 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
-    "@testing-library/jest-dom": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "cross-env": "^7.0.3",
     "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "jest-environment-jsdom": "catalog:",
-    "react-test-renderer": "catalog:",
-    "@swc/jest": "catalog:",
-    "@swc/core": "catalog:"
+    "react-test-renderer": "catalog:"
   }
 }

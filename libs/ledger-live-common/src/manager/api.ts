@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { NetworkDown } from "@ledgerhq/live-network/errors";
 import {
   DeviceOnDashboardExpected,
   FirmwareNotRecognized,
@@ -6,9 +7,8 @@ import {
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
-  NetworkDown,
   UserRefusedFirmwareUpdate,
-} from "@ledgerhq/errors";
+} from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";

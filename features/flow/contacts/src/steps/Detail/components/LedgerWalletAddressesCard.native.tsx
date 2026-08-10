@@ -8,18 +8,22 @@ import {
   CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { ChevronRight, Wallet } from "@ledgerhq/lumen-ui-rnative/symbols";
+import type { ContactDetailLedgerWalletAccountsIntent } from "../types";
+
 type LedgerWalletAddressesCardProps = Readonly<{
   label: string;
-  onPress: () => void;
+  intent: ContactDetailLedgerWalletAccountsIntent;
+  onPress: (intent: ContactDetailLedgerWalletAccountsIntent) => void;
 }>;
 
 export function LedgerWalletAddressesCard({
   label,
+  intent,
   onPress,
 }: LedgerWalletAddressesCardProps): React.JSX.Element {
   return (
     <Card
-      onPress={onPress}
+      onPress={() => onPress(intent)}
       testID="contacts-detail-ledger-wallet-addresses"
       lx={{ marginHorizontal: "s16", marginTop: "s32" }}
     >

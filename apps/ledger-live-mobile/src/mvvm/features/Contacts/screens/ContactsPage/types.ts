@@ -1,8 +1,8 @@
 import type {
-  ContactsAddContactDrawerProps,
   ContactsLedgerSyncIntroductionContentProps,
   ContactsListViewNativeProps,
 } from "@features/flow-contacts";
+import type { ContactsAddContactDrawerProps } from "@features/flow-contacts-add-contact";
 
 type ContactsLedgerSyncIntroductionPresentationProps = Pick<
   ContactsLedgerSyncIntroductionContentProps,

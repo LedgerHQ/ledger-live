@@ -58,7 +58,7 @@ export const MarketRowView = memo<MarketRowViewProps>(function MarketRowView({
       clickable
       onClick={onCurrencyClick}
       data-testid={`market-${currency.ticker}-row`}
-      className="absolute left-0 top-0 grid w-full items-center"
+      className="absolute left-0 top-0 grid w-full items-center rounded-md"
       style={{ ...style, gridTemplateColumns: MARKET_TABLE_GRID_TEMPLATE }}
     >
       <TableCell className={`${MARKET_CELL_CLASSNAME} min-w-0 [&>div]:min-w-0`}>

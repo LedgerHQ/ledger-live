@@ -1,7 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
@@ -29,7 +28,7 @@ setCryptoAssetsStore({
     mockedFindTokenByAddressInCurrency(address, currencyId),
   findTokenById: async () => undefined,
   getTokensSyncHash: async () => "0",
-} as unknown as CryptoAssetsStore);
+});
 
 describe("getAccountShape", () => {
   const mockGetAccountBalances = networkModule.getAccountBalances as jest.Mock;

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import coininfo from "coininfo";
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import { NotEnoughBalance } from "../errors";
 import Bitcoin from "../crypto/bitcoin";
 import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";

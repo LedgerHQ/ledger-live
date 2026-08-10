@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { PasswordIncorrectError } from "@ledgerhq/errors";
+import { PasswordIncorrectError } from "@ledgerhq/live-common/errors";
 import { setEncryptionKey, isEncryptionKeyCorrect, hasBeenDecrypted } from "~/renderer/storage";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useHardReset } from "~/renderer/reset";

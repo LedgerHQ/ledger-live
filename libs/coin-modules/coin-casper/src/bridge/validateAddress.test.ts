@@ -1,7 +1,7 @@
-import { isAddressValid } from "./bridgeHelpers/addresses";
+import { isAddressValid } from "../logic/validateAddress";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("./bridgeHelpers/addresses");
+jest.mock("../logic/validateAddress");
 
 describe("validateAddress", () => {
   const mockedIsAddressValid = jest.mocked(isAddressValid);

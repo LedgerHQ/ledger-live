@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "../../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { sendFeatures } from "./features";
 
 const celo = getCryptoCurrencyById("celo");

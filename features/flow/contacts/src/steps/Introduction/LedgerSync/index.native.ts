@@ -1,2 +1,2 @@
-export { ContactsLedgerSyncIntroductionContent } from "./ContactsLedgerSyncIntroduction.native";
-export type { ContactsLedgerSyncIntroductionContentProps } from "./types";
+export * from "./ContactsLedgerSyncIntroduction.native";
+export * from "./types";

@@ -17,14 +17,14 @@ describe("js-transaction", () => {
     bridge = createBridges(signer, mockCoinConfig);
   });
 
-  test("createTransaction", () => {
+  it("createTransaction", () => {
     const data = mockedTransaction;
     const result = bridge.accountBridge.createTransaction(mockedAccount);
 
     expect(result).toEqual(data);
   });
 
-  test("updateTransaction", () => {
+  it("updateTransaction", () => {
     const patch: Partial<Transaction> = {
       amount: new BigNumber(5),
       recipient: "0.0.3",
@@ -36,7 +36,7 @@ describe("js-transaction", () => {
     expect(result).toEqual(data);
   });
 
-  test("prepareTransaction", async () => {
+  it("prepareTransaction", async () => {
     const data = mockedTransaction;
     const result = await bridge.accountBridge.prepareTransaction(mockedAccount, mockedTransaction);
 

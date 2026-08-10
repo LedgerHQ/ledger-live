@@ -7,7 +7,7 @@ import type { AssetInfo, Stake, StakeState } from "@ledgerhq/coin-module-framewo
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import type { Validator } from "@ledgerhq/coin-module-framework/api/types";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { isExternalNodeConfig } from "../../network/node/types";
@@ -148,8 +148,8 @@ const fetchValidatorDetails = async (
   iface: ethers.Interface,
   contractAddress: string,
   valIds: bigint[],
-): Promise<StakingValidatorItem[]> => {
-  const items: StakingValidatorItem[] = [];
+): Promise<Validator[]> => {
+  const items: Validator[] = [];
 
   for (let i = 0; i < valIds.length; i += DETAILS_BATCH_SIZE) {
     const chunk = valIds.slice(i, i + DETAILS_BATCH_SIZE);
@@ -164,14 +164,12 @@ const fetchValidatorDetails = async (
           secp.length > 0 ? await validatorNameCache(currencyId, secp).catch(() => null) : null;
 
         return {
-          validatorAddress: ethers.computeAddress(secpPubkey),
-          validatorId: valId.toString(),
+          id: valId.toString(),
+          address: ethers.computeAddress(secpPubkey),
           name: name ?? `Validator ${valId.toString()}`,
-          commission: Number.parseFloat(ethers.formatUnits(commission, COMMISSION_DECIMALS)),
-          // StakingValidatorItem.tokens is a string (see LIVE-31520); the bigint
-          // stake serializes losslessly via toString().
-          tokens: stake.toString(),
-          estimatedYearlyRewardsRate: 0,
+          commissionRate: ethers.formatUnits(commission, COMMISSION_DECIMALS),
+          balance: stake,
+          apy: 0,
         };
       }),
     );
@@ -187,7 +185,7 @@ const fetchValidatorDetails = async (
 
       if (!res.value) return;
 
-      items.push({ ...res.value, votingPower: items.length });
+      items.push(res.value);
     });
   }
 
@@ -200,7 +198,7 @@ const fetchPage = async (
   iface: ethers.Interface,
   contractAddress: string,
   startIndex: bigint,
-): Promise<Page<StakingValidatorItem>> => {
+): Promise<Page<Validator>> => {
   const data = iface.encodeFunctionData("getExecutionValidatorSet", [startIndex]);
   const raw = await provider.call({ to: contractAddress, data });
   const decoded = iface.decodeFunctionResult("getExecutionValidatorSet", raw);
@@ -217,10 +215,7 @@ const fetchPage = async (
   return { items, next: exhausted ? undefined : nextIndex.toString() };
 };
 
-const fetchValidators = async (
-  currencyId: string,
-  cursor?: Cursor,
-): Promise<Page<StakingValidatorItem>> => {
+const fetchValidators = async (currencyId: string, cursor?: Cursor): Promise<Page<Validator>> => {
   const ctx = resolveContext(currencyId);
   if (!ctx) return { items: [], next: undefined };
 

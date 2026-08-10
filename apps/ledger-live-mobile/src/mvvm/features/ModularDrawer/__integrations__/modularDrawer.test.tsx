@@ -256,9 +256,9 @@ describe.each(DRAWER_VARIANTS)(
 
       expect(getByText(/select account/i)).toBeVisible();
       expect(getByText(/Arbitrum One/i)).toBeVisible();
-      expect(getByText(/add new or existing account/i)).toBeVisible();
+      expect(getByText(/add account/i)).toBeVisible();
 
-      await user.press(getByText(/add new or existing account/i));
+      await user.press(getByText(/add account/i));
       advanceTimers();
 
       expect(getByText(/Connect Device/i)).toBeVisible();

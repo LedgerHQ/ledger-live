@@ -1,15 +1,17 @@
 import { useMemo } from "react";
+import { useContacts } from "@features/platform-contacts";
 import { createContactsListViewModel } from "../model/viewModel";
 import type { ContactsListViewModel } from "../types";
-import { useContacts } from "../../../hooks/useContacts";
 import { useContactsMeContact } from "../../../hooks/useContactsMeContact";
 
-export function useContactsListViewModel(): ContactsListViewModel {
+export function useContactsListViewModel(
+  formatMeDisplayName?: (name: string) => string,
+): ContactsListViewModel {
   const meContact = useContactsMeContact();
   const contacts = useContacts();
 
   return useMemo(
-    () => createContactsListViewModel(meContact, contacts),
-    [contacts, meContact],
+    () => createContactsListViewModel(meContact, contacts, formatMeDisplayName),
+    [contacts, formatMeDisplayName, meContact],
   );
 }

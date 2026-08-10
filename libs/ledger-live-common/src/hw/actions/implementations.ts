@@ -14,7 +14,7 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/hw-transport/errors";
 import { catchError, debounce, delayWhen, filter, switchMap, tap, timeout } from "rxjs/operators";
 import { Device } from "./types";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";

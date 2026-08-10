@@ -1,5 +1,5 @@
 import Base from "./base";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress } from "../errors";
 import * as bjs from "bitcoinjs-lib";
 import bs58checkBase from "bs58check/base";
 import bs58check from "bs58check";

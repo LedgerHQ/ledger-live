@@ -14,15 +14,14 @@ import reducer, {
   counterValueIdOf,
   migrateLegacyCryptoCounterValue,
   migrateLegacyStarredMarketCoins,
+  supportedCounterValuesSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import {
-  getCryptoCurrencyById,
-  getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   importSettings,
   setAnalyticsConsentInfo,
@@ -46,12 +45,12 @@ const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
 });
 
 /**
- * `trackingEnabledSelector` runs consent / policy / rolling-window checks only when the
+ * `trackingEnabledSelector` runs the consent / policy version checks only when the
  * `analyticsOptIn` feature is resolved as enabled; otherwise it only uses the toggles.
  */
 const withAnalyticsOptInResolved = (
   base: State,
-  params: Partial<{ policyVersion: number; consentValidityDays: number }> = {},
+  params: Partial<{ policyVersion: number | string }> = {},
   enabled = true,
 ): State =>
   ({
@@ -77,7 +76,7 @@ const withAnalyticsOptInResolved = (
   }) as State;
 
 describe("trackingEnabledSelector", () => {
-  /** Fixed clock so consent ages / one-year cutoff in `trackingEnabledSelector` do not depend on real time. */
+  /** Fixed clock so the consent dates used below do not depend on real time. */
   const FIXED_NOW = new Date("2026-03-01T12:00:00.000Z");
   beforeEach(() => {
     jest.useFakeTimers();
@@ -106,7 +105,7 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("returns true when privacyPolicyVersion is null (legacy) but consent date is valid and analytics opt-in feature is on", () => {
+  it("returns false when the stored privacy policy version is missing even though the consent date is valid", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
@@ -116,7 +115,20 @@ describe("trackingEnabledSelector", () => {
         analyticsEnabled: true,
       }),
     );
-    expect(trackingEnabledSelector(state)).toBe(true);
+    expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("returns false when the stored privacy policy version cannot be parsed", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: "v1",
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(false);
   });
 
   it("returns false when consentDate parses to NaN and analytics opt-in feature is on", () => {
@@ -132,66 +144,71 @@ describe("trackingEnabledSelector", () => {
     expect(trackingEnabledSelector(state)).toBe(false);
   });
 
-  it("returns true when privacy policy version is below current but consent is within one year and analytics opt-in feature is on", () => {
+  it("returns false when the major policy version was bumped even though consent is recent", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
           consentDate: "2025-06-01T00:00:00.000Z",
-          privacyPolicyVersion: 0,
+          privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
         personalizedRecommendationsEnabled: true,
       }),
-    );
-    expect(trackingEnabledSelector(state)).toBe(true);
-  });
-
-  it("returns false when consent is older than a 365-day rolling window and analytics opt-in feature is on", () => {
-    const expiredConsent = add(FIXED_NOW, { days: -366 }).toISOString();
-
-    const state = withAnalyticsOptInResolved(
-      stateWithSettings({
-        analyticsConsentInfo: {
-          consentDate: expiredConsent,
-          privacyPolicyVersion: 1,
-        },
-        analyticsEnabled: true,
-      }),
+      { policyVersion: "2.0" },
     );
     expect(trackingEnabledSelector(state)).toBe(false);
   });
 
-  it("returns true when consent is exactly on the 365-day cutoff and analytics opt-in feature is on", () => {
-    const now = new Date("2026-01-10T00:00:00.000Z");
-    jest.setSystemTime(now);
-
-    const consentOnCutoff = add(now, { days: -365 }).toISOString();
-
+  it("returns true when only the minor policy version was bumped", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
-          consentDate: consentOnCutoff,
+          consentDate: "2026-02-01T00:00:00.000Z",
           privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
-        personalizedRecommendationsEnabled: false,
       }),
+      { policyVersion: "1.1" },
     );
     expect(trackingEnabledSelector(state)).toBe(true);
   });
 
-  it("uses consentValidityDays from resolved flag params", () => {
+  it("returns true when the current policy version is invalid and the consent date is still valid", () => {
     const state = withAnalyticsOptInResolved(
       stateWithSettings({
         analyticsConsentInfo: {
-          consentDate: add(FIXED_NOW, { days: -40 }).toISOString(),
+          consentDate: "2026-02-01T00:00:00.000Z",
           privacyPolicyVersion: 1,
         },
         analyticsEnabled: true,
       }),
-      { consentValidityDays: 30 },
+      { policyVersion: 1.2 },
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
+  });
+
+  it("returns false when the current policy version is invalid and the consent date is missing", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: null, privacyPolicyVersion: 1 },
+        analyticsEnabled: true,
+      }),
+      { policyVersion: "v2" },
     );
     expect(trackingEnabledSelector(state)).toBe(false);
+  });
+
+  it("keeps tracking an ageing consent, since renewal is driven by policy version bumps", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: {
+          consentDate: add(FIXED_NOW, { days: -3650 }).toISOString(),
+          privacyPolicyVersion: 1,
+        },
+        analyticsEnabled: true,
+      }),
+    );
+    expect(trackingEnabledSelector(state)).toBe(true);
   });
 
   it("returns false when consent is valid but analytics and personalized recommendations are off and analytics opt-in feature is on", () => {
@@ -699,6 +716,22 @@ describe("counterValueCurrencySelector", () => {
       getFiatCurrencyByTicker("USD"),
     );
   });
+
+  it("falls back to USD for OFAC-restricted tickers (read-time guard)", () => {
+    // RUB is in OFAC_FIAT_TICKERS; a persisted RUB must display as USD at read time
+    // so the user never sees a blocked currency even if they had it stored.
+    expect(counterValueCurrencySelector(buildState("RUB"))).toBe(getFiatCurrencyByTicker("USD"));
+  });
+
+  it("resolves a non-fallback fiat without resetting to USD (regression guard for LIVE-35110)", () => {
+    // AMD (Armenian Dram) is in the domain registry but NOT in the ~36-currency
+    // offline fallback list. Before this fix, booting the app would call
+    // updateSupportedCountervalues against the fallback, causing AMD to be treated
+    // as unsupported and silently reset to USD on every restart.
+    // The selector must resolve AMD directly from the registry regardless of what
+    // the supportedFiats slice currently holds.
+    expect(counterValueCurrencySelector(buildState("AMD"))).toBe(getFiatCurrencyByTicker("AMD"));
+  });
 });
 
 describe("counterValueIdOf", () => {
@@ -739,5 +772,66 @@ describe("migrateLegacyStarredMarketCoins", () => {
     expect(
       migrateLegacyStarredMarketCoins(["bitcoin", "ethereum/erc20/dai_stablecoin_v2_0", "dai"]),
     ).toEqual(["bitcoin", "dai"]);
+  });
+});
+
+describe("supportedCounterValuesSelector", () => {
+  const stateWithFiats = (fiats: ReturnType<typeof getFiatCurrencyByTicker>[]): State =>
+    ({
+      ...({} as State),
+      supportedFiats: { fiats, fiatsReady: true },
+    }) as State;
+
+  it("always includes Bitcoin and Ethereum regardless of fiat list", () => {
+    const result = supportedCounterValuesSelector(stateWithFiats([]));
+    const tickers = result.map(r => r.ticker);
+    expect(tickers).toContain("BTC");
+    expect(tickers).toContain("ETH");
+  });
+
+  it("includes fiats from the supportedFiats slice", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const USD = getFiatCurrencyByTicker("USD");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR, USD]));
+    const tickers = result.map(r => r.ticker);
+    expect(tickers).toContain("EUR");
+    expect(tickers).toContain("USD");
+  });
+
+  it("returns items sorted by currency name", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const USD = getFiatCurrencyByTicker("USD");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR, USD]));
+    const names = result.map(r => r.currency.name);
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+  });
+
+  it("each item carries value, ticker, label and currency", () => {
+    const EUR = getFiatCurrencyByTicker("EUR");
+    const result = supportedCounterValuesSelector(stateWithFiats([EUR]));
+    const eurItem = result.find(r => r.ticker === "EUR");
+    expect(eurItem).toBeDefined();
+    expect(eurItem?.value).toBe("EUR");
+    expect(eurItem?.label).toContain("EUR");
+    expect(eurItem?.currency).toBe(EUR);
+  });
+
+  it("is memoized — returns the same reference when called twice with the same state", () => {
+    const state = stateWithFiats([getFiatCurrencyByTicker("EUR")]);
+    const first = supportedCounterValuesSelector(state);
+    const second = supportedCounterValuesSelector(state);
+    expect(first).toBe(second);
+  });
+});
+
+describe("filterValidSettings strips removed fields (self-healing on upgrade)", () => {
+  it("drops stale supportedCounterValues key from persisted settings", () => {
+    // Before this PR, supportedCounterValues was a persisted SettingsState field.
+    // After removal from INITIAL_STATE it must be auto-stripped on import so old
+    // devices don't silently carry dead data after upgrade.
+    const stale = { counterValue: "EUR", supportedCounterValues: [{ value: "EUR" }] };
+    const filtered = filterValidSettings(stale as unknown as Partial<SettingsState>);
+    expect("supportedCounterValues" in filtered).toBe(false);
+    expect(filtered.counterValue).toBe("EUR");
   });
 });

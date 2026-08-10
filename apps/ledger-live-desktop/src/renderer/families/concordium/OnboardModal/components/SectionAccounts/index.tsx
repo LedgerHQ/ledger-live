@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountNameForCurrencyIndex } from "@domain/entity-account-name";
 import Box from "~/renderer/components/Box";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import { StepProps } from "../../types";

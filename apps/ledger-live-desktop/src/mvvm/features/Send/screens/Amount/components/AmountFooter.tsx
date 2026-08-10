@@ -8,6 +8,7 @@ import { NetworkFeesMenu } from "./Fees/NetworkFeesMenu";
 type AmountFooterProps = Readonly<{
   feesRowLabel: string;
   feesRowValue: string;
+  feesRowSecondaryValue: string | null;
   feesRowStrategyLabel: string;
   feeSelector: Readonly<{
     options: readonly FeeSelectorOption[];
@@ -25,6 +26,7 @@ type AmountFooterProps = Readonly<{
 export function AmountFooter({
   feesRowLabel,
   feesRowValue,
+  feesRowSecondaryValue,
   feesRowStrategyLabel,
   feeSelector,
   reviewLabel,
@@ -51,6 +53,7 @@ export function AmountFooter({
         display={{
           label: feesRowLabel,
           value: feesRowValue,
+          secondaryValue: feesRowSecondaryValue,
           strategyLabel: feesRowStrategyLabel,
         }}
         feeSelector={feeSelector}

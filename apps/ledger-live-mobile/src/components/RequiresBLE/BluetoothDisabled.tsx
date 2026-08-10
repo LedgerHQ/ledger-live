@@ -4,7 +4,7 @@ import { Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "~/context/IsInDrawerContext";
+import { IsInBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 export type Props = {
   onRetry?: (() => void) | null;
@@ -20,7 +20,7 @@ export type Props = {
  */
 const BluetoothDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false }) => {
   const { t } = useTranslation();
-  const { isInDrawer } = useContext(IsInDrawerContext);
+  const { isInBottomSheet } = useContext(IsInBottomSheetContext);
 
   const openNativeBluetoothServiceSettings = useCallback(() => {
     Platform.OS === "ios"
@@ -42,7 +42,7 @@ const BluetoothDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false
     buttonEvent = "BluetoothServiceDisabledRetryAuthorize";
   }
 
-  if (isInDrawer) {
+  if (isInBottomSheet) {
     return (
       <GenericInformationalDrawerContent
         icon={<Icon name="Bluetooth" size={30} color="neutral.c100" />}

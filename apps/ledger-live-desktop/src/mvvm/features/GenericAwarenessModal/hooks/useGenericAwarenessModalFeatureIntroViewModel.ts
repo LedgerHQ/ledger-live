@@ -21,7 +21,6 @@ import {
   trackFeatureIntroSecondaryClick,
 } from "../analytics/featureIntroAnalytics";
 import type { FeatureIntroContentItem, LumenSymbolName } from "../components/FeatureIntroContent";
-
 export interface GenericAwarenessModalFeatureIntroViewModel {
   title: string;
   subtitle: string;
@@ -53,6 +52,8 @@ const mapFeatureIntroItems = (
 const useGenericAwarenessModalFeatureIntroViewModel = (
   contentCard: GenericAwarenessModalContentCard | undefined,
   isOpen: boolean,
+  logClick: () => void,
+  logDismiss: () => void,
 ): GenericAwarenessModalFeatureIntroViewModel => {
   const dispatch = useDispatch();
   const hasTrackedOpenRef = useRef(false);
@@ -101,8 +102,9 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
         openURL(actionLink);
       }
     }
+    logClick();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, featureIntro, getContext]);
+  }, [closeDialog, featureIntro, getContext, logClick]);
 
   const onSecondaryClick = useCallback(() => {
     const context = getContext();
@@ -117,24 +119,27 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
         openURL(actionLink);
       }
     }
+    logClick();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, featureIntro, getContext]);
+  }, [closeDialog, featureIntro, getContext, logClick]);
 
   const onHeaderClose = useCallback(() => {
     const context = getContext();
     if (context) {
       trackFeatureIntroCloseClick(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   const onDismiss = useCallback(() => {
     const context = getContext();
     if (context) {
       trackFeatureIntroDismissed(context);
     }
+    logDismiss();
     closeDialog({ dismissAppStart: true });
-  }, [closeDialog, getContext]);
+  }, [closeDialog, getContext, logDismiss]);
 
   return useMemo(
     () => ({

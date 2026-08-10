@@ -15,10 +15,12 @@ import {
 import { getMemoFamilyCurrencyId } from "@ledgerhq/live-common/flows/send/utils/memoFamilyCurrencyId";
 import { useAvailableBalance } from "../hooks/useAvailableBalance";
 import { useSendHeaderModel } from "../hooks/useSendHeaderModel";
+import { AddressDisclaimer } from "./AddressDisclaimer";
 import { MemoTypeSelect } from "../screens/Recipient/components/Memo/MemoTypeSelect";
 import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueInput";
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
+import { RecipientQrScanner } from "../screens/Recipient/components/RecipientQrScanner";
 import type { SendStepConfig } from "../types";
 
 export function SendHeader() {
@@ -86,6 +88,10 @@ export function SendHeader() {
     descriptionText,
     handleBack,
     handleRecipientInputClick,
+    handleRecipientInputChange,
+    handleQrCodeClick,
+    handleScanPicked,
+    isScannerOpen,
     showBackButton,
     showMemoControls,
     showRecipientInput,
@@ -108,10 +114,12 @@ export function SendHeader() {
               value={addressInputValue}
               hideClearButton
               prefix={t("newSendFlow.to")}
+              suffix={<AddressDisclaimer />}
             />
+            {/* Stops short of the trailing info icon so the disclaimer stays hoverable. */}
             <button
               type="button"
-              className="absolute inset-0"
+              className="absolute inset-y-0 left-0 right-56"
               aria-label="Edit recipient"
               data-testid="send-edit-recipient-button"
               onClick={handleRecipientInputClick}
@@ -130,14 +138,16 @@ export function SendHeader() {
           autoFocus
           prefix={t("newSendFlow.to")}
           value={addressInputValue}
-          onChange={e => recipientSearch.setValue(e.target.value)}
+          onChange={e => handleRecipientInputChange(e.target.value)}
           onClear={recipientSearch.clear}
+          onQrCodeClick={handleQrCodeClick}
           placeholder={
             uiConfig.recipientSupportsDomain
               ? t("newSendFlow.placeholder")
               : t("newSendFlow.placeholderNoENS")
           }
         />
+        {isScannerOpen && <RecipientQrScanner onPick={handleScanPicked} />}
         {showMemoControls && currencyId ? (
           <div className="px-24">
             <div className="flex flex-col gap-12">
@@ -204,6 +214,10 @@ export function SendHeader() {
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
     handleRecipientInputClick,
+    handleRecipientInputChange,
+    handleQrCodeClick,
+    handleScanPicked,
+    isScannerOpen,
   ]);
 
   return (

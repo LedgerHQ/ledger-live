@@ -4,18 +4,19 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  CASPER_MAX_TRANSFER_ID,
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   MayBlockAccountError,
   InvalidMinimumAmountError,
-} from "../consts";
+} from "../constants";
 import { CasperInvalidTransferId } from "../errors";
-import { CASPER_MAX_TRANSFER_ID, validateMemo } from "../logic/validateMemo";
+import { validateMemo } from "../logic/validateMemo";
 import { CasperAccount, Transaction, TransactionStatus } from "../types";
-import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
+import { getAddress, isAddressValid } from "../logic/validateAddress";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

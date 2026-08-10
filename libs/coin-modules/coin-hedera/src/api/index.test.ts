@@ -1,5 +1,4 @@
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_OPERATION_TYPES } from "../constants";
@@ -40,7 +39,7 @@ const mockListOperationsV2 = jest.mocked(logic.listOperationsV2);
 
 describe("createApi", () => {
   let api: ReturnType<typeof createApi>;
-  const mockConfig = { ...getMockedConfig() };
+  const mockConfig = getMockedConfig();
   const mockCurrency = getMockedCurrency();
 
   beforeEach(() => {
@@ -125,6 +124,12 @@ describe("createApi", () => {
     });
   });
 
+  describe("call", () => {
+    it("should throw 'call is not supported'", async () => {
+      await expect(api.call({})).rejects.toThrow("call is not supported");
+    });
+  });
+
   describe("craftRawTransaction", () => {
     it("should throw when called", () => {
       expect(() => api.craftRawTransaction("tx", "sender", "pubkey", 1n)).toThrow(
@@ -145,6 +150,7 @@ describe("createApi", () => {
       const result = await api.estimateFees(txIntent);
 
       expect(result).toEqual({ value: BigInt("5000") });
+      expect(mockEstimateFees).toHaveBeenCalledTimes(1);
       expect(mockEstimateFees).toHaveBeenCalledWith(
         expect.objectContaining({ operationType: "CRYPTOTRANSFER" }),
       );
@@ -160,6 +166,7 @@ describe("createApi", () => {
       const result = await api.estimateFees(txIntent);
 
       expect(result).toEqual({ value: BigInt("9000") });
+      expect(mockEstimateFees).toHaveBeenCalledTimes(1);
       expect(mockEstimateFees).toHaveBeenCalledWith(
         expect.objectContaining({
           operationType: HEDERA_OPERATION_TYPES.ContractCall,
@@ -182,7 +189,7 @@ describe("createApi", () => {
     it("should throw an exception when options is provided", async () => {
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 
@@ -440,6 +447,29 @@ describe("createApi", () => {
 
       expect(result.items[0].id).toEqual(order === "desc" ? newId : oldId);
       expect(result.items[1].id).toEqual(order === "desc" ? oldId : newId);
+    });
+
+    it("should pass ERC20 contract addresses as tokenEvmAddresses to listOperationsV2", async () => {
+      mockGetERC20BalancesForAccountV2.mockResolvedValue([
+        {
+          contractAddress: "0xDeAdBeEf000000000000000000000000000ABCDE",
+          balance: new BigNumber(500),
+        },
+      ]);
+      mockListOperationsV2.mockResolvedValue({
+        coinOperations: [],
+        tokenOperations: [],
+        nextCursor: null,
+      });
+
+      await api.listOperations(mockAddress, mockOptions);
+
+      expect(mockListOperationsV2).toHaveBeenCalledTimes(1);
+      expect(mockListOperationsV2).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tokenEvmAddresses: expect.arrayContaining(["0xdeadbeef000000000000000000000000000abcde"]),
+        }),
+      );
     });
 
     it("should fall back to date sort when consensusTimestamp is missing", async () => {

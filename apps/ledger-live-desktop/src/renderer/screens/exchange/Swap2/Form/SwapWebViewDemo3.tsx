@@ -486,14 +486,14 @@ const SwapWebView = ({
     // Recompute wallet-API ids when possible; otherwise keep raw deeplink ids.
     const fromAccountIdForUrl = resolvedDefaultFromAccount
       ? accountToWalletAPIAccount(
-          walletState,
+          walletState.accountNames,
           resolvedDefaultFromAccount,
           resolvedDefaultFromParentAccount,
         ).id
       : rawFromAccountId;
     const toAccountIdForUrl = resolvedDefaultToAccount
       ? accountToWalletAPIAccount(
-          walletState,
+          walletState.accountNames,
           resolvedDefaultToAccount,
           resolvedDefaultToParentAccount,
         ).id
@@ -544,7 +544,7 @@ const SwapWebView = ({
     resolvedDefaultToAccount,
     resolvedDefaultToParentAccount,
     state,
-    walletState,
+    walletState.accountNames,
   ]);
 
   const onSwapWebviewError = (error?: SwapLiveError) => {

@@ -1,10 +1,9 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "../../../currencies";
 import { genAccount } from "../../../mock/account";
 import {
   getAccountTuplesForCurrency,

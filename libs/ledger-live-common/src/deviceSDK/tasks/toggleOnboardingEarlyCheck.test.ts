@@ -1,5 +1,5 @@
 import { from, of, throwError } from "rxjs";
-import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
+import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport/errors";
 import { toggleOnboardingEarlyCheckTask } from "./toggleOnboardingEarlyCheck";
 import { toggleOnboardingEarlyCheckCmd } from "../commands/toggleOnboardingEarlyCheck";
 import { withTransport } from "../transports/core";

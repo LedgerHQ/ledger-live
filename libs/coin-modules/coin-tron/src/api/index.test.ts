@@ -3,7 +3,6 @@ import {
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import { InvalidParameterError } from "@ledgerhq/errors";
 import { createApi } from ".";
 import coinConfig, { TronConfig } from "../config";
 import {
@@ -11,6 +10,7 @@ import {
   combine,
   craftTransaction,
   estimateFees,
+  getAccountInfo,
   getBalance,
   lastBlock,
   listOperations,
@@ -25,6 +25,7 @@ jest.mock("../logic", () => ({
   combine: jest.fn(),
   craftTransaction: jest.fn(),
   estimateFees: jest.fn(),
+  getAccountInfo: jest.fn(),
   getBalance: jest.fn(),
   listOperations: jest.fn().mockResolvedValue({ items: [], next: undefined }),
   lastBlock: jest.fn(),
@@ -79,6 +80,7 @@ describe("createApi", () => {
     await api.craftTransaction(intent);
     await api.estimateFees(intent);
     await api.getBalance("address");
+    await api.getAccountInfo!("address");
     await api.lastBlock();
     const minHeight = 14;
     await api.listOperations("address", { minHeight, order: "asc" });
@@ -89,6 +91,7 @@ describe("createApi", () => {
     expect(estimateFees).toHaveBeenCalledWith(intent);
     expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
+    expect(getAccountInfo).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {
       limit: 200,
@@ -123,7 +126,7 @@ describe("createApi", () => {
       const api = createApi(mockTronConfig);
       await expect(
         api.getBalance("random address", {} as unknown as BalanceOptions),
-      ).rejects.toThrow(InvalidParameterError);
+      ).rejects.toMatchObject({ name: "InvalidParameterError" });
     });
   });
 });

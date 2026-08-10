@@ -83,11 +83,11 @@ export function createRendererConfig(
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
-        // Route `ZCash` to the IPC client in the renderer so the
-        // `zcash-utils` .node addon stays out of the bundle (see
-        // `@ledgerhq/coin-bitcoin/chain-adapters/zcash/ipc/main-host`).
-        "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash$":
-          "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCashIPC",
+        // Route `ZCash` to the IPC client in the renderer so the `zcash-utils`
+        // .node addon stays out of the bundle: it is hosted in a UtilityProcess,
+        // reached over the `zcash:*` channels the main process registers (see
+        // `@ledgerhq/coin-zcash/network/ipc/main-host`).
+        "@ledgerhq/coin-zcash/network/ZCash$": "@ledgerhq/coin-zcash/network/ZCashIPC",
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),

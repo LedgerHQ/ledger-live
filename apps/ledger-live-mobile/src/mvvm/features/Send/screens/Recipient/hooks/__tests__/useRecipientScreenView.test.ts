@@ -4,7 +4,10 @@ import { useAddressValidation } from "../useAddressValidation";
 import { useClipboardRecipient } from "../useClipboardRecipient";
 import { useSendFlowData } from "../../../../context/SendFlowContext";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { InvalidAddress, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { createMockAccount } from "./accounts";
 
@@ -31,6 +34,7 @@ const idleResult = {
   error: null,
   bridgeErrors: {},
   bridgeWarnings: {},
+  hasBridgeValidationResult: false,
   matchedAccounts: [],
   resolvedAddress: undefined,
   ensName: undefined,
@@ -195,7 +199,7 @@ describe("useRecipientScreenView", () => {
     });
 
     mockedUseAddressValidation.mockReturnValue({
-      result: { ...idleResult, status: "valid" },
+      result: { ...idleResult, status: "valid", hasBridgeValidationResult: true },
       isLoading: false,
       validateAddress: jest.fn(),
     });
@@ -210,6 +214,7 @@ describe("useRecipientScreenView", () => {
     );
 
     expect(result.current.showMatchedAddress).toBe(true);
+    expect(result.current.isAddressValid).toBe(true);
   });
 
   it("identifies self-transfer error correctly", () => {

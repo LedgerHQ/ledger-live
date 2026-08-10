@@ -1,35 +1,77 @@
 import {
-  HandlersPayloads,
-  WalletHandlers,
-  initialState,
-  WalletState,
-  handlers,
-  isStarredAccountSelector,
-  accountNameWithDefaultSelector,
-  walletSyncStateSelector,
-} from "@ledgerhq/live-wallet/store";
-import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
-import { handleActions } from "redux-actions";
-import { State } from ".";
+  accountNameSelector as entityAccountNameSelector,
+  accountNameWithDefaultSelector as entityAccountNameWithDefault,
+  setAccountName as setAccountNameRTK,
+} from "@domain/entity-account-name";
+import {
+  isStarredAccountSelector as entityIsStarredAccount,
+  setAccountStarred as setAccountStarredRTK,
+} from "@domain/entity-starred-account";
 import { createSelector } from "reselect";
 import { useSelector } from "LLD/hooks/redux";
 import { shallowEqual } from "react-redux";
-import { AccountLike, RecentAddressesState } from "@ledgerhq/types-live";
+import type { RecentAddressesState } from "@domain/entity-recent-addresses";
+import type { Account, AccountLike, AccountUserData } from "@ledgerhq/types-live";
+import type { State } from ".";
+import type { WalletState } from "./wallet.core";
+
+export type { WalletState, ExportedWalletState } from "./wallet.core";
+export {
+  exportWalletState,
+  walletStateExportShouldDiffer,
+  importWalletState,
+  initialState,
+  updateRecentAddresses,
+  bulkSetAccountNames,
+} from "./wallet.core";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
+
+export const setAccountName = (accountId: string, name: string) =>
+  setAccountNameRTK({ accountId, name });
+
+export const setAccountStarred = (accountId: string, starred: boolean) =>
+  setAccountStarredRTK({ accountId, starred });
+
+export const accountNameSelector = (
+  state: WalletState,
+  params: { accountId: string },
+): string | undefined => entityAccountNameSelector(state.accountNames, params);
+
+export const accountNameWithDefaultSelector = (state: WalletState, account: AccountLike): string =>
+  entityAccountNameWithDefault(state.accountNames, account);
+
+export const isStarredAccountSelector = (
+  state: WalletState,
+  params: { accountId: string },
+): boolean => entityIsStarredAccount(state.starredAccountIds, params);
+
+export const accountUserDataExportSelector = (
+  state: WalletState,
+  { account }: { account: Account },
+): AccountUserData => {
+  const starredIds = [account, ...(account.subAccounts || [])]
+    .map(a => a.id)
+    .filter(id => state.starredAccountIds.has(id));
+  return {
+    id: account.id,
+    name: accountNameWithDefaultSelector(state, account),
+    starredIds,
+  };
+};
 
 export const accountStarredSelector = createSelector(
   walletSelector,
   (_: State, { accountId }: { accountId: string }) => accountId,
-  (wallet, accountId) => isStarredAccountSelector(wallet, { accountId }),
+  (wallet, accountId) => entityIsStarredAccount(wallet.starredAccountIds, { accountId }),
 );
 
-export function latestDistantStateSelector(state: State): DistantState | null {
-  return walletSyncStateSelector(walletSelector(state)).data;
+export function latestDistantStateSelector(state: State): unknown {
+  return walletSelector(state).walletSync.walletSyncState.data;
 }
 
 export function latestDistantVersionSelector(state: State): number {
-  return walletSyncStateSelector(walletSelector(state)).version;
+  return walletSelector(state).walletSync.walletSyncState.version;
 }
 
 export function recentAddressesSelector(state: State): RecentAddressesState {
@@ -39,30 +81,21 @@ export function recentAddressesSelector(state: State): RecentAddressesState {
 const getAccountName = (
   state: State,
   account: AccountLike | null | undefined,
-): string | undefined => {
-  return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
-};
+): string | undefined =>
+  !account ? undefined : entityAccountNameWithDefault(state.wallet.accountNames, account);
 
-export const useMaybeAccountName = (
-  account: AccountLike | null | undefined,
-): string | undefined => {
-  return useSelector((state: State) => getAccountName(state, account));
-};
+export const useMaybeAccountName = (account: AccountLike | null | undefined): string | undefined =>
+  useSelector((state: State) => getAccountName(state, account));
 
 export const useBatchMaybeAccountName = (
   accounts: (AccountLike | null | undefined)[],
-): (string | undefined)[] => {
-  return useSelector(
+): (string | undefined)[] =>
+  useSelector(
     (state: State) => accounts.map(account => getAccountName(state, account)),
     shallowEqual,
   );
-};
-export const useAccountName = (account: AccountLike) => {
-  return useSelector((state: State) => accountNameWithDefaultSelector(state.wallet, account));
-};
 
-export default handleActions<WalletState, HandlersPayloads[keyof HandlersPayloads]>(
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  handlers as unknown as WalletHandlers<false>,
-  initialState,
-);
+export const useAccountName = (account: AccountLike) =>
+  useSelector((state: State) => entityAccountNameWithDefault(state.wallet.accountNames, account));
+
+export { walletReducer as default } from "./wallet.core";

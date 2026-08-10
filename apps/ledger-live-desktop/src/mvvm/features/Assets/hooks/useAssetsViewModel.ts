@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
-import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
+import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
 import { AssetsViewProps, AssetTableItem } from "../types";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";

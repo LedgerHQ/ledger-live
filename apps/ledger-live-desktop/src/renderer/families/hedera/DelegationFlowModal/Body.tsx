@@ -102,7 +102,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       const transaction = bridge.updateTransaction(t, {
         mode: HEDERA_TRANSACTION_MODES.Delegate,
         properties: {
-          stakingNodeId: defaultValidator?.nodeId ?? null,
+          stakingNodeId: defaultValidator ? Number(defaultValidator.id) : null,
         },
       });
 

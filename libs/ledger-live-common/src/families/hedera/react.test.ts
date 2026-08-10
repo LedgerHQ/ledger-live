@@ -10,7 +10,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { renderHook } from "@testing-library/react";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { liveConfig } from "../../config/sharedConfig";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import * as hooks from "./react";
 import type { HederaAccount, HederaDelegation } from "./types";
 
@@ -115,12 +115,10 @@ describe("hedera/react", () => {
       const firstValidator = data.validators[0];
 
       if (firstValidator) {
-        const { result } = renderHook(() =>
-          hooks.useHederaValidators(currency, firstValidator.nodeId.toString()),
-        );
+        const { result } = renderHook(() => hooks.useHederaValidators(currency, firstValidator.id));
 
         expect(result.current.length).toBeGreaterThan(0);
-        expect(result.current.some(v => v.nodeId === firstValidator.nodeId)).toBe(true);
+        expect(result.current.some(v => v.id === firstValidator.id)).toBe(true);
       }
     });
 
@@ -167,7 +165,7 @@ describe("hedera/react", () => {
       invariant(validator, "No validators available for test");
 
       const delegation: HederaDelegation = {
-        nodeId: validator.nodeId,
+        nodeId: Number(validator.id),
         delegated: new BigNumber(100000),
         pendingReward: new BigNumber(500),
       };
@@ -177,7 +175,7 @@ describe("hedera/react", () => {
       );
 
       expect(result.current).toEqual({
-        nodeId: validator.nodeId,
+        nodeId: delegation.nodeId,
         delegated: delegation.delegated,
         pendingReward: delegation.pendingReward,
         status: "overstaked",
@@ -185,7 +183,7 @@ describe("hedera/react", () => {
           name: validator.name,
           address: validator.address,
           addressChecksum: validator.addressChecksum,
-          nodeId: validator.nodeId,
+          id: validator.id,
           minStake: validator.minStake,
           maxStake: validator.maxStake,
           activeStake: validator.activeStake,
@@ -215,7 +213,7 @@ describe("hedera/react", () => {
           name: "",
           address: "",
           addressChecksum: null,
-          nodeId: delegation.nodeId,
+          id: String(delegation.nodeId),
           minStake: new BigNumber(0),
           maxStake: new BigNumber(0),
           activeStake: new BigNumber(0),
@@ -231,7 +229,7 @@ describe("hedera/react", () => {
       invariant(validator, "No validators available for test");
 
       const delegation: HederaDelegation = {
-        nodeId: validator.nodeId,
+        nodeId: Number(validator.id),
         delegated: new BigNumber(0),
         pendingReward: new BigNumber(0),
       };
@@ -241,7 +239,7 @@ describe("hedera/react", () => {
       );
 
       expect(result.current.delegated).toEqual(new BigNumber(0));
-      expect(result.current.validator.nodeId).toEqual(validator.nodeId);
+      expect(result.current.validator.id).toEqual(validator.id);
     });
 
     it("should handle delegation with pending rewards", () => {
@@ -250,7 +248,7 @@ describe("hedera/react", () => {
       invariant(validator, "No validators available for test");
 
       const delegation: HederaDelegation = {
-        nodeId: validator.nodeId,
+        nodeId: Number(validator.id),
         delegated: new BigNumber(100000),
         pendingReward: new BigNumber(1500),
       };

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-btc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ledger shared UTXO wallet engine (Bitcoin & forks): xpub scanning, coin-selection, storage, address crypto",
   "keywords": [
     "Ledger",
@@ -48,9 +48,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-module-framework": "catalog:",
-    "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/logs": "catalog:",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
     "bchaddrjs": "^0.5.2",

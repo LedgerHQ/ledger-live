@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import type { AddressInfo } from "node:net";
 import { createRelayHub } from "./relay";
+import { createMockLogger, nullLanIp } from "./mocks";
 
 type Hub = ReturnType<typeof createRelayHub>;
 
@@ -34,7 +35,12 @@ describe("relay hub — invalid connections", () => {
   let base: string;
 
   beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+    hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
     base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
   });
@@ -61,7 +67,12 @@ describe("relay hub — message forwarding", () => {
   let base: string;
 
   beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+    hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
     base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
   });
@@ -72,23 +83,11 @@ describe("relay hub — message forwarding", () => {
 
   it("forwards a message from tool to host", async () => {
     const host = await open(`${base}/?role=host&id=app`);
-    const tool = await open(`${base}/?role=tool&id=web-tools&target=app`);
+    const tool = await open(`${base}/?role=tool&id=web-tools&target=1`);
 
     const incoming = waitForMessage(host);
     tool.send("hello");
     expect(await incoming).toBe("hello");
-
-    host.close();
-    tool.close();
-  });
-
-  it("forwards a message from host to tool", async () => {
-    const host = await open(`${base}/?role=host&id=app`);
-    const tool = await open(`${base}/?role=tool&id=web-tools&target=app`);
-
-    const incoming = waitForMessage(tool);
-    host.send("from-host");
-    expect(await incoming).toBe("from-host");
 
     host.close();
     tool.close();
@@ -111,33 +110,32 @@ describe("relay hub — message forwarding", () => {
   });
 });
 
-describe("relay hub — eviction", () => {
-  let hub: Hub;
-  let base: string;
-
-  beforeEach(async () => {
-    hub = createRelayHub({ port: 0, host: "127.0.0.1" });
+describe("relay hub — close", () => {
+  it("terminates all connected clients and resolves", async () => {
+    const hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
     await waitForListening(hub);
-    base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
-  });
+    const base = `ws://127.0.0.1:${(hub.ws.address() as AddressInfo).port}`;
 
-  afterEach(async () => {
+    const host = await open(`${base}/?role=host&id=app`);
+    const closed = waitForClose(host);
     await hub.close();
+    await closed;
+    expect(host.readyState).toBe(WebSocket.CLOSED);
   });
 
-  it("closes the previous host when a new one reconnects with the same id", async () => {
-    const host1 = await open(`${base}/?role=host&id=app`);
-    const closed1 = waitForClose(host1);
-    await open(`${base}/?role=host&id=app`);
-    await closed1;
-    expect(host1.readyState).toBe(WebSocket.CLOSED);
-  });
-
-  it("closes the previous tool when a new one reconnects targeting the same host", async () => {
-    const tool1 = await open(`${base}/?role=tool&id=web-tools&target=app`);
-    const closed1 = waitForClose(tool1);
-    await open(`${base}/?role=tool&id=web-tools&target=app`);
-    await closed1;
-    expect(tool1.readyState).toBe(WebSocket.CLOSED);
+  it("resolves even when no clients are connected", async () => {
+    const hub = createRelayHub({
+      port: 0,
+      host: "127.0.0.1",
+      logger: createMockLogger(),
+      getLanIp: nullLanIp,
+    });
+    await waitForListening(hub);
+    await expect(hub.close()).resolves.toBeUndefined();
   });
 });

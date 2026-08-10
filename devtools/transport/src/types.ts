@@ -62,6 +62,19 @@ export interface TransportProtocol<M extends MessageMap> {
   onError?(err: Error): void;
 }
 
+export type ReconnectionConfig = {
+  /** Whether to reconnect after a disconnect. Defaults to `true`. */
+  enabled?: boolean;
+  /** Delay before reconnecting, in ms. Defaults to 1000. */
+  delay?: number;
+  /** Maximum delay before reconnecting, in ms. Defaults to 30000. */
+  maxDelay?: number;
+  /** Factor to multiply the delay by after each failed attempt. Defaults to 1.5. */
+  factor?: number;
+  /** Maximum number of reconnection attempts. Defaults to `20`. */
+  maxAttempts?: number;
+};
+
 /**
  * Minimal WebSocket surface the transport relies on.
  *
@@ -94,6 +107,8 @@ export type TransportConfig = {
    * global `WebSocket` when present; Node consumers pass a `ws`-backed factory.
    */
   socketFactory?: (url: string, protocols?: string | string[]) => WebSocketLike;
+  /** Reconnection configuration. */
+  reconnection?: ReconnectionConfig;
 };
 
 /**
@@ -107,6 +122,7 @@ export type TransportConfig = {
 export type TransportState<M extends MessageMap> = {
   status: ConnectionStatus;
   url: string;
+  origin: string;
   history: ReadonlyArray<Envelope<M>>;
   lastError?: Error;
 };

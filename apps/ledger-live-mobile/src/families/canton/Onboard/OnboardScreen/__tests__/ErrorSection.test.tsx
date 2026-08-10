@@ -1,4 +1,5 @@
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError } from "@ledgerhq/hw-transport/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { render, screen } from "@tests/test-renderer";
 import React from "react";
 import { ErrorSection } from "../components/ErrorSection";

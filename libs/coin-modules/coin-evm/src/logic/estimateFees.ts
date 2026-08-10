@@ -17,6 +17,8 @@ import { STAKING_CONTRACTS } from "../staking";
 import { getTransactionType, prepareUnsignedTxParams } from "./common";
 import { getNextSequence } from "./getNextSequence";
 
+const SEND_MAX_L1_FEE_BUFFER = new BigNumber(2);
+
 async function computeAdditionalFees(
   currency: CryptoCurrency,
   unsignedTransaction: TransactionLike,
@@ -180,15 +182,28 @@ export async function estimateFees(
       feeDataPromise,
     ]);
 
-  // Recompute the transaction type from the fee data, since
-  // the one in input may not be supported by the Blockchain.
+  // Prevent BigNumber(0) placeholders from being interpreted as EIP-1559 fees
   const finalType =
-    finalFeeData.maxFeePerGas && finalFeeData.maxPriorityFeePerGas
+    BigNumber.isBigNumber(finalFeeData.maxFeePerGas) &&
+    finalFeeData.maxFeePerGas.gt(0) &&
+    BigNumber.isBigNumber(finalFeeData.maxPriorityFeePerGas)
       ? TransactionTypes.eip1559
       : TransactionTypes.legacy;
 
+  // Drop fee fields that don't belong to the resolved type so orphans
+  // (e.g. maxFeePerGas: 0 from createTransaction) are not re-propagated.
+  const typedFeeData: FeeData =
+    finalType === TransactionTypes.eip1559
+      ? { ...finalFeeData, gasPrice: null }
+      : {
+          ...finalFeeData,
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          nextBaseFee: null,
+        };
+
   const gasPrice =
-    finalType === TransactionTypes.legacy ? finalFeeData.gasPrice : finalFeeData.maxFeePerGas;
+    finalType === TransactionTypes.legacy ? typedFeeData.gasPrice : typedFeeData.maxFeePerGas;
   const fee = gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
 
   const unsignedTransaction: TransactionLike = {
@@ -200,7 +215,11 @@ export async function estimateFees(
     value,
     chainId,
   };
-  const additionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const rawAdditionalFees = await computeAdditionalFees(currency, unsignedTransaction);
+  const additionalFees =
+    transactionIntent.useAllAmount && rawAdditionalFees
+      ? rawAdditionalFees.multipliedBy(SEND_MAX_L1_FEE_BUFFER).integerValue(BigNumber.ROUND_CEIL)
+      : rawAdditionalFees;
 
   // delegate send-max: expose reserve/scale so the bridge can compute the amount (it has the balance)
   const stakingConfig = STAKING_CONTRACTS[currency.id];
@@ -217,7 +236,7 @@ export async function estimateFees(
   return {
     value: BigInt(fee.toString()),
     parameters: {
-      ...toApiFeeData(finalFeeData),
+      ...toApiFeeData(typedFeeData),
       type: finalType,
       additionalFees: additionalFees && BigInt(additionalFees.toFixed()),
       gasLimit: BigInt(gasLimit.toFixed()),

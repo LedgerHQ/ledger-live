@@ -33,6 +33,8 @@ const transformIncludePatterns = [
   "@hashgraph/sdk",
   "react-native-startup-time",
   "@segment/analytics-react-native",
+  "expo-crypto",
+  "expo-modules-core",
   "uuid",
   "react-native-ble-plx",
   "react-native-android-location-services-dialog-box",
@@ -133,6 +135,8 @@ module.exports = {
   ],
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
+    "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
+      "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
     ...pathsToModuleNameMapper(compilerOptions.paths),
     // Logic-only stub — integration tests overlay UI components via jest.mock.
     "^@features/flow-contacts$": "<rootDir>/../../features/flow/contacts/src/jest.native.ts",
@@ -153,6 +157,13 @@ module.exports = {
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^react-native-gesture-handler$": "<rootDir>/node_modules/react-native-gesture-handler",
     "^react-native-gesture-handler/(.*)$": "<rootDir>/node_modules/react-native-gesture-handler/$1",
+    // Pin to a single instance so components rendered from workspace packages
+    // (e.g. @shared/ui-queued-bottom-sheet) share the app's SafeAreaProvider context
+    // instead of resolving a second pnpm copy (duplicate context = "No safe
+    // area value available").
+    "^react-native-safe-area-context$": "<rootDir>/node_modules/react-native-safe-area-context",
+    "^react-native-safe-area-context/(.*)$":
+      "<rootDir>/node_modules/react-native-safe-area-context/$1",
     "styled-components":
       "<rootDir>/node_modules/styled-components/native/dist/styled-components.native.cjs.js",
     "^react-redux": "<rootDir>/node_modules/react-redux",

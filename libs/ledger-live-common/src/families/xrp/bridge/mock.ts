@@ -7,7 +7,7 @@ import {
   RecipientRequired,
   FeeTooHigh,
   AmountRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {

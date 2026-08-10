@@ -1,4 +1,8 @@
-import { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import {
+  TokenCurrency,
+  TokenCurrencyIdSchema,
+  CryptoCurrencyIdSchema,
+} from "@ledgerhq/ledger-wallet-framework/types";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { TransferProposal } from "../network/gateway";
@@ -7,9 +11,9 @@ import { buildSubAccounts, CantonTokenAccount } from "./buildSubAccounts";
 const makeTokenCurrency = (overrides: Partial<TokenCurrency> = {}): TokenCurrency => {
   return {
     type: "TokenCurrency",
-    id: overrides.id ?? "canton_network/cip56/TOKEN_A",
+    id: overrides.id ?? TokenCurrencyIdSchema.parse("canton_network/cip56/TOKEN_A"),
     contractAddress: overrides.contractAddress ?? "admin-TOKEN_A",
-    parentCurrencyId: overrides.parentCurrencyId ?? "canton_network",
+    parentCurrencyId: overrides.parentCurrencyId ?? CryptoCurrencyIdSchema.parse("canton_network"),
     tokenType: "canton",
     name: overrides.name ?? "Token A",
     ticker: overrides.ticker ?? "TOKA",

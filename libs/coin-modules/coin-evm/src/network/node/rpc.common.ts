@@ -56,7 +56,14 @@ export const WETH_WITHDRAWAL_TOPIC =
 export const ERC20_MINT_TOPIC =
   "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885";
 
+/** Emitter of the native transfer logs added by https://eips.ethereum.org/EIPS/eip-7708. */
+export const SYSTEM_ADDRESS = "0xfffffffffffffffffffffffffffffffffffffffe";
+
 const ZERO_ADDRESS_HEX = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
+
+function isSystemLog(log: LogWithAddress): boolean {
+  return normalizeAddress(log.address) === SYSTEM_ADDRESS;
+}
 
 function topicToAddress(topic: string | undefined): string {
   if (!topic || topic.length < 66) return ZERO_ADDRESS_HEX;
@@ -127,6 +134,10 @@ function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20
  */
 export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>): ERC20Transfer[] {
   return logs.flatMap(log => {
+    // These mimic an ERC20 `Transfer` on a token that does not exist.
+    if (isSystemLog(log)) {
+      return [];
+    }
     if (isTransfer(log)) {
       return [makeErc20Transfer(log, topicToAddress(log.topics[1]), topicToAddress(log.topics[2]))];
     }
@@ -812,9 +823,9 @@ async function getOptimismAdditionalFees(
   }
 
   const optimismGasOracle = new ethers.Contract(
-    // contract address provided here
-    // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-    "0x4f1db3c6AbD250ba86E0928471A8F7DB3AFd88F1",
+    // Canonical OP-stack GasPriceOracle predeploy, present on all OP-stack chains
+    // (Optimism, Base, Blast). @see https://docs.optimism.io/stack/transactions/fees
+    "0x420000000000000000000000000000000000000F",
     OptimismGasPriceOracleAbi,
     api,
   );
@@ -827,7 +838,7 @@ async function getScrollAdditionalFees(
   currency: CryptoCurrency,
   transaction: string,
 ): Promise<BigNumber> {
-  if (!["scroll", "scroll_sepolia"].includes(currency.id)) {
+  if (currency.id !== "scroll") {
     return new BigNumber(0);
   }
 

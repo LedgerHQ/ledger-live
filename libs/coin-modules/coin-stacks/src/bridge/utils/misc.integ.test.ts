@@ -1,5 +1,5 @@
 import { setCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import type { Operation, CryptoAssetsStore } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
 import { fetchFullTxs } from "../../network/index";
 import { mapTxToOps } from "./misc";
 
@@ -12,7 +12,7 @@ describe("misc integration tests", () => {
       findTokenById: async () => undefined,
       findTokenByAddressInCurrency: async () => undefined,
       getTokensSyncHash: async () => "0",
-    } as CryptoAssetsStore);
+    });
   });
 
   test("convert raw transactions to live operations", async () => {

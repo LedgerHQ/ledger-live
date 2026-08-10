@@ -1,7 +1,7 @@
 import type { Action } from "redux-actions";
-import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
+import type { AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { Account, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
+import type { Account, AccountUserData, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
@@ -25,8 +25,6 @@ import type {
   InViewState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import type { HandlersPayloads } from "@ledgerhq/live-wallet/store";
-import type { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import type { Steps } from "LLM/features/WalletSync/types/Activation";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { UnknownAction } from "redux";
@@ -39,7 +37,6 @@ import type {
 //  === ACCOUNTS ACTIONS ===
 
 export enum AccountsActionTypes {
-  ACCOUNTS_USER_IMPORT = "ACCOUNTS_USER_IMPORT",
   ADD_ACCOUNT = "ADD_ACCOUNT",
   REORDER_ACCOUNTS = "REORDER_ACCOUNTS",
   SET_ACCOUNTS = "SET_ACCOUNTS",
@@ -50,7 +47,6 @@ export enum AccountsActionTypes {
 }
 
 export type AccountsReorderPayload = AccountComparator;
-export type AccountsImportAccountsPayload = ImportAccountsReduceInput;
 export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
@@ -58,9 +54,8 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsReplacePayload = Account[];
 export type AccountsPayload =
-  | HandlersPayloads["INIT_ACCOUNTS"]
+  | { accounts: Account[]; accountsUserData: AccountUserData[] }
   | AccountsReorderPayload
-  | AccountsImportAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
   | AccountsDeleteAccountPayload
   | AccountsReplacePayload
@@ -288,7 +283,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
-  SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
@@ -308,7 +302,6 @@ export enum SettingsActionTypes {
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
-  SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
@@ -359,7 +352,6 @@ export type SettingsSetOsThemePayload = SettingsState["osTheme"];
 export type SettingsSetDismissedDynamicCardsPayload = SettingsState["dismissedDynamicCards"];
 export type SettingsSetDiscreetModePayload = SettingsState["discreetMode"];
 export type SettingsSetLanguagePayload = SettingsState["language"];
-export type SettingsSetLocalePayload = SettingsState["locale"];
 export type SettingsAcceptSwapProviderPayload = Unpacked<
   SettingsState["swap"]["acceptedProviders"]
 >;
@@ -404,7 +396,6 @@ export type SettingsIsOnboardingFlowReceiveSuccessPayload =
 export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOnboardingFlow"];
 
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
-export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
@@ -449,7 +440,6 @@ export type SettingsPayload =
   | SettingsSetOsThemePayload
   | SettingsSetDiscreetModePayload
   | SettingsSetLanguagePayload
-  | SettingsSetLocalePayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceLanguagePayload
@@ -471,7 +461,6 @@ export type SettingsPayload =
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
   | SettingsSetAnalyticsConsentInfoPayload

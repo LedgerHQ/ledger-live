@@ -1,6 +1,4 @@
-import { ApyType } from "../../dada-client/types/trend";
+import type { Apy } from "@domain/entity-interest-rate";
 
-export type ApyProps = {
-  value: number;
-  type: ApyType;
-};
+/** Alias kept because both apps' ApyIndicator imports this name; retarget in LIVE-35228 / 35229. */
+export type ApyProps = Apy;

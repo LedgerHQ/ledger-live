@@ -5,8 +5,8 @@ import {
   type ContactsFeatureIntroduction,
 } from "@features/flow-contacts";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
-import { useSingleFireDismiss } from "../../../../hooks/useSingleFireDismiss";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { useSingleFireDismiss } from "LLM/features/Contacts/hooks/useSingleFireDismiss";
 
 export type ContactsFeatureIntroductionSheetProps = ContactsFeatureIntroduction;
 
@@ -37,7 +37,7 @@ export function ContactsFeatureIntroductionSheet({
   }, [defer]);
 
   return (
-    <QueuedDrawerBottomSheet
+    <QueuedBottomSheet
       isRequestingToBeOpened={isOpen}
       onClose={handleDrawerClose}
       onHeaderClosePressed={defer}
@@ -54,6 +54,6 @@ export function ContactsFeatureIntroductionSheet({
         bottomInset={bottomInset}
         {...contentProps}
       />
-    </QueuedDrawerBottomSheet>
+    </QueuedBottomSheet>
   );
 }

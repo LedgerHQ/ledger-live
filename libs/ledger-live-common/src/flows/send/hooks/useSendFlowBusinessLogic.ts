@@ -68,12 +68,11 @@ export function useSendFlowBusinessLogic({
   useTransactionHook,
 }: UseSendFlowBusinessLogicParams): UseSendFlowBusinessLogicResult {
   const [flowStatus, setFlowStatus] = useState<FlowStatus>(FLOW_STATUS.IDLE);
-  const [recipientSearchValue, setRecipientSearchValue] = useState("");
+  const [recipientSearchValue, setRecipientSearchValue] = useState(
+    () => initParams?.recipient ?? "",
+  );
   const [isRecipientAddressComplete, setIsRecipientAddressComplete] = useState(false);
-  const [recipient, setRecipient] = useState<RecipientData | null>(() => {
-    if (!initParams?.recipient) return null;
-    return { address: initParams.recipient };
-  });
+  const [recipient, setRecipient] = useState<RecipientData | null>(null);
 
   const accountHook = useSendFlowAccount({
     initialAccount: initParams?.account,

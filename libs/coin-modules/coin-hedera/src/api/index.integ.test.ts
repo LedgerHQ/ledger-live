@@ -124,7 +124,7 @@ describe("createApi", () => {
           type: "erc20",
           gasLimit: 100n,
         },
-      } as any);
+      });
 
       const rawTx = ContractExecuteTransaction.fromBytes(Buffer.from(hex, "hex"));
       expect(rawTx).toBeInstanceOf(ContractExecuteTransaction);
@@ -868,7 +868,10 @@ describe("createApi", () => {
 
       expect(lastBlock.height).toBeGreaterThan(0);
       expect(lastBlock.hash?.length).toBe(64);
-      expect(lastBlock.time?.getTime()).toBeGreaterThan(0);
+
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      expect(lastBlock.time?.getTime()).toBeGreaterThan(Date.now() - oneDayMs);
+      expect(lastBlock.time?.getTime()).toBeLessThanOrEqual(Date.now());
     });
   });
 
@@ -1145,7 +1148,7 @@ describe("createApi", () => {
       result.items.forEach(item => {
         expect(item).toMatchObject({
           address: expect.any(String),
-          nodeId: expect.any(String),
+          id: expect.any(String),
           name: expect.any(String),
           description: expect.any(String),
           balance: expect.any(BigInt),

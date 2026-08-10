@@ -74,27 +74,42 @@ export class SettingsPage extends AppPage {
 
   @step("Expect General settings tab to show $0")
   async expectGeneralTabLabel(text: string) {
-    await expect(this.generalTab).toContainText(text);
+    await expect(this.generalTab).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.generalTab).toContainText(text);
+    });
   }
 
   @step("Expect language row title to be $0")
   async expectLanguageRowTranslation(text: string) {
-    await expect(this.languageRow).toContainText(text);
+    await expect(this.languageRow).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.languageRow).toContainText(text);
+    });
   }
 
   @step("Expect counter value row title to be $0")
   async expectCounterValueRowTranslation(text: string) {
-    await expect(this.counterValueRow).toContainText(text);
+    await expect(this.counterValueRow).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.counterValueRow).toContainText(text);
+    });
   }
 
   @step("Expect theme row title to be $0")
   async expectThemeRowTranslation(text: string) {
-    await expect(this.themeRow).toContainText(text);
+    await expect(this.themeRow).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.themeRow).toContainText(text);
+    });
   }
 
   @step("Expect counter value row to contain characters matching $0")
   async expectCounterValueRowCharacterSet(regex: RegExp) {
-    await expect(this.counterValueRow).toContainText(regex);
+    await expect(this.counterValueRow).toBeVisible();
+    await this.softExpect(async soft => {
+      await soft(this.counterValueRow).toContainText(regex);
+    });
   }
 
   @step("Click 'Hide Empty Token Accounts' toggle")

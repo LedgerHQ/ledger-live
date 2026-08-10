@@ -1,1 +1,3 @@
-export { getContactInitial } from "./getContactInitial";
+export * from "./constants";
+export * from "./formatMeDisplayName";
+export * from "./resolveMeContactDisplayName";

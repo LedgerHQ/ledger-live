@@ -1,4 +1,12 @@
 /* eslint-disable no-console */
+// TRANSITION COPY — do not add cross-package imports here.
+// The canonical implementation now lives in `e2e/mobile/scripts/shard-tests.mjs`.
+// This self-contained copy is kept because the @develop-pinned mobile CI
+// (`test-mobile-mock-reusable.yml` + `generate-shards-matrix`) invokes THIS exact
+// path with a sparse checkout that only fetches `apps/ledger-live-mobile`, so it
+// must run without reaching into `e2e/`. Once develop's workflow/action point to
+// the new path (sparse-checkout includes `e2e/mobile`), delete this file.
+// TODO(remove ~2026-08-15).
 // Usage:
 //   node shard-tests.mjs [testFilter] [testRootDir]
 //   node shard-tests.mjs [testFilter] [platform] [testRootDir] [shardIndex] [shardTotal]

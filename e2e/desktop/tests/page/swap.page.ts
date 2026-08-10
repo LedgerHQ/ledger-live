@@ -28,6 +28,7 @@ export class SwapPage extends WebViewAppPage {
     __dirname,
     "../artifacts/ledgerwallet-swap-history.csv",
   );
+  private static readonly PROVIDER_NAME_PREFIX = "lumen-quote-card-provider-name-";
 
   private readonly fullSwapContainer = this.page.getByTestId("swap-web-app-container-full");
   private readonly embeddedSwapContainer = this.page.getByTestId("swap-web-app-container-embedded");
@@ -41,9 +42,8 @@ export class SwapPage extends WebViewAppPage {
   private readonly noQuotesPlaceholder = "quotes-error-state";
   private toAccountCoinSelector = "to-account-coin-selector";
   private readonly toAccountAccountNameTag = "to-account-account-name-tag";
-  private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
-    `[data-testid^='compact-quote-card-provider-name-${provider.toLowerCase()}']`;
+    `[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}${provider.toLowerCase()}']`;
   private providerContainerSelector = (provider: string) =>
     `[data-testid^="quote-container-${provider}"]`;
   private providerContainerInfoSelector = (provider: string, suffix: string) =>
@@ -106,6 +106,28 @@ export class SwapPage extends WebViewAppPage {
     await this.maxSpendableToggle.click();
   }
 
+  // approvalRequired must reflect real allowance state: false for native assets,
+  // deposit-based providers (no contractAddress), or an already-approved token.
+  @step("Check exchange CTA text: $0")
+  async checkQuoteCardCta(providerUiName: string, approvalRequired = false): Promise<void> {
+    const webview = await this.getWebView();
+    const providerName = SwapProvider.getNameByUiName(providerUiName);
+    if (!providerName) {
+      throw new Error(`Unknown provider UI name: "${providerUiName}"`);
+    }
+    const buttonLocator = webview
+      .locator(this.providerContainerSelector(providerName))
+      .getByTestId(this.swapBtn)
+      .first();
+    await expect(buttonLocator).toBeVisible();
+    await expect(buttonLocator).toBeEnabled();
+    const actualButtonText = (await buttonLocator.textContent())?.trim() ?? "";
+
+    // CTA is a fixed "Review"/"Continue" — never interpolates the provider name.
+    const expected = approvalRequired ? /^Continue$/i : /^Review$/i;
+    expect(actualButtonText).toMatch(expected);
+  }
+
   @step("Get provider list")
   async getProviderList() {
     const webview = await this.getWebView();
@@ -115,7 +137,7 @@ export class SwapPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
     return await webview
-      .locator(`[data-testid^='${this.quoteCardProviderName}']`)
+      .locator(`[data-testid^='${SwapPage.PROVIDER_NAME_PREFIX}']`)
       .allTextContents();
   }
 
@@ -180,7 +202,7 @@ export class SwapPage extends WebViewAppPage {
           .getByText("%"),
       ).toBeVisible();
     }
-    await this.checkExchangeButton(providerList[0]);
+    await this.checkQuoteCardCta(providerList[0]);
   }
 
   @step("Select specific provider")
@@ -314,15 +336,6 @@ export class SwapPage extends WebViewAppPage {
       null,
     );
     expect(bestOffer?.quote).toMatch(quoteContainers[0]);
-  }
-
-  @step("Check exchange button is visible and enabled")
-  async checkExchangeButton(provider: string) {
-    const webview = await this.getWebView();
-
-    const buttonLocator = webview.getByRole("button", { name: new RegExp(provider, "i") });
-    await expect(buttonLocator).toBeVisible();
-    await expect(buttonLocator).toBeEnabled();
   }
 
   @step("Click Exchange button")
@@ -760,8 +773,8 @@ export class SwapPage extends WebViewAppPage {
     expect(providerName).toBeDefined();
   }
 
-  @step("Check swap widget balance is masked in discreet mode for $0")
-  async checkWidgetBalanceIsDiscreet(ticker: string) {
+  @step("Check from-account balance is masked in discreet mode for $0")
+  async checkFromAccountBalanceIsDiscreet(ticker: string) {
     const webview = await this.getWebView();
     const text = webview.getByTestId(this.fromAccountBalance);
     await expect(text).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));

@@ -7,6 +7,9 @@ jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
+jest.mock("@devtools/transport-panel", () => ({
+  TransportPanel: () => null,
+}));
 
 const devToolsSpy = jest.fn();
 jest.mock("@devtools/shell", () => ({
@@ -22,7 +25,22 @@ jest.mock("@devtools/shell", () => ({
 
 jest.mock("@devtools/bindings", () => ({
   useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
+  usePayCardToolProps: () => ({ marker: "pay-card-props" }),
 }));
+
+jest.mock("@devtools/wire", () => {
+  const wireState = { hubUrl: "ws://127.0.0.1:9090", role: "host" };
+  return {
+    buildTransport: () => ({
+      transport: {},
+      subscribe: () => () => {},
+      getState: () => wireState,
+      setHubUrl: jest.fn(),
+    }),
+    buildCopyStoreProtocol: () => ({}),
+    combineProtocols: (...args: unknown[]) => args[0],
+  };
+});
 
 describe("DevToolsScreen", () => {
   beforeEach(() => {
@@ -30,12 +48,15 @@ describe("DevToolsScreen", () => {
     devToolsSpy.mockClear();
   });
 
-  it("mounts the DevTools shell with the feature-flags tool config", () => {
+  it("mounts the DevTools shell with feature-flags and pay-card tool configs", () => {
     render(<DevToolsScreen />);
 
     expect(devToolsSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        config: [{ id: "feature-flags", config: { marker: "ff-props" } }],
+        config: [
+          { id: "feature-flags", config: { marker: "ff-props" } },
+          { id: "pay-card", config: { marker: "pay-card-props" } },
+        ],
       }),
     );
   });

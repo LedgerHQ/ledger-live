@@ -13,9 +13,8 @@ import {
   mapTokenTransfersToOperations,
   padAddress,
 } from "../common-logic";
-import { getEnv } from "@ledgerhq/live-env";
+import { getNodeUrl } from "../config";
 
-const BASE_URL = getEnv("API_VECHAIN_THOREST");
 const NET_ERROR_LOG_TRANSFERS_LIMIT = {
   status: 403,
   msgPattern: /exceeds the maximum allowed/,
@@ -24,7 +23,7 @@ const NET_ERROR_LOG_TRANSFERS_LIMIT = {
 export const getAccount = async (address: string): Promise<AccountResponse> => {
   const { data } = await network<AccountResponse>({
     method: "GET",
-    url: `${BASE_URL}/accounts/${address}`,
+    url: `${getNodeUrl()}/accounts/${address}`,
   });
 
   return data;
@@ -33,7 +32,7 @@ export const getAccount = async (address: string): Promise<AccountResponse> => {
 export const getLastBlockHeight = async (): Promise<number> => {
   const { data } = await network<{ number: number }>({
     method: "GET",
-    url: `${BASE_URL}/blocks/best`,
+    url: `${getNodeUrl()}/blocks/best`,
   });
 
   return data.number;
@@ -65,7 +64,7 @@ const fetchRangeOfOperations = async (
 
   const { data } = await network<TransferLog[]>({
     method: "POST",
-    url: `${BASE_URL}/logs/transfer`,
+    url: `${getNodeUrl()}/logs/transfer`,
     data: JSON.stringify(query),
   });
 
@@ -115,7 +114,7 @@ const fetchRangeOfTokenOperations = async (
 
   const { data } = await network<EventLog[]>({
     method: "POST",
-    url: `${BASE_URL}/logs/event`,
+    url: `${getNodeUrl()}/logs/event`,
     data: JSON.stringify(query),
   });
 
@@ -149,6 +148,14 @@ const getLogsWithPagination = async (
   stopAt: number,
   fetchRangeOfLogs: (from: number, to: number) => Promise<Operation[]>,
 ): Promise<Operation[]> => {
+  // No new block since the last known operation (startAt = lastOp.blockHeight + 1 can exceed the
+  // current best height when nothing has happened since the previous sync) — Thor's `/logs/*`
+  // endpoints reject an inverted range with a 400, so treat it as "nothing new" instead of
+  // querying at all.
+  if (stopAt < startAt) {
+    return [];
+  }
+
   let completed = false;
   const ops: Operation[] = [];
 
@@ -250,7 +257,7 @@ export const submit = async (transaction: VechainSDKTransaction): Promise<string
 
   const { data } = await network<{ id: string }>({
     method: "POST",
-    url: `${BASE_URL}/transactions`,
+    url: `${getNodeUrl()}/transactions`,
     data: encodedRawTx,
   });
 
@@ -267,7 +274,7 @@ export const submit = async (transaction: VechainSDKTransaction): Promise<string
 export const getBlockRef = async (): Promise<string> => {
   const { data } = await network<{ id: string }>({
     method: "GET",
-    url: `${BASE_URL}/blocks/best`,
+    url: `${getNodeUrl()}/blocks/best`,
   });
 
   return data.id.slice(0, 18);

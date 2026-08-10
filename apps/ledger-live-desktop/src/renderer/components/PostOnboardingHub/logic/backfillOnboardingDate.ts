@@ -1,4 +1,5 @@
 import { setPostOnboardingDate } from "@ledgerhq/live-common/postOnboarding/actions";
+import { LEGACY_ONBOARDING_DATE } from "@ledgerhq/live-common/postOnboarding/logic/legacyOnboardingDate";
 import { onboardingDateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import type { ReduxStore } from "~/state-manager/configureStore";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -11,9 +12,9 @@ import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
  *
  * The DB middleware persists post-onboarding actions automatically.
  */
-export function backfillOnboardingDate(store: ReduxStore, now: Date = new Date()): void {
+export function backfillOnboardingDate(store: ReduxStore): void {
   const state = store.getState();
   if (hasCompletedOnboardingSelector(state) && onboardingDateSelector(state) == null) {
-    store.dispatch(setPostOnboardingDate({ onboardingDate: now }));
+    store.dispatch(setPostOnboardingDate({ onboardingDate: LEGACY_ONBOARDING_DATE }));
   }
 }

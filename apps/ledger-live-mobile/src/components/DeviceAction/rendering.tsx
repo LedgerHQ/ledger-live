@@ -9,7 +9,8 @@ import { ParamListBase, T } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { getDeviceModel } from "@ledgerhq/devices";
-import { WrongDeviceForAccount, NanoSNotSupported } from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
+import { NanoSNotSupported } from "@ledgerhq/live-common/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -18,7 +19,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { isInvalidGetFirmwareMetadataResponseError } from "@ledgerhq/live-dmk-mobile";
-import { WalletState } from "@ledgerhq/live-wallet/store";
+import { WalletState } from "~/reducers/wallet";
 import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
 import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";

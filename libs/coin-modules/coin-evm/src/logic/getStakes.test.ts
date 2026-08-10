@@ -34,12 +34,9 @@ const mockGetValidators = getValidators as jest.Mock;
 
 const externalNodeConfig = { type: "external" as const, uri: "https://test" };
 const makeValidator = (validatorAddress: string) => ({
-  validatorAddress,
+  id: validatorAddress,
+  address: validatorAddress,
   name: "",
-  commission: 0,
-  tokens: 0,
-  votingPower: 0,
-  estimatedYearlyRewardsRate: 0,
 });
 
 describe("EVM Staking - getStakes", () => {

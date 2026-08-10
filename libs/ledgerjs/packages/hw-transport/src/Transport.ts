@@ -6,7 +6,7 @@ import {
   StatusCodes,
   getAltStatusMessage,
   TransportStatusError,
-} from "@ledgerhq/errors";
+} from "./errors";
 import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
 

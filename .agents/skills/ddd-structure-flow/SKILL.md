@@ -65,6 +65,10 @@ domain/api/<name>/src/
 
 Colocate tests with the files they cover. Add folders only when they group files that change together.
 
+Every `index.ts` above is a **barrel**: only `export * from "./x"` lines, with private code kept in an
+`internals` location. See [package-public-api](../package-public-api/SKILL.md) for the rules and the
+`lint:structure` check that enforces them.
+
 ## Respect Boundaries
 
 Dependencies flow downward:
@@ -109,3 +113,5 @@ More precisely:
 - Confirm apps only compose reusable flows and platform concerns.
 - Confirm feature, entity, API, and development-only state have distinct owners.
 - Confirm imports follow the dependency table and package public APIs.
+- Confirm every `index.*` is a pure barrel and no package re-exports another — see
+  [package-public-api](../package-public-api/SKILL.md).

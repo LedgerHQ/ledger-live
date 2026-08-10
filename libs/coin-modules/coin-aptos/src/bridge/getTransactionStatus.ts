@@ -1,18 +1,20 @@
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 import {
   NotEnoughBalance,
-  NotEnoughToStake,
-  UnstakeNotEnoughStakedBalanceLeft,
-  RestakeNotEnoughStakedBalanceLeft,
-  NotEnoughToRestake,
-  NotEnoughToUnstake,
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalanceFees,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
+import {
+  NotEnoughToStake,
+  NotEnoughToUnstake,
+  NotEnoughToRestake,
+  UnstakeNotEnoughStakedBalanceLeft,
+  RestakeNotEnoughStakedBalanceLeft,
+} from "../errors";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {

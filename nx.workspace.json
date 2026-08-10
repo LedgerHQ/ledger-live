@@ -210,6 +210,18 @@
         "env": "GIT_REPO_USER"
       },
       {
+        "env": "LEDGER_AUTH_CLIENT_ID"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_PROD"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_BASE_URL_STAGING"
+      },
+      {
+        "env": "LEDGER_AUTH_KEYCLOAK_REALM"
+      },
+      {
         "env": "LEDGER_INTERNAL_ARGS"
       },
       {
@@ -316,12 +328,13 @@
       }
     ]
   },
-  "plugins": ["./tools/nx-plugins/project-tags/plugin.js"],
+  "plugins": [
+    "./tools/nx-plugins/project-tags/plugin.js",
+    "./tools/nx-plugins/enforce-package-structure/plugin.js"
+  ],
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": [
         "{projectRoot}/dist/**",
         "{projectRoot}/lib/**",
@@ -345,18 +358,13 @@
     },
     "format:check": {
       "cache": true,
-      "inputs": [
-        "default",
-        "^default"
-      ]
+      "inputs": ["default", "^default"]
     },
     "check-export-rules": {
       "cache": false
     },
     "typecheck": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
       "inputs": [
         "default",
@@ -367,9 +375,7 @@
       ]
     },
     "test": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "cache": true,
       "inputs": [
         "default",
@@ -380,15 +386,11 @@
       ]
     },
     "start": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "start:msw": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "unimported": {
@@ -398,122 +400,59 @@
       "cache": false
     },
     "prebuild:storybook": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true
     },
     "build:storybook": {
-      "dependsOn": [
-        "^build",
-        "prebuild:storybook"
-      ],
-      "outputs": [
-        "{projectRoot}/storybook-static/**"
-      ],
+      "dependsOn": ["^build", "prebuild:storybook"],
+      "outputs": ["{projectRoot}/storybook-static/**"],
       "cache": true
     },
     "android:apk:local": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "mobileEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
     },
     "android:apk": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "mobileEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
     },
     "ios:local:ipa": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "mobileEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
     },
     "ios:ci:adhoc": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
-      "inputs": [
-        "default",
-        "^default",
-        "mobileEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "mobileEnv", "sharedEnv"]
     },
     "nightly": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
-      "inputs": [
-        "default",
-        "^default",
-        "desktopEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
     },
     "pre-build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
-      "inputs": [
-        "default",
-        "^default",
-        "desktopEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
     },
     "release": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
-      "inputs": [
-        "default",
-        "^default",
-        "desktopEnv",
-        "sharedEnv"
-      ]
+      "inputs": ["default", "^default", "desktopEnv", "sharedEnv"]
     },
     "watch": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "watch:es": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false
     },
     "coverage": {
-      "dependsOn": [
-        "^build",
-        "build"
-      ],
+      "dependsOn": ["^build", "build"],
       "outputs": [
         "{projectRoot}/coverage/lcov.info",
         "{projectRoot}/coverage/sonar-executionTests-report.xml"

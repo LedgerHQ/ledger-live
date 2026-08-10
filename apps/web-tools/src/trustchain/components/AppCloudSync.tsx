@@ -2,19 +2,14 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync/index";
-import walletsync, {
-  DistantState as LiveData,
-  liveSlug,
-} from "@ledgerhq/live-wallet/walletsync/index";
+import { CloudSyncSDK, UpdateEvent } from "@shared/cloud-sync";
+import { liveSchema, DistantState as LiveData, liveSlug } from "./walletSync";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { v4 as uuid } from "uuid";
 import { Actionable } from "./Actionable";
 import { JsonEditor } from "./JsonEditor";
 import useEnv from "../useEnv";
-
-const liveSchema = walletsync.schema;
 
 export function AppWalletSync({
   trustchain,
@@ -103,7 +98,7 @@ export function AppWalletSync({
     return new CloudSyncSDK({
       apiBaseUrl: cloudSyncApiBaseUrl,
       slug: liveSlug,
-      schema: walletsync.schema,
+      schema: liveSchema,
       trustchainSdk,
       getCurrentVersion,
       saveNewUpdate,

@@ -15,14 +15,13 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-  ValAddressRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_MAX_SUPPLY } from "../constants";
-import { CardanoMemoExceededSizeError, CardanoMinAmountError } from "../errors";
+import { CardanoMemoExceededSizeError, CardanoMinAmountError, ValAddressRequired } from "../errors";
 import { getPaymentCredentialKeyHash, isTestnet, isTokenAsset, isValidAddress } from "../logic";
 import { validateMemo } from "./validateMemo";
 

@@ -126,6 +126,8 @@ const iconsComponent = {
   UNSTAKE: IconUndelegate,
   WITHDRAW_UNSTAKED: IconCoins,
   FINALIZE_UNSTAKE: IconCoins,
+  STAKE_NEURON: IconDelegate,
+  TOP_UP_NEURON: IconDelegate,
   UNKNOWN: IconCheck,
   BURN: IconTrash,
   ASSOCIATE_TOKEN: IconPlus,
@@ -135,6 +137,8 @@ const iconsComponent = {
   SHIELDED_TX_SAPLING_OUT: IconSend,
   SHIELDED_TX_ORCHARD_IN: IconReceive,
   SHIELDED_TX_ORCHARD_OUT: IconSend,
+  SHIELDED_TX_IRONWOOD_IN: IconReceive,
+  SHIELDED_TX_IRONWOOD_OUT: IconSend,
   SHIELDED_TX_INTERNAL: IconCheck,
 };
 class ConfirmationCheck extends PureComponent<{

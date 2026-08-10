@@ -18,7 +18,8 @@ import { sleep } from "./index";
 import { runWithCrossProcessLock } from "./crossProcessLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   applyGeneratedUserdata,
   getGeneratedAddress,

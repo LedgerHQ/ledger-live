@@ -59,15 +59,8 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
       };
     }
     case "solana":
-      return {
-        family: currency.family,
-        amount: new BigNumber(0),
-        recipient: "",
-        fees: null,
-        mode: "send",
-      };
+    // hypercore has no send flow; this is a neutral tx used only for (de)serialization.
     case "hypercore":
-      // No send flow; return a neutral tx only for (de)serialization.
       return {
         family: currency.family,
         amount: new BigNumber(0),
@@ -85,7 +78,14 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         useAllAmount: false,
         mode: "send",
       };
+    case "near":
+    case "vechain":
     case "cardano":
+      // None has an account sequence: Cardano is UTXO, VeChain's nonce is a random uniqueness
+      // field, and a NEAR nonce belongs to an access key rather than the account. getNextSequence
+      // throws in all three modules, and utils.ts maps nonce → intent.sequence, which lets
+      // signOperation skip that call. The value is inert for crafting — each module builds its
+      // own — so the default tx is signable without callers having to set it.
       return {
         family: currency.family,
         amount: new BigNumber(0),
@@ -93,10 +93,19 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         useAllAmount: false,
         mode: "send",
-        // Cardano is UTXO — no account sequence. utils.ts maps nonce → intent.sequence, which lets
-        // signOperation skip getNextSequence (coin-cardano throws it). nonce 0 is meaningless to
-        // craft, so the default tx is signable without callers having to set it.
         nonce: new BigNumber(0),
+      };
+    case "cosmos":
+      return {
+        family: currency.family,
+        mode: "send",
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        memoType: null,
+        memoValue: null,
+        networkInfo: null,
       };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);

@@ -1,5 +1,5 @@
 import { of, throwError } from "rxjs";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 import { HWDeviceProvider } from "../../HWDeviceProvider";
 import { TrustchainNotAllowed } from "../../errors";

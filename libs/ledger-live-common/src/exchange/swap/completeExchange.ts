@@ -1,9 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
+import { DisconnectedDeviceDuringOperation } from "@ledgerhq/hw-transport/errors";
 import {
-  DisconnectedDeviceDuringOperation,
+  TransactionRefusedOnDevice,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
-} from "@ledgerhq/errors";
+} from "../../errors";
 import {
   createExchange,
   ExchangeTypes,
@@ -12,7 +13,7 @@ import {
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import { ErrorStatus } from "@ledgerhq/hw-app-exchange/ReturnCode";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { getDefaultAccountName } from "@domain/entity-account-name";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -21,7 +22,6 @@ import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
 import { handleHederaTrustedFlow } from "../../families/hedera/exchange";
 import { withDevicePromise } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
@@ -31,7 +31,7 @@ import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
@@ -67,7 +67,7 @@ export function enrichSwapDeserializationError(
   error: unknown,
 ): CompleteExchangeError | undefined {
   // Duck-type on `name` + `statusCode` rather than `instanceof TransportStatusError`, matching
-  // the rest of this file and the repo-wide migration off `@ledgerhq/errors` class checks (#19849,
+  // the rest of this file and the repo-wide migration off shared error class checks (#19849,
   // which dropped the `TransportStatusError` import from here).
   const transportErr = error as { name?: string; statusCode?: number } | null | undefined;
   if (

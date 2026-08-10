@@ -102,8 +102,7 @@ backed by a dedicated `walletSync` UI reducer (flow/step/drawer visibility), sep
 synced `wallet` data slice.
 
 > [!NOTE]
-> **Upcoming — [PR #18568](https://github.com/LedgerHQ/ledger-live/pull/18568).** The
-> `useDestroyTrustchain` hook will call
+> The `useDestroyTrustchain` hook calls
 > [`destroyApplication`](./02-trustchain-sdk.md#deactivating-ledger-sync-per-application-close)
 > instead of `destroyTrustchain`, so deactivating Ledger Sync no longer wipes other applications
 > sharing the same trustchain root (e.g. the wallet-cli ring). No UI change — ejection is already

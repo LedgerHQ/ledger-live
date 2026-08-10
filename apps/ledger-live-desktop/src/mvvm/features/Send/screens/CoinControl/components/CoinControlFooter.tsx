@@ -46,6 +46,7 @@ export function CoinControlFooter({
         display={{
           label: networkFees.feesRowLabel,
           value: networkFees.feesRowValue,
+          secondaryValue: networkFees.feesRowSecondaryValue,
           strategyLabel: networkFees.feesRowStrategyLabel,
         }}
         feeSelector={networkFees.feeSelector}

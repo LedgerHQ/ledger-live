@@ -2,6 +2,7 @@ import { SearchInput } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category, ValueOf } from "@devtools/registry";
 import type { Tool, ToolId } from "@devtools/registry";
+import type { ReactNode } from "react";
 import { CategoryRow } from "../CategoryRow/CategoryRow";
 import { IconSquare } from "../IconSquare/IconSquare";
 import { useSidebarViewModel, type SidebarViewProps } from "./useSidebarViewModel";
@@ -18,6 +19,7 @@ function SidebarView({
   onSelectTool,
   onHome,
   onClose,
+  footer,
 }: SidebarViewProps) {
   return (
     <nav
@@ -67,6 +69,7 @@ function SidebarView({
           />
         ))}
       </ul>
+      {footer}
     </nav>
   );
 }
@@ -77,6 +80,7 @@ interface SidebarProps {
   onSelectTool: (id: ToolId) => void;
   onHome: () => void;
   onClose?: () => void;
+  footer?: ReactNode;
 }
 
 export function Sidebar(props: SidebarProps) {

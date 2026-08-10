@@ -1,6 +1,10 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
+import { http, HttpResponse, server } from "@tests/server";
 import { useAssets } from "../useAssets";
-import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
+import {
+  expectedAssetsSorted as expectedAssetsSortedFromMock,
+  mockData,
+} from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
@@ -8,11 +12,22 @@ jest.mock("@ledgerhq/live-common/coin-modules/registry", () => ({
   isCurrencySupported: jest.fn(() => true),
 }));
 
-describe("useAssets", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+function captureDadaRequests(): string[] {
+  const requests: string[] = [];
+  const handler = ({ request }: { request: Request }) => {
+    requests.push(request.url);
+    return HttpResponse.json(mockData);
+  };
 
+  server.use(
+    http.get("https://dada.api.ledger-test.com/v1/assets", handler),
+    http.get("https://dada.api.ledger.com/v1/assets", handler),
+  );
+
+  return requests;
+}
+
+describe("useAssets", () => {
   it("transforms data into assetsSorted and sortedCryptoCurrencies", async () => {
     const { result } = renderHook(() => useAssets({}));
 
@@ -54,5 +69,22 @@ describe("useAssets", () => {
         ),
       ),
     ).toBe(true);
+  });
+
+  it("keeps the exact currency filter when network ids are empty", async () => {
+    const requests = captureDadaRequests();
+    const { result } = renderHook(() =>
+      useAssets({
+        currencyIds: ["bitcoin"],
+        networkIds: [],
+        areCurrenciesFiltered: true,
+      }),
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const searchParams = new URL(requests[0]).searchParams;
+    expect(searchParams.get("currencyIds")).toBe("bitcoin");
+    expect(searchParams.has("networkIds")).toBe(false);
   });
 });

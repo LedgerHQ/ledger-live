@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { buildEarnDeviceContext } from "../../wallet/earn/device-context";
 import {

@@ -21,7 +21,8 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import { WrongDeviceForAccount, DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/ledger-wallet-framework/errors";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -32,7 +33,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
-import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
+import { accountNameSelector, WalletState } from "~/renderer/reducers/wallet";
 import {
   DmkError,
   isInvalidGetFirmwareMetadataResponseError,

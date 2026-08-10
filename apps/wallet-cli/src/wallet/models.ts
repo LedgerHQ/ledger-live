@@ -6,21 +6,13 @@ import { z } from "zod";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
-// this type is taken from WalletSync, should eventually land in /domain as well
-export const accountDescriptorSchema = z.object({
-  id: z.string(),
-  currencyId: z.string(),
-  freshAddress: z.string(),
-  seedIdentifier: z.string(),
-  derivationMode: z.string(),
-  index: z.number(),
-});
+import { accountDescriptorSchema, type AccountDescriptor } from "@ledgerhq/live-wallet/accounts";
 
-export type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
+export { accountDescriptorSchema, type AccountDescriptor };
 
 /**
  * Raw discovery result from the bridge: V1 descriptor and fresh receive address.

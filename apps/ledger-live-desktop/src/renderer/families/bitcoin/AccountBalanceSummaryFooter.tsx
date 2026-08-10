@@ -19,11 +19,15 @@ import { openModal } from "~/renderer/actions/modals";
 import type { Currency } from "@ledgerhq/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import type { ZcashSyncState } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
+import type { ZcashSyncState } from "@ledgerhq/coin-zcash/network/types";
 import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+} from "@ledgerhq/coin-zcash/constants";
+import {
+  getPrivateBalance,
+  getTransparentBalance,
+} from "@ledgerhq/coin-zcash/logic/account/balance";
 import { selectShieldedSubscriptions } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { useZcashShieldedSync } from "./useZcashShieldedSync";
 
@@ -201,10 +205,6 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const showPrivateBalanceComponent = useFeature("zcashShielded")?.enabled;
 
   const privateInfo = "privateInfo" in account ? account.privateInfo : null;
-  const { orchardBalance, saplingBalance } = privateInfo ?? {
-    orchardBalance: BigNumber(0),
-    saplingBalance: BigNumber(0),
-  };
   const syncState = privateInfo?.syncState ?? "disabled";
   const previousSyncState = usePrevious(syncState);
   const lastSync = privateInfo?.lastSyncTimestamp ? new Date(privateInfo.lastSyncTimestamp) : null;
@@ -308,9 +308,14 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
 
+  // Each label is derived from its own source rather than one from another, so
+  // they stay correct regardless of which module (coin-bitcoin flag-off adapter
+  // vs coin-zcash) last wrote `account.balance` — a toggle or a pre-first-sync
+  // flag-ON no longer yields an under-reported or negative transparent balance.
+  const bitcoinResources = "bitcoinResources" in account ? account.bitcoinResources : undefined;
+  const _transparentBalance = getTransparentBalance(bitcoinResources?.utxos);
+  const _privateBalance = getPrivateBalance(privateInfo);
   const _availableBalance = balance ?? BigNumber(0);
-  const _privateBalance = orchardBalance.plus(saplingBalance);
-  const _transparentBalance = _availableBalance.minus(_privateBalance);
 
   const transparentBalanceLabel = formatCurrencyUnit(unit, _transparentBalance, formatConfig);
   const privateBalanceLabel = formatCurrencyUnit(unit, _privateBalance, formatConfig);

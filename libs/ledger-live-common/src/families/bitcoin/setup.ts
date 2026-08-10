@@ -61,11 +61,4 @@ const resolver: Resolver = (
   return bitcoinResolver(signerContext)("", addressOpt);
 };
 
-// Re-exported so the host apps can mirror the `zcashShielded` feature flag into
-// the coin module (via `useFeature` → `setZcashShieldedEnabled`), the same way
-// `setSuiGraphqlEnabled` / `setCosmosLdmkEnabled` are wired. A coin module cannot
-// read React feature flags directly, so routing of Zcash sends through the
-// shielded PCZT/V5 path is gated by this module-level toggle.
-export { setZcashShieldedEnabled } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
-
 export { bridge, resolver, messageSigner, signerContext };

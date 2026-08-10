@@ -1,4 +1,5 @@
-import { DeviceAppVerifyNotSupported, StatusCodes, UserRefusedAddress } from "@ledgerhq/errors";
+import { StatusCodes } from "@ledgerhq/hw-transport/errors";
+import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "../errors";
 import { log } from "@ledgerhq/logs";
 import type { GetAddressResult, GetAddressOptions } from "../derivation";
 

@@ -1,5 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import { InvalidAddress, NotEnoughBalance, RecipientRequired } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getEvmDummyAddress } from "@ledgerhq/coin-evm/constants";
@@ -21,7 +25,7 @@ import { getTypedTransaction } from "../transaction";
 import { getCurrencyConfiguration } from "../../../config";
 import { EvmConfigInfo, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { validateAddress } from "../../../bridge/validateAddress";
-import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-evm/staking/serialization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 const defaultGetFees = (_a, t: any) => {

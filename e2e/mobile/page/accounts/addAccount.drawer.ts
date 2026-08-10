@@ -45,6 +45,16 @@ export default class AddAccountDrawer extends CommonPage {
     );
   }
 
+  @Step("Get number of accounts displayed by the blockchain scan")
+  async getNumberOfScannedAccounts(): Promise<number> {
+    await this.waitAccountsDiscovery();
+    const scannedAccounts = await countElements(getElementsById(this.accountItemRegExp()));
+    if (scannedAccounts === 0) {
+      throw new Error("No account found on the blockchain scan screen");
+    }
+    return scannedAccounts;
+  }
+
   @Step("Finish account discovery")
   async finishAccountsDiscovery() {
     await retryUntilTimeout(async () => {

@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { getCoinModuleApi } from "../api";
 import { buildOptimisticOperation } from "../utils";
 

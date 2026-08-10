@@ -1,8 +1,11 @@
 import { calculateProviderTotals } from "../calculateProviderTotals";
 import { createFixtureAccount } from "./fixtures";
-import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
+import {
+  CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById,
+  CryptoCurrencyIdSchema,
+} from "@domain/entity-currency-crypto";
 import BigNumber from "bignumber.js";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
 
 describe("calculateProviderTotals", () => {
   const btcCurrency = cryptocurrenciesById["bitcoin"];
@@ -14,7 +17,7 @@ describe("calculateProviderTotals", () => {
 
   const usdcToken: TokenCurrency = {
     type: "TokenCurrency",
-    id: "ethereum/erc20/usdc",
+    id: TokenCurrencyIdSchema.parse("ethereum/erc20/usdc"),
     contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     parentCurrencyId: ethCurrency.id,
     tokenType: "erc20",
@@ -25,9 +28,9 @@ describe("calculateProviderTotals", () => {
 
   const bscUsdcToken: TokenCurrency = {
     type: "TokenCurrency",
-    id: "bsc/bep20/usdc",
+    id: TokenCurrencyIdSchema.parse("bsc/bep20/usdc"),
     contractAddress: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
-    parentCurrencyId: "bsc",
+    parentCurrencyId: CryptoCurrencyIdSchema.parse("bsc"),
     tokenType: "bep20",
     name: "USD Coin (BSC)",
     ticker: "USDC",

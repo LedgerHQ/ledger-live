@@ -3,8 +3,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughGas,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -17,8 +16,10 @@ import {
   triggerConstantContract,
 } from "../network";
 import { STANDARD_FEES_TRC_20 } from "../logic/constants";
+import { getEnergyRentQuote } from "../logic/energyRent";
 import type { NetworkInfo, Transaction, TronAccount } from "../types";
 import {
+  NotEnoughGas,
   TronInvalidFreezeAmount,
   TronInvalidUnDelegateResourceAmount,
   TronNoFrozenForBandwidth,
@@ -33,6 +34,7 @@ import {
 import getTransactionStatus from "./getTransactionStatus";
 
 jest.mock("../network");
+jest.mock("../logic/energyRent");
 
 const mockFetchTronAccount = jest.mocked(fetchTronAccount);
 const mockFetchTronContract = jest.mocked(fetchTronContract);
@@ -41,6 +43,7 @@ const mockGetTronSuperRepresentatives = jest.mocked(getTronSuperRepresentatives)
 const mockTriggerConstantContract = jest.mocked(triggerConstantContract);
 const mockGetChainParameters = jest.mocked(getChainParameters);
 const mockGetTronAccountNetwork = jest.mocked(getTronAccountNetwork);
+const mockGetEnergyRentQuote = jest.mocked(getEnergyRentQuote);
 
 const SENDER_ADDRESS = "TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3";
 const RECIPIENT_ADDRESS = "TJRabPrwbZy45sbavfcjinPJC18kjpRTv8";
@@ -76,6 +79,8 @@ const createTrc20TokenAccount = (overrides: Partial<TokenAccount> = {}): TokenAc
       id: "tron/trc20/mock",
       contractAddress: TRC20_CONTRACT,
       tokenType: "trc20",
+      ticker: "USDT",
+      units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
     },
     ...overrides,
   }) as TokenAccount;
@@ -137,6 +142,8 @@ describe("getTransactionStatus", () => {
     mockGetChainParameters.mockResolvedValue(chainParams);
     mockTriggerConstantContract.mockResolvedValue({ energy_used: 0 });
     mockGetTronAccountNetwork.mockResolvedValue(buildNetworkInfo());
+    // Default: no sponsored fee reserved unless a test opts in (mirrors "provider not configured").
+    mockGetEnergyRentQuote.mockRejectedValue(new Error("no energy-rent provider configured"));
   });
 
   it("sufficient TRC20 fixture: no TronNotEnoughEnergy, fee 0, no fee warning (State A)", async () => {
@@ -290,6 +297,99 @@ describe("getTransactionStatus", () => {
     expect(mockTriggerConstantContract).not.toHaveBeenCalled();
   });
 
+  // LIVE-32776: the sponsoring context now exposes an informational savings estimate on the status,
+  // but must still NOT re-price the send — that is LIVE-32892. So fees/energy/warnings/errors stay
+  // identical to a standard send, and only the additive `sponsoredEnergy` field appears.
+  describe("energyProviderInfo sponsoring context (LIVE-32776)", () => {
+    const energyProviderInfo = { providerId: "tronify", orderId: "order-123" };
+    const TRONIFY = { id: "tronify", name: "Tronify" };
+
+    it("adds the savings estimate without changing fee or status for a covered TRC20 send", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const baseline = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id }),
+      );
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id, energyProviderInfo }),
+      );
+
+      // Re-pricing is out of scope (LIVE-32892): fees/energy/warnings/errors unchanged.
+      expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
+      expect(sponsored.energyRequired).toEqual(baseline.energyRequired);
+      expect(sponsored.energyAvailable).toEqual(baseline.energyAvailable);
+      expect(sponsored.warnings).toEqual(baseline.warnings);
+      expect(sponsored.errors).toEqual(baseline.errors);
+
+      // A standard send exposes no estimate; the sponsored one exposes provider + full energy cost
+      // (energyRequired × energyFee = 1000 × 210).
+      expect(baseline.sponsoredEnergy).toBeNull();
+      expect(sponsored.sponsoredEnergy?.provider).toEqual(TRONIFY);
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(210_000));
+    });
+
+    it("exposes the full-energy-cost saving even when the account has staked energy to cover it", async () => {
+      // Covered send (energyAvailable 100_000 >= energy_used 1000): a non-sponsored send would burn
+      // 0 TRX, yet the estimate reports the FULL energy cost, not the account-specific shortfall.
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id, energyProviderInfo }),
+      );
+
+      expect(sponsored.estimatedFees.isZero()).toBe(true);
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(210_000));
+    });
+
+    it("adds the savings estimate without changing fee or status for an energy-short TRC20 send", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      const overrides = {
+        subAccountId: tokenAccount.id,
+        networkInfo: buildNetworkInfo({ energyLimit: new BigNumber(500) }),
+      };
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+      const baseline = await getTransactionStatus(account, createTransaction(overrides));
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({ ...overrides, energyProviderInfo }),
+      );
+
+      expect(sponsored.estimatedFees).toEqual(baseline.estimatedFees);
+      expect(sponsored.warnings).toEqual(baseline.warnings);
+      expect(sponsored.errors).toEqual(baseline.errors);
+
+      expect(baseline.sponsoredEnergy).toBeNull();
+      expect(sponsored.sponsoredEnergy?.provider).toEqual(TRONIFY);
+      // Full energy cost = 31_895 × 210.
+      expect(sponsored.sponsoredEnergy?.avoidedEnergyFees).toEqual(new BigNumber(6_697_950));
+    });
+
+    it("exposes no estimate for an unknown provider id", async () => {
+      const tokenAccount = createTrc20TokenAccount();
+      const account = createAccount({ subAccounts: [tokenAccount] });
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 1000 });
+
+      const sponsored = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          energyProviderInfo: { providerId: "unknown", orderId: "order-123" },
+        }),
+      );
+
+      expect(sponsored.sponsoredEnergy).toBeNull();
+    });
+  });
+
   describe("transaction-mode validations", () => {
     it("send with zero amount → AmountRequired", async () => {
       const status = await getTransactionStatus(
@@ -407,6 +507,129 @@ describe("getTransactionStatus", () => {
         createTransaction({ mode: "withdrawExpireUnfreeze" }),
       );
       expect(status.errors.resource).toBeInstanceOf(TronNoUnfrozenResource);
+    });
+  });
+
+  // LIVE-32777: on a sponsored USDT send the rental fee is paid in USDT, so getTransactionStatus
+  // must reserve it out of the token balance — blocking the send when USDT can't cover fee + amount
+  // (the Trust Wallet "Case 2" loss), and leaving the fee behind on a max send.
+  describe("sponsored USDT fee guard (LIVE-32777)", () => {
+    const energyProviderInfo = { providerId: "tronify", orderId: "order-123" };
+
+    // A rent quote paying `payCoinAmt` in `payCoinCode`; the token here has magnitude 6.
+    const quote = (payCoinCode: string, payCoinAmt: string) => ({
+      energy: 65_000n,
+      durationSeconds: 600,
+      payCoinCode,
+      payCoinAmt,
+      fees: { energy: "0", trx: "0", bandwidth: "0", activateAccount: "0" },
+    });
+
+    const sponsoredAccount = () => {
+      const tokenAccount = createTrc20TokenAccount({
+        balance: new BigNumber(1_000_000), // 1 USDT
+        spendableBalance: new BigNumber(1_000_000),
+      });
+      return { tokenAccount, account: createAccount({ subAccounts: [tokenAccount] }) };
+    };
+
+    beforeEach(() => {
+      // A real energy figure so the fee helper reaches the quote (0 energy → no reservation).
+      mockTriggerConstantContract.mockResolvedValue({ energy_used: 65_000 });
+    });
+
+    it("blocks with NotEnoughBalance when USDT can't cover fee + amount", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+      mockGetEnergyRentQuote.mockResolvedValue(quote("USDT", "0.5")); // fee = 500_000
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          amount: new BigNumber(600_000), // 600_000 + 500_000 > 1_000_000
+          energyProviderInfo,
+        }),
+      );
+
+      expect(status.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("allows the send when USDT covers fee + amount", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+      mockGetEnergyRentQuote.mockResolvedValue(quote("USDT", "0.5")); // fee = 500_000
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          amount: new BigNumber(400_000), // 400_000 + 500_000 <= 1_000_000
+          energyProviderInfo,
+        }),
+      );
+
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("reserves the fee on a max send: amount = balance − fee, totalSpent = balance", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+      mockGetEnergyRentQuote.mockResolvedValue(quote("USDT", "0.5")); // fee = 500_000
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          useAllAmount: true,
+          energyProviderInfo,
+        }),
+      );
+
+      expect(status.amount).toEqual(new BigNumber(500_000));
+      expect(status.totalSpent).toEqual(new BigNumber(1_000_000));
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("does not reserve a fee for a non-sponsored send", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({ subAccountId: tokenAccount.id, amount: new BigNumber(600_000) }),
+      );
+
+      expect(status.errors.amount).toBeUndefined();
+      expect(mockGetEnergyRentQuote).not.toHaveBeenCalled();
+    });
+
+    it("degrades to no reservation when the quote is unavailable", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+      mockGetEnergyRentQuote.mockRejectedValue(new Error("tronify unreachable"));
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          amount: new BigNumber(600_000),
+          energyProviderInfo,
+        }),
+      );
+
+      expect(status.errors.amount).toBeUndefined();
+    });
+
+    it("does not reserve when the rent is priced in a different asset (TRX-paid flow)", async () => {
+      const { tokenAccount, account } = sponsoredAccount();
+      mockGetEnergyRentQuote.mockResolvedValue(quote("TRX", "3.4"));
+
+      const status = await getTransactionStatus(
+        account,
+        createTransaction({
+          subAccountId: tokenAccount.id,
+          amount: new BigNumber(600_000),
+          energyProviderInfo,
+        }),
+      );
+
+      expect(status.errors.amount).toBeUndefined();
     });
   });
 });

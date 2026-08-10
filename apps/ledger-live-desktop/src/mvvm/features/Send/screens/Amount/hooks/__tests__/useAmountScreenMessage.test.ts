@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
-import { DustLimit, FeeTooHigh } from "@ledgerhq/errors";
+import { FeeTooHigh } from "@ledgerhq/ledger-wallet-framework/errors";
+import { DustLimit } from "@ledgerhq/live-common/errors";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { useAmountScreenMessage } from "../useAmountScreenMessage";
 import { useTranslatedBridgeError } from "../../../Recipient/hooks/useTranslatedBridgeError";

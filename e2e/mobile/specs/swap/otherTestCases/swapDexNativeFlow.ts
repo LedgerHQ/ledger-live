@@ -16,7 +16,7 @@ export function runSwapDexNativeFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - DEX Native flow", () => {
+  describe("Swap - DEX native flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -38,7 +38,7 @@ export function runSwapDexNativeFlow(
     setTeamOwner(Team.SWAP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap test DEX provider native flow - (${provider.uiName})`, async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap DEX native flow with ${provider.uiName}`, async () => {
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
@@ -54,6 +54,8 @@ export function runSwapDexNativeFlow(
       );
 
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      // fromAccount is native, so approval never applies — CTA is always "Review".
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       await app.send.summaryContinue();

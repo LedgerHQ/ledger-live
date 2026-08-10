@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
-import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
-import type { BitcoinAccountBridge } from "@ledgerhq/coin-bitcoin/bridge/js";
+import type { ZcashAccountBridge } from "@ledgerhq/coin-zcash/bridge/index";
+import type { ZcashAccount } from "@ledgerhq/coin-zcash/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
@@ -54,22 +54,29 @@ const StepExport = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account) : null;
   invariant(account && mainAccount, "No account given");
 
-  const bridge = useAccountBridge(mainAccount) as unknown as BitcoinAccountBridge;
+  const bridge = useAccountBridge(mainAccount) as unknown as ZcashAccountBridge;
   const requestUfvkFromDevice = useCallback(async () => {
     try {
       if (!device) {
         throw new DisconnectedDevice();
       }
       const { viewKey } = await bridge
-        .getFullViewingKey(mainAccount as BitcoinAccount, {
+        .getFullViewingKey(mainAccount as unknown as ZcashAccount, {
           deviceId: device.deviceId,
           path: mainAccount.freshAddressPath,
         })
         .finally(() => setUfvkRequestSent(true));
-      onUfvkChanged(viewKey);
+
+      let shieldedAddress: string | null = null;
+      try {
+        shieldedAddress = await bridge.deriveShieldedAddress(viewKey);
+      } catch (err) {
+        console.warn("Failed to derive shielded address:", err);
+      }
+      onUfvkChanged(viewKey, shieldedAddress);
       transitionTo("confirmation");
     } catch (error) {
-      onUfvkChanged("", error as Error);
+      onUfvkChanged("", null, error as Error);
     }
   }, [bridge, device, mainAccount, transitionTo, onUfvkChanged]);
 

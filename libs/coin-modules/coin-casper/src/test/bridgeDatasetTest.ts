@@ -1,7 +1,11 @@
-import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  InvalidAddress,
+  NotEnoughBalance,
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "../bridge/bridgeHelpers/fee";
+import { getEstimatedFees } from "../logic/estimateFees";
 import { fromTransactionRaw } from "../bridge/transaction";
 import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "../errors";
 import type { Transaction } from "../types";

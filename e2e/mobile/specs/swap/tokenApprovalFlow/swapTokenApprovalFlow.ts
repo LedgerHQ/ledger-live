@@ -18,14 +18,14 @@ export function runSwapTokenApprovalFlow(
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.APPROVAL);
   if (!runHere) {
     const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
-    const bothPlatforms = process.env.E2E_BOTH_PLATFORMS === "true";
+    const bothPlatformsBroadcast = process.env.E2E_BROADCAST_BOTH_MOBILE_PLATFORMS === "true";
     console.warn(
-      broadcastEnabled && bothPlatforms
+      broadcastEnabled && bothPlatformsBroadcast
         ? "[approval.swap.spec] Skipping — rotated to the other platform for this run (avoids shared-account broadcast race)"
         : "[approval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0",
     );
   }
-  (runHere ? describe : describe.skip)("Token approval - flow", () => {
+  (runHere ? describe : describe.skip)("Swap - token approval", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -48,7 +48,7 @@ export function runSwapTokenApprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it("Swap - token approval flow", async () => {
+    it(`[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap token approval flow`, async () => {
       const provider = await pickRotatingProvider(swapProviders, fromAccount, toAccount);
       await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
@@ -64,6 +64,8 @@ export function runSwapTokenApprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
+      // Allowance was revoked above, so the CTA reads "Continue".
+      await app.swapLiveApp.checkQuoteCardCta(provider.uiName, true);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();

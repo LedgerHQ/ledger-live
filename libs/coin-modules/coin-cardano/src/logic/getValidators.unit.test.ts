@@ -89,6 +89,7 @@ describe("getValidators", () => {
     const { items } = await getValidators(currency);
 
     expect(items[0]).toEqual({
+      id: "pool1abc",
       address: "pool1abc",
       name: "Stake Pool",
       url: "https://pool.example",

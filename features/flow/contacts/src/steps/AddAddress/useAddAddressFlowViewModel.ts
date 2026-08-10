@@ -1,11 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ContactAddress, ContactId } from "@domain/entity-contact";
+import {
+  CONTACT_ADDRESS_LABEL_MAX_LENGTH,
+  getContactAddressLabelValidationError,
+  parseContactAddressLabel,
+  type ContactAddress,
+  type ContactAddressLabel,
+  type ContactId,
+} from "@domain/entity-contact";
 import type { ContactsAddressValidationPort, ContactsAddressValidationResult } from "./model/ports";
 import type {
+  AddAddressContact,
+  AddAddressCurrencySelection,
   AddAddressEntryState,
   AddAddressFlowState,
   AddAddressFlowViewModel,
   AddAddressInputSource,
+  AddAddressLabelState,
 } from "./types";
 
 const CLOSED_ADD_ADDRESS_FLOW_STATE = {
@@ -25,7 +35,48 @@ const UNAVAILABLE_ADDRESS_VALIDATION: ContactsAddressValidationPort = {
 
 export type UseAddAddressFlowViewModelOptions = Readonly<{
   addressValidation?: ContactsAddressValidationPort;
+  manualValidationDebounceMs?: number;
 }>;
+
+function wait(delayMs: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, delayMs));
+}
+
+function createAddressLabelState(
+  value: string,
+  existingAddressLabels: readonly ContactAddressLabel[],
+): AddAddressLabelState {
+  const validationError = getContactAddressLabelValidationError(value, existingAddressLabels);
+
+  if (value.trim().length === 0) {
+    return {
+      status: "empty",
+      value,
+      label: null,
+      validationError: null,
+    };
+  }
+
+  if (validationError) {
+    return {
+      status: "invalid",
+      value,
+      label: null,
+      validationError,
+    };
+  }
+
+  return {
+    status: "valid",
+    value,
+    label: parseContactAddressLabel(value, existingAddressLabels),
+    validationError: null,
+  };
+}
+
+function limitAddressLabelLength(value: string): string {
+  return value.slice(0, CONTACT_ADDRESS_LABEL_MAX_LENGTH);
+}
 
 function resolveAddressEntryState(
   value: string,
@@ -42,13 +93,15 @@ function resolveAddressEntryState(
       };
     case "invalid_format":
     case "domain_not_found":
+    case "sanctioned":
       return {
         status: "invalid",
         value,
         resolvedAddress: null,
         inputMethod:
           result.status === "domain_not_found" ||
-          (result.status === "invalid_format" && result.isDomain)
+          ((result.status === "invalid_format" || result.status === "sanctioned") &&
+            result.isDomain)
             ? "ens"
             : inputMethod,
         error: result.status,
@@ -106,6 +159,7 @@ function applyAddressEntryState(
 
 export function useAddAddressFlowViewModel({
   addressValidation = UNAVAILABLE_ADDRESS_VALIDATION,
+  manualValidationDebounceMs = 0,
 }: UseAddAddressFlowViewModelOptions = {}): AddAddressFlowViewModel {
   const [state, setState] = useState<AddAddressFlowState>(CLOSED_ADD_ADDRESS_FLOW_STATE);
   const validationRequestId = useRef(0);
@@ -113,17 +167,18 @@ export function useAddAddressFlowViewModel({
     validationRequestId.current += 1;
   }, []);
   const start = useCallback(
-    (selectedContactId: ContactId) => {
+    (contact: AddAddressContact) => {
       cancelAddressValidation();
       setState({
         status: "selectingCurrency",
-        selectedContactId,
+        selectedContactId: contact.id,
+        existingAddressLabels: contact.addresses.map(address => address.label),
       });
     },
     [cancelAddressValidation],
   );
   const completeCurrencySelection = useCallback(
-    (selectedContactId: ContactId, selectedCurrencyId: ContactAddress["currencyId"]) => {
+    (selectedContactId: ContactId, selection: AddAddressCurrencySelection) => {
       setState(currentState => {
         if (
           currentState.status !== "selectingCurrency" ||
@@ -135,8 +190,13 @@ export function useAddAddressFlowViewModel({
         return {
           status: "enteringAddress",
           selectedContactId,
-          selectedCurrencyId,
+          existingAddressLabels: currentState.existingAddressLabels,
+          selectedCurrencyId: selection.currencyId,
           addressEntry: EMPTY_ADD_ADDRESS_ENTRY_STATE,
+          addressLabel: createAddressLabelState(
+            limitAddressLabelLength(selection.assetDisplayName),
+            currentState.existingAddressLabels,
+          ),
         };
       });
     },
@@ -168,6 +228,13 @@ export function useAddAddressFlowViewModel({
         ),
       );
 
+      if (inputMethod === "manual" && manualValidationDebounceMs > 0) {
+        await wait(manualValidationDebounceMs);
+        if (validationRequestId.current !== requestId) {
+          return;
+        }
+      }
+
       const validationResult = await requestAddressValidation(
         addressValidation,
         selectedCurrencyId,
@@ -187,13 +254,138 @@ export function useAddAddressFlowViewModel({
         ),
       );
     },
-    [addressValidation, state],
+    [addressValidation, manualValidationDebounceMs, state],
   );
+  const updateAddressLabel = useCallback((value: string) => {
+    setState(currentState => {
+      if (currentState.status !== "enteringAddress" && currentState.status !== "namingAddress") {
+        return currentState;
+      }
+
+      return {
+        ...currentState,
+        addressLabel: createAddressLabelState(
+          limitAddressLabelLength(value),
+          currentState.existingAddressLabels,
+        ),
+      };
+    });
+  }, []);
+  const confirmAddress = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      if (
+        currentState.status !== "enteringAddress" ||
+        currentState.addressEntry.status !== "valid"
+      ) {
+        return currentState;
+      }
+
+      return {
+        status: "namingAddress",
+        selectedContactId: currentState.selectedContactId,
+        existingAddressLabels: currentState.existingAddressLabels,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+        addressLabel: currentState.addressLabel,
+      };
+    });
+  }, [cancelAddressValidation]);
+  const continueFromName = useCallback(() => {
+    setState(currentState => {
+      if (currentState.status !== "namingAddress" || currentState.addressLabel.status !== "valid") {
+        return currentState;
+      }
+
+      return {
+        status: "confirmationRequired",
+        selectedContactId: currentState.selectedContactId,
+        existingAddressLabels: currentState.existingAddressLabels,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+        addressLabel: currentState.addressLabel,
+      };
+    });
+  }, []);
+  const continueFromAddressDetails = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      if (
+        currentState.status !== "enteringAddress" ||
+        currentState.addressEntry.status !== "valid" ||
+        currentState.addressLabel.status !== "valid"
+      ) {
+        return currentState;
+      }
+
+      return {
+        status: "reviewingAddress",
+        selectedContactId: currentState.selectedContactId,
+        existingAddressLabels: currentState.existingAddressLabels,
+        selectedCurrencyId: currentState.selectedCurrencyId,
+        addressEntry: currentState.addressEntry,
+        addressLabel: currentState.addressLabel,
+        origin: "addressDetails",
+      };
+    });
+  }, [cancelAddressValidation]);
+  const continueFromReview = useCallback(() => {
+    setState(currentState => {
+      if (currentState.status !== "reviewingAddress") {
+        return currentState;
+      }
+
+      const { origin, ...session } = currentState;
+      return { ...session, status: "success" };
+    });
+  }, []);
+  const completeMockConfirmation = useCallback(() => {
+    setState(currentState =>
+      currentState.status === "confirmationRequired"
+        ? {
+            ...currentState,
+            status: "success",
+            target: {
+              type: "contactDetail",
+              contactId: currentState.selectedContactId,
+            },
+          }
+        : currentState,
+    );
+  }, []);
+  const goBack = useCallback(() => {
+    cancelAddressValidation();
+    setState(currentState => {
+      switch (currentState.status) {
+        case "closed":
+          return currentState;
+        case "selectingCurrency":
+          return CLOSED_ADD_ADDRESS_FLOW_STATE;
+        case "enteringAddress":
+          return {
+            status: "selectingCurrency",
+            selectedContactId: currentState.selectedContactId,
+            existingAddressLabels: currentState.existingAddressLabels,
+          };
+        case "namingAddress":
+          return { ...currentState, status: "enteringAddress" };
+        case "reviewingAddress": {
+          const { origin, ...session } = currentState;
+          return origin === "addressDetails"
+            ? { ...session, status: "enteringAddress" }
+            : { ...session, status: "namingAddress" };
+        }
+        case "confirmationRequired":
+          return { ...currentState, status: "namingAddress" };
+        case "success":
+          return currentState;
+      }
+    });
+  }, [cancelAddressValidation]);
   const close = useCallback(() => {
     cancelAddressValidation();
     setState(CLOSED_ADD_ADDRESS_FLOW_STATE);
   }, [cancelAddressValidation]);
-
   useEffect(() => () => cancelAddressValidation(), [cancelAddressValidation]);
 
   return {
@@ -201,6 +393,13 @@ export function useAddAddressFlowViewModel({
     start,
     completeCurrencySelection,
     updateAddress,
+    updateAddressLabel,
+    confirmAddress,
+    continueFromAddressDetails,
+    continueFromName,
+    continueFromReview,
+    completeMockConfirmation,
+    goBack,
     close,
   };
 }

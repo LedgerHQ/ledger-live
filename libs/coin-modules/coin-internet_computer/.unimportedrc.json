@@ -51,5 +51,6 @@
   ],
   "ignoreUnimported": [
     "src/supportedFeatures.ts"
-  ]
+  ],
+  "ignoreUnused": []
 }

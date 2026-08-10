@@ -5,7 +5,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "~/context/IsInDrawerContext";
+import { IsInBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 
 type Props = {
   onRetry?: (() => void) | null;
@@ -25,7 +25,7 @@ type Props = {
  */
 const LocationDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false }) => {
   const { t } = useTranslation();
-  const { isInDrawer } = useContext(IsInDrawerContext);
+  const { isInBottomSheet } = useContext(IsInBottomSheetContext);
 
   // Only handles android
   const openNativeLocationServicesSetting = () => {
@@ -54,7 +54,7 @@ const LocationDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false 
     buttonEvent = "LocationServicesDisabledRetryAuthorize";
   }
 
-  if (isInDrawer) {
+  if (isInBottomSheet) {
     return (
       <GenericInformationalDrawerContent
         icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}

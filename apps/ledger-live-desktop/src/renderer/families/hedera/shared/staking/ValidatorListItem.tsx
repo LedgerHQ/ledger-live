@@ -43,7 +43,7 @@ function ValidatorListItem({ validator, active, unit, currency, onClick }: Reado
       icon={<ValidatorIcon validator={validator} />}
       title={t("hedera.delegation.flow.steps.validator.rowTitle", {
         name: validator.name,
-        index: validator.nodeId,
+        index: validator.id,
       })}
       onExternalLink={onExternalLink}
       unit={unit}

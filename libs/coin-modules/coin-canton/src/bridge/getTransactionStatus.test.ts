@@ -6,7 +6,7 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import * as gateway from "../network/gateway";

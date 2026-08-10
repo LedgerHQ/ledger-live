@@ -37,6 +37,8 @@ const testPathIgnorePatterns = [
 
 const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
+  "^@ledgerhq/ledger-key-ring-protocol/__mocks__/(.*)$":
+    "<rootDir>/../../libs/ledger-key-ring-protocol/src/__mocks__/$1",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
   "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
@@ -67,6 +69,12 @@ const commonConfig = {
   testEnvironment: "jsdom",
   clearMocks: true,
   restoreMocks: true,
+  /**
+   * jest's 5s default is not enough for the suites that mount a whole screen: on CI (one worker per
+   * core) `Default.test.tsx` has been measured at 9.9s and 11.0s and failed the run. This bounds how
+   * long a hung test can stall the job, so keep it well under the job's `timeout-minutes`.
+   */
+  testTimeout: 30_000,
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",

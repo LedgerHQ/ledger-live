@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { Currency } from "@domain/entity-currency";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account";

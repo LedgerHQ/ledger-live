@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useDispatch, useStore } from "LLD/hooks/redux";
-import { closeDialog, openDialog } from "~/renderer/reducers/modularDialog";
+import {
+  closeDialog,
+  openDialog,
+  type ModularDialogPresentation,
+} from "~/renderer/reducers/modularDialog";
 
 type SettleCurrencySelection = (currency: CryptoOrTokenCurrency | null) => boolean;
 
@@ -14,16 +18,28 @@ type PendingCurrencySelection = Readonly<{
 
 export type OpenCurrencyFlow = (
   networkIds: readonly CryptoCurrency["id"][],
+  options?: Readonly<{
+    presentation?: ModularDialogPresentation;
+  }>,
 ) => Promise<CryptoOrTokenCurrency | null>;
 
-export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrencyFlow }> {
+export function useOpenCurrencyFlow(): Readonly<{
+  openCurrencyFlow: OpenCurrencyFlow;
+  cancelCurrencyFlow: () => void;
+}> {
   const dispatch = useDispatch();
   const store = useStore();
   const pendingSelectionRef = useRef<PendingCurrencySelection | undefined>(undefined);
 
+  const cancelCurrencyFlow = useCallback(() => {
+    if (pendingSelectionRef.current?.settle(null)) {
+      dispatch(closeDialog());
+    }
+  }, [dispatch]);
+
   const openCurrencyFlow = useCallback<OpenCurrencyFlow>(
-    networkIds => {
-      pendingSelectionRef.current?.settle(null);
+    (networkIds, options) => {
+      cancelCurrencyFlow();
 
       return new Promise(resolve => {
         let isSettled = false;
@@ -50,6 +66,7 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
         dispatch(
           openDialog({
             networkIds: [...networkIds],
+            presentation: options?.presentation,
             onAssetSelected,
             onClose: () => {
               if (settle(null)) {
@@ -60,7 +77,7 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
         );
       });
     },
-    [dispatch],
+    [cancelCurrencyFlow, dispatch],
   );
 
   useEffect(
@@ -79,5 +96,5 @@ export function useOpenCurrencyFlow(): Readonly<{ openCurrencyFlow: OpenCurrency
     [dispatch, store],
   );
 
-  return { openCurrencyFlow };
+  return { openCurrencyFlow, cancelCurrencyFlow };
 }

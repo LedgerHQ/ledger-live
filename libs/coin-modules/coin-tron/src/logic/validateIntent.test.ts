@@ -6,7 +6,7 @@ import {
   NotEnoughBalance,
   NotEnoughGas,
   RecipientRequired,
-} from "@ledgerhq/errors";
+} from "@ledgerhq/ledger-wallet-framework/errors";
 import { TronMemo } from "../types";
 import { validateIntent } from "./validateIntent";
 

@@ -16,6 +16,10 @@ import {
 } from "./useAddAddressCurrencySelectionViewModel";
 
 const ETHEREUM_CURRENCY_ID = getCryptoCurrencyById("ethereum").id;
+const ETHEREUM_SELECTION = {
+  currencyId: ETHEREUM_CURRENCY_ID,
+  assetDisplayName: "Ethereum",
+} as const;
 
 function makeWrapper(contactsFeature?: Features["lwdContacts"]) {
   const resolved: Features = {
@@ -69,8 +73,12 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     expect(selectionResult).toEqual({ status: "cancelled" });
   });
 
-  it("stores the final eligible crypto-or-token currency id selected by MAD", async () => {
-    const selectCurrency = jest.fn().mockResolvedValue("ethereum/erc20/usd-tether");
+  it("stores the final eligible crypto-or-token currency selected by MAD", async () => {
+    const selection = {
+      currencyId: "ethereum/erc20/usd-tether",
+      assetDisplayName: "Tether USD",
+    } as const;
+    const selectCurrency = jest.fn().mockResolvedValue(selection);
     const { result } = renderViewModel(
       { selectCurrency },
       {
@@ -91,15 +99,18 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     });
 
     expect(selectCurrency).toHaveBeenCalledWith(expectedNetworkIds);
-    expect(result.current.selectedCurrencyId).toBe("ethereum/erc20/usd-tether");
+    expect(result.current.selectedCurrency).toEqual(selection);
     expect(selectionResult).toEqual({
       status: "selected",
-      currencyId: "ethereum/erc20/usd-tether",
+      selection,
     });
   });
 
-  it("preserves the selected currency id when MAD is cancelled", async () => {
-    const selectCurrency = jest.fn().mockResolvedValueOnce("ethereum").mockResolvedValueOnce(null);
+  it("preserves the selected currency when MAD is cancelled", async () => {
+    const selectCurrency = jest
+      .fn()
+      .mockResolvedValueOnce(ETHEREUM_SELECTION)
+      .mockResolvedValueOnce(null);
     const { result } = renderViewModel({ selectCurrency });
 
     await act(async () => {
@@ -107,7 +118,7 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
       expect(await result.current.selectCurrency()).toEqual({ status: "cancelled" });
     });
 
-    expect(result.current.selectedCurrencyId).toBe("ethereum");
+    expect(result.current.selectedCurrency).toEqual(ETHEREUM_SELECTION);
   });
 
   it("does not open MAD when no production network matches the eligible families", async () => {
@@ -133,10 +144,10 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
   });
 
   it("ignores concurrent selection requests while MAD is open", async () => {
-    let resolveSelection: (currencyId: typeof ETHEREUM_CURRENCY_ID) => void = () => undefined;
+    let resolveSelection: (selection: typeof ETHEREUM_SELECTION) => void = () => undefined;
     const selectCurrency = jest.fn(
       () =>
-        new Promise<typeof ETHEREUM_CURRENCY_ID>(resolve => {
+        new Promise<typeof ETHEREUM_SELECTION>(resolve => {
           resolveSelection = resolve;
         }),
     );
@@ -147,31 +158,31 @@ describe("useAddAddressCurrencySelectionViewModel", () => {
     await act(async () => {
       firstSelection = result.current.selectCurrency();
       concurrentSelectionResult = await result.current.selectCurrency();
-      resolveSelection(ETHEREUM_CURRENCY_ID);
+      resolveSelection(ETHEREUM_SELECTION);
       await firstSelection;
     });
 
     expect(selectCurrency).toHaveBeenCalledTimes(1);
     expect(concurrentSelectionResult).toEqual({ status: "busy" });
-    expect(result.current.selectedCurrencyId).toBe("ethereum");
+    expect(result.current.selectedCurrency).toEqual(ETHEREUM_SELECTION);
   });
 
   it("returns a cancelled result and allows retrying when the selection port rejects", async () => {
     const selectCurrency = jest
       .fn()
       .mockRejectedValueOnce(new Error("MAD unavailable"))
-      .mockResolvedValueOnce(ETHEREUM_CURRENCY_ID);
+      .mockResolvedValueOnce(ETHEREUM_SELECTION);
     const { result } = renderViewModel({ selectCurrency });
 
     await act(async () => {
       expect(await result.current.selectCurrency()).toEqual({ status: "cancelled" });
       expect(await result.current.selectCurrency()).toEqual({
         status: "selected",
-        currencyId: ETHEREUM_CURRENCY_ID,
+        selection: ETHEREUM_SELECTION,
       });
     });
 
     expect(selectCurrency).toHaveBeenCalledTimes(2);
-    expect(result.current.selectedCurrencyId).toBe(ETHEREUM_CURRENCY_ID);
+    expect(result.current.selectedCurrency).toEqual(ETHEREUM_SELECTION);
   });
 });

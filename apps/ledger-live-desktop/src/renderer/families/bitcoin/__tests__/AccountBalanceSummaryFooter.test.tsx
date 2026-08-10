@@ -1,6 +1,7 @@
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Observable, Subscriber } from "rxjs";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-zcash/constants";
 import { act, render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
@@ -22,6 +23,16 @@ const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 const origToLocaleString = global.Date.prototype.toLocaleString;
+
+const makeUtxo = (value: number) => ({
+  hash: "",
+  outputIndex: 0,
+  blockHeight: 1,
+  address: "",
+  value: new BigNumber(value),
+  rbf: false,
+  isChange: false,
+});
 
 describe("Bitcoin Account Balance Summary Footer", () => {
   const account = createFixtureAccount();
@@ -296,5 +307,81 @@ describe("Bitcoin Account Balance Summary Footer", () => {
 
     expect(unsubscribe).toHaveBeenCalledTimes(1);
     expect(store.getState().shieldedSyncSubscriptions).toEqual([]);
+  });
+
+  it("shows only the ironwoodBalance as the private balance, excluding the deprecated Orchard/Sapling pools", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          // transparent = own UTXOs (0.1 ZEC); balance = transparent + ironwood
+          // total (0.1 + 0.5 ZEC).
+          balance: new BigNumber(60_000_000),
+          bitcoinResources: { utxos: [makeUtxo(10_000_000)] },
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            orchardBalance: new BigNumber(30_000_000),
+            saplingBalance: new BigNumber(20_000_000),
+            ironwoodBalance: new BigNumber(50_000_000),
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      // Private = ironwood (0.5 ZEC); transparent = own UTXOs (0.1 ZEC);
+      // available = balance (0.6 ZEC). The residual Orchard/Sapling notes are
+      // deliberately not reflected anywhere.
+      expect(screen.getByText("0.5 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.1 ZEC")).toBeInTheDocument();
+      expect(screen.getByText("0.6 ZEC")).toBeInTheDocument();
+    });
+  });
+
+  it("sources the transparent balance from its own UTXOs, not by subtracting the private balance from account.balance", async () => {
+    mockedUseAccountUnit.mockReturnValue({
+      code: "ZEC",
+      name: "Zcash",
+      magnitude: 8,
+    });
+
+    render(
+      <AccountBalanceSummaryFooter
+        account={{
+          ...account,
+          currency: { id: "zcash" } as CryptoCurrency,
+          // Stale provenance: `account.balance` (0.9 ZEC) was last written by a
+          // different flag state than the current privateInfo. Deriving
+          // transparent as balance − ironwood would yield a wrong 0.4 ZEC;
+          // sourcing it from the UTXOs keeps it correct at 0.1 ZEC.
+          balance: new BigNumber(90_000_000),
+          bitcoinResources: { utxos: [makeUtxo(10_000_000)] },
+          privateInfo: {
+            ...DEFAULT_ZCASH_PRIVATE_INFO,
+            ironwoodBalance: new BigNumber(50_000_000),
+          },
+        }}
+      />,
+      {
+        initialState: withFlagOverrides({ zcashShielded: { enabled: true } }),
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("0.1 ZEC")).toBeInTheDocument(); // transparent, from UTXOs
+      expect(screen.getByText("0.5 ZEC")).toBeInTheDocument(); // private, ironwood
+      expect(screen.getByText("0.9 ZEC")).toBeInTheDocument(); // available, balance as-is
+      expect(screen.queryByText("0.4 ZEC")).not.toBeInTheDocument(); // never the subtraction result
+    });
   });
 });
