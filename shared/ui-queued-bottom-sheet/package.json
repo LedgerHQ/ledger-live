@@ -15,9 +15,9 @@
   },
   "sideEffects": false,
   "scripts": {
-    "format": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src",
-    "format:check": "pnpm exec oxfmt -c ../../libs/oxc-live-libs/.oxfmtrc.json ./src --check",
-    "typecheck": "tsc --noEmit",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "typecheck": "tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
@@ -26,10 +26,10 @@
     "uuid": "8.3.2"
   },
   "peerDependencies": {
-    "react": ">=19.0.0",
-    "react-native": ">=0.70.0",
+    "react": "catalog:",
+    "react-native": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "react-native-safe-area-context": ">=4.0.0"
+    "react-native-safe-area-context": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {

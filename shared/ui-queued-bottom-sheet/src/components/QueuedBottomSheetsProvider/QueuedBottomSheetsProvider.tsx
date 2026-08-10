@@ -56,19 +56,15 @@ export function QueuedBottomSheetsProvider({
           "addBottomSheetToQueue -> force close opened & queued drawers, and clear queue",
           id,
         );
-        // 1. Store current queue before modifying
         const previousQueue = queueRef.current;
-        // 2. Close the currently opened drawer (first in queue)
         if (previousQueue.length > 0) {
           previousQueue[0].stateHandlers.close();
         }
-        // 3. Clear the queue except for the first item (which is closing)
         queueRef.current =
           previousQueue.length > 0
             ? [{ ...previousQueue[0], markedForClose: true }, newQueueItem]
             : [newQueueItem];
-        // 4. Close all other queued drawers (which removes them from queue and resets their state)
-        //    The forced drawer will open when the first (marked-for-close) item is removed from queue
+        // The forced drawer opens once the first (marked-for-close) item is removed from the queue.
         for (const queueItem of previousQueue.slice(1)) {
           queueItem.stateHandlers.close();
         }
@@ -83,11 +79,8 @@ export function QueuedBottomSheetsProvider({
           id,
           previousQueueLength: queueRef.current.length,
         });
-        // 1. Remove from queue
         queueRef.current = queueRef.current.filter(queueItem => queueItem.id !== id);
-        // 2. Clean up any remaining marked-for-close items first
         queueRef.current = queueRef.current.filter(queueItem => !queueItem.markedForClose);
-        // 3. Find next drawer to open
         const nextInQueue = queueRef.current[0];
 
         if (nextInQueue) {

@@ -1,4 +1,4 @@
-import * as nativeApi from "./index.native";
+import * as nativeApi from ".";
 
 describe("public API barrels", () => {
   it("native barrel exposes the queue API and the native bottom sheet", () => {
