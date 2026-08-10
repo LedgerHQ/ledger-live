@@ -1,5 +1,8 @@
 import type { ContactAddress, ContactAddressId, ContactId } from "@domain/entity-contact";
-import { CONTACT_ADDRESS_DELETE_REQUIREMENT, CONTACT_ADDRESS_EDIT_REQUIREMENT } from "./editRequirement";
+import {
+  CONTACT_ADDRESS_DELETE_REQUIREMENT,
+  CONTACT_ADDRESS_EDIT_REQUIREMENT,
+} from "./editRequirement";
 import type {
   ContactAddressDeleteLifecycle,
   ContactAddressDetailDeleteIntent,
