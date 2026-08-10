@@ -82,11 +82,16 @@ describe("useProductTourDrawerViewModel", () => {
 
   describe("openProductTour", () => {
     it("should open drawer when feature is enabled and tour is not completed", () => {
+      // First render consumes the once-per-session auto-open flag so the drawer
+      // starts closed below, without going through closeProductTour/onCloseButtonPress
+      // (which now mark the tour completed, see LIVE-35688).
+      renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      }).unmount();
+
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
-
-      act(() => result.current.closeProductTour());
       expect(result.current.isDrawerOpen).toBe(false);
 
       act(() => result.current.openProductTour());
@@ -202,6 +207,24 @@ describe("useProductTourDrawerViewModel", () => {
       expect(result.current.isDrawerOpen).toBe(true);
       expect(productTourCompletedSelector(store.getState())).toBe(true);
     });
+
+    it("should mark the tour completed on early dismiss (swipe/backdrop) so it does not auto-open again (LIVE-35688)", () => {
+      const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.openProductTour());
+      expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+      act(() => result.current.closeProductTour());
+
+      expect(productTourCompletedSelector(store.getState())).toBe(true);
+
+      // A subsequent attempt to reopen (e.g. simulating the next app launch's auto-open
+      // check) must be a no-op now that the tour is marked completed.
+      act(() => result.current.openProductTour());
+      expect(result.current.isDrawerOpen).toBe(false);
+    });
   });
 
   describe("onCloseButtonPress", () => {
@@ -220,6 +243,24 @@ describe("useProductTourDrawerViewModel", () => {
         page: PAGE_TRACKING_PRODUCT_TOUR,
         card: 3,
       });
+    });
+
+    it("should mark the tour completed on early dismiss (close button) so it does not auto-open again (LIVE-35688)", () => {
+      const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.openProductTour());
+      expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+      act(() => result.current.onCloseButtonPress());
+
+      expect(productTourCompletedSelector(store.getState())).toBe(true);
+
+      // A subsequent attempt to reopen (e.g. simulating the next app launch's auto-open
+      // check) must be a no-op now that the tour is marked completed.
+      act(() => result.current.openProductTour());
+      expect(result.current.isDrawerOpen).toBe(false);
     });
   });
 

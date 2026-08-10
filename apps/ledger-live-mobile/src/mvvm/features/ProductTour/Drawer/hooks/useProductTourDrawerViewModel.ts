@@ -67,8 +67,11 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
       page: PAGE_TRACKING_PRODUCT_TOUR,
       card: currentIndexRef.current + 1,
     });
+    // Early dismissal via the close button: mark the tour as completed so it doesn't
+    // auto-open again on the next app launch (see LIVE-35688).
+    dispatch(setProductTourCompleted(true));
     handleCloseDrawer();
-  }, [handleCloseDrawer]);
+  }, [dispatch, handleCloseDrawer]);
 
   const closeProductTour = useCallback(() => {
     if (closeSourceRef.current === "external") {
@@ -78,8 +81,11 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
       });
     }
     closeSourceRef.current = "external";
+    // Early dismissal via backdrop tap or swipe: mark the tour as completed so it doesn't
+    // auto-open again on the next app launch (see LIVE-35688).
+    dispatch(setProductTourCompleted(true));
     handleCloseDrawer();
-  }, [handleCloseDrawer]);
+  }, [dispatch, handleCloseDrawer]);
 
   const onPrimaryAction = useCallback(
     (action: ProductTourPrimaryAction) => {
