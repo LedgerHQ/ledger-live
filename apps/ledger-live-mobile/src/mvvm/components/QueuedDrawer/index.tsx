@@ -43,6 +43,11 @@ export type Props = {
 
 const ANIMATION_DURATION = 250;
 
+// LIVE-DEBUG(drawer-stuck) round 3: delay of the repair write after onShow. Long
+// enough that the 250ms open animation has finished and any surface mount has
+// settled, so the write is unambiguously "after everything".
+const REPAIR_WRITE_DELAY = 500;
+
 const QueuedDrawerNative = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
@@ -90,6 +95,18 @@ const QueuedDrawerNative = ({
   const translateY = useSharedValue(1000);
   const backdropOpacity = useSharedValue(0);
   const closeAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // LIVE-DEBUG(drawer-stuck) round 3: pending repair write. Must be cancelled by
+  // any close and on unmount — otherwise a drawer that closed inside the delay
+  // window would be yanked back to translateY 0 and reappear.
+  const repairTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearRepair = useCallback(() => {
+    if (repairTimeoutRef.current) {
+      clearTimeout(repairTimeoutRef.current);
+      repairTimeoutRef.current = null;
+    }
+  }, []);
+  useEffect(() => clearRepair, [clearRepair]);
 
   // LIVE-DEBUG(drawer-stuck): plain JS callbacks, invoked from the animation
   // worklets via scheduleOnRN — same pattern as the existing `afterOnce`, so the
@@ -158,6 +175,9 @@ const QueuedDrawerNative = ({
       // stuck off-screen — this is the second candidate root cause.
       logDrawer("closeAnim START", { instanceId, translateYBefore: translateY.value });
 
+      // LIVE-DEBUG(drawer-stuck) round 3: a close always wins over a pending repair.
+      clearRepair();
+
       // Cancel any pending callback from a previous closeAnim call
       if (closeAnimTimeoutRef.current) {
         clearTimeout(closeAnimTimeoutRef.current);
@@ -199,7 +219,7 @@ const QueuedDrawerNative = ({
       );
       backdropOpacity.value = withTiming(0, { duration: ANIMATION_DURATION });
     },
-    [translateY, backdropOpacity, instanceId, logAnimEnd],
+    [translateY, backdropOpacity, instanceId, logAnimEnd, clearRepair],
   );
 
   const containerAnimatedStyle = useAnimatedStyle(
@@ -218,10 +238,39 @@ const QueuedDrawerNative = ({
 
   // LIVE-DEBUG(drawer-stuck): round 1 established this DOES fire — kept as the
   // anchor that every later timestamp is read against.
+  //
+  // Round 3 adds the REPAIR WRITE. Round 2 proved the shared values are correct
+  // (translateY 0 across 24 heartbeats) while the rendered views keep their
+  // initial styles (transform +1000dp, backdrop alpha 0.0, ScrollView height 0).
+  // Re-assigning the target value outside any animation answers the one binary
+  // question left:
+  //   - sheet appears  -> only the write during the mount window was lost and
+  //     nothing ever rewrote it; re-asserting is a legitimate fix.
+  //   - sheet stays parked -> this Dialog's views never bind to Reanimated at
+  //     all, and the drawer has to move off useAnimatedStyle entirely.
   const onShow = useCallback(() => {
     logDrawer("Modal onShow fired", { instanceId, translateYBefore: translateY.value });
     openAnim();
-  }, [openAnim, instanceId, translateY]);
+
+    clearRepair();
+    repairTimeoutRef.current = setTimeout(() => {
+      repairTimeoutRef.current = null;
+      logDrawer("repair write BEFORE", {
+        instanceId,
+        translateY: translateY.value,
+        backdropOpacity: backdropOpacity.value,
+      });
+      // Plain assignments, no withTiming — if these do not reach the view, the
+      // views are disconnected rather than the animation being at fault.
+      translateY.value = 0;
+      backdropOpacity.value = 1;
+      logDrawer("repair write AFTER", {
+        instanceId,
+        translateY: translateY.value,
+        backdropOpacity: backdropOpacity.value,
+      });
+    }, REPAIR_WRITE_DELAY);
+  }, [openAnim, instanceId, translateY, backdropOpacity, clearRepair]);
 
   // LIVE-DEBUG(drawer-stuck): bounded heartbeat while the drawer is visible.
   // In round 1 the app's entire log stream stopped ~71s before the test timed out,

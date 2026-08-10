@@ -6,6 +6,7 @@ import { setTeamOwner } from "../../helpers/allure/allure-helper";
 const isSmokeTestRun = process.env.INPUTS_TEST_FILTER?.includes("@smoke");
 
 setTeamOwner(Team.WALLET_XP);
+
 describe("Receive", () => {
   const account = Account.ETH_1;
 
