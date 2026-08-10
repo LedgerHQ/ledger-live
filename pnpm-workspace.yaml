@@ -41,7 +41,7 @@ catalog:
   "@ledgerhq/logs": 6.17.0
   "@ledgerhq/lumen-design-core": 0.1.23
   "@ledgerhq/lumen-ui-react": 0.1.49
-  "@ledgerhq/lumen-ui-rnative": 0.1.52
+  "@ledgerhq/lumen-ui-rnative": 0.1.54
   "@ledgerhq/lumen-ui-rnative-visualization": 0.1.29
   "@ledgerhq/lumen-ui-react-visualization": 0.1.28
   "@ledgerhq/lumen-utils-shared": "0.1.7"
