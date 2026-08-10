@@ -1,27 +1,29 @@
-const DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN = 10n;
-const DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS = 1n;
+/** EIP-7623 values, the pre-fork defaults callers apply when the coin config sets nothing. */
+export const DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN = 10;
+export const DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS = 1;
+
 const NON_ZERO_BYTE_TOKENS = 4n;
 
 const INTRINSIC_ZERO_BYTE_GAS = 4n;
 const INTRINSIC_NON_ZERO_BYTE_GAS = 16n;
 
 /** Values come from remote config, where a float or a NaN would otherwise throw in `BigInt()`. */
-function toPositiveInteger(value: number | undefined, fallback: bigint): bigint {
-  if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
-    return fallback;
+function toPositiveInteger(value: number, fallback: number): bigint {
+  if (!Number.isInteger(value) || value <= 0) {
+    return BigInt(fallback);
   }
   return BigInt(value);
 }
 
 export type CalldataFloorParams = {
-  gasPerToken?: number | undefined;
-  zeroByteTokens?: number | undefined;
+  gasPerToken: number;
+  zeroByteTokens: number;
 };
 
 /**
  * Compute the calldata floor gas limit.
  *
- * Defaults to https://eips.ethereum.org/EIPS/eip-7623 (10/40 gas per zero/non-zero byte).
+ * `DEFAULT_*` give https://eips.ethereum.org/EIPS/eip-7623 (10/40 gas per zero/non-zero byte).
  * https://eips.ethereum.org/EIPS/eip-7976 raises it to 64/64 via `gasPerToken: 16` **and**
  * `zeroByteTokens: 4` — 64 is the resulting gas per byte, not a value to pass here.
  *
@@ -32,7 +34,7 @@ export type CalldataFloorParams = {
 export function computeEIP7623GasLimit(
   defaultGasLimit: bigint,
   callData: Buffer,
-  params: CalldataFloorParams = {},
+  params: CalldataFloorParams,
 ): bigint {
   const gasPerToken = toPositiveInteger(params.gasPerToken, DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN);
   const zeroByteTokens = toPositiveInteger(

@@ -1050,7 +1050,7 @@ describe("validateIntent", () => {
             );
           });
 
-          it("forwards undefined parameters when the coin config sets none", async () => {
+          it("forwards the EIP-7623 defaults when the coin config sets none", async () => {
             await validateIntent(
               {} as CryptoCurrency,
               createIntent({}),
@@ -1061,7 +1061,7 @@ describe("validateIntent", () => {
             expect(computeGasLimitModule.computeEIP7623GasLimit).toHaveBeenCalledWith(
               expect.any(BigInt),
               expect.any(Buffer),
-              { gasPerToken: undefined, zeroByteTokens: undefined },
+              { gasPerToken: 10, zeroByteTokens: 1 },
             );
           });
         });

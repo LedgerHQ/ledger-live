@@ -44,7 +44,11 @@ import {
   isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
-import { computeEIP7623GasLimit } from "./computeGasLimit";
+import {
+  computeEIP7623GasLimit,
+  DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+} from "./computeGasLimit";
 import estimateFees from "./estimateFees";
 
 function assetsAreEqual(asset1: AssetInfo, asset2: AssetInfo): boolean {
@@ -169,8 +173,8 @@ async function validateGas(
     BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
     intent.data.value,
     {
-      gasPerToken: calldataFloorGasPerToken,
-      zeroByteTokens: calldataFloorZeroByteTokens,
+      gasPerToken: calldataFloorGasPerToken ?? DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+      zeroByteTokens: calldataFloorZeroByteTokens ?? DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
     },
   );
 

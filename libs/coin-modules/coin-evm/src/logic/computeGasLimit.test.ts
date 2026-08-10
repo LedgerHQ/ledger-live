@@ -1,5 +1,14 @@
 import { DEFAULT_GAS_LIMIT } from "../utils";
-import { computeEIP7623GasLimit } from "./computeGasLimit";
+import {
+  computeEIP7623GasLimit,
+  DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+} from "./computeGasLimit";
+
+const EIP_7623 = {
+  gasPerToken: DEFAULT_CALLDATA_FLOOR_GAS_PER_TOKEN,
+  zeroByteTokens: DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS,
+};
 
 describe("computeGasLimit", () => {
   describe("computeEIP7623GasLimit", () => {
@@ -27,6 +36,7 @@ describe("computeGasLimit", () => {
       const gasLimit = computeEIP7623GasLimit(
         BigInt(DEFAULT_GAS_LIMIT.toFixed(0)),
         Buffer.from(callData, "hex"),
+        EIP_7623,
       );
       expect(gasLimit).toEqual(expectedGasLimit);
     });
@@ -61,10 +71,11 @@ describe("computeGasLimit", () => {
         expect(allNonZeros).toEqual(23048n);
       });
 
-      it("should keep the EIP-7623 values when no parameter is given", () => {
+      it("should keep the EIP-7623 values with the default parameters", () => {
         const gasLimit = computeEIP7623GasLimit(
           defaultGasLimit,
           Buffer.from(CALLDATA_68_BYTES, "hex"),
+          EIP_7623,
         );
 
         expect(gasLimit).toEqual(22400n);
@@ -75,7 +86,6 @@ describe("computeGasLimit", () => {
         { label: "a negative", params: { gasPerToken: -16, zeroByteTokens: -4 } },
         { label: "zero", params: { gasPerToken: 0, zeroByteTokens: 0 } },
         { label: "NaN", params: { gasPerToken: NaN, zeroByteTokens: NaN } },
-        { label: "undefined", params: { gasPerToken: undefined, zeroByteTokens: undefined } },
       ])("should fall back to the EIP-7623 defaults when the config holds $label", ({ params }) => {
         const gasLimit = computeEIP7623GasLimit(
           defaultGasLimit,
@@ -92,7 +102,7 @@ describe("computeGasLimit", () => {
           const gasLimit = computeEIP7623GasLimit(
             defaultGasLimit,
             Buffer.from(CALLDATA_68_BYTES, "hex"),
-            { gasPerToken },
+            { gasPerToken, zeroByteTokens: DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS },
           );
 
           // 21000 + 4 * 44 zero bytes + 16 * 24 non-zero ones
@@ -104,7 +114,7 @@ describe("computeGasLimit", () => {
         const gasLimit = computeEIP7623GasLimit(
           defaultGasLimit,
           Buffer.from(CALLDATA_68_BYTES, "hex"),
-          { gasPerToken: 16 },
+          { gasPerToken: 16, zeroByteTokens: DEFAULT_CALLDATA_FLOOR_ZERO_BYTE_TOKENS },
         );
 
         // 21000 + 16 * 140 tokens, versus 25352n for the full 64/64 migration
