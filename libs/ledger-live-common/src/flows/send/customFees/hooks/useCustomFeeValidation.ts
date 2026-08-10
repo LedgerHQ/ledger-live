@@ -12,6 +12,7 @@ import {
 
 type UseCustomFeeValidationParams = Readonly<{
   account: AccountLike;
+  feePayerAccount: AccountLike | null;
   transaction: Transaction;
   status: TransactionStatus;
   activeInputs: readonly CustomFeeInputDescriptor[];
@@ -30,6 +31,7 @@ type UseCustomFeeValidationResult = Readonly<{
 
 export function useCustomFeeValidation({
   account,
+  feePayerAccount,
   transaction,
   status,
   activeInputs,
@@ -66,22 +68,27 @@ export function useCustomFeeValidation({
   }, [values]);
 
   const hasInsufficientBalance = useMemo(() => {
-    const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
-    const balance = "balance" in account ? account.balance : new BigNumber(0);
-    const availableBalance = spendable ?? balance ?? new BigNumber(0);
+    const spendable =
+      feePayerAccount && "spendableBalance" in feePayerAccount
+        ? feePayerAccount.spendableBalance
+        : undefined;
+    const balance =
+      feePayerAccount && "balance" in feePayerAccount ? feePayerAccount.balance : undefined;
+    const availableBalance = spendable ?? balance;
     const txAmount = transaction.amount ?? new BigNumber(0);
-    // In max mode, amount is adjusted by the bridge to fit remaining balance.
-    // Local insufficient check should only fail when fees alone exceed available balance.
-    const totalCost = transaction.useAllAmount
-      ? estimatedFeesForValidation
-      : txAmount.plus(estimatedFeesForValidation);
-    const exceedsSpendable = totalCost.gt(availableBalance);
+    const amountAndFeesUseSameBalance = feePayerAccount?.id === account.id;
+    const totalCost =
+      transaction.useAllAmount || !amountAndFeesUseSameBalance
+        ? estimatedFeesForValidation
+        : txAmount.plus(estimatedFeesForValidation);
+    const exceedsSpendable = availableBalance !== undefined && totalCost.gt(availableBalance);
     const fromStatus = Object.entries(status.errors ?? {}).some(
       ([key, error]) => key === "insufficientBalanceFees" || hasInsufficientBalanceErrorName(error),
     );
     return exceedsSpendable || fromStatus || bridgeHasInsufficientBalance;
   }, [
     account,
+    feePayerAccount,
     transaction.amount,
     transaction.useAllAmount,
     estimatedFeesForValidation,
