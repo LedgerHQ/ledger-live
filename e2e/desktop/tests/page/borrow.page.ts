@@ -339,17 +339,28 @@ export class BorrowPage extends WebViewAppPage {
     const deadline = Date.now() + 60_000;
     while (Date.now() < deadline) {
       if (await stepDone.isVisible()) return false;
-      if (await nextAuthorize.isEnabled()) return false;
-      if ((await giveApproval.isVisible()) && (await giveApproval.isEnabled())) {
-        await giveApproval.click();
-        return true;
+
+      if (await giveApproval.isVisible()) {
+        if (await giveApproval.isEnabled()) {
+          await giveApproval.click();
+          return true;
+        }
+        // Give approval is shown but still loading — keep polling instead of skipping.
+      } else if (await nextAuthorize.isEnabled()) {
+        // No give-approval control: allowance already granted on-chain.
+        return false;
       }
+
       await new Promise(resolve => setTimeout(resolve, 500));
     }
+
     if (await stepDone.isVisible()) return false;
+    if (await giveApproval.isVisible()) {
+      throw new Error(`${stepLabel}: give approval stayed disabled for 60s`);
+    }
     if (await nextAuthorize.isEnabled()) return false;
     throw new Error(
-      `${stepLabel}: give approval did not become clickable or auto-complete within 60s`,
+      `${stepLabel}: neither give approval nor the next authorize step became ready within 60s`,
     );
   }
 
@@ -364,8 +375,8 @@ export class BorrowPage extends WebViewAppPage {
     const authorizeDepositing = this.authorizeDepositingBtn(webview);
 
     if (await step1Done.isVisible()) return false;
-    if (await authorizeDepositing.isEnabled()) return false;
-    return (await giveApproval.isVisible()) && (await giveApproval.isEnabled());
+    if (await giveApproval.isVisible()) return true;
+    return !(await authorizeDepositing.isEnabled());
   }
 
   @step("Complete Give approval step if required")
@@ -620,8 +631,8 @@ export class BorrowPage extends WebViewAppPage {
     const authorizeRepay = this.authorizeRepayBtn(webview);
 
     if (await step1Done.isVisible()) return false;
-    if (await authorizeRepay.isEnabled()) return false;
-    return (await giveApproval.isVisible()) && (await giveApproval.isEnabled());
+    if (await giveApproval.isVisible()) return true;
+    return !(await authorizeRepay.isEnabled());
   }
 
   @step("Complete repay Give approval step if required")
