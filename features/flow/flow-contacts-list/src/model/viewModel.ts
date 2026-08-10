@@ -1,12 +1,15 @@
 import type { Contact } from "@domain/entity-contact";
-import { getContactInitial } from "@features/platform-contacts";
+import {
+  getContactInitial,
+  identityFormatMeDisplayName,
+  resolveMeContactDisplayName,
+} from "@features/platform-contacts";
 import type {
   ContactsSearchViewModel,
   ContactsListItem,
   EmptyContactsListViewModel,
   PopulatedContactsListViewModel,
 } from "../types";
-import { identityFormatMeDisplayName, resolveMeContactDisplayName } from "../../../utils";
 import { createContactsListSections } from "../utils";
 
 function createContactsListItem(

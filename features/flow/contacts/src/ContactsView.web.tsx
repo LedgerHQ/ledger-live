@@ -1,17 +1,17 @@
 import React from "react";
 import { ContactsListView as ContactsListFlowView } from "@features/flow-contacts-list";
-import { ContactDetailView } from "../steps/Detail/ContactDetailView.web";
-import { ContactsFeatureIntroductionDialog } from "../steps/Introduction/Feature/ContactsFeatureIntroductionDialog.web";
-import { ContactsLedgerSyncIntroductionDialog } from "../steps/Introduction/LedgerSync/ContactsLedgerSyncIntroductionDialog.web";
-import type { ContactsListViewProps } from "./ContactsListView.types";
+import { ContactDetailView } from "./steps/Detail/ContactDetailView.web";
+import { ContactsFeatureIntroductionDialog } from "./steps/Introduction/Feature/ContactsFeatureIntroductionDialog.web";
+import { ContactsLedgerSyncIntroductionDialog } from "./steps/Introduction/LedgerSync/ContactsLedgerSyncIntroductionDialog.web";
+import type { ContactsViewProps } from "./ContactsView.types";
 
-export function ContactsListView({
+export function ContactsView({
   ledgerSyncStatus,
   featureIntroduction,
   ledgerSyncIntroduction,
   detail,
   ...listProps
-}: ContactsListViewProps): React.ReactNode {
+}: ContactsViewProps): React.ReactNode {
   return (
     <ContactsListFlowView
       {...listProps}

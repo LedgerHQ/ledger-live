@@ -1,13 +1,13 @@
 import React from "react";
 import { ContactsListView as ContactsListFlowView } from "@features/flow-contacts-list/native";
-import type { ContactsListViewNativeProps } from "./ContactsListView.types";
+import type { ContactsViewNativeProps } from "./ContactsView.types";
 
-export function ContactsListView({
+export function ContactsView({
   ledgerSyncStatus,
   featureIntroduction: _featureIntroduction,
   ledgerSyncIntroduction: _ledgerSyncIntroduction,
   ...listProps
-}: ContactsListViewNativeProps): React.ReactNode {
+}: ContactsViewNativeProps): React.ReactNode {
   return (
     <ContactsListFlowView {...listProps} isLedgerSyncChecking={ledgerSyncStatus === "checking"} />
   );

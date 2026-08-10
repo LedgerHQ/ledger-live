@@ -1,5 +1,5 @@
 export * from "./contactsListFacade";
-export * from "./contactsListView";
+export * from "./contactsViewFacade";
 export * from "./addContactFacade";
 export * from "./steps/EditContact";
 export * from "./steps/EditContact/web";

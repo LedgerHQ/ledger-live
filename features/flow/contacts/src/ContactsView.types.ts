@@ -1,12 +1,12 @@
 import type { ChangeEvent } from "react";
 import type { ContactId } from "@domain/entity-contact";
 import type { ContactsListViewLabels, ContactsPageViewModel } from "@features/flow-contacts-list";
-import type { ContactDetailViewProps } from "../steps/Detail/types";
+import type { ContactDetailViewProps } from "./steps/Detail/types";
 import type {
   ContactsFeatureIntroduction,
   ContactsLedgerSyncIntroduction,
-} from "../steps/Introduction/types";
-import type { ContactsLedgerSyncStatus } from "../ledgerSync";
+} from "./steps/Introduction/types";
+import type { ContactsLedgerSyncStatus } from "./ledgerSync";
 
 type ContactsPageSharedProps = Readonly<{
   viewModel: ContactsPageViewModel;
@@ -20,14 +20,14 @@ type ContactsPageSharedProps = Readonly<{
   ledgerSyncIntroduction: ContactsLedgerSyncIntroduction;
 }>;
 
-export type ContactsListViewProps = ContactsPageSharedProps &
+export type ContactsViewProps = ContactsPageSharedProps &
   Readonly<{
     onSearchInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
     onOpenMe: (contactId: ContactId) => void;
     detail?: ContactDetailViewProps;
   }>;
 
-export type ContactsListViewNativeProps = ContactsPageSharedProps &
+export type ContactsViewNativeProps = ContactsPageSharedProps &
   Readonly<{
     onSearchQueryChange: (query: string) => void;
   }>;
