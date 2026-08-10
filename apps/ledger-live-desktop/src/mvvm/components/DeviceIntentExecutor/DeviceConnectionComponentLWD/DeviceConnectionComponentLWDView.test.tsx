@@ -9,7 +9,7 @@ import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
 
 import { DeviceConnectionComponentLWDView } from "./DeviceConnectionComponentLWDView";
-import { makeKnownDevice } from "./testUtils";
+import { DeviceIntentTrackingTestWrapper, makeKnownDevice } from "./testUtils";
 import type { DeviceConnectionComponentLWDViewModel } from "./useDeviceConnectionComponentLWDViewModel";
 
 jest.mock("~/renderer/components/DeviceAction/animations", () => ({
@@ -28,6 +28,7 @@ function renderView(
       onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
       onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
     />,
+    { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 

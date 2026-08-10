@@ -1,18 +1,29 @@
-import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import { ledgerToDmkDeviceIdMap, type KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import {
+  CONNECT_DEVICE_BUTTON,
   DEVICE_ACTION_BUTTON,
   getConnectedDeviceTrackingProperties,
+  getTrackingSubError,
+  getTrackingTransport,
+  PAGE_CONNECT_DEVICE,
   PAGE_DEVICE_ACTION,
+  setIsInTerminalConnectDeviceError,
   trackAppReady,
+  trackConnectDeviceButtonClicked,
   trackDeviceActionButtonClicked,
+  trackDeviceConnected,
+  trackDeviceConnecting,
   trackDeviceflowAborted,
   trackDeviceflowCanceled,
   trackDeviceflowCompleted,
   trackDeviceflowFailed,
   trackDeviceflowStarted,
+  trackDevicePrompted,
+  trackDeviceSelected,
   trackDrawerCloseButtonClicked,
 } from "./trackDeviceIntent";
 
@@ -39,6 +50,7 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     currentRouteNameRef.current = "Connect Device - Connecting";
+    setIsInTerminalConnectDeviceError(false);
   });
 
   describe("trackDeviceflowStarted", () => {
@@ -138,6 +150,158 @@ describe("trackDeviceIntent — Layer A tracking helpers", () => {
         });
       },
     );
+
+    it("GIVEN a terminal Connect Device error WHEN called THEN it tracks deviceflow_failed", () => {
+      currentRouteNameRef.current = PAGE_CONNECT_DEVICE.ConnectionError;
+      setIsInTerminalConnectDeviceError(true);
+
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_failed", {
+        ...layerABaseProperties,
+        sourceFlow: "send",
+      });
+    });
+
+    it("GIVEN a retryable Connect Device discovery error WHEN called THEN it tracks deviceflow_aborted", () => {
+      currentRouteNameRef.current = PAGE_CONNECT_DEVICE.DiscoveryError;
+
+      trackDeviceflowCanceled({ sourceFlow: "send", extraProperties: {} });
+
+      expect(mockedTrack).toHaveBeenCalledWith("deviceflow_aborted", {
+        ...layerABaseProperties,
+        sourceFlow: "send",
+      });
+    });
+  });
+
+  describe("PAGE_CONNECT_DEVICE", () => {
+    it("GIVEN Connect Device pages WHEN inspecting constants THEN it exposes stable page names", () => {
+      // THEN
+      expect(PAGE_CONNECT_DEVICE).toEqual({
+        NoKnownDevice: "Connect Device - No Known Device",
+        Discovering: "Connect Device - Discovering",
+        WaitingForSelectedDevice: "Connect Device - Waiting For Device",
+        Connecting: "Connect Device - Connecting",
+        DiscoveryError: "Connect Device - Discovery Error",
+        ConnectionError: "Connect Device - Connection Error",
+      });
+    });
+  });
+
+  describe("trackDeviceSelected", () => {
+    it("GIVEN a selected USB device WHEN called THEN it tracks device_selected with the selected model and USB transport", () => {
+      // GIVEN
+      const device: KnownDevice = {
+        id: "device-id",
+        name: "Ledger Stax",
+        deviceModelId: DeviceModelId.stax,
+        transport: webHidTransportIdentifier,
+      };
+
+      // WHEN
+      trackDeviceSelected({ sourceFlow: "swap", device, extraProperties: {} });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_selected", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.stax,
+        transport: "usb",
+      });
+    });
+  });
+
+  describe("trackDevicePrompted", () => {
+    it("GIVEN a sourceFlow WHEN called THEN it tracks device_prompted with the Layer A base properties", () => {
+      // WHEN
+      trackDevicePrompted({ sourceFlow: "swap", extraProperties: {} });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_prompted", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+      });
+    });
+  });
+
+  describe("trackDeviceConnecting", () => {
+    it("GIVEN a sourceFlow modelId and transport WHEN called THEN it tracks device_connecting with matchedDevice", () => {
+      // WHEN
+      trackDeviceConnecting({
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        extraProperties: {},
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_connecting", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        matchedDevice: DeviceModelId.nanoX,
+      });
+    });
+  });
+
+  describe("trackDeviceConnected", () => {
+    it("GIVEN a sourceFlow modelId and transport WHEN called THEN it tracks device_connected with matchedDevice", () => {
+      // WHEN
+      trackDeviceConnected({
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        extraProperties: {},
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("device_connected", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        modelId: DeviceModelId.nanoX,
+        transport: "usb",
+        matchedDevice: DeviceModelId.nanoX,
+      });
+    });
+  });
+
+  describe("trackConnectDeviceButtonClicked", () => {
+    it("GIVEN a sourceFlow and button WHEN called THEN it tracks button_clicked", () => {
+      // WHEN
+      trackConnectDeviceButtonClicked({
+        sourceFlow: "swap",
+        button: CONNECT_DEVICE_BUTTON.Retry,
+        extraProperties: {},
+      });
+
+      // THEN
+      expect(mockedTrack).toHaveBeenCalledTimes(1);
+      expect(mockedTrack).toHaveBeenCalledWith("button_clicked", {
+        ...layerABaseProperties,
+        sourceFlow: "swap",
+        button: CONNECT_DEVICE_BUTTON.Retry,
+      });
+    });
+  });
+
+  describe("getTrackingTransport", () => {
+    it("GIVEN no transport WHEN mapping THEN it returns undefined", () => {
+      // THEN
+      expect(getTrackingTransport(undefined)).toBeUndefined();
+    });
+  });
+
+  describe("getTrackingSubError", () => {
+    it("GIVEN an unknown error WHEN mapping THEN it returns Unknown", () => {
+      // THEN
+      expect(getTrackingSubError("unknown" as never)).toBe("Unknown");
+    });
   });
 
   describe("getConnectedDeviceTrackingProperties", () => {
