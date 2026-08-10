@@ -19,7 +19,7 @@ jest.mock("@ledgerhq/asset-aggregation/assetDistribution/index", () => ({
 }));
 
 const mockUseChunkedAssetsData = jest.fn();
-jest.mock("../../dada-client/hooks/useChunkedAssetsData", () => ({
+jest.mock("@features/platform-aggregated-assets", () => ({
   useChunkedAssetsData: (...args: unknown[]) => mockUseChunkedAssetsData(...args),
 }));
 

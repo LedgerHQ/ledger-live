@@ -5847,12 +5847,18 @@ importers:
 
   libs/asset-detail:
     dependencies:
+      '@domain/api-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../domain/api/aggregated-assets
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../domain/entity/currency
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@features/platform-aggregated-assets':
+        specifier: workspace:*
+        version: link:../../features/platform/aggregated-assets
       '@ledgerhq/asset-aggregation':
         specifier: workspace:*
         version: link:../asset-aggregation

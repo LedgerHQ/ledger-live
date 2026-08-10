@@ -1,4 +1,4 @@
-import type { AssetsDataWithPagination } from "@ledgerhq/live-common/dada-client/state-manager/types";
+import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { resolveDadaMarket } from "../resolveDadaMarket";
 
 const ETH = "ethereum/erc20/usd_coin";

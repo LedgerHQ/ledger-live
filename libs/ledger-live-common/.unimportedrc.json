@@ -830,6 +830,7 @@
   ],
   "ignoreUnused": [
     "@cardano-foundation/ledgerjs-hw-app-cardano",
+    "@domain/entity-aggregated-asset",
     "@ledgerhq/asset-aggregation",
     "@ledgerhq/coin-hypercore",
     "@ledgerhq/coin-zcash",
