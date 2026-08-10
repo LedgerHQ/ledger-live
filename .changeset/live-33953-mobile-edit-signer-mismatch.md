@@ -1,7 +1,6 @@
 ---
 "live-mobile": minor
-"ledger-live-desktop": minor
-"@features/flow-contacts": minor
+"@features/flow-contacts": patch
 ---
 
-Render Contacts address edit signer mismatch error on Mobile and Desktop, and extract shared address detail action labels and UI state mapping.
+Render Mobile Contacts address edit signer mismatch error and extract shared address detail action labels and UI state mapping.
