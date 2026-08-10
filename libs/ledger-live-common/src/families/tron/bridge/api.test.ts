@@ -115,6 +115,14 @@ describe("tron bridge", () => {
         resource: null,
       });
     });
+
+    it("forwards the sponsoring context so the coin module can price the rental (LIVE-32775)", () => {
+      const energyProviderInfo = { providerId: "tronify", orderId: "o-1" };
+
+      expect(buildIntentData({ mode: "send", familySpecificData: { energyProviderInfo } })).toEqual(
+        { type: "tron", mode: "send", energyProviderInfo },
+      );
+    });
   });
 
   describe("describeOptimisticOperation", () => {

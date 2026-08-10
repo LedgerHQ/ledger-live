@@ -42,6 +42,7 @@ import {
 } from "../types/errors";
 import { ONE_TRX, TRX_CURRENCY_NAME, TRX_TICKER, TRX_UNIT } from "./constants";
 import { estimateFees, type TronResourceBreakdown } from "./estimateFees";
+import { computeSponsoredUsdtFee } from "./sponsoring";
 import { defaultTronResources, fetchTronResources } from "./tronResources";
 import { findBalance } from "./utils";
 import { validateAddress } from "./validateAddress";
@@ -125,8 +126,18 @@ export async function validateIntent(
   // question below is asked against the available part only.
   const nativeAvailable = (nativeBalance?.value ?? 0n) - (nativeBalance?.locked ?? 0n);
 
+  const rentalFee =
+    isToken && Object.keys(errors).length === 0
+      ? await computeSponsoredUsdtFee(
+          intent,
+          breakdown,
+          findBalance(intent.asset, balances)?.asset.unit,
+        )
+      : new BigNumber(0);
+  const rentalFeeUnits = BigInt(rentalFee.integerValue(BigNumber.ROUND_CEIL).toFixed());
+
   const spendable = isToken
-    ? findAssetBalance(intent.asset, balances)
+    ? maxZero(findAssetBalance(intent.asset, balances) - rentalFeeUnits)
     : nativeAvailable > estimatedFees
       ? nativeAvailable - estimatedFees
       : 0n;
@@ -176,8 +187,9 @@ export async function validateIntent(
     });
   }
 
-  // Fees are paid in TRX by the parent account, so a token send only spends the token amount.
-  const totalSpent = isToken ? amountSpent : amountSpent + estimatedFees;
+  // TRX network fees are paid by the parent account, so a token send spends only the token amount —
+  // plus, for a sponsored send, the USDT rental fee reserved out of the token balance (LIVE-32777).
+  const totalSpent = isToken ? amountSpent + rentalFeeUnits : amountSpent + estimatedFees;
 
   return { errors, warnings, estimatedFees, amount: amountSpent, totalSpent };
 }
@@ -338,10 +350,12 @@ async function validateVotes(
   }
 }
 
+/** Clamp a bigint to ≥ 0 (a fee reservation must never push a spendable balance negative). */
+const maxZero = (value: bigint): bigint => (value > 0n ? value : 0n);
+
 // Token-only lookup (native spendable is derived from `nativeAvailable` above). `locked` is
 // subtracted to stay consistent with the native spendable computation.
 function findAssetBalance(asset: AssetInfo, balances: Balance[]): bigint {
   const match = findBalance(asset, balances);
-  const available = (match?.value ?? 0n) - (match?.locked ?? 0n);
-  return available > 0n ? available : 0n;
+  return maxZero((match?.value ?? 0n) - (match?.locked ?? 0n));
 }

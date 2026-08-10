@@ -13,6 +13,7 @@ import { abiEncodeTrc20Transfer } from "../network/utils";
 import type { NetworkInfo, TronMemo, TronTxData } from "../types";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "./constants";
 import { getBalance } from "./getBalance";
+import { resolveSponsoredEstimate } from "./sponsoring";
 import { findBalance } from "./utils";
 
 type TronIntent = TransactionIntent<TronMemo, TronTxData>;
@@ -33,6 +34,9 @@ export type TronResourceBreakdown = {
   bandwidthAvailable: string;
   /** False when the energy simulation failed and `energyRequired` is a pessimistic sentinel. */
   energyEstimated: boolean;
+  sponsoredProviderId?: string;
+  sponsoredProviderName?: string;
+  avoidedEnergyFeesSun?: string;
 };
 
 // Byte sizes of the fully signed transaction (raw_data + signature + protobuf wrapping).
@@ -228,7 +232,17 @@ export async function estimateFees(transactionIntent: TronIntent): Promise<FeeEs
       .plus(computeEnergyFee(energyRequired.toNumber(), networkInfo, chainParams))
       .plus(computeActivationFee(transactionIntent, recipientAccount, chainParams));
 
-    return withBreakdown(BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()), breakdown);
+    const sponsored = resolveSponsoredEstimate(
+      transactionIntent,
+      energyRequired,
+      energyEstimated,
+      chainParams.energyFee,
+    );
+
+    return withBreakdown(BigInt(total.integerValue(BigNumber.ROUND_CEIL).toFixed()), {
+      ...breakdown,
+      ...sponsored,
+    });
   } catch (err) {
     log("tron/estimateFees", "falling back to pessimistic constants", { err });
     // Network data is unavailable, so the resource pools are unknown rather than zero. Report a

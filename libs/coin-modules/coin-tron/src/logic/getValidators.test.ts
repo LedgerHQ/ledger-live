@@ -30,6 +30,8 @@ describe("getValidators", () => {
 
     expect(items).toEqual([
       {
+        // Tron SRs carry no separate id, so the framework fallback uses the address.
+        id: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
         address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
         name: "www.example-sr.org",
         url: "https://www.example-sr.org/about",

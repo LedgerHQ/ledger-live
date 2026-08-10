@@ -98,7 +98,7 @@ export function buildIntentData(transaction: Record<string, unknown>): TronTxDat
   // The shared hook is typed `Record<string, unknown>`; narrow once here so the field reads below are
   // checked rather than each being asserted.
   const { mode, familySpecificData = {} } = transaction as Partial<Transaction>;
-  const { resource, votes, duration } = familySpecificData;
+  const { resource, votes, duration, energyProviderInfo } = familySpecificData;
 
   return {
     type: "tron",
@@ -108,6 +108,7 @@ export function buildIntentData(transaction: Record<string, unknown>): TronTxDat
     // because Stake 2.0's `freezebalancev2` contract has no duration field.
     ...(duration !== undefined ? { duration } : {}),
     ...(mode !== undefined ? { mode } : {}),
+    ...(energyProviderInfo !== undefined ? { energyProviderInfo } : {}),
   };
 }
 

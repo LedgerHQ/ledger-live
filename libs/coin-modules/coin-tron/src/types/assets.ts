@@ -3,7 +3,7 @@ import type {
   MemoNotSupported,
   TxData,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { TronOperationMode, TronResource, Vote } from "./bridge";
+import type { EnergyProviderInfo, TronOperationMode, TronResource, Vote } from "./bridge";
 
 /*
   TRC10 tokens use a standard implementation on the protocol level.
@@ -60,4 +60,5 @@ export interface TronTxData extends TxData {
    * stays the single source of truth for the mode — do not branch on this field.
    */
   mode?: TronOperationMode;
+  energyProviderInfo?: EnergyProviderInfo | null;
 }

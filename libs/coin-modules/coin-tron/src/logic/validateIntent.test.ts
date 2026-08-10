@@ -57,6 +57,14 @@ jest.mock("./tronResources", () => ({
   fetchTronResources: (...args: unknown[]) => mockFetchTronResources(...args),
 }));
 
+// The sponsored-fee computation is unit-tested in sponsoring.test.ts; here it is mocked so the guard's
+// effect on spendable/totalSpent can be exercised in isolation. Default 0 = a non-sponsored send, which
+// keeps every non-sponsored token test a parity check on the standard behaviour.
+const mockComputeSponsoredUsdtFee = jest.fn();
+jest.mock("./sponsoring", () => ({
+  computeSponsoredUsdtFee: (...args: unknown[]) => mockComputeSponsoredUsdtFee(...args),
+}));
+
 const SENDER = "TFCAe8rzCpc1iQE485VE3Ymgj6ULAuhLH7";
 const RECIPIENT = "TVqLYbpUXv5Q4j7krFr3duqf2GUZghDfQy";
 const TRC20_ADDRESS = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
@@ -126,6 +134,7 @@ describe("validateIntent", () => {
     mockFetchTronResources.mockResolvedValue(makeResources());
     mockGetTronSuperRepresentatives.mockResolvedValue([{ address: SR_ADDRESS }]);
     mockGetDelegatedResource.mockResolvedValue(new BigNumber(0));
+    mockComputeSponsoredUsdtFee.mockResolvedValue(new BigNumber(0));
   });
 
   it("accepts a valid native send", async () => {
@@ -374,6 +383,82 @@ describe("validateIntent", () => {
       expect(result.warnings.amount).toBeUndefined();
       // A fully resource-covered transfer owes no TRX, so a zero TRX balance is not a gas error.
       expect(result.errors.gasLimit).toBeUndefined();
+    });
+  });
+
+  describe("sponsored token send (LIVE-32777)", () => {
+    // The guard reads the token unit off the matched balance, not off intent.asset (whose unit is the
+    // native TRX unit), so the fixture carries a distinct unit object to prove which one is forwarded.
+    const USDT_UNIT = { name: "Tether USD", code: "USDT", magnitude: 6 };
+    const sponsoredIntent = (overrides: Partial<TransactionIntent<TronMemo, TronTxData>> = {}) =>
+      makeIntent({
+        asset: {
+          type: "trc20",
+          assetReference: TRC20_ADDRESS,
+          name: "USDT",
+          unit: { name: "USDT", code: "USDT", magnitude: 6 },
+          assetOwner: SENDER,
+        },
+        data: { type: "tron", energyProviderInfo: { providerId: "tronify", orderId: "o-1" } },
+        ...overrides,
+      });
+    const trc20BalanceWithUnit = (value: bigint): Balance => ({
+      value,
+      asset: { type: "trc20", assetReference: TRC20_ADDRESS, unit: USDT_UNIT },
+    });
+
+    it("reserves the rental fee out of the token spendable (fee + amount can't be covered)", async () => {
+      mockComputeSponsoredUsdtFee.mockResolvedValue(new BigNumber(200_000));
+
+      // 900k fits the raw 1M balance but not the 800k left after the 200k rental reservation.
+      const result = await validateIntent(sponsoredIntent({ amount: 900_000n }), [
+        nativeBalance(10_000_000n),
+        trc20BalanceWithUnit(1_000_000n),
+      ]);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      // Token network fees are paid by the parent, so totalSpent is amount + the token rental only.
+      expect(result.totalSpent).toBe(1_100_000n);
+    });
+
+    it("prices the rent with the token unit from the matched balance, not intent.asset", async () => {
+      await validateIntent(sponsoredIntent({ amount: 100_000n }), [
+        nativeBalance(10_000_000n),
+        trc20BalanceWithUnit(1_000_000n),
+      ]);
+
+      // The default estimateFees mock carries no `parameters`, so the breakdown is undefined here;
+      // what this asserts is the third arg — the unit forwarded is the balance's, not intent.asset's.
+      expect(mockComputeSponsoredUsdtFee).toHaveBeenCalledWith(
+        expect.anything(),
+        undefined,
+        USDT_UNIT,
+      );
+    });
+
+    it("reserves the fee from the max on useAllAmount", async () => {
+      mockComputeSponsoredUsdtFee.mockResolvedValue(new BigNumber(200_000));
+
+      const result = await validateIntent(sponsoredIntent({ amount: 0n, useAllAmount: true }), [
+        nativeBalance(10_000_000n),
+        trc20BalanceWithUnit(1_000_000n),
+      ]);
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(800_000n);
+      expect(result.totalSpent).toBe(1_000_000n);
+    });
+
+    it("does not price a rental once a blocking recipient error exists", async () => {
+      mockFetchTronAccount.mockResolvedValue([]); // unactivated, non-contract recipient
+
+      const result = await validateIntent(sponsoredIntent({ amount: 100_000n }), [
+        nativeBalance(10_000_000n),
+        trc20BalanceWithUnit(1_000_000n),
+      ]);
+
+      expect(result.errors.recipient).toBeInstanceOf(TronSendTrc20ToNewAccountForbidden);
+      expect(mockComputeSponsoredUsdtFee).not.toHaveBeenCalled();
     });
   });
 

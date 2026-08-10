@@ -1,4 +1,9 @@
-import type { TronOperationMode, TronResource, Vote } from "@ledgerhq/coin-tron/types/index";
+import type {
+  EnergyProviderInfo,
+  TronOperationMode,
+  TronResource,
+  Vote,
+} from "@ledgerhq/coin-tron/types/index";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -33,6 +38,8 @@ export type TronFamilySpecificData = {
   votes?: Vote[];
   /** Freeze duration in days. */
   duration?: number;
+  /** Gas-sponsoring (Tronify) context, absent ⇒ standard */
+  energyProviderInfo?: EnergyProviderInfo | null;
 };
 
 /**

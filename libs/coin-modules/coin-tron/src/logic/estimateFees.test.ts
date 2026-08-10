@@ -285,6 +285,56 @@ describe("estimateFees", () => {
 
       expect(result.value).toBe(BigInt(STANDARD_FEES_TRC_20.toString()));
     });
+
+    describe("sponsored savings estimate (LIVE-32776)", () => {
+      const sendTrc20Sponsored: TransactionIntent<TronMemo, TronTxData> = {
+        ...sendTrc20,
+        data: { type: "tron", energyProviderInfo: { providerId: "tronify", orderId: "o-1" } },
+      };
+
+      it("merges the provider + avoided energy cost onto the parameters", async () => {
+        mockGetTronAccountNetwork.mockResolvedValue(
+          buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+        );
+        mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+        mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+        const result = await estimateFees(sendTrc20Sponsored);
+
+        expect(result.parameters).toMatchObject({
+          sponsoredProviderId: "tronify",
+          sponsoredProviderName: "Tronify",
+          avoidedEnergyFeesSun: String(31_895 * chainParams.energyFee),
+        });
+      });
+
+      it("adds no sponsored fields to a non-sponsored send", async () => {
+        mockGetTronAccountNetwork.mockResolvedValue(
+          buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+        );
+        mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+        mockTriggerConstantContract.mockResolvedValue({ energy_used: 31_895 });
+
+        const result = await estimateFees(sendTrc20);
+
+        expect(result.parameters).not.toHaveProperty("sponsoredProviderId");
+      });
+
+      it("omits the estimate when energy could not be simulated (flat-fee path)", async () => {
+        mockGetTronAccountNetwork.mockResolvedValue(
+          buildNetworkInfo({ freeNetLimit: new BigNumber(5000) }),
+        );
+        mockFetchTronAccount.mockResolvedValue(activeRecipientWithToken);
+        mockTriggerConstantContract.mockResolvedValue({
+          result: { result: false, code: "REVERT", message: "insufficient balance" },
+          energy_used: 0,
+        });
+
+        const result = await estimateFees(sendTrc20Sponsored);
+
+        expect(result.parameters).not.toHaveProperty("sponsoredProviderId");
+      });
+    });
   });
 
   describe("estimatedTxSize (exported helper)", () => {

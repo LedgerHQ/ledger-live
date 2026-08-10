@@ -1,5 +1,10 @@
+import { randomBytes } from "crypto";
 import coinConfig from "../config";
+import { encode58Check } from "../network/format";
 import { getBalance } from "./getBalance";
+
+// Collision with an existing on-chain account is ~2^-160, so this is reliably an unactivated address.
+const freshAddress = (): string => encode58Check("41" + randomBytes(20).toString("hex"));
 
 describe("getBalance", () => {
   beforeAll(() => {
@@ -25,7 +30,7 @@ describe("getBalance", () => {
   });
 
   it("returns 0 when address is not found", async () => {
-    const result = await getBalance("TPqmGMoidNTbMZ8ApgcbPMf7JDyiHi1sv0");
+    const result = await getBalance(freshAddress());
 
     expect(result).toEqual([{ value: 0n, locked: 0n, asset: { type: "native" } }]);
   });
